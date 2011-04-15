@@ -1,0 +1,126 @@
+Compiler version: 4.9 (R2008b)  
+mcc -o 'Adjacent_Deconvolution_v1_beta' -W 'main' -d 'C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src' -T 'link:exe' -v 'C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\main.m' -a 'C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\main.fig' -a 'C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\example_collections\collection_2,control_630.zip' -a 'C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\example_collections\collection_2,DFP,cerebellum_4322.zip'  
+Warning: Name is nonexistent or not a directory: C:\Program Files 
+(x86)\MATLAB\R2008b\toolbox\compiler\patch.  
+Warning: Name is nonexistent or not a directory: C:\Program Files 
+(x86)\MATLAB\R2008b\toolbox\compiler\patch.  
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\matlab\mcc.enc 
+Processing C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\main.fig 
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\wavelet\mcc.enc 
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\mcc.enc 
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\optim\mcc.enc 
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\matlab\guide\guideopts.fig 
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\matlab\winfun\actxcontrolselect.fig 
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\shared\optimlib\mcc.enc 
+Processing C:\Program Files (x86)\MATLAB\R2008b\toolbox\matlab\winfun\actxcontrolcreateproperty.fig 
+Processing include files... 
+2 item(s) added. 
+Processing directories installed with MCR... 
+The file C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\mccExcludedFiles.log contains a list of functions excluded from the CTF archive. 
+4 item(s) added. 
+Generating MATLAB path for the compiled application... 
+Created 49 path items. 
+Begin validation of MEX files: Tue Feb 01 18:33:14 2011  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\@distcomp\dctCmdWindowSize.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\dct_psfcns.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\distcompByteBuffer2MxArray.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\distcompMakeByteBufferHandle.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\distcompMxArray2ByteBuffer.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\distcompdeserialize.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\distcompserialize.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\getUncPathFromMappedDrive.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\lang\+spmdlang\private\pctValueStore.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\private\dctPathAndClearNotification.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files (x86)\MATLAB\R2008b\toolbox\distcomp\private\dctRegisterMpiFunctions.mexw32'.  
+No conflicting M-file found.  
+End validation of MEX files: Tue Feb 01 18:33:14 2011  
+Warning: Name is nonexistent or not a directory: C:\Program Files 
+(x86)\MATLAB\R2008b\toolbox\compiler\patch.  
+Deleting 11 temporary MEX authorization files.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_21646_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_16307_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_31445_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_30887_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_12323_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_29164_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_14225_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_9428_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_27352_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_26131_4812.auth'.  
+Removing: 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_26751_4812.auth'.  
+Parsing file "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\main.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files (x86)\MATLAB\R2008b\toolbox\compiler\deploy\deployprint.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files (x86)\MATLAB\R2008b\toolbox\compiler\deploy\printdlg.m" 
+	(Referenced from: "Compiler Command Line").  
+Generating file "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\Adjacent_Deconvolution_v1_beta_main.c".  
+Generating file "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\Adjacent_Deconvolution_v1_beta_delay_load.c".  
+Generating file "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\readme.txt".  
+Generating file "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\Adjacent_Deconvolution_v1_beta_mcc_component_data.c".  
+Contents of temporary response file 'C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_11030':  
+ ......................  
+' -O -v -output "Adjacent_Deconvolution_v1_beta" -I"C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src" "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\Adjacent_Deconvolution_v1_beta_main.c" "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\Adjacent_Deconvolution_v1_beta_delay_load.c" "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src\Adjacent_Deconvolution_v1_beta_mcc_component_data.c" -link exe  -env MCR_DELAYLOAD=/delayload:mclmcrrt79.dll -env MCR_DELAYLIB=delayimp.lib -outdir "C:\Users\Paul\BiRG\Research\Toxicology\omics_analysis\deconvolution\Adjacent_Deconvolution_v1_beta\src"'  
+......................  
+Executing command: mbuild  "@C:\Users\Paul\AppData\Local\Temp\mathworks_tmp_4812_11030"  
+ This is mbuild Copyright 1984-2006 The MathWorks, Inc. 
+ 
+-> Default options filename found in C:\Users\Paul\AppData\Roaming\MathWorks\MATLAB\R2008b 
+---------------------------------------------------------------- 
+->    Options file           = C:\Users\Paul\AppData\Roaming\MathWorks\MATLAB\R2008b\compopts.bat 
+->    COMPILER               = lcc 
+->    Compiler flags: 
+         COMPFLAGS           = -c -Zp8 -I"C:\PROGRA~2\MATLAB\R2008b\sys\lcc\include" -noregistrylookup 
+         OPTIMFLAGS          = -DNDEBUG 
+         DEBUGFLAGS          = -g4 
+         arguments           =  -IC:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC 
+         Name switch         = -Fo 
+->    Pre-linking commands   =  
+->    LINKER                 = lcclnk 
+->    Link directives: 
+         LINKFLAGS           = -tmpdir "C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\." -L"C:\PROGRA~2\MATLAB\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~2\MATLAB\R2008b\extern\lib\win32\lcc" 
+         LINKFLAGSPOST       = mclmcrrt.lib 
+         Name directive      = -o "C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta.exe" 
+         File link directive =  
+         Lib. link directive =  
+         Rsp file indicator  = @ 
+->    Resource Compiler      =  
+->    Resource Linker        =  
+---------------------------------------------------------------- 
+ 
+ 
+--> lcc  -IC:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC -c -Zp8 -I"C:\PROGRA~2\MATLAB\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\Adjacent_Deconvolution_v1_beta_main.obj -IC:\PROGRA~2\MATLAB\R2008b\extern\include -IC:\PROGRA~2\MATLAB\R2008b\simulink\include -DNDEBUG C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta_main.c 
+ 
+ 
+--> lcc  -IC:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC -c -Zp8 -I"C:\PROGRA~2\MATLAB\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\Adjacent_Deconvolution_v1_beta_delay_load.obj -IC:\PROGRA~2\MATLAB\R2008b\extern\include -IC:\PROGRA~2\MATLAB\R2008b\simulink\include -DNDEBUG C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta_delay_load.c 
+ 
+Warning C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta_delay_load.c: 21  static `void function(void) FailedToLoadMCR' is not referenced 
+0 errors, 1 warnings 
+ 
+--> lcc  -IC:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC -c -Zp8 -I"C:\PROGRA~2\MATLAB\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\Adjacent_Deconvolution_v1_beta_mcc_component_data.obj -IC:\PROGRA~2\MATLAB\R2008b\extern\include -IC:\PROGRA~2\MATLAB\R2008b\simulink\include -DNDEBUG C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta_mcc_component_data.c 
+ 
+    Contents of C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\mbuild_tmp.rsp: 
+  C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\Adjacent_Deconvolution_v1_beta_main.obj  C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\Adjacent_Deconvolution_v1_beta_delay_load.obj  C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\Adjacent_Deconvolution_v1_beta_mcc_component_data.obj 
+ 
+ 
+--> lcclnk -o "C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta.exe" -tmpdir "C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\." -L"C:\PROGRA~2\MATLAB\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~2\MATLAB\R2008b\extern\lib\win32\lcc"  @C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\MBUILD~1.RSP  mclmcrrt.lib 
+ 
+Manually moving Adjacent_Deconvolution_v1_beta.exe to C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta.exe 
+Manually moving Adjacent_Deconvolution_v1_beta.lib to C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta.lib 
+Manually moving Adjacent_Deconvolution_v1_beta.exp to C:\USERS\PAUL\BIRG\RESEARCH\TOXICO~1\OMICS_~1\DECONV~1\ADJACE~1\SRC\Adjacent_Deconvolution_v1_beta.exp 
+ 
+--> "if exist C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def del C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def" 
+ 
+ 
+--> "if exist C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj del C:\USERS\PAUL\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj" 
+ 

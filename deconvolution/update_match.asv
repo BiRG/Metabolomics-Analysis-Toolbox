@@ -1,0 +1,67 @@
+function update_match(handles)
+hlabels = findobj('Tag','axes2_hlabels');
+positions = get(hlabels,'position');
+xvs = [];
+for i = 1:length(positions)
+    xvs(i) = positions{i}(1);
+end
+sort(positions{:},
+collections = getappdata(gcf,'collections');
+reference = getappdata(gcf,'reference');
+c = getappdata(gcf,'c');
+s = getappdata(gcf,'s');
+if ~isfield(collections{c},'match_inxs') % Nothing to check yet
+    return;
+end
+match_inxs = collections{c}.match_inxs{s};
+error = false;
+inxs1 = find(reference.include_mask == 1);
+inxs2 = find(collections{c}.include_mask{s} == 1);
+if length(inxs2) ~= length(hlabels)
+    There has been an error call Paul
+end
+new_match_inxs = [];
+for i = 1:length(hlabels)
+    try
+        v = str2num(get(hlabels(i),'String'));
+        
+        if v == 0 % No match for this one
+            continue;
+        end
+        
+        % Must be integer
+        if v ~= round(v)
+            error = true;
+            set(hlabels(i),'color','r');
+            continue;
+        end
+        
+        % Now check for duplicates
+        if ~isempty(find(new_match_inxs == v))
+            error = true;
+            set(hlabels(i),'color','r');
+            inxs = find(match_inxs == v);
+            set(hlabels(inxs),'color','r');
+            continue;
+        end
+        
+        % Check to make sure it is within bounds of reference peaks
+        reference_match_inxs = 1:length(inxs1);
+        if isempty(find(v == reference_match_inxs))
+            error = true;
+            set(hlabels(i),'color','r');
+            continue;
+        end
+        
+        new_match_inxs(end+1) = v;
+        set(hlabels(i),'color','k');
+        match_inxs(inxs2(i)) = v;
+    catch ME
+        error = true;
+        set(hlabels(i),'color','r');
+    end
+end
+if ~error
+    collections{c}.match_inxs{s} = match_inxs;
+    setappdata(gcf,'collections',collections);
+end

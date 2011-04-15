@@ -1,0 +1,74 @@
+function refresh_axes2(handles)
+% Delete old plot
+delete(findobj('Tag','hp2'));
+delete(findobj('Tag','axes2_hmaxs'));
+delete(findobj('Tag','hpeaks'));
+delete(findobj('Tag','hbaseline'));
+delete(findobj('Tag','hresidual'));
+delete(findobj('Tag','axes2_hlabels'));
+
+axes(handles.axes2);
+collections = getappdata(gcf,'collections');
+c = getappdata(gcf,'c');
+s = getappdata(gcf,'s');
+hp2 = line(collections{c}.x,collections{c}.Y(:,s),'Color','k','Tag','hp2');
+xlabel('Chemical shift (ppm)');
+set(handles.axes2,'xdir','reverse');
+
+hmaxs = [];
+hlabels = [];
+min_spectrum = getappdata(gcf,'min_spectrum');
+if isfield(collections{c},'maxs')
+    for i = 1:length(collections{c}.maxs{s})
+        if collections{c}.include_mask{s}(i)
+            hmaxs(end+1) = line([collections{c}.x(collections{c}.maxs{s}(i)),collections{c}.x(collections{c}.maxs{s}(i))],...
+                [min(min_spectrum),collections{c}.Y(collections{c}.maxs{s}(i),s)],'Color','b','Tag','axes2_hmaxs','Visible','off');            
+            if isfield(collections{c},'match_inxs') && length(collections{c}.match_inxs) >= s && length(collections{c}.match_inxs{s}) >= i % Check to see if there is a match
+                hlabels(end+1) = text(collections{c}.x(collections{c}.maxs{s}(i)),min(min_spectrum),num2str(collections{c}.match_inxs{s}(i)),'VerticalAlignment','top','HorizontalAlignment','center','Tag','axes2_hlabels','Visible','off');
+                if collections{c}.match_inxs{s}(i) == 0 % Draw their attention to this
+                    set(hlabels(end),'Color','g');
+                end
+                set(hlabels(end),'ButtonDownFcn',@myfunc);
+            end
+        else
+            hmaxs(end+1) = line([collections{c}.x(collections{c}.maxs{s}(i)),collections{c}.x(collections{c}.maxs{s}(i))],...
+                [min(min_spectrum),collections{c}.Y(collections{c}.maxs{s}(i),s)],'Color',[0.8 0.8 0.8],'Tag','axes2_hmaxs','Visible','off');
+        end
+        myfunc = @(hObject, eventdata) (max_click_spectrum(i,hmaxs(end),handles));
+        set(hmaxs(end),'ButtonDownFcn',myfunc);
+    end
+end
+
+hpeaks = [];
+hbaseline = [];
+hresidual = [];
+if isfield(collections{c},'BETA')
+    if ~isempty(collections{c}.BETA{s})
+        BETA = collections{c}.BETA{s};
+        for p = 1:length(BETA)/4
+            hpeaks(end+1) = line(collections{c}.x,one_peak_model(BETA(4*(p-1)+(1:4)),collections{c}.x),'Color',[0.6,0.6,0.6],'Tag','hpeaks','Visible','off');
+        end
+        hbaseline = line(collections{c}.x,collections{c}.y_baseline{s},'Color',[0.7,0.1,0.8],'Tag','hbaseline','Visible','off');
+        y_residual = 
+        hresidual = line(collections{c}.x,collections{c}.y_fit{s}-collections{c}.Y(:,s),'Color',[0.1,0.7,0.8],'Tag','hresidual','Visible','off');
+    end
+end
+
+set(hmaxs,'visible','on');
+set(hlabels,'visible','on');
+set(hpeaks,'visible','on');
+set(hbaseline,'visible','on');
+set(hresidual,'visible','on');
+
+if isfield(collections{c},'BETA')
+    legend([hp2,hbaseline,hresidual],{get_legend(collections{c},s),'Baseline','Residual'});
+else
+    legend([hp2],{get_legend(collections{c},s)});
+end
+
+update_match(handles);
+
+function myfunc(hObject,eventdata,handles)
+set(hObject,'Color','m');
+set(hObject,'Editing','on');
+

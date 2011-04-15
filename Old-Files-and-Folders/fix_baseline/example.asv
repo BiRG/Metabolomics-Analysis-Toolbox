@@ -1,0 +1,16 @@
+load('data');
+load('y_baseline');
+load('y_noise');
+x = data(:,1);
+y = data(:,2);
+
+inxs = find(y == 0);
+y = y + y_baseline + y_noise;
+y(inxs) = 0;
+
+regions = [11.6,9.5;0.4,-2];
+
+plot(x,y);
+set(gca,'xdir','reverse');
+nm = size(regions);
+

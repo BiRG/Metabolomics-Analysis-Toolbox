@@ -1,0 +1,21 @@
+function clear_plot
+
+lh = getappdata(gcf,'lh');
+if ~isempty(lh)
+    delete(lh);
+end
+
+yh = getappdata(gcf,'yh');
+if ~isempty(yh)
+    delete(yh);
+end
+
+yh_fixed = getappdata(gcf,'yh_fixed');
+if ~isempty(yh_fixed)
+    delete(yh_fixed);
+end
+
+yh_baseline = getappdata(gcf,'yh_baseline');
+if ~isempty(yh_baseline)
+    delete(yh_baseline);
+end

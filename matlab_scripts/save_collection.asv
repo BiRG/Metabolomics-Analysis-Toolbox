@@ -1,0 +1,88 @@
+function save_collection(output_dir,collection)
+fid = fopen([output_dir,'\',filename],'w');
+for i = 1:length(collection.input_names)
+    name = regexprep(collection.input_names{i},' ','_');
+    field_name = lower(name);
+    if i > 1
+        fprintf(fid,'\n');
+    end
+    fprintf(fid,collection.input_names{i});
+    if iscell(collection.(field_name))
+        for j = 1:length(collection.(field_name))
+            fprintf(fid,'\t%s',collection.(field_name){j});
+        end
+    elseif ischar(collection.(field_name))
+        fprintf(fid,'\t%s',collection.(field_name));
+    elseif isinteger(collection.(field_name))
+        fprintf(fid,'\t%d',collection.(field_name));
+    else
+        fprintf(fid,'\t%f',collection.(field_name));
+    end
+end
+fprintf('\nX');
+for i = 1:collection.num_samples
+    fprintf('\tY%d',i);
+end
+for j = 1:length(collection.x)
+    fprintf('\n%f',collection.x(j));
+    for i = 1:collection.num_samples
+        fprintf('\t%d',i);
+    end
+fclose(fid);
+
+ifid = fopen([pathname,filename]);
+if strcmp(ifid,'"stdin"') == 1 || ifid < 0
+    msgbox(['Cannot open file ',pathname,filename]);
+    return
+end
+
+collection = {};
+collection.filename = filename;
+collection.input_names = {};
+
+line = fgetl(ifid);
+data_start = false;
+while line ~= -1
+    tab = sprintf('\t');
+    fields = split(line,tab);
+    if strcmp(fields{1},'X') == 1 || strcmp(fields{1},'x') == 1
+        data_start = true;
+        collection.x = [];
+        collection.Y = zeros(0,length(fields)-1);
+        collection.num_samples = length(fields)-1;
+    elseif data_start
+        collection.x(end+1) = str2num(fields{1});
+        collection.Y(end+1,1:(length(fields{1})-1)) = 0;
+        for j = 2:length(fields)
+            collection.Y(end,j-1) = str2num(fields{j});
+        end
+    else
+        input_name = fields{1};
+        collection.input_names{end+1} = input_name;
+        name = regexprep(input_name,' ','_');
+        field_name = lower(name);
+        % Try to convert to num
+        values = [];
+        try
+            for i = 2:length(fields)
+                v = str2num(fields{i});
+                if ~isempty(v)
+                    values(end+1) = v;
+                end
+            end
+        catch ME
+            values = [];
+        end
+        if ~isempty(values)
+            collection.(field_name) = values;
+        else
+            if length(fields) == 2
+                collection.(field_name) = fields{2};
+            else
+                collection.(field_name) = {fields{2:end}};
+            end
+        end
+    end
+    line = fgetl(ifid);
+end
+fclose(ifid);

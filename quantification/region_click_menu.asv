@@ -1,0 +1,26 @@
+function region_click_menu(left_handle,hObject, eventdata, handles)
+str = {'Edit bin','Delete bin','Show bin'};
+[s,v] = listdlg('PromptString','Select an action',...
+              'SelectionMode','single',...
+              'ListString',str);
+
+if isempty(s)
+    return
+end
+
+[regions,left_handles,right_handles] = get_regions;
+region_inx = NaN;
+for i = 1:length(left_handles)
+    if left_handles(i) == hObject || right_handles(i) == hObject
+        region_inx = i;
+        break;
+    end
+end
+
+if strcmp(str{s},'Show bin')
+    show_bin(region_inx)
+elseif strcmp(str{s},'Edit bin')
+    set_edit(region_inx)
+elseif strcmp(str{s},'Delete bin')
+    delete_region(region_inx)
+end

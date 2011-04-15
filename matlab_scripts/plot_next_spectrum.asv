@@ -1,0 +1,34 @@
+function plot_next_spectrum
+clear_plot
+collections = getappdata(gcf,'collections');
+c = getappdata(gcf,'collection_inx');
+s = getappdata(gcf,'spectrum_inx')+1;
+if s > collections{c}.num_samples
+    c = c + 1;    
+    s = 1;
+end
+setappdata(gcf,'collection_inx',c);
+setappdata(gcf,'spectrum_inx',s);
+
+add = 0;
+if sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
+    add = 0.7;
+end
+yh = line(collections{c}.x,collections{c}.Y(:,s),'Color',[0.1,0.1,0.1]+add);
+myfunc = @(hObject, eventdata, handles) (line_click_info(collections{c},s));
+set(yh,'ButtonDownFcn',myfunc);
+setappdata(gcf,'yh',yh);
+
+legend_cell = {'Original'};
+if sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
+    legend_cell{end+1} = 'Fixed';
+    yh_fixed = line(collections{c}.x,collections{c}.Y_fixed(:,s),'Color','k');
+    setappdata(gcf,'yh_fixed',yh_fixed);
+    myfunc = @(hObject, eventdata, handles) (line_click_info(collections{c},s));
+    set(yh_fixed,'ButtonDownFcn',myfunc);
+    legend_cell{end+1} = 'Baseline';
+    yh_baseline = line(collections{c}.x,collections{c}.Y_baseline(:,s),'Color','b');
+    setappdata(gcf,'yh_baseline',yh_baseline);
+end
+lh = legend(legend_cell);
+setappdata(gcf,'lh',lh);

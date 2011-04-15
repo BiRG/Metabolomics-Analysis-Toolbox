@@ -1,0 +1,23 @@
+function [reference,collection] = renumber_matches(reference,collection)
+old_max_ids = reference.max_ids;
+cnt = 1;
+for i = 1:length(reference.maxs)
+    if reference.include_mask(i)
+        reference.max_ids(i) = cnt;
+        cnt = cnt + 1;
+    else
+        reference.max_ids(i) = 0;
+    end
+end
+
+if isfield(collection,'match_inxs') && ~isempty(collection.match_inxs)
+    for s = 1:length(collection.match_inxs)
+        new_match_inxs = 0*collection.match_inxs{s};
+        for i = 1:length(old_max_ids)
+            old_max_id = old_max_ids(i);
+            max_id = max_ids(i);
+            inxs = find(collection.match_inxs{s} == old_max_id);
+            c
+        end
+    end
+end

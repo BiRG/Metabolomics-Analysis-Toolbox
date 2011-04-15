@@ -1,0 +1,28 @@
+function load_regions
+collections = getappdata(gcf,'collections');
+c = getappdata(gcf,'collection_inx');
+s = getappdata(gcf,'spectrum_inx');
+Y = collections{c}.Y;
+x = collections{c}.x;
+
+[filename,pathname] = uigetfile('*.txt', 'Load regions');
+file = fopen([pathname,filename],'r');
+line = fgetl(file);
+regions = split(line,';');
+lefts = [];
+rights = [];
+for i = 1:length(regions)
+    region = regions{i};
+    fields = split(region,',');
+    lefts(end+1) = str2num(fields{1});
+    rights(end+1) = str2num(fields{2});
+end
+regions = 
+regions_cursors = zeros(length(lefts),2);
+for i = 1:length(lefts)
+    regions_cursors(i,1) = line([x(regions(i,1)),x(regions(i,1))],[min(Y(:,s)),max(Y(:,s))],'Color','g');
+    regions_cursors(i,2) = line([x(regions(i,2)),x(regions(i,2))],[min(Y(:,s)),max(Y(:,s))],'Color','r');
+end
+
+clear_all
+plot_all

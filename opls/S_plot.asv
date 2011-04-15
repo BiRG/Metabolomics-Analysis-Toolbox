@@ -1,0 +1,34 @@
+function [] = S_plot(T, X, SE, sig_inxs)
+cov = [];
+corr = [];
+fold = length(SE);
+
+nm = size(X);
+for i=1:nm(2)
+    cov(i) = (T'*X(:,i))/(T'*T);
+    corr(i) = (T'*X(:,i))/ (norm(T) * norm(X(:,i)));
+    CIJF(1,i) = mean(SE(:,i)) - (std(SE(:,i))/sqrt(fold))*(tinv(.975,fold-1));
+    CIJF(2,i) = mean(SE(:,i)) + (std(SE(:,i))/sqrt(fold))*(tinv(.975,fold-1));
+end;
+
+%[asel_bins,stats] = perm_cutoff(Y,X,100,.02,fold);
+figure;
+hold on;
+hs = zeros(1,4);
+CIJF(1,1) = -1;
+CIJF(2,1) = 1;
+for i=1:length(cov)
+    if (CIJF(1,i)<0) && (CIJF(2,i)>0) && isempty(find(i == sig_inxs)) % Not sig. in either
+        h = scatter(cov(i), corr(i),'o','b');
+        if hs(1) == 0
+            hs(1) = h;
+        end
+    elseif (CIJF(1,i)<0) && (CIJF(2,i)>0) && ~isempty(find(i == sig_inxs)) % Not sig. in CIJF but sig from perm cutoff
+        h = scatter(cov(i), corr(i),'o','k');
+    elseif isempty(find(i == sig_inxs)) % Sig. in CIJF but not sig from perm cutoff
+        h = scatter(cov(i), corr(i),'o','g');
+    else % Sig in both
+        h = scatter(cov(i), corr(i),'o','r');
+    end
+end
+hold off;

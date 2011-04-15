@@ -1,0 +1,37 @@
+function max_click_spectrum(max_inx,h,handles)
+collections = getappdata(gcf,'collections');
+c = getappdata(gcf,'c');    
+s = getappdata(gcf,'s');
+ButtonName = questdlg('Action?', ...
+                      'Spectrum peak', ...
+                      'Toggle mark', 'Remove peak','Toggle all','Toggle mark');
+switch ButtonName,
+ case 'Toggle all',
+     collections{c}.include_mask{s} = ~collections{c}.include_mask{s};
+     setappdata(gcf,'collections',collections);
+     
+     refresh_axes2(handles);
+ case 'Toggle mark',
+     collections{c}.include_mask{s}(max_inx) = ~collections{c}.include_mask{s}(max_inx);
+     setappdata(gcf,'collections',collections);
+     
+     refresh_axes2(handles);
+ case 'Remove peak',
+     collections{c}.include_mask{s} = [collections{c}.include_mask{s}(1:max_inx-1),collections{c}.include_mask{s}((max_inx+1):end)];
+     if ~isempty(collections{c}.match_inxs{s})
+        collections{c}.match_inxs{s} = [collections{c}.match_inxs{s}(1:max_inx-1),collections{c}.match_inxs{s}((max_inx+1):end)];     
+     end
+     if isfield(collections{c},'BETA') && length(collections{c}.BETA) == length(collections{c}.include_mask) && ~isempty(collections{c}.BETA{s})
+         inxs = [1:(4*max_inx),(4*max_inx
+     end
+     collections{c}.maxs{s} = [collections{c}.maxs{s}(1:max_inx-1),collections{c}.maxs{s}((max_inx+1):end)];
+     collections{c}.mins{s} = [collections{c}.mins{s}(1:max_inx-1,:);collections{c}.mins{s}((max_inx+1):end,:)];
+%      delete(h);
+%      hmaxs = getappdata(gcf,'axes2_hmaxs');
+%      hmaxs = [hmaxs(1:max_inx-1),hmaxs((max_inx+1):end)];
+%      setappdata(gcf,'axes2_hmaxs',hmaxs);
+     setappdata(gcf,'collections',collections);
+     
+     refresh_axes2(handles);
+end % switch
+

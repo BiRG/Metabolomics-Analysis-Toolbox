@@ -1,0 +1,15 @@
+function collection = quantify(collection,reference)
+peaks = [];
+xpeaks = [];
+inxs1 = find(reference.include_mask == 1);
+xvs = reference.x(reference.maxs(inxs1));
+if ~isempty(collections{c}.BETA{s})
+    BETA = collections{c}.BETA{s};
+    match_inxs = collections{c}.match_inxs{s};
+    for p = 1:length(BETA)/4
+        if match_inxs(p) >= 1
+            xpeaks(
+            peaks(end+1) = sum(one_peak_model(BETA(4*(p-1)+(1:4)),collections{c}.x);
+        end
+    end    
+end

@@ -1,0 +1,21 @@
+function [y_fit,fit_inxs,MGPX,baseline_BETA0,xmaxs_all] = curve_fit_helper(collections,i,j,left,right,far_left,far_right)
+xmaxs = collections{i}.spectra{j}.xmaxs;
+max_inxs = find(left >= xmaxs & xmaxs >= right);
+xmins = collections{i}.spectra{j}.xmins(max_inxs,:);
+if isempty(xmins)
+    left_min = left;
+    right_min = right;
+else
+    left_min = max(xmins(:,1));
+    right_min = min(xmins(:,2));
+end
+
+% fit_inxs = [find(far_left >= collections{i}.x & collections{i}.x >= left_min),find(right_min >= collections{i}.x & collections{i}.x >= far_right)];
+fit_inxs = find(far_left >= collections{i}.x & collections{i}.x >= far_right);
+far_left = collections{i}.x(fit_inxs(1));
+far_right = collections{i}.x(fit_inxs(end));
+X = xmaxs([find(far_left >= xmaxs & xmaxs >= left_min),find(right_min >= xmaxs & xmaxs >= far_right)]);
+[y_fit,MGPX,baseline_BETA0] = curve_fit(collections{i}.x,collections{i}.Y(:,j),fit_inxs,X,xmaxs,far_left,far_right);
+
+inxs = find(far_left >= xmaxs & xmaxs >= far_right);
+xmaxs_all = xmaxs(inxs);

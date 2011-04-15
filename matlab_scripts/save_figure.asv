@@ -1,0 +1,81 @@
+function save_figure(collections,h,suffix)
+indir = uigetdir;
+if indir == 0
+    msgbox(['Invalid directory ',indir]);
+    return
+end
+
+collection_ids = '';
+for i = 1:length(collections)
+    collection_ids = [collection_ids,'_',num2str(collections{i}.collection_id)];
+end
+file = [indir,'\figure',collection_ids,suffix,'.fig'];
+
+% Make sure the original handles are all saved, so they can be reset
+handles = findobj;
+for i = 1:length(handles)
+    setappdata(handles(i),'saved_handle',handles(i));
+end
+
+% Gives the conversion
+handles = findobj;
+saved_handles = zeros(size(handles));
+for i = 1:length(saved_handles)
+    saved_handles(i) = getappdata(handles(i),'saved_handle');
+end
+
+% yhs
+yhs = getappdata(gcf,'yhs');
+for i = 1:length(yhs)
+    inx = find(saved_handles == yhs(i),1);
+    yhs(i) = handles(inx); % Update the handles
+end
+setappdata(gcf,'yhs',yhs);
+
+% lh
+lh = getappdata(gcf,'lh');
+inx = find(saved_handles == lh,1);
+lh = handles(inx); % Update the handles
+setappdata(gcf,'lh',lh);
+
+% fhs
+setappdata(gcf,'fhs',[]);
+
+% VerticalCursors
+VerticalCursors = getappdata(gcf,'VerticalCursors');
+for i = 1:length(VerticalCursors)
+    inx = find(saved_handles == VerticalCursors{i}.Handles(1),1);
+    VerticalCursors{i}.Handles(1) = handles(inx);
+    inx = find(saved_handles == VerticalCursors{i}.Handles(2),1);
+    VerticalCursors{i}.Handles(2) = handles(inx);    
+end
+setappdata(gcf,'VerticalCursors',VerticalCursors);
+
+% Regions cursors
+regions_cursors = getappdata(gcf,'regions_cursors');
+nm = size(regions_cursors);
+for i = 1:nm(1)
+    if ~is_integer(regions_cursors(i,1))
+        
+    end
+end
+setappdata(gcf,'regions_cursors',regions_cursors);
+
+             orig_ylim: [-0.5000 4.5000]
+       VerticalCursors: {[1x1 struct]  [1x1 struct]}
+     left_noise_cursor: 1
+    right_noise_cursor: 2
+       regions_cursors: [561x2 double]
+            region_inx: 1
+                   fhs: 2
+                   
+                   yhs: [1x7 double]
+                    lh: 164.0088
+             orig_ylim: [-0.5000 4.5000]
+       VerticalCursors: {[1x1 struct]  [1x1 struct]}
+     left_noise_cursor: 1
+    right_noise_cursor: 2
+       regions_cursors: [561x2 double]
+            region_inx: 1
+            
+saveas(h,file,'fig');

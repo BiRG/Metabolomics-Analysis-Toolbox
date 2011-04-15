@@ -1,0 +1,414 @@
+function varargout = main(varargin)
+% MAIN M-file for main.fig
+%      MAIN, by itself, creates a new MAIN or raises the existing
+%      singleton*.
+%
+%      H = MAIN returns the handle to a new MAIN or the handle to
+%      the existing singleton*.
+%
+%      MAIN('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in MAIN.M with the given input arguments.
+%
+%      MAIN('Property','Value',...) creates a new MAIN or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before main_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to main_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help main
+
+% Last Modified by GUIDE v2.5 04-Apr-2011 17:01:06
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @main_OpeningFcn, ...
+                   'gui_OutputFcn',  @main_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before main is made visible.
+function main_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to main (see VARARGIN)
+
+addpath('../../matlab_scripts');
+addpath('../../lib');
+addpath('../../dab');
+
+% Choose default command line output for main
+handles.output = hObject;
+
+handles.bin_inx = 0;
+set(handles.summary_text,'String',{''});
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes main wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = main_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+function collection_id_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to collection_id_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of collection_id_edit as text
+%        str2double(get(hObject,'String')) returns contents of collection_id_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function collection_id_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to collection_id_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in get_collection_button.
+function get_collection_button_Callback(hObject, eventdata, handles)
+% hObject    handle to get_collection_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+try
+    collection_id = str2num(get(handles.collection_id_edit,'String'));
+    handles.collection = get_collection(collection_id);
+    set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
+    
+    clear_all(hObject,handles);
+
+    set(handles.description_text,'String',handles.collection.description);
+    
+    msgbox('Finished loading collection');
+    
+    % Update handles structure
+    guidata(hObject, handles);
+catch ME
+    msgbox('Invalid collection ID');
+end
+
+
+% --- Executes on selection change in group_by_listbox.
+function group_by_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to group_by_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = get(hObject,'String') returns group_by_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from group_by_listbox
+
+
+% --- Executes during object creation, after setting all properties.
+function group_by_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to group_by_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in group_by_time_pushbutton.
+function group_by_time_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to group_by_time_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+group_by_time_pushbutton(hObject,handles);
+
+% --- Executes on button press in group_by_classification_pushbutton.
+function group_by_classification_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to group_by_classification_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+group_by_classification_pushbutton(hObject,handles);
+
+% --- Executes on button press in group_by_time_and_classification_pushbutton.
+function group_by_time_and_classification_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to group_by_time_and_classification_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+group_by_time_and_classification_pushbutton(hObject,handles);
+
+% --- Executes on button press in run_pushbutton.
+function run_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to run_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[X,Y,available_X,available_Y] = get_run_data(hObject,handles);
+
+% Save a few things for later
+available_groups = get(handles.group_by_listbox,'String');
+handles.available_Y = available_Y';
+handles.available_X = available_X';
+handles.available_groups = available_groups;
+handles.X = X';
+handles.Y = Y';
+
+msgbox('Finished running');
+
+% Update handles structure
+guidata(hObject, handles);
+
+function add_line_to_summary_text(h,line)
+current = get(h,'String');
+current{end+1} = line;
+set(h,'String',current);
+
+
+% --- Executes on button press in post_to_analysis_pushbutton.
+function post_to_analysis_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to post_to_analysis_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+username = [];
+password = [];
+if isempty(username) || isempty(password)
+    [username,password] = logindlg;
+end
+
+file = tempname;
+saveas(handles.figure1,[file,'.fig']);
+
+prompt={'Analysis ID:','Description:','File name:'};
+name='Input for uploading file';
+numlines=1;
+defaultanswer={'','Auto-scaled','autoscale_results'};
+answer=inputdlg(prompt,name,numlines,defaultanswer);
+analysis_id = answer{1};
+description = answer{2};
+pretty_file_name = answer{3};
+
+f = fopen([file,'.fig']); 
+d = fread(f,Inf,'*uint8'); % Read in byte stream
+fclose(f); 
+str = urlreadpost('http://birg.cs.wright.edu/omics_analysis/saved_files', ... 
+        {'data',d,'name',username,'password',password,'analysis_id',analysis_id,'description',description,'pretty_file_name',pretty_file_name});
+fprintf(str);
+
+% --- Executes on button press in load_collection_pushbutton.
+function load_collection_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to load_collection_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+try
+    collections = load_collections;
+    if isempty(collections)
+        return
+    end
+    if length(collections) > 1
+        msgbox('Only load a single collection');
+        return;
+    end
+    handles.collection = collections{1};
+    
+    clear_all(hObject,handles);
+    
+    set(handles.description_text,'String',handles.collection.description);
+
+    msgbox('Finished loading collection');
+    
+    % Update handles structure
+    guidata(hObject, handles);
+catch ME
+    msgbox('Invalid collection');
+end
+
+% --- Executes on selection change in model_by_listbox.
+function model_by_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to model_by_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns model_by_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from model_by_listbox
+
+
+% --- Executes during object creation, after setting all properties.
+function model_by_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to model_by_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in model_by_time_pushbutton.
+function model_by_time_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to model_by_time_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+model_by_time_pushbutton(hObject,handles);
+
+% --- Executes on button press in model_by_classification_pushbutton.
+function model_by_classification_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to model_by_classification_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+model_by_classification_pushbutton(hObject,handles);
+
+% --- Executes on button press in model_by_time_and_classification_pushbutton.
+function model_by_time_and_classification_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to model_by_time_and_classification_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+model_by_time_and_classification_pushbutton(hObject,handles);
+
+function new_collection = scale(handles,new_collection,type)
+if strcmp(type,'Auto-scale')
+    means = [];
+    stdevs = [];
+    for i = 1:size(handles.X,1)
+        bin_values = [];
+        for j = 1:size(handles.X,2)
+            bin_values(j) = sum(Y(i,j));
+        end
+        means(i) = mean(handles.X);
+        stdevs(i) = std(handles.X);
+    end
+end
+
+for i = 1:num_regions
+    inxs = find(regions(i,1) >= collection.x & collection.x >= regions(i,2));
+    new_collection.x(i,1) = mean(regions(i,:));
+    for j = 1:collection.num_samples
+        if autoscale
+            new_collection.Y(i,j) = (sum(collection.Y(inxs,j))-means(i))/stdevs(i);
+        else
+            new_collection.Y(i,j) = sum(collection.Y(inxs,j));
+        end
+    end
+end
+new_collection.processing_log = [new_collection.processing_log,' Binned.'];
+
+% --- Executes on button press in save_collection_pushbutton.
+function save_collection_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to save_collection_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+prompt={'Analysis ID:','Description:','File name:'};
+name='Input for uploading file';
+numlines=1;
+defaultanswer={'','Auto-scaled','autoscale_results'};
+answer=inputdlg(prompt,name,numlines,defaultanswer);
+analysis_id = answer{1};
+description = answer{2};
+pretty_file_name = answer{3};
+
+new_collection = handles.collection;
+save_collections({new_collection},'_binned');
+
+% --- Executes on button press in post_collection_pushbutton.
+function post_collection_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to post_collection_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+prompt={'Analysis ID:'};
+name='Enter the analysis ID from the website';
+numlines=1;
+defaultanswer={''};
+answer=inputdlg(prompt,name,numlines,defaultanswer);
+analysis_id = answer{1};        
+
+new_collection = handles.collection;
+post_collections(main_h,{new_collection},'_binned',analysis_id);
+
+% --- Executes on button press in save_figure_pushbutton.
+function save_figure_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to save_figure_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[filename,pathname] = uiputfile('*.fig', 'Save figure');
+try
+    if strcmp(filename,'main.fig')
+        msgbox('Cannot overwrite main.fig. Pick another name and another directory.');
+        return;
+    end
+    saveas(gcf,[pathname,filename]);
+catch ME
+end
+
+
+
+
+% --- Executes on selection change in scaling_popupmenu.
+function scaling_popupmenu_Callback(hObject, eventdata, handles)
+% hObject    handle to scaling_popupmenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = get(hObject,'String') returns scaling_popupmenu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from scaling_popupmenu
+
+
+% --- Executes during object creation, after setting all properties.
+function scaling_popupmenu_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to scaling_popupmenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+

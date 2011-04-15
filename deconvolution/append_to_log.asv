@@ -1,0 +1,4 @@
+function append_to_log(handles,msg)
+current = get(handles.log_text,'String');
+temp = strcat(current,msg);
+set(handles.log_text,'String',temp(end:);

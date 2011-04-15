@@ -1,0 +1,76 @@
+function plot_line_sum(main_h,c,j,sum_saved_data,left,right)
+collections = getappdata(main_h,'collections');
+collection = collections{c};
+
+message = '';
+for i = 1:length(collection.input_names)
+    name = regexprep(collection.input_names{i},' ','_');
+    field_name = lower(name);
+    if strcmp(field_name,'processing_log')
+        continue
+    end
+    if i > 1
+        s = sprintf('\n');
+        message = [message,s];
+    end
+    s = sprintf('%s: ',collection.input_names{i});
+    message = [message,s];
+    if iscell(collection.(field_name))
+        if ischar(collection.(field_name){j})
+            s = sprintf('%s',collection.(field_name){j});
+            message = [message,s];
+        elseif int8(collection.(field_name){j}) == collection.(field_name){j} % Integer
+            s = sprintf('%d',collection.(field_name){j});
+            message = [message,s];
+        else
+            s = sprintf('%f',collection.(field_name){j});
+            message = [message,s];
+        end
+    elseif ischar(collection.(field_name))
+        s = sprintf('%s',collection.(field_name));
+        message = [message,s];
+    elseif length(collection.(field_name)) > 1 % Array
+        if ischar(collection.(field_name)(j))
+            s = sprintf('%s',collection.(field_name)(j));
+            message = [message,s];
+        elseif int32(collection.(field_name)(j)) == collection.(field_name)(j) % Integer
+            s = sprintf('%d',collection.(field_name)(j));
+            message = [message,s];
+        else
+            s = sprintf('%f',collection.(field_name)(j));
+            message = [message,s];
+        end
+    elseif int32(collection.(field_name)) == collection.(field_name) % Integer
+        s = sprintf('%d',collection.(field_name));
+        message = [message,s];
+    else
+        s = sprintf('%f',collection.(field_name));
+        message = [message,s];
+    end
+end
+
+figure;
+x = collection.x;
+inxs = find(left >= x & x >= right);
+y_orig = collection.Y(:,j);
+%% Just to get the limits
+plot(x(inxs),y_orig(inxs))
+yl = ylim;
+%% Now for the real plot
+plot(x,y_orig,'Color',[0.25,0.25,0.25])
+hold on
+plot(x(inxs),y_orig(inxs),'Color','k');
+legend({'Outside bin',message},'Location','BestOutside')
+% plot(x(inxs),y_orig(inxs),x(inxs),y_smoothed(inxs))
+% legend({message,'Smooth'},'Location','Best')
+line([left,left],ylim,'Color','r');
+line([right,right],ylim,'Color','r');
+set(gca,'xdir','reverse')
+xlabel('Chemical shift, ppm')
+ylabel('Intensity')
+
+myfunc = @(hObject,v2,v3) (plot_line_click_menu(c,j));
+set(gca,'ButtonDownFcn',myfunc)
+
+set(gca,'xlim',[new_bin_right,new_bin_left])
+ylim(yl)

@@ -1,0 +1,160 @@
+function show_molecule(molecule)
+h_view_molecule = view_molecule;
+handles = guidata(h_view_molecule);
+
+if exist('molecule') == 1 % Variable
+    setappdata(handles.figure1,'molecule',molecule); % Save the last molecule
+else
+    molecule = getappdata(handles.figure1,'molecule');
+end
+if ~isempty(getappdata(handles.figure1,'x'))
+    x = getappdata(handles.figure1,'x');
+else
+    x = 11.6:-0.0005:-2;
+end
+if ~isempty(getappdata(handles.figure1,'Y'))
+    Y = getappdata(handles.figure1,'Y');
+else
+    Y = [];
+end
+if ~isempty(Y)
+    sample_inx = 1; % default
+    if isempty(getappdata(handles.figure1,'sample_inx'))
+        sample_inx = getappdata(handles.figure1,'sample_inx');
+    end
+end
+spectra = getappdata(handles.figure1,'spectra');
+height = get(handles.height_slider,'Value');
+
+set(handles.molecule_name_text,'String',molecule.moleculeName);
+
+default_width = str2double(get(handles.default_width_edit,'String'));
+height_cutoff = str2double(get(handles.cutoff_height_edit,'String'));
+page_number = str2num(get(handles.page_number_text,'String'));
+
+MGPX = [];
+for p = 1:length(molecule.ppm)
+    MGPX = [MGPX,molecule.peakHeight(p),default_width,0,molecule.ppm(p)];
+end
+y_peaks = global_model(MGPX,x,length(MGPX)/4,[]);
+
+% Break the peaks into groups
+groups = [];
+looking_to_start = true;
+for i = 1:length(x)
+    if looking_to_start
+        if y_peaks(i) > height_cutoff
+            groups(end+1,1) = i;
+            looking_to_start = false;
+        end
+    else
+        if y_peaks(i) < height_cutoff
+            groups(end,2) = i;
+            looking_to_start = true;
+        end
+    end
+end
+y_peaks = y_peaks*height;
+
+[num_groups,cols] = size(groups);
+group_axes = [handles.group1_axes,handles.group2_axes,handles.group3_axes,handles.group4_axes,handles.group5_axes,handles.group6_axes];
+
+shifts = [get(handles.shift1_slider,'Value'),get(handles.shift2_slider,'Value'),get(handles.shift3_slider,'Value'),...
+    get(handles.shift4_slider,'Value'),get(handles.shift5_slider,'Value'),get(handles.shift6_slider,'Value')];
+mx = get(handles.shift1_slider,'Max');
+mn = get(handles.shift1_slider,'Min');
+halfway = (mn+mx)/2;
+shift_allowance = str2num(get(handles.shift_allowance_edit,'String'));
+shifts = shift_allowance*(shifts - halfway);
+
+num_graphs_per_page = 6;
+page = 1;
+hs = getappdata(handles.figure1,'hs');
+delete(hs);
+hs = [];
+graph_inx = 1;
+for g = 1:num_groups
+    if page == page_number
+%         % Plot the possible configurations
+%         S = spectra{sample_inx}.all_maxs;
+%         L = round((max(x)-molecule.ppm(end:-1:1))/(x(1)-x(2))) + 1;
+%         shift_inx = round(abs(shift_allowance/(x(1)-x(2))));
+%         L_in_group = L(find(groups(g,1) <= L & L <= groups(g,2)));
+%         plot_inxs = max([1,L_in_group(1)-shift_inx]):min([length(x),L_in_group(end)+shift_inx]); 
+%         for l = 1:length(L_in_group) %loop through all peaks in library
+%             base_peak_inx = L_in_group(l);
+% %             inxs = max([base_peak_inx - shift_inx,1]):min([base_peak_inx + shift_inx,length(x)]);
+%             S_in_window = S(find(base_peak_inx - shift_inx <= S & S <= base_peak_inx + shift_inx));
+%             for s = 1:length(S_in_window)
+%                 h_temp = figure;
+%                 diff = S_in_window(s) - base_peak_inx;
+%                 sm_y_peaks = sm(y_peaks(plot_inxs),100);
+%                 plot(x(plot_inxs)-diff*(x(1)-x(2)),sm_y_peaks,'b');
+%                 set(gca,'xdir','reverse');
+%                 hold on;
+%                 plot(x(plot_inxs),sm_y_peaks,'r');
+%                 sm_y_smoothed = sm(spectra{sample_inx}.y_smoothed(plot_inxs),100);
+%                 plot(x(plot_inxs),sm_y_smoothed,'k');
+%                 plot([x(S_in_window(s)),x(S_in_window(s))],[sm_y_peaks(S_in_window(s)-plot_inxs(1) - diff),sm_y_smoothed(S_in_window(s)-plot_inxs(1))]);
+%                 hold off;
+%                 %dkdkd = kdkdk
+%             end
+%             kdkdkd = dkdkd
+%         end
+%        klafsjdfl=lksjdfl
+        
+        inxs = groups(g,1):groups(g,2);
+        axes(group_axes(mod(g-1,num_graphs_per_page)+1));
+        hs(end+1) = line(x(inxs),y_peaks(inxs),'Color','r');
+        hs(end+1) = line(x(inxs)-shifts(graph_inx),y_peaks(inxs),'Color','b');
+        yl = [0,max(y_peaks)];
+        if ~isempty(Y)
+            Y_inxs = max([1,groups(g,1)-shift_inx]):min([length(x),groups(g,2)+shift_inx]);
+            [ignore,num_samples] = size(Y);
+            y_mn = yl(1);
+            y_mx = yl(2);
+            for s = 1:num_samples
+                if s == sample_inx
+                    hs(end+1) = line(x(Y_inxs),Y(Y_inxs,s),'Color','k');
+                    max_inxs = find(Y_inxs(1) <= spectra{s}.all_maxs & spectra{s}.all_maxs <= Y_inxs(end));
+                    for z = 1:length(spectra{s}.all_maxs(max_inxs))
+                        m = max_inxs(z);
+                        hs(end+1) = line([x(spectra{s}.all_maxs(m)),x(spectra{s}.all_maxs(m))],[min(Y(:,s)),max(Y(:,s))],'Color','r');
+                    end
+                end
+                if y_mn > min(Y(Y_inxs,s))
+                    y_mn = min(Y(Y_inxs,s));
+                end
+                if y_mx < max(Y(Y_inxs,s))
+                    y_mx = max(Y(Y_inxs,s));
+                end
+            end
+            yl = [y_mn,y_mx];
+        end
+        set(gca,'xdir','reverse');
+        ylim(yl);
+        graph_inx = graph_inx + 1;
+    end
+    if mod(g,num_graphs_per_page) == 0
+        page = page + 1;
+    end
+end
+set(handles.total_num_pages_text,'String',num2str(page));
+
+% Save the original set of values for the axes
+if isempty(getappdata(handles.figure1,'xlim_axes1'))
+    setappdata(handles.figure1,'xlim_axes1',get(handles.group1_axes,'xlim'));
+    setappdata(handles.figure1,'xlim_axes2',get(handles.group2_axes,'xlim'));
+    setappdata(handles.figure1,'xlim_axes3',get(handles.group3_axes,'xlim'));
+    setappdata(handles.figure1,'xlim_axes4',get(handles.group4_axes,'xlim'));
+    setappdata(handles.figure1,'xlim_axes5',get(handles.group5_axes,'xlim'));
+    setappdata(handles.figure1,'xlim_axes6',get(handles.group6_axes,'xlim'));
+    setappdata(handles.figure1,'ylim_axes1',get(handles.group1_axes,'ylim'));
+    setappdata(handles.figure1,'ylim_axes2',get(handles.group2_axes,'ylim'));
+    setappdata(handles.figure1,'ylim_axes3',get(handles.group3_axes,'ylim'));
+    setappdata(handles.figure1,'ylim_axes4',get(handles.group4_axes,'ylim'));
+    setappdata(handles.figure1,'ylim_axes5',get(handles.group5_axes,'ylim'));
+    setappdata(handles.figure1,'ylim_axes6',get(handles.group6_axes,'ylim'));
+end
+
+setappdata(handles.figure1,'hs',hs);

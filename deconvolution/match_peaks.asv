@@ -1,0 +1,32 @@
+function [final_match_inxs,final_score] = match_peaks(left,right,xwidth,answer_maxs,calc_maxs)
+offsets = (left - calc_maxs(end)):-xwidth:(right-calc_maxs(1));
+scores = zeros(size(offsets));
+match_inxs = cell(size(offsets));
+for i = 1:length(offsets)
+    offset = offsets(i);
+    [scores(i),match_inxs{i}] = score(answer_maxs,calc_maxs,offset);
+end
+[final_score,inx] = min(scores);
+match_inxs = 
+
+function [sc,match_inxs] = score(answer_maxs,calc_maxs,offset)
+calc_maxs = calc_maxs - offset;
+diff_matrix = NaN*ones(length(answer_maxs),length(calc_maxs));
+for i = 1:length(answer_maxs)
+    for j = i:length(calc_maxs)
+        diff_matrix(i,j) = abs(answer_maxs(i)-calc_maxs(j));
+    end
+end
+
+sc = 0;
+match_inxs = {};
+while (true)
+    [s_v s_i] = max(diff_matrix(:));
+    if isnan(s_v)
+        return;
+    end
+    sc = sc + s_v;
+    [r c] = ind2sub(size(diff_matrix),s_i);
+    match_inxs{end+1} = [r c];
+    diff_matrix(r,:) = NaN;
+end

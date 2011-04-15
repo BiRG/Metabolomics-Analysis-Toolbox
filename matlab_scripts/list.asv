@@ -1,0 +1,8 @@
+function [filenames,pathnames] = list(chemin,varargin)
+mylist = dirr(chemin,varargin);
+for i = 1:length(list)
+    for j = 1:length(list(i).isdir)
+        pathname = [mydir,'\',list(i).name,'\'];
+        filename = list(i).isdir(j).name;                
+    end
+end
