@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    389485,       8783]
-NotebookOptionsPosition[    374022,       8278]
-NotebookOutlinePosition[    374411,       8295]
-CellTagsIndexPosition[    374368,       8292]
+NotebookDataLength[    397780,       9000]
+NotebookOptionsPosition[    381115,       8458]
+NotebookOutlinePosition[    381501,       8475]
+CellTagsIndexPosition[    381458,       8472]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -4594,7 +4594,7 @@ Cell[BoxData[
  CellChangeTimes->{3.510933564176303*^9}]
 }, Open  ]]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6137,7 +6137,7 @@ Cell[BoxData[
 }, Open  ]]
 }, Open  ]]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -8274,11 +8274,191 @@ Cell[BoxData[
  CellChangeTimes->{3.511871263108925*^9, 3.51187130619167*^9}]
 }, Open  ]]
 }, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["18 April 2011 Monday", "Section",
+ CellChangeTimes->{{3.51220762555131*^9, 3.512207629961317*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Investigate using techniques from compressed sampling for peak matching\
+\>", "Subsection",
+ CellChangeTimes->{{3.512207634529702*^9, 3.5122076371298923`*^9}, {
+  3.5122077053709173`*^9, 3.5122077077630463`*^9}, {3.512207738953519*^9, 
+  3.51220775512346*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["The technique", "Subsubsection",
+ CellChangeTimes->{{3.5122098023327513`*^9, 3.512209804186956*^9}}],
+
+Cell["\<\
+Compressed sampling reconstructs a sparse coefficient matrix from a random \
+sample of a signal.  Let f be a big vector containing the signal.  We assume \
+that there is a basis in which f  is sparse, that is, if \[Beta] is a matrix \
+of basis vectors and c is a sparse matrix of coefficients.\
+\>", "Text",
+ CellChangeTimes->{{3.5122078737934313`*^9, 3.512207886173491*^9}, {
+  3.5122079190913143`*^9, 3.512207932001313*^9}, {3.512208457862558*^9, 
+  3.512208460573002*^9}, {3.512208515561674*^9, 3.512208591030822*^9}}],
+
+Cell["f=\[Beta] c", "Text",
+ CellChangeTimes->{{3.5122085979642887`*^9, 3.5122086016033573`*^9}}],
+
+Cell["\<\
+Further, if \[Phi] is a sampling operator matrix (could be a subset of the \
+identity matrix, for a random sample, or could be another matrix involving \
+sampling averages of several function values) we can construct b, a sample of \
+f, by writing\
+\>", "Text",
+ CellChangeTimes->{{3.512208606372451*^9, 3.51220866005823*^9}, {
+  3.512208818657545*^9, 3.512208889443869*^9}}],
+
+Cell["b=\[Phi] f", "Text",
+ CellChangeTimes->{
+  3.5122088083053637`*^9, {3.512208891448607*^9, 3.512208897664283*^9}}],
+
+Cell["\<\
+Note that \[Phi] has to carry a significant amount of information.  For \
+example, if all the entries in \[Phi] are the same, then each sample adds no \
+new information, and the problem cannot be solved.  If the samples all come \
+from the beginning of the signal, then certain components may not be able to \
+be reconstructed (this will depend on how the information about the signal is \
+spread over the sparse basis vectors).\
+\>", "Text",
+ CellChangeTimes->{{3.5122089010727873`*^9, 3.5122089294666977`*^9}, {
+  3.512208965303339*^9, 3.512208965607153*^9}, {3.512209087134952*^9, 
+  3.5122091146867228`*^9}, {3.512209219031986*^9, 3.5122092389097767`*^9}, {
+  3.5122092757540216`*^9, 3.512209334776148*^9}, {3.512209416957448*^9, 
+  3.512209452962159*^9}}],
+
+Cell["The reconstruction takes place by solving for", "Text",
+ CellChangeTimes->{{3.512209472508246*^9, 3.512209486536283*^9}}],
+
+Cell["\<\
+A x = b where A = \[Phi] \[Beta], that is, where A is a sample of the basis \
+vectors.  \
+\>", "Text",
+ CellChangeTimes->{{3.512209489801694*^9, 3.512209613336532*^9}, 
+   3.5122096658299303`*^9}],
+
+Cell["\<\
+Then we approximate f by f \[TildeTilde] \[Beta] x.\
+\>", "Text",
+ CellChangeTimes->{{3.512209615162644*^9, 3.512209651815868*^9}}],
+
+Cell[TextData[{
+ "Since the sampling matrix takes a very small subset of the original \
+vectors, the system of equations, A x = b is underdetermined.  The magic of \
+the compressed reconstruction is to assume that c is sparse.  Then it turns \
+out that (1) maximizing sparsity usually gives a unique solution (2) that \
+solution is highly likely to be the correct one (3) you can maximize sparsity \
+by minimizing the ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["L", "1"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " norm of x with the linear constraints given by A and b."
+}], "Text",
+ CellChangeTimes->{{3.5122096560411*^9, 3.512209794663268*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Why I was interested", "Subsubsection",
+ CellChangeTimes->{{3.512209808556814*^9, 3.512209811455234*^9}}],
+
+Cell["\<\
+I saw a linear combination involving a sparse matrix and thought such a \
+linear combination resembles what we are doing.  In particular a permutation \
+matrix is a sparse matrix and the \[Beta] matrix bears a resemblance to the \
+linear model\
+\>", "Text",
+ CellChangeTimes->{{3.512209812982006*^9, 3.51220984002022*^9}, {
+  3.512209909116531*^9, 3.512209934758561*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Why I don't think it will work now", "Subsubsection",
+ CellChangeTimes->{{3.512209952194242*^9, 3.512209958523588*^9}}],
+
+Cell["\<\
+The technique requires knowing a sampling matrix and the matrix of basis \
+vectors, or, at least their product.  This doesn't seem to translate well to \
+our problem where we'd have to a priori know the linear model (peak responses \
+and sample parameters) which would take the place of the basis vectors.\
+\>", "Text",
+ CellChangeTimes->{{3.512210048978149*^9, 3.512210154429014*^9}, {
+  3.512210224612221*^9, 3.5122102460044947`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Potential profit", "Subsubsection",
+ CellChangeTimes->{{3.5122102587837877`*^9, 3.512210261192203*^9}}],
+
+Cell[TextData[{
+ "The idea of being able to solve for the permutation by minimizing the ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["L", "1"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " norm of a particular matrix with constraints determined by the peak \
+samples is still intriguing to me.  I have a feeling I might be able to make \
+something out of this."
+}], "Text",
+ CellChangeTimes->{{3.512210264968317*^9, 3.5122102976150217`*^9}, {
+  3.512210329183045*^9, 3.51221035805725*^9}}]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Meet with Dan and Paul", "Subsection",
+ CellChangeTimes->{{3.512207757783503*^9, 3.512207765851366*^9}}],
+
+Cell["\<\
+We discussed moving from sending matlab scripts around to sending \
+platform-dependent executables.\
+\>", "Text",
+ CellChangeTimes->{{3.512210380453668*^9, 3.5122104113530807`*^9}}],
+
+Cell["\<\
+The scientists have trouble finding which thing they should click on to \
+accomplish their tasks amid the myriad of .m files.\
+\>", "Text",
+ CellChangeTimes->{{3.512210413019143*^9, 3.512210442356997*^9}}],
+
+Cell["\<\
+In order to do the deployment, we'll have VMs of Linux, Windows, and OS X \
+running.  We run the Matlab deployment in each of these.\
+\>", "Text",
+ CellChangeTimes->{{3.512210445769054*^9, 3.5122104599469852`*^9}, {
+  3.512211148321204*^9, 3.512211172437559*^9}}],
+
+Cell["\<\
+Further, for our development of the website code, we'll distribute a VM \
+containing an ubuntu system on which rails etc has been already configured.  \
+Then the current code can be downloaded into this VM and developers can run \
+it within the VM, all having the same setup as the final deployment platform. \
+ We may just run the final deployment as another instance of this VM.  But \
+not sure if it would be too slow.  The benefits of VMWare and VirtualBox were \
+discussed and it seems (from a cursory inspection of benchmarks) that they \
+are the same.  Dan, however, has a bad experience running a game-server on \
+VirtualBox, but it worked better under VMWare.\
+\>", "Text",
+ CellChangeTimes->{{3.512211175457575*^9, 3.512211234631885*^9}, {
+  3.512211347097892*^9, 3.512211449292729*^9}}]
+}, Closed]]
 }, Open  ]]
 },
 AutoGeneratedPackage->None,
-WindowSize->{1592, 991},
-WindowMargins->{{1280, Automatic}, {Automatic, 46}},
+WindowSize->{1268, 717},
+WindowMargins->{{0, Automatic}, {Automatic, 26}},
 ShowSelection->True,
 FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
 StyleDefinitions->"Default.nb"
@@ -8546,9 +8726,9 @@ Cell[227087, 4585, 140, 2, 32, "Input"],
 Cell[227230, 4589, 166, 4, 31, "Output"]
 }, Open  ]]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[227457, 4600, 105, 1, 73, "Section"],
+Cell[227457, 4600, 105, 1, 43, "Section"],
 Cell[CellGroupData[{
 Cell[227587, 4605, 340, 6, 39, "Subsection"],
 Cell[CellGroupData[{
@@ -8642,9 +8822,9 @@ Cell[297646, 6131, 195, 4, 31, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[297914, 6143, 106, 1, 73, "Section"],
+Cell[297914, 6143, 106, 1, 43, "Section"],
 Cell[CellGroupData[{
 Cell[298045, 6148, 264, 5, 39, "Subsection"],
 Cell[298312, 6155, 333, 6, 31, "Text"],
@@ -8771,7 +8951,7 @@ Cell[357015, 7864, 457, 9, 121, "Input"],
 Cell[357475, 7875, 4102, 100, 231, "Input"],
 Cell[361580, 7977, 1045, 17, 187, "Input"],
 Cell[362628, 7996, 2391, 58, 143, "Input"],
-Cell[365022, 8056, 1016, 16, 165, "Input"],
+Cell[365022, 8056, 1016, 16, 187, "Input"],
 Cell[366041, 8074, 668, 13, 32, "Input"],
 Cell[366712, 8089, 840, 14, 99, "Input"],
 Cell[367555, 8105, 4682, 105, 297, "Input"],
@@ -8784,6 +8964,43 @@ Cell[373054, 8244, 691, 20, 32, "Input"],
 Cell[373748, 8266, 234, 7, 31, "Output"]
 }, Open  ]]
 }, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[374043, 8280, 104, 1, 43, "Section"],
+Cell[CellGroupData[{
+Cell[374172, 8285, 270, 5, 39, "Subsection"],
+Cell[CellGroupData[{
+Cell[374467, 8294, 106, 1, 29, "Subsubsection"],
+Cell[374576, 8297, 531, 8, 51, "Text"],
+Cell[375110, 8307, 97, 1, 31, "Text"],
+Cell[375210, 8310, 385, 7, 51, "Text"],
+Cell[375598, 8319, 119, 2, 31, "Text"],
+Cell[375720, 8323, 770, 12, 71, "Text"],
+Cell[376493, 8337, 127, 1, 31, "Text"],
+Cell[376623, 8340, 206, 5, 31, "Text"],
+Cell[376832, 8347, 141, 3, 31, "Text"],
+Cell[376976, 8352, 662, 13, 71, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[377675, 8370, 111, 1, 29, "Subsubsection"],
+Cell[377789, 8373, 381, 7, 51, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[378207, 8385, 125, 1, 29, "Subsubsection"],
+Cell[378335, 8388, 446, 7, 51, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[378818, 8400, 109, 1, 29, "Subsubsection"],
+Cell[378930, 8403, 500, 11, 51, "Text"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[379479, 8420, 110, 1, 31, "Subsection"],
+Cell[379592, 8423, 191, 4, 31, "Text"],
+Cell[379786, 8429, 215, 4, 31, "Text"],
+Cell[380004, 8435, 273, 5, 31, "Text"],
+Cell[380280, 8442, 807, 12, 91, "Text"]
+}, Closed]]
 }, Open  ]]
 }
 ]
