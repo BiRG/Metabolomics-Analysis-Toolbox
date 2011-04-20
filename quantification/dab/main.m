@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 12-Apr-2011 16:49:42
+% Last Modified by GUIDE v2.5 20-Apr-2011 10:44:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,8 +57,8 @@ handles.output = hObject;
 
 set(handles.summary_text,'String',{''});
 
-handles.left_cursor = [];
-handles.right_cursor = [];
+myfunc = @(hObject, eventdata, handles_) (key_press(handles));
+set(gcf,'KeyPressFcn',myfunc);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -239,7 +239,7 @@ hold off
 set(gca,'xdir','reverse');
 legend(hs,groups,'Location','Best');
 xlabel('x (ppm)','Interpreter','tex');
-ylabel('Intensity','Interpreter','tex');
+% ylabel('Intensity','Interpreter','tex');
 
 % Save a few things for later
 available_groups = get(handles.group_by_listbox,'String');
@@ -271,7 +271,7 @@ guidata(hObject, handles);
 
 function add_line_to_summary_text(h,line)
 current = get(h,'String');
-current{end+1} = line;
+current = {line,current{:}};
 set(h,'String',current);
 
 
@@ -528,6 +528,10 @@ try
     clear_all(hObject,handles);
     
     set(handles.description_text,'String',handles.collection.description);
+    
+    ymax = max(handles.collection.Y(:,1));
+    ymin = min(handles.collection.Y(:,1));
+    set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
 
     msgbox('Finished loading collection');
     
@@ -535,6 +539,7 @@ try
     guidata(hObject, handles);
 catch ME
     msgbox('Invalid collection');
+    throw(ME);
 end
 
 % --- Executes on selection change in model_by_listbox.
@@ -922,6 +927,15 @@ function delete_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if get(handles.delete_all_checkbox,'Value')
+    data = {};
+    data{1} = '';
+    set(handles.bins_listbox,'String',data);
+    set(handles.bins_listbox,'Value',1);
+    guidata(hObject, handles);
+    return;
+end
+
 bin_inx = get(handles.bins_listbox,'Value');
 if bin_inx == 1
     return;
@@ -992,7 +1006,7 @@ function x_zoom_out_pushbutton_Callback(hObject, eventdata, handles)
 buf = str2num(get(handles.x_zoom_edit,'String'));
 xl = xlim;
 xlim([xl(1)-buf,xl(2)+buf]);
-ylim auto;
+% ylim auto;
 
 % --- Executes on button press in x_zoom_in_pushbutton.
 function x_zoom_in_pushbutton_Callback(hObject, eventdata, handles)
@@ -1003,7 +1017,7 @@ function x_zoom_in_pushbutton_Callback(hObject, eventdata, handles)
 buf = str2num(get(handles.x_zoom_edit,'String'));
 xl = xlim;
 xlim([xl(1)+buf,xl(2)-buf]);
-ylim auto;
+% ylim auto;
 
 function x_zoom_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to x_zoom_edit (see GCBO)
@@ -1060,8 +1074,10 @@ xlim(handles.xlim);
 ylim auto
 
 right_cursor = create_cursor(bin(2),ylim,'r');
+set(right_cursor,'LineWidth',3);
 set(right_cursor,'tag','right_cursor');
 left_cursor = create_cursor(bin(1),ylim,'g');
+set(left_cursor,'LineWidth',3);
 set(left_cursor,'tag','left_cursor');
 
 if inverted_bin
@@ -1089,14 +1105,14 @@ function debug_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-fprintf('\n\nDebugging...\n\n');
+add_line_to_summary_text(handles.summary_text,'Debugging...');
 bins = get_bins(handles);
 for b = 1:size(bins,1)
     if bins(b,1) < bins(b,2)
-        fprintf('Inverted bin boundaries: %f,%f\n',bins(b,1),bins(b,2));
+        add_line_to_summary_text(handles.summary_text,sprintf('Inverted bin boundaries: %f,%f',bins(b,1),bins(b,2)));
     end
 end
-fprintf('\nFinished debugging\n');
+add_line_to_summary_text(handles.summary_text,'Finished debugging');
 
 % --- Executes on button press in update_selected_bin_pushbutton.
 function update_selected_bin_pushbutton_Callback(hObject, eventdata, handles)
@@ -1125,3 +1141,77 @@ for b = 1:size(bins,1)
 end
 
 set(handles.bins_listbox,'String',data);
+
+
+% --- Executes on button press in delete_all_checkbox.
+function delete_all_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to delete_all_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of delete_all_checkbox
+
+
+% --- Executes on button press in y_zoom_out_pushbutton.
+function y_zoom_out_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to y_zoom_out_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+buf = str2num(get(handles.y_zoom_edit,'String'));
+yl = ylim;
+ylim([yl(1),yl(2)+buf]);
+
+% --- Executes on button press in y_zoom_in_pushbutton.
+function y_zoom_in_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to y_zoom_in_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+buf = str2num(get(handles.y_zoom_edit,'String'));
+yl = ylim;
+ylim([yl(1),yl(2)-buf]);
+
+function y_zoom_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to y_zoom_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of y_zoom_edit as text
+%        str2double(get(hObject,'String')) returns contents of y_zoom_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function y_zoom_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to y_zoom_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function summary_text_Callback(hObject, eventdata, handles)
+% hObject    handle to summary_text (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of summary_text as text
+%        str2double(get(hObject,'String')) returns contents of summary_text as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function summary_text_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to summary_text (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

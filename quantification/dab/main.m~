@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 12-Apr-2011 16:49:42
+% Last Modified by GUIDE v2.5 20-Apr-2011 10:08:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -528,6 +528,8 @@ try
     clear_all(hObject,handles);
     
     set(handles.description_text,'String',handles.collection.description);
+    
+    set(handles.description_text,'String',handles.collection.description);
 
     msgbox('Finished loading collection');
     
@@ -922,6 +924,15 @@ function delete_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if get(handles.delete_all_checkbox,'Value')
+    data = {};
+    data{1} = '';
+    set(handles.bins_listbox,'String',data);
+    set(handles.bins_listbox,'Value',1);
+    guidata(hObject, handles);
+    return;
+end
+
 bin_inx = get(handles.bins_listbox,'Value');
 if bin_inx == 1
     return;
@@ -1047,9 +1058,14 @@ end
 
 fields = split(bin_str,',');
 bin = [str2num(fields{1}),str2num(fields{2})];
+inverted_bin = false;
 if bin(1) < bin(2)
-    msgbox('
-handles.xlim = [bin(2),bin(1)];
+    inverted_bin = true;
+    handles.xlim = [bin(1),bin(2)];
+else
+    handles.xlim = [bin(2),bin(1)];
+end
+    
 
 xlim(handles.xlim);
 ylim auto
@@ -1058,6 +1074,10 @@ right_cursor = create_cursor(bin(2),ylim,'r');
 set(right_cursor,'tag','right_cursor');
 left_cursor = create_cursor(bin(1),ylim,'g');
 set(left_cursor,'tag','left_cursor');
+
+if inverted_bin
+    msgbox(sprintf('Inverted bin: %f,%f',bin(1),bin(2)));    
+end
 
 guidata(hObject, handles);
 
@@ -1116,3 +1136,49 @@ for b = 1:size(bins,1)
 end
 
 set(handles.bins_listbox,'String',data);
+
+
+% --- Executes on button press in delete_all_checkbox.
+function delete_all_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to delete_all_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of delete_all_checkbox
+
+
+% --- Executes on button press in y_zoom_out_pushbutton.
+function y_zoom_out_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to y_zoom_out_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in y_zoom_in_pushbutton.
+function y_zoom_in_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to y_zoom_in_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function y_zoom_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to y_zoom_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of y_zoom_edit as text
+%        str2double(get(hObject,'String')) returns contents of y_zoom_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function y_zoom_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to y_zoom_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
