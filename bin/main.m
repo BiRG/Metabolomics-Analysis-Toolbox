@@ -375,7 +375,6 @@ try
 catch ME
     msgbox('No collection loaded');
     throw(ME);
-    return;
 end
 
 h = findobj(gcf,'tag','spectrum_line');
@@ -426,8 +425,10 @@ for g = 1:length(handles.group_by_inxs)
                 h = plot(collection.x,handles.available_X(inxs(i),:),...
                     'Marker',data{d,4},'Color',data{d,3},...
                     'MarkerFaceColor',data{d,3},'tag','spectrum_line');
-                myfunc = @(hObject, eventdata, handles) (line_click_info(collection,inxs(i)));
-                set(h,'ButtonDownFcn',myfunc);
+                if ~disable_subplot_feature
+                    myfunc = @(hObject, eventdata, handles_) (line_click_info(collection,inxs(i)));
+                    set(h,'ButtonDownFcn',myfunc);
+                end
                 if i == 1
                     h_groups{subplot_inx}(end+1) = h;
                 end
@@ -436,8 +437,10 @@ for g = 1:length(handles.group_by_inxs)
             for i = 1:length(inxs)
                 h = plot(collection.x,handles.available_X(inxs(i),:),...
                     'Marker',data{d,4},'Color',data{d,3},'tag','spectrum_line');
-                myfunc = @(hObject, eventdata, handles) (line_click_info(collection,inxs(i)));
-                set(h,'ButtonDownFcn',myfunc);
+                if ~disable_subplot_feature
+                    myfunc = @(hObject, eventdata, handles_) (line_click_info(collection,inxs(i)));
+                    set(h,'ButtonDownFcn',myfunc);
+                end
                 if i == 1
                     h_groups{subplot_inx}(end+1) = h;
                 end
@@ -1056,8 +1059,9 @@ try
         msgbox('Cannot overwrite main.fig. Pick another name and another directory.');
         return;
     end
-    saveas(gcf,[pathname,filename]);
+    saveas(handles.figure1,[pathname,filename]);
 catch ME
+    throw(ME);
 end
 
 function delete_cursors()
