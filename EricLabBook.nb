@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    716443,      18267]
-NotebookOptionsPosition[    674590,      16921]
-NotebookOutlinePosition[    676124,      16969]
-CellTagsIndexPosition[    675816,      16959]
+NotebookDataLength[    733039,      18701]
+NotebookOptionsPosition[    688999,      17288]
+NotebookOutlinePosition[    690533,      17336]
+CellTagsIndexPosition[    690225,      17326]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -4594,7 +4594,7 @@ Cell[BoxData[
  CellChangeTimes->{3.510933564176303*^9}]
 }, Open  ]]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6141,7 +6141,7 @@ Cell[BoxData[
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -8346,7 +8346,7 @@ Cell[BoxData[
    3.511872090190297*^9, 3.5118721016799803`*^9}, 3.512494935451405*^9, {
    3.5124960778811417`*^9, 3.512496082752798*^9}}]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -16917,6 +16917,373 @@ Cell["\<\
 \>", "Text",
  CellChangeTimes->{{3.5125707416313267`*^9, 3.512570769064262*^9}}]
 }, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["25 April 2011 Monday", "Section",
+ CellChangeTimes->{{3.5128304525337563`*^9, 3.512830459570524*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Read about hough transform", "Subsection",
+ CellChangeTimes->{{3.5128304656226807`*^9, 3.51283046912901*^9}}],
+
+Cell["\<\
+I checked two books out of the library - one on the hough transform and the \
+other on parallelization.  Through reading some of the chapters of the first \
+book I have some ideas and found a few papers.  One is titled \"On the \
+sensitivity of the hough transform...\" and the other two concern a \
+statistical treatment of the transform as a hypothesis tesgint method when \
+used for object recognition.\
+\>", "Text",
+ CellChangeTimes->{{3.512830470909841*^9, 3.512830664494413*^9}}],
+
+Cell["I wonder what is the best cell size etc for our application.", "Text",
+ CellChangeTimes->{{3.512830673325911*^9, 3.512830684481084*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Sample param+peak param hough inference idea", "Subsubsection",
+ CellChangeTimes->{{3.512830686965621*^9, 3.5128306901330853`*^9}, {
+  3.512830772959673*^9, 3.5128307874735117`*^9}}],
+
+Cell["\<\
+I think it might be possible to do the inference for the sample parameters \
+also using the hough transform - the special structure may let us marginalize \
+treat it as several different accumulator arrays - one for each \
+sample-parameter set then with extra dimensions for the peak position \
+parameters\
+\>", "Text",
+ CellChangeTimes->{{3.5128306918013763`*^9, 3.512830766197091*^9}, {
+  3.5128307963508263`*^9, 3.5128309064537363`*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["26 April 2011 Tuesday", "Section",
+ CellChangeTimes->{{3.5128309152233477`*^9, 3.5128309194010143`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Web-site configuration", "Subsection",
+ CellChangeTimes->{{3.5128309760833387`*^9, 3.512830979137032*^9}}],
+
+Cell["\<\
+I spent some time looking for cheap mac server OS packages and also looking \
+at server burn in to test bio-db.  I sent my findings to Paul and Dan.\
+\>", "Text",
+ CellChangeTimes->{{3.512830980610824*^9, 3.5128310302543383`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Reading about the hough transform", "Subsection",
+ CellChangeTimes->{{3.512830921971878*^9, 3.512830929541264*^9}}],
+
+Cell["\<\
+I continued reading \"A Formal Definition of the Hough Transform: Properties \
+and Relationships.\"  I won't finish it today.  It contains a number of \
+things that are hard to visualize.\
+\>", "Text",
+ CellChangeTimes->{{3.5128309313153963`*^9, 3.512830972136455*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Hough variations to try", "Subsection",
+ CellChangeTimes->{{3.5128321142682447`*^9, 3.512832117238103*^9}, {
+  3.5128504888539143`*^9, 3.5128504901816263`*^9}}],
+
+Cell["\<\
+1. Use the known (model) peaks to derive the sample parameters but then \
+calculate peak parameters for all peaks in the sample.  See how this works \
+compared to the normal way.  Also see how it works in the face of errors in \
+the model peaks - especially using the input of another matching algorithm as \
+the model\
+\>", "Text",
+ CellChangeTimes->{{3.5128321229588413`*^9, 3.5128321984311733`*^9}, {
+  3.512832229212027*^9, 3.512832261686027*^9}}],
+
+Cell["\<\
+2. See what happens to error when different quantization shapes (and \
+quantizations) are used\
+\>", "Text",
+ CellChangeTimes->{{3.512832266798893*^9, 3.512832269480138*^9}, {
+  3.512850492891852*^9, 3.5128505105421457`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Designing hough transform prototype", "Subsection",
+ CellChangeTimes->{{3.512831099396618*^9, 3.5128311426292467`*^9}, {
+  3.5128311970973873`*^9, 3.512831202694479*^9}}],
+
+Cell["\<\
+The basic paradigm is read/write space-separated line oriented data file \
+using the standard streams\
+\>", "Text",
+ CellChangeTimes->{{3.512835874375024*^9, 3.512835906845468*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["hough_sample_params", "Subsubsection",
+ CellChangeTimes->{{3.51283408529628*^9, 3.512834091529793*^9}}],
+
+Cell["\<\
+hough_sample_params [fractionVariance] < known_peaks > sample_params\
+\>", "Text",
+ CellChangeTimes->{{3.512831135113229*^9, 3.5128311386440353`*^9}, {
+   3.512831450858382*^9, 3.512831471758383*^9}, {3.5128315136979847`*^9, 
+   3.512831517057518*^9}, 3.512832062098823*^9, {3.512832327112322*^9, 
+   3.5128323385354548`*^9}, {3.512832574541724*^9, 3.512832603454234*^9}, {
+   3.512832651149777*^9, 3.5128326579896727`*^9}, {3.512832736387932*^9, 
+   3.5128327432004423`*^9}}],
+
+Cell["\<\
+Reads a known peak correspondence list from standard_input and writes the \
+calculated sample parameters to standard_output.  The peaks must be present \
+in all samples.  Outputs the sample parameters for each sample - calculated \
+by choosing the principal components that explain fractionVariance portion of \
+the variance.\
+\>", "Text",
+ CellChangeTimes->{{3.512832660952713*^9, 3.512832733593745*^9}, {
+  3.5128327965907173`*^9, 3.512832818779917*^9}, {3.512833212480723*^9, 
+  3.5128332198344107`*^9}, {3.512833518333908*^9, 3.512833527685792*^9}, {
+  3.512834717454102*^9, 3.512834738524317*^9}, {3.512834825049527*^9, 
+  3.512834839707478*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Input", "Subsubsubsection",
+ CellChangeTimes->{{3.512835403436387*^9, 3.512835404805444*^9}}],
+
+Cell[TextData[{
+ "The input peaks are one per line.  Each line begins with a type string.  \
+The format for each line is:\nknown_peak ",
+ StyleBox["sample_number  peak_id peak_group_id  peak_position",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.5128335308467627`*^9, 3.5128335372677402`*^9}, {
+  3.512833824365385*^9, 3.512833857078424*^9}, {3.5128338879382668`*^9, 
+  3.512833890146963*^9}, {3.512834385068729*^9, 3.512834386893008*^9}, {
+  3.512834432955517*^9, 3.5128344351622458`*^9}, {3.512845187263307*^9, 
+  3.512845189464929*^9}, {3.512845331408695*^9, 3.512845332593299*^9}, {
+  3.51284538369304*^9, 3.5128453913332376`*^9}, {3.512845426858327*^9, 
+  3.512845460590931*^9}}],
+
+Cell[TextData[{
+ StyleBox["sample_number",
+  FontSlant->"Italic"],
+ " is a non-negative number identifying a sample\n",
+ StyleBox["peak_id",
+  FontSlant->"Italic"],
+ " is a non-negative integer uniquely identifying this peak in this sample\n\
+",
+ StyleBox["peak_group_id",
+  FontSlant->"Italic"],
+ " is a non-negative integer identifying a group of corresponding peaks - if \
+a peak_group_id is present for one sample it must be present for all the \
+samples\n",
+ StyleBox["peak_position",
+  FontSlant->"Italic"],
+ " is a decimal rational number expected to be ppm (though it doesn't really \
+matter)\nAll peaks with the same group identifier are expected to correspond"
+}], "Text",
+ CellChangeTimes->{{3.512833900998667*^9, 3.5128339466819887`*^9}, {
+  3.512833982580433*^9, 3.512834060663746*^9}, {3.512834437031822*^9, 
+  3.512834448878625*^9}, {3.512834624352916*^9, 3.512834635440126*^9}, {
+  3.512834690557947*^9, 3.512834692550995*^9}, {3.512835241124256*^9, 
+  3.512835242046352*^9}, {3.512835339703095*^9, 3.512835354888803*^9}, {
+  3.512845199816901*^9, 3.512845317089818*^9}, {3.512845369904389*^9, 
+  3.5128454332767563`*^9}, {3.5128456448707542`*^9, 3.512845645799412*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Output", "Subsubsubsection",
+ CellChangeTimes->{{3.5128354149776793`*^9, 3.512835416039151*^9}}],
+
+Cell[TextData[{
+ "The sample_params are output one per line in the format:\nsample_param",
+ StyleBox[" sample_number  param_1 param_2 param_3 ...",
+  FontSlant->"Italic"],
+ "\n",
+ "param_stats",
+ StyleBox[" fraction_variance_1 fraction_variance_2",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.512834217896432*^9, 3.512834308057804*^9}, {
+  3.5128343897069693`*^9, 3.512834398496232*^9}, {3.512834908330311*^9, 
+  3.512834959686665*^9}, {3.512844204846787*^9, 3.512844212385709*^9}}],
+
+Cell[TextData[{
+ "Each line begins with a type string.  \n\nExactly one line has the string \
+\"param_stats\".  Its fields are the fraction of the variance explained by \
+parameter 1, the fraction of the variance explained by parameter 2, etc.\n\n\
+The other lines begin with the string \"sample param\"  their fields are:\n",
+ StyleBox["sample_number",
+  FontSlant->"Italic"],
+ " is an integer corresponding to the sample number in the input\n",
+ StyleBox["param_1..param_n",
+  FontSlant->"Italic"],
+ " are the calculated principal components for that sample"
+}], "Text",
+ CellChangeTimes->{{3.512834295715222*^9, 3.512834346614521*^9}, {
+  3.512834658578656*^9, 3.512834675416594*^9}, {3.5128347066425123`*^9, 
+  3.5128347113779783`*^9}, {3.512834756549101*^9, 3.512834778889172*^9}, {
+  3.512834948672475*^9, 3.512835059006482*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["simple_hough", "Subsubsection",
+ CellChangeTimes->{{3.51283409769344*^9, 3.512834103667535*^9}, {
+  3.512834134334455*^9, 3.512834145280264*^9}}],
+
+Cell["\<\
+simple_hough centralLocationResolution baseResolution < \
+sample_params_and_peaks > correspondence\
+\>", "Text",
+ CellChangeTimes->{{3.512834150572906*^9, 3.512834173822555*^9}, {
+  3.512834867641458*^9, 3.512834869009192*^9}, {3.512835144504862*^9, 
+  3.512835146437089*^9}, {3.5128359479395857`*^9, 3.512835954774075*^9}}],
+
+Cell["\<\
+Reads sample_params_and_peaks on the standard input and calculates the hough \
+transform correspondence which it writes to stdout.  The hough transform is \
+calculated using centralLocationResolution bins for the location of the peak \
+center and baseResonlution bins for the first principal component.  The other \
+principal components are allocated bins according to the fraction of the \
+first's variance that they explain.  Thus if component 1 explains 30% of the \
+variance and component 2 explains 15% of the variance then component 2 would \
+be allocated baseResolution/2 =(baseResolution*15/30)\
+\>", "Text",
+ CellChangeTimes->{{3.5128339272094183`*^9, 3.512833938295236*^9}, {
+  3.512834702558419*^9, 3.512834704496907*^9}, {3.5128348046036453`*^9, 
+  3.51283481689531*^9}, {3.512834856458015*^9, 3.51283486522645*^9}, {
+  3.512835136833406*^9, 3.512835140310197*^9}, {3.5128352934044533`*^9, 
+  3.5128352971301126`*^9}, {3.512835957309637*^9, 3.512836017070201*^9}, {
+  3.512836056577662*^9, 3.512836132550961*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Input", "Subsubsubsection",
+ CellChangeTimes->{{3.512835429070829*^9, 3.5128354308495073`*^9}}],
+
+Cell["\<\
+The input is one record per line.  Each line begins with a string indicating \
+its type\
+\>", "Text",
+ CellChangeTimes->{{3.5128353723790283`*^9, 3.5128353730631227`*^9}, {
+  3.5128354479941273`*^9, 3.5128354491229486`*^9}, {3.512835505215063*^9, 
+  3.512835540297762*^9}}],
+
+Cell["\<\
+The first two types are the \"sample_param\" and \"param_stats\" types from \
+the output of hough_sample_params\
+\>", "Text",
+ CellChangeTimes->{{3.512835572772559*^9, 3.512835609848777*^9}}],
+
+Cell[TextData[{
+ "The third type is \"unknown_peak\" with a format:\nunknown_peak",
+ StyleBox[" sample_number peak_id peak_position",
+  FontSlant->"Italic"],
+ "\n\n",
+ StyleBox["sample number",
+  FontSlant->"Italic"],
+ " is a non-negative integer\n",
+ StyleBox["peak_id",
+  FontSlant->"Italic"],
+ " is a non-negative integer uniquely identifying this peak in the sample\n",
+ StyleBox["peak_position",
+  FontSlant->"Italic"],
+ " is is a decimal rational number expected to be ppm (though it doesn't \
+really matter)"
+}], "Text",
+ CellChangeTimes->{{3.5128357417977333`*^9, 3.5128357744033947`*^9}, {
+  3.512842268939452*^9, 3.512842307759306*^9}, {3.5128441343123302`*^9, 
+  3.512844159875463*^9}, {3.512844831904087*^9, 3.512844843213191*^9}, {
+  3.512845677267353*^9, 3.512845688543359*^9}}],
+
+Cell["\<\
+Any lines beginning with \"known_peak\", \"human_verified_peak\", and \
+\"peak_group_params\" will be ignored.\
+\>", "Text",
+ CellChangeTimes->{{3.512835545650824*^9, 3.5128355631045847`*^9}, {
+  3.512835683411776*^9, 3.512835737307695*^9}, {3.512845904242532*^9, 
+  3.512845919630231*^9}, {3.5128459537505302`*^9, 3.512845957639056*^9}, {
+  3.51284643045823*^9, 3.512846457677105*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Output", "Subsubsubsection",
+ CellChangeTimes->{{3.512835429070829*^9, 3.5128354428083153`*^9}}],
+
+Cell["\<\
+The output is also one record per line with each line beginning with a string \
+indicating its type\
+\>", "Text",
+ CellChangeTimes->{{3.5128353723790283`*^9, 3.5128353730631227`*^9}, {
+  3.512844675903324*^9, 3.512844691986898*^9}}],
+
+Cell[TextData[{
+ "\"peak_group_params\"\npeak_group_params ",
+ StyleBox["peak_group_id location_param param_1...param_n",
+  FontSlant->"Italic"],
+ "\n\n",
+ StyleBox["peak_group_id",
+  FontSlant->"Italic"],
+ " the identifier of the detected peak grouping whose parameters are being \
+given\n",
+ StyleBox["location_param",
+  FontSlant->"Italic"],
+ " the base location of the detected peak\n",
+ StyleBox["param_1..param_n ",
+  FontSlant->"Italic"],
+ " the peak reaction parameter for "
+}], "Text",
+ CellChangeTimes->{{3.512844762593981*^9, 3.512844767392857*^9}, 
+   3.5128448051652184`*^9, {3.512844873623942*^9, 3.512845109078207*^9}, {
+   3.5128457051043177`*^9, 3.512845732300119*^9}, {3.512845923499193*^9, 
+   3.512845939267208*^9}}],
+
+Cell[TextData[{
+ "\"known_peak\"\nThe format is the same as the \"known_peak\" input to \
+hough_sample_params\n\n",
+ StyleBox["peak_id",
+  FontSlant->"Italic"],
+ " will correspond to one of the unknown_peak ids (in the future it may also \
+correspond to one of the known_peak  peak_id's)\n",
+ StyleBox["peak_group_id",
+  FontSlant->"Italic"],
+ " will correspond to one of the peak_group_params lines"
+}], "Text",
+ CellChangeTimes->{{3.5128457574354887`*^9, 3.512845897017407*^9}, {
+  3.51284596781074*^9, 3.512845996471693*^9}, {3.512846039991516*^9, 
+  3.512846065513968*^9}, {3.5128461038888273`*^9, 3.5128461075390244`*^9}}],
+
+Cell["\<\
+\"unknown_peak\"
+The format is the same as the \"unknown_peak\" input to this program and will \
+be one of those entries unmodified\
+\>", "Text",
+ CellChangeTimes->{{3.5128461401706877`*^9, 3.512846166506608*^9}, {
+  3.512846281354143*^9, 3.512846308655003*^9}}],
+
+Cell["\<\
+Future versions may also output \"human_verified_peak\" entries.\
+\>", "Text",
+ CellChangeTimes->{{3.5128461477032223`*^9, 3.512846148826951*^9}, {
+   3.5128463999491053`*^9, 3.5128464194441547`*^9}, {3.512846470136346*^9, 
+   3.5128464835669193`*^9}, 3.5128504367442837`*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 },
 AutoGeneratedPackage->None,
@@ -16958,12 +17325,12 @@ CellTagsIndex->{
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Info3512459889-7380264", 675131, 16938},
- {"Info3512474752-6925473", 675246, 16941},
- {"Info3512479406-3746257", 675361, 16944},
- {"Info3512481356-2868314", 675476, 16947},
- {"Info3512481362-2165483", 675591, 16950},
- {"Info3512496286-5561169", 675706, 16953}
+ {"Info3512459889-7380264", 689540, 17305},
+ {"Info3512474752-6925473", 689655, 17308},
+ {"Info3512479406-3746257", 689770, 17311},
+ {"Info3512481356-2868314", 689885, 17314},
+ {"Info3512481362-2165483", 690000, 17317},
+ {"Info3512496286-5561169", 690115, 17320}
  }
 *)
 (*NotebookFileOutline
@@ -17220,9 +17587,9 @@ Cell[227087, 4585, 140, 2, 32, "Input"],
 Cell[227230, 4589, 166, 4, 31, "Output"]
 }, Open  ]]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[227457, 4600, 105, 1, 73, "Section"],
+Cell[227457, 4600, 105, 1, 43, "Section"],
 Cell[CellGroupData[{
 Cell[227587, 4605, 340, 6, 39, "Subsection"],
 Cell[CellGroupData[{
@@ -17316,9 +17683,9 @@ Cell[297948, 6135, 195, 4, 31, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[298216, 6147, 106, 1, 73, "Section"],
+Cell[298216, 6147, 106, 1, 43, "Section"],
 Cell[CellGroupData[{
 Cell[298347, 6152, 264, 5, 39, "Subsection"],
 Cell[298614, 6159, 333, 6, 31, "Text"],
@@ -17460,9 +17827,9 @@ Cell[372594, 8217, 1198, 19, 209, "Input",
 Cell[373795, 8238, 4854, 108, 297, "Input",
  InitializationCell->True]
 }, Closed]]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[378698, 8352, 104, 1, 73, "Section"],
+Cell[378698, 8352, 104, 1, 43, "Section"],
 Cell[CellGroupData[{
 Cell[378827, 8357, 270, 5, 39, "Subsection"],
 Cell[CellGroupData[{
@@ -18267,6 +18634,73 @@ Cell[673469, 16891, 307, 6, 31, "Text"],
 Cell[673779, 16899, 242, 5, 31, "Text"],
 Cell[674024, 16906, 317, 5, 51, "Text"],
 Cell[674344, 16913, 218, 4, 31, "Text"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[674611, 16923, 107, 1, 43, "Section"],
+Cell[CellGroupData[{
+Cell[674743, 16928, 115, 1, 39, "Subsection"],
+Cell[674861, 16931, 495, 8, 71, "Text"],
+Cell[675359, 16941, 142, 1, 31, "Text"],
+Cell[CellGroupData[{
+Cell[675526, 16946, 188, 2, 29, "Subsubsection"],
+Cell[675717, 16950, 450, 8, 51, "Text"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[676228, 16965, 110, 1, 73, "Section"],
+Cell[CellGroupData[{
+Cell[676363, 16970, 112, 1, 39, "Subsection"],
+Cell[676478, 16973, 240, 4, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[676755, 16982, 121, 1, 39, "Subsection"],
+Cell[676879, 16985, 279, 5, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[677195, 16995, 166, 2, 39, "Subsection"],
+Cell[677364, 16999, 461, 8, 51, "Text"],
+Cell[677828, 17009, 235, 5, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[678100, 17019, 176, 2, 39, "Subsection"],
+Cell[678279, 17023, 191, 4, 31, "Text"],
+Cell[CellGroupData[{
+Cell[678495, 17031, 109, 1, 29, "Subsubsection"],
+Cell[678607, 17034, 486, 8, 31, "Text"],
+Cell[679096, 17044, 661, 11, 51, "Text"],
+Cell[CellGroupData[{
+Cell[679782, 17059, 99, 1, 30, "Subsubsubsection"],
+Cell[679884, 17062, 697, 12, 51, "Text"],
+Cell[680584, 17076, 1186, 24, 111, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[681807, 17105, 102, 1, 30, "Subsubsubsection"],
+Cell[681912, 17108, 495, 11, 71, "Text"],
+Cell[682410, 17121, 835, 15, 151, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[683294, 17142, 151, 2, 29, "Subsubsection"],
+Cell[683448, 17146, 334, 6, 31, "Text"],
+Cell[683785, 17154, 1035, 15, 91, "Text"],
+Cell[CellGroupData[{
+Cell[684845, 17173, 101, 1, 30, "Subsubsubsection"],
+Cell[684949, 17176, 283, 6, 31, "Text"],
+Cell[685235, 17184, 201, 4, 31, "Text"],
+Cell[685439, 17190, 792, 19, 131, "Text"],
+Cell[686234, 17211, 396, 7, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[686667, 17223, 102, 1, 30, "Subsubsubsection"],
+Cell[686772, 17226, 242, 5, 31, "Text"],
+Cell[687017, 17233, 736, 19, 131, "Text"],
+Cell[687756, 17254, 627, 13, 111, "Text"],
+Cell[688386, 17269, 272, 6, 51, "Text"],
+Cell[688661, 17277, 286, 5, 31, "Text"]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }
