@@ -6,12 +6,17 @@ if isempty(username) || isempty(password)
     setappdata(gcf,'username',username);
     setappdata(gcf,'password',password);
 end
+
+% Read which collections to get
 prompt={'Collection ID(s) [comma separated]:'};
 name='Enter the collection ID from the website';
 numlines=1;
 defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 collection_ids = split(answer{1},',');
+
+
+% Download collections
 collections = {};
 try
     for i = 1:length(collection_ids)
