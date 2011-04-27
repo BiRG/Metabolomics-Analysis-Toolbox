@@ -38,10 +38,19 @@ elseif strcmp(str{s},'Create signal map')
     create_global_regions
 elseif strcmp(str{s},'Get collection(s)')
     loaded_collections = getappdata(gcf,'collections'); 
+    
+    % Set pointer to wait cursor
+    old_pointer=get(gcf, 'Pointer');
+    set(gcf, 'Pointer', 'watch');
+
     collections = get_collections;
     if ~isempty(loaded_collections)
         collections = {loaded_collections{:},collections{:}};
     end
+    
+    % Set the pointer back to what it was
+    set(gcf, 'Pointer', old_pointer);
+    
     setappdata(gcf,'spectrum_inx',0);
     setappdata(gcf,'collection_inx',1);
     for c = 1:length(collections)
