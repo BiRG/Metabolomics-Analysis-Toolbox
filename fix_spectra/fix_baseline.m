@@ -4,6 +4,9 @@ name='Fix baseline';
 numlines=1;
 defaultanswer={'20'};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
+if(isempty(answer))
+    return
+end
 lambda = str2num(answer{1});
 
 regions = get_regions;

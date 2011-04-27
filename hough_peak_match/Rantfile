@@ -1,0 +1,30 @@
+import ["c/dependencies","autoclean"]
+gen C::Dependencies
+$cpp="g++"
+$warn="-Wall -Wextra -Weffc++"
+
+task :default => ["hough_sample_params", "simple_hough"]
+
+desc "Compile hough_sample_params"
+file "hough_sample_params" => %w(hough_sample_params.o) do |t|
+  sys "#{$cpp} -o  #{t.name} #{sys.sp t.prerequisites}"
+end
+desc "Compile simple_hough"
+file "simple_hough" => %w(simple_hough.o) do |t|
+  sys "#{$cpp} -o  #{t.name} #{sys.sp t.prerequisites}"
+end
+
+# Do c/c++ dependency checking
+gen Action do source "c_dependencies" end
+
+#.o file rules - compile .c and .cpp with C++ compiler
+gen Rule, :o => :cpp do |t|
+  sys "#{$cpp} #{$warn} -c -o #{t.name} #{t.source}"
+end
+gen Rule, :o => :c do |t|
+  sys "#{$cpp} #{$warn} -c -o #{t.name} #{t.source}"
+end
+
+# Clean up
+desc "Remove all generated files"
+gen AutoClean, :clean
