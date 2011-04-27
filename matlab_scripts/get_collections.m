@@ -1,4 +1,7 @@
 function collections = get_collections
+% Displays dialogs for downloading collections from the BIRG server.  
+% Returns a cell array of collections. On error returns an empty array.
+
 username = getappdata(gcf,'username');
 password = getappdata(gcf,'password');    
 if isempty(username) || isempty(password)
@@ -7,12 +10,10 @@ if isempty(username) || isempty(password)
     setappdata(gcf,'password',password);
 end
 
-%Throw an exception if no username or password were entered
+%Return empty collection username and password were not entered
 if isempty(username) || isempty(password)
-    exception = MException('get_collections:no_collections', ...
-        ['User cancelled without entering a user-name or password' ...
-        'to log in for getting a collection']);
-    throw(exception);
+    collections={};
+    return;
 end
     
 % Read which collections to get
@@ -22,9 +23,8 @@ numlines=1;
 defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 if(isempty(answer))
-    exception = MException('get_collections:no_collections', ...
-        'User did not enter a list of collections to get.');
-    throw(exception);    
+    collections={};
+    return;    
 end
 collection_ids = split(answer{1},',');
 
@@ -53,23 +53,14 @@ try
         collections{end+1} = load_collection(file,'');
     end
 catch ME
+    collections = {};
     if(regexp( ME.identifier,'MATLAB:urlread'))
         fprintf(['Could not read a collection from BIRG server.\n' ...
             'Either the collection number was not valid or the server ' ...
             'is not working\n']);
-        collections = {};
     else
-        fprintf('Failed with following xml:\n');
+        fprintf('Get Collections failed with following xml:\n');
         fprintf(xml);
         fprintf('\n');
     end
 end
-
-
-if(isempty(collections))
-    exception = MException('get_collections:no_collections', ...
-        ['The entered list of collections could be retrieved - either ' ... 
-        'because of invalid elements or because of server ' ... 
-        'communication errors.']);
-    throw(exception);
-end    
