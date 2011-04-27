@@ -44,12 +44,19 @@ elseif strcmp(str{s},'Get collection(s)')
     set(gcf, 'Pointer', 'watch');
 
     collections = get_collections;
-    if ~isempty(loaded_collections)
-        collections = {loaded_collections{:},collections{:}};
-    end
     
     % Set the pointer back to what it was
     set(gcf, 'Pointer', old_pointer);
+ 
+    % Check for error
+    if isempty(collections)
+        return
+    end
+ 
+    % Add the newly loaded collections onto the end of the current list
+    if ~isempty(loaded_collections)
+        collections = {loaded_collections{:},collections{:}};
+    end
     
     setappdata(gcf,'spectrum_inx',0);
     setappdata(gcf,'collection_inx',1);
