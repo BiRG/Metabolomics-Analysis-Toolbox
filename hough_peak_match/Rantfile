@@ -25,6 +25,18 @@ gen Rule, :o => :c do |t|
   sys "#{$cpp} #{$warn} -c -o #{t.name} #{t.source}"
 end
 
+# Run tests
+desc "Run unit tests"
+task :test do
+  sys "cd tests; perl -MTest::Harness -e '$h=TAP::Harness->new({verbosity=>0}); $h->runtests(@ARGV);' *.t"
+end
+
+desc "Run unit tests verbosely"
+task :testverbose do
+  sys "cd tests; perl -MTest::Harness -e '$h=TAP::Harness->new({verbosity=>1}); $h->runtests(@ARGV);' *.t"
+end
+
+
 # Clean up
 desc "Remove all generated files"
 gen AutoClean, :clean
