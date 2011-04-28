@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    796980,      20074]
-NotebookOptionsPosition[    749412,      18559]
-NotebookOutlinePosition[    750946,      18607]
-CellTagsIndexPosition[    750638,      18597]
+NotebookDataLength[    798609,      20118]
+NotebookOptionsPosition[    750877,      18599]
+NotebookOutlinePosition[    752411,      18647]
+CellTagsIndexPosition[    752103,      18637]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -18455,13 +18455,15 @@ Cell[TextData[{
  StyleBox["centralLocationResolution baseResolution",
   FontSlant->"Italic"],
  " ",
- StyleBox["standardDeviation",
+ StyleBox["standardDeviation max_GiB_RAM",
   FontSlant->"Italic"],
  "   <   initial_db   >   db_with_detected_peaks"
 }], "Text",
  CellChangeTimes->{{3.512944015330653*^9, 3.5129440203875217`*^9}, {
   3.51294409625839*^9, 3.512944143790782*^9}, {3.512945129701129*^9, 
-  3.512945144671627*^9}, {3.5129479250402308`*^9, 3.512947930024087*^9}}],
+  3.512945144671627*^9}, {3.5129479250402308`*^9, 3.512947930024087*^9}, {
+  3.5129510953050137`*^9, 3.512951103889146*^9}, {3.512951370304287*^9, 
+  3.512951380217441*^9}}],
 
 Cell["\<\
 Reads a peak database from standard input.  This database must have \
@@ -18475,7 +18477,45 @@ peak groups.  The output database has a set of detected_peak_group objects.\
   3.512945641970704*^9, 3.512945754307271*^9}, {3.512946721996518*^9, 
   3.512946761573937*^9}, {3.512946810675273*^9, 3.5129468450413446`*^9}, {
   3.512948572173431*^9, 3.5129485845173798`*^9}, {3.5129487442368097`*^9, 
-  3.5129487572535477`*^9}}]
+  3.5129487572535477`*^9}}],
+
+Cell[TextData[{
+ StyleBox["centralLocationResolution",
+  FontSlant->"Italic"],
+ " gives the number of steps to use in definining the central location of the \
+peaks."
+}], "Text",
+ CellChangeTimes->{{3.512951113735547*^9, 3.512951142911283*^9}}],
+
+Cell[TextData[{
+ StyleBox["baseResolution ",
+  FontSlant->"Italic"],
+ "gives the number of steps to use for the first principal component.  If \
+another principal component explains 25% of the variance of the first it will \
+be given 25% of the steps."
+}], "Text",
+ CellChangeTimes->{{3.5129511465820103`*^9, 3.5129512099321623`*^9}, {
+  3.512951253605517*^9, 3.512951265762288*^9}}],
+
+Cell[TextData[{
+ StyleBox["standardDeviation",
+  FontSlant->"Italic"],
+ " gives the standard deviation of the Gaussian used in \"fuzzifying\" the \
+hough transform"
+}], "Text",
+ CellChangeTimes->{{3.5129513574260693`*^9, 3.51295142134479*^9}, 
+   3.512951530471697*^9}],
+
+Cell[TextData[{
+ StyleBox["max_GiB_RAM",
+  FontSlant->"Italic"],
+ " gives the maximum number of GiB of RAM to use.  The program will either \
+use partitioning methods to try and meet this constraint or exit with an \
+error.  The program calculates only an estimate, so this is more of a \
+suggestion than a hard rule."
+}], "Text",
+ CellChangeTimes->{{3.512951430322555*^9, 3.512951505955454*^9}, {
+  3.512951604356937*^9, 3.512951633048246*^9}}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -18596,12 +18636,12 @@ CellTagsIndex->{
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Info3512459889-7380264", 749953, 18576},
- {"Info3512474752-6925473", 750068, 18579},
- {"Info3512479406-3746257", 750183, 18582},
- {"Info3512481356-2868314", 750298, 18585},
- {"Info3512481362-2165483", 750413, 18588},
- {"Info3512496286-5561169", 750528, 18591}
+ {"Info3512459889-7380264", 751418, 18616},
+ {"Info3512474752-6925473", 751533, 18619},
+ {"Info3512479406-3746257", 751648, 18622},
+ {"Info3512481356-2868314", 751763, 18625},
+ {"Info3512481362-2165483", 751878, 18628},
+ {"Info3512496286-5561169", 751993, 18631}
  }
 *)
 (*NotebookFileOutline
@@ -20063,16 +20103,20 @@ Cell[743773, 18438, 282, 5, 31, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[744104, 18449, 105, 1, 29, "Subsubsection"],
-Cell[744212, 18452, 447, 11, 31, "Text"],
-Cell[744662, 18465, 789, 12, 51, "Text"]
+Cell[744212, 18452, 559, 13, 31, "Text"],
+Cell[744774, 18467, 789, 12, 51, "Text"],
+Cell[745566, 18481, 244, 6, 31, "Text"],
+Cell[745813, 18489, 383, 8, 31, "Text"],
+Cell[746199, 18499, 269, 7, 31, "Text"],
+Cell[746471, 18508, 445, 9, 51, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[745488, 18482, 102, 1, 29, "Subsubsection"],
-Cell[745593, 18485, 532, 11, 31, "Text"],
-Cell[746128, 18498, 829, 13, 91, "Text"],
-Cell[746960, 18513, 321, 6, 31, "Text"],
-Cell[747284, 18521, 1193, 17, 111, "Text"],
-Cell[748480, 18540, 892, 14, 91, "Text"]
+Cell[746953, 18522, 102, 1, 29, "Subsubsection"],
+Cell[747058, 18525, 532, 11, 31, "Text"],
+Cell[747593, 18538, 829, 13, 91, "Text"],
+Cell[748425, 18553, 321, 6, 31, "Text"],
+Cell[748749, 18561, 1193, 17, 111, "Text"],
+Cell[749945, 18580, 892, 14, 91, "Text"]
 }, Open  ]]
 }, Closed]]
 }, Open  ]]
