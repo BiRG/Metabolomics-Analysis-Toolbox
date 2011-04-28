@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    733039,      18701]
-NotebookOptionsPosition[    688999,      17288]
-NotebookOutlinePosition[    690533,      17336]
-CellTagsIndexPosition[    690225,      17326]
+NotebookDataLength[    796980,      20074]
+NotebookOptionsPosition[    749412,      18559]
+NotebookOutlinePosition[    750946,      18607]
+CellTagsIndexPosition[    750638,      18597]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -16959,7 +16959,7 @@ parameters\
   3.5128307963508263`*^9, 3.5128309064537363`*^9}}]
 }, Open  ]]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -16976,7 +16976,7 @@ I spent some time looking for cheap mac server OS packages and also looking \
 at server burn in to test bio-db.  I sent my findings to Paul and Dan.\
 \>", "Text",
  CellChangeTimes->{{3.512830980610824*^9, 3.5128310302543383`*^9}}]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -16989,7 +16989,7 @@ and Relationships.\"  I won't finish it today.  It contains a number of \
 things that are hard to visualize.\
 \>", "Text",
  CellChangeTimes->{{3.5128309313153963`*^9, 3.512830972136455*^9}}]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -17013,13 +17013,14 @@ quantizations) are used\
 \>", "Text",
  CellChangeTimes->{{3.512832266798893*^9, 3.512832269480138*^9}, {
   3.512850492891852*^9, 3.5128505105421457`*^9}}]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
-Cell["Designing hough transform prototype", "Subsection",
+Cell["First crack at hough transform prototype", "Subsection",
  CellChangeTimes->{{3.512831099396618*^9, 3.5128311426292467`*^9}, {
-  3.5128311970973873`*^9, 3.512831202694479*^9}}],
+  3.5128311970973873`*^9, 3.512831202694479*^9}, {3.5128524535469522`*^9, 
+  3.5128524558497887`*^9}}],
 
 Cell["\<\
 The basic paradigm is read/write space-separated line oriented data file \
@@ -17283,7 +17284,1277 @@ Future versions may also output \"human_verified_peak\" entries.\
    3.5128464835669193`*^9}, 3.5128504367442837`*^9}]
 }, Open  ]]
 }, Open  ]]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["27 April 2011 Wednesday", "Section",
+ CellChangeTimes->{{3.512918050401314*^9, 3.5129180731624727`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Improved design for hough transform prototype", "Subsection",
+ CellChangeTimes->{{3.5128515417797937`*^9, 3.512851552858687*^9}, {
+  3.512852462432822*^9, 3.512852463487632*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Goals", "Subsubsection",
+ CellChangeTimes->{{3.512947647535294*^9, 3.51294764834476*^9}}],
+
+Cell["Easy to implement", "Text",
+ CellChangeTimes->{{3.512947658332226*^9, 3.51294766122044*^9}}],
+
+Cell["\<\
+Extensible to humans verifying/modifying correspondence and then adding more \
+samples and repeating the analysis.\
+\>", "Text",
+ CellChangeTimes->{{3.512947663341651*^9, 3.512947706363687*^9}, {
+  3.512947770450178*^9, 3.512947770956698*^9}, {3.5129478543550587`*^9, 
+  3.512947863907452*^9}, {3.51294866357471*^9, 3.512948676508121*^9}}],
+
+Cell["Should do the correspondence not just predicted points", "Text",
+ CellChangeTimes->{{3.512947869349978*^9, 3.512947882833576*^9}}],
+
+Cell["Can interact with Matlab", "Text",
+ CellChangeTimes->{{3.512947667689211*^9, 3.512947677476089*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["File-format", "Subsubsection",
+ CellChangeTimes->{{3.512851567449967*^9, 3.5128515703881083`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Overview", "Subsubsubsection",
+ CellChangeTimes->{{3.512919347472014*^9, 3.512919348830381*^9}}],
+
+Cell[TextData[{
+ "The file-format can be viewed as a serialization of database tables \
+describing the relationships shown in the following diagram.  I do not use \
+SQLite because I want a text-based format that is easily written by Matlab \
+(and ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ ", but that is not essential)."
+}], "Text",
+ CellChangeTimes->{{3.5128515726424*^9, 3.51285162396723*^9}, {
+  3.512851697399476*^9, 3.512851698963485*^9}, {3.5128523384843397`*^9, 
+  3.5128524356202497`*^9}, {3.51285247284372*^9, 3.512852537502095*^9}, {
+  3.512852587895509*^9, 3.512852620633321*^9}, {3.51285265306472*^9, 
+  3.5128526852340508`*^9}, {3.512856843086403*^9, 3.5128568708097277`*^9}, {
+  3.5128597336091957`*^9, 3.512859783058876*^9}}],
+
+Cell["\<\
+One constraint that is not drawn in the diagram is that the parameters \
+vectors in sample params and in peak groups must have the same dimension.\
+\>", "Text",
+ CellChangeTimes->{{3.512862569965164*^9, 3.512862579491007*^9}, {
+  3.512862635096137*^9, 3.512862654178693*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.011627906976744193`, 0.9335195270679142}, \
+{0.14311270125223613`, 0.7957734022250151}]}, 
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.3291592128801431, 0.907070707070707}, \
+{0.4561717352415027, 0.715151515151515}]}, 
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.5894454382826477, 0.913131313131313}, \
+{0.7245080500894456, 0.709090909090909}]}, 
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.8228980322003578, 0.9151515151515152}, \
+{0.9445438282647586, 0.7111111111111111}]}, 
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.20393559928443653`, 0.5696969696969697}, \
+{0.32647584973166366`, 0.40808080808080816`}]}, 
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.46332737030411447`, 0.5797979797979798}, \
+{0.5840787119856887, 0.4161616161616162}]}, 
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.11627906976744187`, 0.23838383838383836`}, \
+{0.23434704830053668`, 0.06464646464646462}]}, 
+   {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    RectangleBox[{0.3184257602862254, 0.2404040404040404}, \
+{0.4355992844364937, 0.07070707070707072}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    ArrowBox[{{0.1771019677996422, 0.24444444444444446`}, {
+     0.25402504472271914`, 0.40808080808080804`}}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    ArrowBox[{{0.38014311270125223`, 0.24848484848484842`}, {
+     0.2924865831842576, 0.40404040404040387`}}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    ArrowBox[{{0.27906976744186046`, 0.5838383838383838}, {0.3828264758497317,
+      0.709090909090909}}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    ArrowBox[{{0.5125223613595706, 0.591919191919192}, {0.424865831842576, 
+     0.7030303030303031}}]}, 
+   {GrayLevel[0], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], EdgeForm[
+    GrayLevel[0]], FaceForm[None], 
+    LineBox[{{0.4552772808586762, 0.8101010101010101}, {0.5894454382826475, 
+     0.8101010101010101}}]}, 
+   {GrayLevel[0], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], EdgeForm[
+    GrayLevel[0]], FaceForm[None], 
+    LineBox[{{0.723613595706619, 0.8161616161616161}, {0.8220035778175314, 
+     0.8161616161616161}}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["0..n",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.4615384615384615, 0.8303030303030303}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["1..1",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.569767441860465, 0.8404040404040404}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["1..1",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.7316636851520573, 0.8383838383838383}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["0..1",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.8050089445438282, 0.8444444444444444}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["0..n",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.24239713774597493`, 0.593939393939394}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["1..1",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.15026833631484796`, 0.8444444444444448}, {
+     Left, Baseline}, Offset[{19., 19.599999999999998`}, {0., 0.}], {{1., 
+     0.}, {0., 1.4}}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox["", {0.23613595706618962`, 0.5191919191919192}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["Peak",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.37119856887298747`, 0.8565656565656565}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["Known Peak",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.23076923076923078`, 0.5313131313131313}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["Unknown Peak",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.4982110912343471, 0.5434343434343434}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], InsetBox[Cell["\<\
+Human verified
+peak\
+\>",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.14177101967799643`, 0.20404040404040402`}, {
+     Left, Baseline}, Offset[{88., 33.}, {0., 0.}], {{1.0864197530864197`, 
+     0.}, {0., 1.}}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox["", {0.2549194991055456, 0.18585858585858583`}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox["", {0.20304114490161002`, 0.2161616161616161}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox["", {0.17889087656529518`, 0.21818181818181814`}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox["", {0.15742397137745975`, 0.1777777777777778}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox["", {0.18872987477638642`, 0.17373737373737375`}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox["", {0.1708407871198569, 0.21414141414141408`}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[
+     InsetBox["", {0.36583184257602863`, 0.20606060606060606`}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["Unverified peak",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.3443649373881932, 0.19999999999999996`}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["Peak group",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.05724508050089447, 0.8949494949494949}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["Sample",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.6350626118067979, 0.8686868686868687}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["Sample Params",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.8488372093023256, 0.8666666666666666}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[
+     InsetBox["", {0.9257602862254024, 0.9878787878787879}, {Left, Baseline}],
+     
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], 
+    StyleBox[
+     LineBox[{{0.3291592128801431, 0.8444444444444451}, {0.4579606440071557, 
+      0.8444444444444448}}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["ppm",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.3372093023255814, 0.7656565656565657}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], 
+    StyleBox[
+     LineBox[{{0.8246869409660107, 0.8404040404040404}, {0.9418604651162787, 
+      0.8404040404040404}}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["parameters",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.8363148479427549, 0.7414141414141414}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["class",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.6019677996422184, 0.7535353535353535}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], 
+    StyleBox[
+     LineBox[{{0.5894454382826475, 0.8404040404040404}, {0.7245080500894454, 
+      0.8404040404040404}}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[InsetBox[Cell["ppm",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline], {0.09391771019678002, 0.4686868686868687}, {
+      Left, Baseline}],
+     FontColor->GrayLevel[0.]]}, {
+    {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+     AbsoluteThickness[0.5], Dashing[{}], JoinForm[{"Miter", 3.25}]}], 
+     FaceForm[None], 
+     RectangleBox[{0.08075931969044675, 0.6141414141414142}, \
+{0.16051975007699526`, 0.4101010101010102}]}, 
+    {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[
+     1.], Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+     StyleBox[InsetBox[Cell["\<\
+Parameterized
+Peak Group\
+\>",
+        GeneratedCell->False,
+        CellAutoOverwrite->False,
+        CellBaseline->Baseline], {0.08799194991055465, 0.5777777777777778}, {
+       Left, Baseline}],
+      FontColor->GrayLevel[0.]]}, 
+    {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[
+     1.], Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+     StyleBox[InsetBox[Cell["parameters",
+        GeneratedCell->False,
+        CellAutoOverwrite->False,
+        CellBaseline->Baseline], {0.0942531305903398, 0.44040404040404046`}, {
+       Left, Baseline}],
+      FontColor->GrayLevel[0.]]}}, 
+   {GrayLevel[0.], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], 
+    StyleBox[
+     LineBox[{{0.08050089445438285, 0.5171717171717172}, {
+      0.15921288014311274`, 0.5171717171717172}}],
+     FontColor->GrayLevel[0.]]}, 
+   {EdgeForm[GrayLevel[0]], FaceForm[None], 
+    RectangleBox[{0.6520833166208075, 0.5757575757575759}, \
+{0.7629435170106773, 0.41414141414141437`}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["Param Statistics",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.6663685152057246, 0.5272727272727276}, {
+     Left, Baseline}]}, 
+   {GrayLevel[0], AbsoluteThickness[0.5], Opacity[1], Dashing[{}], EdgeForm[
+    GrayLevel[0]], FaceForm[None], 
+    LineBox[{{0.6520572450805009, 0.49898989898989976`}, {0.7620751341681575, 
+     0.4989898989898993}}]}, 
+   {GrayLevel[0], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1], 
+    Dashing[{}], Arrowheads[0.04], EdgeForm[{GrayLevel[0], Opacity[1], 
+    AbsoluteThickness[0.5], Dashing[{}]}], FaceForm[None], 
+    InsetBox[Cell["param_frac_variance",
+      GeneratedCell->False,
+      CellAutoOverwrite->False,
+      CellBaseline->Baseline], {0.6592128801431127, 0.45858585858585865`}, {
+     Left, Baseline}]}, {{
+     {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[
+      1.], Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+      StyleBox[InsetBox[Cell["ppm",
+         GeneratedCell->False,
+         CellAutoOverwrite->False,
+         CellBaseline->Baseline], {0.02785729848565266, 0.2161616161616161}, {
+        Left, Baseline}],
+       FontColor->GrayLevel[0.]]}, 
+     {GrayLevel[0], Opacity[1.], EdgeForm[{GrayLevel[0], Opacity[1], 
+      AbsoluteThickness[0.5], Dashing[{}], JoinForm[{"Miter", 3.25}]}], 
+      FaceForm[None], 
+      RectangleBox[{0.014698907979319387`, 0.3616161616161616}, \
+{0.09445933836586795, 0.1575757575757576}]}}, {{
+      {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[
+       1.], Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+       StyleBox[InsetBox[Cell["\<\
+Detected 
+peak group\
+\>",
+          GeneratedCell->False,
+          CellAutoOverwrite->False,
+          
+          CellBaseline->
+           Baseline], {0.028192718879212597`, 0.32121212121212117`}, {
+         Left, Baseline}],
+        FontColor->GrayLevel[0.]]}, 
+      {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[
+       1.], Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+       StyleBox[InsetBox[Cell["parameters",
+          GeneratedCell->False,
+          CellAutoOverwrite->False,
+          
+          CellBaseline->
+           Baseline], {0.028192718879212375`, 0.18787878787878787`}, {
+         Left, Baseline}],
+        FontColor->GrayLevel[0.]]}}, 
+     {GrayLevel[0.], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], 
+      StyleBox[
+       LineBox[{{0.01444048274325549, 0.2646464646464646}, {
+        0.09315246843198544, 0.2646464646464646}}],
+       FontColor->GrayLevel[0.]]}}}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[
+     ArrowBox[{{0.050983899821109124`, 0.3616161616161616}, {
+      0.050983899821109124`, 0.795959595959596}}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsolutePointSize[3.], AbsoluteThickness[0.5], Opacity[1.],
+     Dashing[{}], Arrowheads[0.04], EdgeForm[None], 
+    StyleBox[
+     ArrowBox[{{0.12880143112701253`, 0.6222222222222222}, {
+      0.09481216457960645, 0.793939393939394}}],
+     FontColor->GrayLevel[0.]]}, 
+   {GrayLevel[0.], AbsoluteThickness[0.5], Opacity[1.], Dashing[{}], 
+    StyleBox[
+     LineBox[{{0.22808586762075134`, 0.5696969696969697}, {
+      0.22808586762075134`, 0.8848484848484848}, {0.14311270125223613`, 
+      0.8848484848484848}}],
+     FontColor->GrayLevel[0.]]}},
+  AspectRatio->Full,
+  ImageSize->{1118., 495.},
+  PlotRange->{{0, 1}, {0, 1}}]], "Input",
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGAQAWIQfbA4a6aNzitHLp+pYPrG6atzQfQk8S/zQLTM1IRl
+IDqgu+AciH4TNek6iJ631PA2WH3L80cgOiU56zlYPOjyJxCtr9L9HUQvTJf7
+C6KZroew2QLp14WrBO2A9AGnQGkQ/SoujtkBSBt5cbCAaB/1PE4QbXashRtE
+a6g13QPTlgxPQLTOvs8fQfSD7+5fQLTLIRF7RyB9aLdRCIh+sPjR3BggvSKE
+Yz6IvrVT82QGkJ5lVwKmP1pZXgTRk0pu3AfRWzun52SB9C90LADRMpqZq0E0
+c6XHJhA93e33NhDdZXVjN4iekR18GEQvnJ94A0QDAPfblWU=
+  "],
+ ImageCache->GraphicsData["CompressedBitmap", "\<\
+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
+tLBuYd3CuoV1C+t6YG07XCMnfSOec6nSLPnZNqT5sY6sleTw8lnx4eUjmhfr
+/skhLaxbWLewfn9gvUJcMyU37dIHTljVFoL1Wlh/QDmkhXUL6/6DtR23xhoA
+Z0mxzvnggw/Gq4pjG5WKFAcb15EAJRnFnDNOpJ7okcXb3N0WlVKS3HpuOhHR
+18zOi4r1gZtNJfLs3vCesNb8424nLTqHAwZ2NGld84g63QUOKYQQ77jjDlu4
+hK6s4FDcHRz5WA1L1aPYyoBnN4fbbvz5kKS6L/uHA3IyTTRmxGMoKyczk8VY
+soY5FwK+Z0WM/lRKhcu7L4VcA84ktY6yWsYpy5QK6XXJ5o6MtIjXqWtzLcza
+HlLUgtHdI0WN0euavbSkuwYlhdGz49BYk+Qkj4svljOMU3n++WgNS9WjGHzP
+fhm3XRs4q57KQurwfd0guba8/FwxkUPQhfQETlWzMw3zkvUq3WzDWgRnk9uM
+J/kQtnSv1si0mWS2lMvE7lpc2LOOp/t95+wO4WxAsMSNtMKgr5iHVPN8qphI
+XcKYXN/Ehghba1QGrIzR4Fy+zuwzsg7kVU8lRbVnv17eQ0X5WYilN9NGM6mZ
+y3qq5nN6RyKIuDWI9cRXX321x6RBvUTHUmDcO3Q4iglziaQJmJMly7vvvju1
+aSvTpPF5uUj0H1VexRVL9eHxbkGVrDYKKMB9pAM0KMHLJgSZTtiCmL5nnHEG
+J7UGPpb0oGUX1LjVMEEtL4sxy2zakt/z6qdysjolJ4s8xEwTfRPimysbuOmj
+1bF7u4wcpgUmxfz589uUWpWyGnM4HaONcy9ZVqariHvSLkkdoniaNMPEIyIT
+aH25DMvX8b6z+wruzJSCDOMozwYkiOmsX0fS3rH77HYPtCz8n93xlodTth4Z
+g5bZRUJjZvdbxfqUbFYX0z/TRh9tFmN3N7O1OnaPZSp23fTp09WeGJubVmnH
+kWWv9CIth3OYofZ9990nJjWjRLHjfz1tuszuk5U1uLSsPuK9U5o3fsdhQL1G
+Aicm6iDBgLPzrXComt28qfsONfG0092HKEXT1Torv57oQU5+FmIc23dYR7co
+npXj5WxwrsriqD4O40dzHXTQQXJuex1vzBzt6XVPUh+QqKGIhc31z8ncNIcp
+eyEbaYZIeUQbFwQhNvDPkfqIaXiCDviSQd3Z4BOllIL3ziXq33fxXK39Vbsy
+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
+x6FNhWbm1fWeZwe3EG4h3EK4hXAfEL4yfiYe9dy5c8/h5c38FrRt2tQIE2uJ
+fIW5McLRb0HbNk2JcL9jiaII67MU65wcsw4prlY3uLzZEHZZ5+SYdVgXbj6E
++x1LtBBuIdxCuI4Ix0tmNTuYe3Z/679lBdToEO/z+2f/e3Xgd7/tay9OCO+3
+fe3FkeI6h1kMnEKT0bQOPio/20a4IOIg/VBZubCT0e1UzzzRQYnqBwOoHcFw
+TgG1+9ilG6xyAPFi+dmerNUJ1ZKN7/UnX+9OND++xpSxhbOeRiQe1cGSg2iX
+j1NyhJg161QP9mvAIJymcN95552NqMEx+9fIzzb7W46StUHIkc0z+97bDg+e
+vmmtR1hEnw1OfvMdSl6DqV7rWbV9GdmjYUy46JqYi+xvOUvQDr3IHDN/tocG
+nX2g3/ba0Wosj3RHO9KHCMdcqWfv9mkMajCPpiZkLypyLqgxfeMTuodUa9n4
+OtPmAVkDVvdhPa1J6JZrEQ1MKra/r6mSYYFBnmfbKqVy7Kn+RKkCvS2qK+yk
+HxI7OOMt+j5pz31mfJZjofUT6p1fsLfV8h5SyQ7YHOR5ZryXY6A1hnoFuKay
+HohztcquhI1xHundCpu3t4IkK5rmG5IXSHOZMWNGMM0D1li+JyIXZfkDdDBy
+VI2dNtYAlVJ08lVmdEtiKr8otjt3f2v+Ntx2yd8h8Yld7zNnztzBA7Jo4OhA
+bTJjnBmJ3T7WmfN7Yp7KnG8kLr8Z1rdro9Jtse2SEgwt2EUesVtfyGun47sd
+8bHq+go6s2tir76Tt7KvGpNtpO+mV6lQaT+of9tqnFHNZiIuO9ixIO2m+fu/
+s6eqLyRipyq4GyIaSjvflax5mzHz94zGrMdGZyRFFaxnR+u6/a+Wdu4mh4bS
+zndzKsW3A9KzYyJJZrdMfjJ7ONDskUce8WqrSgR0iVCUgGPl50QhPNuMyKID
+ZxJFyb6txWEXeZsi3F2SlOyhGLYbazHfEe/blDmuMTyWexGsHdzibgApKq7W
+b+Ihn1wV23ZLrJGzSK0wPmxayjdAKu0bGejuG/HtPbFqtg01x/4x3V1uMnXU
+94SSrqQDvhNF6s60sQWfe8uvXWpj1AurZtpmHfCtPRhXYlv2vuuJT6JJuWSE
+M67zDbtKZ5oMc3fmVNzdY+JCjUqzXsvtzko2Zg1OYelKMPZsJq4/n07WnmKw
+kZfPTq+dPPUqMWKTDOF2HhR9nLe8/BwkJwPsvPPOYqvYdiW/LVzpbJZR7ral
+ilufDN0cW9y4zWPCJ2al9+SYGhww05l0IrPPeryHfjXlv23itxHbFOW6DZtz
++KqVe3gSbJDCPGOTqR59WMGrWLbQETOUSvvHrBs5Xk0Sz8jzhvp8Us6wQt3w
+bEWvuywsmrhjcq9Zh7A6VlxejgklT0fvDZBVINqrdJpOD7vopF7OTjzTe+4x
+EBkfUWNUE3P9ygYc9CP1fLv1m4wPm3L8JlfFgp0SK9lwww2TcWbpKGp7TPxJ
+yrcbqJ/kuINbNtfoVNW17QtSbTn52SFcjonARRwMMO643e/qbt03kuU4I1tV
+R7J5CsHNFzgkzhcQlrJ7Zk7rA/E2qLKHUwpSzm5mcffg79L37h+q3XczYXz7
+iIt2366Yc9Es2sUahPIX9gH1OmW/xYPUKVOFPYscZg5jsG4Uybn4FJCyuPOa
+/atzGASYrlaYTTfddFN8TXU6KtzPevb444/LtQeoqNdee02CiNHQWc/ccG0/
+6Zmt9NRxiTZWtOMkC4cDJrAzueIUr4d62eguhX3SsBBtkT2ghyaJKY/OJwDP
+9SfA1uPhvaf4rN4/RsEWPeq0ImvRSy4zZAQiC1xN0+GpCCUxXU6G1lOWjL3l
+d5fSHM619957VzzTp59Rvg4LtfaJXaEO1YimsxDpix9hfE6aNClxQzHWubeL
+wn58OzmR8wT32WcfC3nkhJZW60/0r9+Kb7sSmnNM8aRwPjnZP2rTG1YpOgg4
+GplB8ERc+uEg1GnpOJ4My8h4MT8ojCOKQM9STsVd+BQpZqKIa+9MFAHexoGb
+BJ1xyIk39MNxqOcydPxuKSEuXjKheiQUp6lwRXQ2/MDhjGhkbuEGBmOKRobC
+nHzDYEQuzQBGIk6gyXO689VCPW+Uy6d1VcuxlgaEIWPNDFIyQw4LbDFFCHev
+5wErP//auG6a+17FAp4vgt1otO2eZ3c9x5cAUcJLrsL0nRhWJWTxTyWSnwtP
+irCAe01lUa80TJeHW19/YL++2a2oZUH8PvSUo1qvWq9ar2ryKlji/wGFzKd/
+\
+\>"]],
+
+Cell["\<\
+The hough tools use a file format consisting of lines of space-separated \
+values.  The first value in each line is a type identifier.  It would be the \
+table name in the database.  There is a table for each of the following \
+classes: parameterized_peak_group, detected_peak_group, sample, \
+sample_parameters, param_statistics, human_verified_peak, unverified_peak, \
+and unknown_peak.\
+\>", "Text",
+ CellChangeTimes->{
+  3.5128526228011017`*^9, {3.51285980950461*^9, 3.5128598364780293`*^9}, {
+   3.512859869963209*^9, 3.5128599749433537`*^9}, 3.5128600575998087`*^9, {
+   3.512860207173373*^9, 3.512860213824254*^9}, {3.512863554012232*^9, 
+   3.5128635553403473`*^9}, {3.512944461835423*^9, 3.5129444654581947`*^9}, {
+   3.512947943348864*^9, 3.512947955594503*^9}, {3.512948435154171*^9, 
+   3.512948440502288*^9}}],
+
+Cell["\<\
+It is assumed that there is a peak group for any peak_group_id referenced in \
+a known_peak object, this avoids materializing the list of peak_group_ids \
+directly\
+\>", "Text",
+ CellChangeTimes->{{3.512863623491695*^9, 3.512863664322465*^9}, {
+  3.512948514857566*^9, 3.5129485157957277`*^9}}],
+
+Cell["\<\
+A peak is identified by a two-part primary key: (sample_id, peak_id) - I did \
+this because the natural way to identify peaks is to sort them by ppm within \
+each sample and then sort the samples in some way and give the sample number \
+and peak number.  This also makes merging new samples into the database a \
+little easier - no need to renumber the peaks, just give each sample a unique \
+id.\
+\>", "Text",
+ CellChangeTimes->{{3.5128602160094233`*^9, 3.512860422614649*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Fields for each table (that is each line-type)", "Subsubsubsection",
+ CellChangeTimes->{{3.512860432374092*^9, 3.512860442584797*^9}, {
+  3.512860521737116*^9, 3.512860535974435*^9}}],
+
+Cell["\<\
+Each table has fixed fields.  Thus each line of the file, depending on its \
+type has well defined fields to model the relations and data shown in the \
+table.\
+\>", "Text",
+ CellChangeTimes->{{3.512860539249481*^9, 3.512860641529158*^9}}],
+
+Cell["\<\
+Each description begins with a prototype line of the file and then a \
+description of each field.\
+\>", "Text",
+ CellChangeTimes->{{3.512862902598979*^9, 3.512862947782179*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["parameterized_peak_group", "Subsubsubsubsection",
+ CellChangeTimes->{
+  3.512851753308806*^9, {3.512860091399046*^9, 3.512860093005937*^9}, {
+   3.512863484777368*^9, 3.5128634859364023`*^9}, 3.5129485232834377`*^9}],
+
+Cell[TextData[{
+ "parametersized_peak_group ",
+ StyleBox["peak_group_id ppm param_1 param_2 ... param_n",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.5128606648726797`*^9, 3.512860666151311*^9}, 
+   3.512862662302587*^9, {3.512862693731703*^9, 3.5128627247221823`*^9}, {
+   3.5128634893055677`*^9, 3.5128635042905817`*^9}, {3.512948536552684*^9, 
+   3.5129485410304127`*^9}}],
+
+Cell[TextData[{
+ StyleBox["peak_group_id",
+  FontSlant->"Italic"],
+ " non-negative integer uniquely identifying the peak_group to which the \
+parameters apply"
+}], "Text",
+ CellChangeTimes->{{3.51286274016573*^9, 3.5128627709017963`*^9}, {
+  3.512863513912805*^9, 3.512863518954089*^9}, {3.512863579645277*^9, 
+  3.5128636172504587`*^9}}],
+
+Cell[TextData[{
+ StyleBox["ppm",
+  FontSlant->"Italic"],
+ " the base location of the peak group"
+}], "Text",
+ CellChangeTimes->{{3.5128627833865013`*^9, 3.512862795371359*^9}, {
+  3.512863713792913*^9, 3.512863714061513*^9}}],
+
+Cell[TextData[{
+ StyleBox["param_1 ... param_n",
+  FontSlant->"Italic"],
+ " a vector of n reaction parameters so that the predicted location of a peak \
+in this group is ppm + peak_group.parameters \[CenterDot] \
+sample.sample_parameters"
+}], "Text",
+ CellChangeTimes->{{3.5128628080395203`*^9, 3.512862869362644*^9}, {
+  3.5128637266585903`*^9, 3.512863728472499*^9}, {3.512863832067727*^9, 
+  3.512863833030181*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["detected_peak_group", "Subsubsubsubsection",
+ CellChangeTimes->{
+  3.512851753308806*^9, {3.512860091399046*^9, 3.512860093005937*^9}, {
+   3.512863484777368*^9, 3.5128634859364023`*^9}, {3.512948017231636*^9, 
+   3.512948022787404*^9}}],
+
+Cell[TextData[{
+ "detected_peak_group ",
+ StyleBox["peak_group_id ppm param_1 param_2 ... param_n",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.5128606648726797`*^9, 3.512860666151311*^9}, 
+   3.512862662302587*^9, {3.512862693731703*^9, 3.5128627247221823`*^9}, {
+   3.5128634893055677`*^9, 3.5128635042905817`*^9}, {3.512948026001808*^9, 
+   3.512948028095695*^9}}],
+
+Cell[TextData[{
+ StyleBox["peak_group_id",
+  FontSlant->"Italic"],
+ " non-negative integer uniquely identifying the peak_group to which the \
+parameters apply"
+}], "Text",
+ CellChangeTimes->{{3.51286274016573*^9, 3.5128627709017963`*^9}, {
+  3.512863513912805*^9, 3.512863518954089*^9}, {3.512863579645277*^9, 
+  3.5128636172504587`*^9}}],
+
+Cell[TextData[{
+ StyleBox["ppm",
+  FontSlant->"Italic"],
+ " the base location of the peak group"
+}], "Text",
+ CellChangeTimes->{{3.5128627833865013`*^9, 3.512862795371359*^9}, {
+  3.512863713792913*^9, 3.512863714061513*^9}}],
+
+Cell[TextData[{
+ StyleBox["param_1 ... param_n",
+  FontSlant->"Italic"],
+ " a vector of n reaction parameters so that the predicted location of a peak \
+in this group is ppm + peak_group.parameters \[CenterDot] \
+sample.sample_parameters"
+}], "Text",
+ CellChangeTimes->{{3.5128628080395203`*^9, 3.512862869362644*^9}, {
+  3.5128637266585903`*^9, 3.512863728472499*^9}, {3.512863832067727*^9, 
+  3.512863833030181*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["human_verified_peak", "Subsubsubsubsection",
+ CellChangeTimes->{
+  3.512851753308806*^9, {3.5128601042493067`*^9, 3.512860107432747*^9}}],
+
+Cell[TextData[{
+ "human_verified_peak ",
+ StyleBox["sample_id peak_id ppm peak_group_id",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.5128628890156517`*^9, 3.512862894502688*^9}, {
+  3.512862952869981*^9, 3.512862989971086*^9}}],
+
+Cell[TextData[{
+ StyleBox["sample_id",
+  FontSlant->"Italic"],
+ " non-negative integer uniquely identifying the sample to which this peak \
+belongs"
+}], "Text",
+ CellChangeTimes->{{3.5128630897386713`*^9, 3.512863135349742*^9}}],
+
+Cell[TextData[{
+ StyleBox["peak_id",
+  FontSlant->"Italic"],
+ " non-negative integer uniquely identifying this peak within all peaks \
+belonging to that sample"
+}], "Text",
+ CellChangeTimes->{{3.51286311176022*^9, 3.512863158284938*^9}}],
+
+Cell[TextData[{
+ StyleBox["peak_group_id",
+  FontSlant->"Italic"],
+ " the id of the peak group to which this peak belongs"
+}], "Text",
+ CellChangeTimes->{{3.5128636798662357`*^9, 3.5128637075416737`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["unverified_peak", "Subsubsubsubsection",
+ CellChangeTimes->{
+  3.512851753308806*^9, {3.5128601110614643`*^9, 3.512860114589192*^9}}],
+
+Cell[TextData[{
+ "unverified_peak ",
+ StyleBox["sample_id peak_id ppm peak_group_id",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.512863002770936*^9, 3.512863013239389*^9}}],
+
+Cell["Fields are the same as in human_verified_peak", "Text",
+ CellChangeTimes->{{3.512863045512755*^9, 3.5128630528643303`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["unknown_peak", "Subsubsubsubsection",
+ CellChangeTimes->{3.512851753308806*^9}],
+
+Cell[TextData[{
+ "unknown_peak",
+ StyleBox[" sample_id peak_id ppm",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.5128357417977333`*^9, 3.5128357744033947`*^9}, {
+  3.512842268939452*^9, 3.512842307759306*^9}, {3.5128441343123302`*^9, 
+  3.512844159875463*^9}, {3.512844831904087*^9, 3.512844843213191*^9}, {
+  3.512845677267353*^9, 3.512845688543359*^9}, {3.512851676058429*^9, 
+  3.512851678622175*^9}, {3.512851733465119*^9, 3.512851740882955*^9}, {
+  3.5128601714573927`*^9, 3.512860198869239*^9}, {3.5128637395168343`*^9, 
+  3.5128637756125727`*^9}}],
+
+Cell["The fields are the same as in human_verified_peak", "Text",
+ CellChangeTimes->{{3.512863781499023*^9, 3.51286379060808*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["sample", "Subsubsubsubsection",
+ CellChangeTimes->{
+  3.512851753308806*^9, {3.5128601486769743`*^9, 3.512860149399611*^9}}],
+
+Cell[TextData[{
+ "sample ",
+ StyleBox["sample_id class",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.512863800327096*^9, 3.5128638086420727`*^9}}],
+
+Cell[TextData[{
+ StyleBox["sample_id",
+  FontSlant->"Italic"],
+ " a non-negative integer uniquely identifying the sample described by this \
+line"
+}], "Text",
+ CellChangeTimes->{{3.512863814954463*^9, 3.5128638620234947`*^9}, {
+  3.5129184864409437`*^9, 3.512918495997427*^9}}],
+
+Cell[TextData[{
+ StyleBox["class",
+  FontSlant->"Italic"],
+ " a string (without spaces) indicating which treatment class this sample \
+came from.  If two samples have different strings, then they came from \
+different classes, same string, same classes"
+}], "Text",
+ CellChangeTimes->{{3.512863866503633*^9, 3.512863867011032*^9}, {
+  3.512918261411395*^9, 3.5129183414691896`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["sample_params", "Subsubsubsubsection",
+ CellChangeTimes->{
+  3.512851753308806*^9, {3.512860152519236*^9, 3.512860154369104*^9}}],
+
+Cell[TextData[{
+ "sample_params ",
+ StyleBox["sample_id param_1 param_2 ... param_n",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.512918374342269*^9, 3.512918434619418*^9}}],
+
+Cell[TextData[{
+ StyleBox["sample_id",
+  FontSlant->"Italic"],
+ " a non-negative integer uniquely identifying the samle to which these \
+parameters apply"
+}], "Text",
+ CellChangeTimes->{{3.512860143518787*^9, 3.5128601445972033`*^9}, {
+  3.512918474311311*^9, 3.512918520599001*^9}}],
+
+Cell[TextData[{
+ StyleBox["param_1 ... param_n",
+  FontSlant->"Italic"],
+ " a vector of n sample parameters so that the predicted location of a peak \
+in this sample is peak_group.ppm + peak_group.parameters \[CenterDot] \
+sample.sample_parameters"
+}], "Text",
+ CellChangeTimes->{{3.512918553870042*^9, 3.512918585287904*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["param_stats", "Subsubsubsubsection",
+ CellChangeTimes->{
+  3.512851753308806*^9, {3.512860152519236*^9, 3.512860154369104*^9}, {
+   3.512944644717148*^9, 3.5129446544329853`*^9}}],
+
+Cell["param_stats fracvar_1 fracvar_2 ... fracvar_n", "Text",
+ CellChangeTimes->{{3.5129446576517277`*^9, 3.512944675715708*^9}}],
+
+Cell[TextData[{
+ StyleBox["fracvar_1 ... fracvar_n",
+  FontSlant->"Italic"],
+ " is a vector of n decimal rational numbers that give fraction of variance \
+explained by the corresponding sample parameter in the group of known peaks \
+used to generate the sample parameters"
+}], "Text",
+ CellChangeTimes->{{3.5129446789265547`*^9, 3.512944772121903*^9}}]
 }, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["hough_sample_params", "Subsubsection",
+ CellChangeTimes->{{3.51283408529628*^9, 3.512834091529793*^9}}],
+
+Cell[TextData[{
+ "hough_sample_params ",
+ StyleBox["options",
+  FontSlant->"Italic"],
+ " ",
+ StyleBox["fractionVariance",
+  FontSlant->"Italic"],
+ "   <   initial_db   >   db_with_sample_params"
+}], "Text",
+ CellChangeTimes->{{3.512831135113229*^9, 3.5128311386440353`*^9}, {
+   3.512831450858382*^9, 3.512831471758383*^9}, {3.5128315136979847`*^9, 
+   3.512831517057518*^9}, 3.512832062098823*^9, {3.512832327112322*^9, 
+   3.5128323385354548`*^9}, {3.512832574541724*^9, 3.512832603454234*^9}, {
+   3.512832651149777*^9, 3.5128326579896727`*^9}, {3.512832736387932*^9, 
+   3.5128327432004423`*^9}, {3.512918665538003*^9, 3.5129186764584007`*^9}, {
+   3.512918931950904*^9, 3.512918946431259*^9}, {3.512943582761167*^9, 
+   3.512943592031831*^9}}],
+
+Cell["\<\
+Reads a peak database from standard input.  Extracts the set of peak_groups \
+that have a representative in every sample.  Creates a set of sample \
+parameters that accounts for at least fractionVariance (0..1) of the variance \
+of the peaks in those peak groups.  Outputs a database with these new sample \
+parameters along with a param_stats object added.\
+\>", "Text",
+ CellChangeTimes->{{3.512918683640894*^9, 3.512918759701789*^9}, {
+  3.512918794645802*^9, 3.512918904656478*^9}, {3.512918980832136*^9, 
+  3.5129189972907677`*^9}, {3.512919046639976*^9, 3.512919075470748*^9}, {
+  3.512919140863475*^9, 3.512919189739751*^9}, {3.512919368771625*^9, 
+  3.512919427630797*^9}, {3.512944797744252*^9, 3.512944806003613*^9}}],
+
+Cell["\<\
+If there are already sample_params objects in the database, then three things \
+differ.  First, the number of parameters is set to be the same as the number \
+of parameters in the existing objects.  Second, only samples not associated \
+with an extant sample_params object are given new sample_params objects.  \
+Third, the param_stats object will be left unchanged.  (Maybe I should update \
+it? - check for later version.)\
+\>", "Text",
+ CellChangeTimes->{{3.512919429920203*^9, 3.512919465620377*^9}, {
+  3.512943615197925*^9, 3.512943689427772*^9}, {3.512944816522481*^9, 
+  3.512944838450777*^9}, {3.5129448798001842`*^9, 3.5129449333418303`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Options", "Subsubsubsection",
+ CellChangeTimes->{{3.512943736966728*^9, 3.51294374239797*^9}}],
+
+Cell["\<\
+The only option is --remove-sample-params which, when present, removes all \
+sample_params objects from the input database before processing it\
+\>", "Text",
+ CellChangeTimes->{{3.512943744974175*^9, 3.51294379499345*^9}, {
+  3.51294399976042*^9, 3.5129440021018467`*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["simple_hough", "Subsubsection",
+ CellChangeTimes->{{3.5129440098505287`*^9, 3.512944012385881*^9}}],
+
+Cell[TextData[{
+ "simple_hough ",
+ StyleBox["centralLocationResolution baseResolution",
+  FontSlant->"Italic"],
+ " ",
+ StyleBox["standardDeviation",
+  FontSlant->"Italic"],
+ "   <   initial_db   >   db_with_detected_peaks"
+}], "Text",
+ CellChangeTimes->{{3.512944015330653*^9, 3.5129440203875217`*^9}, {
+  3.51294409625839*^9, 3.512944143790782*^9}, {3.512945129701129*^9, 
+  3.512945144671627*^9}, {3.5129479250402308`*^9, 3.512947930024087*^9}}],
+
+Cell["\<\
+Reads a peak database from standard input.  This database must have \
+sample_params objects defined for every sample and also a param_stats object. \
+ Uses the Alm et. al. Hough transform algorithm to infer the existence of \
+peak groups.  The output database has a set of detected_peak_group objects.\
+\>", "Text",
+ CellChangeTimes->{{3.5129449688638163`*^9, 3.512945013610648*^9}, {
+  3.512945106737544*^9, 3.512945107940775*^9}, {3.512945469752722*^9, 
+  3.512945484775813*^9}, {3.512945525530162*^9, 3.5129455587487173`*^9}, {
+  3.512945641970704*^9, 3.512945754307271*^9}, {3.512946721996518*^9, 
+  3.512946761573937*^9}, {3.512946810675273*^9, 3.5129468450413446`*^9}, {
+  3.512948572173431*^9, 3.5129485845173798`*^9}, {3.5129487442368097`*^9, 
+  3.5129487572535477`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["assign_peaks", "Subsubsection",
+ CellChangeTimes->{{3.51294876694215*^9, 3.512948783219778*^9}}],
+
+Cell[TextData[{
+ "assign_peaks ",
+ "[keep_original_groups|keep_new_groups]",
+ StyleBox[" singleMismatchPenalty groupMismatchPenalty",
+  FontSlant->"Italic"],
+ "  <   initial_db   >   db_with_correspondence"
+}], "Text",
+ CellChangeTimes->{{3.5129488927090797`*^9, 3.512948920009192*^9}, {
+  3.5129490560899353`*^9, 3.512949086712624*^9}, {3.512949121789072*^9, 
+  3.51294913182202*^9}, {3.512949324961236*^9, 3.5129493451014223`*^9}, {
+  3.51294938682682*^9, 3.512949393083354*^9}, {3.512949427014985*^9, 
+  3.5129494330591993`*^9}}],
+
+Cell["\<\
+Reads a peak database from standard input.  This database must have \
+detected_peak_group objects.  Does an assignment of unknown peaks to detected \
+groups.  Many of them should become known peaks.  Then the extant known peaks \
+are harmonized with the detected groups and newly known peaks.  Known peaks \
+in the input that correspond to one another will continue to correspond \
+afterwards.  However, if keep_new_groups is set, they may be given different \
+peak parameters.  The output will have no detected_peak_group objects, and \
+may have new parameterized_peak_group objects.  I outline the algorithm in \
+more detail below.\
+\>", "Text",
+ CellChangeTimes->{{3.5129489236545563`*^9, 3.5129489259153843`*^9}, {
+  3.512948989718502*^9, 3.5129490138767767`*^9}, {3.512950421473537*^9, 
+  3.5129506604969788`*^9}}],
+
+Cell["\<\
+Alm et. al. does not speak about peak assignment - they use the predicted \
+locations as the peak location in each sample.  This does an assignment of \
+peaks to detected peak groups.\
+\>", "Text",
+ CellChangeTimes->{{3.51294697012208*^9, 3.512947027957899*^9}, {
+  3.512949178385405*^9, 3.512949198931471*^9}}],
+
+Cell["\<\
+First, for each sample, an assignment is made between all peaks and both the \
+detected peak groups so as to minimize a penalty function.  For any groups \
+that do not have a corresponding peak, a singleMismatchPenalty is charged.  \
+Otherwise, the distance between a group's predicted location and the assigned \
+peak location is charged.  Then any unknown peaks are changed into known \
+peaks assigned to the group from the generated assignment.  (Note: I do not \
+match to both groups because one expects that each peak group in a set should \
+have a representative peak, thus it makes sense to charge a penalty.  However \
+there is overlap between the sets - most peak groups in the original should \
+have a corresponding group in the detected.  If I use both sets, I don't know \
+which groups correspond so I don't know when to charge a penalty.)\
+\>", "Text",
+ CellChangeTimes->{{3.5129491861751328`*^9, 3.512949224870956*^9}, {
+  3.5129492603346987`*^9, 3.512949312690757*^9}, {3.5129494795411987`*^9, 
+  3.512949612854702*^9}, {3.512949650508915*^9, 3.512949703458128*^9}, {
+  3.512949844461131*^9, 3.512949972801229*^9}, {3.5129500153316708`*^9, 
+  3.5129500659993477`*^9}}],
+
+Cell["\<\
+Then, depending on the first parameter (whether it is keep_original_groups or \
+keep_new_groups), the group that is to be discarded is matched in the as done \
+with the sample peaks to the group that is to be kept.  An discarded group \
+with no match is charged a groupMismatchPenalty.  A discarded group with a \
+match is charged a penalty according to the total error of its peaks in the \
+matched kept group.  Finally, any known peaks in a discarded group with a \
+match are moved to a the kept group and the discarded group is removed.  \
+Those \"discarded\" groups with no match are kept.  At the end, all remaining \
+detected_peak_group objects are promoted to parameterized peak group objects.\
+\
+\>", "Text",
+ CellChangeTimes->{{3.5129497167071447`*^9, 3.512949826908492*^9}, {
+  3.512950078150457*^9, 3.512950323024849*^9}, {3.512950678159091*^9, 
+  3.512950719923258*^9}}]
+}, Open  ]]
+}, Closed]]
 }, Open  ]]
 },
 AutoGeneratedPackage->None,
@@ -17325,12 +18596,12 @@ CellTagsIndex->{
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Info3512459889-7380264", 689540, 17305},
- {"Info3512474752-6925473", 689655, 17308},
- {"Info3512479406-3746257", 689770, 17311},
- {"Info3512481356-2868314", 689885, 17314},
- {"Info3512481362-2165483", 690000, 17317},
- {"Info3512496286-5561169", 690115, 17320}
+ {"Info3512459889-7380264", 749953, 18576},
+ {"Info3512474752-6925473", 750068, 18579},
+ {"Info3512479406-3746257", 750183, 18582},
+ {"Info3512481356-2868314", 750298, 18585},
+ {"Info3512481362-2165483", 750413, 18588},
+ {"Info3512496286-5561169", 750528, 18591}
  }
 *)
 (*NotebookFileOutline
@@ -18647,61 +19918,163 @@ Cell[675526, 16946, 188, 2, 29, "Subsubsection"],
 Cell[675717, 16950, 450, 8, 51, "Text"]
 }, Open  ]]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[676228, 16965, 110, 1, 73, "Section"],
+Cell[676228, 16965, 110, 1, 43, "Section"],
 Cell[CellGroupData[{
 Cell[676363, 16970, 112, 1, 39, "Subsection"],
 Cell[676478, 16973, 240, 4, 31, "Text"]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[676755, 16982, 121, 1, 39, "Subsection"],
+Cell[676755, 16982, 121, 1, 31, "Subsection"],
 Cell[676879, 16985, 279, 5, 31, "Text"]
-}, Open  ]],
+}, Closed]],
 Cell[CellGroupData[{
-Cell[677195, 16995, 166, 2, 39, "Subsection"],
+Cell[677195, 16995, 166, 2, 31, "Subsection"],
 Cell[677364, 16999, 461, 8, 51, "Text"],
 Cell[677828, 17009, 235, 5, 31, "Text"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[678100, 17019, 234, 3, 31, "Subsection"],
+Cell[678337, 17024, 191, 4, 31, "Text"],
+Cell[CellGroupData[{
+Cell[678553, 17032, 109, 1, 29, "Subsubsection"],
+Cell[678665, 17035, 486, 8, 31, "Text"],
+Cell[679154, 17045, 661, 11, 51, "Text"],
+Cell[CellGroupData[{
+Cell[679840, 17060, 99, 1, 30, "Subsubsubsection"],
+Cell[679942, 17063, 697, 12, 51, "Text"],
+Cell[680642, 17077, 1186, 24, 111, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[678100, 17019, 176, 2, 39, "Subsection"],
-Cell[678279, 17023, 191, 4, 31, "Text"],
-Cell[CellGroupData[{
-Cell[678495, 17031, 109, 1, 29, "Subsubsection"],
-Cell[678607, 17034, 486, 8, 31, "Text"],
-Cell[679096, 17044, 661, 11, 51, "Text"],
-Cell[CellGroupData[{
-Cell[679782, 17059, 99, 1, 30, "Subsubsubsection"],
-Cell[679884, 17062, 697, 12, 51, "Text"],
-Cell[680584, 17076, 1186, 24, 111, "Text"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[681807, 17105, 102, 1, 30, "Subsubsubsection"],
-Cell[681912, 17108, 495, 11, 71, "Text"],
-Cell[682410, 17121, 835, 15, 151, "Text"]
+Cell[681865, 17106, 102, 1, 30, "Subsubsubsection"],
+Cell[681970, 17109, 495, 11, 71, "Text"],
+Cell[682468, 17122, 835, 15, 151, "Text"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[683294, 17142, 151, 2, 29, "Subsubsection"],
-Cell[683448, 17146, 334, 6, 31, "Text"],
-Cell[683785, 17154, 1035, 15, 91, "Text"],
+Cell[683352, 17143, 151, 2, 29, "Subsubsection"],
+Cell[683506, 17147, 334, 6, 31, "Text"],
+Cell[683843, 17155, 1035, 15, 91, "Text"],
 Cell[CellGroupData[{
-Cell[684845, 17173, 101, 1, 30, "Subsubsubsection"],
-Cell[684949, 17176, 283, 6, 31, "Text"],
-Cell[685235, 17184, 201, 4, 31, "Text"],
-Cell[685439, 17190, 792, 19, 131, "Text"],
-Cell[686234, 17211, 396, 7, 31, "Text"]
+Cell[684903, 17174, 101, 1, 30, "Subsubsubsection"],
+Cell[685007, 17177, 283, 6, 31, "Text"],
+Cell[685293, 17185, 201, 4, 31, "Text"],
+Cell[685497, 17191, 792, 19, 131, "Text"],
+Cell[686292, 17212, 396, 7, 31, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[686667, 17223, 102, 1, 30, "Subsubsubsection"],
-Cell[686772, 17226, 242, 5, 31, "Text"],
-Cell[687017, 17233, 736, 19, 131, "Text"],
-Cell[687756, 17254, 627, 13, 111, "Text"],
-Cell[688386, 17269, 272, 6, 51, "Text"],
-Cell[688661, 17277, 286, 5, 31, "Text"]
+Cell[686725, 17224, 102, 1, 30, "Subsubsubsection"],
+Cell[686830, 17227, 242, 5, 31, "Text"],
+Cell[687075, 17234, 736, 19, 131, "Text"],
+Cell[687814, 17255, 627, 13, 111, "Text"],
+Cell[688444, 17270, 272, 6, 51, "Text"],
+Cell[688719, 17278, 286, 5, 31, "Text"]
 }, Open  ]]
 }, Open  ]]
+}, Closed]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[689078, 17291, 110, 1, 73, "Section"],
+Cell[CellGroupData[{
+Cell[689213, 17296, 184, 2, 39, "Subsection"],
+Cell[CellGroupData[{
+Cell[689422, 17302, 95, 1, 29, "Subsubsection"],
+Cell[689520, 17305, 98, 1, 31, "Text"],
+Cell[689621, 17308, 349, 6, 31, "Text"],
+Cell[689973, 17316, 136, 1, 31, "Text"],
+Cell[690112, 17319, 106, 1, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[690255, 17325, 104, 1, 29, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[690384, 17330, 102, 1, 30, "Subsubsubsection"],
+Cell[690489, 17333, 751, 14, 51, "Text"],
+Cell[691243, 17349, 285, 5, 31, "Text"],
+Cell[691531, 17356, 39103, 714, 510, 19249, 385, "CachedBoxData", "BoxData", \
+"Input"],
+Cell[730637, 18072, 832, 14, 51, "Text"],
+Cell[731472, 18088, 304, 6, 31, "Text"],
+Cell[731779, 18096, 488, 8, 71, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[732304, 18109, 189, 2, 30, "Subsubsubsection"],
+Cell[732496, 18113, 249, 5, 31, "Text"],
+Cell[732748, 18120, 187, 4, 31, "Text"],
+Cell[CellGroupData[{
+Cell[732960, 18128, 222, 3, 29, "Subsubsubsubsection"],
+Cell[733185, 18133, 388, 8, 31, "Text"],
+Cell[733576, 18143, 338, 8, 31, "Text"],
+Cell[733917, 18153, 225, 6, 31, "Text"],
+Cell[734145, 18161, 418, 9, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[734600, 18175, 243, 4, 29, "Subsubsubsubsection"],
+Cell[734846, 18181, 380, 8, 31, "Text"],
+Cell[735229, 18191, 338, 8, 31, "Text"],
+Cell[735570, 18201, 225, 6, 31, "Text"],
+Cell[735798, 18209, 418, 9, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[736253, 18223, 143, 2, 29, "Subsubsubsubsection"],
+Cell[736399, 18227, 241, 6, 31, "Text"],
+Cell[736643, 18235, 228, 6, 31, "Text"],
+Cell[736874, 18243, 237, 6, 31, "Text"],
+Cell[737114, 18251, 204, 5, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[737355, 18261, 139, 2, 29, "Subsubsubsubsection"],
+Cell[737497, 18265, 186, 5, 31, "Text"],
+Cell[737686, 18272, 129, 1, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[737852, 18278, 85, 1, 29, "Subsubsubsubsection"],
+Cell[737940, 18281, 567, 11, 31, "Text"],
+Cell[738510, 18294, 130, 1, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[738677, 18300, 130, 2, 29, "Subsubsubsubsection"],
+Cell[738810, 18304, 159, 5, 31, "Text"],
+Cell[738972, 18311, 277, 7, 31, "Text"],
+Cell[739252, 18320, 382, 8, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[739671, 18333, 135, 2, 29, "Subsubsubsubsection"],
+Cell[739809, 18337, 186, 5, 31, "Text"],
+Cell[739998, 18344, 283, 7, 31, "Text"],
+Cell[740284, 18353, 326, 7, 31, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[740647, 18365, 185, 3, 29, "Subsubsubsubsection"],
+Cell[740835, 18370, 129, 1, 31, "Text"],
+Cell[740967, 18373, 352, 7, 51, "Text"]
 }, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[741380, 18387, 109, 1, 29, "Subsubsection"],
+Cell[741492, 18390, 748, 16, 31, "Text"],
+Cell[742243, 18408, 737, 11, 51, "Text"],
+Cell[742983, 18421, 662, 10, 71, "Text"],
+Cell[CellGroupData[{
+Cell[743670, 18435, 100, 1, 30, "Subsubsubsection"],
+Cell[743773, 18438, 282, 5, 31, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[744104, 18449, 105, 1, 29, "Subsubsection"],
+Cell[744212, 18452, 447, 11, 31, "Text"],
+Cell[744662, 18465, 789, 12, 51, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[745488, 18482, 102, 1, 29, "Subsubsection"],
+Cell[745593, 18485, 532, 11, 31, "Text"],
+Cell[746128, 18498, 829, 13, 91, "Text"],
+Cell[746960, 18513, 321, 6, 31, "Text"],
+Cell[747284, 18521, 1193, 17, 111, "Text"],
+Cell[748480, 18540, 892, 14, 91, "Text"]
+}, Open  ]]
+}, Closed]]
 }, Open  ]]
 }
 ]
