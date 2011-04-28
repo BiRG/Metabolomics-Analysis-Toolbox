@@ -1156,12 +1156,17 @@ ylim auto;
 yl = ylim;
 bins = get_bins(handles);
 for b = 1:size(bins,1)
-    right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],'r');
+    color = 'm';
+    if mod(b-1,2) == 0
+        color = 'b';
+    end
+    right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],color);
 %     if b == bin_inx
     set(right_cursor,'LineWidth',3);
+    set(right_cursor,'LineStyle','--');
 %     end
     set(right_cursor,'tag','right_cursor');
-    left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],'g');
+    left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],color);
 %     if b == bin_inx
     set(left_cursor,'LineWidth',3);
 %     end
@@ -1404,4 +1409,4 @@ function about_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-web('about.html');
+web('about.html'); 

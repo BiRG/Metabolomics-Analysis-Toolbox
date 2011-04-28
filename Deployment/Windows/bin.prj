@@ -62,6 +62,7 @@
       <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\main.m</file>
     </fileset.main>
     <fileset.resources>
+      <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\about.html</file>
       <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\bin_collection.m</file>
       <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\clear_all.m</file>
       <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\clear_before_run.m</file>
@@ -77,6 +78,10 @@
     <matlab>
       <root>C:\Program Files\MATLAB\R2011a</root>
       <path>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\lib\dab</directory>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\matlab_scripts\cursors</directory>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\matlab_scripts</directory>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\lib</directory>
         <directory>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\lib\dab</directory>
         <directory>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\matlab_scripts\cursors</directory>
         <directory>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\matlab_scripts</directory>
