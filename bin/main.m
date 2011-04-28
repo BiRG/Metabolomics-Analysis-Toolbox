@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 27-Apr-2011 15:34:18
+% Last Modified by GUIDE v2.5 28-Apr-2011 10:15:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1156,12 +1156,17 @@ ylim auto;
 yl = ylim;
 bins = get_bins(handles);
 for b = 1:size(bins,1)
-    right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],'r');
+    color = 'm';
+    if mod(b-1,2) == 0
+        color = 'b';
+    end
+    right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],color);
 %     if b == bin_inx
     set(right_cursor,'LineWidth',3);
+    set(right_cursor,'LineStyle','--');
 %     end
     set(right_cursor,'tag','right_cursor');
-    left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],'g');
+    left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],color);
 %     if b == bin_inx
     set(left_cursor,'LineWidth',3);
 %     end
@@ -1386,3 +1391,22 @@ function right_pushbutton_Callback(hObject, eventdata, handles)
 xlim1 = xlim;
 xdist = str2num(get(handles.x_zoom_edit,'String'));
 xlim([xlim1(1)-xdist,xlim1(2)-xdist]);        
+
+
+% --- Executes on button press in open_figure_pushbutton.
+function open_figure_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to open_figure_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[filename,pathname] = uigetfile('*.fig', 'Open figure');
+open([pathname,filename]);
+
+
+% --- Executes on button press in about_pushbutton.
+function about_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to about_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+web('about.html'); 

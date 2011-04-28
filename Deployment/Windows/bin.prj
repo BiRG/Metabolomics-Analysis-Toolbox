@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project>
-  <configuration target="target.standalone.win" target-name="Windows Standalone Application" name="bin" location="C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows" file="C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin.prj" build-checksum="1652675807">
-    <param.project.name>C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin.prj</param.project.name>
+  <configuration target="target.standalone.win" target-name="Windows Standalone Application" name="bin" location="C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows" file="C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin.prj" build-checksum="2148059009">
+    <param.project.name>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin.prj</param.project.name>
     <param.target.type>Windows Standalone Application</param.target.type>
     <param.appname>bin</param.appname>
     <param.intermediate>${PROJECT_ROOT}\bin\src</param.intermediate>
@@ -18,6 +18,7 @@
       <warning.demo>on</warning.demo>
     </param.warnings>
     <param.version>1.0</param.version>
+    <param.user.only.registration>false</param.user.only.registration>
     <param.c.cpp.options.file />
     <param.include.dirs />
     <param.lib.dirs />
@@ -43,6 +44,7 @@
       <param.tbx_on_path />
       <param.warnings />
       <param.version />
+      <param.user.only.registration />
       <param.c.cpp.options.file />
       <param.include.dirs />
       <param.lib.dirs />
@@ -57,22 +59,34 @@
       <param.log.file />
     </unset>
     <fileset.main>
-      <file>C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\quantification\dab\main.m</file>
+      <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\main.m</file>
     </fileset.main>
     <fileset.resources>
+      <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\about.html</file>
+      <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\bin_collection.m</file>
+      <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\clear_all.m</file>
+      <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\clear_before_run.m</file>
+      <file>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\bin\main.fig</file>
       <file>C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\lib</file>
       <file>C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\matlab_scripts</file>
-      <file>C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\quantification\dab\main.fig</file>
     </fileset.resources>
     <fileset.package />
     <build-deliverables>
-      <file name="bin.exe" location="${PROJECT_ROOT}\bin\distrib">C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin\distrib\bin.exe</file>
-      <file name="readme.txt" location="${PROJECT_ROOT}\bin\distrib">C:\Users\Paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin\distrib\readme.txt</file>
+      <file name="bin.exe" location="${PROJECT_ROOT}\bin\distrib" optional="false">C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin\distrib\bin.exe</file>
+      <file name="readme.txt" location="${PROJECT_ROOT}\bin\distrib" optional="false">C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\Deployment\Windows\bin\distrib\readme.txt</file>
     </build-deliverables>
     <matlab>
-      <root>C:\Program Files\MATLAB\R2010b</root>
+      <root>C:\Program Files\MATLAB\R2011a</root>
       <path>
-        <directory>C:\Users\Paul\Documents\MATLAB</directory>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\lib\dab</directory>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\matlab_scripts\cursors</directory>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\matlab_scripts</directory>
+        <directory>C:\Users\paul\Dropbox\omics_analysis\lib</directory>
+        <directory>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\lib\dab</directory>
+        <directory>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\matlab_scripts\cursors</directory>
+        <directory>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\matlab_scripts</directory>
+        <directory>C:\Users\paul\Dropbox\Development\Metabolomics-Analysis-Toolbox\lib</directory>
+        <directory>C:\Users\paul\Documents\MATLAB</directory>
         <directory>${MATLAB_ROOT}\toolbox\matlab\general</directory>
         <directory>${MATLAB_ROOT}\toolbox\matlab\ops</directory>
         <directory>${MATLAB_ROOT}\toolbox\matlab\lang</directory>
@@ -111,7 +125,6 @@
         <directory>${MATLAB_ROOT}\toolbox\matlab\datamanager</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\simulink</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\instrument</directory>
-        <directory>${MATLAB_ROOT}\toolbox\rtw\rtw</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\asynciolib</directory>
         <directory>${MATLAB_ROOT}\toolbox\bioinfo\bioinfo</directory>
         <directory>${MATLAB_ROOT}\toolbox\bioinfo\biolearning</directory>
@@ -121,6 +134,12 @@
         <directory>${MATLAB_ROOT}\toolbox\bioinfo\biomatrices</directory>
         <directory>${MATLAB_ROOT}\toolbox\bioinfo\biodemos</directory>
         <directory>${MATLAB_ROOT}\toolbox\bioinfo\graphtheory</directory>
+        <directory>${MATLAB_ROOT}\toolbox\coder\emlcodermex</directory>
+        <directory>${MATLAB_ROOT}\toolbox\rtw\rtw</directory>
+        <directory>${MATLAB_ROOT}\toolbox\rtw\targets\shared</directory>
+        <directory>${MATLAB_ROOT}\toolbox\rtw\coder_foundation\tfl</directory>
+        <directory>${MATLAB_ROOT}\toolbox\shared\simtargets</directory>
+        <directory>${MATLAB_ROOT}\toolbox\coder\coder</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\comparisons</directory>
         <directory>${MATLAB_ROOT}\toolbox\compiler</directory>
         <directory>${MATLAB_ROOT}\toolbox\compiler\compilerdemos</directory>
@@ -139,33 +158,32 @@
         <directory>${MATLAB_ROOT}\toolbox\distcomp\mpi</directory>
         <directory>${MATLAB_ROOT}\toolbox\distcomp\pctdemos</directory>
         <directory>${MATLAB_ROOT}\toolbox\distcomp\parallel</directory>
-        <directory>${MATLAB_ROOT}\toolbox\distcomp\parallel\lapack</directory>
         <directory>${MATLAB_ROOT}\toolbox\distcomp\parallel\util</directory>
         <directory>${MATLAB_ROOT}\toolbox\distcomp\lang</directory>
         <directory>${MATLAB_ROOT}\toolbox\distcomp\cluster</directory>
         <directory>${MATLAB_ROOT}\toolbox\distcomp\gpu</directory>
         <directory>${MATLAB_ROOT}\toolbox\eml\eml</directory>
-        <directory>${MATLAB_ROOT}\toolbox\emlcoder\emlcoder</directory>
-        <directory>${MATLAB_ROOT}\toolbox\emlcoder\emlcodermex</directory>
-        <directory>${MATLAB_ROOT}\toolbox\shared\simtargets</directory>
+        <directory>${MATLAB_ROOT}\toolbox\fixedpoint\fixedpoint</directory>
         <directory>${MATLAB_ROOT}\toolbox\globaloptim</directory>
         <directory>${MATLAB_ROOT}\toolbox\globaloptim\globaloptim</directory>
         <directory>${MATLAB_ROOT}\toolbox\globaloptim\globaloptimdemos</directory>
+        <directory>${MATLAB_ROOT}\toolbox\sam\m3i</directory>
         <directory>${MATLAB_ROOT}\toolbox\optim\optim</directory>
         <directory>${MATLAB_ROOT}\toolbox\optim\optimdemos</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\eml\eml</directory>
+        <directory>${MATLAB_ROOT}\toolbox\shared\siglib</directory>
         <directory>${MATLAB_ROOT}\toolbox\signal\signal</directory>
         <directory>${MATLAB_ROOT}\toolbox\signal\sigtools</directory>
         <directory>${MATLAB_ROOT}\toolbox\signal\sptoolgui</directory>
         <directory>${MATLAB_ROOT}\toolbox\signal\sigdemos</directory>
-        <directory>${MATLAB_ROOT}\toolbox\shared\spcuilib</directory>
-        <directory>${MATLAB_ROOT}\toolbox\shared\siglib</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\filterdesignlib</directory>
         <directory>${MATLAB_ROOT}\toolbox\simbio\simbio</directory>
         <directory>${MATLAB_ROOT}\toolbox\simbio\simbiodemos</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\statslib</directory>
+        <directory>${MATLAB_ROOT}\toolbox\shared\spcuilib</directory>
         <directory>${MATLAB_ROOT}\toolbox\stats\stats</directory>
         <directory>${MATLAB_ROOT}\toolbox\stats\statsdemos</directory>
+        <directory>${MATLAB_ROOT}\toolbox\stats\classreg</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\testmeaslib\general</directory>
         <directory>${MATLAB_ROOT}\toolbox\shared\testmeaslib\graphics</directory>
         <directory>${MATLAB_ROOT}\toolbox\wavelet\wavelet</directory>
