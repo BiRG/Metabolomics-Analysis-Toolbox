@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 27-Apr-2011 15:34:18
+% Last Modified by GUIDE v2.5 28-Apr-2011 10:15:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1386,3 +1386,22 @@ function right_pushbutton_Callback(hObject, eventdata, handles)
 xlim1 = xlim;
 xdist = str2num(get(handles.x_zoom_edit,'String'));
 xlim([xlim1(1)-xdist,xlim1(2)-xdist]);        
+
+
+% --- Executes on button press in open_figure_pushbutton.
+function open_figure_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to open_figure_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[filename,pathname] = uigetfile('*.fig', 'Open figure');
+open([pathname,filename]);
+
+
+% --- Executes on button press in about_pushbutton.
+function about_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to about_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+web('about.html');
