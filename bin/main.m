@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 25-Apr-2011 15:14:29
+% Last Modified by GUIDE v2.5 27-Apr-2011 15:34:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,8 +57,8 @@ handles.output = hObject;
 
 set(handles.summary_text,'String',{''});
 
-myfunc = @(hObject, eventdata, handles_) (key_press(handles));
-set(gcf,'KeyPressFcn',myfunc);
+% myfunc = @(hObject, eventdata, handles_) (key_press(handles));
+% set(gcf,'KeyPressFcn',myfunc);
 
 set(handles.collection_uipanel,'Visible','on');
 set(handles.results_uipanel,'Visible','off');
@@ -74,7 +74,6 @@ guidata(hObject, handles);
 
 % UIWAIT makes main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
 
 % --- Outputs from this function are returned to the command line.
 function varargout = main_OutputFcn(hObject, eventdata, handles) 
@@ -425,10 +424,9 @@ for g = 1:length(handles.group_by_inxs)
                 h = plot(collection.x,handles.available_X(inxs(i),:),...
                     'Marker',data{d,4},'Color',data{d,3},...
                     'MarkerFaceColor',data{d,3},'tag','spectrum_line');
-                if ~disable_subplot_feature
-                    myfunc = @(hObject, eventdata, handles_) (line_click_info(collection,inxs(i)));
-                    set(h,'ButtonDownFcn',myfunc);
-                end
+%                 myfunc = @(hObject, eventdata, handles_) (line_click_info(collection,inxs(i)));
+                setappdata(h,'inx',inxs(i));
+                set(h,'ButtonDownFcn',@line_click_info_myfunc);
                 if i == 1
                     h_groups{subplot_inx}(end+1) = h;
                 end
@@ -437,10 +435,9 @@ for g = 1:length(handles.group_by_inxs)
             for i = 1:length(inxs)
                 h = plot(collection.x,handles.available_X(inxs(i),:),...
                     'Marker',data{d,4},'Color',data{d,3},'tag','spectrum_line');
-                if ~disable_subplot_feature
-                    myfunc = @(hObject, eventdata, handles_) (line_click_info(collection,inxs(i)));
-                    set(h,'ButtonDownFcn',myfunc);
-                end
+                setappdata(h,'inx',inxs(i));
+%                 myfunc = @(hObject, eventdata, handles_) (line_click_info(collection,inxs(i)));
+                set(h,'ButtonDownFcn',@line_click_info_myfunc);
                 if i == 1
                     h_groups{subplot_inx}(end+1) = h;
                 end
@@ -490,6 +487,10 @@ for r = 1:rows
     end
 end
 
+function line_click_info_myfunc(hObject,eventdata)
+inx = getappdata(hObject,'inx');
+handles = guidata(hObject);
+line_click_info(handles.collection,inx);
 
 function xlim_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to xlim_edit (see GCBO)
@@ -983,10 +984,8 @@ data{end} = '';
 set(handles.bins_listbox,'String',data(end:-1:1));
 set(handles.bins_listbox,'Value',1);
 
-xlim auto;
-ylim auto;
-
-delete_cursors();
+% xlim auto;
+% ylim auto;
 
 guidata(handles.figure1, handles);
 
@@ -1143,24 +1142,29 @@ if bin(1) < bin(2)
 else
     handles.xlim = [bin(2)-buf,bin(1)+buf];
 end
-    
-if ~get(handles.lock_window_checkbox,'Value')
-    xlim(handles.xlim);
-    ylim auto
+
+if get(handles.lock_window_checkbox,'Value')
+    x_range = handles.x_range;
+    current_x_range = handles.xlim(2) - handles.xlim(1);
+    diff = x_range - current_x_range;
+    handles.xlim = [handles.xlim(1)-diff/2,handles.xlim(2)+diff/2];
 end
 
+xlim(handles.xlim);
+ylim auto;
+    
 yl = ylim;
 bins = get_bins(handles);
 for b = 1:size(bins,1)
     right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],'r');
-    if b == bin_inx
-        set(right_cursor,'LineWidth',3);
-    end
+%     if b == bin_inx
+    set(right_cursor,'LineWidth',3);
+%     end
     set(right_cursor,'tag','right_cursor');
     left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],'g');
-    if b == bin_inx
-        set(left_cursor,'LineWidth',3);
-    end
+%     if b == bin_inx
+    set(left_cursor,'LineWidth',3);
+%     end
     set(left_cursor,'tag','left_cursor');           
 end
 
@@ -1357,4 +1361,28 @@ function lock_window_checkbox_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of lock_window_checkbox
 
+xl = xlim;
+handles.x_range = xl(2)-xl(1);
 
+guidata(hObject, handles);
+
+
+% --- Executes on button press in left_pushbutton.
+function left_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to left_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+xlim1 = xlim;
+xdist = str2num(get(handles.x_zoom_edit,'String'));
+xlim([xlim1(1)+xdist,xlim1(2)+xdist]); 
+    
+% --- Executes on button press in right_pushbutton.
+function right_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to right_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+xlim1 = xlim;
+xdist = str2num(get(handles.x_zoom_edit,'String'));
+xlim([xlim1(1)-xdist,xlim1(2)-xdist]);        

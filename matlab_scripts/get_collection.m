@@ -21,13 +21,15 @@ end
 
 url = sprintf('http://birg.cs.wright.edu/omics_analysis/collections/%d.xml',collection_id);
 xml = urlread(url,'get',{'name',username,'password',password});
-file = tempname;
-fid = fopen(file,'w');
-fwrite(fid,xml);
-%fprintf(fid,xml);
-fclose(fid);
-collection_xml = xml2struct(file);
-data = collection_xml.Children(2).Children.Data;
+n = regexp(xml,'<data>(.*)</data>','tokens');
+data = n{1}{1};
+% file = tempname;
+% fid = fopen(file,'w');
+% fwrite(fid,xml);
+% %fprintf(fid,xml);
+% fclose(fid);
+% collection_xml = xml2struct(file);
+% data = collection_xml.Children(2).Children.Data;
 file = tempname;
 fid = fopen(file,'w');
 fwrite(fid,data);
