@@ -207,7 +207,7 @@ end
 def basic_completed_db(num_peaks, num_samples,
                        ppm_max, peak_param_std_devs, peak_noise, 
                        sample_param_std_devs)
-  lastId = 1
+  lastId = 0
   peak_groups = (1..num_peaks).to_a.map do  
     lastId += 1
     ParameterizedPeakGroup.new(lastId, ppm_max, peak_param_std_devs)
@@ -245,7 +245,25 @@ if ARGV.length != 3
   EOT
 
 else
-  numPeaks, numSamples, numParams = ARGV.map { |arg| arg.to_f }
+  numPeaks, numSamples, numParams = ARGV.map { |arg| arg.to_i }
+
+  puts <<EOT
+# Basic test data: all peaks are known and unverified, #{numPeaks} peaks
+# #{numSamples} samples, and #{numParams} parameters in both the peaks and the 
+# samples.
+#
+# The peaks are generated uniformly in the interval 0..11 and their
+# reaction parameters are all zero-mean unit width Gaussians.  The
+# sample parameters are also zero-mean unit width Gaussians.  All
+# parameters are chosen independently.
+#
+# The peak group and sample parameters explain the peak locations
+# commpletely, there is no noise.
+#
+# The blank line below serves as separating white-space and also
+# helps test that the program ignores blank lines
+
+EOT
 
   basic_completed_db(numPeaks, numSamples, 11, 
                      [1]*numParams, 0, [1]*numParams).each do |obj|
