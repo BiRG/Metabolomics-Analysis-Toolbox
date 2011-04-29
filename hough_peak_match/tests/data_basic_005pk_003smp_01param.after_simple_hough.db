@@ -13,21 +13,28 @@
 # The blank line below serves as separating white-space and also
 # helps test that the program ignores blank lines
 
-# In this data set I have removed the information for peak groups 2
-# and 3 and the sample parameter data - this is input for
-# hough_sample_params
+#################################################################
 
-# This file contains a simulation of what the output of *.initial
-# would be after being run through hough_sample_params.  Note that the
-# ordering of the items in the file should not matter, so I've swapped
-# it around a bit.  The eventual code will probably always write
-# things in the same order.
+# This file contains a simulation of what the output of
+# *.after_hough_sample_params would be after being run through
+# simple_hough.  I will have to make some slight modifications when I
+# run the actual code to account for variations in the detected
+# groups, but I expect them to be close to this.
 
+#################################################################
+
+
+detected_peak_group 25 3.58942133 -1.17405428
+detected_peak_group 26 1.47868132 -0.447780836
+detected_peak_group 27 10.60385 0.670343521
+detected_peak_group 28 3.92665492 -0.430933584
+detected_peak_group 29 9.25772734 -0.089111547
 parameterized_peak_group 4 10.603859674475 0.670343521877728
 parameterized_peak_group 5 3.92665492302606 -0.430933584676478
 parameterized_peak_group 6 9.25772734183249 -0.089111547074751
 sample 7 1
 sample 8 1
+param_stats 1
 sample 9 1
 sample_params 7 -0.482081320837365
 sample_params 8 -0.97739121424512
@@ -47,4 +54,3 @@ unknown_peak 8 15 4.73693167354539
 unknown_peak 8 16 1.91633838519872
 unknown_peak 9 20 5.47451762719196
 unknown_peak 9 21 2.1976514906282
-param_stats 1
