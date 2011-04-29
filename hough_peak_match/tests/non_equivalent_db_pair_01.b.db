@@ -1,0 +1,5 @@
+# Here is a pair of db's with parameterized peak groups with different
+# id numbers and different parameters for one of the entries
+
+parameterized_peak_group 100 1.58942133448949 1.17405428075406
+parameterized_peak_group 3 1.47868132923621 -0.447780836970717
