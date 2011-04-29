@@ -2,7 +2,7 @@ import ["c/dependencies","autoclean"]
 gen C::Dependencies
 $cpp="g++"
 $warn="-Wall -Wextra -Weffc++"
-$executables = ["hough_sample_params", "simple_hough","assign_peaks"]
+$executables = ["hough_sample_params", "simple_hough","assign_peaks","equivalent_db"]
 
 desc "Compile all executables"
 task :default => $executables
