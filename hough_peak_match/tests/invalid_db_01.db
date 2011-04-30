@@ -1,0 +1,5 @@
+# A database with only a sample params object violates the constraint
+# that each sample params object must have a 1..1 relationship with a
+# sample object
+
+sample_params 1 1 2
