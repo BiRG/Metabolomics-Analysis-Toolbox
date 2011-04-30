@@ -4,3 +4,4 @@ hough_sample_params
 simple_hough
 assign_peaks
 equivalent_db
+valid_db

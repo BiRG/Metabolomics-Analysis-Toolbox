@@ -2,7 +2,7 @@ import ["c/dependencies","autoclean"]
 gen C::Dependencies
 $cpp="g++"
 $warn="-Wall -Wextra -Weffc++"
-$executables = ["hough_sample_params", "simple_hough","assign_peaks","equivalent_db"]
+$executables = ["hough_sample_params", "simple_hough","assign_peaks","equivalent_db","valid_db"]
 
 desc "Compile all executables"
 task :default => $executables
@@ -27,7 +27,7 @@ end
 
 # Run tests
 desc "Run unit tests"
-task :test do
+task :test => $executables.map {|s| s.to_sym}  do
   sys "cd tests; perl -MTest::Harness -e '$h=TAP::Harness->new({verbosity=>0}); $h->runtests(@ARGV);' *.t"
 end
 
