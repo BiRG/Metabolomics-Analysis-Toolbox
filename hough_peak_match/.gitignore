@@ -1,5 +1,4 @@
-*.o
-c_dependencies
+obj/*.o
 hough_sample_params
 simple_hough
 assign_peaks

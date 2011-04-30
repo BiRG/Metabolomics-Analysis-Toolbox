@@ -32,18 +32,16 @@ libgsl0-dev
 
 ( gnu scientific library - what I use for PCA )
 
-rant
+The next two are not package names (but you already have them installed, don't you?)
 
-( the rant build system - the build scripts are ruby - maybe I'll make
-  the dependency just ruby some day)
+gmake
 
-ruby 
-
-( for rant - will be autoinstalled from apt-get )
+( gnu make - if you can't use this and gcc, you'll have to figure out
+  how to build things yourself )
 
 g++
 
-( gnu C++ compiler - you'll have to modify the rant file to compile on
+( gnu C++ compiler - you'll have to modify the Makefile to compile on
   a system without gcc )
 
 ***************
@@ -52,6 +50,7 @@ g++
 
 change to the directory with the source files
 
-type "rant"
+type "make"
+type "make test" (to run the unit tests)
 
 
