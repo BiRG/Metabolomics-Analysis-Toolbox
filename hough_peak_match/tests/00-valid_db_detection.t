@@ -23,6 +23,7 @@ print `pwd`;
 my $numEquiv=0; 
 my $numNonEquiv=0;
 my $numInvalid=0;
+my $numValid=0;
 for my $i (1..99){
     my $str = pad($i);
     ++$numEquiv if(-e "equivalent_db_pair_${str}.a.db");
@@ -30,9 +31,10 @@ for my $i (1..99){
     ++$numNonEquiv if( -e "non_equivalent_db_pair_${str}.a.db");
     ++$numNonEquiv if( -e "non_equivalent_db_pair_${str}.b.db");
     ++$numInvalid if( -e "invalid_db_${str}.db");
+    ++$numValid if( -e "valid_db_${str}.db");
 }
 
-plan tests=>($numEquiv+$numNonEquiv+$numInvalid);
+plan tests=>($numEquiv+$numNonEquiv+$numInvalid+$numValid);
 
 #Executes a test asserting that the given file is valid (but only if the file exists)
 sub isValidOrNonexistant($){
@@ -62,7 +64,8 @@ for my $i (1..99){
     isValidOrNonexistant("equivalent_db_pair_${str}.b.db");
     isValidOrNonexistant("non_equivalent_db_pair_${str}.a.db");
     isValidOrNonexistant("non_equivalent_db_pair_${str}.b.db");
-    isValidOrNonexistant("invalid_db_${str}.db");
+    isValidOrNonexistant("valid_db_${str}.db");
+    isInvalidOrNonexistant("invalid_db_${str}.db");
 }
 }
 
