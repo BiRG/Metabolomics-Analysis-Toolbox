@@ -1,5 +1,5 @@
 # A database with only a peak object violates the constraint that each
 # peak must come from a corresponding sample
 
-unknown_peak 100 5
+unknown_peak 100 5 2.7
 

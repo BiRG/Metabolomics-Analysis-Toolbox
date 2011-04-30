@@ -1,0 +1,7 @@
+# A database with only a peak object and its sample object.  A known
+# peak does not have to have a corresponding peak_group object because the
+# peak_group object is assumed to exist
+
+sample 12
+human_verified_peak 12 2 5.0 27
+

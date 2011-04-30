@@ -1,0 +1,7 @@
+# A database with only a peak object violates the constraint that each
+# peak must come from a corresponding sample.  Here I use a known peak
+# -- note that a known peak does not have to have a corresponding peak
+# object because the peak object is assumed to exist
+
+unverified_peak 1 3 7 22
+
