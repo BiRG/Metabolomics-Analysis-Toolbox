@@ -14,7 +14,7 @@ use warnings;
 
 sub pad($){
     my ($val) = @_;
-    sprintf "%02d",$val;
+    sprintf "%03d",$val;
 }
 
 use Test::More;
