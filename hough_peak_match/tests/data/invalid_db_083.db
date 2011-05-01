@@ -1,0 +1,4 @@
+#duplicated ids between human_verified_peak and unverified_peak
+sample 1 fatigued
+human_verified_peak 1 2 0.7 22
+unverified_peak 1 2 0.5 23
