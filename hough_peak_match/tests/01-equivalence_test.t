@@ -40,8 +40,8 @@ for my $i (1..99){
 	is($resp,"Databases ARE equivalent", 
 	   "Equivalent db pair ${str} should be equivalent when reversed");
     }
-    my $fn1 = "data/non_equivalent_db_pair_${str}.a.db";
-    my $fn2 = "data/non_equivalent_db_pair_${str}.b.db";
+    $fn1 = "data/non_equivalent_db_pair_${str}.a.db";
+    $fn2 = "data/non_equivalent_db_pair_${str}.b.db";
     if(-e $fn1) {
 	my $resp=`../equivalent_db $fn1 $fn2`;
 	is($resp,"Databases ARE NOT equivalent", 
