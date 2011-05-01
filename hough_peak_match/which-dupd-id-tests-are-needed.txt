@@ -1,0 +1,25 @@
+IDs are duplicated when:
+
+Any of the subclasses has the same id.  For peaks, it is the same sample_id and peak_id
+
+For the peaks, we also need valid databases where the peaks have the different sample_ids but the same peak_ids -- one for each pair
+
+So we need:
+
+Peak:
+human+unv
+human+human
+human+unk
+unv+unv
+unv+unk
+unk+unk
+
+peak_group:
+det+det
+det+param
+param+param
+
+sample:
+sample+sample
+
+
