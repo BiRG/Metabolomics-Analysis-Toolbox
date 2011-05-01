@@ -18,7 +18,6 @@ sub pad($){
 }
 
 use Test::More;
-print `pwd`;
 #Count the tests
 my $numEquiv=0; 
 my $numNonEquiv=0;
