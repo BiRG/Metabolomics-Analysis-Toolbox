@@ -2,6 +2,6 @@
 # peak does not have to have a corresponding peak_group object because the
 # peak_group object is assumed to exist
 
-sample 12
+sample 12 mouse-num-1
 human_verified_peak 12 2 5.0 27
 

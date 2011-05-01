@@ -2,6 +2,6 @@
 # peak does not have to have a corresponding peak_group object because the
 # peak_group object is assumed to exist
 
-sample 1
+sample 1 foo
 unverified_peak 1 2 7.0 22
 
