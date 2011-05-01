@@ -26,12 +26,12 @@ my $numInvalid=0;
 my $numValid=0;
 for my $i (1..99){
     my $str = pad($i);
-    ++$numEquiv if(-e "equivalent_db_pair_${str}.a.db");
-    ++$numEquiv if(-e "equivalent_db_pair_${str}.b.db");
-    ++$numNonEquiv if( -e "non_equivalent_db_pair_${str}.a.db");
-    ++$numNonEquiv if( -e "non_equivalent_db_pair_${str}.b.db");
-    ++$numInvalid if( -e "invalid_db_${str}.db");
-    ++$numValid if( -e "valid_db_${str}.db");
+    ++$numEquiv if(-e "data/equivalent_db_pair_${str}.a.db");
+    ++$numEquiv if(-e "data/equivalent_db_pair_${str}.b.db");
+    ++$numNonEquiv if( -e "data/non_equivalent_db_pair_${str}.a.db");
+    ++$numNonEquiv if( -e "data/non_equivalent_db_pair_${str}.b.db");
+    ++$numInvalid if( -e "data/invalid_db_${str}.db");
+    ++$numValid if( -e "data/valid_db_${str}.db");
 }
 
 plan tests=>($numEquiv+$numNonEquiv+$numInvalid+$numValid);
@@ -60,12 +60,12 @@ TODO:{
     local $TODO = "Have not written yet valid_db testing code yet.";
 for my $i (1..99){
     my $str = pad($i);
-    isValidOrNonexistant("equivalent_db_pair_${str}.a.db");
-    isValidOrNonexistant("equivalent_db_pair_${str}.b.db");
-    isValidOrNonexistant("non_equivalent_db_pair_${str}.a.db");
-    isValidOrNonexistant("non_equivalent_db_pair_${str}.b.db");
-    isValidOrNonexistant("valid_db_${str}.db");
-    isInvalidOrNonexistant("invalid_db_${str}.db");
+    isValidOrNonexistant("data/equivalent_db_pair_${str}.a.db");
+    isValidOrNonexistant("data/equivalent_db_pair_${str}.b.db");
+    isValidOrNonexistant("data/non_equivalent_db_pair_${str}.a.db");
+    isValidOrNonexistant("data/non_equivalent_db_pair_${str}.b.db");
+    isValidOrNonexistant("data/valid_db_${str}.db");
+    isInvalidOrNonexistant("data/invalid_db_${str}.db");
 }
 }
 

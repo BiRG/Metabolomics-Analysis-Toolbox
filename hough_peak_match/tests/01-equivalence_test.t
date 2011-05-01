@@ -21,8 +21,8 @@ my $numEquiv=0;
 my $numNonEquiv=0;
 for my $i (1..99){
     my $str = pad($i);
-    ++$numEquiv if(-e "equivalent_db_pair_${str}.a.db");
-    ++$numNonEquiv if( -e "non_equivalent_db_pair_${str}.a.db");
+    ++$numEquiv if(-e "data/equivalent_db_pair_${str}.a.db");
+    ++$numNonEquiv if( -e "data/non_equivalent_db_pair_${str}.a.db");
 }
 
 plan tests=>2*($numEquiv+$numNonEquiv);
@@ -31,8 +31,8 @@ TODO:{
     local $TODO = "Have not written yet equivalence testing code yet.";
 for my $i (1..99){
     my $str = pad($i);
-    my $fn1 = "equivalent_db_pair_${str}.a.db";
-    my $fn2 = "equivalent_db_pair_${str}.b.db";
+    my $fn1 = "data/equivalent_db_pair_${str}.a.db";
+    my $fn2 = "data/equivalent_db_pair_${str}.b.db";
     if(-e $fn1) {
 	my $resp=`../equivalent_db $fn1 $fn2`;
 	is($resp,"Databases ARE equivalent", 
@@ -41,8 +41,8 @@ for my $i (1..99){
 	is($resp,"Databases ARE equivalent", 
 	   "Equivalent db pair ${str} should be equivalent when reversed");
     }
-    $fn1 = "non_".$fn1;
-    $fn2 = "non_".$fn2;
+    my $fn1 = "data/non_equivalent_db_pair_${str}.a.db";
+    my $fn2 = "data/non_equivalent_db_pair_${str}.b.db";
     if(-e $fn1) {
 	my $resp=`../equivalent_db $fn1 $fn2`;
 	is($resp,"Databases ARE NOT equivalent", 
