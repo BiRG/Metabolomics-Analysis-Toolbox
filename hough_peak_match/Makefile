@@ -21,10 +21,10 @@ obj/%.o : %.cpp
 	    -e '/^$$/ d' -e 's/$$/ :/' < obj/$*.d >> obj/$*.deps; \
 	    rm -f obj/$*.d
 
-test:
+test: all
 	cd tests; ./runalltests.pl
 
-testverbose:
+testverbose: all
 	cd tests; ./runalltests.pl verbose
 
 
