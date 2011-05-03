@@ -1,3 +1,6 @@
+///\file
+///\brief Documents common file format used by BIRG peak matching tools
+
 ///\page file_format_docs File format documentation
 ///
 ///The tools communicate with each other using a serialization of this
