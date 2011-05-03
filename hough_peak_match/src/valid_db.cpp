@@ -1,4 +1,4 @@
-#include "peak_matching_database.h"
+#include "peak_matching_database.hpp"
 #include <iostream>
 #include <fstream>
 #include <cstdlib> //For exit
@@ -28,6 +28,14 @@ int main(int argc, char**argv){
   if(!db_stream){
     printUsageAndExit(std::string("ERROR: Could not open \"")+
 		      db_file_name+"\"");
+  }
+
+  HoughPeakMatch::PeakMatchingDatabase db;
+  bool success = db.read(db_stream);
+  if(success){
+    std::cout << "Valid\n";
+  }else{
+    std::cout << "Invalid\n";
   }
   return 0;
 }
