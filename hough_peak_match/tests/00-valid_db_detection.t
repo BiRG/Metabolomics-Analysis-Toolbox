@@ -40,7 +40,7 @@ sub isValidOrNonexistant($){
     my $fn = $_[0];
     if(-e $fn){
 	my $resp=`../valid_db $fn`;
-	is($resp,'Valid',"$fn detected as a valid db");
+	is($resp,"Valid\n","$fn detected as a valid db");
     }
 }
 
@@ -50,7 +50,7 @@ sub isInvalidOrNonexistant($){
     my $fn = $_[0];
     if(-e $fn){
 	my $resp=`../valid_db $fn`;
-	is($resp,'Invalid',"$fn detected as an invalid db");
+	is($resp,"Invalid\n","$fn detected as an invalid db");
     }
 }
 
