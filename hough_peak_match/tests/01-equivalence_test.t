@@ -34,20 +34,20 @@ for my $i (1..99){
     my $fn2 = "data/equivalent_db_pair_${str}.b.db";
     if(-e $fn1) {
 	my $resp=`../equivalent_db $fn1 $fn2`;
-	is($resp,"Databases ARE equivalent", 
+	is($resp,"Databases ARE equivalent\n", 
 	   "Equivalent db pair ${str} should be detected equivalent");
 	$resp=`../equivalent_db $fn2 $fn1`;
-	is($resp,"Databases ARE equivalent", 
+	is($resp,"Databases ARE equivalent\n", 
 	   "Equivalent db pair ${str} should be equivalent when reversed");
     }
     $fn1 = "data/non_equivalent_db_pair_${str}.a.db";
     $fn2 = "data/non_equivalent_db_pair_${str}.b.db";
     if(-e $fn1) {
 	my $resp=`../equivalent_db $fn1 $fn2`;
-	is($resp,"Databases ARE NOT equivalent", 
+	is($resp,"Databases ARE NOT equivalent\n", 
 	   "Non-equivalent db pair ${str} should be detected non-equivalent");
 	$resp=`../equivalent_db $fn2 $fn1`;
-	is($resp,"Databases ARE NOT equivalent", 
+	is($resp,"Databases ARE NOT equivalent\n", 
 	   "Non-equivalent db pair ${str} should be non-equivalent when reversed");
     }
 }
