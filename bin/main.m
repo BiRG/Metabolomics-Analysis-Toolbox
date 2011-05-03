@@ -930,7 +930,7 @@ function save_collection_pushbutton_Callback(hObject, eventdata, handles)
 
 collection = handles.collection;
 bins = get_bins(handles);
-new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.X');
+new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
 save_collections({new_collection},'_binned');
 
 % --- Executes on button press in post_collection_pushbutton.
@@ -947,7 +947,7 @@ numlines=1;
 defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};        
-new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.X');
+new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
 post_collections(main_h,{new_collection},'_binned',analysis_id);
 
 % --- Executes on button press in add_bin_pushbutton.
