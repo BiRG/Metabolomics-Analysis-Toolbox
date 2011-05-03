@@ -1,0 +1,4 @@
+# All peak groups and sample_params must have the same number of parameters
+sample 1 1
+sample_params 1 100 101 102
+detected_peak_group 0 0.5 1 2 3 4 5 6 

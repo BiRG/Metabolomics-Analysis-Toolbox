@@ -1,0 +1,42 @@
+# Basic test data: all peaks are known and unverified, 5 peaks
+# 3 samples, and 1 parameters in both the peaks and the 
+# samples.
+#
+# The peaks are generated uniformly in the interval 0..11 and their
+# reaction parameters are all zero-mean unit width Gaussians.  The
+# sample parameters are also zero-mean unit width Gaussians.  All
+# parameters are chosen independently.
+#
+# The peak group and sample parameters explain the peak locations
+# commpletely, there is no noise.
+#
+# The blank line below serves as separating white-space and also
+# helps test that the program ignores blank lines
+
+parameterized_peak_group 2 3.58942133448949 -1.17405428075406
+parameterized_peak_group 3 1.47868132923621 -0.447780836970717
+parameterized_peak_group 4 10.603859674475 0.670343521877728
+parameterized_peak_group 5 3.92665492302606 -0.430933584676478
+parameterized_peak_group 6 9.25772734183249 -0.089111547074751
+sample_params 7 -0.482081320837365
+sample_params 8 -0.97739121424512
+sample_params 9 -1.60562958936764
+sample 7 1
+sample 8 1
+sample 9 1
+unverified_peak 7 10 4.15541097289017 2
+unverified_peak 7 11 1.69454810656872 3
+unverified_peak 7 12 10.2806995840334 4
+unverified_peak 7 13 4.13439995472008 5
+unverified_peak 7 14 9.30068635414814 6
+unverified_peak 8 15 4.73693167354539 2
+unverified_peak 8 16 1.91633838519872 3
+unverified_peak 8 17 9.94867180566561 4
+unverified_peak 8 18 4.34784562261201 5
+unverified_peak 8 19 9.34482418503114 6
+unverified_peak 9 20 5.47451762719196 2
+unverified_peak 9 21 2.1976514906282 3
+unverified_peak 9 22 9.52753628070724 4
+unverified_peak 9 23 4.61857463763488 5
+unverified_peak 9 24 9.40080747857003 6
+param_stats 1

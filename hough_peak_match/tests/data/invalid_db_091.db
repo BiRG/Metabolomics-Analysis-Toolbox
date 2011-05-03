@@ -1,0 +1,4 @@
+#duplicate ids between parameterized_peak_group and parameterized_peak_group
+parameterized_peak_group 5 0.5 1 2 3
+parameterized_peak_group 5 0.01 3.2 2.1 1.0
+

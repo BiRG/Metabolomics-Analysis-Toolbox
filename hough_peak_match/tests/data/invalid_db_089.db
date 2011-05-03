@@ -1,0 +1,4 @@
+#duplicate ids between detected_peak_group and detected_peak_group
+detected_peak_group 23 0.5 1 2 3
+detected_peak_group 23 0.01 3.2 2.1 1.0
+

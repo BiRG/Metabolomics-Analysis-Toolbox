@@ -1,0 +1,6 @@
+#unique sample ids but duplicated peak ids between 
+#human_verified_peak and unverified_peak
+sample 2 dead
+sample 3 mostly-dead
+human_verified_peak 2 2 0.7 22
+unverified_peak 3 2 0.5 23

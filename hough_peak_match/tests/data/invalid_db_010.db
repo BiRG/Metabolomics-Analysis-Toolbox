@@ -1,0 +1,5 @@
+# All param_stas and sample_params must have the same number of parameters
+sample 1 1
+sample_params 1 100 101 102
+param_stats 0.2 0.1
+

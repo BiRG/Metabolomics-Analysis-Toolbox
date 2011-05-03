@@ -1,0 +1,9 @@
+Synopsis: valid_db db_file
+
+Checks whether the given file parses as a valid peak-matching
+database or not.
+
+Prints "Valid" or "Invalid" to stdout depending on whether the
+database is valid or not.
+
+ERROR: Could not open "non_existant_file_yes"

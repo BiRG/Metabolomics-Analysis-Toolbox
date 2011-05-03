@@ -1,0 +1,6 @@
+#peak ids duplicated but sample ids different between 
+#unverified_peak and unverified_peak
+sample 2 fatigued
+sample 8 caffineated
+unverified_peak 2 2 0.7 22
+unverified_peak 8 2 0.7 22

@@ -1,0 +1,4 @@
+#detected_peak_group with bad ppm
+detected_peak_group 4 str 1.7 .2
+
+sample 4 class-330

@@ -1,0 +1,6 @@
+#peak ids duplcated but sample ids not duplicated between 
+#unverified_peak and unknown_peak
+sample 1 fatigued
+sample 5 nonfatigued
+unknown_peak 5 2 0.7
+unverified_peak 1 2 0.7 22

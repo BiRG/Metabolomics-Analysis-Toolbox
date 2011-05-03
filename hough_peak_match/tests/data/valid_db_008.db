@@ -1,0 +1,6 @@
+#unique sample ids but duplicated peak ids between 
+#human_verified_peak and unknown_peak
+sample 8 fatigued
+sample 4 purple
+human_verified_peak 4 5 0.7 22
+unknown_peak 8 5 0.7
