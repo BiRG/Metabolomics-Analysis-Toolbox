@@ -1,8 +1,0 @@
-function solution = score(intensity,array)
-
-
-%Calculate baseY and sampleY
-for i=1:length(intensity)
-    sum = (
-    
-end
