@@ -3,7 +3,7 @@ CXX:=g++
 VPATH:=src:obj
 CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough valid_db
-LIBRARYOBJS:=obj/peak_matching_database.o
+LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o
 
 all: $(EXECUTABLES)
 
