@@ -110,7 +110,6 @@ function get_collection_button_Callback(hObject, eventdata, handles)
 try
     collection_id = str2num(get(handles.collection_id_edit,'String'));
     handles.collection = get_collection(collection_id);
-    set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
     
     clear_all(hObject,handles);
 
