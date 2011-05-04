@@ -1,8 +1,11 @@
 obj/*.o
 obj/*.deps
+obj/tests/*.o
+obj/tests/*.deps
 hough_sample_params
 simple_hough
 assign_peaks
 equivalent_db
 valid_db
+tests/006-split_function.compiled.t
 doc/html
