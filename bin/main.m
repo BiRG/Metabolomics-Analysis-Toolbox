@@ -948,7 +948,7 @@ defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};        
 new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
-post_collections(main_h,{new_collection},'_binned',analysis_id);
+post_collections(gcf,{new_collection},'_binned',analysis_id);
 
 % --- Executes on button press in add_bin_pushbutton.
 function add_bin_pushbutton_Callback(hObject, eventdata, handles)
