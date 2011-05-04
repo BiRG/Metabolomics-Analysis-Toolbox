@@ -1,2 +1,0 @@
-function select_binning_method_sum(ax,left_handle,hObject, eventdata, handles)
-whitegb(ax,
