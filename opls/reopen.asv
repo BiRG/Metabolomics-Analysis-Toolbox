@@ -1,4 +1,0 @@
-function reopen(disk_file_id)
-str = urlwrite('http://birg.cs.wright.edu/omics_analysis/saved_files', ... 
-        {'data',d,'name',username,'password',password,'analysis_id',analysis_id,'description',description,'pretty_file_name',pretty_file_name});
-fprintf(str);

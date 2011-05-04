@@ -1,3 +1,0 @@
-load('xy');
-h = view_molecule;
-setappdata(
