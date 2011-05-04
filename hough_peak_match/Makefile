@@ -1,9 +1,11 @@
 CC:=g++
 CXX:=g++
-VPATH:=src:obj
+VPATH:=src:obj:src/tests
 CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic
-EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough valid_db
+EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
+	valid_db tests/006-split_function.compiled.t
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o
+LDLIBS:=-ltap++
 
 all: $(EXECUTABLES)
 
@@ -20,6 +22,8 @@ equivalent_db: obj/equivalent_db.o $(LIBRARYOBJS)
 simple_hough: obj/simple_hough.o $(LIBRARYOBJS)
 
 valid_db: obj/valid_db.o $(LIBRARYOBJS)
+
+tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o $(LIBRARYOBJS)
 
 #############
 # Utility targets
@@ -61,4 +65,3 @@ obj/%.o : %.cpp
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	    -e '/^$$/ d' -e 's/$$/ :/' < obj/$*.d >> obj/$*.deps; \
 	    rm -f obj/$*.d
-
