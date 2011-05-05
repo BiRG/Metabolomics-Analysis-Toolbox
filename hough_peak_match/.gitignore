@@ -8,4 +8,5 @@ assign_peaks
 equivalent_db
 valid_db
 tests/006-split_function.compiled.t
+tests/007-collection_is.compiled.t
 doc/html

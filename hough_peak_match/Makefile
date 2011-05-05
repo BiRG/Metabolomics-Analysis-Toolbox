@@ -1,9 +1,11 @@
 CC:=g++
 CXX:=g++
 VPATH:=src:obj:src/tests
-CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic
+CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
-	valid_db tests/006-split_function.compiled.t
+	valid_db\
+	tests/006-split_function.compiled.t\
+	tests/007-collection_is.compiled.t
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o
 LDLIBS:=-ltap++
 
@@ -24,6 +26,8 @@ simple_hough: obj/simple_hough.o $(LIBRARYOBJS)
 valid_db: obj/valid_db.o $(LIBRARYOBJS)
 
 tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o $(LIBRARYOBJS)
+
+tests/007-collection_is.compiled.t: obj/tests/007-collection_is.compiled.t.o $(LIBRARYOBJS)
 
 #############
 # Utility targets
