@@ -2,13 +2,13 @@ function collections = get_collections
 % Displays dialogs for downloading collections from the BIRG server.  
 % Returns a cell array of collections. On error returns an empty array.
 
-username = getappdata(gcf,'username');
-password = getappdata(gcf,'password');    
-if isempty(username) || isempty(password)
+% username = getappdata(gcf,'username');
+% password = getappdata(gcf,'password');    
+% if isempty(username) || isempty(password)
     [username,password] = logindlg;
-    setappdata(gcf,'username',username);
-    setappdata(gcf,'password',password);
-end
+%     setappdata(gcf,'username',username);
+%     setappdata(gcf,'password',password);
+% end
 
 %Return empty collection username and password were not entered
 if isempty(username) || isempty(password)
@@ -37,13 +37,15 @@ try
 
         url = sprintf('http://birg.cs.wright.edu/omics_analysis/collections/%d.xml',collection_id);
         xml = urlread(url,'get',{'name',username,'password',password});
-        file = tempname;
-        fid = fopen(file,'w');
-        fwrite(fid,xml);
-        %fprintf(fid,xml);
-        fclose(fid);
-        collection_xml = xml2struct(file);
-        data = collection_xml.Children(2).Children.Data;
+        n = regexp(xml,'<data>(.*)</data>','tokens');
+        data = n{1}{1};
+        % file = tempname;
+        % fid = fopen(file,'w');
+        % fwrite(fid,xml);
+        % %fprintf(fid,xml);
+        % fclose(fid);
+        % collection_xml = xml2struct(file);
+        % data = collection_xml.Children(2).Children.Data;
         file = tempname;
         fid = fopen(file,'w');
         fwrite(fid,data);
@@ -51,6 +53,7 @@ try
         fclose(fid);
 
         collections{end+1} = load_collection(file,'');
+        
     end
 catch ME
     collections = {};
