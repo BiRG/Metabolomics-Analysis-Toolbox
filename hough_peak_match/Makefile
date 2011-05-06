@@ -7,7 +7,10 @@ EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	tests/006-split_function.compiled.t
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
-	obj/detected_peak_group.o
+	obj/detected_peak_group.o \
+	obj/human_verified_peak.o \
+	obj/known_peak.o\
+	obj/peak.o 
 LDLIBS:=-ltap++
 
 all: $(EXECUTABLES)

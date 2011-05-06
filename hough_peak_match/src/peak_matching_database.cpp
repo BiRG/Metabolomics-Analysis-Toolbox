@@ -51,6 +51,12 @@ namespace HoughPeakMatch{
 	  }
 	  detected_peak_groups.push_back(g);
 	}else if(line_type == "human_verified_peak"){
+	  HumanVerifiedPeak p = 
+	    HumanVerifiedPeak::fromTextLine(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  human_verified_peaks.push_back(p);
 	}else if(line_type == "unverified_peak"){
 	}else if(line_type == "unknown_peak"){
 	}else if(line_type == "sample"){
