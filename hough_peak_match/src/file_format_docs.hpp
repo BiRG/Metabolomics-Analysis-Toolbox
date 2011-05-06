@@ -78,7 +78,7 @@
 ///
 ///\subsection unverified_peak unverified_peak
 ///
-///unverified_peak <em>sample_id peak_id ppm peak_group_id</em
+///unverified_peak <em>sample_id peak_id ppm peak_group_id</em>
 ///
 ///Fields are the same as in human_verified_peak
 ///

@@ -34,7 +34,7 @@ public:
   ///set to false.
   ///
   ///\remark Assumes that the words follow the format for a
-  ///parameterized_peak_group line in 
+  ///\ref parameterized_peak_group "parameterized_peak_group line" in 
   ///\ref file_format_docs "the file format documentation."  
   ///That is, the first word is parameterized_peak_group, the second,
   ///the peak group id, etc.
@@ -48,6 +48,9 @@ public:
   ///\returns the peak group described by the input line.  On failure,
   ///failed will be set to true and the returned peak group will be
   ///nonsense.
+  ///
+  ///\todo refactor this to combine it with the detected_peak_group
+  ///reading - they're almost identical
   static ParameterizedPeakGroup fromTextLine
   (const std::vector<std::string>& words, bool& failed);
 

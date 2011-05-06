@@ -44,12 +44,20 @@ namespace HoughPeakMatch{
 	  }
 	  parameterized_peak_groups.push_back(g);
 	}else if(line_type == "detected_peak_group"){
+	  DetectedPeakGroup g = 
+	    DetectedPeakGroup::fromTextLine(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  detected_peak_groups.push_back(g);
 	}else if(line_type == "human_verified_peak"){
 	}else if(line_type == "unverified_peak"){
 	}else if(line_type == "unknown_peak"){
 	}else if(line_type == "sample"){
 	}else if(line_type == "sample_params"){
 	}else if(line_type == "param_stats"){
+	}else{
+	  make_empty(); return false;
 	}
       }
       ///\todo write the referential integrity code
