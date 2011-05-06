@@ -66,3 +66,6 @@ obj/%.o : %.cpp
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	    -e '/^$$/ d' -e 's/$$/ :/' < obj/$*.d >> obj/$*.deps; \
 	    rm -f obj/$*.d
+
+include obj/*.deps obj/tests/*.deps
+
