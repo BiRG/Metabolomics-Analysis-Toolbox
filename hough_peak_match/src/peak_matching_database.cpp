@@ -24,11 +24,13 @@ namespace HoughPeakMatch{
     string line;
     while(getline(in,line)){
       //Skip comments
-      if(line.size() > 0 && line[0] == '#'){ continue; }
+      if(line.size() > 0 && line[0] == '#'){ 
+	continue; }
       //Extract words from the line
       vector<string> words = split(line);
       //Skip blank lines
-      if(words.size() == 0) { continue; }
+      if(words.size() == 0) { 
+	continue; }
       //Add the object to the database
       string line_type = words[0];
       {
@@ -37,7 +39,9 @@ namespace HoughPeakMatch{
 	if(line_type == "parameterized_peak_group"){
 	  ParameterizedPeakGroup g = 
 	    ParameterizedPeakGroup::fromTextLine(words, failed);
-	  if(failed){ make_empty(); return false; }
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
 	  parameterized_peak_groups.push_back(g);
 	}else if(line_type == "detected_peak_group"){
 	}else if(line_type == "human_verified_peak"){
@@ -48,6 +52,7 @@ namespace HoughPeakMatch{
 	}else if(line_type == "param_stats"){
 	}
       }
+      ///\todo write the referential integrity code
     }
     return true;
   }

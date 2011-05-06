@@ -129,5 +129,7 @@ everything they need to.)
 
 17. Include statements must be made at the top of the file.
 
-
+18. If's and else's must be on a different line than the statements
+they control.  This causes code-coverage metrics to work
+better. (Exception: "else if " clauses.)
 
