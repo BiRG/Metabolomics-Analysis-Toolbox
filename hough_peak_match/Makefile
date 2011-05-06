@@ -5,7 +5,8 @@ CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
 	tests/006-split_function.compiled.t
-LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o
+LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
+	obj/parameterized_peak_group.o
 LDLIBS:=-ltap++
 
 all: $(EXECUTABLES)
@@ -67,5 +68,5 @@ obj/%.o : %.cpp
 	    -e '/^$$/ d' -e 's/$$/ :/' < obj/$*.d >> obj/$*.deps; \
 	    rm -f obj/$*.d
 
-include obj/*.deps obj/tests/*.deps
+-include obj/*.deps obj/tests/*.deps
 

@@ -42,45 +42,52 @@ namespace HoughPeakMatch{
   ///\ref file_format_docs "common file format"
   class PeakMatchingDatabase{
     ///All ParameterizedPeakGroup objects in this database
-    std::vector<ParameterizedPeakGroup> parameterizedPeakGroups;
+    std::vector<ParameterizedPeakGroup> parameterized_peak_groups;
 
     ///All DetectedPeakGroup objects in this database
-    std::vector<DetectedPeakGroup> detectedPeakGroups;
+    std::vector<DetectedPeakGroup> detected_peak_groups;
 
     ///All HumanVerifiedPeak objects in this database
-    std::vector<HumanVerifiedPeak> humanVerifiedPeaks;
+    std::vector<HumanVerifiedPeak> human_verified_peaks;
 
     ///All UnverifiedPeak objects in this database
-    std::vector<UnverifiedPeak> unverifiedPeaks;
+    std::vector<UnverifiedPeak> unverified_peaks;
 
     ///All UnknownPeak objects in this database
-    std::vector<UnknownPeak> unknownPeaks;
+    std::vector<UnknownPeak> unknown_peaks;
 
     ///All Sample objects in this database
     std::vector<Sample> samples;
 
     ///All SampleParams objects in this database
-    std::vector<SampleParams> sampleParams;
+    std::vector<SampleParams> sample_params;
 
     ///All ParamStatistics objects in this database
-    std::vector<ParamStatistics> paramStatistics;
+    std::vector<ParamStatistics> param_statistics;
   public:
     ///Create an empty PeakMatchingDatabase
 
     ///
     ///\todo Write default constructor for PeakMatchingDatabase
     PeakMatchingDatabase():
-      parameterizedPeakGroups(),detectedPeakGroups(),
-      humanVerifiedPeaks(),unverifiedPeaks(),unknownPeaks(),
-      samples(),sampleParams(),paramStatistics(){}
+      parameterized_peak_groups(),detected_peak_groups(),
+      human_verified_peaks(),unverified_peaks(),unknown_peaks(),
+      samples(),sample_params(),param_statistics(){}
 
-    ///Read database from the given stream replacing current contents
-    
+    ///\brief Read database from the given stream replacing current contents
+    ///
+    ///The stream should contain a database in the 
+    ///\ref file_format_docs "peak match tool common file format"
+    ///
     ///\param in the stream to read the new contents from.
     ///
     ///\return true on success and false on failure.  On failure the
-    ///database contents will be left unchanged.
+    ///database will be empty
     bool read(std::istream& in);
+
+
+    ///\brief Remove all objects from the database
+    void make_empty();
   };
   
 }
