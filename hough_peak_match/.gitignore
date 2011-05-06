@@ -1,12 +1,32 @@
+#####
+#Compilation intermediate files
+#####
 obj/*.o
 obj/*.deps
 obj/tests/*.o
 obj/tests/*.deps
+
+#####
+#Editor files
+####
+src/#*
+src/.#*
+
+#####
+# Executables
+#####
 hough_sample_params
 simple_hough
 assign_peaks
 equivalent_db
 valid_db
+
+#####
+# Test executables
+#####
 tests/006-split_function.compiled.t
-tests/007-collection_is.compiled.t
+
+#####
+# Generated documentation
+#####
 doc/html
