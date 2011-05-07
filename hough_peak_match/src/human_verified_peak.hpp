@@ -32,8 +32,8 @@ public:
   ///\param failed will be set to true if the words could not be
   ///parsed as a HumanVerifiedPeak, it will be false otherwise
   ///
-  ///\returns the peak group described by the input line.  On failure,
-  ///failed will be set to true and the returned peak group will be
+  ///\returns the peak described by the input line.  On failure,
+  ///failed will be set to true and the returned peak will be
   ///nonsense.
   static HumanVerifiedPeak fromTextLine
   (const std::vector<std::string>& words, bool& failed);
