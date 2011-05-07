@@ -24,7 +24,7 @@ protected:
   ///\brief the measured location of this peak within the sample in ppm
   double ppm_;
 
-  ///\brief Construct an uninitialized peak
+  ///\brief Construct an uninitialized Peak
   Peak():sample_id_(),peak_id_(),ppm_(){}
 
 
