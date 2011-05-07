@@ -13,10 +13,10 @@ class UnknownPeak:public Peak{
 public:
   virtual ~UnknownPeak(){}
 
-  ///\brief Creates a UnknownPeak from a line in a database file
+  ///\brief Creates an UnknownPeak from a line in a database file
   ///
-  ///Takes vector of words and creates a UnknownPeak from
-  ///them.  If the words do not define a unknown_peak,
+  ///Takes vector of words and creates an UnknownPeak from
+  ///them.  If the words do not define an unknown_peak,
   ///returns nonsense and sets failed to true.  Otherwise, failed is
   ///set to false.
   ///
@@ -30,7 +30,7 @@ public:
   ///UnknownPeak
   ///
   ///\param failed will be set to true if the words could not be
-  ///parsed as a UnknownPeak, it will be false otherwise
+  ///parsed as an UnknownPeak, it will be false otherwise
   ///
   ///\returns the peak described by the input line.  On failure,
   ///failed will be set to true and the returned peak will be
