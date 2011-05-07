@@ -11,6 +11,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/unverified_peak.o \
 	obj/unknown_peak.o \
 	obj/human_verified_peak.o\
+	obj/sample_params.o\
 	obj/known_peak.o\
 	obj/sample.o\
 	obj/peak.o 
