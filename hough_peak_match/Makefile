@@ -8,6 +8,7 @@ EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
 	obj/detected_peak_group.o \
+	obj/unverified_peak.o \
 	obj/human_verified_peak.o \
 	obj/known_peak.o\
 	obj/peak.o 
