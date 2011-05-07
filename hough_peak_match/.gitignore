@@ -5,6 +5,7 @@ obj/*.o
 obj/*.deps
 obj/tests/*.o
 obj/tests/*.deps
+libbirgpeakmatch.a
 
 #####
 #Editor files

@@ -72,6 +72,12 @@ namespace HoughPeakMatch{
 	  }
 	  unknown_peaks.push_back(p);
 	}else if(line_type == "sample"){
+	  Sample s = 
+	    Sample::fromTextLine(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  samples.push_back(s);
 	}else if(line_type == "sample_params"){
 	}else if(line_type == "param_stats"){
 	}else{

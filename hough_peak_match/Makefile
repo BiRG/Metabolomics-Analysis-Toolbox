@@ -10,8 +10,9 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/detected_peak_group.o \
 	obj/unverified_peak.o \
 	obj/unknown_peak.o \
-	obj/human_verified_peak.o \
+	obj/human_verified_peak.o\
 	obj/known_peak.o\
+	obj/sample.o\
 	obj/peak.o 
 LDLIBS:=-ltap++
 
@@ -21,17 +22,21 @@ all: $(EXECUTABLES)
 # Executables
 #############
 
-assign_peaks: obj/assign_peaks.o $(LIBRARYOBJS)
+#Note: this rule requires gnu ar to work correctly 
+libbirgpeakmatch.a: $(LIBRARYOBJS)
+	ar rsc libbirgpeakmatch.a $?
 
-hough_sample_params: obj/hough_sample_params.o $(LIBRARYOBJS)
+assign_peaks: obj/assign_peaks.o libbirgpeakmatch.a
 
-equivalent_db: obj/equivalent_db.o $(LIBRARYOBJS)
+hough_sample_params: obj/hough_sample_params.o libbirgpeakmatch.a
 
-simple_hough: obj/simple_hough.o $(LIBRARYOBJS)
+equivalent_db: obj/equivalent_db.o libbirgpeakmatch.a
 
-valid_db: obj/valid_db.o $(LIBRARYOBJS)
+simple_hough: obj/simple_hough.o libbirgpeakmatch.a
 
-tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o $(LIBRARYOBJS)
+valid_db: obj/valid_db.o libbirgpeakmatch.a
+
+tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o libbirgpeakmatch.a
 
 #############
 # Utility targets
@@ -51,7 +56,7 @@ doc/html/index.html: src/*.cpp src/*.hpp
 
 clean:
 	-rm $(EXECUTABLES)
-	-rm obj/* obj/tests/*
+	-rm obj/* obj/tests/* *.a
 	-rm doc/html/index.html
 
 .PHONY: all clean test testverbose docs
