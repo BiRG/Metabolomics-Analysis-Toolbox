@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <algorithm>
 
 namespace HoughPeakMatch{
   void PeakMatchingDatabase::make_empty(){
@@ -179,7 +180,7 @@ namespace HoughPeakMatch{
       for(InputIterB cur = b_begin; cur != b_end; ++cur){
 	ids.insert(cur->id());
       }
-      return includes(ids.begin(), ids.end(), keys.begin(), keys.end());
+      return std::includes(ids.begin(), ids.end(), keys.begin(), keys.end());
     }
 
     ///\brief KeyExtractor that extracts peak_id foreign keys
@@ -195,7 +196,7 @@ namespace HoughPeakMatch{
       ///
       ///\returns the peak_id of an object of type T
       template<class T>
-      KeyType operator()( const T& t){ return t.peak_id(); }
+      KeyType operator()( const T& t) const { return t.peak_id(); }
     };
 
     ///\brief KeyExtractor that extracts sample_id foreign keys
@@ -211,7 +212,7 @@ namespace HoughPeakMatch{
       ///
       ///\returns the sample_id of an object of type T
       template<class T>
-      KeyType operator()( const T& t){ return t.sample_id(); }
+      KeyType operator()( const T& t) const{ return t.sample_id(); }
     };
   }
 
@@ -243,11 +244,32 @@ namespace HoughPeakMatch{
 				  samples.end());
 
     bool correct_num_param_stats = param_stats.size() <= 1;
-
     
+    bool ref_integrity = 
+      all_foreign_keys_in_a_are_ids_in_b
+      (SampleIDExtractor(), 
+       unknown_peaks.begin(), unknown_peaks.end(),
+       samples.begin(), samples.end())
+      &&
+      all_foreign_keys_in_a_are_ids_in_b
+      (SampleIDExtractor(), 
+       unverified_peaks.begin(), unverified_peaks.end(),
+       samples.begin(), samples.end())
+      &&
+      all_foreign_keys_in_a_are_ids_in_b
+      (SampleIDExtractor(), 
+       human_verified_peaks.begin(), human_verified_peaks.end(),
+       samples.begin(), samples.end())
+      &&
+      all_foreign_keys_in_a_are_ids_in_b
+      (SampleIDExtractor(), 
+       sample_params.begin(), sample_params.end(),
+       samples.begin(), samples.end())
+      ;
+      
 
-    ///\todo write other constraints ref integrity, all params members have the same number of elements
-    return unique_ids && correct_num_param_stats;
+    ///\todo write other constraints: all params members have the same number of elements
+    return unique_ids && correct_num_param_stats && ref_integrity;
   }
 
 }

@@ -57,7 +57,7 @@ public:
   ///\brief Return the sample_id for the sample these parameters describe
   ///
   ///\return Return the sample_id for the sample these parameters describe
-  virtual unsigned id() const { return sample_id_; }
+  virtual unsigned sample_id() const { return sample_id_; }
 
   ///\brief Return the parameters determining the shifts in the
   ///\brief described sample
