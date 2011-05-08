@@ -85,9 +85,26 @@ namespace HoughPeakMatch{
     ///database will be empty
     bool read(std::istream& in);
 
-
     ///\brief Remove all objects from the database
     void make_empty();
+
+    ///\brief Return true if the database satisfies its constraints,
+    ///\brief false otherwise
+    ///
+    ///There are a number of constraints the database must satisfiy to
+    ///be in a consistent state.  For example: all sample_id's refered
+    ///to by sample_params objects must be present in exactly one
+    ///sample object; all sample_params, parameterized_peak_group,
+    ///detected_peak_group, and param_statistics objects must have the
+    ///same number of parameters; there cannot be two param_stats
+    ///objects in the database; and many more.
+    ///
+    ///This function returns true if they are all satisfied and false
+    ///if there is an unsatisifed constraint.
+    ////
+    ///\return true if the database satisfies its constraints,
+    ///false otherwise
+    bool satisfies_constraints();
   };
   
 }
