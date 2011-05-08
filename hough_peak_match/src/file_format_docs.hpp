@@ -123,3 +123,6 @@
 ///Note that fracvar values of 0 are acceptable. This is needed, for
 ///example, in the case that the user specifies a model with more
 ///parameters than necessary.
+///
+///Note also that there can be at most one param_stats object in a
+///database

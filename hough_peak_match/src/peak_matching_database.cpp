@@ -15,7 +15,7 @@ namespace HoughPeakMatch{
     unknown_peaks.clear();
     samples.clear();
     sample_params.clear();
-    param_statistics.clear();
+    param_stats.clear();
   }
 
 
@@ -35,7 +35,6 @@ namespace HoughPeakMatch{
       string line_type = words[0];
       {
 	bool failed = false;
-	///\todo finish writing the actual object creation code.
 	if(line_type == "parameterized_peak_group"){
 	  ParameterizedPeakGroup g = 
 	    ParameterizedPeakGroup::fromTextLine(words, failed);
@@ -86,6 +85,12 @@ namespace HoughPeakMatch{
 	  }
 	  sample_params.push_back(sp);
 	}else if(line_type == "param_stats"){
+	  ParamStats ps = 
+	    ParamStats::fromTextLine(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  param_stats.push_back(ps);
 	}else{
 	  make_empty(); return false;
 	}

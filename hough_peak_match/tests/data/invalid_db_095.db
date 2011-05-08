@@ -1,0 +1,3 @@
+#Database with two identical param_stats items
+param_stats 1 2 3
+param_stats 1 2 3

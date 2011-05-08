@@ -13,7 +13,7 @@
 #include "unknown_peak.hpp"
 #include "sample.hpp"
 #include "sample_params.hpp"
-#include "param_statistics.hpp"
+#include "param_stats.hpp"
 
 ///Holds all the library classes and functions for the Hough peak matching prototype
 
@@ -62,8 +62,8 @@ namespace HoughPeakMatch{
     ///All SampleParams objects in this database
     std::vector<SampleParams> sample_params;
 
-    ///All ParamStatistics objects in this database
-    std::vector<ParamStatistics> param_statistics;
+    ///All ParamStats objects in this database
+    std::vector<ParamStats> param_stats;
   public:
     ///Create an empty PeakMatchingDatabase
 
@@ -72,7 +72,7 @@ namespace HoughPeakMatch{
     PeakMatchingDatabase():
       parameterized_peak_groups(),detected_peak_groups(),
       human_verified_peaks(),unverified_peaks(),unknown_peaks(),
-      samples(),sample_params(),param_statistics(){}
+      samples(),sample_params(),param_stats(){}
 
     ///\brief Read database from the given stream replacing current contents
     ///
