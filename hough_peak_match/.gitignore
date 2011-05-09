@@ -8,6 +8,14 @@ obj/tests/*.deps
 libbirgpeakmatch.a
 
 #####
+# Test-coverage/profiling files
+#####
+obj/*.gcda
+obj/*.gcno
+obj/tests/*.gcda
+obj/tests/*.gcno
+
+#####
 #Editor files
 ####
 src/#*
