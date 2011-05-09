@@ -23,15 +23,15 @@ Deployment/
 	Development/ # Will always hold the most recent development compilation (no revision numbers)
 		Windows/
 			bin/
-			bin.prj
-				src/
-				deploy/
-					bin.exe
+				bin.prj # MATLAB Deployment Project File
+				src/ # Created automatically by MATLAB
+				deploy/ # Created automatically by MATLAB
+					bin.exe # Created automatically by MATLAB
 		Mac/
 		Linux/
 	Releases/ # Will hold all current and prior releases with revistion numbers
 		Windows/
-			bin.exe # Current release
+			bin_0r2.exe # Current release
 			Old Releases/
 				bin_0r1.exe
 				bin_0r2.exe
