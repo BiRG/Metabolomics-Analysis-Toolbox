@@ -15,8 +15,9 @@
 #include "sample_params.hpp"
 #include "param_stats.hpp"
 
-///Holds all the library classes and functions for the Hough peak matching prototype
-
+///\brief Holds all the library classes and functions for the Hough
+///\brief peak matching prototype
+///
 ///Note: this documentation block is in peak_matching_database.hpp
 namespace HoughPeakMatch{
 

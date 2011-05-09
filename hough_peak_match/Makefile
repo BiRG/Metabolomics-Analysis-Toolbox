@@ -4,7 +4,8 @@ VPATH:=src:obj:src/tests
 CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
-	tests/006-split_function.compiled.t
+	tests/006-split_function.compiled.t\
+	tests/007-from_text_line_funcs.compiled.t
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
 	obj/detected_peak_group.o \
@@ -39,6 +40,9 @@ simple_hough: obj/simple_hough.o libbirgpeakmatch.a
 valid_db: obj/valid_db.o libbirgpeakmatch.a
 
 tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o libbirgpeakmatch.a
+
+tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.compiled.t.o libbirgpeakmatch.a
+
 
 #############
 # Utility targets
