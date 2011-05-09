@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 17-Mar-2011 16:31:04
+% Last Modified by GUIDE v2.5 09-May-2011 14:28:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,12 +60,16 @@ handles.output = hObject;
 
 set(handles.summary_text,'String',{''});
 
+set(handles.version_text,'String',get_version_string());
+
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
+function res = get_version_string()
+res = '0r1';
 
 % --- Outputs from this function are returned to the command line.
 function varargout = main_OutputFcn(hObject, eventdata, handles) 
@@ -107,22 +111,12 @@ function get_collection_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-try
-    collection_id = str2num(get(handles.collection_id_edit,'String'));
-    handles.collection = get_collection(collection_id);
-    
-    clear_all(hObject,handles);
+handles = get_collection_pushbutton(handles);
 
-    set(handles.description_text,'String',handles.collection.description);
+msgbox('Finished loading collection');
     
-    msgbox('Finished loading collection');
-    
-    % Update handles structure
-    guidata(hObject, handles);
-catch ME
-    msgbox('Invalid collection ID');
-end
-
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes on selection change in group_by_listbox.
 function group_by_listbox_Callback(hObject, eventdata, handles)
@@ -152,6 +146,11 @@ function group_by_time_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to group_by_time_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 group_by_time_pushbutton(hObject,handles);
 
@@ -183,6 +182,11 @@ function group_by_classification_pushbutton_Callback(hObject, eventdata, handles
 % hObject    handle to group_by_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 group_by_classification_pushbutton(hObject,handles);
 
@@ -191,6 +195,11 @@ function group_by_time_and_classification_pushbutton_Callback(hObject, eventdata
 % hObject    handle to group_by_time_and_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 group_by_time_and_classification_pushbutton(hObject,handles);
 
@@ -199,6 +208,11 @@ function paired_by_time_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to paired_by_time_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 paired_by_time_pushbutton(hObject,handles);
 
@@ -207,6 +221,11 @@ function paired_by_classification_pushbutton_Callback(hObject, eventdata, handle
 % hObject    handle to paired_by_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 paired_by_classification_pushbutton(hObject,handles);
 
@@ -215,6 +234,11 @@ function paired_by_time_and_classification_pushbutton_Callback(hObject, eventdat
 % hObject    handle to paired_by_time_and_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 paired_by_time_and_classification_pushbutton(hObject,handles);
 
@@ -223,6 +247,11 @@ function run_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to run_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 clear_before_run(hObject,handles);
 
@@ -294,6 +323,11 @@ add_line_to_summary_text(handles.summary_text,sprintf('# OPLS factors removed: %
 add_line_to_summary_text(handles.summary_text,sprintf('R^2_X: %.4f',handles.stats.R2_X));
 add_line_to_summary_text(handles.summary_text,sprintf('R^2_Y: %.4f',handles.stats.R2_Y));
 add_line_to_summary_text(handles.summary_text,sprintf('Q^2: %.4f',handles.stats.Q2));
+sorted = sort(handles.stats.permutation_Q2s,'descend');
+ix = max([1,round(length(handles.stats.permutation_Q2s)*test_alpha)]); % One tailed
+thres = sorted(ix);
+add_line_to_summary_text(handles.summary_text,sprintf('Q^2 Sig. Threshold: %.4f',thres));
+add_line_to_summary_text(handles.summary_text,sprintf('Accuracy: %.4f%',100*handles.stats.accuracy));
 
 %% Now determine the sig. variables
 sig_vars_num_permutations = str2num(get(handles.sig_vars_num_permutations_edit,'String'));
@@ -353,6 +387,17 @@ handles.available_X = available_X';
 handles.available_groups = available_groups;
 handles.X = X';
 handles.Y = Y';
+
+%% Q2 distribution plot
+axes(handles.q2_distribution_axes);
+[f,xi] = ksdensity(handles.stats.permutation_Q2s);
+plot(xi,f,'k-');
+xlabel('Q2');
+ylabel('Probability Density Estimate');
+% [n,xi] = hist(handles.p_permuted(v,:),50);
+% bar(xi,n/sum(n));
+yl = ylim;
+arrow([handles.stats.Q2,yl(2)/4],[handles.stats.Q2,0]);
 
 msgbox('Finished running OPLS');
 
@@ -449,14 +494,22 @@ if strcmp(selected,'Scores')
     set(handles.scores_uipanel,'Visible','on');
     set(handles.loadings_uipanel,'Visible','off');
     set(handles.sig_vars_uipanel,'Visible','off');
+    set(handles.q2_distribution_uipanel,'Visible','off');
 elseif strcmp(selected,'Loadings')
     set(handles.scores_uipanel,'Visible','off');
     set(handles.loadings_uipanel,'Visible','on');
     set(handles.sig_vars_uipanel,'Visible','off');
+    set(handles.q2_distribution_uipanel,'Visible','off');
 elseif strcmp(selected,'Sig. vars.')
     set(handles.scores_uipanel,'Visible','off');
     set(handles.loadings_uipanel,'Visible','off');
     set(handles.sig_vars_uipanel,'Visible','on');
+    set(handles.q2_distribution_uipanel,'Visible','off');
+elseif strcmp(selected,'Q2 Distribution')
+    set(handles.scores_uipanel,'Visible','off');
+    set(handles.loadings_uipanel,'Visible','off');
+    set(handles.sig_vars_uipanel,'Visible','off');
+    set(handles.q2_distribution_uipanel,'Visible','on');
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -523,6 +576,11 @@ function plot_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to plot_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 [t,t_ortho,Y_pred] = apply_opls_model(handles.X,handles.Y,handles.model,handles.available_X);
 if isempty(t_ortho)
@@ -762,6 +820,11 @@ function save_table_loadings_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to save_table_loadings_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 data = {};
 % Fill in columns
@@ -790,6 +853,11 @@ function sig_vars_listbox_Callback(hObject, eventdata, handles)
 
 % Hints: contents = get(hObject,'String') returns sig_vars_listbox contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from sig_vars_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 set(handles.not_sig_vars_listbox,'Value',1);
 inx = get(hObject,'Value');
@@ -827,6 +895,11 @@ function not_sig_vars_listbox_Callback(hObject, eventdata, handles)
 
 % Hints: contents = get(hObject,'String') returns not_sig_vars_listbox contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from not_sig_vars_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 set(handles.sig_vars_listbox,'Value',1);
 inx = get(hObject,'Value');
@@ -918,29 +991,12 @@ function load_collection_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-try
-    collections = load_collections;
-    if isempty(collections)
-        return
-    end
-    if length(collections) > 1
-        msgbox('Only load a single collection');
-        return;
-    end
-    handles.collection = collections{1};
-    
-    clear_all(hObject,handles);
-    
-    set(handles.description_text,'String',handles.collection.description);
+handles = load_collection_pushbutton(handles);
 
-    msgbox('Finished loading collection');
+msgbox('Finished loading collection');
     
-    % Update handles structure
-    guidata(hObject, handles);
-catch ME
-    msgbox('Invalid collection');
-end
-
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes on button press in ids_radiobutton.
 function ids_radiobutton_Callback(hObject, eventdata, handles)
@@ -979,6 +1035,11 @@ function model_by_time_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to model_by_time_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 model_by_time_pushbutton(hObject,handles);
 
@@ -987,6 +1048,11 @@ function model_by_classification_pushbutton_Callback(hObject, eventdata, handles
 % hObject    handle to model_by_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 model_by_classification_pushbutton(hObject,handles);
 
@@ -995,5 +1061,17 @@ function model_by_time_and_classification_pushbutton_Callback(hObject, eventdata
 % hObject    handle to model_by_time_and_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 model_by_time_and_classification_pushbutton(hObject,handles);
+
+
+% --- Executes on button press in about_pushbutton.
+function about_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to about_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

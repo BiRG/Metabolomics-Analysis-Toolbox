@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 28-Apr-2011 10:15:15
+% Last Modified by GUIDE v2.5 06-May-2011 09:16:47
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,6 +57,8 @@ handles.output = hObject;
 
 set(handles.summary_text,'String',{''});
 
+set(handles.version_text,'String',get_version_string());
+
 % myfunc = @(hObject, eventdata, handles_) (key_press(handles));
 % set(gcf,'KeyPressFcn',myfunc);
 
@@ -74,6 +76,9 @@ guidata(hObject, handles);
 
 % UIWAIT makes main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+
+function res = get_version_string()
+res = '0r1';
 
 % --- Outputs from this function are returned to the command line.
 function varargout = main_OutputFcn(hObject, eventdata, handles) 
@@ -115,29 +120,20 @@ function get_collection_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-try
-    collection_id = str2num(get(handles.collection_id_edit,'String'));
-    handles.collection = get_collection(collection_id);
-    set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
-    
-    clear_all(hObject,handles);
+handles = get_collection_pushbutton(hObject,handles);
 
-    set(handles.description_text,'String',handles.collection.description);
-    
-    ymax = max(handles.collection.Y(:,1));
-    ymin = min(handles.collection.Y(:,1));
-    handles.ymax = ymax;
-    handles.ymin = ymin;
-    set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
-    
-    msgbox('Finished loading collection');
-    
-    % Update handles structure
-    guidata(hObject, handles);
-catch ME
-    msgbox('Invalid collection ID');
-end
+set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
 
+ymax = max(handles.collection.Y(:,1));
+ymin = min(handles.collection.Y(:,1));
+handles.ymax = ymax;
+handles.ymin = ymin;
+set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
+
+msgbox('Finished loading collection');
+
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes on selection change in group_by_listbox.
 function group_by_listbox_Callback(hObject, eventdata, handles)
@@ -167,6 +163,11 @@ function group_by_time_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to group_by_time_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 handles = group_by_time_pushbutton(hObject,handles);
 update_spectra_plot(handles);
@@ -176,6 +177,11 @@ function group_by_classification_pushbutton_Callback(hObject, eventdata, handles
 % hObject    handle to group_by_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 handles = group_by_classification_pushbutton(hObject,handles);
 update_spectra_plot(handles);
@@ -185,6 +191,11 @@ function group_by_time_and_classification_pushbutton_Callback(hObject, eventdata
 % hObject    handle to group_by_time_and_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 handles = group_by_time_and_classification_pushbutton(hObject,handles);
 update_spectra_plot(handles);
@@ -194,6 +205,11 @@ function run_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to run_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 clear_before_run(hObject,handles);
 
@@ -363,6 +379,11 @@ function plot_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to plot_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 figure;
 plot_spectra(handles,false);
@@ -542,12 +563,13 @@ function post_to_analysis_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to post_to_analysis_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-username = [];
-password = [];
-if isempty(username) || isempty(password)
-    [username,password] = logindlg;
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
 end
+
+[username,password] = logindlg;
 
 file = tempname;
 saveas(handles.figure1,[file,'.fig']);
@@ -555,7 +577,7 @@ saveas(handles.figure1,[file,'.fig']);
 prompt={'Analysis ID:','Description:','File name:'};
 name='Input for uploading file';
 numlines=1;
-defaultanswer={'','DAB results','dab_results'};
+defaultanswer={'','Binning results','binning_results'};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};
 description = answer{2};
@@ -574,36 +596,20 @@ function load_collection_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-try
-    collections = load_collections;
-    if isempty(collections)
-        return
-    end
-    if length(collections) > 1
-        msgbox('Only load a single collection');
-        return;
-    end
-    handles.collection = collections{1};
-    set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
-    
-    clear_all(hObject,handles);
-    
-    set(handles.description_text,'String',handles.collection.description);
-    
-    ymax = max(handles.collection.Y(:,1));
-    ymin = min(handles.collection.Y(:,1));
-    handles.ymax = ymax;
-    handles.ymin = ymin;
-    set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
+handles = load_collection_pushbutton(handles);
 
-    msgbox('Finished loading collection');
-    
-    % Update handles structure
-    guidata(hObject, handles);
-catch ME
-    msgbox('Invalid collection');
-    throw(ME);
-end
+set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
+
+ymax = max(handles.collection.Y(:,1));
+ymin = min(handles.collection.Y(:,1));
+handles.ymax = ymax;
+handles.ymin = ymin;
+set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
+
+msgbox('Finished loading collection');
+
+% Update handles structure
+guidata(hObject, handles);
 
 % --- Executes on selection change in model_by_listbox.
 function model_by_listbox_Callback(hObject, eventdata, handles)
@@ -633,6 +639,11 @@ function model_by_time_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to model_by_time_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 model_by_time_pushbutton(hObject,handles);
 
@@ -641,6 +652,11 @@ function model_by_classification_pushbutton_Callback(hObject, eventdata, handles
 % hObject    handle to model_by_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 model_by_classification_pushbutton(hObject,handles);
 
@@ -649,6 +665,11 @@ function model_by_time_and_classification_pushbutton_Callback(hObject, eventdata
 % hObject    handle to model_by_time_and_classification_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 model_by_time_and_classification_pushbutton(hObject,handles);
 
@@ -872,6 +893,11 @@ function save_bins_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to save_bins_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 regions = get_bins(handles);
 lefts = regions(:,1);
@@ -893,6 +919,11 @@ function load_bins_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to load_bins_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 [filename,pathname] = uigetfile('*.txt', 'Load regions');
 file = fopen([pathname,filename],'r');
@@ -927,6 +958,11 @@ function save_collection_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to save_collection_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 collection = handles.collection;
 bins = get_bins(handles);
@@ -938,6 +974,11 @@ function post_collection_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to post_collection_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 collection = handles.collection;
 bins = get_bins(handles);
@@ -955,6 +996,11 @@ function add_bin_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to add_bin_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 xl = xlim;
 data = get(handles.bins_listbox,'String');
@@ -967,10 +1013,20 @@ function sort_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to sort_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 sort_bins(handles);
 
 function sort_bins(handles)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 bins = get_bins(handles);
 bins = sortrows(bins,1);
@@ -994,6 +1050,11 @@ function delete_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to delete_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 if get(handles.delete_all_checkbox,'Value')
     data = {};
@@ -1032,6 +1093,11 @@ function zoom_out_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to zoom_out_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 xlim auto;
 ylim auto;
@@ -1051,6 +1117,11 @@ function save_figure_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to save_figure_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 [filename,pathname] = uiputfile('*.fig', 'Save figure');
 try
@@ -1074,6 +1145,11 @@ function x_zoom_out_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to x_zoom_out_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 buf = str2num(get(handles.x_zoom_edit,'String'));
 xl = xlim;
@@ -1085,6 +1161,11 @@ function x_zoom_in_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to x_zoom_in_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 buf = str2num(get(handles.x_zoom_edit,'String'));
 xl = xlim;
@@ -1120,6 +1201,11 @@ function bins_listbox_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns bins_listbox contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from bins_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 delete_cursors;
 
@@ -1198,6 +1284,11 @@ function debug_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to debug_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 add_line_to_summary_text(handles.summary_text,'Debugging...');
 bins = get_bins(handles);
@@ -1213,6 +1304,11 @@ function update_bins_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to update_bins_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 bins = get_bins(handles);
 % bin_inx = get(handles.bins_listbox,'Value')-1;
@@ -1255,6 +1351,11 @@ function y_zoom_out_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to y_zoom_out_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 buf = str2num(get(handles.y_zoom_edit,'String'));
 yl = ylim;
@@ -1265,6 +1366,11 @@ function y_zoom_in_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to y_zoom_in_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 buf = str2num(get(handles.y_zoom_edit,'String'));
 yl = ylim;
@@ -1320,6 +1426,11 @@ function dab_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to dab_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 set(handles.collection_uipanel,'Visible','off');
 set(handles.results_uipanel,'Visible','off');
@@ -1330,6 +1441,11 @@ function results_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to results_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 set(handles.collection_uipanel,'Visible','off');
 set(handles.results_uipanel,'Visible','on');
@@ -1340,6 +1456,11 @@ function collection_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to collection_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 set(handles.collection_uipanel,'Visible','on');
 set(handles.results_uipanel,'Visible','off');
@@ -1351,6 +1472,11 @@ function update_plot_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to update_plot_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 % Now update plot
 axes(handles.spectra_axes);
@@ -1365,6 +1491,11 @@ function lock_window_checkbox_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of lock_window_checkbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 xl = xlim;
 handles.x_range = xl(2)-xl(1);
@@ -1377,6 +1508,11 @@ function left_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to left_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 xlim1 = xlim;
 xdist = str2num(get(handles.x_zoom_edit,'String'));
@@ -1387,6 +1523,11 @@ function right_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to right_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
 
 xlim1 = xlim;
 xdist = str2num(get(handles.x_zoom_edit,'String'));
