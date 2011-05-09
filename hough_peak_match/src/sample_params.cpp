@@ -4,7 +4,7 @@
 #include <cassert>
 
 namespace HoughPeakMatch{
-  SampleParams SampleParams::fromTextLine
+  SampleParams SampleParams::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     SampleParams ret;
     if(words.size() < 3){

@@ -51,7 +51,7 @@ public:
   ///
   ///\todo refactor this to combine it with the detected_peak_group
   ///reading - they're almost identical
-  static ParameterizedPeakGroup fromTextLine
+  static ParameterizedPeakGroup from_text_line
   (const std::vector<std::string>& words, bool& failed);
 
   

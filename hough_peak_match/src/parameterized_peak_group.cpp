@@ -4,7 +4,7 @@
 #include <sstream>
 
 namespace HoughPeakMatch{
-  ParameterizedPeakGroup ParameterizedPeakGroup::fromTextLine
+  ParameterizedPeakGroup ParameterizedPeakGroup::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     failed = true;
     ParameterizedPeakGroup ret;

@@ -57,7 +57,7 @@ public:
   ///\returns the ParamStats object described by the input line.  On failure,
   ///\a failed will be set to true and the returned object will be
   ///nonsense.
-  static ParamStats fromTextLine
+  static ParamStats from_text_line
   (const std::vector<std::string>& words, bool& failed);
 
 };

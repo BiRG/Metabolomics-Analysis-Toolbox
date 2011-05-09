@@ -1,5 +1,5 @@
 ///\file
-///\brief Tests the xxx::fromTextLine functions
+///\brief Tests the xxx::from_text_line functions
 
 #include <tap++/tap++.h>
 #include "../unknown_peak.hpp"
@@ -13,9 +13,9 @@
 
 namespace HoughPeakMatch{
   namespace Test{
-    ///\brief Exercise all the *::fromTextLine functions
+    ///\brief Exercise all the *::from_text_line functions
     ///
-    ///\todo change all the fromTextLine functions to from_text_line
+    ///\todo change all the from_text_line functions to from_text_line
     ///functions
     void from_text_line(){
       using std::string; using std::vector; using namespace TAP;
@@ -23,7 +23,7 @@ namespace HoughPeakMatch{
       bool failed;
       {
 	string in1[4]={"unknown_peak","22","25","0.52"};
-	UnknownPeak p1 = UnknownPeak::fromTextLine(vstr(in1,in1+4), failed);
+	UnknownPeak p1 = UnknownPeak::from_text_line(vstr(in1,in1+4), failed);
 	is(failed, false, "Unknown peak 1 constructs with no errors");
 
 	

@@ -50,7 +50,7 @@ public:
   ///\returns the SampleParams object described by the input line.  On failure,
   ///\a failed will be set to true and the returned peak group will be
   ///nonsense.
-  static SampleParams fromTextLine
+  static SampleParams from_text_line
   (const std::vector<std::string>& words, bool& failed);
 
 

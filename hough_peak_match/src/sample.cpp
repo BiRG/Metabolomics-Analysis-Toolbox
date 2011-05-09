@@ -2,7 +2,7 @@
 #include <sstream>
 
 namespace HoughPeakMatch{
-  Sample Sample::fromTextLine
+  Sample Sample::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     Sample ret;
     if(words.size() != 3){

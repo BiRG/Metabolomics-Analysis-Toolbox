@@ -5,7 +5,7 @@
 #include <sstream>
 
 namespace HoughPeakMatch{
-  HumanVerifiedPeak HumanVerifiedPeak::fromTextLine
+  HumanVerifiedPeak HumanVerifiedPeak::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     failed = true;
     HumanVerifiedPeak ret;

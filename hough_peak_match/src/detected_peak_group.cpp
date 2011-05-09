@@ -5,7 +5,7 @@
 #include <sstream>
 
 namespace HoughPeakMatch{
-  DetectedPeakGroup DetectedPeakGroup::fromTextLine
+  DetectedPeakGroup DetectedPeakGroup::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     failed = true;
     DetectedPeakGroup ret;

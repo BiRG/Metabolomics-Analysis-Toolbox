@@ -4,7 +4,7 @@
 #include <cassert>
 
 namespace HoughPeakMatch{
-  ParamStats ParamStats::fromTextLine
+  ParamStats ParamStats::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     ParamStats ret;
     if(words.size() < 2){

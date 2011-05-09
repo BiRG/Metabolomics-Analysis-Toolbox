@@ -35,7 +35,7 @@ public:
   ///\returns the peak described by the input line.  On failure,
   ///failed will be set to true and the returned peak will be
   ///nonsense.
-  static UnknownPeak fromTextLine
+  static UnknownPeak from_text_line
   (const std::vector<std::string>& words, bool& failed);
 };
 

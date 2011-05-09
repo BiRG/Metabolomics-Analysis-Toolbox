@@ -61,7 +61,7 @@ public:
   ///\returns the Sample described by the input line.  On failure,
   ///\a failed will be set to true and the returned sample will be
   ///nonsense.
-  static Sample fromTextLine
+  static Sample from_text_line
   (const std::vector<std::string>& words, bool& failed);
 
 };

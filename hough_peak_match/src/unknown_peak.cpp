@@ -5,7 +5,7 @@
 #include <sstream>
 
 namespace HoughPeakMatch{
-  UnknownPeak UnknownPeak::fromTextLine
+  UnknownPeak UnknownPeak::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     failed = true;
     UnknownPeak ret;

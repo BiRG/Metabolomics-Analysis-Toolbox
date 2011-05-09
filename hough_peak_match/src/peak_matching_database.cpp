@@ -40,56 +40,56 @@ namespace HoughPeakMatch{
 	bool failed = false;
 	if(line_type == "parameterized_peak_group"){
 	  ParameterizedPeakGroup g = 
-	    ParameterizedPeakGroup::fromTextLine(words, failed);
+	    ParameterizedPeakGroup::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  parameterized_peak_groups.push_back(g);
 	}else if(line_type == "detected_peak_group"){
 	  DetectedPeakGroup g = 
-	    DetectedPeakGroup::fromTextLine(words, failed);
+	    DetectedPeakGroup::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  detected_peak_groups.push_back(g);
 	}else if(line_type == "human_verified_peak"){
 	  HumanVerifiedPeak p = 
-	    HumanVerifiedPeak::fromTextLine(words, failed);
+	    HumanVerifiedPeak::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  human_verified_peaks.push_back(p);
 	}else if(line_type == "unverified_peak"){
 	  UnverifiedPeak p = 
-	    UnverifiedPeak::fromTextLine(words, failed);
+	    UnverifiedPeak::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  unverified_peaks.push_back(p);
 	}else if(line_type == "unknown_peak"){
 	  UnknownPeak p = 
-	    UnknownPeak::fromTextLine(words, failed);
+	    UnknownPeak::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  unknown_peaks.push_back(p);
 	}else if(line_type == "sample"){
 	  Sample s = 
-	    Sample::fromTextLine(words, failed);
+	    Sample::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  samples.push_back(s);
 	}else if(line_type == "sample_params"){
 	  SampleParams sp = 
-	    SampleParams::fromTextLine(words, failed);
+	    SampleParams::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  sample_params.push_back(sp);
 	}else if(line_type == "param_stats"){
 	  ParamStats ps = 
-	    ParamStats::fromTextLine(words, failed);
+	    ParamStats::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
