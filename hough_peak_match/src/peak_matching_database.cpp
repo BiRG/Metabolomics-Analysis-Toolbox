@@ -311,10 +311,11 @@ namespace HoughPeakMatch{
     std::transform(sample_params.begin(),
 		   sample_params.end(),
 		   inserter, NumParamsExtractor());
-    
+
     std::transform(param_stats.begin(),
 		   param_stats.end(),
 		   inserter, NumParamsExtractor());
+
     
     bool all_param_counts_equal = param_counts.size() <= 1;
     

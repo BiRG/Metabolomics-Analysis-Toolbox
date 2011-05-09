@@ -27,7 +27,7 @@ namespace HoughPeakMatch{
       failed = true; return ret; }
     
     
-    for(size_t i = 2; i < words.size(); ++i){
+    for(size_t i = 3; i < words.size(); ++i){
       double param_temp;
       std::istringstream param_in(words.at(i));
       if(!(param_in >> param_temp)) { 
