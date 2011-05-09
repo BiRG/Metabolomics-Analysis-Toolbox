@@ -7,6 +7,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <iterator>
 
 namespace HoughPeakMatch{
   void PeakMatchingDatabase::make_empty(){
@@ -214,6 +215,25 @@ namespace HoughPeakMatch{
       template<class T>
       KeyType operator()( const T& t) const{ return t.sample_id(); }
     };
+
+    ///\brief Functional that extracts the number of parameter vectors
+    ///\brief implied by a given object's members.
+    struct NumParamsExtractor{
+      ///\brief Returns the number of parameters for an object of type T
+      ///
+      ///\param t The object whose parameters are being counted
+      ///
+      ///\return the number of parameters for an object of type T
+      template<class T>
+      inline std::size_t operator()(const T& t) const{ 
+	return t.params().size(); }
+      
+    };
+
+    template<>
+    inline std::size_t NumParamsExtractor::operator()(const ParamStats& ps) const{ 
+      return ps.frac_variances().size(); }
+      
   }
 
   bool PeakMatchingDatabase::satisfies_constraints(){
@@ -268,8 +288,30 @@ namespace HoughPeakMatch{
       ;
       
 
-    ///\todo write other constraints: all params members have the same number of elements
-    return unique_ids && correct_num_param_stats && ref_integrity;
+    std::set<std::size_t> param_counts;
+    std::insert_iterator<std::set<std::size_t> > inserter = 
+      std::inserter(param_counts, param_counts.begin());
+
+    std::transform(parameterized_peak_groups.begin(),
+		   parameterized_peak_groups.end(),
+		   inserter, NumParamsExtractor());
+    
+    std::transform(detected_peak_groups.begin(),
+		   detected_peak_groups.end(),
+		   inserter, NumParamsExtractor());
+    
+    std::transform(sample_params.begin(),
+		   sample_params.end(),
+		   inserter, NumParamsExtractor());
+    
+    std::transform(param_stats.begin(),
+		   param_stats.end(),
+		   inserter, NumParamsExtractor());
+    
+    bool all_param_counts_equal = param_counts.size() <= 1;
+    
+    return unique_ids && correct_num_param_stats && ref_integrity 
+      && all_param_counts_equal;
   }
 
 }
