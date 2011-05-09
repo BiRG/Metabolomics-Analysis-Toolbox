@@ -15,11 +15,14 @@ namespace HoughPeakMatch{
     if(words.at(0) != "detected_peak_group"){ 
       failed = true; return ret; }
     
-    int id_temp = atoi(words.at(1).c_str());
+    std::istringstream id_in(words.at(1));
+    int id_temp;
+    if(!(id_in >> id_temp)){
+      failed = true; return ret; }
     if(id_temp < 0){ 
       failed = true; return ret; }
     ret.peak_group_id = id_temp;
-    
+
     std::istringstream ppm_in(words.at(2));
     if(!(ppm_in >> ret.ppm_)) { 
       failed = true; return ret; }
