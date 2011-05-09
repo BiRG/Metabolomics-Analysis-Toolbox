@@ -238,6 +238,9 @@ namespace HoughPeakMatch{
 
   bool PeakMatchingDatabase::satisfies_constraints(){
     using std::pair;
+
+    //Check that all object ids are unique over all items that have
+    //that class
     std::set<unsigned> peak_group_ids;
     bool unique_ids = 
       has_unique_ids<unsigned>(peak_group_ids, 
@@ -263,8 +266,12 @@ namespace HoughPeakMatch{
       && has_unique_ids<unsigned>(sample_ids, samples.begin(),
 				  samples.end());
 
+    //Check that at most one param_stats object
+
     bool correct_num_param_stats = param_stats.size() <= 1;
     
+    //Check referential integrity constraints
+
     bool ref_integrity = 
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
@@ -287,6 +294,7 @@ namespace HoughPeakMatch{
        samples.begin(), samples.end())
       ;
       
+    //Check that all param counts are equal
 
     std::set<std::size_t> param_counts;
     std::insert_iterator<std::set<std::size_t> > inserter = 
