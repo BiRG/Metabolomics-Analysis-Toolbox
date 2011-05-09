@@ -1,10 +1,22 @@
 CC:=g++
 CXX:=g++
 VPATH:=src:obj:src/tests
-CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic
+CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
-	valid_db tests/006-split_function.compiled.t
-LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o
+	valid_db\
+	tests/006-split_function.compiled.t\
+	tests/007-from_text_line_funcs.compiled.t
+LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
+	obj/parameterized_peak_group.o \
+	obj/detected_peak_group.o \
+	obj/unverified_peak.o \
+	obj/unknown_peak.o \
+	obj/human_verified_peak.o\
+	obj/sample_params.o\
+	obj/param_stats.o\
+	obj/known_peak.o\
+	obj/sample.o\
+	obj/peak.o 
 LDLIBS:=-ltap++
 
 all: $(EXECUTABLES)
@@ -13,17 +25,24 @@ all: $(EXECUTABLES)
 # Executables
 #############
 
-assign_peaks: obj/assign_peaks.o $(LIBRARYOBJS)
+#Note: this rule requires gnu ar to work correctly 
+libbirgpeakmatch.a: $(LIBRARYOBJS)
+	ar rsc libbirgpeakmatch.a $?
 
-hough_sample_params: obj/hough_sample_params.o $(LIBRARYOBJS)
+assign_peaks: obj/assign_peaks.o libbirgpeakmatch.a
 
-equivalent_db: obj/equivalent_db.o $(LIBRARYOBJS)
+hough_sample_params: obj/hough_sample_params.o libbirgpeakmatch.a
 
-simple_hough: obj/simple_hough.o $(LIBRARYOBJS)
+equivalent_db: obj/equivalent_db.o libbirgpeakmatch.a
 
-valid_db: obj/valid_db.o $(LIBRARYOBJS)
+simple_hough: obj/simple_hough.o libbirgpeakmatch.a
 
-tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o $(LIBRARYOBJS)
+valid_db: obj/valid_db.o libbirgpeakmatch.a
+
+tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o libbirgpeakmatch.a
+
+tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.compiled.t.o libbirgpeakmatch.a
+
 
 #############
 # Utility targets
@@ -43,10 +62,10 @@ doc/html/index.html: src/*.cpp src/*.hpp
 
 clean:
 	-rm $(EXECUTABLES)
-	-rm obj/*
+	-rm obj/* obj/tests/* *.a
 	-rm doc/html/index.html
 
-.PHONY: all clean test docs
+.PHONY: all clean test testverbose docs
 
 ############
 # Automatic dependency generation
@@ -65,3 +84,6 @@ obj/%.o : %.cpp
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	    -e '/^$$/ d' -e 's/$$/ :/' < obj/$*.d >> obj/$*.deps; \
 	    rm -f obj/$*.d
+
+-include obj/*.deps obj/tests/*.deps
+

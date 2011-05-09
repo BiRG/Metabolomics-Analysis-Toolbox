@@ -2,6 +2,9 @@
 # sample_params objects with different numbers but identical
 # parameters
 
+sample 27 foo
+sample 22 foo
+sample 0  baz
 sample_params 27 -0.482081320837365
 sample_params 22 -0.97739121424512
 sample_params 0 -1.60562958936764

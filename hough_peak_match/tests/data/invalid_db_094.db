@@ -1,0 +1,3 @@
+#Database with two different param_stats items
+param_stats .3 .2 .1
+param_stats .6 .35 .05

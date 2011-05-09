@@ -1,11 +1,42 @@
+#####
+#Compilation intermediate files
+#####
 obj/*.o
 obj/*.deps
 obj/tests/*.o
 obj/tests/*.deps
+libbirgpeakmatch.a
+
+#####
+# Test-coverage/profiling files
+#####
+obj/*.gcda
+obj/*.gcno
+obj/tests/*.gcda
+obj/tests/*.gcno
+
+#####
+#Editor files
+####
+src/#*
+src/.#*
+
+#####
+# Executables
+#####
 hough_sample_params
 simple_hough
 assign_peaks
 equivalent_db
 valid_db
+
+#####
+# Test executables
+#####
 tests/006-split_function.compiled.t
+tests/007-from_text_line_funcs.compiled.t
+
+#####
+# Generated documentation
+#####
 doc/html

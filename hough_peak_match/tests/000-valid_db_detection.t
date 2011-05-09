@@ -55,8 +55,6 @@ sub isInvalidOrNonexistant($){
 }
 
 
-TODO:{
-    local $TODO = "Have not written yet valid_db testing code yet.";
 for my $i (1..99){
     my $str = pad($i);
     isValidOrNonexistant("data/equivalent_db_pair_${str}.a.db");
@@ -66,6 +64,6 @@ for my $i (1..99){
     isValidOrNonexistant("data/valid_db_${str}.db");
     isInvalidOrNonexistant("data/invalid_db_${str}.db");
 }
-}
+
 
 

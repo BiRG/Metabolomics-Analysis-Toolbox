@@ -40,79 +40,81 @@
 ///
 ///\subsection parameterized_peak_group parameterized_peak_group
 ///
-///parameterized_peak_group peak_group_id ppm param_1 param_2 ... param_n
+///parameterized_peak_group <em>peak_group_id ppm param_1 param_2 ... param_n</em>
 ///
-///peak_group_id non-negative integer uniquely identifying the
-///peak_group to which the parameters apply ppm the base location of
-///the peak group
+///\a peak_group_id non-negative integer uniquely identifying the
+///peak_group to which the parameters apply 
 ///
-///param_1 ... param_n a vector of n reaction parameters so that the
+///\a ppm the base location of the peak group
+///
+///\a param_1 ... \a param_n a vector of n reaction parameters so that the
 ///predicted location of a peak in this group is ppm +
 ///peak_group.parameters · sample.sample_parameters
 ///
 ///\subsection detected_peak_group detected_peak_group
 ///
-///detected_peak_group peak_group_id ppm param_1 param_2 ... param_n
+///detected_peak_group <em>peak_group_id ppm param_1 param_2 ... param_n</em>
 ///
-///peak_group_id non-negative integer uniquely identifying the
-///peak_group to which the parameters apply ppm the base location of
-///the peak group
+///\a peak_group_id non-negative integer uniquely identifying the
+///peak_group to which the parameters apply 
 ///
-///param_1 ... param_n a vector of n reaction parameters so that the
+///\a ppm the base location of the peak group
+///
+///\a param_1 ... \a param_n a vector of n reaction parameters so that the
 ///predicted location of a peak in this group is ppm +
 ///peak_group.parameters · sample.sample_parameters
 ///
 ///\subsection human_verified_peak human_verified_peak
 ///
-///human_verified_peak sample_id peak_id ppm peak_group_id
+///human_verified_peak <em>sample_id peak_id ppm peak_group_id</em>
 ///
-///sample_id non-negative integer uniquely identifying the sample to
+///\a sample_id non-negative integer uniquely identifying the sample to
 ///which this peak belongs
 ///
-///peak_id non-negative integer uniquely identifying this peak within
+///\a peak_id non-negative integer uniquely identifying this peak within
 ///all peaks belonging to that sample
 ///
-///peak_group_id the id of the peak group to which this peak belongs
+///\a peak_group_id the id of the peak group to which this peak belongs
 ///
 ///\subsection unverified_peak unverified_peak
 ///
-///unverified_peak sample_id peak_id ppm peak_group_id
+///unverified_peak <em>sample_id peak_id ppm peak_group_id</em>
 ///
 ///Fields are the same as in human_verified_peak
 ///
 ///\subsection unknown_peak unknown_peak
 ///
-///unknown_peak sample_id peak_id ppm
+///unknown_peak <em>sample_id peak_id ppm</em>
 ///
 ///The fields are the same as in human_verified_peak 
 ///
 ///\subsection sample sample
 ///
-///sample sample_id class
+///sample <em>sample_id class</em>
 ///
-///sample_id a non-negative integer uniquely identifying the sample
+///\a sample_id a non-negative integer uniquely identifying the sample
 ///described by this line
 ///
-///class a string (without spaces) indicating which treatment class
+///\a class a string (without spaces) indicating which treatment class
 ///this sample came from. If two samples have different strings, then
 ///they came from different classes, same string, same classes
 ///
 ///\subsection sample_params sample_params
 ///
-///sample_params sample_id param_1 param_2 ... param_n
+///sample_params <em>sample_id param_1 param_2 ... param_n</em>
 ///
-///sample_id a non-negative integer uniquely identifying the sample to
+///\a sample_id a non-negative integer uniquely identifying the sample to
 ///which these parameters apply
 ///
-///param_1 ... param_n a vector of n sample parameters so that the
+///\a param_1 ... \a param_n a vector of n sample parameters so that the
 ///predicted location of a peak in this sample is peak_group.ppm +
 ///peak_group.parameters · sample.sample_parameters
 ///
 ///\subsection param_stats param_stats
 ///
-///param_stats fracvar_1 fracvar_2 ... fracvar_n
+///param_stats <em> fracvar_1 fracvar_2 ... fracvar_n</em>
 ///
-///fracvar_1 ... fracvar_n is a vector of n non-negative decimal
+///\a fracvar_1 ... \a fracvar_n is a vector of n non-negative decimal
 ///rational numbers that give fraction of variance explained by the
 ///corresponding sample parameter in the group of known peaks used to
 ///generate the sample parameters. The sum of all fracvar_i parameters
@@ -121,3 +123,6 @@
 ///Note that fracvar values of 0 are acceptable. This is needed, for
 ///example, in the case that the user specifies a model with more
 ///parameters than necessary.
+///
+///Note also that there can be at most one param_stats object in a
+///database
