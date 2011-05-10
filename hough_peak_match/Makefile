@@ -24,7 +24,7 @@ LDFLAGS:=-fprofile-arcs
 
 all: mock_executables
 
-gcov: GCOV_OPTS:=-O0 -fprofile-arcs -ftest-coverage -fno-default-inline
+gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage
 gcov: mock_executables
 
 mock_executables: 

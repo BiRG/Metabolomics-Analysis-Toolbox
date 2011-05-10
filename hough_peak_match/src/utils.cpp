@@ -12,4 +12,11 @@ std::vector<std::string> split(const std::string& s){
   return out;
 }
 
+bool is_special_double(double d){ 
+  return is_nan(d) 
+    || d==std::numeric_limits<double>::infinity()
+    || -d==std::numeric_limits<double>::infinity();
+}
+
+
 }
