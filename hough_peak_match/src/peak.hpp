@@ -55,7 +55,7 @@ public:
   ///
   ///\return the id of the sample to which this peak belongs.
   virtual unsigned sample_id() const{ 
-    std::cerr << "Peak::sample_id() called\n";
+    //    std::cerr << "Peak::sample_id() called\n";
     return sample_id_; }
 
   ///\brief Return the id of this peak within its sample
