@@ -1,11 +1,17 @@
 #####
-#Compilation intermediate files
+# Compilation intermediate files
 #####
 obj/*.o
 obj/*.deps
 obj/tests/*.o
 obj/tests/*.deps
 libbirgpeakmatch.a
+
+#####
+# Files flagging directory states to the build system
+#####
+mock_executables
+normal_executables
 
 #####
 # Test-coverage/profiling files
@@ -16,7 +22,7 @@ obj/tests/*.gcda
 obj/tests/*.gcno
 
 #####
-#Editor files
+# Editor files
 ####
 src/#*
 src/.#*

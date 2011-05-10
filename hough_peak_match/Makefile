@@ -1,7 +1,7 @@
 CC:=g++
 CXX:=g++
 VPATH:=src:obj:src/tests
-CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g -O0 -fprofile-arcs -ftest-coverage -fno-default-inline
+CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g -O0 -fprofile-arcs -ftest-coverage -fno-default-inline $(PREDEFINE)
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
 	tests/006-split_function.compiled.t\
@@ -17,10 +17,24 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/param_stats.o\
 	obj/known_peak.o\
 	obj/sample.o\
-	obj/peak.o 
+	obj/peak.o \
+	obj/mockable_stringstream.o
 LDLIBS:=-ltap++
 LDFLAGS:=-fprofile-arcs
-all: $(EXECUTABLES)
+
+all: mock_executables
+
+mock_executables: 
+	@if [ -e normal_executables ]; then $(MAKE) --no-print-directory clean; fi
+	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM executables
+	touch mock_executables
+
+normal_executables: 
+	@if [ -e mock_executables ]; then $(MAKE) --no-print-directory clean; fi
+	@$(MAKE) --no-print-directory executables
+	touch normal_executables
+
+executables: $(EXECUTABLES)
 
 #############
 # Executables
@@ -44,16 +58,16 @@ tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o l
 
 tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.compiled.t.o libbirgpeakmatch.a
 
-stringstream_sandbox: obj/stringstream_sandbox.o
+stringstream_sandbox: obj/stringstream_sandbox.o libbirgpeakmatch.a
 
 #############
 # Utility targets
 #############
 
-test: all
+test: mock_executables
 	cd tests; ./runalltests.pl
 
-testverbose: all
+testverbose: mock_executables
 	cd tests; ./runalltests.pl verbose
 
 
@@ -62,13 +76,13 @@ docs: doc/html/index.html
 doc/html/index.html: src/*.cpp src/*.hpp
 	doxygen Doxyfile
 
-clean:
-	-rm $(EXECUTABLES)
-	-rm obj/* obj/tests/* *.a
-	-rm *.gcov
-	-rm doc/html/index.html
+THINGS_CLEAN_REMOVES:=$(EXECUTABLES) obj/* obj/tests/* *.a *.gcov \
+	doc/html/index.html normal_executables mock_executables
 
-.PHONY: all clean test testverbose docs
+clean:
+	-rm $(THINGS_CLEAN_REMOVES)
+
+.PHONY: all clean test testverbose docs executables normal_executables mock_executables
 
 ############
 # Automatic dependency generation

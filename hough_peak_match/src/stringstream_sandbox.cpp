@@ -1,7 +1,9 @@
 #include <iostream>
 #include <limits>
 
+#ifndef USE_MOCK_ISTRINGSTREAM
 #define USE_MOCK_ISTRINGSTREAM
+#endif
 #include "mockable_stringstream.hpp"
 
 int main(){
