@@ -1,7 +1,7 @@
 CC:=g++
 CXX:=g++
 VPATH:=src:obj:src/tests
-CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g -O0 -fprofile-arcs -ftest-coverage -fno-default-inline $(PREDEFINE)
+CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g $(GCOV_OPTS) $(PREDEFINE)
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
 	tests/006-split_function.compiled.t\
@@ -24,9 +24,12 @@ LDFLAGS:=-fprofile-arcs
 
 all: mock_executables
 
+gcov: GCOV_OPTS:=-O0 -fprofile-arcs -ftest-coverage -fno-default-inline
+gcov: mock_executables
+
 mock_executables: 
 	@if [ -e normal_executables ]; then $(MAKE) --no-print-directory clean; fi
-	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM executables
+	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM GCOV_OPTS="$(GCOV_OPTS)" executables
 	touch mock_executables
 
 normal_executables: 
