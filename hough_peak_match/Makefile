@@ -5,7 +5,8 @@ CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g -O0 -fprofile-arcs -ftest-coverage
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
 	tests/006-split_function.compiled.t\
-	tests/007-from_text_line_funcs.compiled.t
+	tests/007-from_text_line_funcs.compiled.t\
+	stringstream_sandbox
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
 	obj/detected_peak_group.o \
@@ -43,6 +44,7 @@ tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o l
 
 tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.compiled.t.o libbirgpeakmatch.a
 
+stringstream_sandbox: obj/stringstream_sandbox.o
 
 #############
 # Utility targets

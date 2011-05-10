@@ -29,6 +29,7 @@ simple_hough
 assign_peaks
 equivalent_db
 valid_db
+stringstream_sandbox
 
 #####
 # Test executables
