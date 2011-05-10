@@ -1,7 +1,7 @@
 #include "utils.hpp"
 #include "parameterized_peak_group.hpp"
 #include <cassert>
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 namespace HoughPeakMatch{
   ParameterizedPeakGroup ParameterizedPeakGroup::from_text_line

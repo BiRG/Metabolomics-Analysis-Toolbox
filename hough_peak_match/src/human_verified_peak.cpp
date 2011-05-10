@@ -2,7 +2,7 @@
 #include "human_verified_peak.hpp"
 #include <cassert>
 #include <cstdlib>
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 namespace HoughPeakMatch{
   HumanVerifiedPeak HumanVerifiedPeak::from_text_line

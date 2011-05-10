@@ -2,7 +2,7 @@
 #include "detected_peak_group.hpp"
 #include <cassert>
 #include <cstdlib>
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 namespace HoughPeakMatch{
   DetectedPeakGroup DetectedPeakGroup::from_text_line

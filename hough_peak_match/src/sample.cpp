@@ -1,5 +1,5 @@
 #include "sample.hpp"
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 namespace HoughPeakMatch{
   Sample Sample::from_text_line

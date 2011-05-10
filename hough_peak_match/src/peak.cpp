@@ -1,6 +1,6 @@
 #include "peak.hpp"
 #include "utils.hpp"
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 namespace HoughPeakMatch{
   void Peak::initFrom(const std::vector<std::string>& words, 

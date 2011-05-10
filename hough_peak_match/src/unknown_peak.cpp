@@ -2,7 +2,7 @@
 #include "unknown_peak.hpp"
 #include <cassert>
 #include <cstdlib>
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 namespace HoughPeakMatch{
   UnknownPeak UnknownPeak::from_text_line

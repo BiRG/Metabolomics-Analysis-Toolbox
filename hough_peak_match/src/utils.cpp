@@ -1,5 +1,5 @@
 #include "utils.hpp"
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 namespace HoughPeakMatch{
 std::vector<std::string> split(const std::string& s){

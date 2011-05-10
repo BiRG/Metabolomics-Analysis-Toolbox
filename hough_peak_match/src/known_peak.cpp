@@ -1,5 +1,5 @@
 #include "known_peak.hpp"
-#include <sstream>
+#include "mockable_stringstream.hpp"
 
 
 namespace HoughPeakMatch{
