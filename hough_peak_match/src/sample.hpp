@@ -28,17 +28,17 @@ class Sample{
   ///\brief Construct an uninitialized Sample
   Sample():sample_id_(),sample_class_(){}
 public:
-  virtual ~Sample(){}
+  ~Sample(){}
 
   ///\brief Return the sample_id for this sample
   ///
   ///\return the sample_id for this sample
-  virtual unsigned id() const { return sample_id_; }
+  unsigned id() const { return sample_id_; }
 
   ///\brief Return the sample_class for this sample 
   ///
   ///\return the sample_class for this sample 
-  virtual std::string sample_class() const { return sample_class_; }
+  std::string sample_class() const { return sample_class_; }
 
   ///\brief Creates a Sample from a line in a database file
   ///

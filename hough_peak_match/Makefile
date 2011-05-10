@@ -1,7 +1,7 @@
 CC:=g++
 CXX:=g++
 VPATH:=src:obj:src/tests
-CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g
+CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g -O0 -fprofile-arcs -ftest-coverage -fno-default-inline
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
 	tests/006-split_function.compiled.t\
@@ -18,7 +18,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/sample.o\
 	obj/peak.o 
 LDLIBS:=-ltap++
-
+LDFLAGS:=-fprofile-arcs
 all: $(EXECUTABLES)
 
 #############
@@ -63,6 +63,7 @@ doc/html/index.html: src/*.cpp src/*.hpp
 clean:
 	-rm $(EXECUTABLES)
 	-rm obj/* obj/tests/* *.a
+	-rm *.gcov
 	-rm doc/html/index.html
 
 .PHONY: all clean test testverbose docs
