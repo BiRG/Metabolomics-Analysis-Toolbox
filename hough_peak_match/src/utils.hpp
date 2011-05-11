@@ -38,12 +38,7 @@ inline bool is_nan(double d){ return d != d; }
 ///\param d the value being tested for specialness
 ///
 ///\return true if d is NAN, infinity or -infinity false otherwise
-inline bool is_special_double(double d){ 
-  return is_nan(d) 
-    || d==std::numeric_limits<double>::infinity()
-    || -d==std::numeric_limits<double>::infinity();
-}
-
+bool is_special_double(double d);
 
 
 }

@@ -43,6 +43,10 @@ protected:
   ///\param words a vector of words as strings in the appropriate
   ///format
   ///
+  ///\param expected_name the expected line_type value from the file
+  ///format.  It should correspond to the Peak subclass being
+  ///instantiated.
+  ///
   ///\param failed will be set to true if the words could not be
   ///parsed as a Peak, it will be false otherwise
   virtual void initFrom(const std::vector<std::string>& words, 
@@ -55,7 +59,7 @@ public:
   ///
   ///\return the id of the sample to which this peak belongs.
   virtual unsigned sample_id() const{ 
-    std::cerr << "Peak::sample_id() called\n";
+    //    std::cerr << "Peak::sample_id() called\n";
     return sample_id_; }
 
   ///\brief Return the id of this peak within its sample

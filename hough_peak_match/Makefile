@@ -1,11 +1,13 @@
 CC:=g++
 CXX:=g++
 VPATH:=src:obj:src/tests
-CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g -O0 -fprofile-arcs -ftest-coverage -fno-default-inline
+CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g $(GCOV_OPTS) $(PREDEFINE)
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
 	tests/006-split_function.compiled.t\
-	tests/007-from_text_line_funcs.compiled.t
+	tests/007-from_text_line_funcs.compiled.t\
+	tests/008-mockable_stringstream.compiled.t\
+	stringstream_sandbox
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
 	obj/detected_peak_group.o \
@@ -16,10 +18,38 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/param_stats.o\
 	obj/known_peak.o\
 	obj/sample.o\
-	obj/peak.o 
+	obj/peak.o \
+	obj/mockable_stringstream.o
 LDLIBS:=-ltap++
 LDFLAGS:=-fprofile-arcs
-all: $(EXECUTABLES)
+
+all: mock_executables
+
+executables: $(EXECUTABLES)
+
+
+mock_executables: 
+	@if [ -e normal_executables ]; then $(MAKE) --no-print-directory clean; fi
+	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM GCOV_OPTS="$(GCOV_OPTS)" executables
+	touch mock_executables
+
+normal_executables: 
+	@if [ -e mock_executables ]; then $(MAKE) --no-print-directory clean; fi
+	@$(MAKE) --no-print-directory executables
+	touch normal_executables
+
+gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage 
+gcov: mock_executables
+
+
+#To do the lcov analysis: 1) make clean 2) make gcov 3) make test 4) make lcov
+
+lcov:
+	mkdir -p lcov_output
+	lcov --directory obj --capture --output-file lcov_output/lcov.info -b .
+	genhtml -o lcov_output lcov_output/lcov.info
+
+.PHONY: lcov
 
 #############
 # Executables
@@ -43,30 +73,33 @@ tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o l
 
 tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.compiled.t.o libbirgpeakmatch.a
 
+tests/008-mockable_stringstream.compiled.t: obj/tests/008-mockable_stringstream.compiled.t.o libbirgpeakmatch.a
+
+
+stringstream_sandbox: obj/stringstream_sandbox.o libbirgpeakmatch.a
 
 #############
 # Utility targets
 #############
 
-test: all
+test: mock_executables
 	cd tests; ./runalltests.pl
 
-testverbose: all
+testverbose: mock_executables
 	cd tests; ./runalltests.pl verbose
 
 
 docs: doc/html/index.html
 
-doc/html/index.html: src/*.cpp src/*.hpp
+doc/html/index.html: src/*.cpp src/*.hpp src/tests/*.[ch]pp
 	doxygen Doxyfile
 
 clean:
-	-rm $(EXECUTABLES)
-	-rm obj/* obj/tests/* *.a
-	-rm *.gcov
-	-rm doc/html/index.html
+	-rm $(EXECUTABLES) obj/* obj/tests/* *.a *.gcov 
+	-rm doc/html/index.html normal_executables mock_executables
+	-rm -rf lcov_output
 
-.PHONY: all clean test testverbose docs
+.PHONY: all clean test testverbose docs executables normal_executables mock_executables
 
 ############
 # Automatic dependency generation

@@ -1,0 +1,13 @@
+Synopsis: equivalent_db database_1 database_2
+
+Reads the two given peak database files and reports whether 
+they describe equivalent databases, that is, databases that 
+describe the same real-world information but with file-level 
+differences like changes in line ordering or in object id numbers.
+
+Writes to standard output, prints:
+    "Databases ARE equivalent" if the databases are equivalent,
+    "Databases ARE NOT equivalent" if the databases are not 
+                                     equivalent
+
+ERROR: Wrong number of arguments

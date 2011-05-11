@@ -13,7 +13,48 @@
 
 namespace HoughPeakMatch{
   namespace Test{
-    ///\brief Exercise all the *::from_text_line functions
+
+    ///\brief proxy object used for accessing protected methods of KnownPeak
+    class KnownPeakProxy:public KnownPeak{
+    public:
+      ///\brief construct uninitialized KnownPeakProxy
+      KnownPeakProxy():KnownPeak(){}
+
+      ///\brief public Access to KnownPeak::initFrom
+      ///
+      ///\param words \see KnownPeak::initFrom
+      ///
+      ///\param expected_name \see KnownPeak::initFrom
+      ///
+      ///\param failed \see KnownPeak::initFrom
+      virtual void initFrom(const std::vector<std::string>& words, 
+			    const std::string& expected_name, 
+			    bool& failed){
+	KnownPeak::initFrom(words,expected_name,failed);
+      }
+    };
+
+    ///\brief proxy object used for accessing protected methods of Peak
+    class PeakProxy:public Peak{
+    public:
+      ///\brief construct uninitialized PeakProxy
+      PeakProxy():Peak(){}
+
+      ///\brief public Access to Peak::initFrom
+      ///
+      ///\param words \see Peak::initFrom
+      ///
+      ///\param expected_name \see Peak::initFrom
+      ///
+      ///\param failed \see Peak::initFrom
+      virtual void initFrom(const std::vector<std::string>& words, 
+			    const std::string& expected_name, 
+			    bool& failed){
+	Peak::initFrom(words,expected_name,failed);
+      }
+    };
+
+    ///\brief Exercise all the various from_text_line functions
     ///
     ///Note: only checks that they construct what is expected from
     ///valid input.  The invalid input is checked using the black-box
@@ -46,6 +87,52 @@ namespace HoughPeakMatch{
 	collection_is(p2.params().begin(), p2.params().end(),
 		      params2,params2+1,
 		      "Detected peak group 2 has expected params vector");
+
+	//With bad input name
+	{
+	  string in[4]={"sample","55","11.9","389"};
+	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Detected peak group fails for wrong input line-type.");
+	}
+
+	//With NAN ppm
+	{
+	  string in[4]={"sample","55","nan","389"};
+	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Detected peak group fails nan ppm.");
+	}
+
+	//With INF ppm
+	{
+	  string in[4]={"sample","55","inf","389"};
+	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Detected peak group fails inf ppm.");
+	}
+	
+	//With NAN param
+	{
+	  string in[4]={"sample","55","2.1","nan"};
+	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Detected peak group fails nan param.");
+	}
+
+	//With INF param
+	{
+	  string in[4]={"sample","55","2.1","inf"};
+	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Detected peak group fails inf param.");
+	}
+
       }
       {
 	string in1[5]={"parameterized_peak_group","33","4.45","35","-0.59"};
@@ -69,6 +156,54 @@ namespace HoughPeakMatch{
 	collection_is(p2.params().begin(), p2.params().end(),
 		      params2,params2+1,
 		      "Parameterized peak group 2 has expected params vector");
+
+
+	//With bad input name
+	{
+	  string in[4]={"sample","55","11.9","389"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails for wrong input line-type.");
+	}
+
+	//With NAN ppm
+	{
+	  string in[4]={"sample","55","nan","389"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails nan ppm.");
+	}
+
+	//With INF ppm
+	{
+	  string in[4]={"sample","55","inf","389"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails inf ppm.");
+	}
+	
+	//With NAN param
+	{
+	  string in[4]={"sample","55","2.1","nan"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails nan param.");
+	}
+
+	//With INF param
+	{
+	  string in[4]={"sample","55","2.1","inf"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails inf param.");
+	}
+
+
       }
       {
 	string in1[3]={"sample","22","class_name"};
@@ -76,6 +211,34 @@ namespace HoughPeakMatch{
 	is(failed, false, "Sample 1 constructs with no errors");
 	is(p1.id(), 22,"Sample 1 has expected id");
 	is(p1.sample_class(), "class_name","Sample 1 has expected class");
+
+	//With bad input name
+	{
+	  string in[3]={"vafafkasdfhjk","22","class_name"};
+	  Sample p = Sample::from_text_line(vstr(in,in+3), failed);
+	  is(failed, true, "Sample fails when given bad input name");
+	}
+
+	//With blank class name
+	{
+	  string in[3]={"sample","1",""};
+	  Sample p = Sample::from_text_line(vstr(in,in+3), failed);
+	  is(failed, true, "Sample fails when too few arguments");
+	}
+
+	//With too few arguments
+	{
+	  string in[3]={"sample","22","class_name"};
+	  Sample p = Sample::from_text_line(vstr(in,in+2), failed);
+	  is(failed, true, "Sample fails when too few arguments");
+	}
+
+	//With too many arguments
+	{
+	  string in[4]={"sample","22","class_name","12"};
+	  Sample p = Sample::from_text_line(vstr(in,in+4), failed);
+	  is(failed, true, "Sample fails when too many arguments");
+	}
       }
       {
 	string in1[3]={"param_stats","0.95","0.05"};
@@ -93,6 +256,20 @@ namespace HoughPeakMatch{
 	collection_is(p2.frac_variances().begin(), p2.frac_variances().end(),
 		      stats2,stats2+1,
 		      "Param stats 2 has expected stats vector");
+
+	//Bad line type
+	{
+	  string in[3]={"param__stats","0.95","0.05"};
+	  ParamStats p = ParamStats::from_text_line(vstr(in,in+3), failed);
+	  is(failed, true, "Param stats fails when given bad line_type");
+	}
+
+	//Bad too few input prameters
+	{
+	  string in[1]={"param__stats"};
+	  ParamStats p = ParamStats::from_text_line(vstr(in,in+1), failed);
+	  is(failed, true, "Param stats fails when given bad line_type");
+	}
       }
       {
 	string in1[4]={"sample_params","22","25","-0.52"};
@@ -112,6 +289,13 @@ namespace HoughPeakMatch{
 	collection_is(p2.params().begin(), p2.params().end(),
 		      params2,params2+1,
 		      "Sample params 2 has expected params vector");
+
+	//sample_params with bad name
+	{
+	  string in[4]={"sampleparams","22","25","-0.52"};
+	  SampleParams p = SampleParams::from_text_line(vstr(in,in+4), failed);
+	  is(failed, true, "Sample params fails with bad name");
+	}
       }
       {
 	string in1[4]={"unknown_peak","22","25","0.52"};
@@ -120,6 +304,25 @@ namespace HoughPeakMatch{
 	is(p1.sample_id(), 22,"Unknown peak 1 has expected sample_id");
 	is(p1.peak_id(), 25,"Unknown peak 1 has expected peak_id");
 	is(p1.ppm(), 0.52,"Unknown peak 1 has expected ppm");
+
+	//unknown_peak with bad name
+	{
+	  string in[4]={"unknownpeak","22","25","0.52"};
+	  UnknownPeak p = UnknownPeak::from_text_line(vstr(in,in+4), failed);
+	  is(failed, true, "Unknown peak fails with bad name");
+	}
+	//unknown_peak with too many arguments
+	{
+	  string in[5]={"unknownpeak","22","25","0.52",".01"};
+	  UnknownPeak p = UnknownPeak::from_text_line(vstr(in,in+5), failed);
+	  is(failed, true, "Unknown peak fails with too many arguments");
+	}
+	//unknown_peak with too few arguments
+	{
+	  string in[3]={"unknownpeak","22","25"};
+	  UnknownPeak p = UnknownPeak::from_text_line(vstr(in,in+3), failed);
+	  is(failed, true, "Unknown peak fails with too few arguments");
+	}
       }
       {
 	string in1[5]={"unverified_peak","2","5","0.12","11"};
@@ -131,6 +334,62 @@ namespace HoughPeakMatch{
 	is(p1.ppm(), 0.12,"Unverified peak 1 has expected ppm");
 	is(p1.peak_group_id(), 11,
 	   "Unverified peak 1 has expected peak_group_id");
+
+	//Wrong name
+	{
+	  string in[5]={"unknown_peak","2","5","0.12","11"};
+	  UnverifiedPeak p = 
+	    UnverifiedPeak::from_text_line(vstr(in,in+5), failed);
+	  is(failed, true, "Unverified peak from_text_line fails when given wrong name");
+	}
+      }
+
+      {
+	//Known peak: wrong name
+	{
+	  KnownPeakProxy kp;
+	  string in[5]={"kno_peak","2","5","0.1","81"};
+	  kp.initFrom(vstr(in,in+5), "known_peak", failed);
+	  is(failed, true, "Known peak init fails when given wrong name");
+	}
+	//Known peak: too short
+	{
+	  KnownPeakProxy kp;
+	  string in[4]={"known_peak","2","5","0.1"};
+	  kp.initFrom(vstr(in,in+4), "known_peak", failed);
+	  is(failed, true, "Known peak init fails when too few arguments");
+	}
+      }
+
+      {
+	//Peak: wrong name
+	{
+	  PeakProxy p;
+	  string in[4]={"peek","2","5","0.1"};
+	  p.initFrom(vstr(in,in+4), "peak", failed);
+	  is(failed, true, "Peak init fails when given wrong name");
+	}
+	//Peak: too long
+	{
+	  PeakProxy p;
+	  string in[5]={"peak","2","5","0.1","righteous"};
+	  p.initFrom(vstr(in,in+5), "peak", failed);
+	  is(failed, false, "Peak init succeeds when given too many arguments");
+	  is(p.ppm(), 0.1,"Peak has correct ppm with too many arguments");
+	  is(p.peak_id(), 5, 
+	     "Peak has correct peak_id with too many arguments");
+	  is(p.sample_id(), 2, 
+	     "Peak has correct sample_id with too many arguments");
+	  is(p.id(),std::make_pair(2u,5u),
+	     "Peak has correct id with too many arguments");
+	}
+	//Peak: too short
+	{
+	  PeakProxy p;
+	  string in[3]={"peak","2","5"};
+	  p.initFrom(vstr(in,in+3), "peak", failed);
+	  is(failed, true, "Peak init fails when too few arguments");
+	}
       }
       {
 	string in1[5]={"human_verified_peak","2","5","0.12","11"};
@@ -147,8 +406,11 @@ namespace HoughPeakMatch{
   }
 }
 
+///\brief test harness wrapper around HoughPeakMatch::Test::from_text_line();
+///
+///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(43);
+  TAP::plan(73);
   HoughPeakMatch::Test::from_text_line();
   return TAP::exit_status();
 }

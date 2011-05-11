@@ -1,5 +1,5 @@
 #####
-#Compilation intermediate files
+# Compilation intermediate files
 #####
 obj/*.o
 obj/*.deps
@@ -8,15 +8,24 @@ obj/tests/*.deps
 libbirgpeakmatch.a
 
 #####
-# Test-coverage/profiling files
+# Files flagging directory states to the build system
 #####
-obj/*.gcda
-obj/*.gcno
-obj/tests/*.gcda
-obj/tests/*.gcno
+mock_executables
+normal_executables
 
 #####
-#Editor files
+# Test-coverage/profiling files
+#####
+obj/*.gcov
+obj/*.gcda
+obj/*.gcno
+obj/tests/*.gcov
+obj/tests/*.gcda
+obj/tests/*.gcno
+lcov_output
+
+#####
+# Editor files
 ####
 src/#*
 src/.#*
@@ -29,12 +38,14 @@ simple_hough
 assign_peaks
 equivalent_db
 valid_db
+stringstream_sandbox
 
 #####
 # Test executables
 #####
 tests/006-split_function.compiled.t
 tests/007-from_text_line_funcs.compiled.t
+tests/008-mockable_stringstream.compiled.t
 
 #####
 # Generated documentation

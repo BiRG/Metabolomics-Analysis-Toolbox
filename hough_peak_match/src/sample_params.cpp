@@ -1,6 +1,6 @@
 #include "sample_params.hpp"
 #include "utils.hpp"
-#include <sstream>
+#include "mockable_stringstream.hpp"
 #include <cassert>
 
 namespace HoughPeakMatch{
