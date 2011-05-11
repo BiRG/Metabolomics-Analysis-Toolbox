@@ -41,6 +41,8 @@ gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage
 gcov: mock_executables
 
 
+#To do the lcov analysis: 1) make clean 2) make gcov 3) make tests 4) make lcov
+
 lcov:
 	mkdir -p lcov_output
 	lcov --directory obj --capture --output-file lcov_output/lcov.info -b .
