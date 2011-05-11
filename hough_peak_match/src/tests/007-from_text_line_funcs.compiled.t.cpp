@@ -34,6 +34,26 @@ namespace HoughPeakMatch{
       }
     };
 
+    ///\brief proxy object used for accessing protected methods of Peak
+    class PeakProxy:public Peak{
+    public:
+      ///\construct uninitialized PeakProxy
+      PeakProxy():Peak(){}
+
+      ///\brief public Access to Peak::initFrom
+      ///
+      ///\param words \see Peak::initFrom
+      ///
+      ///\param expected_name \see Peak::initFrom
+      ///
+      ///\param failed \see Peak::initFrom
+      virtual void initFrom(const std::vector<std::string>& words, 
+			    const std::string& expected_name, 
+			    bool& failed){
+	Peak::initFrom(words,expected_name,failed);
+      }
+    };
+
     ///\brief Exercise all the *::from_text_line functions
     ///
     ///Note: only checks that they construct what is expected from
@@ -221,6 +241,13 @@ namespace HoughPeakMatch{
 	collection_is(p2.params().begin(), p2.params().end(),
 		      params2,params2+1,
 		      "Sample params 2 has expected params vector");
+
+	//sample_params with bad name
+	{
+	  string in[4]={"sampleparams","22","25","-0.52"};
+	  SampleParams p = SampleParams::from_text_line(vstr(in,in+4), failed);
+	  is(failed, true, "Sample params fails with bad name");
+	}
       }
       {
 	string in1[4]={"unknown_peak","22","25","0.52"};
@@ -229,6 +256,25 @@ namespace HoughPeakMatch{
 	is(p1.sample_id(), 22,"Unknown peak 1 has expected sample_id");
 	is(p1.peak_id(), 25,"Unknown peak 1 has expected peak_id");
 	is(p1.ppm(), 0.52,"Unknown peak 1 has expected ppm");
+
+	//unknown_peak with bad name
+	{
+	  string in[4]={"unknownpeak","22","25","0.52"};
+	  UnknownPeak p = UnknownPeak::from_text_line(vstr(in,in+4), failed);
+	  is(failed, true, "Unknown peak fails with bad name");
+	}
+	//unknown_peak with too many arguments
+	{
+	  string in[5]={"unknownpeak","22","25","0.52",".01"};
+	  UnknownPeak p = UnknownPeak::from_text_line(vstr(in,in+5), failed);
+	  is(failed, true, "Unknown peak fails with too many arguments");
+	}
+	//unknown_peak with too few arguments
+	{
+	  string in[3]={"unknownpeak","22","25"};
+	  UnknownPeak p = UnknownPeak::from_text_line(vstr(in,in+3), failed);
+	  is(failed, true, "Unknown peak fails with too few arguments");
+	}
       }
       {
 	string in1[5]={"unverified_peak","2","5","0.12","11"};
@@ -266,6 +312,37 @@ namespace HoughPeakMatch{
 	  is(failed, true, "Known peak init fails when too few arguments");
 	}
       }
+
+      {
+	//Peak: wrong name
+	{
+	  PeakProxy p;
+	  string in[4]={"peek","2","5","0.1"};
+	  p.initFrom(vstr(in,in+4), "peak", failed);
+	  is(failed, true, "Peak init fails when given wrong name");
+	}
+	//Peak: too long
+	{
+	  PeakProxy p;
+	  string in[5]={"peak","2","5","0.1","righteous"};
+	  p.initFrom(vstr(in,in+5), "peak", failed);
+	  is(failed, false, "Peak init succeeds when given too many arguments");
+	  is(p.ppm(), 0.1,"Peak has correct ppm with too many arguments");
+	  is(p.peak_id(), 5, 
+	     "Peak has correct peak_id with too many arguments");
+	  is(p.sample_id(), 2, 
+	     "Peak has correct sample_id with too many arguments");
+	  is(p.id(),std::make_pair(2u,5u),
+	     "Peak has correct id with too many arguments");
+	}
+	//Peak: too short
+	{
+	  PeakProxy p;
+	  string in[3]={"peak","2","5"};
+	  p.initFrom(vstr(in,in+3), "peak", failed);
+	  is(failed, true, "Peak init fails when too few arguments");
+	}
+      }
       {
 	string in1[5]={"human_verified_peak","2","5","0.12","11"};
 	HumanVerifiedPeak p1 = 
@@ -282,7 +359,7 @@ namespace HoughPeakMatch{
 }
 
 int main(){
-  TAP::plan(57);
+  TAP::plan(68);
   HoughPeakMatch::Test::from_text_line();
   return TAP::exit_status();
 }
