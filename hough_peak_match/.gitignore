@@ -45,6 +45,7 @@ stringstream_sandbox
 #####
 tests/006-split_function.compiled.t
 tests/007-from_text_line_funcs.compiled.t
+tests/008-mockable_stringstream.compiled.t
 
 #####
 # Generated documentation

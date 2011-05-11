@@ -6,6 +6,7 @@ EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
 	tests/006-split_function.compiled.t\
 	tests/007-from_text_line_funcs.compiled.t\
+	tests/008-mockable_stringstream.compiled.t\
 	stringstream_sandbox
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
@@ -37,11 +38,11 @@ normal_executables:
 	@$(MAKE) --no-print-directory executables
 	touch normal_executables
 
-gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage
+gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage 
 gcov: mock_executables
 
 
-#To do the lcov analysis: 1) make clean 2) make gcov 3) make tests 4) make lcov
+#To do the lcov analysis: 1) make clean 2) make gcov 3) make test 4) make lcov
 
 lcov:
 	mkdir -p lcov_output
@@ -71,6 +72,9 @@ valid_db: obj/valid_db.o libbirgpeakmatch.a
 tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o libbirgpeakmatch.a
 
 tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.compiled.t.o libbirgpeakmatch.a
+
+tests/008-mockable_stringstream.compiled.t: obj/tests/008-mockable_stringstream.compiled.t.o libbirgpeakmatch.a
+
 
 stringstream_sandbox: obj/stringstream_sandbox.o libbirgpeakmatch.a
 
