@@ -16,10 +16,13 @@ normal_executables
 #####
 # Test-coverage/profiling files
 #####
+obj/*.gcov
 obj/*.gcda
 obj/*.gcno
+obj/tests/*.gcov
 obj/tests/*.gcda
 obj/tests/*.gcno
+lcov_output
 
 #####
 # Editor files

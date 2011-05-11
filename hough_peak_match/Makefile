@@ -24,8 +24,8 @@ LDFLAGS:=-fprofile-arcs
 
 all: mock_executables
 
-gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage
-gcov: mock_executables
+executables: $(EXECUTABLES)
+
 
 mock_executables: 
 	@if [ -e normal_executables ]; then $(MAKE) --no-print-directory clean; fi
@@ -37,7 +37,16 @@ normal_executables:
 	@$(MAKE) --no-print-directory executables
 	touch normal_executables
 
-executables: $(EXECUTABLES)
+gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage
+gcov: mock_executables
+
+
+lcov:
+	mkdir -p lcov_output
+	lcov --directory obj --capture --output-file lcov_output/lcov.info -b .
+	genhtml -o lcov_output lcov_output/lcov.info
+
+.PHONY: lcov
 
 #############
 # Executables
@@ -79,11 +88,10 @@ docs: doc/html/index.html
 doc/html/index.html: src/*.cpp src/*.hpp
 	doxygen Doxyfile
 
-THINGS_CLEAN_REMOVES:=$(EXECUTABLES) obj/* obj/tests/* *.a *.gcov \
-	doc/html/index.html normal_executables mock_executables
-
 clean:
-	-rm $(THINGS_CLEAN_REMOVES)
+	-rm $(EXECUTABLES) obj/* obj/tests/* *.a *.gcov 
+	-rm doc/html/index.html normal_executables mock_executables
+	-rm -rf lcov_output
 
 .PHONY: all clean test testverbose docs executables normal_executables mock_executables
 
