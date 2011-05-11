@@ -225,7 +225,7 @@ namespace HoughPeakMatch{
       ///
       ///\return the number of parameters for the particular object of type T
       template<class T>
-      inline std::size_t NumParamsExtractor::operator()(const T& t) const{ 
+      inline std::size_t operator()(const T& t) const{ 
 	return t.params().size(); }
     };
     
