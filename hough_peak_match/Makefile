@@ -91,7 +91,7 @@ testverbose: mock_executables
 
 docs: doc/html/index.html
 
-doc/html/index.html: src/*.cpp src/*.hpp
+doc/html/index.html: src/*.cpp src/*.hpp src/tests/*.[ch]pp
 	doxygen Doxyfile
 
 clean:

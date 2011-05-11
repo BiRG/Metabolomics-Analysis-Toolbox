@@ -43,6 +43,10 @@ protected:
   ///\param words a vector of words as strings in the appropriate
   ///format
   ///
+  ///\param expected_name the expected line_type value from the file
+  ///format.  It should correspond to the Peak subclass being
+  ///instantiated.
+  ///
   ///\param failed will be set to true if the words could not be
   ///parsed as a Peak, it will be false otherwise
   virtual void initFrom(const std::vector<std::string>& words, 

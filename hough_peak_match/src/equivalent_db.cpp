@@ -4,8 +4,8 @@
 #include <iostream>
 #include <cstdlib> //For exit
 
-///The main routine for equivalent_db
-
+///\brief The main routine for equivalent_db
+///
 ///\param argc The number of elements in the argv vector
 ///
 ///\param argv The command line arguments to this program - an array of strings

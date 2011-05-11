@@ -17,7 +17,7 @@ namespace HoughPeakMatch{
     ///\brief proxy object used for accessing protected methods of KnownPeak
     class KnownPeakProxy:public KnownPeak{
     public:
-      ///\construct uninitialized KnownPeakProxy
+      ///\brief construct uninitialized KnownPeakProxy
       KnownPeakProxy():KnownPeak(){}
 
       ///\brief public Access to KnownPeak::initFrom
@@ -37,7 +37,7 @@ namespace HoughPeakMatch{
     ///\brief proxy object used for accessing protected methods of Peak
     class PeakProxy:public Peak{
     public:
-      ///\construct uninitialized PeakProxy
+      ///\brief construct uninitialized PeakProxy
       PeakProxy():Peak(){}
 
       ///\brief public Access to Peak::initFrom
@@ -54,7 +54,7 @@ namespace HoughPeakMatch{
       }
     };
 
-    ///\brief Exercise all the *::from_text_line functions
+    ///\brief Exercise all the various from_text_line functions
     ///
     ///Note: only checks that they construct what is expected from
     ///valid input.  The invalid input is checked using the black-box
@@ -406,6 +406,9 @@ namespace HoughPeakMatch{
   }
 }
 
+///\brief test harness wrapper around HoughPeakMatch::Test::from_text_line();
+///
+///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
   TAP::plan(73);
   HoughPeakMatch::Test::from_text_line();

@@ -151,7 +151,7 @@ namespace HoughPeakMatch{
     ///desired foreign key given an object of the type contained in
     ///collection a.  It must have a type member KeyType that gives
     ///the type returned from operator().  The prototype is
-    ///<code>KeyType get_key_from(const object_type&) const; </code>
+    /// <code> KeyType get_key_from(const object_type&) const; </code>
     ///
     ///\param a_begin An iterator pointing to the first item in collection A
     ///
@@ -223,18 +223,28 @@ namespace HoughPeakMatch{
       ///
       ///\param t The object whose parameters are being counted
       ///
-      ///\return the number of parameters for an object of type T
+      ///\return the number of parameters for the particular object of type T
       template<class T>
-      inline std::size_t operator()(const T& t) const{ 
+      inline std::size_t NumParamsExtractor::operator()(const T& t) const{ 
 	return t.params().size(); }
-      
     };
+    
+    /// @cond SUPPRESS
 
+    ///\brief Specialization returning the number of parameters in a
+    ///\brief ParamStats object
+    ///
+    ///\param ps The ParamStats object whose parameters are being counted
+    ///
+    ///\return the number of parameters for the ParamStats object
     template<>
-    inline std::size_t NumParamsExtractor::operator()(const ParamStats& ps) const{ 
+      inline std::size_t NumParamsExtractor::operator()(const ParamStats& ps) const{ 
       return ps.frac_variances().size(); }
-      
+
+    /// @endcond 
   }
+
+
 
   bool PeakMatchingDatabase::satisfies_constraints(){
     using std::pair;
