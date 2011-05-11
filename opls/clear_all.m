@@ -2,7 +2,9 @@ function clear_all(hObject,handles)
 set(handles.group_by_listbox,'String','');
 set(handles.paired_by_listbox,'String','');
 set(handles.model_by_listbox,'String','');
-try
+set(handles.ignore_by_listbox,'String','');
+
+try    
     rmfield(handles,'group_by_inxs');
 catch ME
 end
@@ -12,6 +14,11 @@ catch ME
 end
 try
     rmfield(handles,'model_by_inxs');
+catch ME
+end
+
+try
+    rmfield(handles,'ignore_by_inxs');
 catch ME
 end
 
