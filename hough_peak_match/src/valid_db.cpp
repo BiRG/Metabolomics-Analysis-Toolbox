@@ -44,8 +44,9 @@ int main(int argc, char**argv){
   char const * const db_file_name = argv[1];
   std::ifstream db_stream(db_file_name);
   if(!db_stream){
-    printUsageAndExit(std::string("ERROR: Could not open \"")+
-		      db_file_name+"\"");
+    std::string msg = 
+      std::string("ERROR: Could not open \"")+db_file_name+"\"";
+    printUsageAndExit(msg);
   }
 
   HoughPeakMatch::PeakMatchingDatabase db;
