@@ -156,6 +156,54 @@ namespace HoughPeakMatch{
 	collection_is(p2.params().begin(), p2.params().end(),
 		      params2,params2+1,
 		      "Parameterized peak group 2 has expected params vector");
+
+
+	//With bad input name
+	{
+	  string in[4]={"sample","55","11.9","389"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails for wrong input line-type.");
+	}
+
+	//With NAN ppm
+	{
+	  string in[4]={"sample","55","nan","389"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails nan ppm.");
+	}
+
+	//With INF ppm
+	{
+	  string in[4]={"sample","55","inf","389"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails inf ppm.");
+	}
+	
+	//With NAN param
+	{
+	  string in[4]={"sample","55","2.1","nan"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails nan param.");
+	}
+
+	//With INF param
+	{
+	  string in[4]={"sample","55","2.1","inf"};
+	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
+	    (vstr(in,in+4), failed);
+	  is(failed, true, 
+	     "Parameterized peak group fails inf param.");
+	}
+
+
       }
       {
 	string in1[3]={"sample","22","class_name"};
@@ -359,7 +407,7 @@ namespace HoughPeakMatch{
 }
 
 int main(){
-  TAP::plan(68);
+  TAP::plan(73);
   HoughPeakMatch::Test::from_text_line();
   return TAP::exit_status();
 }
