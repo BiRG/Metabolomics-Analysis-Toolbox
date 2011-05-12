@@ -44,8 +44,7 @@ public:
 			 InputIter param_begin, InputIter param_end):
     PeakGroup(id),ppm_(ppm),params_(param_begin, param_end){
     if(params().size() == 0){
-      std::cerr << "ERROR: attempt to create a peak group with 0 parameters\n";
-      std::exit(-1);
+      throw no_params_exception("HoughPeakMatch::ParameterizedPeakGroup");
     }
   }
 
