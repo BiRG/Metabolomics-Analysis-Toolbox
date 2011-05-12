@@ -9,19 +9,19 @@ cause MATLAB Compiler to only look for functions in the specified toolbox
 directories in addition to the MATLAB directories. Refer to the MCC 
 documentation for more information on this. 
 
-C:\Program Files\MATLAB\R2011a\toolbox\stats\stats\range.m 
-  called by C:\Program Files\MATLAB\R2011a\toolbox\matlab\iofun\xlsread.m 
-(C:\Program Files\MATLAB\R2011a\toolbox\compiler\depfun.opts, line 7: 
+C:\Program Files\MATLAB\R2010b\toolbox\stats\stats\range.m 
+  called by C:\Program Files\MATLAB\R2010b\toolbox\matlab\iofun\xlsread.m 
+(C:\Program Files\MATLAB\R2010b\toolbox\compiler\depfun.opts, line 7: 
 exclude if $caller in [$toolbox/matlab, $toolbox/daq] and ...
            $file in $toolbox and ...
            $file not in [$toolbox/matlab, $toolbox/shared, $toolbox/compiler] ...
            and not ($file in $toolbox/distcomp and $caller in $toolbox/matlab)) 
-C:\Program Files\MATLAB\R2011a\toolbox\wavelet\wavelet\wwarndlg.m 
-  called by C:\Program Files\MATLAB\R2011a\toolbox\wavelet\wavelet\dwtmode.m 
+C:\Program Files\MATLAB\R2010b\toolbox\wavelet\wavelet\wwarndlg.m 
+  called by C:\Program Files\MATLAB\R2010b\toolbox\wavelet\wavelet\dwtmode.m 
 (because of toolbox compilability rules) 
-C:\Program Files\MATLAB\R2011a\toolbox\stats\stats\range.m 
-  called by C:\Program Files\MATLAB\R2011a\toolbox\matlab\iofun\xlswrite.m 
-(C:\Program Files\MATLAB\R2011a\toolbox\compiler\depfun.opts, line 7: 
+C:\Program Files\MATLAB\R2010b\toolbox\stats\stats\range.m 
+  called by C:\Program Files\MATLAB\R2010b\toolbox\matlab\iofun\xlswrite.m 
+(C:\Program Files\MATLAB\R2010b\toolbox\compiler\depfun.opts, line 7: 
 exclude if $caller in [$toolbox/matlab, $toolbox/daq] and ...
            $file in $toolbox and ...
            $file not in [$toolbox/matlab, $toolbox/shared, $toolbox/compiler] ...
