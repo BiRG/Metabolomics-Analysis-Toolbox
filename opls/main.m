@@ -587,10 +587,14 @@ end
 contents = get(handles.scores_type_popupmenu,'String');
 scores_type = contents{get(handles.scores_type_popupmenu,'Value')};
 
-graph_Xs = {{t},{handles.available_Y}};
-graph_Ys = {{t_ortho},{Y_pred}};
-ylabels = {'T_{orthogonal}','Predicted'};
-xlabels = {'Y','Observed'};
+graph_Xs = {{t}};
+graph_Ys = {{t_ortho}};
+ylabels = {'T_{orthogonal}'};
+xlabels = {'Y'};
+graph_Xs{end+1} = {handles.available_Y};
+graph_Ys{end+1} = {Y_pred};
+xlabels{end+1} = 'Observed';
+ylabels{end+1} = 'Predicted';
 for gi = 1:length(graph_Xs)
     figure;
     graph_X = graph_Xs{gi}{1};
@@ -641,7 +645,8 @@ for gi = 1:length(graph_Xs)
                 end
                 if get(handles.ids_radiobutton,'Value')
                     for i = 1:length(inxs)
-                        text(graph_X(inxs(i)),graph_Y(inxs(i),1),num2str(handles.collection.subject_id(inxs(i))),'VerticalAlignment','top');
+                        subject_id = get_field(handles.collection,'subject_id',inxs(i));
+                        text(graph_X(inxs(i)),graph_Y(inxs(i),1),num2str(subject_id),'VerticalAlignment','top');
                     end
                 end
             else
