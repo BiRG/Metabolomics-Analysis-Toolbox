@@ -39,6 +39,25 @@ namespace HoughPeakMatch{
 	  is(p.to_text_line(), expected.str(),
 	     "Parameterized peak group to_text_line gives expected output");
 	}
+	{
+	  bool threw = false;
+	  std::string msg = "no message because the constructor did not throw";
+	  try{
+	    double params[1]={2};
+	    ParameterizedPeakGroup p(150, 3.5, params, params+0);
+	  }catch (no_params_exception& e){
+	    threw = true;
+	    msg = e.what();
+	  }
+	  is(threw,true,"ParameterizedPeakGroup throws exception "
+	     "with empty params vector");
+	  is(msg,
+	     string("HoughPeakMatch::ParameterizedPeakGroup "
+		    "received an empty parameter vector in its "
+		    "constructor."),
+	     "Parameterized peak group no params exception error "
+	     "message is correct");
+	}
       }
     }
   }
@@ -48,7 +67,7 @@ namespace HoughPeakMatch{
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(4);
+  TAP::plan(6);
   HoughPeakMatch::Test::to_text_line();
   return TAP::exit_status();
 }

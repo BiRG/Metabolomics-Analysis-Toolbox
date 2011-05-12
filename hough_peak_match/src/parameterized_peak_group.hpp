@@ -4,6 +4,7 @@
 #ifndef HOUGH_PEAK_MATCH_PARAMETERIZED_PEAK_GROUP
 #define HOUGH_PEAK_MATCH_PARAMETERIZED_PEAK_GROUP
 
+#include "no_params_exception.hpp"
 #include "peak_group.hpp"
 #include <vector>
 #include <string>
@@ -35,6 +36,9 @@ public:
   ///
   ///\param param_end an iterator to one-past-the-end of the sequence of
   ///shift-governing parameters
+  ///
+  ///\throws HoughPeakMatch::no_params_exception if the passed
+  ///sequence of parameters is empty
   template<class InputIter>
   ParameterizedPeakGroup(unsigned id, double ppm, 
 			 InputIter param_begin, InputIter param_end):
