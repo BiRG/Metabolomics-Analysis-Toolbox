@@ -1,0 +1,11 @@
+000-valid_db_detection.t text
+001-equivalence_test.t text
+002-hough_sample_params.t text
+003-simple_hough.t text
+004-assign_peaks.t text
+005-valid_db.t text
+009-equivalent_db.t text
+data/* text
+dbs_to_3_digit.pl text
+outputs/* text
+runalltests.pl text
