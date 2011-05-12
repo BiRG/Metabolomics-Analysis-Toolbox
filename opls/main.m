@@ -265,12 +265,8 @@ catch ME
     return;
 end
 
-CV = NaN;
-try
-    CV = str2num(get(handles.cv_edit,'String'));
-catch ME
-end
-try
+CV = str2num(get(handles.cv_edit,'String'));
+if isempty(CV)
     CV_str = get(handles.cv_edit,'String');
     fields = split(CV_str,'x');
     num_times = str2num(fields{end});
@@ -278,9 +274,9 @@ try
     st = str2num(fields{1});
     en = str2num(fields{2});
     CV = [st,en,num_times];
-catch ME
 end
-if isnan(CV)
+
+if isempty(CV)
     msgbox('Enter a valid CV');
     return;
 end

@@ -13,7 +13,6 @@
 %   left/right - cycles through the regions
 addpath('../matlab_scripts');
 addpath('../matlab_scripts/cursors');
-addpath('../Old-Files-and-Folders/quantification');
 
 % Fix spectra
 fix_spectra_h = figure;
