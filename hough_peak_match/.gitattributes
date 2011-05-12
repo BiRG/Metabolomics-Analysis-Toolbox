@@ -5,3 +5,4 @@
 *.html text
 *.pl text
 Makefile text
+Doxyfile text
