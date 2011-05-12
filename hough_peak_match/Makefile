@@ -7,6 +7,7 @@ EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	tests/006-split_function.compiled.t\
 	tests/007-from_text_line_funcs.compiled.t\
 	tests/008-mockable_stringstream.compiled.t\
+	tests/010-to_text_line_funcs.compiled.t\
 	stringstream_sandbox
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
@@ -75,6 +76,7 @@ tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.co
 
 tests/008-mockable_stringstream.compiled.t: obj/tests/008-mockable_stringstream.compiled.t.o libbirgpeakmatch.a
 
+tests/010-to_text_line_funcs.compiled.t: obj/tests/010-to_text_line_funcs.compiled.t.o libbirgpeakmatch.a
 
 stringstream_sandbox: obj/stringstream_sandbox.o libbirgpeakmatch.a
 
