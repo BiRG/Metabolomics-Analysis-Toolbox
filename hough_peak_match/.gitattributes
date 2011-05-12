@@ -3,3 +3,5 @@
 *.hpp text
 *.txt text
 *.html text
+*.pl text
+Makefile text
