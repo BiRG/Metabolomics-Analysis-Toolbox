@@ -120,7 +120,7 @@ function get_collection_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-handles = get_collection_pushbutton(hObject,handles);
+handles = get_collection_pushbutton(handles);
 
 set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
 
