@@ -29,6 +29,8 @@ public:
 
   ///\brief Construct a ParameterizedPeakGroup with the given members
   ///
+  ///\param id The peak_group identifier for the peak group
+  ///
   ///\param ppm The base location of the peak group
   ///
   ///\param param_begin an iterator to the first in the sequence of
