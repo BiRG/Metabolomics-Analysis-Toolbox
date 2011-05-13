@@ -5,6 +5,7 @@
 #define HOUGH_PEAK_MATCH_DETECTED_PEAK_GROUP
 
 #include "peak_group.hpp"
+#include "no_params_exception.hpp"
 
 namespace HoughPeakMatch{
 
@@ -22,6 +23,31 @@ class DetectedPeakGroup: public PeakGroup{
   ///\brief Create an uninitialized DetectedPeakGroup
   DetectedPeakGroup():ppm_(),params_(){};
 public:
+  ///\brief Construct a DetectedPeakGroup with the given members
+  ///
+  ///\param id The peak_group identifier for the peak group
+  ///
+  ///\param ppm The base location of the peak group
+  ///
+  ///\param param_begin an iterator to the first in the sequence of
+  ///shift-governing parameters
+  ///
+  ///\param param_end an iterator to one-past-the-end of the sequence of
+  ///shift-governing parameters
+  ///
+  ///\throws HoughPeakMatch::no_params_exception if the passed
+  ///sequence of parameters is empty
+  template<class InputIter>
+  DetectedPeakGroup(unsigned id, double ppm, 
+			 InputIter param_begin, InputIter param_end):
+    PeakGroup(id),ppm_(ppm),params_(param_begin, param_end){
+    if(params().size() == 0){
+      throw no_params_exception("HoughPeakMatch::DetectedPeakGroup");
+    }
+  }
+
+
+
   virtual ~DetectedPeakGroup(){}
 
   ///\brief Creates a DetectedPeakGroup from a line in a database file
@@ -53,6 +79,18 @@ public:
   (const std::vector<std::string>& words, bool& failed);
 
   
+  ///\brief Write this DetectedPeakGroup to a new-line terminated string
+  ///
+  ///Returns the string representation of this DetectedPeakGroup
+  ///from \ref file_format_docs "the file format documentation"
+  ///terminated with a newline
+  ///
+  ///\returns the string representation of this DetectedPeakGroup
+  ///from \ref file_format_docs "the file format documentation"
+  std::string to_text_line();
+
+  
+
   ///\brief Return the parameters for this DetectedPeakGroup
   ///
   ///\return the parameters for this DetectedPeakGroup
