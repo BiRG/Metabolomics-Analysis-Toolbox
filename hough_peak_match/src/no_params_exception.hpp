@@ -13,8 +13,8 @@ namespace HoughPeakMatch{
   ///passed an empty collection instead.
   class no_params_exception:public std::invalid_argument{
   public:
-    ///\brief Creates a no_params_exception reporting that \a
-    ///\brief class_name received an empty collection in its constructor
+    ///\brief Creates a no_params_exception reporting that
+    ///\brief \a class_name received an empty collection in its constructor
     ///
     ///\param class_name The name of the class whose constructor
     ///received the empty collection
