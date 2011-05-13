@@ -174,6 +174,78 @@ namespace HoughPeakMatch{
 	  skip(2,"No quiet-NaN value for double");
 	}
       }
+    
+      
+      //UnverifiedPeak
+      
+      
+      {
+	UnverifiedPeak p(65537, 2147483648, 1.11, 21);
+	is(p.id(), make_pair(65537u,2147483648u),
+	   "Unverified peak constructor gives correct id");
+	is(p.sample_id(), 65537,
+	   "Unverified peak constructor gives correct sample_id");
+	is(p.peak_id(), 2147483648,
+	   "Unverified peak constructor gives correct peak_id");
+	is(p.ppm(),1.11,
+	   "Unverified peak constructor gives correct ppm");
+	is(p.peak_group_id(),21,
+	   "Unverified peak constructor gives correct peak_group_id");
+	ostringstream expected;
+	expected << "unverified_peak 65537 2147483648 1.11 21" << endl;
+	is(p.to_text_line(), expected.str(),
+	   "Unverified peak to_text_line gives expected output");
+      }
+
+      {
+	if(numeric_limits<double>::has_infinity){
+	  bool threw = false;
+	  std::string msg = "no message because the constructor did not throw";
+	  double inf = numeric_limits<double>::infinity();
+	  try{
+	    UnverifiedPeak p(65537, 2147483648, inf, 21);
+	  }catch (invalid_argument& e){
+	    threw = true;
+	    msg = e.what();
+	  }
+	  is(threw,true,"UnverifiedPeak throws exception "
+	     "with infinite ppm");
+	  ostringstream expected_msg;
+	  expected_msg 
+	    << "HoughPeakMatch::UnverifiedPeak was passed "
+	    << "an invalid ppm value: " << inf;
+	  is(msg, expected_msg.str(),
+	     "Unverified peak infinite ppm exception error "
+	     "message is correct");
+	}else{
+	  skip(2,"No infinite double");
+	}
+      }
+      
+      {
+	if(numeric_limits<double>::has_quiet_NaN){
+	  bool threw = false;
+	  std::string msg = "no message because the constructor did not throw";
+	  double nan = numeric_limits<double>::quiet_NaN();
+	  try{
+	    UnverifiedPeak p(65537, 2147483648, nan, 21);
+	  }catch (invalid_argument& e){
+	    threw = true;
+	    msg = e.what();
+	  }
+	  is(threw,true,"UnverifiedPeak throws exception "
+	     "with not-a-number ppm");
+	  ostringstream expected_msg;
+	  expected_msg 
+	    << "HoughPeakMatch::UnverifiedPeak was passed "
+	    << "an invalid ppm value: " << nan;
+	  is(msg, expected_msg.str(),
+	     "Unverified peak not-a-number ppm exception error "
+	     "message is correct");
+	}else{
+	  skip(2,"No quiet-NaN value for double");
+	}
+      }
     }
   }
 }
@@ -183,7 +255,7 @@ namespace HoughPeakMatch{
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(22);
+  TAP::plan(32);
   HoughPeakMatch::Test::to_text_line();
   return TAP::exit_status();
 }

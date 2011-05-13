@@ -85,11 +85,11 @@ public:
   ///\brief Write this ParameterizedPeakGroup to a new-line terminated string
   ///
   ///Returns the string representation of this ParameterizedPeakGroup
-  ///from \ref file_format_docs "the file format documentation"
+  ///from \ref parameterized_peak_group "the file format documentation"
   ///terminated with a newline
   ///
   ///\returns the string representation of this ParameterizedPeakGroup
-  ///from \ref file_format_docs "the file format documentation"
+  ///from \ref parameterized_peak_group "the file format documentation"
   std::string to_text_line();
 
   

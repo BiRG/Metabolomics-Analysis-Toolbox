@@ -62,11 +62,11 @@ public:
   ///\brief Write this HumanVerifiedPeak to a new-line terminated string
   ///
   ///Returns the string representation of this HumanVerifiedPeak
-  ///from \ref file_format_docs "the file format documentation"
+  ///from \ref human_verified_peak "the file format documentation"
   ///terminated with a newline
   ///
   ///\returns the string representation of this HumanVerifiedPeak from
-  ///\ref file_format_docs "the file format documentation" terminated
+  ///\ref human_verified_peak "the file format documentation" terminated
   ///with a newline
   std::string to_text_line();
 };

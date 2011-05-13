@@ -82,11 +82,11 @@ public:
   ///\brief Write this DetectedPeakGroup to a new-line terminated string
   ///
   ///Returns the string representation of this DetectedPeakGroup
-  ///from \ref file_format_docs "the file format documentation"
+  ///from \ref detected_peak_group "the file format documentation"
   ///terminated with a newline
   ///
   ///\returns the string representation of this DetectedPeakGroup
-  ///from \ref file_format_docs "the file format documentation"
+  ///from \ref detected_peak_group "the file format documentation"
   std::string to_text_line();
 
   

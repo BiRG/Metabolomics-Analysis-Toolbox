@@ -13,7 +13,26 @@ namespace HoughPeakMatch{
 ///A peak that has been assigned a peak_group membership but that
 ///membership has not verified by other means
 class UnverifiedPeak:public KnownPeak{
+  ///\brief Construct an uninitialized UnverifiedPeak
+  UnverifiedPeak():KnownPeak(){}
 public:
+  ///\brief Construct an unverified peak object
+  ///
+  ///\param sample_id the id of the sample that contains this peak
+  ///
+  ///\param peak_id a unique identifier for this peak within its sample
+  ///
+  ///\param ppm the location of this peak (in ppm)
+  ///
+  ///\param peak_group_id the identifier of the peak_group to which
+  ///this peak belongs
+  ///
+  ///\throws invalid_argument if ppm is infinity or nan
+  UnverifiedPeak(unsigned sample_id, unsigned peak_id, double ppm,
+		unsigned peak_group_id)
+    :KnownPeak(sample_id,peak_id,ppm,peak_group_id,
+	       "HoughPeakMatch::UnverifiedPeak"){}
+
   virtual ~UnverifiedPeak(){};
 
   ///\brief Creates a UnverifiedPeak from a line in a database file
@@ -41,6 +60,16 @@ public:
   static UnverifiedPeak from_text_line
   (const std::vector<std::string>& words, bool& failed);
 
+  ///\brief Write this UnverifiedPeak to a new-line terminated string
+  ///
+  ///Returns the string representation of this UnverifiedPeak
+  ///from \ref unverified_peak "the file format documentation"
+  ///terminated with a newline
+  ///
+  ///\returns the string representation of this HumanVerifiedPeak from
+  ///\ref unverified_peak "the file format documentation" terminated
+  ///with a newline
+  std::string to_text_line();
 };
 
 }
