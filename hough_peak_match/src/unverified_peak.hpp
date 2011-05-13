@@ -13,6 +13,7 @@ namespace HoughPeakMatch{
 ///A peak that has been assigned a peak_group membership but that
 ///membership has not verified by other means
 class UnverifiedPeak:public KnownPeak{
+protected:
   ///\brief Construct an uninitialized UnverifiedPeak
   UnverifiedPeak():KnownPeak(){}
 public:
