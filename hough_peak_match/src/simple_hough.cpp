@@ -17,9 +17,9 @@ int main(int argc, char**argv){
     exit(-1);
   }
   ///\todo main is stub
-  std::cout << "There were " << argc << " arguments:";
+  std::cout << "# There were " << argc << " arguments:\n";
   for(int i = 0; i < argc; ++i){
-    std::cout << argv[i] << "\n";
+    std::cout << "# "<< argv[i] << "\n";
   }
   return 0;
 }
