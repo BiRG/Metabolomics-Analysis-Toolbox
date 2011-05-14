@@ -394,7 +394,44 @@ namespace HoughPeakMatch{
 	       "with "+white_char_name[i]+" at the end of sample class");
 	  }
 	}
-      }
+
+
+	//SampleParams
+            
+	{
+	  double params[3]={3.8,1,5};
+	  SampleParams p(150, params, params+3);
+	  is(p.sample_id(),150,
+	     "Sample params constructor gives correct sample_id");
+	  vector<double> p_params=p.params();
+	  collection_is(p_params.begin(), p_params.end(), 
+			params,params+3,
+			"Sample params constructor gives correct params");
+	  ostringstream expected;
+	  expected << "sample_params 150 3.5 3.8 1 5" << endl;
+	  is(p.to_text_line(), expected.str(),
+	     "Sample params to_text_line gives expected output");
+	}
+	{
+	  bool threw = false;
+	  std::string msg = "no message because the constructor did not throw";
+	  try{
+	    double params[1]={1};
+	    SampleParams p(150, params, params+0);
+	  }catch (no_params_exception& e){
+	    threw = true;
+	    msg = e.what();
+	  }
+	  is(threw,true,"SampleParams throws exception with empty "
+	     "params vector");
+	  is(msg,
+	     string("HoughPeakMatch::SampleParams "
+		    "received an empty parameter vector in its "
+		    "constructor."),
+	     "Sample params no params exception error message is correct");
+	}
+      }      
+      
     }
   }
 }
@@ -404,7 +441,7 @@ namespace HoughPeakMatch{
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(70);
+  TAP::plan(75);
   HoughPeakMatch::Test::to_text_line();
   return TAP::exit_status();
 }

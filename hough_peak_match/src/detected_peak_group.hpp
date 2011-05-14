@@ -46,8 +46,6 @@ public:
     }
   }
 
-
-
   virtual ~DetectedPeakGroup(){}
 
   ///\brief Creates a DetectedPeakGroup from a line in a database file
