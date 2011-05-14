@@ -94,7 +94,7 @@ public:
   ///
   ///\returns the string representation of this ParamStats
   ///from \ref param_stats "the file format documentation"
-  std::string to_text_line();  
+  std::string to_text_line() const;
 
 };
 

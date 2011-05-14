@@ -17,7 +17,7 @@ namespace HoughPeakMatch{
     failed=false; return ret;
   }
 
-  std::string HumanVerifiedPeak::to_text_line(){
+  std::string HumanVerifiedPeak::to_text_line() const{
     using namespace std;;
     ostringstream o;
     o << "human_verified_peak " 

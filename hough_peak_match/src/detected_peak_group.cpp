@@ -45,7 +45,7 @@ namespace HoughPeakMatch{
     failed=false; return ret;
   }
 
-  std::string DetectedPeakGroup::to_text_line(){
+  std::string DetectedPeakGroup::to_text_line() const{
     using namespace std;
     ostringstream out;
     out << "detected_peak_group" << " " << id() << " " << ppm() << " ";

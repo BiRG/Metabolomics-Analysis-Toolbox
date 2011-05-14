@@ -85,7 +85,7 @@ public:
   ///
   ///\returns the string representation of this DetectedPeakGroup
   ///from \ref detected_peak_group "the file format documentation"
-  std::string to_text_line();
+  std::string to_text_line() const;
 
   
 
