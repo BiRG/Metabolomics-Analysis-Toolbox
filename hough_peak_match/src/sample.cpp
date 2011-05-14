@@ -39,7 +39,6 @@ namespace HoughPeakMatch{
     if(words.at(2) == ""){
       failed = true; return ret; }
     if(contains_white_space(words.at(2))){
-      ///\todo test
       failed = true; return ret; }
     ret.sample_class_ = words.at(2);
 

@@ -226,6 +226,30 @@ namespace HoughPeakMatch{
 	  is(failed, true, "Sample fails when given blank class name");
 	}
 
+	//With white space in class name
+	{
+	  string in[3]={"sample","1",""};
+	  const unsigned num_chars = 6;
+	  char white_char[num_chars]={' ','\t','\n','\v','\r','\f'};
+	  string white_char_name[num_chars]=
+	    {"space","tab","newline","vertical tab",
+	     "carriage return","form feed"};
+  
+	  for(unsigned i = 0; i < num_chars; ++i){
+	    bool failed = false;
+
+	    in[2] = string("begin")+white_char[i]+"end";
+	    Sample::from_text_line(vstr(in,in+3), failed);
+	    is(failed, true, "Sample fails when a "+white_char_name[i]
+	       +" is in the middle of the class name.");
+	    
+	    in[2] = string("begin")+white_char[i];
+	    Sample::from_text_line(vstr(in,in+3), failed);
+	    is(failed, true, "Sample fails when a "+white_char_name[i]
+	       +" is at the end of the class name.");
+	  }
+	}
+
 	//With too few arguments
 	{
 	  string in[3]={"sample","22","class_name"};
@@ -410,7 +434,7 @@ namespace HoughPeakMatch{
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(73);
+  TAP::plan(85);
   HoughPeakMatch::Test::from_text_line();
   return TAP::exit_status();
 }
