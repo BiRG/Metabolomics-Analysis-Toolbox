@@ -408,7 +408,7 @@ namespace HoughPeakMatch{
 			params,params+3,
 			"Sample params constructor gives correct params");
 	  ostringstream expected;
-	  expected << "sample_params 150 3.5 3.8 1 5" << endl;
+	  expected << "sample_params 150 3.8 1 5" << endl;
 	  is(p.to_text_line(), expected.str(),
 	     "Sample params to_text_line gives expected output");
 	}
@@ -430,8 +430,73 @@ namespace HoughPeakMatch{
 		    "constructor."),
 	     "Sample params no params exception error message is correct");
 	}
-      }      
+            
       
+
+	//ParamStats
+        ///\todo test ParamStats constructor for rejecting sum > 1
+	{
+	  double params[3]={0.15,0.1,0};
+	  ParamStats p(params, params+3);
+	  vector<double> p_params=p.frac_variances();
+	  collection_is(p_params.begin(), p_params.end(), 
+			params,params+3,
+			"Param stats constructor gives correct params");
+	  ostringstream expected;
+	  expected << "param_stats 0.15 0.1 0" << endl;
+	  is(p.to_text_line(), expected.str(),
+	     "Param stats to_text_line gives expected output");
+	}
+	{
+	  bool threw = false;
+	  std::string msg = "no message because the constructor did not throw";
+	  try{
+	    double params[1]={1};
+	    ParamStats p(params, params+0);
+	  }catch (no_params_exception& e){
+	    threw = true;
+	    msg = e.what();
+	  }
+	  is(threw,true,"ParamStats throws exception with empty "
+	     "params vector");
+	  is(msg,
+	     string("HoughPeakMatch::ParamStats "
+		    "received an empty parameter vector in its "
+		    "constructor."),
+	     "Param stats no params exception error message is correct");
+	}
+      
+	{
+	  bool threw = false;
+	  std::string msg = "no message because the constructor did not throw";
+	  try{
+	    double params[2]={0.55,0.5};
+	    ParamStats p(params, params+2);
+	  }catch (invalid_argument& e){
+	    threw = true;
+	    msg = e.what();
+	  }
+	  is(threw,true,"ParamStats throws exception when frac_variances "
+	     "sums to greater than 1.");
+	  is(msg,
+	     string("HoughPeakMatch::ParamStats "
+		    "received fractions of total variance totalling "
+		    "to more than 1."),
+	     "Param stats too big frac_variances error message is correct");
+	}
+
+	{
+	  bool threw = false;
+	  try{
+	    double params[2]={0.5,0.5};
+	    ParamStats p(params, params+2);
+	  }catch (invalid_argument& e){
+	    threw = true;
+	  }
+	  is(threw,false,"ParamStats throws no exception when frac_variances "
+	     "sums to exactly 1.");
+	}
+      }      
     }
   }
 }
@@ -441,7 +506,7 @@ namespace HoughPeakMatch{
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(75);
+  TAP::plan(82);
   HoughPeakMatch::Test::to_text_line();
   return TAP::exit_status();
 }
