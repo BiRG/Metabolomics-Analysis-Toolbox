@@ -290,7 +290,7 @@ namespace HoughPeakMatch{
 	  skip(2,"There is no infinite double on this platform.");
 	}
       }
-      
+
       {
 	if(numeric_limits<double>::has_quiet_NaN){
 	  bool threw = false;
@@ -316,6 +316,85 @@ namespace HoughPeakMatch{
 	}
       }
 
+
+      //Sample
+   
+
+      {
+	Sample s(1022, "My_fair_lady");
+	is(s.id(), 1022, "Sample constructor sets id correctly.");
+	is(s.sample_class(), "My_fair_lady","Sample constructor sets "
+	   "sample_class correctly");
+	ostringstream expected;
+	expected << "sample 1022 My_fair_lady" << endl;
+	is(s.to_text_line(), expected.str(), 
+	   "Sample to_text_line gives expected output.");
+      }
+      {
+	  bool threw = false;
+	  std::string msg = "no message because the constructor did not throw";
+	  try{
+	    Sample s(155, "");
+	  }catch (invalid_argument& e){
+	    threw = true;
+	    msg = e.what();
+	  }
+	  is(threw,true,"UnknownPeak throws exception "
+	     "with empty-string sample class");
+	  ostringstream expected_msg;
+	  expected_msg 
+	    << "HoughPeakMatch::Sample received an empty string for "
+	    << "a sample class";
+
+	  is(msg, expected_msg.str(),
+	     "Sample exception message is correct with \"\" sample class");
+      }
+
+      {
+	const unsigned num_chars = 6;
+	char white_char[num_chars]={' ','\t','\n','\v','\r','\f'};
+	string white_char_name[num_chars]=
+	  {"space","tab","newline","vertical tab",
+	   "carriage return","form feed"};
+	string expected_msg = "HoughPeakMatch::Sample received a string "
+	  "containing white-space for a sample class";
+  
+	for(unsigned i = 0; i < num_chars; ++i){
+	  string char_in_mid = string("begin")+white_char[i]+"end";
+	  string char_at_end = string("begin")+white_char[i];
+	  {
+	    bool threw = false;
+	    string msg = "no message because the constructor did not throw";
+	    try{
+	      Sample s(155, char_in_mid);
+	    }catch (invalid_argument& e){
+	      threw = true;
+	      msg = e.what();
+	    }
+	    is(threw,true,"Sample throws exception "
+	       "with "+white_char_name[i]+" in middle of sample class");
+	    is(msg, expected_msg,
+	       "Sample has correct exception message "
+	       "with "+white_char_name[i]+" in middle of sample class");
+	  }
+
+	  {
+	    bool threw = false;
+	    string msg = "no message because the constructor did not throw";
+	    try{
+	      Sample s(155, char_at_end);
+	    }catch (invalid_argument& e){
+	      threw = true;
+	      msg = e.what();
+	    }
+	    is(threw,true,"Sample throws exception "
+	       "with "+white_char_name[i]+" at the end of the sample class");
+	    is(msg, expected_msg,
+	       "Sample has correct exception message "
+	       "with "+white_char_name[i]+" at the end of sample class");
+	  }
+	}
+      }
     }
   }
 }
@@ -325,7 +404,7 @@ namespace HoughPeakMatch{
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(41);
+  TAP::plan(70);
   HoughPeakMatch::Test::to_text_line();
   return TAP::exit_status();
 }

@@ -67,7 +67,7 @@ public:
   ///from \ref unverified_peak "the file format documentation"
   ///terminated with a newline
   ///
-  ///\returns the string representation of this HumanVerifiedPeak from
+  ///\returns the string representation of this UnverifiedPeak from
   ///\ref unverified_peak "the file format documentation" terminated
   ///with a newline
   std::string to_text_line();

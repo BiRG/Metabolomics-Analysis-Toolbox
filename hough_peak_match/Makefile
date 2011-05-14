@@ -96,6 +96,10 @@ docs: doc/html/index.html
 doc/html/index.html: src/*.cpp src/*.hpp src/tests/*.[ch]pp
 	doxygen Doxyfile
 
+zerocounts:
+	-rm obj/*.gcda tests/*.gcda
+.PHONY: zerocounts
+
 clean:
 	-rm $(EXECUTABLES) obj/* obj/tests/* *.a *.gcov 
 	-rm doc/html/index.html normal_executables mock_executables
