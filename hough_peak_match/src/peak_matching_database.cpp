@@ -8,6 +8,8 @@
 #include <set>
 #include <algorithm>
 #include <iterator>
+#include <fstream>
+
 
 namespace HoughPeakMatch{
   void PeakMatchingDatabase::make_empty(){
@@ -332,5 +334,28 @@ namespace HoughPeakMatch{
     return unique_ids && correct_num_param_stats && ref_integrity 
       && all_param_counts_equal;
   }
+
+
+  PeakMatchingDatabase read_database(std::string file_name, 
+				     std::string which_db,
+				     void (*print_error_and_exit)(std::string)){
+    std::ifstream db_stream(file_name.c_str());
+    if(!db_stream){
+      std::string msg = 
+	"ERROR: Could not open "+ which_db + " database \"" + file_name + "\"";
+      print_error_and_exit(msg);
+    }
+    
+    PeakMatchingDatabase db;
+    bool success = db.read(db_stream);
+    if(!success){
+      std::string msg = 
+	"ERROR: " + which_db + " database \"" + file_name + "\" is invalid";
+      print_error_and_exit(msg);
+    }
+    
+    return db;
+  }
+
 
 }

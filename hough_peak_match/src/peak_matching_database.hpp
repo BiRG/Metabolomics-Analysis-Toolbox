@@ -107,6 +107,31 @@ namespace HoughPeakMatch{
     ///false otherwise
     bool satisfies_constraints();
   };
+
+
+  ///\brief Returns the given database or aborts with an appropriate message
+  ///
+  ///Either returns the result of successfully reading and opening the
+  ///given database file or executes printUsageAndExit with an
+  ///appropriate error message.  On an error, does not return.
+  ///
+  ///\param file_name the name of the file to read the database from
+  ///
+  ///\param which_db A user-level identifier for the database that would
+  ///fit in the blank in this sentence: <code> ERROR: Could not open
+  ///____ database "db_filename.db" </code>
+  ///
+  ///\param print_error_and_exit a function that never returns
+  ///(because it aborts the program) and takes a single string
+  ///parameter with an error message to print.  A good candiate would
+  ///be the print_usage_and_exit methods in most programs.  You should
+  ///be able to all it as:
+  ///<code>print_error_and_exit(my_error_message);</code>
+  ///
+  ///\return (if it returns) the contents of the specified database file
+  PeakMatchingDatabase read_database(std::string file_name, 
+				     std::string which_db,
+				     void (*print_error_and_exit)(std::string));
   
 }
 
