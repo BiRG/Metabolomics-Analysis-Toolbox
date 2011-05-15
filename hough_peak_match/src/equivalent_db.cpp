@@ -30,8 +30,37 @@ void print_usage_and_exit(std::string errMsg){
   std::exit(-1);
 }
 
+namespace HoughPeakMatch{
+///\brief A form for easily comparing whether two peak-matching
+///\brief databases are semantically equal
+///
+///PeakMatchingDatabase objects are designed for easy serialization to
+///a format that can be read in other languages and easy conversion
+///to/from the data form needed by the various peak-matching
+///algorithms.  However, they are not easy to semantically compare.  A
+///ComparablePMDatabase strips away the redundancy creating a form
+///that is easy to compare.  It is not a subclass because though it
+///represents the same data, it does so in a form useless for the
+///purposes of the original.
+class ComparablePMDatabase{
+private:
+  std::vector<std::string> contents;
+public:
+  ///\brief Create a ComparablePMDatabase that encodes the semantics of \a pmd
+  ComparablePMDatabase(const PeakMatchingDatabase& pmd){
+    ///\todo write
+  }
 
-
+  ///\brief Return whether the two databases are semantically the same
+  ///
+  ///\return True if the two databases have the same underlying
+  ///semantic content and false otherwise
+  bool operator=(const ComparablePMDatabase& rhs){
+    ///\todo write
+    return true;
+  }
+};
+}
 
 ///\brief The main routine for equivalent_db
 ///
