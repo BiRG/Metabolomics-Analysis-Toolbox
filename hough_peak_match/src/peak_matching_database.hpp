@@ -43,37 +43,34 @@ namespace HoughPeakMatch{
   ///\ref file_format_docs "common file format"
   class PeakMatchingDatabase{
     ///All ParameterizedPeakGroup objects in this database
-    std::vector<ParameterizedPeakGroup> parameterized_peak_groups;
+    std::vector<ParameterizedPeakGroup> parameterized_peak_groups_;
 
     ///All DetectedPeakGroup objects in this database
-    std::vector<DetectedPeakGroup> detected_peak_groups;
+    std::vector<DetectedPeakGroup> detected_peak_groups_;
 
     ///All HumanVerifiedPeak objects in this database
-    std::vector<HumanVerifiedPeak> human_verified_peaks;
+    std::vector<HumanVerifiedPeak> human_verified_peaks_;
 
     ///All UnverifiedPeak objects in this database
-    std::vector<UnverifiedPeak> unverified_peaks;
+    std::vector<UnverifiedPeak> unverified_peaks_;
 
     ///All UnknownPeak objects in this database
-    std::vector<UnknownPeak> unknown_peaks;
+    std::vector<UnknownPeak> unknown_peaks_;
 
     ///All Sample objects in this database
-    std::vector<Sample> samples;
+    std::vector<Sample> samples_;
 
     ///All SampleParams objects in this database
-    std::vector<SampleParams> sample_params;
+    std::vector<SampleParams> sample_params_;
 
     ///All ParamStats objects in this database
-    std::vector<ParamStats> param_stats;
+    std::vector<ParamStats> param_stats_;
   public:
-    ///Create an empty PeakMatchingDatabase
-
-    ///
-    ///\todo Write default constructor for PeakMatchingDatabase
+    ///\brief Create an empty PeakMatchingDatabase
     PeakMatchingDatabase():
-      parameterized_peak_groups(),detected_peak_groups(),
-      human_verified_peaks(),unverified_peaks(),unknown_peaks(),
-      samples(),sample_params(),param_stats(){}
+      parameterized_peak_groups_(),detected_peak_groups_(),
+      human_verified_peaks_(),unverified_peaks_(),unknown_peaks_(),
+      samples_(),sample_params_(),param_stats_(){}
 
     ///\brief Read database from the given stream replacing current contents
     ///

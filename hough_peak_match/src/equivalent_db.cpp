@@ -31,6 +31,8 @@ void print_usage_and_exit(std::string errMsg){
 }
 
 
+
+
 ///\brief The main routine for equivalent_db
 ///
 ///\param argc The number of elements in the argv vector
@@ -49,6 +51,7 @@ int main(int argc, char**argv){
   PeakMatchingDatabase db2 = 
     read_database(argv[2],"the second", print_usage_and_exit);
 
+  
   ///\todo main is stub
   std::cout << "There were " << argc << " arguments:";
   for(int i = 1; i < argc; ++i){
