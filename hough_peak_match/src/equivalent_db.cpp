@@ -30,36 +30,151 @@ void print_usage_and_exit(std::string errMsg){
   std::exit(-1);
 }
 
+#include <set> //For multiset
+#include <sstream>
+
 namespace HoughPeakMatch{
-///\brief A form for easily comparing whether two peak-matching
-///\brief databases are semantically equal
+///\brief A unique encoding of the semantics of a PeakMatchinDatabase
+///\biief for comparing the semantics of two databses
 ///
 ///PeakMatchingDatabase objects are designed for easy serialization to
 ///a format that can be read in other languages and easy conversion
-///to/from the data form needed by the various peak-matching
+///to/from the data forms needed by the various peak-matching
 ///algorithms.  However, they are not easy to semantically compare.  A
-///ComparablePMDatabase strips away the redundancy creating a form
-///that is easy to compare.  It is not a subclass because though it
-///represents the same data, it does so in a form useless for the
-///purposes of the original.
-class ComparablePMDatabase{
+///PMDatabaseSemantics re-encodes the semantics of the database (what
+///objects exist with which parameters and connected to what other
+///objects) in a form that is easy to compare.
+class PMDatabaseSemantics{
 private:
-  std::vector<std::string> contents;
+  std::multiset<std::string> contents;
 public:
-  ///\brief Create a ComparablePMDatabase that encodes the semantics of \a pmd
-  ComparablePMDatabase(const PeakMatchingDatabase& pmd){
-    ///\todo write
-  }
+  ///\brief Create a PMDatabaseSemantics that encodes the semantics of \a pmd
+  PMDatabaseSemantics(const PeakMatchingDatabase& pmd);
 
   ///\brief Return whether the two databases are semantically the same
   ///
   ///\return True if the two databases have the same underlying
   ///semantic content and false otherwise
-  bool operator=(const ComparablePMDatabase& rhs){
-    ///\todo write
-    return true;
+  bool operator==(const PMDatabaseSemantics& rhs) const{
+    return std::equal(contents.begin(), contents.end(),
+		      rhs.contents.begin());
   }
 };
+  namespace{
+    ///\brief Returns a unique string-multiset representation for a
+    ///\brief collection of objects
+    ///
+    ///Given a collection specified by \a begin and \a end
+    ///(one-past-the-end, as usual), applies \a flatten to each and
+    ///adds the elements to the given multiset.
+    ///
+    ///\param c The collection to be flattened
+    ///
+    ///\param flatten A function object that can be treated as if it
+    ///had the signature <code>std::string
+    ///flatten(InputIter::value_type& o)</code>
+    template<class Collection, class FlattenerT>
+      std::multiset<std::string> flatten(const Collection & c,
+					 FlattenerT flatten){
+      typename Collection::const_iterator cur = c.begin();
+      std::multiset<std::string> ret;
+      while(cur != c.end()){
+	ret.insert(flatten(*cur));
+	++cur;
+      }
+      return ret;
+    }
+
+    ///\brief Base class encapsulating common functionality for
+    ///\brief flattener objects
+    class Flattener{
+    protected:
+      const PeakMatchingDatabase& db;
+      Flattener(const PeakMatchingDatabase& db):db(db){}
+      virtual ~Flattener(){}
+      
+      ///\brief Writes a space-separated version of \a v to \a out,
+      ///\brief returning \a out
+      ///
+      ///The list {1,2,3} will be space separated into "1 2 3" -
+      ///spaces only between entries.  ostream_iterator would insert
+      ///spaces after entries.  T is expected to have an ostream
+      ///insertion operator.
+      ///
+      ///The code is not the prettiest, but it works and avoids
+      ///writing everything to an intermediate string.
+      ///
+      ///Example:
+      ///\code
+      ///out << "This is my vector: "; space_separate(out,my_vector) << endl;
+      ///\endcode
+      ///
+      ///\param out The ostream to which the items are written
+      template<class T>
+      std::ostream& space_separate(std::ostream &out, const std::vector<T>& v) const{
+	typename std::vector<T>::const_iterator it = v.begin();
+	if(it != v.end()){
+	  out << *it;
+	  ++it;
+	}
+	while(it != v.end()){
+	  out << " " << *it;
+	  ++it;
+	}
+	return out;
+      }
+    };
+
+    ///\brief Flattens ParameterizedPeakGroups from one db
+    class ParameterizedPeakGroupFlattener:public Flattener{
+    public:
+      ///\brief Create a Flattener that flattens
+      ///\brief ParameterizedPeakGroups from the database \a db
+      ///
+      ///\param db The database from which come the
+      ///ParameterizedPeakGroup objects flattened by this flattener
+      ParameterizedPeakGroupFlattener(const PeakMatchingDatabase& db):
+	Flattener(db){}
+      
+      ///\brief Return a flattened representation of the given
+      ///\brief ParameterizedPeakGroup
+      ///
+      ///Returns a string that uniquely representst this parameterized
+      ///peak group within its database and that has no references to
+      ///other objects
+      ///
+      ///\param f The peak group to flatten
+      ///
+      ///\return Return a flattened representation of the given
+      ///ParameterizedPeakGroup
+      std::string operator()(const ParameterizedPeakGroup& f) const{
+	std::ostringstream o;
+	o << "parameterized_peak_group " << f.ppm() 
+	  << " "; space_separate(o, f.params());
+	return o.str();
+      }
+    };
+  }
+
+  PMDatabaseSemantics::PMDatabaseSemantics(const PeakMatchingDatabase& pmd)
+    :contents(){
+    std::multiset<std::string> tmp = 
+      flatten(pmd.parameterized_peak_groups(),
+	      ParameterizedPeakGroupFlattener(pmd));
+    contents.insert(tmp.begin(), tmp.end());
+    ///\todo write for detected_peak_group
+
+    ///\todo write for human_verified_peak
+
+    ///\todo write for unverified_peak
+
+    ///\todo write for unknown_peak
+
+    ///\todo write for sample
+
+    ///\todo write for sample_params
+  }
+
 }
 
 ///\brief The main routine for equivalent_db
@@ -80,11 +195,14 @@ int main(int argc, char**argv){
   PeakMatchingDatabase db2 = 
     read_database(argv[2],"the second", print_usage_and_exit);
 
-  
-  ///\todo main is stub
-  std::cout << "There were " << argc << " arguments:";
-  for(int i = 1; i < argc; ++i){
-    std::cout << argv[i] << "\n";
+  PMDatabaseSemantics cpmd1(db1);
+  PMDatabaseSemantics cpmd2(db2);
+
+  if(cpmd1==cpmd2){
+    std::cout << "Databases ARE equivalent" << std::endl;
+  }else{
+    std::cout << "Databases ARE NOT equivalent" << std::endl;
   }
+  
   return 0;
 }
