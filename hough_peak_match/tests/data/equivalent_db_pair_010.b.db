@@ -1,0 +1,6 @@
+# Here is a pair of db's with detected peak groups with different
+# numbers but identical parameters (note that I reuse the id 2 to
+# refer to the group with identical parameters to the original id 3)
+
+detected_peak_group 2 1.47868132923621 -531.112 .1010101
+detected_peak_group 150 3.58942133448949 -2.15521333 555.551
