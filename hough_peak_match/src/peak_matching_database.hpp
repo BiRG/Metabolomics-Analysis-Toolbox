@@ -103,6 +103,55 @@ namespace HoughPeakMatch{
     ///\return true if the database satisfies its constraints,
     ///false otherwise
     bool satisfies_constraints();
+
+    ///\brief Return all ParameterizedPeakGroup objects in this database
+    ///\return all ParameterizedPeakGroup objects in this database
+    std::vector<ParameterizedPeakGroup> parameterized_peak_groups() const {
+      return parameterized_peak_groups_;
+    }
+
+    ///\brief Return all DetectedPeakGroup objects in this database
+    ///\return all DetectedPeakGroup objects in this database
+    std::vector<DetectedPeakGroup> detected_peak_groups() const {
+      return detected_peak_groups_;
+    }
+
+    ///\brief Return all HumanVerifiedPeak objects in this database
+    ///\return all HumanVerifiedPeak objects in this database
+    std::vector<HumanVerifiedPeak> human_verified_peaks() const {
+      return human_verified_peaks_;
+    }
+
+    ///\brief Return all UnverifiedPeak objects in this database
+    ///\return all UnverifiedPeak objects in this database
+    std::vector<UnverifiedPeak> unverified_peaks() const {
+      return unverified_peaks_;
+    }
+
+    ///\brief Return all UnknownPeak objects in this database
+    ///\return all UnknownPeak objects in this database
+    std::vector<UnknownPeak> unknown_peaks() const {
+      return unknown_peaks_;
+    }
+
+    ///\brief Return all Sample objects in this database
+    ///\return all Sample objects in this database
+    std::vector<Sample> samples() const {
+      return samples_;
+    }
+
+    ///\brief Return all SampleParams objects in this database
+    ///\return all SampleParams objects in this database
+    std::vector<SampleParams> sample_params() const {
+      return sample_params_;
+    }
+
+    ///\brief Return all ParamStats objects in this database
+    ///\return all ParamStats objects in this database
+    std::vector<ParamStats> param_stats() const {
+      return param_stats_;
+    }
+
   };
 
 
