@@ -1,6 +1,7 @@
 ///\file
 ///\brief Main routine and supporting code for the equivalent_db executable
 
+#include "utils.hpp"
 #include "peak_matching_database.hpp"
 #include <iostream>
 #include <cstdlib> //For exit
@@ -89,40 +90,14 @@ public:
     ///\brief flattener objects
     class Flattener{
     protected:
+      ///\brief the database with respect to which the objects will be
+      ///\brief flattened
       const PeakMatchingDatabase& db;
+      ///\brief Construct a Flattener that initializes the database to db
+      ///
+      ///\param db the database used to resolve references in flattening
       Flattener(const PeakMatchingDatabase& db):db(db){}
       virtual ~Flattener(){}
-      
-      ///\brief Writes a space-separated version of \a v to \a out,
-      ///\brief returning \a out
-      ///
-      ///The list {1,2,3} will be space separated into "1 2 3" -
-      ///spaces only between entries.  ostream_iterator would insert
-      ///spaces after entries.  T is expected to have an ostream
-      ///insertion operator.
-      ///
-      ///The code is not the prettiest, but it works and avoids
-      ///writing everything to an intermediate string.
-      ///
-      ///Example:
-      ///\code
-      ///out << "This is my vector: "; space_separate(out,my_vector) << endl;
-      ///\endcode
-      ///
-      ///\param out The ostream to which the items are written
-      template<class T>
-      std::ostream& space_separate(std::ostream &out, const std::vector<T>& v) const{
-	typename std::vector<T>::const_iterator it = v.begin();
-	if(it != v.end()){
-	  out << *it;
-	  ++it;
-	}
-	while(it != v.end()){
-	  out << " " << *it;
-	  ++it;
-	}
-	return out;
-      }
     };
 
     ///\brief Flattens ParameterizedPeakGroups from one db
@@ -139,7 +114,7 @@ public:
       ///\brief Return a flattened representation of the given
       ///\brief ParameterizedPeakGroup
       ///
-      ///Returns a string that uniquely representst this parameterized
+      ///Returns a string that uniquely represents this parameterized
       ///peak group within its database and that has no references to
       ///other objects
       ///

@@ -23,5 +23,4 @@ bool is_special_double(double d){
 bool contains_white_space(const std::string s){
   return std::find_if(s.begin(), s.end(), isspace) != s.end();
 }
-
 }

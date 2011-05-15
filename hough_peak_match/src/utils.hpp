@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include <iostream>
 
 namespace HoughPeakMatch{
 
@@ -46,6 +47,43 @@ bool is_special_double(double d);
 ///
 ///\return true if \a s contains white-space
 bool contains_white_space(const std::string s);
+
+///\brief Writes a space-separated version of \a v to \a out,
+///\brief returning \a out
+///
+///The list {1,2,3} will be space separated into "1 2 3" -
+///spaces only between entries.  ostream_iterator would insert
+///spaces after entries.  T is expected to have an ostream
+///insertion operator.
+///
+///The code is not the prettiest, but it works and avoids
+///writing everything to an intermediate string.
+///
+///Example:
+///\code
+///out << "This is my vector: "; space_separate(out,my_vector) << endl;
+///\endcode
+///
+///\param out The ostream to which the items are written
+///
+///\param v the vector of items to write
+///
+///\return the stream after writing to it (so << sequence can be continued)
+///
+///\tparam T the class contained in the vector
+template<class T>
+std::ostream& space_separate(std::ostream &out, const std::vector<T>& v){
+  typename std::vector<T>::const_iterator it = v.begin();
+  if(it != v.end()){
+    out << *it;
+    ++it;
+  }
+  while(it != v.end()){
+    out << " " << *it;
+    ++it;
+  }
+  return out;
+}
 
 }
 
