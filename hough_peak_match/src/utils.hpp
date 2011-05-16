@@ -71,6 +71,9 @@ bool contains_white_space(const std::string s);
 ///\return the stream after writing to it (so << sequence can be continued)
 ///
 ///\tparam T the class contained in the vector
+///
+///\todo (low priority) Write tests specifically for this.  Not really
+///necessary as it gets exercised by other functions
 template<class T>
 std::ostream& space_separate(std::ostream &out, const std::vector<T>& v){
   typename std::vector<T>::const_iterator it = v.begin();
