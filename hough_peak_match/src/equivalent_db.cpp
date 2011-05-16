@@ -1,7 +1,6 @@
 ///\file
 ///\brief Main routine and supporting code for the equivalent_db executable
 
-#include "utils.hpp"
 #include "peak_matching_database.hpp"
 #include <iostream>
 #include <cstdlib> //For exit
@@ -31,8 +30,10 @@ void print_usage_and_exit(std::string errMsg){
   std::exit(-1);
 }
 
+#include "utils.hpp"
 #include <set> //For multiset
 #include <sstream>
+#include <stdexcept>
 
 namespace HoughPeakMatch{
 ///\brief A unique encoding of the semantics of a PeakMatchinDatabase
@@ -62,6 +63,61 @@ public:
   }
 };
   namespace{
+    ///\brief Represents a unique parameter ordering for a particular
+    ///\brief PeakMatchingDatabase
+    ///
+    ///This parameter ordering depends only on the contents of the
+    ///database not on the external keys.  It can be applied to
+    ///parameter vectors to reorder them in this unique/canonical
+    ///ordering
+    class ParameterOrdering{
+      ///\brief occupant[i] gives the original index of the value to
+      ///\brief occupy position i in the reordered array
+      std::vector<std::size_t> occupant;
+    public:
+      ///\brief Extract the parameter ordering for \a pmd
+      ///
+      ///\param pmd The database whose canonical ordering is to be
+      ///extracted
+      ParameterOrdering(const PeakMatchingDatabase& pmd);
+
+      ///\brief Return the given vector reordered into this ordering
+      ///
+      ///\param v The vector whose elements will be reordered for the
+      ///return value.  Must have the same number of elements as the
+      ///number of parameters in the PeakMatchingDatabase used to
+      ///initialize this ParameterOrdering
+      ///
+      ///\return the given vector reordered into this ordering
+      ///
+      ///\throw invalid_argument if v has the wrong number of elements
+      template<class T>
+      std::vector<T> return_reordered(const std::vector<T>& v) const{
+	if(v.size() != occupant.size()){
+	  throw std::invalid_argument("ERROR: Vector with the wrong number "
+				      "of elements passed to "
+				      "ParameterOrdering::return_reordered");
+	}
+	typename std::vector<T> ret(v.size());
+	typename std::vector<T>::iterator out = ret.begin();
+	typename std::vector<T>::const_iterator in_idx = occupant.begin();
+	while(out != ret.end()){
+	  *out = v.at(*in_idx);
+	  ++out; ++in_idx;
+	}
+	return ret;
+      }
+    };
+
+    ParameterOrdering::ParameterOrdering(const PeakMatchingDatabase& pmd)
+      :occupant(){
+      //Extract the list of parameters (one object per row)
+      //Sort lexically by sorted rows (treat each row as a set)
+      //Sort columns lexically 
+      //Store this ordering in occupant
+    }
+
+    
     ///\brief Returns a unique string-multiset representation for a
     ///\brief collection of objects
     ///
