@@ -34,6 +34,7 @@ void print_usage_and_exit(std::string errMsg){
 #include <set> //For multiset
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 
 namespace HoughPeakMatch{
 ///\brief A unique encoding of the semantics of a PeakMatchinDatabase
@@ -93,6 +94,7 @@ public:
       ///\throw invalid_argument if v has the wrong number of elements
       template<class T>
       std::vector<T> return_reordered(const std::vector<T>& v) const{
+	using std::size_t;
 	if(v.size() != occupant.size()){
 	  throw std::invalid_argument("ERROR: Vector with the wrong number "
 				      "of elements passed to "
@@ -100,7 +102,7 @@ public:
 	}
 	typename std::vector<T> ret(v.size());
 	typename std::vector<T>::iterator out = ret.begin();
-	typename std::vector<T>::const_iterator in_idx = occupant.begin();
+	typename std::vector<size_t>::const_iterator in_idx = occupant.begin();
 	while(out != ret.end()){
 	  *out = v.at(*in_idx);
 	  ++out; ++in_idx;
@@ -109,12 +111,120 @@ public:
       }
     };
 
+    ///\brief A row in the matrix of parameters from all database objects
+    typedef std::vector<double> Row;
+
+    ///\brief Functional that extracts the parameters in an object
+    struct ParamsExtractor{
+      ///\brief Returns the parameters for an object of type T
+      ///
+      ///\param t The object whose parameters are being extracted
+      ///
+      ///\return the parameters for an instance of type T
+      template<class T>
+      inline Row operator()(const T& t) const{ 
+	return t.params(); }
+    };
+    
+    /// @cond SUPPRESS
+
+    ///\brief Specialization returning the parameters in a
+    ///\brief ParamStats object
+    ///
+    ///\param ps The ParamStats object whose parameters are being extracted
+    ///
+    ///\return the parameters for the ParamStats object
+    template<>
+      inline Row ParamsExtractor::operator()(const ParamStats& ps) const{ 
+      return ps.frac_variances(); }
+
+    /// @endcond 
+
+    ///\brief Functional that compares two rows by looking at whether
+    ///\brief their sorted contents are lexically in order
+    struct RowSortedLessThan{
+      bool operator()(const Row& a_orig, const Row& b_orig) const{
+	Row a=a_orig; Row b=b_orig;
+	sort(a.begin(),a.end());
+	sort(b.begin(),b.end());
+	return a < b;
+      }
+    };
+
+    ///\brief A column of the parameter vectors for all objects in the
+    ///\brief database
+    class Column:public std::vector<double>{
+    public:
+      ///\param The index this column had before being
+      ///reordered
+      std::size_t original_index;
+
+      ///\brief create a colum with \a v as contents and \a
+      ///\brief original_index as the original index
+      ///
+      ///\param original_index the index this column had before being
+      ///reordered
+      ///
+      ///\param v the contents of this column
+      Column(std::size_t original_index=0, 
+	     const std::vector<double>& v=std::vector<double>()):
+	std::vector<double>(v),original_index(original_index){}      
+    };
+
     ParameterOrdering::ParameterOrdering(const PeakMatchingDatabase& pmd)
       :occupant(){
+      using std::vector; using std::transform; using std::size_t;
+      using std::back_insert_iterator;
       //Extract the list of parameters (one object per row)
+      size_t num_objects = pmd.parameterized_peak_groups().size()+
+	pmd.detected_peak_groups().size()+
+	pmd.sample_params().size()+
+	pmd.param_stats().size();
+      vector<Row> rows; rows.reserve(num_objects);
+      back_insert_iterator<vector<Row> > inserter = 
+	std::back_inserter(rows);
+      transform(pmd.parameterized_peak_groups().begin(),
+		pmd.parameterized_peak_groups().end(),
+		inserter, ParamsExtractor());
+      
+      transform(pmd.detected_peak_groups().begin(),
+		pmd.detected_peak_groups().end(),
+		inserter, ParamsExtractor());
+      
+      transform(pmd.sample_params().begin(),
+		pmd.sample_params().end(),
+		inserter, ParamsExtractor());
+      
+      transform(pmd.param_stats().begin(),
+		pmd.param_stats().end(),
+		inserter, ParamsExtractor());      
+
       //Sort lexically by sorted rows (treat each row as a set)
+      std::sort(rows.begin(), rows.end(), RowSortedLessThan());
+
+      //Transpose the matrix into columns (that remember their
+      //original index) - note that this step depends on pmd elements
+      //all having the same number of parameters (which should be an
+      //invariant of the object)
+      size_t num_params = 0;
+      if(rows.size() > 0){ num_params = rows.at(0).size(); }
+      vector<Column> cols; cols.reserve(num_params);
+      for(size_t col = 0; col < num_params; ++col){
+	Column c(col); c.reserve(num_objects);
+	for(vector<Row>::const_iterator row = rows.begin(); 
+	    row != rows.end(); ++row){
+	  c.push_back(row->at(col));
+	}
+	cols.push_back(c);
+      }
+
       //Sort columns lexically 
+      sort(cols.begin(), cols.end());
+
       //Store this ordering in occupant
+      for(size_t col = 0; col < cols.size(); ++col){
+	occupant.push_back(cols.at(col).original_index);
+      }      
     }
 
     
@@ -158,14 +268,21 @@ public:
 
     ///\brief Flattens ParameterizedPeakGroups from one db
     class ParameterizedPeakGroupFlattener:public Flattener{
+      ///\brief The ordering of the parameters to use in the flattened
+      ///\brief peak groups
+      ParameterOrdering ordering_;
     public:
       ///\brief Create a Flattener that flattens
       ///\brief ParameterizedPeakGroups from the database \a db
       ///
       ///\param db The database from which come the
+      ///
+      ///\param ordering The ordering of the parameters to use in the flattened
+      ///peak groups.
       ///ParameterizedPeakGroup objects flattened by this flattener
-      ParameterizedPeakGroupFlattener(const PeakMatchingDatabase& db):
-	Flattener(db){}
+      ParameterizedPeakGroupFlattener(const PeakMatchingDatabase& db,
+				      const ParameterOrdering& ordering)
+	:Flattener(db), ordering_(ordering){}
       
       ///\brief Return a flattened representation of the given
       ///\brief ParameterizedPeakGroup
@@ -181,7 +298,7 @@ public:
       std::string operator()(const ParameterizedPeakGroup& f) const{
 	std::ostringstream o;
 	o << "parameterized_peak_group " << f.ppm() 
-	  << " "; space_separate(o, f.params());
+	  << " "; space_separate(o, ordering_.return_reordered(f.params()));
 	return o.str();
       }
     };
@@ -189,9 +306,10 @@ public:
 
   PMDatabaseSemantics::PMDatabaseSemantics(const PeakMatchingDatabase& pmd)
     :contents(){
+    ParameterOrdering ordering(pmd);
     std::multiset<std::string> tmp = 
       flatten(pmd.parameterized_peak_groups(),
-	      ParameterizedPeakGroupFlattener(pmd));
+	      ParameterizedPeakGroupFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
     ///\todo write for detected_peak_group
 
