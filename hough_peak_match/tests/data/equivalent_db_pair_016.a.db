@@ -1,0 +1,8 @@
+#Ensure that databases with different parameter orderings are
+#equivalent. 3 parameters: rearrangement of the columns, param'd peak
+#groups and param_stats
+parameterized_peak_group 100 100.0 1 2 2
+parameterized_peak_group 101 100.0 2 3 4
+parameterized_peak_group 102 100.0 3 4 3
+parameterized_peak_group 103 100.0 4 1 1
+param_stats .9 .06 .04
