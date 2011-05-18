@@ -1,15 +1,82 @@
-function [sig_inxs,not_sig_inxs,significant,p_permuted] = determine_significant_features(X,Y,orig_model,num_permutations,talpha,variables)
+function [sig_inxs,not_sig_inxs,significant,p_permuted] = determine_significant_features(X,Y,orig_model,num_permutations,talpha,inside_num_permutations,inside_talpha)
 [num_samples,num_variables] = size(X);
-if ~exist('variables')
-    variables = 1:num_variables;
-end
+p_permuted = cell(num_variables,1);
+% if ~exist('variables')
+%     variables = 1:num_variables;
+% end
+
 %% Determine the significant features for a model
 P_original = orig_model.p; % Grab the original P
 % for each variable, permute the labels N times and recalculate P
-fprintf('Maximum number of permutations is %d\n',factorial(num_samples));
-N = min([num_permutations,factorial(num_samples)]);
-fprintf('The number of permutations is %d\n',N);
-fprintf('The test alpha is %f\n',talpha);
+max_num_permutations = factorial(num_samples);
+fprintf('Maximum number of permutations is %d\n',max_num_permutations);
+% fprintf('The number of permutations is %d\n',N);
+% fprintf('The test alpha is %f\n',talpha);
+
+%% Inner permutation test
+variables = 1:num_variables;
+N = min([inside_num_permutations,max_num_permutations]);
+inner_P_permuted = run(X,Y,orig_model,N,variables);
+
+% Determine the outright not significant bins
+significant = ones(1,num_variables)*NaN;
+sig_inxs = [];
+not_sig_inxs = [];
+for v = 1:num_variables
+    sorted = sort(inner_P_permuted(v,:),'descend');
+    inside_ix = max([1,round(N*inside_talpha/2)]); % Two tailed
+    inside_thres1 = sorted(inside_ix);
+    inside_thres2 = sorted(end-inside_ix+1);
+%     if P_original(v) < sorted(end) % Greatest observed
+%         p_permuted{v} = inner_P_permuted(v,:);
+%         significant(v) = true;
+%         sig_inxs(end+1) = v;
+%     elseif P_original(v) > sorted(1) % Greatest negative observed
+%         p_permuted{v} = inner_P_permuted(v,:);
+%         significant(v) = true;
+%         sig_inxs(end+1) = v;
+    if inside_thres1 >= P_original(v) && P_original(v) >= inside_thres2 % Not close to the boundary
+        p_permuted{v} = inner_P_permuted(v,:);
+        not_sig_inxs(end+1) = v;
+        significant(v) = false;
+    end
+end
+
+%% Border permutation test
+variables = find(isnan(significant));
+N = min([num_permutations,max_num_permutations]);
+border_P_permuted = run(X,Y,orig_model,N,variables);
+
+% Determine the outright (not) significant bins
+sig_inxs = [];
+not_sig_inxs = [];
+for v = variables
+    sorted = sort(border_P_permuted(v,:),'descend');
+    ix = max([1,round(N*talpha/2)]); % Two tailed
+    thres1 = sorted(ix);
+    thres2 = sorted(end-ix+1);    
+    if P_original(v) >= thres1
+        p_permuted{v} = border_P_permuted(v,:);
+        significant(v) = true;
+        sig_inxs(end+1) = v;
+    elseif P_original(v) <= thres2
+        p_permuted{v} = border_P_permuted(v,:);
+        significant(v) = true;
+        sig_inxs(end+1) = v;
+    else
+        p_permuted{v} = border_P_permuted(v,:);
+        not_sig_inxs(end+1) = v;
+        significant(v) = false;
+    end
+end
+
+% p_permuted = P_permuted;
+
+function P_permuted = run(X,Y,orig_model,N,variables)
+[num_samples,num_variables] = size(X);
+P_original = orig_model.p; % Grab the original P
+
+num_OPLS_fact = orig_model.num_OPLS_fact;
 P_permuted = NaN*ones(N,num_variables);
 for v = variables
     v_P_permuted = NaN*ones(N,1);
@@ -17,7 +84,7 @@ for v = variables
         X_permuted = X;
         inxs = randperm(num_samples);
         X_permuted(:,v) = X(inxs,v);
-        [model,stats] = opls(X_permuted,Y,orig_model.num_OPLS_fact);
+        [model,stats] = opls(X_permuted,Y,num_OPLS_fact);
         v_P_permuted(n) = model.p(v);
         % Make sure the direction of the vector is the same
         model.p(v) = 0; % Remove from calculation
@@ -33,49 +100,3 @@ for v = variables
     %fprintf('Finished %d\n',v);
 end
 P_permuted = P_permuted';
-
-% Determine the significant bins
-significant = ones(1,num_variables)*false;
-sig_inxs = [];
-not_sig_inxs = [];
-for v = 1:num_variables
-    sorted = sort(P_permuted(v,:),'descend');
-    ix = max([1,round(N*talpha/2)]); % Two tailed
-    thres1 = sorted(ix);
-    thres2 = sorted(end-ix+1);
-    if P_original(v) >= thres1
-        significant(v) = true;
-        sig_inxs(end+1) = v;
-    elseif P_original(v) <= thres2
-        significant(v) = true;
-        sig_inxs(end+1) = v;
-    else
-        not_sig_inxs(end+1) = v;
-    end
-end
-
-p_permuted = P_permuted;
-
-% % Graph each significant distribution
-% for v = 1:num_variables
-%     if significant(v)
-%         figure;
-%         [f,xi] = ksdensity(P_permuted(v,:));
-%         plot(xi,f,'k-');
-%         yl = ylim;
-%         arrow([P_original(v),yl(2)/4],[P_original(v),0]);
-%         xlabel(['P_{',num2str(v),'}']);
-%     end
-% end
-% 
-% % Graph the distributions that are not significant
-% for v = 1:num_variables
-%     if ~significant(v)
-%         figure;
-%         [f,xi] = ksdensity(P_permuted(v,:));
-%         plot(xi,f,'k-');
-%         yl = ylim;
-%         arrow([P_original(v),yl(2)/4],[P_original(v),0]);
-%         xlabel(['P_{',num2str(v),'}']);
-%     end
-% end
