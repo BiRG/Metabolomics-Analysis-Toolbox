@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 11-May-2011 14:09:03
+% Last Modified by GUIDE v2.5 17-May-2011 15:08:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -320,7 +320,10 @@ end
 %% Now determine the sig. variables
 sig_vars_num_permutations = str2num(get(handles.sig_vars_num_permutations_edit,'String'));
 sig_vars_talpha = str2num(get(handles.sig_vars_talpha_edit,'String'));
-[handles.sig_inxs,handles.not_sig_inxs,handles.significant,handles.p_permuted] = determine_significant_features(X',Y',handles.model,sig_vars_num_permutations,sig_vars_talpha);
+sig_vars_inner_num_permutations = str2num(get(handles.sig_vars_inner_num_permutations_edit,'String'));
+sig_vars_inner_talpha = str2num(get(handles.sig_vars_inner_talpha_edit,'String'));
+[handles.sig_inxs,handles.not_sig_inxs,handles.significant,handles.p_permuted] = determine_significant_features(X',Y',handles.model,...
+    sig_vars_num_permutations,sig_vars_talpha,sig_vars_inner_num_permutations,sig_vars_inner_talpha);
 set(handles.sig_vars_listbox,'String',{'',handles.collection.x(handles.sig_inxs)});
 set(handles.sig_vars_listbox,'Value',1);
 set(handles.not_sig_vars_listbox,'String',{'',handles.collection.x(handles.not_sig_inxs)});
@@ -386,10 +389,12 @@ axes(handles.q2_distribution_axes);
 plot(xi,f,'k-');
 xlabel('Q2');
 ylabel('Probability Density Estimate');
-% [n,xi] = hist(handles.p_permuted(v,:),50);
+% [n,xi] = hist(handles.p_permuted{v},50);
 % bar(xi,n/sum(n));
 yl = ylim;
 arrow([handles.stats.Q2,yl(2)/4],[handles.stats.Q2,0]);
+
+handles.run_groups_checkbox = get(handles.groups_checkbox,'Value');
 
 msgbox('Finished running OPLS');
 
@@ -400,8 +405,6 @@ function add_line_to_summary_text(h,line)
 current = get(h,'String');
 current = {line,current{:}};
 set(h,'String',current);
-
-
 
 function cv_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to cv_edit (see GCBO)
@@ -591,10 +594,12 @@ graph_Xs = {{t}};
 graph_Ys = {{t_ortho}};
 ylabels = {'T_{orthogonal}'};
 xlabels = {'Y'};
-graph_Xs{end+1} = {handles.available_Y};
-graph_Ys{end+1} = {Y_pred};
-xlabels{end+1} = 'Observed';
-ylabels{end+1} = 'Predicted';
+if ~handles.run_groups_checkbox
+    graph_Xs{end+1} = {handles.available_Y};
+    graph_Ys{end+1} = {Y_pred};
+    xlabels{end+1} = 'Observed';
+    ylabels{end+1} = 'Predicted';
+end
 for gi = 1:length(graph_Xs)
     figure;
     graph_X = graph_Xs{gi}{1};
@@ -857,9 +862,29 @@ for i = 1:length(handles.collection.x)
     data{i+1,4} = handles.significant(i);
 end
 
-[filename, pathname] = uiputfile({'*.xlsx'},'Save as');
+[filename, pathname] = uiputfile({'*.csv'},'Save as');
 
-xlswrite([pathname,filename],data,'Loadings');
+fid=fopen([pathname,filename],'wt');
+
+for i = 1:size(data,1)
+    if i > 1
+        fprintf(fid,'\n');
+    end
+    for j = 1:size(data,2)
+        if j > 1
+            fprintf(fid,',');
+        end
+        if ischar(data{i,j})
+            fprintf(fid,'%s',data{i,j});
+        elseif isinteger(data{i,j})
+            fprintf(fid,'%d',data{i,j});
+        else
+            fprintf(fid,'%f',data{i,j});
+        end
+    end        
+end
+
+fclose(fid);
 
 
 % --- Executes on selection change in sig_vars_listbox.
@@ -888,9 +913,9 @@ end
 v = handles.sig_inxs(inx);
 contents = get(hObject,'String');
 
-[f,xi] = ksdensity(handles.p_permuted(v,:));
+[f,xi] = ksdensity(handles.p_permuted{v});
 plot(xi,f,'k-');
-% [n,xi] = hist(handles.p_permuted(v,:),50);
+% [n,xi] = hist(handles.p_permuted{v},50);
 % bar(xi,n/sum(n));
 yl = ylim;
 arrow([handles.model.p(v),yl(2)/4],[handles.model.p(v),0]);
@@ -937,9 +962,9 @@ end
 v = handles.not_sig_inxs(inx);
 contents = get(hObject,'String');
 
-[f,xi] = ksdensity(handles.p_permuted(v,:));
+[f,xi] = ksdensity(handles.p_permuted{v});
 plot(xi,f,'k-');
-% [n,xi] = hist(handles.p_permuted(v,:),50);
+% [n,xi] = hist(handles.p_permuted{v},50);
 % bar(xi,n/sum(n));
 yl = ylim;
 arrow([handles.model.p(v),yl(2)/4],[handles.model.p(v),0]);
@@ -1327,10 +1352,15 @@ if get(hObject,'Value')
     prompt={'Enter the number of workers (pool size):'};
     name='Open MATLAB parallel computation session';
     numlines=1;
-    defaultanswer={'2'};
+    sched = findResource();
+    defaultanswer={num2str(sched.ClusterSize)};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     
     poolsize = str2num(answer{1});
+    if poolsize > sched.ClusterSize
+        msgbox(['Please specify a number less than ',num2str(sched.ClusterSize)]);
+        return;
+    end
     if poolsize > 0
         try
             matlabpool(poolsize);
@@ -1436,3 +1466,49 @@ function figure1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+
+function sig_vars_inner_talpha_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to sig_vars_inner_talpha_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sig_vars_inner_talpha_edit as text
+%        str2double(get(hObject,'String')) returns contents of sig_vars_inner_talpha_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function sig_vars_inner_talpha_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sig_vars_inner_talpha_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function sig_vars_inner_num_permutations_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to sig_vars_inner_num_permutations_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sig_vars_inner_num_permutations_edit as text
+%        str2double(get(hObject,'String')) returns contents of sig_vars_inner_num_permutations_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function sig_vars_inner_num_permutations_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sig_vars_inner_num_permutations_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
