@@ -9,8 +9,23 @@
 namespace HoughPeakMatch{
 
 ///A peak that has not been assigned a peak_group membership
-class UnknownPeak:public Peak{
+class UnknownPeak:public Peak{  
+protected:
+  ///\brief Construct an uninitialized UnknownPeak
+  UnknownPeak():Peak(){}
 public:
+  ///\brief Construct an unknown peak object
+  ///
+  ///\param sample_id the id of the sample that contains this peak
+  ///
+  ///\param peak_id a unique identifier for this peak within its sample
+  ///
+  ///\param ppm the location of this peak (in ppm)
+  ///
+  ///\throws invalid_argument if ppm is infinity or nan
+  UnknownPeak(unsigned sample_id, unsigned peak_id, double ppm)
+    :Peak(sample_id,peak_id,ppm,"HoughPeakMatch::UnknownPeak"){}
+
   virtual ~UnknownPeak(){}
 
   ///\brief Creates an UnknownPeak from a line in a database file
@@ -37,6 +52,17 @@ public:
   ///nonsense.
   static UnknownPeak from_text_line
   (const std::vector<std::string>& words, bool& failed);
+
+  ///\brief Write this UnknownPeak to a new-line terminated string
+  ///
+  ///Returns the string representation of this UnknownPeak
+  ///from \ref unknown_peak "the file format documentation"
+  ///terminated with a newline
+  ///
+  ///\returns the string representation of this HumanVerifiedPeak from
+  ///\ref unknown_peak "the file format documentation" terminated
+  ///with a newline
+  std::string to_text_line() const;
 };
 
 }

@@ -99,7 +99,7 @@ namespace HoughPeakMatch{
 
 	//With NAN ppm
 	{
-	  string in[4]={"sample","55","nan","389"};
+	  string in[4]={"detected_peak_group","55","nan","389"};
 	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -108,7 +108,7 @@ namespace HoughPeakMatch{
 
 	//With INF ppm
 	{
-	  string in[4]={"sample","55","inf","389"};
+	  string in[4]={"detected_peak_group","55","inf","389"};
 	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -117,7 +117,7 @@ namespace HoughPeakMatch{
 	
 	//With NAN param
 	{
-	  string in[4]={"sample","55","2.1","nan"};
+	  string in[4]={"detected_peak_group","55","2.1","nan"};
 	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -126,7 +126,7 @@ namespace HoughPeakMatch{
 
 	//With INF param
 	{
-	  string in[4]={"sample","55","2.1","inf"};
+	  string in[4]={"detected_peak_group","55","2.1","inf"};
 	  DetectedPeakGroup pg=DetectedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -169,7 +169,7 @@ namespace HoughPeakMatch{
 
 	//With NAN ppm
 	{
-	  string in[4]={"sample","55","nan","389"};
+	  string in[4]={"parameterized_peak_group","55","nan","389"};
 	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -178,7 +178,7 @@ namespace HoughPeakMatch{
 
 	//With INF ppm
 	{
-	  string in[4]={"sample","55","inf","389"};
+	  string in[4]={"parameterized_peak_group","55","inf","389"};
 	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -187,7 +187,7 @@ namespace HoughPeakMatch{
 	
 	//With NAN param
 	{
-	  string in[4]={"sample","55","2.1","nan"};
+	  string in[4]={"parameterized_peak_group","55","2.1","nan"};
 	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -196,7 +196,7 @@ namespace HoughPeakMatch{
 
 	//With INF param
 	{
-	  string in[4]={"sample","55","2.1","inf"};
+	  string in[4]={"parameterized_peak_group","55","2.1","inf"};
 	  ParameterizedPeakGroup pg=ParameterizedPeakGroup::from_text_line
 	    (vstr(in,in+4), failed);
 	  is(failed, true, 
@@ -223,7 +223,31 @@ namespace HoughPeakMatch{
 	{
 	  string in[3]={"sample","1",""};
 	  Sample p = Sample::from_text_line(vstr(in,in+3), failed);
-	  is(failed, true, "Sample fails when too few arguments");
+	  is(failed, true, "Sample fails when given blank class name");
+	}
+
+	//With white space in class name
+	{
+	  string in[3]={"sample","1",""};
+	  const unsigned num_chars = 6;
+	  char white_char[num_chars]={' ','\t','\n','\v','\r','\f'};
+	  string white_char_name[num_chars]=
+	    {"space","tab","newline","vertical tab",
+	     "carriage return","form feed"};
+  
+	  for(unsigned i = 0; i < num_chars; ++i){
+	    bool failed = false;
+
+	    in[2] = string("begin")+white_char[i]+"end";
+	    Sample::from_text_line(vstr(in,in+3), failed);
+	    is(failed, true, "Sample fails when a "+white_char_name[i]
+	       +" is in the middle of the class name.");
+	    
+	    in[2] = string("begin")+white_char[i];
+	    Sample::from_text_line(vstr(in,in+3), failed);
+	    is(failed, true, "Sample fails when a "+white_char_name[i]
+	       +" is at the end of the class name.");
+	  }
 	}
 
 	//With too few arguments
@@ -410,7 +434,7 @@ namespace HoughPeakMatch{
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
-  TAP::plan(73);
+  TAP::plan(85);
   HoughPeakMatch::Test::from_text_line();
   return TAP::exit_status();
 }

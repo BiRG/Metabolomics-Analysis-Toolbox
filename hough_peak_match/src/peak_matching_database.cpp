@@ -8,17 +8,19 @@
 #include <set>
 #include <algorithm>
 #include <iterator>
+#include <fstream>
+
 
 namespace HoughPeakMatch{
   void PeakMatchingDatabase::make_empty(){
-    parameterized_peak_groups.clear();
-    detected_peak_groups.clear();
-    human_verified_peaks.clear();
-    unverified_peaks.clear();
-    unknown_peaks.clear();
-    samples.clear();
-    sample_params.clear();
-    param_stats.clear();
+    parameterized_peak_groups_.clear();
+    detected_peak_groups_.clear();
+    human_verified_peaks_.clear();
+    unverified_peaks_.clear();
+    unknown_peaks_.clear();
+    samples_.clear();
+    sample_params_.clear();
+    param_stats_.clear();
   }
 
 
@@ -44,56 +46,56 @@ namespace HoughPeakMatch{
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  parameterized_peak_groups.push_back(g);
+	  parameterized_peak_groups_.push_back(g);
 	}else if(line_type == "detected_peak_group"){
 	  DetectedPeakGroup g = 
 	    DetectedPeakGroup::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  detected_peak_groups.push_back(g);
+	  detected_peak_groups_.push_back(g);
 	}else if(line_type == "human_verified_peak"){
 	  HumanVerifiedPeak p = 
 	    HumanVerifiedPeak::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  human_verified_peaks.push_back(p);
+	  human_verified_peaks_.push_back(p);
 	}else if(line_type == "unverified_peak"){
 	  UnverifiedPeak p = 
 	    UnverifiedPeak::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  unverified_peaks.push_back(p);
+	  unverified_peaks_.push_back(p);
 	}else if(line_type == "unknown_peak"){
 	  UnknownPeak p = 
 	    UnknownPeak::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  unknown_peaks.push_back(p);
+	  unknown_peaks_.push_back(p);
 	}else if(line_type == "sample"){
 	  Sample s = 
 	    Sample::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  samples.push_back(s);
+	  samples_.push_back(s);
 	}else if(line_type == "sample_params"){
 	  SampleParams sp = 
 	    SampleParams::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  sample_params.push_back(sp);
+	  sample_params_.push_back(sp);
 	}else if(line_type == "param_stats"){
 	  ParamStats ps = 
 	    ParamStats::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
-	  param_stats.push_back(ps);
+	  param_stats_.push_back(ps);
 	}else{
 	  make_empty(); return false;
 	}
@@ -254,54 +256,54 @@ namespace HoughPeakMatch{
     std::set<unsigned> peak_group_ids;
     bool unique_ids = 
       has_unique_ids<unsigned>(peak_group_ids, 
-			       parameterized_peak_groups.begin(),
-			       parameterized_peak_groups.end())
+			       parameterized_peak_groups_.begin(),
+			       parameterized_peak_groups_.end())
       && has_unique_ids<unsigned>(peak_group_ids, 
-				  detected_peak_groups.begin(),
-				  detected_peak_groups.end());
+				  detected_peak_groups_.begin(),
+				  detected_peak_groups_.end());
     std::set<pair<unsigned, unsigned> > peak_ids;
     unique_ids = unique_ids
       && has_unique_ids<pair<unsigned,unsigned> >
-      (peak_ids, human_verified_peaks.begin(), 
-       human_verified_peaks.end())
+      (peak_ids, human_verified_peaks_.begin(), 
+       human_verified_peaks_.end())
       && has_unique_ids<pair<unsigned,unsigned> >
-      (peak_ids, unverified_peaks.begin(),
-       unverified_peaks.end())
+      (peak_ids, unverified_peaks_.begin(),
+       unverified_peaks_.end())
       && has_unique_ids<pair<unsigned,unsigned> >
-      (peak_ids, unknown_peaks.begin(),
-       unknown_peaks.end());
+      (peak_ids, unknown_peaks_.begin(),
+       unknown_peaks_.end());
     
     std::set<unsigned> sample_ids;
     unique_ids = unique_ids
-      && has_unique_ids<unsigned>(sample_ids, samples.begin(),
-				  samples.end());
+      && has_unique_ids<unsigned>(sample_ids, samples_.begin(),
+				  samples_.end());
 
     //Check that at most one param_stats object
 
-    bool correct_num_param_stats = param_stats.size() <= 1;
+    bool correct_num_param_stats = param_stats_.size() <= 1;
     
     //Check referential integrity constraints
 
     bool ref_integrity = 
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
-       unknown_peaks.begin(), unknown_peaks.end(),
-       samples.begin(), samples.end())
+       unknown_peaks_.begin(), unknown_peaks_.end(),
+       samples_.begin(), samples_.end())
       &&
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
-       unverified_peaks.begin(), unverified_peaks.end(),
-       samples.begin(), samples.end())
+       unverified_peaks_.begin(), unverified_peaks_.end(),
+       samples_.begin(), samples_.end())
       &&
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
-       human_verified_peaks.begin(), human_verified_peaks.end(),
-       samples.begin(), samples.end())
+       human_verified_peaks_.begin(), human_verified_peaks_.end(),
+       samples_.begin(), samples_.end())
       &&
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
-       sample_params.begin(), sample_params.end(),
-       samples.begin(), samples.end())
+       sample_params_.begin(), sample_params_.end(),
+       samples_.begin(), samples_.end())
       ;
       
     //Check that all param counts are equal
@@ -310,20 +312,20 @@ namespace HoughPeakMatch{
     std::insert_iterator<std::set<std::size_t> > inserter = 
       std::inserter(param_counts, param_counts.begin());
 
-    std::transform(parameterized_peak_groups.begin(),
-		   parameterized_peak_groups.end(),
+    std::transform(parameterized_peak_groups_.begin(),
+		   parameterized_peak_groups_.end(),
 		   inserter, NumParamsExtractor());
     
-    std::transform(detected_peak_groups.begin(),
-		   detected_peak_groups.end(),
+    std::transform(detected_peak_groups_.begin(),
+		   detected_peak_groups_.end(),
 		   inserter, NumParamsExtractor());
     
-    std::transform(sample_params.begin(),
-		   sample_params.end(),
+    std::transform(sample_params_.begin(),
+		   sample_params_.end(),
 		   inserter, NumParamsExtractor());
 
-    std::transform(param_stats.begin(),
-		   param_stats.end(),
+    std::transform(param_stats_.begin(),
+		   param_stats_.end(),
 		   inserter, NumParamsExtractor());
 
     
@@ -332,5 +334,28 @@ namespace HoughPeakMatch{
     return unique_ids && correct_num_param_stats && ref_integrity 
       && all_param_counts_equal;
   }
+
+
+  PeakMatchingDatabase read_database(std::string file_name, 
+				     std::string which_db,
+				     void (*print_error_and_exit)(std::string)){
+    std::ifstream db_stream(file_name.c_str());
+    if(!db_stream){
+      std::string msg = 
+	"ERROR: Could not open "+ which_db + " database \"" + file_name + "\"";
+      print_error_and_exit(msg);
+    }
+    
+    PeakMatchingDatabase db;
+    bool success = db.read(db_stream);
+    if(!success){
+      std::string msg = 
+	"ERROR: " + which_db + " database \"" + file_name + "\" is invalid";
+      print_error_and_exit(msg);
+    }
+    
+    return db;
+  }
+
 
 }

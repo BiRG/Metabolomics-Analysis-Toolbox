@@ -53,6 +53,22 @@ protected:
 			const std::string& expected_name, 
 			bool& failed);
 public:
+  ///\brief Construct a Peak object
+  ///
+  ///\param sample_id the id of the sample that contains this peak
+  ///
+  ///\param peak_id a unique identifier for this peak within its sample
+  ///
+  ///\param ppm the location of this peak (in ppm)
+  ///
+  ///\param report_errors_as the name of the class to report any
+  ///errors as -- useful when being called from subclasses
+  ///
+  ///\throws invalid_argument if ppm is infinity or nan
+  Peak(unsigned sample_id, unsigned peak_id, double ppm, 
+       std::string report_errors_as);
+
+
   virtual ~Peak(){}
 
   ///\brief Return the id of the sample to which this peak belongs.

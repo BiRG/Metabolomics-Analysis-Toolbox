@@ -44,6 +44,27 @@ protected:
 			const std::string& expected_name, 
 			bool& failed);
 public:
+  ///\brief Construct a known peak object
+  ///
+  ///\param sample_id the id of the sample that contains this peak
+  ///
+  ///\param peak_id a unique identifier for this peak within its sample
+  ///
+  ///\param ppm the location of this peak (in ppm)
+  ///
+  ///\param peak_group_id the identifier of the peak_group to which
+  ///this peak belongs
+  ///
+  ///\param report_errors_as the name of the class to report any
+  ///errors as -- useful when being called from subclasses
+  ///
+  ///\throws invalid_argument if ppm is infinity or nan
+  KnownPeak(unsigned sample_id, unsigned peak_id, double ppm,
+	    unsigned peak_group_id, std::string report_errors_as)
+    :Peak(sample_id, peak_id, ppm, report_errors_as), 
+     peak_group_id_(peak_group_id){}
+
+
   virtual ~KnownPeak(){}
 
   ///\brief Return the id of the peak group to which this peak belongs

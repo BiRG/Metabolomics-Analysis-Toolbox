@@ -19,7 +19,7 @@ int main(int argc, char**argv){
   double fractionVariance = atof(argv[argc-1]);
   bool shouldRemoveSampleParamsFirst=argc==3;
   ///\todo main is stub
-  std::cout << "fractionVariance="<<fractionVariance 
-	    << "\nremoveSampleParams="<<shouldRemoveSampleParamsFirst<<"\n";
+  std::cout << "#fractionVariance="<<fractionVariance 
+	    << "\n#removeSampleParams="<<shouldRemoveSampleParamsFirst<<"\n";
   return 0;
 }

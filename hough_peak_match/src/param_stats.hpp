@@ -4,8 +4,10 @@
 #ifndef HOUGH_PEAK_MATCH_PARAM_STATS
 #define HOUGH_PEAK_MATCH_PARAM_STATS
 
+#include "no_params_exception.hpp"
 #include <string>
 #include <vector>
+#include <numeric>
 
 namespace HoughPeakMatch{
 
@@ -24,6 +26,29 @@ class ParamStats{
   ///\brief Construct an uninitialized ParamStats object
   ParamStats():frac_variances_(){}
 public:
+  ///\brief Construct a ParamStats with the given members
+  ///
+  ///\param param_begin an iterator to the first in the sequence of
+  ///shift-governing parameters
+  ///
+  ///\param param_end an iterator to one-past-the-end of the sequence of
+  ///shift-governing parameters
+  ///
+  ///\throws HoughPeakMatch::no_params_exception if the passed
+  ///sequence of parameters is empty
+  template<class InputIter>
+  ParamStats(InputIter param_begin, InputIter param_end):
+    frac_variances_(param_begin, param_end){
+    if(frac_variances().size() == 0){
+      throw no_params_exception("HoughPeakMatch::ParamStats");
+    }else if(std::accumulate
+	     (frac_variances_.begin(), frac_variances_.end(), 0.0) > 1){
+      throw std::invalid_argument
+	("HoughPeakMatch::ParamStats received fractions of total variance "
+	 "totalling to more than 1.");
+    }
+  }
+
   virtual ~ParamStats(){}
 
   ///\brief Returns a vector giving the fraction of the total variance
@@ -59,6 +84,17 @@ public:
   ///nonsense.
   static ParamStats from_text_line
   (const std::vector<std::string>& words, bool& failed);
+
+
+  ///\brief Write this ParamStats to a new-line terminated string
+  ///
+  ///Returns the string representation of this ParamStats
+  ///from \ref param_stats "the file format documentation"
+  ///terminated with a newline
+  ///
+  ///\returns the string representation of this ParamStats
+  ///from \ref param_stats "the file format documentation"
+  std::string to_text_line() const;
 
 };
 

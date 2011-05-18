@@ -10,7 +10,27 @@ namespace HoughPeakMatch{
 
 ///A peak whose peak-group membership has been verified by a human being
 class HumanVerifiedPeak:public KnownPeak{
+protected:
+  ///\brief Construct an uninitialized human-verified peak object
+  HumanVerifiedPeak():KnownPeak(){}
 public:
+  ///\brief Construct a human-verified peak object
+  ///
+  ///\param sample_id the id of the sample that contains this peak
+  ///
+  ///\param peak_id a unique identifier for this peak within its sample
+  ///
+  ///\param ppm the location of this peak (in ppm)
+  ///
+  ///\param peak_group_id the identifier of the peak_group to which
+  ///this peak belongs
+  ///
+  ///\throws invalid_argument if ppm is infinity or nan
+  HumanVerifiedPeak(unsigned sample_id, unsigned peak_id, double ppm,
+		    unsigned peak_group_id)
+    :KnownPeak(sample_id,peak_id,ppm,peak_group_id,
+	       "HoughPeakMatch::HumanVerifiedPeak"){}
+
   virtual ~HumanVerifiedPeak(){}
 
   ///\brief Creates a HumanVerifiedPeak from a line in a database file
@@ -38,6 +58,17 @@ public:
   static HumanVerifiedPeak from_text_line
   (const std::vector<std::string>& words, bool& failed);
 
+
+  ///\brief Write this HumanVerifiedPeak to a new-line terminated string
+  ///
+  ///Returns the string representation of this HumanVerifiedPeak
+  ///from \ref human_verified_peak "the file format documentation"
+  ///terminated with a newline
+  ///
+  ///\returns the string representation of this HumanVerifiedPeak from
+  ///\ref human_verified_peak "the file format documentation" terminated
+  ///with a newline
+  std::string to_text_line() const;
 };
 
 }

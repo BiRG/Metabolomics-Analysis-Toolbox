@@ -16,4 +16,16 @@ namespace HoughPeakMatch{
 
     failed=false; return ret;
   }
+
+  std::string HumanVerifiedPeak::to_text_line() const{
+    using namespace std;;
+    ostringstream o;
+    o << "human_verified_peak " 
+      << sample_id() << " " 
+      << peak_id() << " " 
+      << ppm() << " " 
+      << peak_group_id() << endl;
+    return o.str();
+  }
+
 }

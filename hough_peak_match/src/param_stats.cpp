@@ -33,4 +33,16 @@ namespace HoughPeakMatch{
 
     failed = false; return ret;
   }
+
+  std::string ParamStats::to_text_line() const{
+    std::ostringstream out;
+    out << "param_stats";
+    for(std::vector<double>::const_iterator it = frac_variances_.begin();
+	it != frac_variances_.end(); ++it){
+      out << " " << *it;
+    }
+    out << std::endl;
+    return out.str();
+  }
+
 }

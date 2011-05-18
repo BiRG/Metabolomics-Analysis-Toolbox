@@ -14,4 +14,12 @@ namespace HoughPeakMatch{
     ret.initFrom(words, "unknown_peak", failed);
     return ret;
   }
+
+  std::string UnknownPeak::to_text_line() const{
+    std::ostringstream out;
+    out << "unknown_peak" << " " << sample_id() << " " 
+	<< peak_id() << " " << ppm() << std::endl;
+    return out.str();
+  }
+
 }

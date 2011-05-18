@@ -1,8 +1,22 @@
 #include "peak.hpp"
 #include "utils.hpp"
 #include "mockable_stringstream.hpp"
+#include <stdexcept>
+#include <sstream>
 
 namespace HoughPeakMatch{
+  Peak::Peak(unsigned sample_id, unsigned peak_id, double ppm, 
+	     std::string report_errors_as)
+    :sample_id_(sample_id),peak_id_(peak_id),ppm_(ppm){
+    if(is_special_double(ppm)){
+      std::ostringstream msg;
+      msg << report_errors_as << " was passed an invalid ppm value: " 
+	  << ppm;
+      throw std::invalid_argument(msg.str());
+    }
+  }
+
+
   void Peak::initFrom(const std::vector<std::string>& words, 
 		      const std::string& expected_name, 
 		      bool& failed){
@@ -36,4 +50,6 @@ namespace HoughPeakMatch{
 
     failed = false; return;
   }
+
+
 }

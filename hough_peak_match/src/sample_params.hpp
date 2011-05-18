@@ -1,6 +1,7 @@
 ///\file
 ///\brief Declares the SampleParams class
 
+#include "no_params_exception.hpp"
 #include <string>
 #include <vector>
 
@@ -25,6 +26,26 @@ class SampleParams{
   ///\brief Make an uninitialized SampleParams object
   SampleParams():sample_id_(),params_(){}
 public:
+  ///\brief Construct a SampleParams with the given members
+  ///
+  ///\param sample_id The sample_id described by this sample_params object
+  ///
+  ///\param param_begin an iterator to the first in the sequence of
+  ///shift-governing parameters
+  ///
+  ///\param param_end an iterator to one-past-the-end of the sequence of
+  ///shift-governing parameters
+  ///
+  ///\throws HoughPeakMatch::no_params_exception if the passed
+  ///sequence of parameters is empty
+  template<class InputIter>
+  SampleParams(unsigned sample_id, InputIter param_begin, InputIter param_end):
+    sample_id_(sample_id),params_(param_begin, param_end){
+    if(params().size() == 0){
+      throw no_params_exception("HoughPeakMatch::SampleParams");
+    }
+  }
+
   virtual ~SampleParams(){}
 
   ///\brief Creates a SampleParams object from a line in a database
@@ -52,6 +73,19 @@ public:
   ///nonsense.
   static SampleParams from_text_line
   (const std::vector<std::string>& words, bool& failed);
+
+
+
+  ///\brief Write this SampleParams to a new-line terminated string
+  ///
+  ///Returns the string representation of this SampleParams
+  ///from \ref sample_params "the file format documentation"
+  ///terminated with a newline
+  ///
+  ///\returns the string representation of this SampleParams
+  ///from \ref sample_params "the file format documentation"
+  std::string to_text_line() const;  
+
 
 
   ///\brief Return the sample_id for the sample these parameters describe

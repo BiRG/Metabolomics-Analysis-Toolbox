@@ -1,5 +1,7 @@
 #include "utils.hpp"
 #include <sstream>
+#include <cctype>
+#include <algorithm>
 
 namespace HoughPeakMatch{
 std::vector<std::string> split(const std::string& s){
@@ -18,5 +20,7 @@ bool is_special_double(double d){
     || -d==std::numeric_limits<double>::infinity();
 }
 
-
+bool contains_white_space(const std::string s){
+  return std::find_if(s.begin(), s.end(), isspace) != s.end();
+}
 }

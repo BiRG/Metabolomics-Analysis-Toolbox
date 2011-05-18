@@ -4,9 +4,12 @@
 #ifndef HOUGH_PEAK_MATCH_PARAMETERIZED_PEAK_GROUP
 #define HOUGH_PEAK_MATCH_PARAMETERIZED_PEAK_GROUP
 
+#include "no_params_exception.hpp"
 #include "peak_group.hpp"
 #include <vector>
 #include <string>
+#include <cstdlib>//For exit
+#include <iostream>
 
 namespace HoughPeakMatch{
 
@@ -23,6 +26,29 @@ protected:
   ParameterizedPeakGroup():ppm_(),params_(){};
 public:
   friend class PeakMatchingDatabase;
+
+  ///\brief Construct a ParameterizedPeakGroup with the given members
+  ///
+  ///\param id The peak_group identifier for the peak group
+  ///
+  ///\param ppm The base location of the peak group
+  ///
+  ///\param param_begin an iterator to the first in the sequence of
+  ///shift-governing parameters
+  ///
+  ///\param param_end an iterator to one-past-the-end of the sequence of
+  ///shift-governing parameters
+  ///
+  ///\throws HoughPeakMatch::no_params_exception if the passed
+  ///sequence of parameters is empty
+  template<class InputIter>
+  ParameterizedPeakGroup(unsigned id, double ppm, 
+			 InputIter param_begin, InputIter param_end):
+    PeakGroup(id),ppm_(ppm),params_(param_begin, param_end){
+    if(params().size() == 0){
+      throw no_params_exception("HoughPeakMatch::ParameterizedPeakGroup");
+    }
+  }
 
   virtual ~ParameterizedPeakGroup(){}
 
@@ -53,6 +79,18 @@ public:
   ///reading - they're almost identical
   static ParameterizedPeakGroup from_text_line
   (const std::vector<std::string>& words, bool& failed);
+
+  
+
+  ///\brief Write this ParameterizedPeakGroup to a new-line terminated string
+  ///
+  ///Returns the string representation of this ParameterizedPeakGroup
+  ///from \ref parameterized_peak_group "the file format documentation"
+  ///terminated with a newline
+  ///
+  ///\returns the string representation of this ParameterizedPeakGroup
+  ///from \ref parameterized_peak_group "the file format documentation"
+  std::string to_text_line() const;
 
   
   ///\brief Return the parameters for this ParameterizedPeakGroup

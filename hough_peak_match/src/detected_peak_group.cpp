@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstdlib>
 #include "mockable_stringstream.hpp"
+#include <iterator>
 
 namespace HoughPeakMatch{
   DetectedPeakGroup DetectedPeakGroup::from_text_line
@@ -43,4 +44,18 @@ namespace HoughPeakMatch{
     
     failed=false; return ret;
   }
+
+  std::string DetectedPeakGroup::to_text_line() const{
+    using namespace std;
+    ostringstream out;
+    out << "detected_peak_group" << " " << id() << " " << ppm() << " ";
+    const vector<double> v = params();
+    assert(v.size() != 0);//Shouldn't have a space and shouldn't
+			  //subtract 1 from end in this case
+    copy(v.begin(), v.end()-1, ostream_iterator<double>(out, " "));
+    out << v.back() << endl;
+    return out.str();
+  }
+
+
 }
