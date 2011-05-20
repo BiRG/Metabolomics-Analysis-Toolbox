@@ -359,9 +359,42 @@ public:
       ///
       ///\return Return a flattened representation of the given
       ///HumanVerifiedPeak
+      ///
+      ///\todo This doesn't flatten anything yet
       std::string operator()(const HumanVerifiedPeak& p) const{
 	std::ostringstream o;
 	o << "human_verified_peak" 
+	  << " " << p.sample_id() << " " << p.peak_id() 
+	  << " " << p.ppm() << " " << p.peak_group_id();
+	return o.str();
+      }
+    };
+
+    ///\brief Flattens UnverifiedPeaks from one db
+    class UnverifiedPeakFlattener:public Flattener{
+    public:
+      ///\brief Create a Flattener that flattens
+      ///\brief UnverifiedPeaks from the database \a db
+      ///
+      ///\param db The database from which come the peaks to be flattened
+      UnverifiedPeakFlattener(const PeakMatchingDatabase& db)
+	:Flattener(db){}
+      
+      ///\brief Return a flattened representation of the given
+      ///\brief UnverifiedPeak
+      ///
+      ///Returns a string that uniquely represents this detected
+      ///peak within its database and that has no references to
+      ///other objects
+      ///
+      ///\param p The peak to flatten
+      ///
+      ///\return Return a flattened representation of the given
+      ///UnverifiedPeak
+      ///\todo This doesn't flatten anything yet
+      std::string operator()(const UnverifiedPeak& p) const{
+	std::ostringstream o;
+	o << "unverified_peak" 
 	  << " " << p.sample_id() << " " << p.peak_id() 
 	  << " " << p.ppm() << " " << p.peak_group_id();
 	return o.str();
@@ -385,7 +418,8 @@ public:
     tmp=flatten(pmd.human_verified_peaks(), HumanVerifiedPeakFlattener(pmd));
     contents.insert(tmp.begin(), tmp.end());
 
-    ///\todo write for unverified_peak
+    tmp=flatten(pmd.unverified_peaks(), UnverifiedPeakFlattener(pmd));
+    contents.insert(tmp.begin(), tmp.end());
 
     ///\todo write for unknown_peak
 
