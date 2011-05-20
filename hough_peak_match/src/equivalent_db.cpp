@@ -279,7 +279,6 @@ public:
       ///
       ///\param ordering The ordering of the parameters to use in the flattened
       ///peak groups.
-      ///ParameterizedPeakGroup objects flattened by this flattener
       ParameterizedPeakGroupFlattener(const PeakMatchingDatabase& db,
 				      const ParameterOrdering& ordering)
 	:Flattener(db), ordering_(ordering){}
@@ -302,6 +301,43 @@ public:
 	return o.str();
       }
     };
+
+    ///\brief Flattens DetectedPeakGroups from one db
+    class DetectedPeakGroupFlattener:public Flattener{
+      ///\brief The ordering of the parameters to use in the flattened
+      ///\brief peak groups
+      ParameterOrdering ordering_;
+    public:
+      ///\brief Create a Flattener that flattens
+      ///\brief DetectedPeakGroups from the database \a db
+      ///
+      ///\param db The database from which come the
+      ///
+      ///\param ordering The ordering of the parameters to use in the flattened
+      ///peak groups.
+      DetectedPeakGroupFlattener(const PeakMatchingDatabase& db,
+				 const ParameterOrdering& ordering)
+	:Flattener(db), ordering_(ordering){}
+      
+      ///\brief Return a flattened representation of the given
+      ///\brief DetectedPeakGroup
+      ///
+      ///Returns a string that uniquely represents this detected
+      ///peak group within its database and that has no references to
+      ///other objects
+      ///
+      ///\param f The peak group to flatten
+      ///
+      ///\return Return a flattened representation of the given
+      ///DetectedPeakGroup
+      std::string operator()(const DetectedPeakGroup& f) const{
+	std::ostringstream o;
+	o << "detected_peak_group " << f.ppm() 
+	  << " "; space_separate(o, ordering_.return_reordered(f.params()));
+	return o.str();
+      }
+    };
+
   }
 
   PMDatabaseSemantics::PMDatabaseSemantics(const PeakMatchingDatabase& pmd)
@@ -311,7 +347,10 @@ public:
       flatten(pmd.parameterized_peak_groups(),
 	      ParameterizedPeakGroupFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
-    ///\todo write for detected_peak_group
+
+    tmp=flatten(pmd.detected_peak_groups(),
+		DetectedPeakGroupFlattener(pmd,ordering));
+    contents.insert(tmp.begin(), tmp.end());
 
     ///\todo write for human_verified_peak
 
