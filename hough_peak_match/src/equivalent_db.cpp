@@ -338,6 +338,36 @@ public:
       }
     };
 
+    ///\brief Flattens HumanVerifiedPeaks from one db
+    class HumanVerifiedPeakFlattener:public Flattener{
+    public:
+      ///\brief Create a Flattener that flattens
+      ///\brief HumanVerifiedPeaks from the database \a db
+      ///
+      ///\param db The database from which come the peaks to be flattened
+      HumanVerifiedPeakFlattener(const PeakMatchingDatabase& db)
+	:Flattener(db){}
+      
+      ///\brief Return a flattened representation of the given
+      ///\brief HumanVerifiedPeak
+      ///
+      ///Returns a string that uniquely represents this detected
+      ///peak within its database and that has no references to
+      ///other objects
+      ///
+      ///\param p The peak to flatten
+      ///
+      ///\return Return a flattened representation of the given
+      ///HumanVerifiedPeak
+      std::string operator()(const HumanVerifiedPeak& p) const{
+	std::ostringstream o;
+	o << "human_verified_peak" 
+	  << " " << p.sample_id() << " " << p.peak_id() 
+	  << " " << p.ppm() << " " << p.peak_group_id();
+	return o.str();
+      }
+    };
+
   }
 
   PMDatabaseSemantics::PMDatabaseSemantics(const PeakMatchingDatabase& pmd)
@@ -352,7 +382,8 @@ public:
 		DetectedPeakGroupFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
 
-    ///\todo write for human_verified_peak
+    tmp=flatten(pmd.human_verified_peaks(), HumanVerifiedPeakFlattener(pmd));
+    contents.insert(tmp.begin(), tmp.end());
 
     ///\todo write for unverified_peak
 
