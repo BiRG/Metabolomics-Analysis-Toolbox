@@ -5,6 +5,7 @@
 #define HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
 #include <iostream>
 #include <vector>
+#include <memory> //auto_ptr
 
 #include "parameterized_peak_group.hpp"
 #include "detected_peak_group.hpp"
@@ -103,6 +104,68 @@ namespace HoughPeakMatch{
     ///\return true if the database satisfies its constraints,
     ///false otherwise
     bool satisfies_constraints();
+
+#if 0
+    ///\brief Returns an auto_pointer to a newly allocated copy of the peak
+    ///\brief object specified by peak_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy so one can
+    ///downcast the resulting pointer (use auto_ptr_dynamic_cast from
+    ///utils.hpp)
+    ///
+    ///\param sample_id the id of the sample containing the peak to
+    ///copy
+    ///
+    ///\param peak_id the id of the peak to copy within its sample
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the peak
+    ///object specified by peak_id or to null if there is no such peak
+    std::auto_ptr<Peak> peak_copy_from_id(unsigned sample_id, unsigned peak_id) const;
+
+#endif
+
+    ///\brief Returns an auto_pointer to a newly allocated copy of the
+    ///\brief sample_params object specified by sample_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy because it makes
+    ///it easy to return null and also to ensure that the object's
+    ///deletion semantics are obvious
+    ///
+    ///\param sample_id the id of the sample the copied sample_params describes
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the
+    ///sample_params object specified by sample_id or to null if there
+    ///is no such object
+    std::auto_ptr<SampleParams> sample_params_copy_from_id(unsigned sample_id) const;
+
+    ///\brief Returns an auto_pointer to a newly allocated copy of the
+    ///\brief peak_group object specified by peak_group_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy because it makes
+    ///it easy to return null and also to ensure that the object's
+    ///deletion semantics are obvious.  It also allows down-casting to
+    ///the appropriate peak-group object type.
+    ///
+    ///\param peak_group_id the id of the peak-group to copy
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the
+    ///peak_group object specified by peak_group_id or to null if there
+    ///is no such object
+    std::auto_ptr<PeakGroup> peak_group_copy_from_id(unsigned peak_group_id) const;
+
+    ///\brief Returns an auto_pointer to a newly allocated copy of the
+    ///\brief sample object specified by sample_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy because it makes
+    ///it easy to return null and also to ensure that the object's
+    ///deletion semantics are obvious
+    ///
+    ///\param sample_id the id of the sample the copied sample describes
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the
+    ///sample object specified by sample_id or to null if there
+    ///is no such object
+    std::auto_ptr<Sample> sample_copy_from_id(unsigned sample_id) const;
 
     ///\brief Return all ParameterizedPeakGroup objects in this database
     ///\return all ParameterizedPeakGroup objects in this database

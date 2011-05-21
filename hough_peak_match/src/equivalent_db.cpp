@@ -35,6 +35,7 @@ void print_usage_and_exit(std::string errMsg){
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <cassert>
 
 namespace HoughPeakMatch{
 ///\brief A unique encoding of the semantics of a PeakMatchinDatabase
@@ -258,33 +259,39 @@ public:
     protected:
       ///\brief the database with respect to which the objects will be
       ///\brief flattened
-      const PeakMatchingDatabase& db;
+      const PeakMatchingDatabase& db_;
+
+      ///\brief The ordering of the parameters to use in the flattened
+      ///\brief objects
+      const ParameterOrdering ordering_;
+
       ///\brief Construct a Flattener that initializes the database to db
       ///
+      ///\warning This saves a reference to the database, so make sure
+      ///that the database has a longer life-span than the Flattener
+      ///
       ///\param db the database used to resolve references in flattening
-      Flattener(const PeakMatchingDatabase& db):db(db){}
+      Flattener(const PeakMatchingDatabase& db,
+		const ParameterOrdering& ordering):db_(db),ordering_(ordering){}
       virtual ~Flattener(){}
     };
 
     ///\brief Flattens ParameterizedPeakGroups from one db
-    class ParameterizedPeakGroupFlattener:public Flattener{
-      ///\brief The ordering of the parameters to use in the flattened
-      ///\brief peak groups
-      ParameterOrdering ordering_;
+    class PeakGroupFlattener:public Flattener{
     public:
       ///\brief Create a Flattener that flattens
-      ///\brief ParameterizedPeakGroups from the database \a db
+      ///\brief PeakGroups from the database \a db
       ///
       ///\param db The database from which come the
       ///
       ///\param ordering The ordering of the parameters to use in the flattened
       ///peak groups.
-      ParameterizedPeakGroupFlattener(const PeakMatchingDatabase& db,
-				      const ParameterOrdering& ordering)
-	:Flattener(db), ordering_(ordering){}
+      PeakGroupFlattener(const PeakMatchingDatabase& db,
+			 const ParameterOrdering& ordering)
+	:Flattener(db, ordering){}
       
       ///\brief Return a flattened representation of the given
-      ///\brief ParameterizedPeakGroup
+      ///\brief PeakGroup
       ///
       ///Returns a string that uniquely represents this parameterized
       ///peak group within its database and that has no references to
@@ -293,60 +300,126 @@ public:
       ///\param f The peak group to flatten
       ///
       ///\return Return a flattened representation of the given
-      ///ParameterizedPeakGroup
-      std::string operator()(const ParameterizedPeakGroup& f) const{
-	std::ostringstream o;
-	o << "parameterized_peak_group " << f.ppm() 
-	  << " "; space_separate(o, ordering_.return_reordered(f.params()));
+      ///PeakGroup
+      std::string operator()(const PeakGroup& pg) const{
+		std::ostringstream o;
+	std::string name;
+	double ppm;
+	std::vector<double> params;
+	if(const DetectedPeakGroup* dpg = 
+	   dynamic_cast<const DetectedPeakGroup*>(&pg)){
+	  name = "detected_peak_group";
+	  ppm = dpg->ppm();
+	  params = dpg->params();
+	}else if(const ParameterizedPeakGroup* ppg = 
+		 dynamic_cast<const ParameterizedPeakGroup*>(&pg)){
+	  name = "parameterized_peak_group";
+	  ppm = ppg->ppm();
+	  params = ppg->params();
+	}else{ 
+	  throw std::invalid_argument("Attempt to flatten unknown "
+				      "peak group type");
+	}
+	o << name << " " << ppm << " "; 
+	space_separate(o, ordering_.return_reordered(params));
 	return o.str();
       }
     };
 
-    ///\brief Flattens DetectedPeakGroups from one db
-    class DetectedPeakGroupFlattener:public Flattener{
-      ///\brief The ordering of the parameters to use in the flattened
-      ///\brief peak groups
-      ParameterOrdering ordering_;
+    ///\brief Flattens SampleParams from one db
+    class SampleParamsFlattener:public Flattener{
     public:
       ///\brief Create a Flattener that flattens
-      ///\brief DetectedPeakGroups from the database \a db
+      ///\brief SampleParams from the database \a db
       ///
-      ///\param db The database from which come the
-      ///
-      ///\param ordering The ordering of the parameters to use in the flattened
-      ///peak groups.
-      DetectedPeakGroupFlattener(const PeakMatchingDatabase& db,
-				 const ParameterOrdering& ordering)
-	:Flattener(db), ordering_(ordering){}
+      ///\param db The database from which come the peaks to be flattened
+      SampleParamsFlattener(const PeakMatchingDatabase& db,
+			    const ParameterOrdering& ordering)
+	:Flattener(db, ordering){}
       
       ///\brief Return a flattened representation of the given
-      ///\brief DetectedPeakGroup
+      ///\brief SampleParams
       ///
-      ///Returns a string that uniquely represents this detected
-      ///peak group within its database and that has no references to
+      ///Returns a string that uniquely represents this sample_params
+      ///object within this database and has no external references to
       ///other objects
       ///
-      ///\param f The peak group to flatten
+      ///\param sp the SampleParams to flatten
       ///
       ///\return Return a flattened representation of the given
-      ///DetectedPeakGroup
-      std::string operator()(const DetectedPeakGroup& f) const{
+      ///SampleParams
+      ///
+      ///\pre \a sp.sample_id() must refer to a valid sample (which is
+      ///not really a problem since this is an invariant of
+      ///PeakMatchingDatabase)
+      std::string operator()(const SampleParams& sp) const{
+	//NOTE: it is important that this not call
+	//SampleFlattener::operator() because that method calls this
+	//one
 	std::ostringstream o;
-	o << "detected_peak_group " << f.ppm() 
-	  << " "; space_separate(o, ordering_.return_reordered(f.params()));
+	std::auto_ptr<Sample> samp = db_.sample_copy_from_id(sp.sample_id());
+	assert(samp.get());
+	o << "sample_params sample_class " << samp->sample_class()
+	  << " params "; 
+	space_separate(o, ordering_.return_reordered(sp.params()));
 	return o.str();
       }
     };
+
+
+    ///\brief Flattens Samples from one db
+    class SampleFlattener:public Flattener{
+      ///\brief Flattener to include any sample params that refer to
+      ///\brief this object
+      SampleParamsFlattener flatten_params;
+    public:
+      ///\brief Create a Flattener that flattens
+      ///\brief Samples from the database \a db
+      ///
+      ///\param db The database from which come the peaks to be flattened
+      ///
+      ///\param ordering The ordering to be applied to parameters in \a db
+      SampleFlattener(const PeakMatchingDatabase& db,
+		      const ParameterOrdering& ordering)
+	:Flattener(db,ordering), flatten_params(db, ordering){}
+
+      ///\brief Return a flattened representation of the given
+      ///\brief Sample
+      ///
+      ///Returns a string that uniquely represents this sample
+      ///object within this database and has no external references to
+      ///other objects
+      ///
+      ///\param s the Sample to flatten
+      ///
+      ///\return Return a flattened representation of the given
+      ///Sample
+      std::string operator()(const Sample& s) const{
+	std::ostringstream o;
+	o << "sample " << s.sample_class();
+	std::auto_ptr<SampleParams> sp = 
+	  db_.sample_params_copy_from_id(s.id());
+	if(sp.get()){
+	  o << " " << flatten_params(*sp);
+	}
+	return o.str();
+      }
+    };
+
 
     ///\brief Flattens HumanVerifiedPeaks from one db
     class HumanVerifiedPeakFlattener:public Flattener{
+      SampleFlattener flatten_sample;
+      PeakGroupFlattener flatten_pg;
     public:
       ///\brief Create a Flattener that flattens
       ///\brief HumanVerifiedPeaks from the database \a db
       ///
       ///\param db The database from which come the peaks to be flattened
-      HumanVerifiedPeakFlattener(const PeakMatchingDatabase& db)
-	:Flattener(db){}
+      HumanVerifiedPeakFlattener(const PeakMatchingDatabase& db,
+				 const ParameterOrdering& ordering)
+	:Flattener(db,ordering), flatten_sample(db,ordering)
+	,flatten_pg(db,ordering){}
       
       ///\brief Return a flattened representation of the given
       ///\brief HumanVerifiedPeak
@@ -360,46 +433,23 @@ public:
       ///\return Return a flattened representation of the given
       ///HumanVerifiedPeak
       ///
+      ///\pre All the ids \a p refers to must be falid
+      ///
       ///\todo This doesn't flatten anything yet
       std::string operator()(const HumanVerifiedPeak& p) const{
+	std::auto_ptr<Sample> samp = db_.sample_copy_from_id(p.sample_id());
+	assert(samp.get());
+	///\todo write peak-group fetching
+	// std::auto_ptr<PeakGroup> pg =
+	//   db_.peak_group_copy_from_id(p.peak_group_id());
 	std::ostringstream o;
-	o << "human_verified_peak" 
-	  << " " << p.sample_id() << " " << p.peak_id() 
+	o << "human_verified_peak " << flatten_sample(*samp)
 	  << " " << p.ppm() << " " << p.peak_group_id();
 	return o.str();
       }
     };
 
-    ///\brief Flattens UnverifiedPeaks from one db
-    class UnverifiedPeakFlattener:public Flattener{
-    public:
-      ///\brief Create a Flattener that flattens
-      ///\brief UnverifiedPeaks from the database \a db
-      ///
-      ///\param db The database from which come the peaks to be flattened
-      UnverifiedPeakFlattener(const PeakMatchingDatabase& db)
-	:Flattener(db){}
-      
-      ///\brief Return a flattened representation of the given
-      ///\brief UnverifiedPeak
-      ///
-      ///Returns a string that uniquely represents this detected
-      ///peak within its database and that has no references to
-      ///other objects
-      ///
-      ///\param p The peak to flatten
-      ///
-      ///\return Return a flattened representation of the given
-      ///UnverifiedPeak
-      ///\todo This doesn't flatten anything yet
-      std::string operator()(const UnverifiedPeak& p) const{
-	std::ostringstream o;
-	o << "unverified_peak" 
-	  << " " << p.sample_id() << " " << p.peak_id() 
-	  << " " << p.ppm() << " " << p.peak_group_id();
-	return o.str();
-      }
-    };
+
 
   }
 
@@ -408,24 +458,27 @@ public:
     ParameterOrdering ordering(pmd);
     std::multiset<std::string> tmp = 
       flatten(pmd.parameterized_peak_groups(),
-	      ParameterizedPeakGroupFlattener(pmd,ordering));
+	      PeakGroupFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
 
     tmp=flatten(pmd.detected_peak_groups(),
-		DetectedPeakGroupFlattener(pmd,ordering));
+		PeakGroupFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
 
-    tmp=flatten(pmd.human_verified_peaks(), HumanVerifiedPeakFlattener(pmd));
+    tmp=flatten(pmd.human_verified_peaks(), 
+		HumanVerifiedPeakFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
 
-    tmp=flatten(pmd.unverified_peaks(), UnverifiedPeakFlattener(pmd));
+    ///\todo write unverified peaks flattener
+    
+    ///\todo write unknown peaks flattener
+
+    ///\todo write sample_flattener
+
+    tmp=flatten(pmd.sample_params(), SampleParamsFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
 
-    ///\todo write for unknown_peak
-
-    ///\todo write for sample
-
-    ///\todo write for sample_params
+    ///\todo write for param_stats
   }
 
 }

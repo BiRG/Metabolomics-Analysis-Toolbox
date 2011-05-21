@@ -357,5 +357,129 @@ namespace HoughPeakMatch{
     return db;
   }
 
+  namespace{
+    ///\brief Traits type giving the id type used by the given class.
+    ///
+    ///\tparam T the class whose id type is represented
+    template<class T>
+      class IdType{
+    public:
+      ///\brief the member giving the id type for \a T
+      typedef unsigned type;
+    };
 
+
+    ///\brief Macro creating a template specialization declaring that
+    ///\brief the given class uses a pair of unsigneds for its
+    ///\brief id rather than the normal
+    ///\brief unsigned integer
+#define CLASS_USES_PAIR_ID(class_name)			\
+    template<>						\
+      class IdType<class_name>{				\
+      public:						\
+      typedef std::pair<unsigned,unsigned> type;	\
+      }							\
+    /// @cond SUPPRESS
+    
+    CLASS_USES_PAIR_ID(Peak);
+    CLASS_USES_PAIR_ID(KnownPeak);
+    CLASS_USES_PAIR_ID(UnknownPeak);
+    CLASS_USES_PAIR_ID(HumanVerifiedPeak);
+    CLASS_USES_PAIR_ID(UnverifiedPeak);
+    /// @endcond 
+#undef CLASS_USES_PAIR_ID
+
+    ///\brief Predicate that returns true if its object has the given id
+    template<class T> 
+      class HasID{
+      typename IdType<T>::type id;
+    public:
+      ///\brief Create a predicate that returns true iff its argument
+      ///\brief has the id \a id
+      HasID(typename IdType<T>::type id):id(id){}
+      
+      ///\brief Return true if \a t has the id and false otherwise
+      ///
+      ///\param t The object whose id is checked
+      ///
+      ///\return true if \a t has the id and false otherwise
+      bool operator()(const T& t){ return t.id() == id; }
+    };
+  }
+
+#if 0
+  std::auto_ptr<Peak> PeakMatchingDatabase::peak_copy_from_id
+  (unsigned sample_id, unsigned peak_id) const{
+    using std::find_if; using std::vector;
+    std::pair<unsigned,unsigned> id=make_pair(sample_id,peak_id);
+    HasID<UnknownPeak> unknown_pred(id);
+    HasID<UnverifiedPeak> unverified_pred(id);
+    HasID<HumanVerifiedPeak> human_verified_pred(id);
+    vector<UnknownPeak>::const_iterator locUnk =
+      find_if(unknown_peaks().begin(), unknown_peaks().end(), unknown_pred);
+    if(locUnk != unknown_peaks().end()){
+      return auto_ptr<Peak>(new UnknownPeak(*locUnk));
+    }
+    vector<UnverifiedPeak>::const_iterator locUnv =
+      find_if(unverified_peaks().begin(), unverified_peaks().end(), unverified_pred);
+    if(locUnv != unverified_peaks().end()){
+      return auto_ptr<Peak>(new UnverifiedPeak(*locUnv));
+    }
+    vector<HumanVerifiedPeak>::const_iterator locHum =
+      find_if(human_verified_peaks().begin(), human_verified_peaks().end(), human_verified_pred);
+    if(locHum != human_verified_peaks().end()){
+      return auto_ptr<Peak>(new HumanVerifiedPeak(*locHum));
+    }
+    return auto_ptr<Peak>(NULL);
+  }
+#endif
+
+  std::auto_ptr<SampleParams> 
+  PeakMatchingDatabase::sample_params_copy_from_id(unsigned sample_id) const{
+    using std::find_if; using std::vector;
+    HasID<SampleParams> right_sample(sample_id);
+    vector<SampleParams>::const_iterator loc =
+      find_if(sample_params().begin(), sample_params().end(), right_sample);
+    if(loc != sample_params().end()){
+      return std::auto_ptr<SampleParams>(new SampleParams(*loc));
+    }else{
+      return std::auto_ptr<SampleParams>();
+    }
+  }
+
+
+  std::auto_ptr<Sample> 
+  PeakMatchingDatabase::sample_copy_from_id(unsigned sample_id) const{
+    using std::find_if; using std::vector;
+    HasID<Sample> right_sample(sample_id);
+    vector<Sample>::const_iterator loc =
+      find_if(samples().begin(), samples().end(), right_sample);
+    if(loc != samples().end()){
+      return std::auto_ptr<Sample>(new Sample(*loc));
+    }else{
+      return std::auto_ptr<Sample>();
+    }
+  }
+
+
+  std::auto_ptr<PeakGroup> 
+  PeakMatchingDatabase::peak_group_copy_from_id(unsigned peak_group_id) const{
+    using std::find_if; using std::vector;
+    HasID<PeakGroup> right_group(peak_group_id);
+    vector<DetectedPeakGroup>::const_iterator dpgLoc=
+      find_if(detected_peak_groups().begin(), 
+	      detected_peak_groups().end(), right_group);
+    if(dpgLoc != detected_peak_groups().end()){
+      return std::auto_ptr<PeakGroup>(new DetectedPeakGroup(*dpgLoc));
+    }
+
+    vector<ParameterizedPeakGroup>::const_iterator ppgLoc=
+      find_if(parameterized_peak_groups().begin(), 
+	      parameterized_peak_groups().end(), right_group);
+    if(ppgLoc != parameterized_peak_groups().end()){
+      return std::auto_ptr<PeakGroup>(new ParameterizedPeakGroup(*ppgLoc));
+    }else{
+      return std::auto_ptr<PeakGroup>(NULL);
+    }
+  }
 }
