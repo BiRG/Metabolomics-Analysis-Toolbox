@@ -47,6 +47,7 @@ gcov: mock_executables
 #To do the lcov analysis: 1) make clean 2) make gcov 3) make test 4) make lcov
 
 lcov:
+	rm -rf lcov_output
 	mkdir -p lcov_output
 	lcov --directory obj --capture --output-file lcov_output/lcov.info -b .
 	genhtml -o lcov_output lcov_output/lcov.info
