@@ -3,6 +3,12 @@
 #
 #Will need to add keys_for_type and reorder_with methods to database
 #
+#Will need to add type methods and has_same_non_key_parameters methods
+#to each of the peak matching database objects
+#
+#Will need to make an abstract superclass PMObject for all the
+#peak-matching database objects
+#
 #Note: to use samples as objects with one key that can regenerate the
 #object, we need to get rid of the SampleParams class and create
 #ParameterizedSample and UnparameterizedSample classes with Sample as
@@ -23,40 +29,40 @@ class Key:
 
 class PeakKey:
     def PeakKey(database, sample_id, peak_id):
-        database = database
-        sample_id = sample_id
-        peak_id = peak_id
+        self.database = database
+        self.sample_id = sample_id
+        self.peak_id = peak_id
 
     def obj():
-        return database.get_peak(sample_id,peak_id)
+        return self.database.get_peak(sample_id,peak_id)
 
 class PeakGroupKey:
     def PeakGroupKey(database, peak_group_id):
-        database = database
-        peak_group_id = peak_group_id
+        self.database = database
+        self.peak_group_id = peak_group_id
 
     def obj():
         #Note that this function will return a peak_group object for
         #any id since all peak_groups are assumed to exist
-        return database.get_peak_group(peak_group_id)
+        return self.database.get_peak_group(peak_group_id)
 
 class SampleKey:
     def SampleKey(database, sample_id):
-        database = database
-        sample_id = sample_id
+        self.database = database
+        self.sample_id = sample_id
 
     def obj():
-        return database.get_sample(sample_id)
+        return self.database.get_sample(sample_id)
 
 class ParamStatisticsKey:
     #Note that there can never be more than 1 ParamStatistics object
     #in a database, so the key giving it just needs to specify the
     #database
     def ParamStatisticsKey(datatbase):
-        database = database
+        self.database = database
         
     def obj():
-        return database.get_param_stats()
+        return self.database.get_param_stats()
 
 
 class KeyRelation(SetOfOrderedPairs):
@@ -64,11 +70,81 @@ class KeyRelation(SetOfOrderedPairs):
 
     def project_second(): pass #Trivial implementation
 
-#TODO: write ObjectType class
+class ObjectType:
+    def ObjectType(type_name):
+        self.type_name = type_name
 
-#TODO: write MappingList class and iterator
+    def operator==(o):
+        return self.type_name == o.type_name
 
-#TODO: write have_same_non_key_parameters function
+
+class MappingList(MapFromKeysToSets):
+    def MappingList(relation):
+        for key_pair in relation:
+            self.at(key_pair.first()).add(key_pair.second())
+    def begin():
+        return MappingListIterator(self, True)
+
+    def end():
+        return MappingListIterator(self, False)
+
+class IterTriple:
+    def IterTriple(begin, cur, end):
+        self.begin = begin
+        self.cur = cur
+        self.end = end
+
+class MappingListIterator(MapFromKeysToSetIterators):
+    def MappingListIterator(mapping_list, from_beginning):
+        if(from_beginning):
+            self.at_end = False
+            for key in mapping_list.keys():
+                begin = mapping_list.at(key).begin()
+                end = mapping_list.at(key).end()
+                if(begin == end):
+                    self.at_end = True
+                self.put(key, IterTriple(begin,begin,end))
+        else:
+            self.at_end = True
+
+    def operator++():
+        if(self.at_end): 
+            return
+        last_key_wrapped_around = True
+        for key in self.keys():
+            triple = self.at(key)
+            ++triple.cur
+            if(triple.cur != triple.end):
+                self.put(key, triple)
+                last_key_wrapped_around = False
+                break
+            else:
+                triple.cur = triple.begin
+                self.put(key, triple)
+        if(last_key_wrapped_around):
+            self.at_end = True
+
+    def operator()(key):
+        return self.at(key).dereference
+
+    def operator!=(other):
+        if(self.at_end != other.at_end):
+            return True
+        if(self.keys() != other.keys()):
+            return True
+        for key in self.keys():
+            if(self.at(key) != other.at(key)):
+                return True
+        return False
+
+    def project_first():
+        return self.keys()
+
+    def project_second():
+        return map(self.at, self.keys())
+
+def have_same_non_key_parameters(key1,key2):
+    key1.obj().has_same_non_key_parameters(key2.obj())
 
 def equivalent_db(db1_orig, db2_orig):
     o1 = Ordering(db1)
@@ -81,7 +157,8 @@ def equivalent_db(db1_orig, db2_orig):
     
     k1 = Set()
     k2 = Set()
-    
+
+    #Note that the relation will always be symmetric
     r = KeyRelation()
 
     for ot in ObjectType(param_stats, human_verified_peak, unverified_peak, 
