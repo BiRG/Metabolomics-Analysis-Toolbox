@@ -69,6 +69,11 @@ public:
   ///\ref human_verified_peak "the file format documentation" terminated
   ///with a newline
   std::string to_text_line() const;
+
+  virtual ObjectType type() const{
+    return ObjectType("human_verified_peak");
+  }
+
 };
 
 }

@@ -32,6 +32,13 @@ namespace HoughPeakMatch{
 			    bool& failed){
 	KnownPeak::initFrom(words,expected_name,failed);
       }
+
+      ///\brief Stub method to enable implementation of the proxy -
+      ///\brief returns false results
+      virtual ObjectType type() const{
+	return ObjectType("human_verified_peak");
+      }
+
     };
 
     ///\brief proxy object used for accessing protected methods of Peak
@@ -52,6 +59,13 @@ namespace HoughPeakMatch{
 			    bool& failed){
 	Peak::initFrom(words,expected_name,failed);
       }
+
+      ///\brief Stub method to enable implementation of the proxy -
+      ///\brief returns false results
+      virtual ObjectType type() const{
+	return ObjectType("human_verified_peak");
+      }
+
     };
 
     ///\brief Exercise all the various from_text_line functions

@@ -63,6 +63,10 @@ public:
   ///\ref unknown_peak "the file format documentation" terminated
   ///with a newline
   std::string to_text_line() const;
+
+  virtual ObjectType type() const{
+    return ObjectType("unknown_peak");
+  }
 };
 
 }
