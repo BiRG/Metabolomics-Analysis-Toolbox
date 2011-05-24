@@ -2,6 +2,7 @@
 #include "../unknown_peak.hpp"
 #include "../human_verified_peak.hpp"
 #include "../unverified_peak.hpp"
+#include "../peak_group.hpp"
 
 #include <tap++/tap++.h>
 #include <string>
@@ -10,7 +11,7 @@
 int main(){
   using namespace TAP; using namespace HoughPeakMatch;
   using std::auto_ptr;
-  plan(30);
+  plan(35);
 
   //ParamStats
 
@@ -206,5 +207,36 @@ int main(){
     UnknownPeak tt(1,8,0.5);
     ok(t.has_same_non_key_parameters(&tt),
        "UnknownPeak has same non-key as obj with diff peak_id");
+  }
+
+  //PeakGroup
+  {
+    PeakGroup t(12);
+    not_ok(t.has_same_non_key_parameters(NULL),
+	   "PeakGroup has diff non-key than NULL");
+  }
+  {
+    double d[1]={1};
+    PeakGroup t(12);
+    ParamStats tt(d,d+1);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "PeakGroup has diff non-key than object of a different type");
+  }
+  {
+    PeakGroup t(12);
+    ok(t.has_same_non_key_parameters(&t),
+       "PeakGroup has same non-key as itself");
+  }
+  {
+    PeakGroup t(12);
+    PeakGroup tt(12);
+    ok(t.has_same_non_key_parameters(&tt),
+       "PeakGroup has same non-key as identical object");
+  }
+  {
+    PeakGroup t(12);
+    PeakGroup tt(1);
+    ok(t.has_same_non_key_parameters(&tt),
+       "PeakGroup has same non-key as object with different id");
   }
 }
