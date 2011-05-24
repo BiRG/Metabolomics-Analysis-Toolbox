@@ -5,6 +5,7 @@
 #define HOUGH_PEAK_MATCH_PARAM_STATS
 
 #include "no_params_exception.hpp"
+#include "object_type.hpp"
 #include <string>
 #include <vector>
 #include <numeric>
@@ -95,6 +96,13 @@ public:
   ///\returns the string representation of this ParamStats
   ///from \ref param_stats "the file format documentation"
   std::string to_text_line() const;
+
+  ///\brief Return the type of this peak matching database object.
+  ///
+  ///\returns the type of this peak matching database object.
+  ObjectType type() const{
+    return ObjectType("param_stats");
+  }
 
 };
 
