@@ -1,0 +1,6 @@
+#Ensure that databases with different parameter orderings are
+#equivalent. 2 parameters: rearrangement of the columns and 2 rows
+detected_peak_group 100 100.0 2 1
+detected_peak_group 101 100.0 4 3 
+detected_peak_group 102 100.0 3 2
+detected_peak_group 103 100.0 1 4

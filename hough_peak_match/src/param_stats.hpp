@@ -4,7 +4,9 @@
 #ifndef HOUGH_PEAK_MATCH_PARAM_STATS
 #define HOUGH_PEAK_MATCH_PARAM_STATS
 
+#include "pmobject.hpp"
 #include "no_params_exception.hpp"
+#include "object_type.hpp"
 #include <string>
 #include <vector>
 #include <numeric>
@@ -18,7 +20,7 @@ namespace HoughPeakMatch{
 ///variance accounted for by each parameter.
 ///
 ///There should be at most one of these in the database
-class ParamStats{
+class ParamStats:public PMObject{
   ///\brief Vector where element i holds the fraction of the variance
   ///\brief accounted for by parameter pair i in the database
   std::vector<double> frac_variances_;
@@ -95,6 +97,19 @@ public:
   ///\returns the string representation of this ParamStats
   ///from \ref param_stats "the file format documentation"
   std::string to_text_line() const;
+
+  virtual ObjectType type() const{
+    return ObjectType("param_stats");
+  }
+
+  virtual bool has_same_non_key_parameters(const PMObject* o) const{
+    if(o == NULL){ 
+      return false; }
+    if(o->type() != type()){ 
+      return false; }
+    const ParamStats* ps = dynamic_cast<const ParamStats*>(o);
+    return frac_variances_ == ps->frac_variances_;
+  }
 
 };
 

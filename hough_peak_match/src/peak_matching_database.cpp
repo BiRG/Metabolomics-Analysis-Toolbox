@@ -76,15 +76,15 @@ namespace HoughPeakMatch{
 	  }
 	  unknown_peaks_.push_back(p);
 	}else if(line_type == "sample"){
-	  Sample s = 
-	    Sample::from_text_line(words, failed);
+	  FileFormatSample s = 
+	    FileFormatSample::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  samples_.push_back(s);
 	}else if(line_type == "sample_params"){
-	  SampleParams sp = 
-	    SampleParams::from_text_line(words, failed);
+	  FileFormatSampleParams sp = 
+	    FileFormatSampleParams::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
@@ -357,5 +357,135 @@ namespace HoughPeakMatch{
     return db;
   }
 
+  namespace{
+    ///\brief Traits type giving the id type used by the given class.
+    ///
+    ///\tparam T the class whose id type is represented
+    template<class T>
+      class IdType{
+    public:
+      ///\brief the member giving the id type for \a T
+      typedef unsigned type;
+    };
 
+    ///\brief Declares that \a class_name uses a pair of unsigneds for
+    ///\brief its id
+    ///
+    ///Macro creating a template specialization declaring that
+    ///the given class uses a pair of unsigneds for its
+    ///id rather than the normal
+    ///unsigned integer
+    ///
+    ///\param class_name the class that uses a pair
+#define CLASS_USES_PAIR_ID(class_name)			\
+    template<>						\
+      class IdType<class_name>{				\
+      public:						\
+      typedef std::pair<unsigned,unsigned> type;	\
+      }							
+    /// @cond SUPPRESS
+    
+    CLASS_USES_PAIR_ID(Peak);
+    CLASS_USES_PAIR_ID(KnownPeak);
+    CLASS_USES_PAIR_ID(UnknownPeak);
+    CLASS_USES_PAIR_ID(HumanVerifiedPeak);
+    CLASS_USES_PAIR_ID(UnverifiedPeak);
+    /// @endcond 
+#undef CLASS_USES_PAIR_ID
+
+    ///\brief Predicate that returns true if its object has the given id
+    template<class T> 
+      class HasID{
+      ///\brief The id this predicate checks for
+      typename IdType<T>::type id;
+    public:
+      ///\brief Create a predicate that returns true iff its argument
+      ///\brief has the id \a id
+      ///\param id the id that this predicate will check for
+      HasID(typename IdType<T>::type id):id(id){}
+      
+      ///\brief Return true if \a t has the id and false otherwise
+      ///
+      ///\param t The object whose id is checked
+      ///
+      ///\return true if \a t has the id and false otherwise
+      bool operator()(const T& t){ return t.id() == id; }
+    };
+  }
+
+#if 0
+  std::auto_ptr<Peak> PeakMatchingDatabase::peak_copy_from_id
+  (unsigned sample_id, unsigned peak_id) const{
+    using std::find_if; using std::vector;
+    std::pair<unsigned,unsigned> id=make_pair(sample_id,peak_id);
+    HasID<UnknownPeak> unknown_pred(id);
+    HasID<UnverifiedPeak> unverified_pred(id);
+    HasID<HumanVerifiedPeak> human_verified_pred(id);
+    vector<UnknownPeak>::const_iterator locUnk =
+      find_if(unknown_peaks().begin(), unknown_peaks().end(), unknown_pred);
+    if(locUnk != unknown_peaks().end()){
+      return auto_ptr<Peak>(new UnknownPeak(*locUnk));
+    }
+    vector<UnverifiedPeak>::const_iterator locUnv =
+      find_if(unverified_peaks().begin(), unverified_peaks().end(), unverified_pred);
+    if(locUnv != unverified_peaks().end()){
+      return auto_ptr<Peak>(new UnverifiedPeak(*locUnv));
+    }
+    vector<HumanVerifiedPeak>::const_iterator locHum =
+      find_if(human_verified_peaks().begin(), human_verified_peaks().end(), human_verified_pred);
+    if(locHum != human_verified_peaks().end()){
+      return auto_ptr<Peak>(new HumanVerifiedPeak(*locHum));
+    }
+    return auto_ptr<Peak>(NULL);
+  }
+#endif
+
+  std::auto_ptr<FileFormatSampleParams> 
+  PeakMatchingDatabase::sample_params_copy_from_id(unsigned sample_id) const{
+    using std::find_if; using std::vector;
+    HasID<FileFormatSampleParams> right_sample(sample_id);
+    vector<FileFormatSampleParams>::const_iterator loc =
+      find_if(sample_params().begin(), sample_params().end(), right_sample);
+    if(loc != sample_params().end()){
+      return std::auto_ptr<FileFormatSampleParams>(new FileFormatSampleParams(*loc));
+    }else{
+      return std::auto_ptr<FileFormatSampleParams>();
+    }
+  }
+
+
+  std::auto_ptr<FileFormatSample> 
+  PeakMatchingDatabase::sample_copy_from_id(unsigned sample_id) const{
+    using std::find_if; using std::vector;
+    HasID<FileFormatSample> right_sample(sample_id);
+    vector<FileFormatSample>::const_iterator loc =
+      find_if(samples().begin(), samples().end(), right_sample);
+    if(loc != samples().end()){
+      return std::auto_ptr<FileFormatSample>(new FileFormatSample(*loc));
+    }else{
+      return std::auto_ptr<FileFormatSample>();
+    }
+  }
+
+
+  std::auto_ptr<PeakGroup> 
+  PeakMatchingDatabase::peak_group_copy_from_id(unsigned peak_group_id) const{
+    using std::find_if; using std::vector;
+    HasID<PeakGroup> right_group(peak_group_id);
+    vector<DetectedPeakGroup>::const_iterator dpgLoc=
+      find_if(detected_peak_groups().begin(), 
+	      detected_peak_groups().end(), right_group);
+    if(dpgLoc != detected_peak_groups().end()){
+      return std::auto_ptr<PeakGroup>(new DetectedPeakGroup(*dpgLoc));
+    }
+
+    vector<ParameterizedPeakGroup>::const_iterator ppgLoc=
+      find_if(parameterized_peak_groups().begin(), 
+	      parameterized_peak_groups().end(), right_group);
+    if(ppgLoc != parameterized_peak_groups().end()){
+      return std::auto_ptr<PeakGroup>(new ParameterizedPeakGroup(*ppgLoc));
+    }else{
+      return std::auto_ptr<PeakGroup>(NULL);
+    }
+  }
 }

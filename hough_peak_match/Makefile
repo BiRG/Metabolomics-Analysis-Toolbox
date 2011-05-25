@@ -8,6 +8,7 @@ EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	tests/007-from_text_line_funcs.compiled.t\
 	tests/008-mockable_stringstream.compiled.t\
 	tests/010-to_text_line_and_constructors.compiled.t\
+	tests/011-pmobject_method_overloads.compiled.t\
 	stringstream_sandbox
 LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/parameterized_peak_group.o \
@@ -15,14 +16,14 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/unverified_peak.o \
 	obj/unknown_peak.o \
 	obj/human_verified_peak.o\
-	obj/sample_params.o\
+	obj/file_format_sample_params.o\
 	obj/param_stats.o\
 	obj/known_peak.o\
-	obj/sample.o\
+	obj/file_format_sample.o\
 	obj/peak.o \
 	obj/mockable_stringstream.o
 LDLIBS:=-ltap++
-LDFLAGS:=-fprofile-arcs
+LDFLAGS:=$(GCOV_LDOPTS)
 
 all: mock_executables
 
@@ -31,7 +32,7 @@ executables: $(EXECUTABLES)
 
 mock_executables: 
 	@if [ -e normal_executables ]; then $(MAKE) --no-print-directory clean; fi
-	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM GCOV_OPTS="$(GCOV_OPTS)" executables
+	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM GCOV_OPTS="$(GCOV_OPTS)" GCOV_LDOPTS="$(GCOV_LDOPTS)" executables
 	touch mock_executables
 
 normal_executables: 
@@ -40,12 +41,14 @@ normal_executables:
 	touch normal_executables
 
 gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage 
+gcov: GCOV_LDOPTS:=-fprofile-arcs
 gcov: mock_executables
 
 
 #To do the lcov analysis: 1) make clean 2) make gcov 3) make test 4) make lcov
 
 lcov:
+	rm -rf lcov_output
 	mkdir -p lcov_output
 	lcov --directory obj --capture --output-file lcov_output/lcov.info -b .
 	genhtml -o lcov_output lcov_output/lcov.info
@@ -77,6 +80,8 @@ tests/007-from_text_line_funcs.compiled.t: obj/tests/007-from_text_line_funcs.co
 tests/008-mockable_stringstream.compiled.t: obj/tests/008-mockable_stringstream.compiled.t.o libbirgpeakmatch.a
 
 tests/010-to_text_line_and_constructors.compiled.t: obj/tests/010-to_text_line_and_constructors.compiled.t.o libbirgpeakmatch.a
+
+tests/011-pmobject_method_overloads.compiled.t: obj/tests/011-pmobject_method_overloads.compiled.t.o libbirgpeakmatch.a
 
 stringstream_sandbox: obj/stringstream_sandbox.o libbirgpeakmatch.a
 

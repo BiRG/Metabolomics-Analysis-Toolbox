@@ -7,6 +7,7 @@
 #include <vector>
 #include <limits>
 #include <iostream>
+#include <memory>
 
 namespace HoughPeakMatch{
 
@@ -86,6 +87,37 @@ std::ostream& space_separate(std::ostream &out, const std::vector<T>& v){
     ++it;
   }
   return out;
+}
+
+///\brief dynamic cast that works for autoptrs
+///
+///Use:
+///\code
+///auto_ptr<Foo> f = foo_returning_method;
+///auto_ptr<Bar> b = auto_ptr_dynamic_cast<Bar>(f);
+///\endcode
+///On a successful cast, b owns the object and f has released it.
+///On failure, b is null and f still owns the object.
+///
+///Code from: http://stackoverflow.com/questions/518959/why-does-this-dynamic-cast-of-auto-ptr-fail
+///
+///\param in The auto_ptr that will be dynamic cast to type \a R
+///
+///\return On success returns an auto_ptr<R> that owns the object
+///pointed to by \a in.  On failure, in is unchanged and returns NULL.
+///
+///\tparam T the type of the original auto_ptr
+///
+///\tparam R the type of the returned auto_ptr
+template<typename R, typename T>
+std::auto_ptr<R> auto_ptr_dynamic_cast(std::auto_ptr<T>& in) {
+  std::auto_ptr<R> rv;
+  R* p;
+  if( p = dynamic_cast<R*>( in.get() ) ) {
+      in.release();
+      rv = p;
+  }
+  return rv;
 }
 
 }

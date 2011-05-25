@@ -5,10 +5,10 @@
 #include "../unknown_peak.hpp"
 #include "../parameterized_peak_group.hpp"
 #include "../param_stats.hpp"
-#include "../sample_params.hpp"
+#include "../file_format_sample_params.hpp"
 #include "../detected_peak_group.hpp"
 #include "../unverified_peak.hpp"
-#include "../sample.hpp"
+#include "../file_format_sample.hpp"
 #include "../human_verified_peak.hpp"
 #include <tap++/tap++.h>
 #include <sstream>
@@ -317,24 +317,24 @@ namespace HoughPeakMatch{
       }
 
 
-      //Sample
+      //FileFormatSample
    
 
       {
-	Sample s(1022, "My_fair_lady");
-	is(s.id(), 1022, "Sample constructor sets id correctly.");
-	is(s.sample_class(), "My_fair_lady","Sample constructor sets "
+	FileFormatSample s(1022, "My_fair_lady");
+	is(s.id(), 1022, "FileFormatSample constructor sets id correctly.");
+	is(s.sample_class(), "My_fair_lady","FileFormatSample constructor sets "
 	   "sample_class correctly");
 	ostringstream expected;
 	expected << "sample 1022 My_fair_lady" << endl;
 	is(s.to_text_line(), expected.str(), 
-	   "Sample to_text_line gives expected output.");
+	   "FileFormatSample to_text_line gives expected output.");
       }
       {
 	  bool threw = false;
 	  std::string msg = "no message because the constructor did not throw";
 	  try{
-	    Sample s(155, "");
+	    FileFormatSample s(155, "");
 	  }catch (invalid_argument& e){
 	    threw = true;
 	    msg = e.what();
@@ -343,11 +343,11 @@ namespace HoughPeakMatch{
 	     "with empty-string sample class");
 	  ostringstream expected_msg;
 	  expected_msg 
-	    << "HoughPeakMatch::Sample received an empty string for "
+	    << "HoughPeakMatch::FileFormatSample received an empty string for "
 	    << "a sample class";
 
 	  is(msg, expected_msg.str(),
-	     "Sample exception message is correct with \"\" sample class");
+	     "FileFormatSample exception message is correct with \"\" sample class");
       }
 
       {
@@ -356,7 +356,7 @@ namespace HoughPeakMatch{
 	string white_char_name[num_chars]=
 	  {"space","tab","newline","vertical tab",
 	   "carriage return","form feed"};
-	string expected_msg = "HoughPeakMatch::Sample received a string "
+	string expected_msg = "HoughPeakMatch::FileFormatSample received a string "
 	  "containing white-space for a sample class";
   
 	for(unsigned i = 0; i < num_chars; ++i){
@@ -366,15 +366,15 @@ namespace HoughPeakMatch{
 	    bool threw = false;
 	    string msg = "no message because the constructor did not throw";
 	    try{
-	      Sample s(155, char_in_mid);
+	      FileFormatSample s(155, char_in_mid);
 	    }catch (invalid_argument& e){
 	      threw = true;
 	      msg = e.what();
 	    }
-	    is(threw,true,"Sample throws exception "
+	    is(threw,true,"FileFormatSample throws exception "
 	       "with "+white_char_name[i]+" in middle of sample class");
 	    is(msg, expected_msg,
-	       "Sample has correct exception message "
+	       "FileFormatSample has correct exception message "
 	       "with "+white_char_name[i]+" in middle of sample class");
 	  }
 
@@ -382,53 +382,53 @@ namespace HoughPeakMatch{
 	    bool threw = false;
 	    string msg = "no message because the constructor did not throw";
 	    try{
-	      Sample s(155, char_at_end);
+	      FileFormatSample s(155, char_at_end);
 	    }catch (invalid_argument& e){
 	      threw = true;
 	      msg = e.what();
 	    }
-	    is(threw,true,"Sample throws exception "
+	    is(threw,true,"FileFormatSample throws exception "
 	       "with "+white_char_name[i]+" at the end of the sample class");
 	    is(msg, expected_msg,
-	       "Sample has correct exception message "
+	       "FileFormatSample has correct exception message "
 	       "with "+white_char_name[i]+" at the end of sample class");
 	  }
 	}
 
 
-	//SampleParams
+	//FileFormatSampleParams
             
 	{
 	  double params[3]={3.8,1,5};
-	  SampleParams p(150, params, params+3);
+	  FileFormatSampleParams p(150, params, params+3);
 	  is(p.sample_id(),150,
-	     "Sample params constructor gives correct sample_id");
+	     "File format sample params constructor gives correct sample_id");
 	  vector<double> p_params=p.params();
 	  collection_is(p_params.begin(), p_params.end(), 
 			params,params+3,
-			"Sample params constructor gives correct params");
+			"File format sample params constructor gives correct params");
 	  ostringstream expected;
 	  expected << "sample_params 150 3.8 1 5" << endl;
 	  is(p.to_text_line(), expected.str(),
-	     "Sample params to_text_line gives expected output");
+	     "File format sample params to_text_line gives expected output");
 	}
 	{
 	  bool threw = false;
 	  std::string msg = "no message because the constructor did not throw";
 	  try{
 	    double params[1]={1};
-	    SampleParams p(150, params, params+0);
+	    FileFormatSampleParams p(150, params, params+0);
 	  }catch (no_params_exception& e){
 	    threw = true;
 	    msg = e.what();
 	  }
-	  is(threw,true,"SampleParams throws exception with empty "
+	  is(threw,true,"FileFormatSampleParams throws exception with empty "
 	     "params vector");
 	  is(msg,
-	     string("HoughPeakMatch::SampleParams "
+	     string("HoughPeakMatch::FileFormatSampleParams "
 		    "received an empty parameter vector in its "
 		    "constructor."),
-	     "Sample params no params exception error message is correct");
+	     "File format sample params no params exception error message is correct");
 	}
             
       

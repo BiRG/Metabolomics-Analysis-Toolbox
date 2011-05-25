@@ -5,14 +5,15 @@
 #define HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
 #include <iostream>
 #include <vector>
+#include <memory> //auto_ptr
 
 #include "parameterized_peak_group.hpp"
 #include "detected_peak_group.hpp"
 #include "human_verified_peak.hpp"
 #include "unverified_peak.hpp"
 #include "unknown_peak.hpp"
-#include "sample.hpp"
-#include "sample_params.hpp"
+#include "file_format_sample.hpp"
+#include "file_format_sample_params.hpp"
 #include "param_stats.hpp"
 
 ///\brief Holds all the library classes and functions for the Hough
@@ -57,11 +58,11 @@ namespace HoughPeakMatch{
     ///All UnknownPeak objects in this database
     std::vector<UnknownPeak> unknown_peaks_;
 
-    ///All Sample objects in this database
-    std::vector<Sample> samples_;
+    ///All FileFormatSample objects in this database
+    std::vector<FileFormatSample> samples_;
 
-    ///All SampleParams objects in this database
-    std::vector<SampleParams> sample_params_;
+    ///All FileFormatSampleParams objects in this database
+    std::vector<FileFormatSampleParams> sample_params_;
 
     ///All ParamStats objects in this database
     std::vector<ParamStats> param_stats_;
@@ -104,51 +105,114 @@ namespace HoughPeakMatch{
     ///false otherwise
     bool satisfies_constraints();
 
+#if 0
+    ///\brief Returns an auto_pointer to a newly allocated copy of the peak
+    ///\brief object specified by peak_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy so one can
+    ///downcast the resulting pointer (use auto_ptr_dynamic_cast from
+    ///utils.hpp)
+    ///
+    ///\param sample_id the id of the sample containing the peak to
+    ///copy
+    ///
+    ///\param peak_id the id of the peak to copy within its sample
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the peak
+    ///object specified by peak_id or to null if there is no such peak
+    std::auto_ptr<Peak> peak_copy_from_id(unsigned sample_id, unsigned peak_id) const;
+
+#endif
+
+    ///\brief Returns an auto_pointer to a newly allocated copy of the
+    ///\brief sample_params object specified by sample_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy because it makes
+    ///it easy to return null and also to ensure that the object's
+    ///deletion semantics are obvious
+    ///
+    ///\param sample_id the id of the sample the copied sample_params describes
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the
+    ///sample_params object specified by sample_id or to null if there
+    ///is no such object
+    std::auto_ptr<FileFormatSampleParams> sample_params_copy_from_id(unsigned sample_id) const;
+
+    ///\brief Returns an auto_pointer to a newly allocated copy of the
+    ///\brief peak_group object specified by peak_group_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy because it makes
+    ///it easy to return null and also to ensure that the object's
+    ///deletion semantics are obvious.  It also allows down-casting to
+    ///the appropriate peak-group object type.
+    ///
+    ///\param peak_group_id the id of the peak-group to copy
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the
+    ///peak_group object specified by peak_group_id or to null if there
+    ///is no such object
+    std::auto_ptr<PeakGroup> peak_group_copy_from_id(unsigned peak_group_id) const;
+
+    ///\brief Returns an auto_pointer to a newly allocated copy of the
+    ///\brief sample object specified by sample_id
+    ///
+    ///I use an auto-pointer to a heap allocated copy because it makes
+    ///it easy to return null and also to ensure that the object's
+    ///deletion semantics are obvious
+    ///
+    ///\param sample_id the id of the sample the copied sample describes
+    ///
+    ///\return An auto_pointer to a newly allocated copy of the
+    ///sample object specified by sample_id or to null if there
+    ///is no such object
+    std::auto_ptr<FileFormatSample> sample_copy_from_id(unsigned sample_id) const;
+
     ///\brief Return all ParameterizedPeakGroup objects in this database
     ///\return all ParameterizedPeakGroup objects in this database
-    std::vector<ParameterizedPeakGroup> parameterized_peak_groups() const {
+    const std::vector<ParameterizedPeakGroup>& 
+    parameterized_peak_groups() const {
       return parameterized_peak_groups_;
     }
 
     ///\brief Return all DetectedPeakGroup objects in this database
     ///\return all DetectedPeakGroup objects in this database
-    std::vector<DetectedPeakGroup> detected_peak_groups() const {
+    const std::vector<DetectedPeakGroup>& detected_peak_groups() const {
       return detected_peak_groups_;
     }
 
     ///\brief Return all HumanVerifiedPeak objects in this database
     ///\return all HumanVerifiedPeak objects in this database
-    std::vector<HumanVerifiedPeak> human_verified_peaks() const {
+    const std::vector<HumanVerifiedPeak>& human_verified_peaks() const {
       return human_verified_peaks_;
     }
 
     ///\brief Return all UnverifiedPeak objects in this database
     ///\return all UnverifiedPeak objects in this database
-    std::vector<UnverifiedPeak> unverified_peaks() const {
+    const std::vector<UnverifiedPeak>& unverified_peaks() const {
       return unverified_peaks_;
     }
 
     ///\brief Return all UnknownPeak objects in this database
     ///\return all UnknownPeak objects in this database
-    std::vector<UnknownPeak> unknown_peaks() const {
+    const std::vector<UnknownPeak>& unknown_peaks() const {
       return unknown_peaks_;
     }
 
-    ///\brief Return all Sample objects in this database
-    ///\return all Sample objects in this database
-    std::vector<Sample> samples() const {
+    ///\brief Return all FileFormatSample objects in this database
+    ///\return all FileFormatSample objects in this database
+    const std::vector<FileFormatSample>& samples() const {
       return samples_;
     }
 
-    ///\brief Return all SampleParams objects in this database
-    ///\return all SampleParams objects in this database
-    std::vector<SampleParams> sample_params() const {
+    ///\brief Return all FileFormatSampleParams objects in this database
+    ///\return all FileFormatSampleParams objects in this database
+    const std::vector<FileFormatSampleParams>& sample_params() const {
       return sample_params_;
     }
 
     ///\brief Return all ParamStats objects in this database
     ///\return all ParamStats objects in this database
-    std::vector<ParamStats> param_stats() const {
+    const std::vector<ParamStats>& param_stats() const {
       return param_stats_;
     }
 
@@ -172,7 +236,7 @@ namespace HoughPeakMatch{
   ///parameter with an error message to print.  A good candiate would
   ///be the print_usage_and_exit methods in most programs.  You should
   ///be able to all it as:
-  ///<code>print_error_and_exit(my_error_message);</code>
+  /// <code>print_error_and_exit(my_error_message);</code>
   ///
   ///\return (if it returns) the contents of the specified database file
   PeakMatchingDatabase read_database(std::string file_name, 

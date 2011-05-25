@@ -98,6 +98,23 @@ public:
   ///
   ///\return the ppm location for this DetectedPeakGroup
   double ppm() const{ return ppm_; }
+
+
+  virtual ObjectType type() const{
+    return ObjectType("detected_peak_group");
+  }
+
+  virtual bool has_same_non_key_parameters(const PMObject* o) const{
+    if(o == NULL){ 
+      return false; }
+    if(o->type() != type()){ 
+      return false; }
+    const DetectedPeakGroup*p = 
+      dynamic_cast<const DetectedPeakGroup*>(o);
+    return p->params() == params() && p->ppm() == ppm();
+  }
+
+
 };
 
 }

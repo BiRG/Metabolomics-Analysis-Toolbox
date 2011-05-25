@@ -4,6 +4,7 @@
 #ifndef HOUGH_PEAK_MATCH_PEAK
 #define HOUGH_PEAK_MATCH_PEAK
 
+#include "pmobject.hpp"
 #include <utility> //For pair, make_pair
 #include <vector>
 #include <string>
@@ -12,7 +13,7 @@
 namespace HoughPeakMatch{
 
 ///\brief A peak detected in a sample with a maximum at a certain location
-class Peak{
+class Peak:public PMObject{
 protected:
   ///\brief non-negative integer uniquely identifying the sample to
   ///\brief which this peak belongs
@@ -97,6 +98,16 @@ public:
   virtual std::pair<unsigned, unsigned> id() const{ 
     return std::make_pair(sample_id(),peak_id());
   }
+
+  virtual bool has_same_non_key_parameters(const PMObject* o) const{
+    if(o == NULL){ 
+      return false; }
+    if(o->type() != type()){ 
+      return false; }
+    const Peak* p = dynamic_cast<const Peak*>(o);
+    return ppm() == p->ppm();
+  }
+
 };
 
 }
