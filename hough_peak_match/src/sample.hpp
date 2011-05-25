@@ -14,7 +14,7 @@ namespace HoughPeakMatch{
 ///
 ///An NMR measurement of a sample from a particular experimental class
 ///or treatment
-  class Sample:PMObject{
+class Sample:public PMObject{
 protected:
   ///\brief non-negative integer uniquely identifying this sample in
   ///\brief the database
