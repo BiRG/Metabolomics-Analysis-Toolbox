@@ -350,40 +350,40 @@ public:
       }
     };
 
-    ///\brief Flattens SampleParams from one db
-    class SampleParamsFlattener:public Flattener{
+    ///\brief Flattens FileFormatSampleParams from one db
+    class FileFormatSampleParamsFlattener:public Flattener{
     public:
       ///\brief Create a Flattener that flattens
-      ///\brief SampleParams from the database \a db
+      ///\brief FileFormatSampleParams from the database \a db
       ///
       ///\param db The database from which come the peaks to be flattened
       ///
       ///\param ordering the parameter ordering to use during the flattening
-      SampleParamsFlattener(const PeakMatchingDatabase& db,
+      FileFormatSampleParamsFlattener(const PeakMatchingDatabase& db,
 			    const ParameterOrdering& ordering)
 	:Flattener(db, ordering){}
       
       ///\brief Return a flattened representation of the given
-      ///\brief SampleParams
+      ///\brief FileFormatSampleParams
       ///
       ///Returns a string that uniquely represents this sample_params
       ///object within this database and has no external references to
       ///other objects
       ///
-      ///\param sp the SampleParams to flatten
+      ///\param sp the FileFormatSampleParams to flatten
       ///
       ///\return Return a flattened representation of the given
-      ///SampleParams
+      ///FileFormatSampleParams
       ///
       ///\pre \a sp.sample_id() must refer to a valid sample (which is
       ///not really a problem since this is an invariant of
       ///PeakMatchingDatabase)
-      std::string operator()(const SampleParams& sp) const{
+      std::string operator()(const FileFormatSampleParams& sp) const{
 	//NOTE: it is important that this not call
-	//SampleFlattener::operator() because that method calls this
+	//FileFormatSampleFlattener::operator() because that method calls this
 	//one
 	std::ostringstream o;
-	std::auto_ptr<Sample> samp = db_.sample_copy_from_id(sp.sample_id());
+	std::auto_ptr<FileFormatSample> samp = db_.sample_copy_from_id(sp.sample_id());
 	assert(samp.get());
 	o << "sample_params sample_class " << samp->sample_class()
 	  << " params "; 
@@ -393,37 +393,37 @@ public:
     };
 
 
-    ///\brief Flattens Samples from one db
-    class SampleFlattener:public Flattener{
+    ///\brief Flattens FileFormatSamples from one db
+    class FileFormatSampleFlattener:public Flattener{
       ///\brief Flattener to include any sample params that refer to
       ///\brief this object
-      SampleParamsFlattener flatten_params;
+      FileFormatSampleParamsFlattener flatten_params;
     public:
       ///\brief Create a Flattener that flattens
-      ///\brief Samples from the database \a db
+      ///\brief FileFormatSamples from the database \a db
       ///
       ///\param db The database from which come the peaks to be flattened
       ///
       ///\param ordering The ordering to be applied to parameters in \a db
-      SampleFlattener(const PeakMatchingDatabase& db,
+      FileFormatSampleFlattener(const PeakMatchingDatabase& db,
 		      const ParameterOrdering& ordering)
 	:Flattener(db,ordering), flatten_params(db, ordering){}
 
       ///\brief Return a flattened representation of the given
-      ///\brief Sample
+      ///\brief FileFormatSample
       ///
       ///Returns a string that uniquely represents this sample
       ///object within this database and has no external references to
       ///other objects
       ///
-      ///\param s the Sample to flatten
+      ///\param s the FileFormatSample to flatten
       ///
       ///\return Return a flattened representation of the given
-      ///Sample
-      std::string operator()(const Sample& s) const{
+      ///FileFormatSample
+      std::string operator()(const FileFormatSample& s) const{
 	std::ostringstream o;
 	o << "sample " << s.sample_class();
-	std::auto_ptr<SampleParams> sp = 
+	std::auto_ptr<FileFormatSampleParams> sp = 
 	  db_.sample_params_copy_from_id(s.id());
 	if(sp.get()){
 	  o << " " << flatten_params(*sp);
@@ -436,7 +436,7 @@ public:
     ///\brief Flattens HumanVerifiedPeaks from one db
     class HumanVerifiedPeakFlattener:public Flattener{
       ///\brief object for flattening foreign samples
-      SampleFlattener flatten_sample;
+      FileFormatSampleFlattener flatten_sample;
       ///\brief object for flattening foreign peak groups
       PeakGroupFlattener flatten_pg;
     public:
@@ -467,7 +467,7 @@ public:
       ///
       ///\todo This doesn't flatten anything yet
       std::string operator()(const HumanVerifiedPeak& p) const{
-	std::auto_ptr<Sample> samp = db_.sample_copy_from_id(p.sample_id());
+	std::auto_ptr<FileFormatSample> samp = db_.sample_copy_from_id(p.sample_id());
 	assert(samp.get());
 	///\todo write peak-group fetching
 	// std::auto_ptr<PeakGroup> pg =
@@ -505,7 +505,7 @@ public:
 
     ///\todo write sample_flattener
 
-    tmp=flatten(pmd.sample_params(), SampleParamsFlattener(pmd,ordering));
+    tmp=flatten(pmd.sample_params(), FileFormatSampleParamsFlattener(pmd,ordering));
     contents.insert(tmp.begin(), tmp.end());
 
     ///\todo write for param_stats

@@ -16,10 +16,10 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/unverified_peak.o \
 	obj/unknown_peak.o \
 	obj/human_verified_peak.o\
-	obj/sample_params.o\
+	obj/file_format_sample_params.o\
 	obj/param_stats.o\
 	obj/known_peak.o\
-	obj/sample.o\
+	obj/file_format_sample.o\
 	obj/peak.o \
 	obj/mockable_stringstream.o
 LDLIBS:=-ltap++

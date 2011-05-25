@@ -1,5 +1,5 @@
 ///\file
-///\brief Declares the Sample class
+///\brief Declares the FileFormatSample class
 
 #ifndef HOUGH_PEAK_MATCH_SAMPLE
 #define HOUGH_PEAK_MATCH_SAMPLE
@@ -13,7 +13,7 @@ namespace HoughPeakMatch{
 ///
 ///An NMR measurement of a sample from a particular experimental class
 ///or treatment
-class Sample{
+class FileFormatSample{
 protected:
   ///\brief non-negative integer uniquely identifying this sample in
   ///\brief the database
@@ -30,10 +30,10 @@ protected:
   ///to check
   std::string sample_class_;
 
-  ///\brief Construct an uninitialized Sample
+  ///\brief Construct an uninitialized FileFormatSample
   ///
   ///\warning Uninitialized is by definition an inconsistent state
-  Sample():sample_id_(),sample_class_(){}
+  FileFormatSample():sample_id_(),sample_class_(){}
 public:
   ///\brief Construct a sample object
   ///
@@ -43,9 +43,9 @@ public:
   ///
   ///\throws invalid_argument if class is the empty string or contains
   ///white-space
-  Sample(unsigned sample_id, std::string sample_class);
+  FileFormatSample(unsigned sample_id, std::string sample_class);
 
-  ~Sample(){}
+  ~FileFormatSample(){}
 
   ///\brief Return the sample_id for this sample
   ///
@@ -57,9 +57,9 @@ public:
   ///\return the sample_class for this sample 
   std::string sample_class() const { return sample_class_; }
 
-  ///\brief Creates a Sample from a line in a database file
+  ///\brief Creates a FileFormatSample from a line in a database file
   ///
-  ///Takes vector of words and creates a Sample from them.  If the
+  ///Takes vector of words and creates a FileFormatSample from them.  If the
   ///words do not define a sample, returns nonsense and sets \a failed
   ///to true.  Otherwise, \a failed is set to false.
   ///
@@ -70,25 +70,25 @@ public:
   ///the sample id, etc.
   ///
   ///\param words a vector of words as strings describing the desired
-  ///Sample
+  ///FileFormatSample
   ///
   ///\param failed will be set to true if the words could not be
-  ///parsed as a Sample, it will be false otherwise
+  ///parsed as a FileFormatSample, it will be false otherwise
   ///
-  ///\returns the Sample described by the input line.  On failure,
+  ///\returns the FileFormatSample described by the input line.  On failure,
   ///\a failed will be set to true and the returned sample will be
   ///nonsense.
-  static Sample from_text_line
+  static FileFormatSample from_text_line
   (const std::vector<std::string>& words, bool& failed);
 
 
-  ///\brief Write this Sample to a new-line terminated string
+  ///\brief Write this FileFormatSample to a new-line terminated string
   ///
-  ///Returns the string representation of this Sample
+  ///Returns the string representation of this FileFormatSample
   ///from \ref sample "the file format documentation"
   ///terminated with a newline
   ///
-  ///\returns the string representation of this Sample from
+  ///\returns the string representation of this FileFormatSample from
   ///\ref sample "the file format documentation" terminated
   ///with a newline
   std::string to_text_line() const;

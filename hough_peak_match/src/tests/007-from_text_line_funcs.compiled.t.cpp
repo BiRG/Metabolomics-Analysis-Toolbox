@@ -5,10 +5,10 @@
 #include "../unknown_peak.hpp"
 #include "../parameterized_peak_group.hpp"
 #include "../param_stats.hpp"
-#include "../sample_params.hpp"
+#include "../file_format_sample_params.hpp"
 #include "../detected_peak_group.hpp"
 #include "../unverified_peak.hpp"
-#include "../sample.hpp"
+#include "../file_format_sample.hpp"
 #include "../human_verified_peak.hpp"
 
 namespace HoughPeakMatch{
@@ -223,23 +223,23 @@ namespace HoughPeakMatch{
       }
       {
 	string in1[3]={"sample","22","class_name"};
-	Sample p1 = Sample::from_text_line(vstr(in1,in1+3), failed);
-	is(failed, false, "Sample 1 constructs with no errors");
-	is(p1.id(), 22,"Sample 1 has expected id");
-	is(p1.sample_class(), "class_name","Sample 1 has expected class");
+	FileFormatSample p1 = FileFormatSample::from_text_line(vstr(in1,in1+3), failed);
+	is(failed, false, "FileFormatSample 1 constructs with no errors");
+	is(p1.id(), 22,"FileFormatSample 1 has expected id");
+	is(p1.sample_class(), "class_name","FileFormatSample 1 has expected class");
 
 	//With bad input name
 	{
 	  string in[3]={"vafafkasdfhjk","22","class_name"};
-	  Sample p = Sample::from_text_line(vstr(in,in+3), failed);
-	  is(failed, true, "Sample fails when given bad input name");
+	  FileFormatSample p = FileFormatSample::from_text_line(vstr(in,in+3), failed);
+	  is(failed, true, "FileFormatSample fails when given bad input name");
 	}
 
 	//With blank class name
 	{
 	  string in[3]={"sample","1",""};
-	  Sample p = Sample::from_text_line(vstr(in,in+3), failed);
-	  is(failed, true, "Sample fails when given blank class name");
+	  FileFormatSample p = FileFormatSample::from_text_line(vstr(in,in+3), failed);
+	  is(failed, true, "FileFormatSample fails when given blank class name");
 	}
 
 	//With white space in class name
@@ -255,13 +255,13 @@ namespace HoughPeakMatch{
 	    bool failed = false;
 
 	    in[2] = string("begin")+white_char[i]+"end";
-	    Sample::from_text_line(vstr(in,in+3), failed);
-	    is(failed, true, "Sample fails when a "+white_char_name[i]
+	    FileFormatSample::from_text_line(vstr(in,in+3), failed);
+	    is(failed, true, "FileFormatSample fails when a "+white_char_name[i]
 	       +" is in the middle of the class name.");
 	    
 	    in[2] = string("begin")+white_char[i];
-	    Sample::from_text_line(vstr(in,in+3), failed);
-	    is(failed, true, "Sample fails when a "+white_char_name[i]
+	    FileFormatSample::from_text_line(vstr(in,in+3), failed);
+	    is(failed, true, "FileFormatSample fails when a "+white_char_name[i]
 	       +" is at the end of the class name.");
 	  }
 	}
@@ -269,15 +269,15 @@ namespace HoughPeakMatch{
 	//With too few arguments
 	{
 	  string in[3]={"sample","22","class_name"};
-	  Sample p = Sample::from_text_line(vstr(in,in+2), failed);
-	  is(failed, true, "Sample fails when too few arguments");
+	  FileFormatSample p = FileFormatSample::from_text_line(vstr(in,in+2), failed);
+	  is(failed, true, "FileFormatSample fails when too few arguments");
 	}
 
 	//With too many arguments
 	{
 	  string in[4]={"sample","22","class_name","12"};
-	  Sample p = Sample::from_text_line(vstr(in,in+4), failed);
-	  is(failed, true, "Sample fails when too many arguments");
+	  FileFormatSample p = FileFormatSample::from_text_line(vstr(in,in+4), failed);
+	  is(failed, true, "FileFormatSample fails when too many arguments");
 	}
       }
       {
@@ -313,28 +313,28 @@ namespace HoughPeakMatch{
       }
       {
 	string in1[4]={"sample_params","22","25","-0.52"};
-	SampleParams p1 = SampleParams::from_text_line(vstr(in1,in1+4), failed);
-	is(failed, false, "Sample params 1 constructs with no errors");
-	is(p1.sample_id(), 22,"Sample params 1 has expected sample_id");
+	FileFormatSampleParams p1 = FileFormatSampleParams::from_text_line(vstr(in1,in1+4), failed);
+	is(failed, false, "File format sample params 1 constructs with no errors");
+	is(p1.sample_id(), 22,"File format sample params 1 has expected sample_id");
 	double params1[2]={25,-0.52};
 	collection_is(p1.params().begin(), p1.params().end(),
 		      params1,params1+2,
-		      "Sample params 1 has expected params vector");
+		      "File format sample params 1 has expected params vector");
 
 	string in2[3]={"sample_params","1","11"};
-	SampleParams p2 = SampleParams::from_text_line(vstr(in2,in2+3), failed);
-	is(failed, false, "Sample params 2 constructs with no errors");
-	is(p2.sample_id(), 1,"Sample params 2 has expected sample_id");
+	FileFormatSampleParams p2 = FileFormatSampleParams::from_text_line(vstr(in2,in2+3), failed);
+	is(failed, false, "File format sample params 2 constructs with no errors");
+	is(p2.sample_id(), 1,"File format sample params 2 has expected sample_id");
 	double params2[1]={11};
 	collection_is(p2.params().begin(), p2.params().end(),
 		      params2,params2+1,
-		      "Sample params 2 has expected params vector");
+		      "File format sample params 2 has expected params vector");
 
 	//sample_params with bad name
 	{
 	  string in[4]={"sampleparams","22","25","-0.52"};
-	  SampleParams p = SampleParams::from_text_line(vstr(in,in+4), failed);
-	  is(failed, true, "Sample params fails with bad name");
+	  FileFormatSampleParams p = FileFormatSampleParams::from_text_line(vstr(in,in+4), failed);
+	  is(failed, true, "File format sample params fails with bad name");
 	}
       }
       {

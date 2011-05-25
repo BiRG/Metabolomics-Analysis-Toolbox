@@ -76,15 +76,15 @@ namespace HoughPeakMatch{
 	  }
 	  unknown_peaks_.push_back(p);
 	}else if(line_type == "sample"){
-	  Sample s = 
-	    Sample::from_text_line(words, failed);
+	  FileFormatSample s = 
+	    FileFormatSample::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
 	  samples_.push_back(s);
 	}else if(line_type == "sample_params"){
-	  SampleParams sp = 
-	    SampleParams::from_text_line(words, failed);
+	  FileFormatSampleParams sp = 
+	    FileFormatSampleParams::from_text_line(words, failed);
 	  if(failed){ 
 	    make_empty(); return false; 
 	  }
@@ -440,30 +440,30 @@ namespace HoughPeakMatch{
   }
 #endif
 
-  std::auto_ptr<SampleParams> 
+  std::auto_ptr<FileFormatSampleParams> 
   PeakMatchingDatabase::sample_params_copy_from_id(unsigned sample_id) const{
     using std::find_if; using std::vector;
-    HasID<SampleParams> right_sample(sample_id);
-    vector<SampleParams>::const_iterator loc =
+    HasID<FileFormatSampleParams> right_sample(sample_id);
+    vector<FileFormatSampleParams>::const_iterator loc =
       find_if(sample_params().begin(), sample_params().end(), right_sample);
     if(loc != sample_params().end()){
-      return std::auto_ptr<SampleParams>(new SampleParams(*loc));
+      return std::auto_ptr<FileFormatSampleParams>(new FileFormatSampleParams(*loc));
     }else{
-      return std::auto_ptr<SampleParams>();
+      return std::auto_ptr<FileFormatSampleParams>();
     }
   }
 
 
-  std::auto_ptr<Sample> 
+  std::auto_ptr<FileFormatSample> 
   PeakMatchingDatabase::sample_copy_from_id(unsigned sample_id) const{
     using std::find_if; using std::vector;
-    HasID<Sample> right_sample(sample_id);
-    vector<Sample>::const_iterator loc =
+    HasID<FileFormatSample> right_sample(sample_id);
+    vector<FileFormatSample>::const_iterator loc =
       find_if(samples().begin(), samples().end(), right_sample);
     if(loc != samples().end()){
-      return std::auto_ptr<Sample>(new Sample(*loc));
+      return std::auto_ptr<FileFormatSample>(new FileFormatSample(*loc));
     }else{
-      return std::auto_ptr<Sample>();
+      return std::auto_ptr<FileFormatSample>();
     }
   }
 

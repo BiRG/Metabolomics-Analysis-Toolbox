@@ -1,12 +1,12 @@
-#include "sample_params.hpp"
+#include "file_format_sample_params.hpp"
 #include "utils.hpp"
 #include "mockable_stringstream.hpp"
 #include <cassert>
 
 namespace HoughPeakMatch{
-  SampleParams SampleParams::from_text_line
+  FileFormatSampleParams FileFormatSampleParams::from_text_line
   (const std::vector<std::string>& words, bool& failed){
-    SampleParams ret;
+    FileFormatSampleParams ret;
     if(words.size() < 3){
       failed = true;  return ret; } 
 
@@ -35,7 +35,7 @@ namespace HoughPeakMatch{
     failed = false; return ret;
   }
 
-  std::string SampleParams::to_text_line() const{
+  std::string FileFormatSampleParams::to_text_line() const{
     std::ostringstream out;
     out << "sample_params " << sample_id();
     for(std::vector<double>::const_iterator it = params_.begin();

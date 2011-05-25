@@ -12,8 +12,8 @@
 #include "human_verified_peak.hpp"
 #include "unverified_peak.hpp"
 #include "unknown_peak.hpp"
-#include "sample.hpp"
-#include "sample_params.hpp"
+#include "file_format_sample.hpp"
+#include "file_format_sample_params.hpp"
 #include "param_stats.hpp"
 
 ///\brief Holds all the library classes and functions for the Hough
@@ -58,11 +58,11 @@ namespace HoughPeakMatch{
     ///All UnknownPeak objects in this database
     std::vector<UnknownPeak> unknown_peaks_;
 
-    ///All Sample objects in this database
-    std::vector<Sample> samples_;
+    ///All FileFormatSample objects in this database
+    std::vector<FileFormatSample> samples_;
 
-    ///All SampleParams objects in this database
-    std::vector<SampleParams> sample_params_;
+    ///All FileFormatSampleParams objects in this database
+    std::vector<FileFormatSampleParams> sample_params_;
 
     ///All ParamStats objects in this database
     std::vector<ParamStats> param_stats_;
@@ -136,7 +136,7 @@ namespace HoughPeakMatch{
     ///\return An auto_pointer to a newly allocated copy of the
     ///sample_params object specified by sample_id or to null if there
     ///is no such object
-    std::auto_ptr<SampleParams> sample_params_copy_from_id(unsigned sample_id) const;
+    std::auto_ptr<FileFormatSampleParams> sample_params_copy_from_id(unsigned sample_id) const;
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the
     ///\brief peak_group object specified by peak_group_id
@@ -165,7 +165,7 @@ namespace HoughPeakMatch{
     ///\return An auto_pointer to a newly allocated copy of the
     ///sample object specified by sample_id or to null if there
     ///is no such object
-    std::auto_ptr<Sample> sample_copy_from_id(unsigned sample_id) const;
+    std::auto_ptr<FileFormatSample> sample_copy_from_id(unsigned sample_id) const;
 
     ///\brief Return all ParameterizedPeakGroup objects in this database
     ///\return all ParameterizedPeakGroup objects in this database
@@ -198,15 +198,15 @@ namespace HoughPeakMatch{
       return unknown_peaks_;
     }
 
-    ///\brief Return all Sample objects in this database
-    ///\return all Sample objects in this database
-    const std::vector<Sample>& samples() const {
+    ///\brief Return all FileFormatSample objects in this database
+    ///\return all FileFormatSample objects in this database
+    const std::vector<FileFormatSample>& samples() const {
       return samples_;
     }
 
-    ///\brief Return all SampleParams objects in this database
-    ///\return all SampleParams objects in this database
-    const std::vector<SampleParams>& sample_params() const {
+    ///\brief Return all FileFormatSampleParams objects in this database
+    ///\return all FileFormatSampleParams objects in this database
+    const std::vector<FileFormatSampleParams>& sample_params() const {
       return sample_params_;
     }
 
