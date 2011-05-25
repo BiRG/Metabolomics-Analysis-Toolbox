@@ -1,8 +1,8 @@
 ///\file
 ///\brief Declares the FileFormatSample class
 
-#ifndef HOUGH_PEAK_MATCH_SAMPLE
-#define HOUGH_PEAK_MATCH_SAMPLE
+#ifndef HOUGH_PEAK_MATCH_FILE_FORMAT_SAMPLE
+#define HOUGH_PEAK_MATCH_FILE_FORMAT_SAMPLE
 
 #include <vector>
 #include <string>
@@ -96,4 +96,4 @@ public:
 };
 
 }
-#endif //HOUGH_PEAK_MATCH_SAMPLE
+#endif //HOUGH_PEAK_MATCH_FILE_FORMAT_SAMPLE

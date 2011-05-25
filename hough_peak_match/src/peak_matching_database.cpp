@@ -2,6 +2,8 @@
 ///\brief Definitions members of the PeakMatchingDatabase class
 
 #include "peak_matching_database.hpp"
+#include "file_format_sample.hpp"
+#include "file_format_sample_params.hpp"
 #include "utils.hpp"
 #include <string>
 #include <vector>
@@ -12,104 +14,81 @@
 
 
 namespace HoughPeakMatch{
-  void PeakMatchingDatabase::make_empty(){
-    parameterized_peak_groups_.clear();
-    detected_peak_groups_.clear();
-    human_verified_peaks_.clear();
-    unverified_peaks_.clear();
-    unknown_peaks_.clear();
-    samples_.clear();
-    sample_params_.clear();
-    param_stats_.clear();
+
+  namespace{
+    ///\brief Traits type giving the id type used by the given class.
+    ///
+    ///\tparam T the class whose id type is represented
+    template<class T>
+      class IdType{
+    public:
+      ///\brief the member giving the id type for \a T
+      typedef unsigned type;
+    };
+
+    ///\brief Declares that \a class_name uses a pair of unsigneds for
+    ///\brief its id
+    ///
+    ///Macro creating a template specialization declaring that
+    ///the given class uses a pair of unsigneds for its
+    ///id rather than the normal
+    ///unsigned integer
+    ///
+    ///\param class_name the class that uses a pair
+#define CLASS_USES_PAIR_ID(class_name)			\
+    template<>						\
+      class IdType<class_name>{				\
+      public:						\
+      typedef std::pair<unsigned,unsigned> type;	\
+      }							
+    /// @cond SUPPRESS
+    
+    CLASS_USES_PAIR_ID(Peak);
+    CLASS_USES_PAIR_ID(KnownPeak);
+    CLASS_USES_PAIR_ID(UnknownPeak);
+    CLASS_USES_PAIR_ID(HumanVerifiedPeak);
+    CLASS_USES_PAIR_ID(UnverifiedPeak);
+    /// @endcond 
+#undef CLASS_USES_PAIR_ID
+
+    ///\brief Predicate that returns true if its object has the given id
+    template<class T> 
+      class HasID{
+      ///\brief The id this predicate checks for
+      typename IdType<T>::type id;
+    public:
+      ///\brief Create a predicate that returns true iff its argument
+      ///\brief has the id \a id
+      ///\param id the id that this predicate will check for
+      HasID(typename IdType<T>::type id):id(id){}
+      
+      ///\brief Return true if \a t has the id and false otherwise
+      ///
+      ///\param t The object whose id is checked
+      ///
+      ///\return true if \a t has the id and false otherwise
+      bool operator()(const T& t){ return t.id() == id; }
+    };
+
+    ///\brief Class to serve as a stand-in for abstract superclasses
+    ///\brief with unsigned ids
+    class ObjectWithUnsignedID{
+      ///\brief The id for this object
+      unsigned id_;
+    public:
+      ///\brief Create an ObjectWithUnsignedID with the id \a id
+      ///
+      ///\param id the id of the object to be created
+      ObjectWithUnsignedID(unsigned id):id_(id){}
+      
+      ///\brief Return the id of this object
+      ///
+      ///\return the id of this object
+      unsigned id() const{ return id_; }
+    };
   }
 
 
-  bool PeakMatchingDatabase::read(std::istream& in){
-    using namespace std;
-    string line;
-    while(getline(in,line)){
-      //Skip comments
-      if(line.size() > 0 && line[0] == '#'){ 
-	continue; }
-      //Extract words from the line
-      vector<string> words = split(line);
-      //Skip blank lines
-      if(words.size() == 0) { 
-	continue; }
-      //Add the object to the database
-      string line_type = words[0];
-      {
-	bool failed = false;
-	if(line_type == "parameterized_peak_group"){
-	  ParameterizedPeakGroup g = 
-	    ParameterizedPeakGroup::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  parameterized_peak_groups_.push_back(g);
-	}else if(line_type == "detected_peak_group"){
-	  DetectedPeakGroup g = 
-	    DetectedPeakGroup::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  detected_peak_groups_.push_back(g);
-	}else if(line_type == "human_verified_peak"){
-	  HumanVerifiedPeak p = 
-	    HumanVerifiedPeak::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  human_verified_peaks_.push_back(p);
-	}else if(line_type == "unverified_peak"){
-	  UnverifiedPeak p = 
-	    UnverifiedPeak::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  unverified_peaks_.push_back(p);
-	}else if(line_type == "unknown_peak"){
-	  UnknownPeak p = 
-	    UnknownPeak::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  unknown_peaks_.push_back(p);
-	}else if(line_type == "sample"){
-	  FileFormatSample s = 
-	    FileFormatSample::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  samples_.push_back(s);
-	}else if(line_type == "sample_params"){
-	  FileFormatSampleParams sp = 
-	    FileFormatSampleParams::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  sample_params_.push_back(sp);
-	}else if(line_type == "param_stats"){
-	  ParamStats ps = 
-	    ParamStats::from_text_line(words, failed);
-	  if(failed){ 
-	    make_empty(); return false; 
-	  }
-	  param_stats_.push_back(ps);
-	}else{
-	  make_empty(); return false;
-	}
-      }
-    }
-    //Ensure that the completed database satisfies the various
-    //referential integrity and other constraints on the database's
-    //structure.
-    if( ! this->satisfies_constraints() ){
-      make_empty(); return false;
-    }	
-    return true;
-  }
-  
   namespace{
     ///\brief The id member in each object returns a value not
     ///\brief repeated by any other object in the collection.
@@ -248,6 +227,153 @@ namespace HoughPeakMatch{
 
 
 
+  void PeakMatchingDatabase::make_empty(){
+    parameterized_peak_groups_.clear();
+    detected_peak_groups_.clear();
+    human_verified_peaks_.clear();
+    unverified_peaks_.clear();
+    unknown_peaks_.clear();
+    param_stats_.clear();
+  }
+
+
+  bool PeakMatchingDatabase::read(std::istream& in){
+    ///All FileFormatSample objects in this database
+    std::vector<FileFormatSample> samples;
+
+    ///All FileFormatSampleParams objects in this database
+    std::vector<FileFormatSampleParams> sample_params;
+
+    using namespace std;
+    string line;
+    while(getline(in,line)){
+      //Skip comments
+      if(line.size() > 0 && line[0] == '#'){ 
+	continue; }
+      //Extract words from the line
+      vector<string> words = split(line);
+      //Skip blank lines
+      if(words.size() == 0) { 
+	continue; }
+      //Add the object to the database
+      string line_type = words[0];
+      {
+	bool failed = false;
+	if(line_type == "parameterized_peak_group"){
+	  ParameterizedPeakGroup g = 
+	    ParameterizedPeakGroup::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  parameterized_peak_groups_.push_back(g);
+	}else if(line_type == "detected_peak_group"){
+	  DetectedPeakGroup g = 
+	    DetectedPeakGroup::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  detected_peak_groups_.push_back(g);
+	}else if(line_type == "human_verified_peak"){
+	  HumanVerifiedPeak p = 
+	    HumanVerifiedPeak::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  human_verified_peaks_.push_back(p);
+	}else if(line_type == "unverified_peak"){
+	  UnverifiedPeak p = 
+	    UnverifiedPeak::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  unverified_peaks_.push_back(p);
+	}else if(line_type == "unknown_peak"){
+	  UnknownPeak p = 
+	    UnknownPeak::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  unknown_peaks_.push_back(p);
+	}else if(line_type == "sample"){
+	  FileFormatSample s = 
+	    FileFormatSample::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  samples.push_back(s);
+	}else if(line_type == "sample_params"){
+	  FileFormatSampleParams sp = 
+	    FileFormatSampleParams::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  sample_params.push_back(sp);
+	}else if(line_type == "param_stats"){
+	  ParamStats ps = 
+	    ParamStats::from_text_line(words, failed);
+	  if(failed){ 
+	    make_empty(); return false; 
+	  }
+	  param_stats_.push_back(ps);
+	}else{
+	  make_empty(); return false;
+	}
+      }
+    }
+    //Move from FileFormatSample and FileFormatSampleParams to
+    //Parameterized and Unparameterized Sample objects
+
+    //First, ensure that exactly one sample object exists for each
+    //sample_params object and that sample_ids apply to at most one
+    //sample
+    if(!all_foreign_keys_in_a_are_ids_in_b
+       (SampleIDExtractor(), 
+	sample_params.begin(), sample_params.end(),
+	samples.begin(), samples.end())){
+      make_empty(); return false;
+    }
+    std::set<unsigned> sample_ids;
+    if(!has_unique_ids<unsigned>(sample_ids, sample_params.begin(),
+				 sample_params.end())){
+      make_empty(); return false;
+    }
+    sample_ids.clear();
+    if(!has_unique_ids<unsigned>(sample_ids, samples.begin(),
+				 samples.end())){
+      make_empty(); return false;
+    }
+      
+    //Now, for each sample object, if there is a corresponding
+    //sample_params object, create a ParameterizedSample, otherwise
+    //create an UnparameterizedSample
+
+    std::vector<FileFormatSample>::const_iterator samp;
+    for(samp = samples.begin(); samp != samples.end(); ++samp){
+      HasID<FileFormatSampleParams> has_id(samp->id());
+      std::vector<FileFormatSampleParams>::const_iterator params =
+	find_if(sample_params.begin(), sample_params.end(), has_id);
+      if(params != sample_params.end()){
+	std::vector<double> vals = params->params();
+	ParameterizedSample ps(samp->id(), samp->sample_class(), 
+			       vals.begin(), vals.end());
+	parameterized_samples_.push_back(ps);
+      }else{
+	UnparameterizedSample us(samp->id(), samp->sample_class());
+	unparameterized_samples_.push_back(us);
+      }
+    }
+    
+    //Ensure that the completed database satisfies the various
+    //referential integrity and other constraints on the database's
+    //structure.
+    if( ! this->satisfies_constraints() ){
+      make_empty(); return false;
+    }	
+    return true;
+  }
+  
+
+
   bool PeakMatchingDatabase::satisfies_constraints(){
     using std::pair;
 
@@ -271,39 +397,39 @@ namespace HoughPeakMatch{
        unverified_peaks_.end())
       && has_unique_ids<pair<unsigned,unsigned> >
       (peak_ids, unknown_peaks_.begin(),
-       unknown_peaks_.end());
+       unknown_peaks_.end())
+      ;
     
     std::set<unsigned> sample_ids;
     unique_ids = unique_ids
-      && has_unique_ids<unsigned>(sample_ids, samples_.begin(),
-				  samples_.end());
+      && has_unique_ids<unsigned>(sample_ids, parameterized_samples_.begin(),
+				  parameterized_samples_.end())
+      && has_unique_ids<unsigned>(sample_ids, unparameterized_samples_.begin(),
+				  unparameterized_samples_.end())
+      ;
 
     //Check that at most one param_stats object
 
     bool correct_num_param_stats = param_stats_.size() <= 1;
     
     //Check referential integrity constraints
-
+    std::vector<ObjectWithUnsignedID> samples(sample_ids.begin(), 
+					      sample_ids.end());
     bool ref_integrity = 
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
        unknown_peaks_.begin(), unknown_peaks_.end(),
-       samples_.begin(), samples_.end())
+       samples.begin(), samples.end())
       &&
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
        unverified_peaks_.begin(), unverified_peaks_.end(),
-       samples_.begin(), samples_.end())
+       samples.begin(), samples.end())
       &&
       all_foreign_keys_in_a_are_ids_in_b
       (SampleIDExtractor(), 
        human_verified_peaks_.begin(), human_verified_peaks_.end(),
-       samples_.begin(), samples_.end())
-      &&
-      all_foreign_keys_in_a_are_ids_in_b
-      (SampleIDExtractor(), 
-       sample_params_.begin(), sample_params_.end(),
-       samples_.begin(), samples_.end())
+       samples.begin(), samples.end())
       ;
       
     //Check that all param counts are equal
@@ -320,8 +446,8 @@ namespace HoughPeakMatch{
 		   detected_peak_groups_.end(),
 		   inserter, NumParamsExtractor());
     
-    std::transform(sample_params_.begin(),
-		   sample_params_.end(),
+    std::transform(parameterized_samples_.begin(),
+		   parameterized_samples_.end(),
 		   inserter, NumParamsExtractor());
 
     std::transform(param_stats_.begin(),
@@ -357,61 +483,6 @@ namespace HoughPeakMatch{
     return db;
   }
 
-  namespace{
-    ///\brief Traits type giving the id type used by the given class.
-    ///
-    ///\tparam T the class whose id type is represented
-    template<class T>
-      class IdType{
-    public:
-      ///\brief the member giving the id type for \a T
-      typedef unsigned type;
-    };
-
-    ///\brief Declares that \a class_name uses a pair of unsigneds for
-    ///\brief its id
-    ///
-    ///Macro creating a template specialization declaring that
-    ///the given class uses a pair of unsigneds for its
-    ///id rather than the normal
-    ///unsigned integer
-    ///
-    ///\param class_name the class that uses a pair
-#define CLASS_USES_PAIR_ID(class_name)			\
-    template<>						\
-      class IdType<class_name>{				\
-      public:						\
-      typedef std::pair<unsigned,unsigned> type;	\
-      }							
-    /// @cond SUPPRESS
-    
-    CLASS_USES_PAIR_ID(Peak);
-    CLASS_USES_PAIR_ID(KnownPeak);
-    CLASS_USES_PAIR_ID(UnknownPeak);
-    CLASS_USES_PAIR_ID(HumanVerifiedPeak);
-    CLASS_USES_PAIR_ID(UnverifiedPeak);
-    /// @endcond 
-#undef CLASS_USES_PAIR_ID
-
-    ///\brief Predicate that returns true if its object has the given id
-    template<class T> 
-      class HasID{
-      ///\brief The id this predicate checks for
-      typename IdType<T>::type id;
-    public:
-      ///\brief Create a predicate that returns true iff its argument
-      ///\brief has the id \a id
-      ///\param id the id that this predicate will check for
-      HasID(typename IdType<T>::type id):id(id){}
-      
-      ///\brief Return true if \a t has the id and false otherwise
-      ///
-      ///\param t The object whose id is checked
-      ///
-      ///\return true if \a t has the id and false otherwise
-      bool operator()(const T& t){ return t.id() == id; }
-    };
-  }
 
 #if 0
   std::auto_ptr<Peak> PeakMatchingDatabase::peak_copy_from_id
@@ -440,30 +511,28 @@ namespace HoughPeakMatch{
   }
 #endif
 
-  std::auto_ptr<FileFormatSampleParams> 
-  PeakMatchingDatabase::sample_params_copy_from_id(unsigned sample_id) const{
-    using std::find_if; using std::vector;
-    HasID<FileFormatSampleParams> right_sample(sample_id);
-    vector<FileFormatSampleParams>::const_iterator loc =
-      find_if(sample_params().begin(), sample_params().end(), right_sample);
-    if(loc != sample_params().end()){
-      return std::auto_ptr<FileFormatSampleParams>(new FileFormatSampleParams(*loc));
-    }else{
-      return std::auto_ptr<FileFormatSampleParams>();
-    }
-  }
-
-
-  std::auto_ptr<FileFormatSample> 
+  std::auto_ptr<Sample> 
   PeakMatchingDatabase::sample_copy_from_id(unsigned sample_id) const{
     using std::find_if; using std::vector;
-    HasID<FileFormatSample> right_sample(sample_id);
-    vector<FileFormatSample>::const_iterator loc =
-      find_if(samples().begin(), samples().end(), right_sample);
-    if(loc != samples().end()){
-      return std::auto_ptr<FileFormatSample>(new FileFormatSample(*loc));
-    }else{
-      return std::auto_ptr<FileFormatSample>();
+    {
+      HasID<ParameterizedSample> right_sample(sample_id);
+      vector<ParameterizedSample>::const_iterator loc =
+	find_if(parameterized_samples_.begin(), parameterized_samples_.end(), 
+		right_sample);
+      if(loc != parameterized_samples_.end()){
+	return std::auto_ptr<Sample>(new ParameterizedSample(*loc));
+      }
+    }
+    {
+      HasID<UnparameterizedSample> right_sample(sample_id);
+      vector<UnparameterizedSample>::const_iterator loc =
+	find_if(unparameterized_samples_.begin(), 
+		unparameterized_samples_.end(), right_sample);
+      if(loc != unparameterized_samples_.end()){
+	return std::auto_ptr<Sample>(new UnparameterizedSample(*loc));
+      }else{
+	return std::auto_ptr<Sample>();
+      }
     }
   }
 

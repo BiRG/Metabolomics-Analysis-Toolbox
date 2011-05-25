@@ -163,7 +163,7 @@ namespace HoughPeakMatch{
       //Extract the list of parameters (one object per row)
       size_t num_objects = pmd.parameterized_peak_groups().size()+
 	pmd.detected_peak_groups().size()+
-	pmd.sample_params().size()+
+	pmd.parameterized_samples().size()+
 	pmd.param_stats().size();
       vector<Row> rows; rows.reserve(num_objects);
       back_insert_iterator<vector<Row> > inserter = 
@@ -176,8 +176,8 @@ namespace HoughPeakMatch{
 		pmd.detected_peak_groups().end(),
 		inserter, ParamsExtractor());
       
-      transform(pmd.sample_params().begin(),
-		pmd.sample_params().end(),
+      transform(pmd.parameterized_samples().begin(),
+		pmd.parameterized_samples().end(),
 		inserter, ParamsExtractor());
       
       transform(pmd.param_stats().begin(),
