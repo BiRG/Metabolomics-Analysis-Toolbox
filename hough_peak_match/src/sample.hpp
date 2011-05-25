@@ -65,7 +65,7 @@ public:
   ///\returns the string representation of this Sample from
   ///\ref sample "the file format documentation" terminated
   ///with a newline
-  virtual std::string to_text_line() const = 0;
+  virtual std::string to_text() const = 0;
 
 };
 

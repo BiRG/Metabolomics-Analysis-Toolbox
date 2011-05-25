@@ -1,5 +1,5 @@
 ///\file
-///\brief Tests the xxx::to_text_line functions and constructors for
+///\brief Tests the xxx::to_text functions and constructors for
 ///\brief peak database objects
 
 #include "../unknown_peak.hpp"
@@ -17,9 +17,9 @@
 namespace HoughPeakMatch{
   namespace Test{
 
-    ///\brief Exercise all the various to_text_line functions and the
+    ///\brief Exercise all the various to_text functions and the
     ///\brief constructors
-    void to_text_line(){
+    void to_text(){
       using std::string; using std::vector; using namespace TAP;
       using std::endl; using std::make_pair; using std::ostringstream;
       using std::invalid_argument; using std::numeric_limits;
@@ -40,8 +40,8 @@ namespace HoughPeakMatch{
 			"gives correct params");
 	  ostringstream expected;
 	  expected << "parameterized_peak_group 150 3.5 2 1 5" << endl;
-	  is(p.to_text_line(), expected.str(),
-	     "Parameterized peak group to_text_line gives expected output");
+	  is(p.to_text(), expected.str(),
+	     "Parameterized peak group to_text gives expected output");
 	}
 	{
 	  bool threw = false;
@@ -80,8 +80,8 @@ namespace HoughPeakMatch{
 			"gives correct params");
 	  ostringstream expected;
 	  expected << "detected_peak_group 150 3.5 2 1 5" << endl;
-	  is(p.to_text_line(), expected.str(),
-	     "Detected peak group to_text_line gives expected output");
+	  is(p.to_text(), expected.str(),
+	     "Detected peak group to_text gives expected output");
 	}
 	{
 	  bool threw = false;
@@ -122,8 +122,8 @@ namespace HoughPeakMatch{
 	   "Human verified peak constructor gives correct peak_group_id");
 	ostringstream expected;
 	expected << "human_verified_peak 65537 1073741824 1.11 13" << endl;
-	is(p.to_text_line(), expected.str(),
-	   "Human verified peak to_text_line gives expected output");
+	is(p.to_text(), expected.str(),
+	   "Human verified peak to_text gives expected output");
       }
       {
 	if(numeric_limits<double>::has_infinity){
@@ -193,8 +193,8 @@ namespace HoughPeakMatch{
 	   "Unverified peak constructor gives correct peak_group_id");
 	ostringstream expected;
 	expected << "unverified_peak 65537 2147483648 1.11 21" << endl;
-	is(p.to_text_line(), expected.str(),
-	   "Unverified peak to_text_line gives expected output");
+	is(p.to_text(), expected.str(),
+	   "Unverified peak to_text gives expected output");
       }
 
       {
@@ -262,8 +262,8 @@ namespace HoughPeakMatch{
 	   "Unknown peak constructor gives correct ppm");
 	ostringstream expected;
 	expected << "unknown_peak 2147483648 65537 0.00052" << endl;
-	is(p.to_text_line(), expected.str(),
-	   "Unknown peak to_text_line gives expected output");
+	is(p.to_text(), expected.str(),
+	   "Unknown peak to_text gives expected output");
       }
 
       {
@@ -327,8 +327,8 @@ namespace HoughPeakMatch{
 	   "sample_class correctly");
 	ostringstream expected;
 	expected << "sample 1022 My_fair_lady" << endl;
-	is(s.to_text_line(), expected.str(), 
-	   "FileFormatSample to_text_line gives expected output.");
+	is(s.to_text(), expected.str(), 
+	   "FileFormatSample to_text gives expected output.");
       }
       {
 	  bool threw = false;
@@ -409,8 +409,8 @@ namespace HoughPeakMatch{
 			"File format sample params constructor gives correct params");
 	  ostringstream expected;
 	  expected << "sample_params 150 3.8 1 5" << endl;
-	  is(p.to_text_line(), expected.str(),
-	     "File format sample params to_text_line gives expected output");
+	  is(p.to_text(), expected.str(),
+	     "File format sample params to_text gives expected output");
 	}
 	{
 	  bool threw = false;
@@ -444,8 +444,8 @@ namespace HoughPeakMatch{
 			"Param stats constructor gives correct params");
 	  ostringstream expected;
 	  expected << "param_stats 0.15 0.1 0" << endl;
-	  is(p.to_text_line(), expected.str(),
-	     "Param stats to_text_line gives expected output");
+	  is(p.to_text(), expected.str(),
+	     "Param stats to_text gives expected output");
 	}
 	{
 	  bool threw = false;
@@ -502,11 +502,11 @@ namespace HoughPeakMatch{
 }
 
 
-///\brief test harness wrapper around HoughPeakMatch::Test::to_text_line();
+///\brief test harness wrapper around HoughPeakMatch::Test::to_text();
 ///
 ///\return the appropriate exit status for TAP (the test-anything-protocol)
 int main(){
   TAP::plan(82);
-  HoughPeakMatch::Test::to_text_line();
+  HoughPeakMatch::Test::to_text();
   return TAP::exit_status();
 }

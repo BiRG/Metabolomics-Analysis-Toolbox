@@ -40,7 +40,7 @@ public:
   ///with a newline
   ///
   ///\todo test
-  virtual std::string to_text_line() const;
+  virtual std::string to_text() const;
 
   virtual ObjectType type() const{
     return ObjectType("unparameterized_sample");

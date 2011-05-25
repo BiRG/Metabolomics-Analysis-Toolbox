@@ -91,7 +91,7 @@ public:
   ///\returns the string representation of this FileFormatSample from
   ///\ref sample "the file format documentation" terminated
   ///with a newline
-  std::string to_text_line() const;
+  std::string to_text() const;
 
 };
 

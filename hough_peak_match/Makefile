@@ -22,6 +22,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/file_format_sample.o\
 	obj/sample.o\
 	obj/unparameterized_sample.o\
+	obj/parameterized_sample.o\
 	obj/peak.o \
 	obj/mockable_stringstream.o
 LDLIBS:=-ltap++

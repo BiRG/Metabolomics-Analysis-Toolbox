@@ -84,7 +84,7 @@ public:
   ///
   ///\returns the string representation of this FileFormatSampleParams
   ///from \ref sample_params "the file format documentation"
-  std::string to_text_line() const;  
+  std::string to_text() const;  
 
 
 

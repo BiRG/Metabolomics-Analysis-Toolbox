@@ -45,7 +45,7 @@ namespace HoughPeakMatch{
     failed = false; return ret;
   }
   
-  std::string FileFormatSample::to_text_line() const{
+  std::string FileFormatSample::to_text() const{
     std::ostringstream out;
     out << "sample " << id() << " " << sample_class() << std::endl;
     return out.str();

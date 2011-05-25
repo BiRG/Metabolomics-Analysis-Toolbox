@@ -90,7 +90,7 @@ public:
   ///
   ///\returns the string representation of this ParameterizedPeakGroup
   ///from \ref parameterized_peak_group "the file format documentation"
-  std::string to_text_line() const;
+  std::string to_text() const;
 
   
   ///\brief Return the parameters for this ParameterizedPeakGroup
