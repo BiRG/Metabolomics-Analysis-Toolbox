@@ -54,15 +54,20 @@ while line ~= -1
             % Try to convert to num
             values = NaN*ones(1,collection.num_samples);
             try
-                found_number = false;
+                found_str = false;
+                all_empty = true;
                 for i = 2:length(fields)
+                    if ~isempty(fields{i})
+                        all_empty = false;
+                    end
                     v = str2num(fields{i});
                     if ~isempty(v)
                         values(i-1) = v;
-                        found_number = true;
-                    end
+                    elseif ~isempty(fields{i}) % contains string
+                        found_str = true;
+                    end                    
                 end
-                if ~found_number
+                if found_str || all_empty
                     values = [];
                 end
             catch ME
