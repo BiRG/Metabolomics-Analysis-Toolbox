@@ -4,6 +4,7 @@
 #ifndef HOUGH_PEAK_MATCH_SAMPLE
 #define HOUGH_PEAK_MATCH_SAMPLE
 
+#include "pmobject.hpp"
 #include <vector>
 #include <string>
 
@@ -13,7 +14,7 @@ namespace HoughPeakMatch{
 ///
 ///An NMR measurement of a sample from a particular experimental class
 ///or treatment
-class Sample{
+  class Sample:PMObject{
 protected:
   ///\brief non-negative integer uniquely identifying this sample in
   ///\brief the database
