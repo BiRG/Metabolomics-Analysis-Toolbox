@@ -12,3 +12,4 @@ fprintf('\tpca/main - Orthogonal Projection on Latent Structures\n');
 fprintf('\tfix_spectra/fix_spectra - Baseline correction, alignment to reference, and zero regions\n');
 fprintf('\tbin/main - Bin based quantification designed around dynamic adaptive binning\n');
 fprintf('\tdeconvolution/main - Map-reduce based deconvolution algorithm\n');
+fprintf('\tvisualization/visualize_collections/main - Flexible spectral viewer\n');

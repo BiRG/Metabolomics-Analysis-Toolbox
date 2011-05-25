@@ -593,7 +593,7 @@ scores_type = contents{get(handles.scores_type_popupmenu,'Value')};
 graph_Xs = {{t}};
 graph_Ys = {{t_ortho}};
 ylabels = {'T_{orthogonal}'};
-xlabels = {'Y'};
+xlabels = {'T'};
 if ~handles.run_groups_checkbox
     graph_Xs{end+1} = {handles.available_Y};
     graph_Ys{end+1} = {Y_pred};
