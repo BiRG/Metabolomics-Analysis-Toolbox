@@ -368,17 +368,21 @@ namespace HoughPeakMatch{
       typedef unsigned type;
     };
 
-
-    ///\brief Macro creating a template specialization declaring that
-    ///\brief the given class uses a pair of unsigneds for its
-    ///\brief id rather than the normal
-    ///\brief unsigned integer
+    ///\brief Declares that \a class_name uses a pair of unsigneds for
+    ///\brief its id
+    ///
+    ///Macro creating a template specialization declaring that
+    ///the given class uses a pair of unsigneds for its
+    ///id rather than the normal
+    ///unsigned integer
+    ///
+    ///\param class_name the class that uses a pair
 #define CLASS_USES_PAIR_ID(class_name)			\
     template<>						\
       class IdType<class_name>{				\
       public:						\
       typedef std::pair<unsigned,unsigned> type;	\
-      }							\
+      }							
     /// @cond SUPPRESS
     
     CLASS_USES_PAIR_ID(Peak);
@@ -392,10 +396,12 @@ namespace HoughPeakMatch{
     ///\brief Predicate that returns true if its object has the given id
     template<class T> 
       class HasID{
+      ///\brief The id this predicate checks for
       typename IdType<T>::type id;
     public:
       ///\brief Create a predicate that returns true iff its argument
       ///\brief has the id \a id
+      ///\param id the id that this predicate will check for
       HasID(typename IdType<T>::type id):id(id){}
       
       ///\brief Return true if \a t has the id and false otherwise

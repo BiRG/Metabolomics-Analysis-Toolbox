@@ -236,7 +236,7 @@ namespace HoughPeakMatch{
   ///parameter with an error message to print.  A good candiate would
   ///be the print_usage_and_exit methods in most programs.  You should
   ///be able to all it as:
-  ///<code>print_error_and_exit(my_error_message);</code>
+  /// <code>print_error_and_exit(my_error_message);</code>
   ///
   ///\return (if it returns) the contents of the specified database file
   PeakMatchingDatabase read_database(std::string file_name, 

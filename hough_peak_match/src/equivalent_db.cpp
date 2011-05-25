@@ -39,7 +39,7 @@ void print_usage_and_exit(std::string errMsg){
 
 namespace HoughPeakMatch{
 ///\brief A unique encoding of the semantics of a PeakMatchinDatabase
-///\biief for comparing the semantics of two databses
+///\brief for comparing the semantics of two databses
 ///
 ///PeakMatchingDatabase objects are designed for easy serialization to
 ///a format that can be read in other languages and easy conversion
@@ -50,12 +50,18 @@ namespace HoughPeakMatch{
 ///objects) in a form that is easy to compare.
 class PMDatabaseSemantics{
 private:
+  ///\brief Strings representing the flattened objects of the database
+  ///\brief stored so that their order does not matter
   std::multiset<std::string> contents;
 public:
   ///\brief Create a PMDatabaseSemantics that encodes the semantics of \a pmd
+  ///
+  ///\param pmd The database whose semantics are to be encoded
   PMDatabaseSemantics(const PeakMatchingDatabase& pmd);
 
   ///\brief Return whether the two databases are semantically the same
+  ///
+  ///\param rhs the PMDatabaseSemantics object being compared to
   ///
   ///\return True if the two databases have the same underlying
   ///semantic content and false otherwise
@@ -144,6 +150,19 @@ public:
     ///\brief Functional that compares two rows by looking at whether
     ///\brief their sorted contents are lexically in order
     struct RowSortedLessThan{
+      ///\brief returns true if sorted \a a_orig lexically comes 
+      ///\brief before \a b_orig
+      ///
+      ///Behaves as if follows the following algorithm: sort a copy of
+      ///\a a_orig (a), sort a copy of \a b_orig (b).  Returns true if
+      ///a comes before b.  This is effectively a less-than operator
+      ///
+      ///\param a_orig the first row to compare
+      ///
+      ///\param b_orig the second row to compare
+      ///
+      ///\return true if sorted \a a_orig lexically comes before \a
+      ///b_orig
       bool operator()(const Row& a_orig, const Row& b_orig) const{
 	Row a=a_orig; Row b=b_orig;
 	sort(a.begin(),a.end());
@@ -241,6 +260,9 @@ public:
     ///\param flatten A function object that can be treated as if it
     ///had the signature <code>std::string
     ///flatten(InputIter::value_type& o)</code>
+    ///
+    ///\returns a unique string-multiset representation for a
+    ///collection of objects
     template<class Collection, class FlattenerT>
       std::multiset<std::string> flatten(const Collection & c,
 					 FlattenerT flatten){
@@ -271,6 +293,8 @@ public:
       ///that the database has a longer life-span than the Flattener
       ///
       ///\param db the database used to resolve references in flattening
+      ///
+      ///\param ordering the parameter ordering to use during the flattening
       Flattener(const PeakMatchingDatabase& db,
 		const ParameterOrdering& ordering):db_(db),ordering_(ordering){}
       virtual ~Flattener(){}
@@ -297,7 +321,7 @@ public:
       ///peak group within its database and that has no references to
       ///other objects
       ///
-      ///\param f The peak group to flatten
+      ///\param pg The peak group to flatten
       ///
       ///\return Return a flattened representation of the given
       ///PeakGroup
@@ -333,6 +357,8 @@ public:
       ///\brief SampleParams from the database \a db
       ///
       ///\param db The database from which come the peaks to be flattened
+      ///
+      ///\param ordering the parameter ordering to use during the flattening
       SampleParamsFlattener(const PeakMatchingDatabase& db,
 			    const ParameterOrdering& ordering)
 	:Flattener(db, ordering){}
@@ -409,13 +435,17 @@ public:
 
     ///\brief Flattens HumanVerifiedPeaks from one db
     class HumanVerifiedPeakFlattener:public Flattener{
+      ///\brief object for flattening foreign samples
       SampleFlattener flatten_sample;
+      ///\brief object for flattening foreign peak groups
       PeakGroupFlattener flatten_pg;
     public:
       ///\brief Create a Flattener that flattens
       ///\brief HumanVerifiedPeaks from the database \a db
       ///
       ///\param db The database from which come the peaks to be flattened
+      ///
+      ///\param ordering the parameter ordering to use during the flattening
       HumanVerifiedPeakFlattener(const PeakMatchingDatabase& db,
 				 const ParameterOrdering& ordering)
 	:Flattener(db,ordering), flatten_sample(db,ordering)

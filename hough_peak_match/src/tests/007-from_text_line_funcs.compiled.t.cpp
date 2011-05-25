@@ -35,6 +35,7 @@ namespace HoughPeakMatch{
 
       ///\brief Stub method to enable implementation of the proxy -
       ///\brief returns false results
+      ///\return garbage
       virtual ObjectType type() const{
 	return ObjectType("human_verified_peak");
       }
@@ -62,6 +63,7 @@ namespace HoughPeakMatch{
 
       ///\brief Stub method to enable implementation of the proxy -
       ///\brief returns false results
+      ///\return garbage
       virtual ObjectType type() const{
 	return ObjectType("human_verified_peak");
       }
