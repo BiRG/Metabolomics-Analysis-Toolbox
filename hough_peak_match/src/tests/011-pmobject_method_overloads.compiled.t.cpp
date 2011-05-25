@@ -3,6 +3,8 @@
 #include "../human_verified_peak.hpp"
 #include "../unverified_peak.hpp"
 #include "../peak_group.hpp"
+#include "../parameterized_peak_group.hpp"
+#include "../detected_peak_group.hpp"
 
 #include <tap++/tap++.h>
 #include <string>
@@ -11,7 +13,7 @@
 int main(){
   using namespace TAP; using namespace HoughPeakMatch;
   using std::auto_ptr;
-  plan(35);
+  plan(53);
 
   //ParamStats
 
@@ -239,4 +241,162 @@ int main(){
     ok(t.has_same_non_key_parameters(&tt),
        "PeakGroup has same non-key as object with different id");
   }
+
+  //ParameterizedPeakGroup
+
+  {
+    double params[4] = {7,2.1,0,0.001};
+    ParameterizedPeakGroup t(5,201.1,params,params+4);
+    not_ok(t.has_same_non_key_parameters(NULL),
+	   "ParameterizedPeakGroup has different non-key parameters "
+	   "than NULL pointer.");
+  }
+  {
+    double params[4] = {7,2.1,0,0.001};
+    ParameterizedPeakGroup t(5,201.1,params,params+4);
+    UnknownPeak p(1,2,0.01);
+    not_ok(t.has_same_non_key_parameters(&p),
+	   "ParameterizedPeakGroup has different non-key parameters "
+	   "than object of "
+	   "different type .");
+  }
+  {
+    double paramst[4] = {7,2.1,0,0.001};
+    double paramstt[4] = {7,2.1,0,0.001};
+    ParameterizedPeakGroup t(5,201.1,paramst,paramst+4);
+    ParameterizedPeakGroup tt(5,201.1,paramstt,paramstt+4);
+    ok(t.has_same_non_key_parameters(&tt),
+       "ParameterizedPeakGroup has same parameters as "
+       "identical ParameterizedPeakGroup");
+  }
+  {
+    double paramst[4] = {7,2.1,0,0.001};
+    ParameterizedPeakGroup t(5,201.1,paramst,paramst+4);
+    ok(t.has_same_non_key_parameters(&t),
+       "ParameterizedPeakGroup has same parameters as itself");
+  }
+  {
+    double paramst[4] = {7,2.1,0,0.001};
+    double paramstt[3] = {7,2.1,0};
+    ParameterizedPeakGroup t(5,201.1,paramst,paramst+4);
+    ParameterizedPeakGroup tt(5,201.1,paramstt,paramstt+3);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "ParameterizedPeakGroup has different parameters than "
+	   "shorter object.");
+  }
+  {
+    double paramst[3] = {7,2.1,0};
+    double paramstt[4] = {7,2.1,0,0.001};
+    ParameterizedPeakGroup t(5,201.1,paramst,paramst+3);
+    ParameterizedPeakGroup tt(5,201.1,paramstt,paramstt+4);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "ParameterizedPeakGroup has different parameters than "
+	   "longer object.");
+  }
+  {
+    double paramst[4] = {7,2.1,0,0.2};
+    double paramstt[4] = {7,2.1,0,0.001};
+    ParameterizedPeakGroup t(5,201.1,paramst,paramst+4);
+    ParameterizedPeakGroup tt(5,201.1,paramstt,paramstt+4);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "ParameterizedPeakGroup has different parameters with same length "
+	   "but different last value.");
+  }
+  {
+    double paramst[4] = {7,2.1,0,0.2};
+    double paramstt[4] = {7,2.1,0,0.2};
+    ParameterizedPeakGroup t(5,201.1,paramst,paramst+4);
+    ParameterizedPeakGroup tt(5,200,paramstt,paramstt+4);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "ParameterizedPeakGroup has different parameters with identical "
+	   "vectors but different ppm.");
+  }
+  {
+    double paramst[4] = {7,2.1,0,0.2};
+    double paramstt[4] = {7,2.1,0,0.2};
+    ParameterizedPeakGroup t(5,201.1,paramst,paramst+4);
+    ParameterizedPeakGroup tt(100,201.1,paramstt,paramstt+4);
+    ok(t.has_same_non_key_parameters(&tt),
+       "ParameterizedPeakGroup has same parameters when differ only in "
+       "id.");
+  }
+
+  //DetectedPeakGroup
+
+  {
+    double params[2] = {5,0.001};
+    DetectedPeakGroup t(20,51.1,params,params+2);
+    not_ok(t.has_same_non_key_parameters(NULL),
+	   "DetectedPeakGroup has different non-key parameters "
+	   "than NULL pointer.");
+  }
+  {
+    double params[2] = {5,0.001};
+    DetectedPeakGroup t(20,51.1,params,params+2);
+    ParameterizedPeakGroup p(20,51.1,params,params+2);
+    not_ok(t.has_same_non_key_parameters(&p),
+	   "DetectedPeakGroup has different non-key parameters "
+	   "than object of different type .");
+  }
+  {
+    double paramst[2] = {5,0.001};
+    double paramstt[2] = {5,0.001};
+    DetectedPeakGroup t(20,51.1,paramst,paramst+2);
+    DetectedPeakGroup tt(20,51.1,paramstt,paramstt+2);
+    ok(t.has_same_non_key_parameters(&tt),
+       "DetectedPeakGroup has same parameters as "
+       "identical DetectedPeakGroup");
+  }
+  {
+    double paramst[2] = {5,0.001};
+    DetectedPeakGroup t(20,51.1,paramst,paramst+2);
+    ok(t.has_same_non_key_parameters(&t),
+       "DetectedPeakGroup has same parameters as itself");
+  }
+  {
+    double paramst[2] = {5,0.001};
+    double paramstt[1] = {5};
+    DetectedPeakGroup t(20,51.1,paramst,paramst+2);
+    DetectedPeakGroup tt(20,51.1,paramstt,paramstt+1);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "DetectedPeakGroup has different parameters than "
+	   "shorter object.");
+  }
+  {
+    double paramst[1] = {5};
+    double paramstt[2] = {5,0.001};
+    DetectedPeakGroup t(20,51.1,paramst,paramst+1);
+    DetectedPeakGroup tt(20,51.1,paramstt,paramstt+2);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "DetectedPeakGroup has different parameters than "
+	   "longer object.");
+  }
+  {
+    double paramst[2] = {5,0.2};
+    double paramstt[2] = {5,0.001};
+    DetectedPeakGroup t(20,51.1,paramst,paramst+2);
+    DetectedPeakGroup tt(20,51.1,paramstt,paramstt+2);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "DetectedPeakGroup has different parameters with same length "
+	   "but different last value.");
+  }
+  {
+    double paramst[2] = {5,0.2};
+    double paramstt[2] = {5,0.2};
+    DetectedPeakGroup t(20,51.1,paramst,paramst+2);
+    DetectedPeakGroup tt(20,50,paramstt,paramstt+2);
+    not_ok(t.has_same_non_key_parameters(&tt),
+	   "DetectedPeakGroup has different parameters with identical "
+	   "vectors but different ppm.");
+  }
+  {
+    double paramst[2] = {5,0.2};
+    double paramstt[2] = {5,0.2};
+    DetectedPeakGroup t(20,51.1,paramst,paramst+2);
+    DetectedPeakGroup tt(10,51.1,paramstt,paramstt+2);
+    ok(t.has_same_non_key_parameters(&tt),
+       "DetectedPeakGroup has same parameters when differ only in "
+       "id.");
+  }
+
 }
