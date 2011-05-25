@@ -18,19 +18,21 @@ public:
   ///
   ///\param type_name the name of the type to be represented by this
   ///object.  Valid names include: peak_group, detected_peak_group,
-  ///human_verified_peak, unverified_peak, unknown_peak,
-  ///parameterized_sample, unparameterized_sample, and param_stats
+  ///parameterized_peak_group, human_verified_peak, unverified_peak,
+  ///unknown_peak, parameterized_sample, unparameterized_sample, and
+  ///param_stats
   ///
   ///\throws invalid_argument if \a type_name is not one of the types
   ///of object that are represented directly in the database.  There
   ///should be no: peak, known_peak, sample, or sample_params objects.
   ObjectType(std::string type_name):type_name_(type_name){
-    const char* valid_types[8]=
-      {"peak_group","detected_peak_group","human_verified_peak",
+    const char* valid_types[9]=
+      {"peak_group","detected_peak_group","parameterized_peak_group",
+       "human_verified_peak",
        "unverified_peak","unknown_peak","parameterized_sample",
        "unparameterized_sample","param_stats"};
-    if(std::find(valid_types, valid_types+8, type_name)==
-       valid_types+8){
+    if(std::find(valid_types, valid_types+9, type_name)==
+       valid_types+9){
       throw std::invalid_argument
 	("ERROR: "+type_name+" is not a known object type.");
     }
