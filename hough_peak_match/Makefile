@@ -23,7 +23,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/peak.o \
 	obj/mockable_stringstream.o
 LDLIBS:=-ltap++
-LDFLAGS:=-fprofile-arcs
+LDFLAGS:=$(GCOV_LDOPTS)
 
 all: mock_executables
 
@@ -32,7 +32,7 @@ executables: $(EXECUTABLES)
 
 mock_executables: 
 	@if [ -e normal_executables ]; then $(MAKE) --no-print-directory clean; fi
-	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM GCOV_OPTS="$(GCOV_OPTS)" executables
+	@$(MAKE) --no-print-directory PREDEFINE=-DUSE_MOCK_ISTRINGSTREAM GCOV_OPTS="$(GCOV_OPTS)" GCOV_LDOPTS="$(GCOV_LDOPTS)" executables
 	touch mock_executables
 
 normal_executables: 
@@ -41,6 +41,7 @@ normal_executables:
 	touch normal_executables
 
 gcov: GCOV_OPTS:=-fprofile-arcs -ftest-coverage 
+gcov: GCOV_LDOPTS:=-fprofile-arcs
 gcov: mock_executables
 
 
