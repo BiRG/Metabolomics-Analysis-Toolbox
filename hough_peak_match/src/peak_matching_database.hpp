@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory> //auto_ptr
 
+#include "sample_key.hpp"
 #include "peak_key.hpp"
 #include "key.hpp"
 #include "parameterized_sample.hpp"
