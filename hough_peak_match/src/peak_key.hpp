@@ -32,10 +32,12 @@ public:
 	  unsigned sample_id, unsigned peak_id)
     :Key(database),sample_id_(sample_id),peak_id_(peak_id){}
 
-  ///\brief Return a copy of the object referenced by this key
-  ///
-  ///\return a copy of the object referenced by this key
   virtual std::auto_ptr<PMObject> obj_copy() const;
+
+  virtual bool operator==(const Key& k) const;
+
+  virtual bool operator<(const Key& k) const;
+
 };
 
 }
