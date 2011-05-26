@@ -113,7 +113,7 @@ template<typename R, typename T>
 std::auto_ptr<R> auto_ptr_dynamic_cast(std::auto_ptr<T>& in) {
   std::auto_ptr<R> rv;
   R* p;
-  if( p = dynamic_cast<R*>( in.get() ) ) {
+  if( (p = dynamic_cast<R*>( in.get() )) ) {
       in.release();
       rv.reset(p);
   }
