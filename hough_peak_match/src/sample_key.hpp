@@ -27,8 +27,6 @@ public:
 
   virtual std::auto_ptr<PMObject> obj_copy() const;
 
-  virtual bool operator==(const Key& k) const;
-
   virtual bool operator<(const Key& k) const;
 };
 
