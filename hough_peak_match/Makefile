@@ -26,6 +26,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/peak.o \
 	obj/mockable_stringstream.o\
 	obj/peak_key.o\
+	obj/peak_group_key.o\
 	obj/sample_key.o
 LDLIBS:=-ltap++
 LDFLAGS:=$(GCOV_LDOPTS)
