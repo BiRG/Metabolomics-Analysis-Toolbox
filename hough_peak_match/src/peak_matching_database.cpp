@@ -554,7 +554,7 @@ namespace HoughPeakMatch{
     if(ppgLoc != parameterized_peak_groups().end()){
       return std::auto_ptr<PeakGroup>(new ParameterizedPeakGroup(*ppgLoc));
     }else{
-      return std::auto_ptr<PeakGroup>(NULL);
+      return std::auto_ptr<PeakGroup>(new PeakGroup(peak_group_id));
     }
   }
 }

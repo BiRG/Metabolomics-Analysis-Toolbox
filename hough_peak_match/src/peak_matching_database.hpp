@@ -132,13 +132,16 @@ namespace HoughPeakMatch{
     ///I use an auto-pointer to a heap allocated copy because it makes
     ///it easy to return null and also to ensure that the object's
     ///deletion semantics are obvious.  It also allows down-casting to
-    ///the appropriate peak-group object type.
+    ///the appropriate peak-group object type if the object is of a
+    ///derived class like ParameterizedPeakGroup or DetectedPeakGroup.
+    ///
+    ///\note It is impossible for this function to return NULL.  All
+    ///peak_group_ids are implicitly present in the database.
     ///
     ///\param peak_group_id the id of the peak-group to copy
     ///
     ///\return An auto_pointer to a newly allocated copy of the
-    ///peak_group object specified by peak_group_id or to null if there
-    ///is no such object
+    ///peak_group object specified by peak_group_id 
     std::auto_ptr<PeakGroup> peak_group_copy_from_id(unsigned peak_group_id) const;
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the
