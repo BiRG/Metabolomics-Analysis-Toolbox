@@ -7,6 +7,8 @@
 #include <vector>
 #include <memory> //auto_ptr
 
+#include "peak_key.hpp"
+#include "key.hpp"
 #include "parameterized_sample.hpp"
 #include "unparameterized_sample.hpp"
 #include "parameterized_peak_group.hpp"
@@ -15,6 +17,7 @@
 #include "unverified_peak.hpp"
 #include "unknown_peak.hpp"
 #include "param_stats.hpp"
+
 
 ///\brief Holds all the library classes and functions for the Hough
 ///\brief peak matching prototype
@@ -105,13 +108,12 @@ namespace HoughPeakMatch{
     ///false otherwise
     bool satisfies_constraints();
 
-#if 0
     ///\brief Returns an auto_pointer to a newly allocated copy of the peak
     ///\brief object specified by peak_id
     ///
     ///I use an auto-pointer to a heap allocated copy so one can
     ///downcast the resulting pointer (use auto_ptr_dynamic_cast from
-    ///utils.hpp)
+    ///utils.hpp) and so object life-time issues are explicit
     ///
     ///\param sample_id the id of the sample containing the peak to
     ///copy
@@ -119,10 +121,9 @@ namespace HoughPeakMatch{
     ///\param peak_id the id of the peak to copy within its sample
     ///
     ///\return An auto_pointer to a newly allocated copy of the peak
-    ///object specified by peak_id or to null if there is no such peak
+    ///object specified by sample_id,peak_id or to NULL if there is no
+    ///such peak
     std::auto_ptr<Peak> peak_copy_from_id(unsigned sample_id, unsigned peak_id) const;
-
-#endif
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the
     ///\brief peak_group object specified by peak_group_id

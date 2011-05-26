@@ -115,7 +115,7 @@ std::auto_ptr<R> auto_ptr_dynamic_cast(std::auto_ptr<T>& in) {
   R* p;
   if( p = dynamic_cast<R*>( in.get() ) ) {
       in.release();
-      rv = p;
+      rv.reset(p);
   }
   return rv;
 }
