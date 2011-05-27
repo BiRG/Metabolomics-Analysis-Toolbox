@@ -40,7 +40,7 @@ public:
   }
 
   ///\brief return true iff \a o represents the same type as this
-  ///\brief object does
+  ///object does
   ///
   ///\param o the object being compared to this one
   ///

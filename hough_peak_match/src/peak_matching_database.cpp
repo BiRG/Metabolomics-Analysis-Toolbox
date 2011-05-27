@@ -30,7 +30,7 @@ namespace HoughPeakMatch{
     };
 
     ///\brief Declares that \a class_name uses a pair of unsigneds for
-    ///\brief its id
+    /// its id
     ///
     ///Macro creating a template specialization declaring that
     ///the given class uses a pair of unsigneds for its
@@ -61,7 +61,7 @@ namespace HoughPeakMatch{
       typename IdType<T>::type id;
     public:
       ///\brief Create a predicate that returns true iff its argument
-      ///\brief has the id \a id
+      /// has the id \a id
       ///\param id the id that this predicate will check for
       HasID(typename IdType<T>::type id):id(id){}
       
@@ -74,7 +74,7 @@ namespace HoughPeakMatch{
     };
 
     ///\brief Class to serve as a stand-in for abstract superclasses
-    ///\brief with unsigned ids
+    /// with unsigned ids
     class ObjectWithUnsignedID{
       ///\brief The id for this object
       unsigned id_;
@@ -94,7 +94,7 @@ namespace HoughPeakMatch{
 
   namespace{
     ///\brief The id member in each object returns a value not
-    ///\brief repeated by any other object in the collection.
+    /// repeated by any other object in the collection.
     ///
     ///\param used_ids In/Out parameter - on input contains a list of
     ///ids that should not be used by any member of the collection
@@ -126,7 +126,7 @@ namespace HoughPeakMatch{
     }
     
     ///\brief Returns whether the foreign keys in collection A are all
-    ///\brief ids in collection B
+    /// ids in collection B
     ///
     ///Elements of collection B must have a const id() function that
     ///returns get_key_from::KeyType
@@ -201,7 +201,7 @@ namespace HoughPeakMatch{
     };
 
     ///\brief Functional that extracts the number of parameter vectors
-    ///\brief implied by a given object's members.
+    /// implied by a given object's members.
     struct NumParamsExtractor{
       ///\brief Returns the number of parameters for an object of type T
       ///
@@ -216,7 +216,7 @@ namespace HoughPeakMatch{
     /// @cond SUPPRESS
 
     ///\brief Specialization returning the number of parameters in a
-    ///\brief ParamStats object
+    /// ParamStats object
     ///
     ///\param ps The ParamStats object whose parameters are being counted
     ///

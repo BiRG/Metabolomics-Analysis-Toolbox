@@ -22,7 +22,7 @@ namespace HoughPeakMatch{
 ///There should be at most one of these in the database
 class ParamStats:public PMObject{
   ///\brief Vector where element i holds the fraction of the variance
-  ///\brief accounted for by parameter pair i in the database
+  ///accounted for by parameter pair i in the database
   std::vector<double> frac_variances_;
 
   ///\brief Construct an uninitialized ParamStats object
@@ -54,7 +54,7 @@ public:
   virtual ~ParamStats(){}
 
   ///\brief Returns a vector giving the fraction of the total variance
-  ///\brief covered by each parameter in the database
+  ///covered by each parameter in the database
   ////
   ///\returns a vector giving the fraction of the total variance 
   ///covered by each parameter in the database
@@ -62,7 +62,7 @@ public:
     return frac_variances_; }
 
   ///\brief Creates a ParamStats object from a line in a database
-  ///\brief file
+  ///file
   ///
   ///Takes vector of words and creates a ParamStats object from
   ///them.  If the words do not define a ParamStats object, returns

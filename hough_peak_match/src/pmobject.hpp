@@ -20,7 +20,7 @@ public:
   virtual ObjectType type() const = 0;
 
   ///\brief Return true if this object's attributes that are not
-  ///\brief foreign keys are the same as those of \a o
+  ///foreign keys are the same as those of \a o
   ///
   ///Two objects of different type (even a base and derived type) will
   ///always compare different.  This object will also always compare

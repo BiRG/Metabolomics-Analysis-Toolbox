@@ -1,6 +1,6 @@
 ///\file
 ///\brief Declares std::mock_istringstream without making it replace
-///\brief std::istringstream
+///std::istringstream
 
 #ifndef STD_MOCK_ISTRINGSTREAM_DECLARATION_HPP
 #define STD_MOCK_ISTRINGSTREAM_DECLARATION_HPP

@@ -22,7 +22,7 @@
 #include <memory> //auto_ptr
 
 ///\brief Holds all the library classes and functions for the Hough
-///\brief peak matching prototype
+///peak matching prototype
 ///
 ///Note: this documentation block is in peak_matching_database.hpp
 namespace HoughPeakMatch{
@@ -93,7 +93,7 @@ namespace HoughPeakMatch{
     void make_empty();
 
     ///\brief Return true if the database satisfies its constraints,
-    ///\brief false otherwise
+    /// false otherwise
     ///
     ///There are a number of constraints the database must satisfiy to
     ///be in a consistent state.  For example: all sample_id's refered
@@ -111,7 +111,7 @@ namespace HoughPeakMatch{
     bool satisfies_constraints();
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the peak
-    ///\brief object specified by peak_id
+    /// object specified by peak_id
     ///
     ///I use an auto-pointer to a heap allocated copy so one can
     ///downcast the resulting pointer (use auto_ptr_dynamic_cast from
@@ -128,7 +128,7 @@ namespace HoughPeakMatch{
     std::auto_ptr<Peak> peak_copy_from_id(unsigned sample_id, unsigned peak_id) const;
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the
-    ///\brief peak_group object specified by peak_group_id
+    /// peak_group object specified by peak_group_id
     ///
     ///I use an auto-pointer to a heap allocated copy because it makes
     ///it easy to return null and also to ensure that the object's
@@ -146,7 +146,7 @@ namespace HoughPeakMatch{
     std::auto_ptr<PeakGroup> peak_group_copy_from_id(unsigned peak_group_id) const;
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the
-    ///\brief sample object specified by sample_id
+    /// sample object specified by sample_id
     ///
     ///I use an auto-pointer to a heap allocated copy because it makes
     ///it easy to return null and also to ensure that the object's

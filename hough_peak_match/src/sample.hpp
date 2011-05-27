@@ -17,11 +17,11 @@ namespace HoughPeakMatch{
 class Sample:public PMObject{
 protected:
   ///\brief non-negative integer uniquely identifying this sample in
-  ///\brief the database
+  ///the database
   unsigned sample_id_;
 
   ///\brief A string (without white-space) indicating which treatment class
-  ///\brief this sample came from. 
+  ///this sample came from. 
   ////
   ///If two samples have different strings, then they came from
   ///different classes, same string, same classes

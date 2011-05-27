@@ -38,7 +38,7 @@ void print_usage_and_exit(std::string errMsg){
 namespace HoughPeakMatch{
   namespace{
     ///\brief Represents a unique parameter ordering for a particular
-    ///\brief PeakMatchingDatabase
+    ///PeakMatchingDatabase
     ///
     ///This parameter ordering depends only on the contents of the
     ///database not on the external keys.  It can be applied to
@@ -46,7 +46,7 @@ namespace HoughPeakMatch{
     ///ordering
     class ParameterOrdering{
       ///\brief occupant[i] gives the original index of the value to
-      ///\brief occupy position i in the reordered array
+      ///occupy position i in the reordered array
       std::vector<std::size_t> occupant;
     public:
       ///\brief Extract the parameter ordering for \a pmd
@@ -102,7 +102,7 @@ namespace HoughPeakMatch{
     /// @cond SUPPRESS
 
     ///\brief Specialization returning the parameters in a
-    ///\brief ParamStats object
+    ///ParamStats object
     ///
     ///\param ps The ParamStats object whose parameters are being extracted
     ///
@@ -114,10 +114,10 @@ namespace HoughPeakMatch{
     /// @endcond 
 
     ///\brief Functional that compares two rows by looking at whether
-    ///\brief their sorted contents are lexically in order
+    ///their sorted contents are lexically in order
     struct RowSortedLessThan{
       ///\brief returns true if sorted \a a_orig lexically comes 
-      ///\brief before \a b_orig
+      ///before \a b_orig
       ///
       ///Behaves as if follows the following algorithm: sort a copy of
       ///\a a_orig (a), sort a copy of \a b_orig (b).  Returns true if
@@ -138,7 +138,7 @@ namespace HoughPeakMatch{
     };
 
     ///\brief A column of the parameter vectors for all objects in the
-    ///\brief database
+    ///database
     class Column:public std::vector<double>{
     public:
       ///\param The index this column had before being
@@ -146,7 +146,7 @@ namespace HoughPeakMatch{
       std::size_t original_index;
 
       ///\brief create a colum with \a v as contents and \a
-      ///\brief original_index as the original index
+      ///original_index as the original index
       ///
       ///\param original_index the index this column had before being
       ///reordered

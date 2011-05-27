@@ -27,14 +27,14 @@ namespace HoughPeakMatch{
     KeyRelation():std::set<KeyPair>(){}
 
     ///\brief Return the keys that are the first element of some
-    ///\brief ordered pair in the relation
+    ///ordered pair in the relation
     ///
     ///\return the keys that are the first element of some ordered
     ///pair in the relation
     std::set<KeySptr> project_first();
 
     ///\brief Return the keys that are the second element of some
-    ///\brief ordered pair in the relation
+    ///ordered pair in the relation
     ///
     ///\return the keys that are the second element of some ordered
     ///pair in the relation

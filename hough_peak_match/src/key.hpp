@@ -27,7 +27,7 @@ class Key:private boost::less_than_comparable<Key>,
 	  private boost::equivalent<Key>{
 protected:
   ///\brief The database in which the object referenced by this key is
-  ///\brief stored
+  ///stored
   const PeakMatchingDatabase& db_;
 public:
   ///\brief Create a key referencing \a database
@@ -83,7 +83,7 @@ public:
 //a base-class pointer will not be a problem
 #pragma GCC diagnostic ignored "-Weffc++"
   ///\brief A wrapper around shared pointers to keys that provides a
-  ///\brief dereferencing less-than
+  ///dereferencing less-than
   class KeySptr:public boost::shared_ptr<Key>{
   public:
     ///\brief Create a shared_ptr to a Key

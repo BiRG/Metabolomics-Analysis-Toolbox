@@ -50,7 +50,7 @@ bool is_special_double(double d);
 bool contains_white_space(const std::string s);
 
 ///\brief Writes a space-separated version of \a v to \a out,
-///\brief returning \a out
+///returning \a out
 ///
 ///The list {1,2,3} will be space separated into "1 2 3" -
 ///spaces only between entries.  ostream_iterator would insert

@@ -17,11 +17,11 @@ namespace HoughPeakMatch{
 class Peak:public PMObject{
 protected:
   ///\brief non-negative integer uniquely identifying the sample to
-  ///\brief which this peak belongs
+  ///which this peak belongs
   unsigned sample_id_;
 
   ///\brief non-negative integer uniquely identifying this peak within
-  ///\brief all peaks belonging to its sample
+  ///all peaks belonging to its sample
   unsigned peak_id_;
 
   ///\brief the measured location of this peak within the sample in ppm

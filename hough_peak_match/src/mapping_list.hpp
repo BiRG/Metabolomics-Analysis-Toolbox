@@ -20,7 +20,7 @@ namespace HoughPeakMatch{
     friend class MappingListConstIterator;
   public:
     ///\brief Create a MappingList containing all the mappings implied
-    ///\brief by the candidate pairs in \a r
+    ///by the candidate pairs in \a r
     ///
     ///\param r The relation to be represented as a list of mappings
     MappingList(const KeyRelation& r):map(){
@@ -31,14 +31,14 @@ namespace HoughPeakMatch{
     }
 
     ///\brief Return a const-iterator-like object to the beginning of
-    ///\brief this MappingList
+    ///this MappingList
     ///
     ///\return a const-iterator-like object to the beginning of this
     ///MappingList
     MappingListConstIterator begin() const;
 
     ///\brief Return a const-iterator-like object to one-past-the-end
-    ///\brief of this MappingList
+    ///of this MappingList
     ///
     ///\return a const-iterator-like object to one-past-the-end of
     ///this MappingList
@@ -46,7 +46,7 @@ namespace HoughPeakMatch{
   };
 
   ///\brief Data class to hold the beginning, current position and end
-  ///\brief of a set of Keys
+  ///of a set of Keys
   struct KeySetConstIteratorTriple{
     ///\brief Begin iterator for the set
     std::set<KeySptr>::const_iterator begin;
@@ -100,11 +100,11 @@ namespace HoughPeakMatch{
     ///points to a valid KeySptr
     std::map<KeySptr, KeySetConstIteratorTriple> map;
     ///\brief If true then the map member wrapped around and now we
-    ///\brief are a one-past-the-end iterator
+    ///are a one-past-the-end iterator
     bool at_end;
   public:
     ///\brief Create an iterator for \a ml either at the beginning or
-    ///\brief one-past-the-end
+    ///one-past-the-end
     ///
     ///\param ml The mapping list the iterator will cover
     ///
@@ -128,7 +128,7 @@ namespace HoughPeakMatch{
     KeySptr operator()(KeySptr key) const;
     
     ///\brief Return true iff the two iterators point to different
-    ///\brief parts of the list or to different lists
+    ///parts of the list or to different lists
     ///
     ///\param other the iterator to which this one is being compared
     ///
