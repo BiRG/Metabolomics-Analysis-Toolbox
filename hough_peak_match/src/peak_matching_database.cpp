@@ -1,13 +1,16 @@
 ///\file
 ///\brief Definitions members of the PeakMatchingDatabase class
 
+#include "peak_group_key.hpp"
+#include "sample_key.hpp"
+#include "peak_key.hpp"
+#include "param_stats_key.hpp"
 #include "peak_matching_database.hpp"
 #include "file_format_sample.hpp"
 #include "file_format_sample_params.hpp"
 #include "utils.hpp"
 #include <string>
 #include <vector>
-#include <set>
 #include <algorithm>
 #include <iterator>
 #include <fstream>
@@ -484,10 +487,10 @@ namespace HoughPeakMatch{
   }
 
 
-#if 0
   std::auto_ptr<Peak> PeakMatchingDatabase::peak_copy_from_id
   (unsigned sample_id, unsigned peak_id) const{
-    using std::find_if; using std::vector;
+    using std::find_if; using std::vector; using std::make_pair;
+    using std::auto_ptr;
     std::pair<unsigned,unsigned> id=make_pair(sample_id,peak_id);
     HasID<UnknownPeak> unknown_pred(id);
     HasID<UnverifiedPeak> unverified_pred(id);
@@ -509,7 +512,6 @@ namespace HoughPeakMatch{
     }
     return auto_ptr<Peak>(NULL);
   }
-#endif
 
   std::auto_ptr<Sample> 
   PeakMatchingDatabase::sample_copy_from_id(unsigned sample_id) const{
@@ -557,4 +559,92 @@ namespace HoughPeakMatch{
       return std::auto_ptr<PeakGroup>(new PeakGroup(peak_group_id));
     }
   }
+
+  namespace{
+    ///\brief Return the keys for the given sequence of database objects
+    ///
+    ///\param db the database the keys will reference -- must have a
+    ///life-span longer than the generated keys
+    ///
+    ///\param begin the first element in the sequence
+    ///
+    ///\param end one-past-the-end element of the sequence
+    ///
+    ///\return the keys for the given sequence of param_stats objects
+    ///
+    ///\tparam KeyType the type of key that is generated from the
+    ///value type of the sequence
+    ///
+    ///\tparam InputIter the input iterator to go through the sequence
+    template<class KeyType,class InputIter>
+      std::set<KeySptr> keys_for_sequence(const PeakMatchingDatabase& db,
+					  InputIter begin, InputIter end){
+      std::set<KeySptr> ret;
+      while(begin != end){
+	KeySptr k=new KeyType(db, begin->id());
+	ret.insert(k);
+	++begin;
+      }
+      return ret;
+    }
+
+    ///\brief Return the keys for the given sequence of param_stats objects
+    ///
+    ///\param db the database the keys will reference -- must have a
+    ///life-span longer than the generated keys
+    ///
+    ///\param begin the first element in the sequence
+    ///
+    ///\param end one-past-the-end element of the sequence
+    ///
+    ///\return the keys for the given sequence of param_stats objects
+    ///
+    ///\tparam InputIter the input iterator to go through the sequence
+    template<class InputIter>
+      std::set<KeySptr> keys_for_param_stats_sequence
+      (const PeakMatchingDatabase& db, InputIter begin, InputIter end){
+      std::set<KeySptr> ret;
+      while(begin != end){
+	KeySptr k=new ParamStatsKey(db);
+	ret.insert(k);
+	++begin;
+      }
+      return ret;
+    }
+    
+  }
+
+  std::set<KeySptr> PeakMatchingDatabase::keys_for_type(ObjectType t) const{
+    if      (t == ObjectType("detected_peak_group")){
+      return keys_for_sequence<PeakGroupKey>
+	(*this, detected_peak_groups_.begin(), detected_peak_groups_.end());
+    }else if(t == ObjectType("parameterized_peak_group")){
+      return keys_for_sequence<PeakGroupKey>
+	(*this, parameterized_peak_groups_.begin(), 
+	 parameterized_peak_groups_.end());
+    }else if(t == ObjectType("human_verified_peak")){
+      return keys_for_sequence<PeakKey>
+	(*this, human_verified_peaks_.begin(), human_verified_peaks_.end());
+    }else if(t == ObjectType("unverified_peak")){
+      return keys_for_sequence<PeakKey>
+	(*this, unverified_peaks_.begin(), unverified_peaks_.end());
+    }else if(t == ObjectType("unknown_peak")){
+      return keys_for_sequence<PeakKey>
+	(*this, unknown_peaks_.begin(), unknown_peaks_.end());
+    }else if(t == ObjectType("parameterized_sample")){
+      return keys_for_sequence<SampleKey>
+	(*this, parameterized_samples_.begin(), parameterized_samples_.end());
+    }else if(t == ObjectType("unparameterized_sample")){
+      return keys_for_sequence<SampleKey>
+	(*this, unparameterized_samples_.begin(), 
+	 unparameterized_samples_.end());
+    }else if(t == ObjectType("param_stats")){
+      return keys_for_param_stats_sequence
+	(*this, param_stats_.begin(), param_stats_.end());
+    }else{
+      throw std::logic_error("Unknown ObjectType passed to "
+			     "PeakMatchingDatabase::keys_for_type");
+    }
+  }
+
 }

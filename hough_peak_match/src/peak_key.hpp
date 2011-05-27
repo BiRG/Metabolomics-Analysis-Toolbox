@@ -3,6 +3,7 @@
 
 #include "key.hpp"
 #include <memory> //For auto_ptr
+#include <utility> //For pair
 
 namespace HoughPeakMatch{
 
@@ -25,12 +26,15 @@ public:
   ///\param database the database in which the object referenced by
   ///this key is stored - should have longer life-span than the key
   ///
-  ///\param sample_id the sample_id for the peak in \a database
-  ///
-  ///\param peak_id the peak_id for the peak in \a database
+  ///\param id a pair in which the first is the sample_id and the
+  ///second, the peak_id
   PeakKey(const PeakMatchingDatabase& database, 
-	  unsigned sample_id, unsigned peak_id)
-    :Key(database),sample_id_(sample_id),peak_id_(peak_id){}
+	  std::pair<unsigned, unsigned> id)
+    :Key(database),sample_id_(id.first),peak_id_(id.second){}
+
+  virtual std::string type_string() const{ 
+    return "peak_key";
+  }
 
   virtual std::auto_ptr<PMObject> obj_copy() const;
 

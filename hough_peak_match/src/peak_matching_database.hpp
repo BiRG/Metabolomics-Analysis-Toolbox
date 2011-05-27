@@ -3,9 +3,6 @@
 
 #ifndef HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
 #define HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
-#include <iostream>
-#include <vector>
-#include <memory> //auto_ptr
 
 #include "sample_key.hpp"
 #include "peak_key.hpp"
@@ -19,6 +16,10 @@
 #include "unknown_peak.hpp"
 #include "param_stats.hpp"
 
+#include <iostream>
+#include <vector>
+#include <set>
+#include <memory> //auto_ptr
 
 ///\brief Holds all the library classes and functions for the Hough
 ///\brief peak matching prototype
@@ -201,6 +202,15 @@ namespace HoughPeakMatch{
     const std::vector<ParamStats>& param_stats() const {
       return param_stats_;
     }
+
+    ///\return All the keys that would return an object of the given
+    ///type in this database
+    ///
+    ///\param t the type of object whose keys should be returned
+    ///
+    ///\brief Return all the keys that would return an object of the given
+    ///type in this database
+    std::set<KeySptr> keys_for_type(ObjectType t) const;
 
   };
 
