@@ -130,6 +130,8 @@ namespace HoughPeakMatch{
     ///\brief Return true iff the two iterators point to different
     ///\brief parts of the list or to different lists
     ///
+    ///\param other the iterator to which this one is being compared
+    ///
     ///\return true iff the two iterators point to different parts of
     ///the list or to different lists
     bool operator !=(const MappingListConstIterator& other);
