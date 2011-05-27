@@ -6,7 +6,7 @@
 
 namespace HoughPeakMatch{
 
-ParamStats ParamStats::from_text_line
+  ParamStats ParamStats::from_text_line
   (const std::vector<std::string>& words, bool& failed){
     ParamStats ret;
     if(words.size() < 2){
@@ -20,11 +20,11 @@ ParamStats ParamStats::from_text_line
       double fracvar_temp;
       std::istringstream fracvar_in(words.at(i));
       if(!(fracvar_in >> fracvar_temp)) {
-failed = true; return ret; }
+	failed = true; return ret; }
       if(is_special_double(fracvar_temp)) {
-failed = true; return ret; }
+	failed = true; return ret; }
       if(fracvar_temp < 0){
-failed = true; return ret; }
+	failed = true; return ret; }
       ret.frac_variances_.push_back(fracvar_temp);
       fracvar_sum += fracvar_temp;
     }
@@ -36,20 +36,20 @@ failed = true; return ret; }
     failed = false; return ret;
   }
 
-std::string ParamStats::to_text() const{
-  std::ostringstream out;
-  out << "param_stats";
-  for(std::vector<double>::const_iterator it = frac_variances_.begin();
-      it != frac_variances_.end(); ++it){
-    out << " " << *it;
+  std::string ParamStats::to_text() const{
+    std::ostringstream out;
+    out << "param_stats";
+    for(std::vector<double>::const_iterator it = frac_variances_.begin();
+	it != frac_variances_.end(); ++it){
+      out << " " << *it;
+    }
+    out << std::endl;
+    return out.str();
   }
-  out << std::endl;
-  return out.str();
-}
 
-std::vector<KeySptr> 
-ParamStats::foreign_keys(const PeakMatchingDatabase&) const{
-  return std::vector<KeySptr>();
-}
+  std::vector<KeySptr> 
+  ParamStats::foreign_keys(const PeakMatchingDatabase&) const{
+    return std::vector<KeySptr>();
+  }
 
 }
