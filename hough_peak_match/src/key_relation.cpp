@@ -3,6 +3,7 @@
 namespace HoughPeakMatch{
 
   namespace{
+    ///\brief Shortcut for std::set<KeySptr> - a set of keys
     typedef std::set<KeySptr> KeySet;
   }
 
