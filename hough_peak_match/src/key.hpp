@@ -3,6 +3,7 @@
 
 #include "pmobject.hpp"
 #include <boost/operators.hpp>
+#include <boost/shared_ptr.hpp>
 #include <memory> //For auto_ptr
 
 namespace HoughPeakMatch{
@@ -76,6 +77,28 @@ public:
   }
 };
 #pragma GCC diagnostic warning "-Weffc++"
+
+//I also ignore the same base-class warning here as for Key - here,
+//there is no extra data and no virtual functions, so deletion through
+//a base-class pointer will not be a problem
+#pragma GCC diagnostic ignored "-Weffc++"
+  ///\brief A wrapper around shared pointers to keys that provides a
+  ///\brief dereferencing less-than
+  class KeySptr:public boost::shared_ptr<Key>{
+    ///\brief Create a 
+    KeySptr(Key*k):boost::shared_ptr<Key>(k){}
+
+    ///\brief Return true if **this < \a *rhs
+    ///
+    ///\param rhs the right-hand-side of the < operator
+    ///
+    ///\return Return true if **this < \a *rhs
+    bool operator<(KeySptr rhs){
+      return (**this) < *rhs;
+    }
+  };
+#pragma GCC diagnostic warning "-Weffc++"
+
 
 }
 

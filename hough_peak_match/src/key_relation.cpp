@@ -3,12 +3,11 @@
 namespace HoughPeakMatch{
 
   namespace{
-    typedef boost::shared_ptr<Key> pKey;
-    typedef std::set<pKey, DereferenceLess> KeySet;
+    typedef std::set<KeySptr> KeySet;
   }
 
   KeySet KeyRelation::project_first(){
-    KeySet ret=std::set<pKey, DereferenceLess>(DereferenceLess());
+    KeySet ret=std::set<KeySptr>();
     typename KeySet::iterator last = ret.begin();
     for(iterator cur = begin(); cur != end(); ++cur){
       last = ret.insert(last, cur->first);
@@ -17,7 +16,7 @@ namespace HoughPeakMatch{
   }
 
   KeySet KeyRelation::project_second(){
-    KeySet ret=std::set<pKey, DereferenceLess>(DereferenceLess());
+    KeySet ret=std::set<KeySptr>();
     typename KeySet::iterator last = ret.begin();
     for(iterator cur = begin(); cur != end(); ++cur){
       last = ret.insert(last, cur->second);

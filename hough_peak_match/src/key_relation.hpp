@@ -2,7 +2,6 @@
 #define HOUGH_PEAK_MATCH_KEY_RELATION_HPP
 
 #include "key_pair.hpp"
-#include "dereference_less.hpp"
 #include "key.hpp"
 #include <boost/shared_ptr.hpp>
 #include <utility> //For pair
@@ -32,14 +31,14 @@ namespace HoughPeakMatch{
     ///
     ///\return the keys that are the first element of some ordered
     ///pair in the relation
-    std::set<boost::shared_ptr<Key>, DereferenceLess> project_first();
+    std::set<KeySptr> project_first();
 
     ///\brief Return the keys that are the second element of some
     ///\brief ordered pair in the relation
     ///
     ///\return the keys that are the second element of some ordered
     ///pair in the relation
-    std::set<boost::shared_ptr<Key>, DereferenceLess> project_second();
+    std::set<KeySptr> project_second();
 
   };
 
