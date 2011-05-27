@@ -1,6 +1,7 @@
 ///\file
 ///\brief Main routine and supporting code for the equivalent_db executable
 
+#include "key_relation.hpp"
 #include "peak_matching_database.hpp"
 #include <iostream>
 #include <cstdlib> //For exit

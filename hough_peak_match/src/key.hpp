@@ -9,12 +9,19 @@ namespace HoughPeakMatch{
 
 class PeakMatchingDatabase;
 
+
+
+//I ignore EffectiveC++ warnings here to get rid of warning about
+//non-virtual destructor in the base class -- you aren't going to
+//delete a key object through a pointer to a boost::equivalent<Key>
+//object
+#pragma GCC diagnostic ignored "-Weffc++"
+
 ///\brief Key uniquely specifying an object in a PeakMatchingDatabase
 ///
 ///Key objects can retrieve a copy of the object they specify from the
 ///database and be compared to other key objects
 ///\todo Test
-#pragma GCC diagnostic ignored "-Weffc++"
 class Key:private boost::less_than_comparable<Key>, 
 	  private boost::equivalent<Key>{
 protected:
