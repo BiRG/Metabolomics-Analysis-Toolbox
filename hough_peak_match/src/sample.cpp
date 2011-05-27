@@ -1,6 +1,7 @@
 #include "sample.hpp"
 #include "mockable_stringstream.hpp"
 #include "utils.hpp"
+#include "key.hpp"
 #include <stdexcept>
 
 namespace HoughPeakMatch{
@@ -17,4 +18,10 @@ namespace HoughPeakMatch{
 			     "a sample class");
     }
   }
+
+  std::vector<KeySptr> 
+  Sample::foreign_keys(const PeakMatchingDatabase&) const{
+    return std::vector<KeySptr>();
+  }
+
 }

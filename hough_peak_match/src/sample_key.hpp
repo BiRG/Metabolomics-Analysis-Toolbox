@@ -25,9 +25,14 @@ public:
   SampleKey(const PeakMatchingDatabase& database, unsigned sample_id)
     :Key(database),sample_id_(sample_id){}
 
+  virtual std::string type_string() const{ 
+    return "sample_key";
+  }
+
   virtual std::auto_ptr<PMObject> obj_copy() const;
 
   virtual bool operator<(const Key& k) const;
+
 };
 
 }

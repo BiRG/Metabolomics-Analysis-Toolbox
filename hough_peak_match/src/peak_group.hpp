@@ -45,6 +45,8 @@ public:
     return true;
   }
 
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase&) const;
+
 };
 
 }

@@ -4,6 +4,7 @@
 #ifndef HOUGH_PEAK_MATCH_PEAK
 #define HOUGH_PEAK_MATCH_PEAK
 
+#include "sample_key.hpp"
 #include "pmobject.hpp"
 #include <utility> //For pair, make_pair
 #include <vector>
@@ -106,6 +107,12 @@ public:
       return false; }
     const Peak* p = dynamic_cast<const Peak*>(o);
     return ppm() == p->ppm();
+  }
+
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase& db) const{
+    std::vector<KeySptr> ret(1,KeySptr(NULL));
+    ret[0]=KeySptr(new SampleKey(db, sample_id()));
+    return ret;
   }
 
 };

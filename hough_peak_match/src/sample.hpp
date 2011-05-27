@@ -66,6 +66,9 @@ public:
   ///\ref sample "the file format documentation" terminated
   ///with a newline
   virtual std::string to_text() const = 0;
+
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase&) const;
+
 };
 
 }

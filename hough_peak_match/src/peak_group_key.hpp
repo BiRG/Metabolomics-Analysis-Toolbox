@@ -25,6 +25,10 @@ public:
   PeakGroupKey(const PeakMatchingDatabase& database, unsigned peak_group_id)
     :Key(database),peak_group_id_(peak_group_id){}
 
+  virtual std::string type_string() const{
+    return "peak_group_key";
+  }
+
   virtual std::auto_ptr<PMObject> obj_copy() const;
 
   virtual bool operator<(const Key& k) const;

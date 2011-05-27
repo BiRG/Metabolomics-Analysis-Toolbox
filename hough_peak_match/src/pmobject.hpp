@@ -4,8 +4,12 @@
 #define HOUGH_PEAK_MATCH_PMOBJECT_HPP
 
 #include "object_type.hpp"
+#include <vector>
 
 namespace HoughPeakMatch{
+
+class KeySptr;
+class PeakMatchingDatabase;
 
 ///\brief The base class of all objects in the PeakMatchingDatabase
 class PMObject{
@@ -28,6 +32,17 @@ public:
   ///\return true if this object's attributes that are not foreign
   ///keys are the same as those of \a o
   virtual bool has_same_non_key_parameters(const PMObject* o) const = 0;
+
+  ///\brief Return a list of the foreign keys used by this object
+  ///
+  ///This list is guaranteed to be in the same order for all objects
+  ///the same type
+  ///
+  ///\param db the database to resolve the keys against -- must have a
+  ///longer life-span than the returned key objects
+  ///
+  ///\return a list of the foreign keys used by this object
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase& db) const = 0;
 
   virtual ~PMObject(){}
 };

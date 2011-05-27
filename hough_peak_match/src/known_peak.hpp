@@ -71,6 +71,9 @@ public:
   ///
   ///\return the id of the peak group to which this peak belongs
   virtual unsigned peak_group_id() const { return peak_group_id_; }
+
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase& db);
+
 };
 
 }

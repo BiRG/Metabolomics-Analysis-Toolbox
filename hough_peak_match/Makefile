@@ -24,6 +24,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/unparameterized_sample.o\
 	obj/parameterized_sample.o\
 	obj/peak.o \
+	obj/peak_group.o\
 	obj/mockable_stringstream.o\
 	obj/peak_key.o\
 	obj/peak_group_key.o\

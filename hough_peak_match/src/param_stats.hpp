@@ -111,6 +111,8 @@ public:
     return frac_variances_ == ps->frac_variances_;
   }
 
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase&) const;
+
 };
 
 }
