@@ -16,15 +16,17 @@ namespace HoughPeakMatch{
   class MappingList{
     ///\brief Maps keys to sets of candidate keys in the other database
     std::map<KeySptr, std::set<KeySptr> > map;
+
+    friend class MappingListConstIterator;
   public:
     ///\brief Create a MappingList containing all the mappings implied
     ///\brief by the candidate pairs in \a r
     ///
     ///\param r The relation to be represented as a list of mappings
-    MappingList(const KeyRelation& r){
+    MappingList(const KeyRelation& r):map(){
       KeyRelation::const_iterator it;
       for(it = r.begin(); it != r.end(); ++it){
-	map[(*it)->first]=(*it)->second;
+	map[it->first].insert(it->second);
       }
     }
 
@@ -64,6 +66,20 @@ namespace HoughPeakMatch{
     (std::set<KeySptr>::const_iterator begin,
      std::set<KeySptr>::const_iterator cur,
      std::set<KeySptr>::const_iterator end):begin(begin),cur(cur),end(end){}
+
+    ///\brief Create an uninitialized KeySetConstIteratorTriple
+    KeySetConstIteratorTriple():begin(),cur(),end(){}
+
+    ///\brief Return true if this has identical members to \a rhs
+    ///
+    ///\param rhs the KeySetConstIteratorTriple whose members will be
+    ///compared for equality
+    ///
+    ///\return true if this has identical members to \a rhs
+    bool operator==(const KeySetConstIteratorTriple&rhs) const{
+      return begin == rhs.begin && cur == rhs.cur && end == rhs.end;
+    }
+
   };
 
   ///\brief A const_iterator-like object for iterating through a
@@ -79,6 +95,9 @@ namespace HoughPeakMatch{
   ///\todo test
   class MappingListConstIterator{
     ///\brief Maps from each key to its current candidate
+    ///
+    ///Unless at_end is set, the cur element of the triple always
+    ///points to a valid KeySptr
     std::map<KeySptr, KeySetConstIteratorTriple> map;
     ///\brief If true then the map member wrapped around and now we
     ///\brief are a one-past-the-end iterator
@@ -93,6 +112,37 @@ namespace HoughPeakMatch{
     ///element of ml, if false, then a one-past-the-end iterator is
     ///created.
     MappingListConstIterator(const MappingList&ml,bool from_beginning);
+
+    ///\brief Increment this iterator and return it
+    ///
+    ///\return this iterator after incrementation
+    MappingListConstIterator& operator++();
+
+    ///\brief Return the KeySptr that \a key maps to
+    ///
+    ///\param key the key whose associated value will be returned
+    ///
+    ///\return Return the KeySptr that \a key maps to, if \a key
+    ///doesn't exist or the iterator is past the end, returns a
+    ///KeySptr to NULL
+    KeySptr operator()(KeySptr key) const;
+    
+    ///\brief Return true iff the two iterators point to different
+    ///\brief parts of the list or to different lists
+    ///
+    ///\return true iff the two iterators point to different parts of
+    ///the list or to different lists
+    bool operator !=(const MappingListConstIterator& other);
+
+    ///\brief Return the keys of the mapping
+    ///
+    ///\return the keys of the mapping
+    std::set<KeySptr> keys();
+
+    ///\brief Return the values of the mapping
+    ///
+    ///\return the values of the mapping
+    std::set<KeySptr> values();
   };
 }
 
