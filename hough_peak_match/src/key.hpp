@@ -85,6 +85,7 @@ public:
   ///\brief A wrapper around shared pointers to keys that provides a
   ///\brief dereferencing less-than
   class KeySptr:public boost::shared_ptr<Key>{
+  public:
     ///\brief Create a shared_ptr to a Key
     ///
     ///\param k the raw pointer to wrap
