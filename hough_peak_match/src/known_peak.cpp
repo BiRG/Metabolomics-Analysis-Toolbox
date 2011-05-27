@@ -25,7 +25,7 @@ namespace HoughPeakMatch{
     failed = false; return;
   }
 
-  std::vector<KeySptr> KnownPeak::foreign_keys(const PeakMatchingDatabase& db){
+  std::vector<KeySptr> KnownPeak::foreign_keys(const PeakMatchingDatabase& db) const{
     std::vector<KeySptr> ret(2, KeySptr(NULL));
     ret[0]=KeySptr(new SampleKey(db, sample_id()));
     ret[1]=KeySptr(new PeakGroupKey(db, peak_group_id()));
