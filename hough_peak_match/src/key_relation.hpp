@@ -1,6 +1,7 @@
 #ifndef HOUGH_PEAK_MATCH_KEY_RELATION_HPP
 #define HOUGH_PEAK_MATCH_KEY_RELATION_HPP
 
+#include "key_pair.hpp"
 #include "dereference_less.hpp"
 #include "key.hpp"
 #include <boost/shared_ptr.hpp>
@@ -8,17 +9,6 @@
 #include <set>
 
 namespace HoughPeakMatch{
-
-  ///\brief A pair of keys
-  typedef std::pair<boost::shared_ptr<Key>, boost::shared_ptr<Key> > KeyPair;
-
-  struct KeyPairLess{
-    bool operator()(KeyPair a, KeyPair b){
-      return 
-	*(a.first) < *(b.first) ||
-	(*(a.first) == *(b.first) && *(a.second) == *(b.second));
-    }
-  };
 
 //I ignore EffectiveC++ warnings here to get rid of warning about
 //non-virtual destructor in the base class -- and I put a warning in
@@ -32,10 +22,10 @@ namespace HoughPeakMatch{
   ///not delete this class through a base-class pointer
   ///
   ///\todo test
-  class KeyRelation:public std::set<KeyPair,KeyPairLess>{
+  class KeyRelation:public std::set<KeyPair>{
   public:
     ///\brief Create an empty KeyRelation
-    KeyRelation():std::set<KeyPair,KeyPairLess>(KeyPairLess()){}
+    KeyRelation():std::set<KeyPair>(){}
 
     ///\brief Return the keys that are the first element of some
     ///\brief ordered pair in the relation
