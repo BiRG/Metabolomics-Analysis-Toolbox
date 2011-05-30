@@ -31,6 +31,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/param_stats_key.o\
 	obj/key_relation.o\
 	obj/mapping_list.o\
+	obj/unique_parameter_ordering.o\
 	obj/sample_key.o
 LDLIBS:=-ltap++
 LDFLAGS:=$(GCOV_LDOPTS)
