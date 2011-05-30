@@ -1,6 +1,7 @@
 ///\file
 ///\brief Main routine and supporting code for the equivalent_db executable
 
+#include "object_type.hpp"
 #include "unique_parameter_ordering.hpp"
 #include "key_relation.hpp"
 #include "peak_matching_database.hpp"
@@ -32,6 +33,65 @@ void print_usage_and_exit(std::string errMsg){
   std::exit(-1);
 }
 
+namespace HoughPeakMatch{
+
+bool have_same_non_key_parameters(KeySptr k1, KeySptr k2){
+  std::auto_ptr<PMObject> o1 = k1->obj_copy();
+  std::auto_ptr<PMObject> o2 = k2->obj_copy();
+  
+  return o1->has_same_non_key_parameters(o2.get());
+}
+
+bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
+  using std::set;
+  UniqueParameterOrdering o1(db1);
+  db1.reorder_with(o1);
+  UniqueParameterOrdering o2(db2);
+  db2.reorder_with(o2);
+
+  set<KeySptr> k1,k2;
+
+  KeyRelation r;
+
+  const unsigned num_otypes = 8;
+  ObjectType otypes[num_otypes] = 
+    {ObjectType("param_stats"), ObjectType("human_verified_peak"), 
+     ObjectType("unverified_peak"), ObjectType("unknown_peak"), 
+     ObjectType("parameterized_sample"), ObjectType("unparameterized_sample"), 
+     ObjectType("detected_peak_group"), ObjectType("parameterized_peak_group")};
+
+  for(ObjectType* ot = otypes; ot != otypes+num_otypes; ++ot){
+    set<KeySptr> db1_keys = db1.keys_for_type(*ot);
+    set<KeySptr> db2_keys = db2.keys_for_type(*ot);
+
+    k1.insert(db1_keys.begin(), db1_keys.end());
+    k2.insert(db2_keys.begin(), db2_keys.end());
+    
+    {
+      set<KeySptr>::iterator it1, it2;
+      for(it1 = db1_keys.begin(); it1 != db1_keys.end(); ++it1){
+	for(it2 = db2_keys.begin(); it2 != db2_keys.end(); ++it2){
+	  if(have_same_non_key_parameters(*it1, *it2)){
+	      r.insert(std::make_pair(*it1,*it2));
+	  }
+	}
+      }
+    }
+
+    if(r.project_first() != k1){ 
+      return false; 
+    }else if(r.project_second() != k2){
+      return false;
+    }
+
+  }
+
+  ///\todo finish -- write all candidate search
+
+  return true;///\todo DEBUG
+}
+
+}
 ///\brief The main routine for equivalent_db
 ///
 ///\param argc The number of elements in the argv vector
@@ -50,7 +110,7 @@ int main(int argc, char**argv){
   PeakMatchingDatabase db2 = 
     read_database(argv[2],"the second", print_usage_and_exit);
 
-  if(true){
+  if(are_equivalent(db1,db2)){
     std::cout << "Databases ARE equivalent" << std::endl;
   }else{
     std::cout << "Databases ARE NOT equivalent" << std::endl;

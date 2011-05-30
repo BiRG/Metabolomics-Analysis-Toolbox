@@ -83,8 +83,9 @@ public:
 //a base-class pointer will not be a problem
 #pragma GCC diagnostic ignored "-Weffc++"
   ///\brief A wrapper around shared pointers to keys that provides a
-  ///dereferencing less-than
-  class KeySptr:public boost::shared_ptr<Key>{
+  ///dereferencing less-than and a dereferencing == and !=
+  class KeySptr:public boost::shared_ptr<Key>, 
+		private boost::equality_comparable<KeySptr>{
   public:
     ///\brief Create a shared_ptr to a Key
     ///
@@ -99,6 +100,17 @@ public:
     bool operator<(KeySptr rhs){
       return (**this) < *rhs;
     }
+
+    ///\brief Return true if **this == \a *rhs
+    ///
+    ///\param rhs the right-hand-side of the == operator
+    ///
+    ///\return Return true if **this == \a *rhs
+    bool operator==(KeySptr rhs){
+      return (**this) == *rhs;
+    }
+
+    
   };
 #pragma GCC diagnostic warning "-Weffc++"
 
