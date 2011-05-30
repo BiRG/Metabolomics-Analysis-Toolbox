@@ -4,6 +4,7 @@
 #ifndef HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
 #define HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
 
+#include "unique_parameter_ordering.hpp"
 #include "sample_key.hpp"
 #include "peak_key.hpp"
 #include "key.hpp"
@@ -212,6 +213,11 @@ namespace HoughPeakMatch{
     ///type in this database
     std::set<KeySptr> keys_for_type(ObjectType t) const;
 
+
+    ///\brief Reorders all the parameters in this database according to \a upo
+    ///
+    ///\param upo The ordering for the reordered parameters
+    void reorder_with(const UniqueParameterOrdering& upo);
   };
 
 

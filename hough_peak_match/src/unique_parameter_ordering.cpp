@@ -1,3 +1,4 @@
+#include "params_extractor.hpp"
 #include "unique_parameter_ordering.hpp"
 #include "peak_matching_database.hpp"
 #include "utils.hpp"
@@ -7,32 +8,6 @@ namespace HoughPeakMatch{
   namespace{
     ///\brief A row in the matrix of parameters from all database objects
     typedef std::vector<double> Row;
-
-    ///\brief Functional that extracts the parameters in an object
-    struct ParamsExtractor{
-      ///\brief Returns the parameters for an object of type T
-      ///
-      ///\param t The object whose parameters are being extracted
-      ///
-      ///\return the parameters for an instance of type T
-      template<class T>
-      inline Row operator()(const T& t) const{ 
-	return t.params(); }
-    };
-    
-    /// @cond SUPPRESS
-
-    ///\brief Specialization returning the parameters in a
-    ///ParamStats object
-    ///
-    ///\param ps The ParamStats object whose parameters are being extracted
-    ///
-    ///\return the parameters for the ParamStats object
-    template<>
-      inline Row ParamsExtractor::operator()(const ParamStats& ps) const{ 
-      return ps.frac_variances(); }
-
-    /// @endcond 
 
     ///\brief Functional that compares two rows by looking at whether
     ///their sorted contents are lexically in order
@@ -82,6 +57,7 @@ namespace HoughPeakMatch{
     :occupant(){
     using std::vector; using std::transform; using std::size_t;
     using std::back_insert_iterator;
+    using Private::ParamsExtractor;
     //Extract the list of parameters (one object per row)
     size_t num_objects = pmd.parameterized_peak_groups().size()+
       pmd.detected_peak_groups().size()+

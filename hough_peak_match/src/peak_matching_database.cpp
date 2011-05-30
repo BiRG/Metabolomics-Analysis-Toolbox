@@ -647,4 +647,8 @@ namespace HoughPeakMatch{
     }
   }
 
+  void PeakMatchingDatabase::reorder_with(const UniqueParameterOrdering& upo){
+    ///\todo write
+  }
+
 }
