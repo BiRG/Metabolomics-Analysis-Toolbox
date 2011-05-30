@@ -75,6 +75,9 @@ public:
     return &db_ < &(k.db_) ||
       (&db_ < &(k.db_) && type_string() < k.type_string());
   }
+
+  ///\brief Return this key as a string
+  virtual std::string to_string() const = 0;
 };
 #pragma GCC diagnostic warning "-Weffc++"
 
@@ -110,7 +113,6 @@ public:
       return (**this) == *rhs;
     }
 
-    
   };
 #pragma GCC diagnostic warning "-Weffc++"
 

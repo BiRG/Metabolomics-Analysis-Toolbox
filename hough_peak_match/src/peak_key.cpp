@@ -1,6 +1,7 @@
 #include "peak_matching_database.hpp"
 #include "peak_key.hpp"
 #include "utils.hpp"
+#include <sstream>
 
 namespace HoughPeakMatch{
   std::auto_ptr<PMObject> PeakKey::obj_copy() const{
@@ -31,5 +32,14 @@ namespace HoughPeakMatch{
       }
     }
   }
+
+
+  std::string PeakKey::to_string() const{
+    std::ostringstream out;
+    out << "(" << type_string() << " " 
+	<< sample_id_ << ", " << peak_id_ << ")";
+    return out.str();
+  }
+
 
 }

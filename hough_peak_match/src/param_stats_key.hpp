@@ -28,6 +28,8 @@ public:
   }
 
   virtual std::auto_ptr<PMObject> obj_copy() const;
+
+  virtual std::string to_string() const;
 };
 
 }

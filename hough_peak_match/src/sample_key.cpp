@@ -2,6 +2,7 @@
 #include "sample_key.hpp"
 #include "utils.hpp"
 #include <stdexcept>
+#include <sstream>
 
 namespace HoughPeakMatch{
   std::auto_ptr<PMObject> SampleKey::obj_copy() const{
@@ -30,4 +31,11 @@ namespace HoughPeakMatch{
       }
     }
   }
+
+  std::string SampleKey::to_string() const{
+    std::ostringstream out;
+    out << "(" << type_string() << " " << sample_id_ << ")";
+    return out.str();
+  }
+
 }

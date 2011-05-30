@@ -33,6 +33,7 @@ public:
 
   virtual bool operator<(const Key& k) const;
 
+  virtual std::string to_string() const;
 };
 
 }

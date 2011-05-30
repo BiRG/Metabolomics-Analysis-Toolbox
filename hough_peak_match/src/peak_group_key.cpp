@@ -2,6 +2,7 @@
 #include "peak_group_key.hpp"
 #include "utils.hpp"
 #include <stdexcept>
+#include <sstream>
 
 namespace HoughPeakMatch{
   std::auto_ptr<PMObject> PeakGroupKey::obj_copy() const{
@@ -31,5 +32,11 @@ namespace HoughPeakMatch{
     }
   }
   
+  std::string PeakGroupKey::to_string() const{
+    std::ostringstream out;
+    out << "(" << type_string() << " " << peak_group_id_ << ")";
+    return out.str();
+  }
+
 
 }

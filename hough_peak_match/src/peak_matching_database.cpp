@@ -672,7 +672,7 @@ namespace HoughPeakMatch{
       T operator()(const T&t){
 	T ret=t;
 	Private::ParamsExtractor ex;
-	ret.set_params(ex(t));
+	ret.set_params(upo.return_reordered(ex(t)));
 	return ret;
       }
 
@@ -684,7 +684,7 @@ namespace HoughPeakMatch{
       ParamStats ReorderParams::operator()(const ParamStats&t){
       ParamStats ret=t;
       Private::ParamsExtractor ex;
-      ret.set_frac_variances(ex(t));
+      ret.set_frac_variances(upo.return_reordered(ex(t)));
       return ret;
     }
 
