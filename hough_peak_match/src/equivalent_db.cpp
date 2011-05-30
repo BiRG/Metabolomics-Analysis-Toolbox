@@ -54,7 +54,6 @@ bool have_same_non_key_parameters(KeySptr k1, KeySptr k2){
 
 bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
   using std::set;
-  using std::cerr; using std::endl; //DEBUG
   UniqueParameterOrdering o1(db1);
   db1.reorder_with(o1);
   UniqueParameterOrdering o2(db2);
@@ -82,27 +81,12 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
       set<KeySptr>::iterator it1, it2;
       for(it1 = db1_keys.begin(); it1 != db1_keys.end(); ++it1){
 	for(it2 = db2_keys.begin(); it2 != db2_keys.end(); ++it2){
-#if 0
-	  if(*ot == ObjectType("detected_peak_group")){ //DEBUG
-	    std::auto_ptr<PMObject> o1ap = (*it1)->obj_copy();
-	    DetectedPeakGroup*o1 = (DetectedPeakGroup*)o1ap.get();
-	    cerr << (o1->to_text());
-	    std::auto_ptr<PMObject> o2ap = (*it2)->obj_copy();
-	    DetectedPeakGroup*o2 = (DetectedPeakGroup*)o2ap.get();
-	    cerr << (o2->to_text());
-	    
-	  }
-#endif
 	  if(have_same_non_key_parameters(*it1, *it2)){
 	    r.insert(std::make_pair(*it1,*it2));
 	  }
 	}
       }
     }
-#if 0
-    std::cerr << "R1:" << (r.project_first()) << std::endl; //DEBUG
-    std::cerr << "K1:" << k1 << std::endl;//DEBUG
-#endif
 
     if(r.project_first() != k1){ 
       return false; 
@@ -114,7 +98,7 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
 
   ///\todo finish -- write all candidate search
 
-  return true;///\todo DEBUG
+  return true;///\todo stub return value
 }
 
 }
