@@ -105,6 +105,11 @@ public:
   ///described sample
   virtual const std::vector<double>& params() const{ return params_; }
 
+  ///\brief Set the parameters for this FileFormatSampleParams
+  ///
+  ///\param params the new parameter values
+  void set_params(std::vector<double>& params){ params_=params; }
+
 };
 
 }

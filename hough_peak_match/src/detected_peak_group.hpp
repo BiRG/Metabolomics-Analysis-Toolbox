@@ -94,6 +94,12 @@ public:
   ///\return the parameters for this DetectedPeakGroup
   const std::vector<double>& params() const{ return params_; }
 
+  ///\brief Set the parameters for this DetectedPeakGroup
+  ///
+  ///\param params the new parameter values
+  void set_params(std::vector<double>& params){ params_=params; }
+
+
   ///\brief Return the ppm location for this DetectedPeakGroup
   ///
   ///\return the ppm location for this DetectedPeakGroup

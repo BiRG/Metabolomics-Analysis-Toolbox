@@ -53,6 +53,11 @@ public:
   ///\return the parameters for this ParameterizedSample
   const std::vector<double>& params() const{ return params_; }
 
+  ///\brief Set the parameters for this ParameterizedSample
+  ///
+  ///\param params the new parameter values
+  void set_params(std::vector<double>& params){ params_=params; }
+
   ///\brief Write this ParameterizedSample to a new-line terminated string
   ///
   ///Returns the string representation of this ParameterizedSample

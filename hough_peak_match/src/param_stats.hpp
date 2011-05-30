@@ -61,6 +61,14 @@ public:
   const std::vector<double>& frac_variances() const { 
     return frac_variances_; }
 
+  ///\brief Set the fractional variances for this ParamStats
+  ///
+  ///\params params the new values for the fractional variances for
+  ///each parameter
+  void set_frac_variances(std::vector<double>& params){ 
+    frac_variances_=params; }
+
+
   ///\brief Creates a ParamStats object from a line in a database
   ///file
   ///
