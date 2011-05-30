@@ -101,7 +101,7 @@ public:
   ///\brief Set the parameters for this ParameterizedPeakGroup
   ///
   ///\param params the new parameter values
-  void set_params(std::vector<double>& params){ params_=params; }
+  void set_params(const std::vector<double>& params){ params_=params; }
 
   ///\brief Return the ppm location for this ParameterizedPeakGroup
   ///

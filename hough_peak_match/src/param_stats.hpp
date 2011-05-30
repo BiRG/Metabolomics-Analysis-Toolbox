@@ -63,9 +63,9 @@ public:
 
   ///\brief Set the fractional variances for this ParamStats
   ///
-  ///\params params the new values for the fractional variances for
+  ///\param params the new values for the fractional variances for
   ///each parameter
-  void set_frac_variances(std::vector<double>& params){ 
+  void set_frac_variances(const std::vector<double>& params){ 
     frac_variances_=params; }
 
 

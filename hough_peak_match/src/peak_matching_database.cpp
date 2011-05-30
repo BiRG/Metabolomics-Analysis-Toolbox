@@ -1,6 +1,7 @@
 ///\file
 ///\brief Definitions members of the PeakMatchingDatabase class
 
+#include "params_extractor.hpp"
 #include "peak_group_key.hpp"
 #include "sample_key.hpp"
 #include "peak_key.hpp"
@@ -647,8 +648,68 @@ namespace HoughPeakMatch{
     }
   }
 
+  namespace{
+    ///\brief Functional that reorders the parameter members of its
+    ///arguments according to a given ordering.
+    struct ReorderParams{
+      ///\brief The ordering to use when reordering database object
+      ///parameter lists
+      UniqueParameterOrdering upo;
+
+      ///\brief Create a functional that reorders according to \a upo
+      ///
+      ///\param upo The ordering to use 
+      ReorderParams(UniqueParameterOrdering upo):upo(upo){}
+
+      ///\brief Return a copy of \a t with reordered parameters
+      ///
+      ///\param t The object to whose copy will be reordered
+      ///
+      ///\return a copy of \a t with reordered parameters
+      ///
+      ///\tparam T the class whose parameters will be reordered
+      template<class T>
+      T operator()(const T&t){
+	T ret=t;
+	Private::ParamsExtractor ex;
+	ret.set_params(ex(t));
+	return ret;
+      }
+
+    };
+
+    /// @cond SUPPRESS
+
+    template<>
+      ParamStats ReorderParams::operator()(const ParamStats&t){
+      ParamStats ret=t;
+      Private::ParamsExtractor ex;
+      ret.set_frac_variances(ex(t));
+      return ret;
+    }
+
+    /// @endcond 
+
+  }
+
   void PeakMatchingDatabase::reorder_with(const UniqueParameterOrdering& upo){
-    ///\todo write
+    using std::transform;
+    ReorderParams rp(upo);
+    transform(parameterized_peak_groups_.begin(), 
+	      parameterized_peak_groups_.end(),
+	      parameterized_peak_groups_.begin(), rp);
+
+    transform(detected_peak_groups_.begin(), 
+	      detected_peak_groups_.end(),
+	      detected_peak_groups_.begin(), rp);
+
+    transform(parameterized_samples_.begin(), 
+	      parameterized_samples_.end(),
+	      parameterized_samples_.begin(), rp);
+
+    transform(param_stats_.begin(), 
+	      param_stats_.end(),
+	      param_stats_.begin(), rp);
   }
 
 }
