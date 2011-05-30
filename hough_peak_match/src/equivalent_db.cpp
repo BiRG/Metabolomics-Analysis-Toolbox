@@ -1,6 +1,7 @@
 ///\file
 ///\brief Main routine and supporting code for the equivalent_db executable
 
+#include "mapping_list.hpp"
 #include "object_type.hpp"
 #include "unique_parameter_ordering.hpp"
 #include "key_relation.hpp"
@@ -96,9 +97,64 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
 
   }
 
-  ///\todo finish -- write all candidate search
+  MappingList maps = r;
+  MappingListConstIterator cur = maps.begin();
+  while(cur != maps.end()){
+    if(cur.keys() != k1){
+      ++cur; continue;
+    }
+    if(cur.values() != k2){
+      ++cur; continue;
+    }
+    
+    //Check for two keys mapping to the same value
+    std::set<KeySptr> seen;
+    bool bad_mapping = false;
+    for(std::set<KeySptr>::const_iterator k = k1.begin(); k != k1.end(); ++k){
+      if(seen.count(cur(*k)) != 0){
+	bad_mapping = true; break;
+      }else{
+	seen.insert(cur(*k));
+      }
+    }
+    if(bad_mapping){
+      ++cur; continue;
+    }
 
-  return true;///\todo stub return value
+    //Check for equivalence under the mapping
+    for(std::set<KeySptr>::const_iterator k = k1.begin(); k != k1.end(); ++k){
+      std::auto_ptr<PMObject> o1 = (*k)->obj_copy();
+      std::auto_ptr<PMObject> o2 = cur(*k)->obj_copy();
+      if(o1->type() != o2->type()){
+	bad_mapping = true; break;
+      }else if(! o1->has_same_non_key_parameters(o2.get()) ){
+	bad_mapping = true; break;
+      }else{
+	//if the keys are different after transforming the keys of the
+	//first object then we have a bad mapping
+	std::vector<KeySptr> fk1_raw = o1->foreign_keys(db1);
+	std::vector<KeySptr> fk1_transformed; 
+	fk1_transformed.reserve(fk1_raw.size());
+	for(std::vector<KeySptr>::const_iterator it=fk1_raw.begin(); 
+	    it != fk1_raw.end(); ++it){
+	  fk1_transformed.push_back(cur(*it));
+	}
+	std::vector<KeySptr> fk2 = o2->foreign_keys(db2);
+	if(fk1_transformed != fk2){
+	  bad_mapping = true; break;
+	}
+      }
+    }
+
+    if(!bad_mapping){
+      return true;
+    }else{
+      ++cur;
+    }
+  }
+
+  //All mappings were bad
+  return false;
 }
 
 }
