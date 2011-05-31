@@ -87,23 +87,51 @@ public:
 #pragma GCC diagnostic ignored "-Weffc++"
   ///\brief A wrapper around shared pointers to keys that provides a
   ///dereferencing less-than and a dereferencing == and !=
-  class KeySptr:public boost::shared_ptr<Key>, 
-		private boost::equality_comparable<KeySptr>{
+  class KeySptr:private boost::equality_comparable<KeySptr>{
+    boost::shared_ptr<Key> ptr;
   public:
     ///\brief Create a NULL shared_ptr to a key
-    KeySptr():boost::shared_ptr<Key>(){}
+    KeySptr():ptr(){}
 
     ///\brief Create a shared_ptr to a Key
     ///
     ///\param k the raw pointer to wrap
-    KeySptr(Key*k):boost::shared_ptr<Key>(k){}
+    KeySptr(Key*k):ptr(k){}
+
+    ///\brief Return the raw pointer
+    ///
+    ///\return the raw pointer
+    Key* get(){ return ptr.get(); }
+
+    ///\brief Return the raw pointer (const version)
+    ///
+    ///\return the raw pointer to a const object
+    const Key* get() const{ return ptr.get(); }
+
+    ///\brief Return the pointed to object
+    ///
+    ///\return the pointed to object
+    Key& operator*(){ return *ptr; }
+
+    ///\brief Return the pointed to object
+    ///
+    ///\return the pointed to object
+    const Key& operator*() const{ return *ptr; }
+
+    ///\brief Overload the -> operator 
+    ///\return a pointer to the underlying object
+    Key* operator->(){ return ptr.operator->(); }
+
+    ///\brief Overload the -> operator (const version)
+    ///\return a pointer to the const underlying object
+    const Key* operator->() const{ return ptr.operator->(); }
 
     ///\brief Return true if **this < \a *rhs
     ///
     ///\param rhs the right-hand-side of the < operator
     ///
     ///\return Return true if **this < \a *rhs
-    bool operator<(KeySptr rhs){
+    bool operator<(const KeySptr& rhs) const{
       return (**this) < *rhs;
     }
 
@@ -112,7 +140,7 @@ public:
     ///\param rhs the right-hand-side of the == operator
     ///
     ///\return Return true if **this == \a *rhs
-    bool operator==(KeySptr rhs){
+    bool operator==(const KeySptr& rhs) const{
       return (**this) == *rhs;
     }
 
