@@ -2,3 +2,4 @@ hough_sample_params-data_basic_005pk_003smp_01param.initial.actual.db
 simple_hough-data_basic_005pk_003smp_01param.after_hough_sample_params.actual.db
 assign_peaks-keep_new-data_basic_005pk_003smp_01param.after_simple_hough.actual.db
 assign_peaks-keep_original-data_basic_005pk_003smp_01param.after_simple_hough.actual.db
+*.dup.db
