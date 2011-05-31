@@ -110,7 +110,9 @@ public:
   }
 
   virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase& db) const{
-    std::vector<KeySptr> ret(1,KeySptr(new SampleKey(db, sample_id())));
+    std::vector<KeySptr> ret;
+    KeySptr k =new SampleKey(db, sample_id());
+    ret.push_back(k);
     return ret;
   }
 

@@ -41,7 +41,25 @@ std::ostream& operator<<(std::ostream& out, const std::set<KeySptr>& set){
   std::set<KeySptr>::const_iterator it;
   for(it = set.begin(); it != set.end(); ++it){
     const Key* k = it->get();
-    out << k->to_string();
+    if(k != NULL){
+      out << k->to_string();
+    }else{
+      out << "(NULL Key pointer)";
+    }
+  }
+  return out << "}";
+}
+
+std::ostream& operator<<(std::ostream& out, const std::vector<KeySptr>& vec){
+  out << "{KeyVector: ";
+  std::vector<KeySptr>::const_iterator it;
+  for(it = vec.begin(); it != vec.end(); ++it){
+    const Key* k = it->get();
+    if(k != NULL){
+      out << k->to_string();
+    }else{
+      out << "(NULL Key pointer)";
+    }
   }
   return out << "}";
 }
@@ -106,15 +124,17 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
     if(cur.values() != k2){
       ++cur; continue;
     }
-#if 0
+
     //DEBUG
-    for(std::set<KeySptr>::const_iterator k = k1.begin(); k != k1.end(); ++k){
-      std::cerr << "<" << ((*k)->to_string()) << "," 
-		<< (cur(*k)->to_string()) << ">";
+    const bool dbg = false;
+    if(dbg){
+      for(std::set<KeySptr>::const_iterator k = k1.begin(); k != k1.end(); ++k){
+	std::cerr << "<" << ((*k)->to_string()) << "," 
+		  << (cur(*k)->to_string()) << ">";
+      }
+      std::cerr << "\n";
     }
-    std::cerr << "\n";
-    //End DEBUG
-#endif
+    //end DEBUG
     
     //Check for two keys mapping to the same value
     std::set<KeySptr> seen;
@@ -130,13 +150,17 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
       ++cur; continue;
     }
 
+    if(dbg) std::cerr << "Good mapping\n";//DEBUG
+
     //Check for equivalence under the mapping
     for(std::set<KeySptr>::iterator k = k1.begin(); k != k1.end(); ++k){
       std::auto_ptr<PMObject> o1 = (*k)->obj_copy();
       std::auto_ptr<PMObject> o2 = cur(*k)->obj_copy();
       if(o1->type() != o2->type()){
+	if(dbg) std::cerr << "Bad type\n";//DEBUG
 	bad_mapping = true; break;
       }else if(! o1->has_same_non_key_parameters(o2.get()) ){
+	if(dbg) std::cerr << "Bad non-key params\n";//DEBUG
 	bad_mapping = true; break;
       }else{
 	//if the keys are different after transforming the keys of the
@@ -146,10 +170,15 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
 	fk1_transformed.reserve(fk1_raw.size());
 	for(std::vector<KeySptr>::iterator it=fk1_raw.begin(); 
 	    it != fk1_raw.end(); ++it){
-	  fk1_transformed.push_back(cur(*it));
+	  KeySptr it_xformed = cur(*it);
+	  fk1_transformed.push_back(it_xformed);
 	}
 	std::vector<KeySptr> fk2 = o2->foreign_keys(db2);
 	if(fk1_transformed != fk2){
+	  if(dbg) std::cerr << "Bad transformed keys\n";//DEBUG
+	  if(dbg) std::cerr << "fk1_raw: " << fk1_raw << "\n";//DEBUG
+	  if(dbg) std::cerr << "fk1: " << fk1_transformed << "\n";//DEBUG
+	  if(dbg) std::cerr << "fk2: " << fk2 << "\n";//DEBUG
 	  bad_mapping = true; break;
 	}
       }

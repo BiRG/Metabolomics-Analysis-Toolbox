@@ -73,7 +73,7 @@ public:
   ///\return true iff this should sort before \a k
   virtual bool operator<(const Key& k) const{
     return &db_ < &(k.db_) ||
-      (&db_ < &(k.db_) && type_string() < k.type_string());
+      (&db_ == &(k.db_) && type_string() < k.type_string());
   }
 
   ///\brief Return this key as a string
