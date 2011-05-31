@@ -103,7 +103,7 @@ public:
     ///\param rhs the right-hand-side of the < operator
     ///
     ///\return Return true if **this < \a *rhs
-    bool operator<(KeySptr rhs){
+    bool operator<(const KeySptr& rhs) const{
       return (**this) < *rhs;
     }
 
@@ -112,7 +112,7 @@ public:
     ///\param rhs the right-hand-side of the == operator
     ///
     ///\return Return true if **this == \a *rhs
-    bool operator==(KeySptr rhs){
+    bool operator==(const KeySptr& rhs) const{
       return (**this) == *rhs;
     }
 
