@@ -1,5 +1,5 @@
 #include "mapping_list.hpp"
-
+#include <cassert>
 
 namespace HoughPeakMatch{
   MappingListConstIterator MappingList::begin() const{
@@ -53,12 +53,12 @@ namespace HoughPeakMatch{
   
   KeySptr MappingListConstIterator::operator()(KeySptr key) const{
     if(at_end){ 
-      return KeySptr(NULL); 
+      return KeySptr(); 
     }else{
       std::map<KeySptr, KeySetConstIteratorTriple>::const_iterator loc;
       loc = map.find(key);
       if(loc == map.end()){
-	return KeySptr(NULL); 
+	return KeySptr(); 
       }else{
 	assert(loc->second.cur != loc->second.end);
 	return *(loc->second.cur);
@@ -68,11 +68,17 @@ namespace HoughPeakMatch{
   
   bool MappingListConstIterator::operator!=
   (const MappingListConstIterator& other){
-    if(at_end != other.at_end){
-      return true;
+    bool are_equal;
+    if(at_end && other.at_end){
+      are_equal = true;
+    }else if(!at_end && !other.at_end){
+      are_equal = map == other.map;
     }else{
-      return map != other.map;
+      assert(at_end != other.at_end);
+      are_equal = false;
     }
+
+    return !are_equal;
   }
   
   

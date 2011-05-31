@@ -99,13 +99,22 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
 
   MappingList maps = r;
   MappingListConstIterator cur = maps.begin();
-  while(cur != maps.end()){
+  while(cur != maps.end()){    
     if(cur.keys() != k1){
       ++cur; continue;
     }
     if(cur.values() != k2){
       ++cur; continue;
     }
+#if 0
+    //DEBUG
+    for(std::set<KeySptr>::const_iterator k = k1.begin(); k != k1.end(); ++k){
+      std::cerr << "<" << ((*k)->to_string()) << "," 
+		<< (cur(*k)->to_string()) << ">";
+    }
+    std::cerr << "\n";
+    //End DEBUG
+#endif
     
     //Check for two keys mapping to the same value
     std::set<KeySptr> seen;
@@ -120,9 +129,11 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
     if(bad_mapping){
       ++cur; continue;
     }
+    //    std::cerr << "BEGIN\n"; //DEBUG
 
     //Check for equivalence under the mapping
-    for(std::set<KeySptr>::const_iterator k = k1.begin(); k != k1.end(); ++k){
+    //    std::cerr << "K1: " << k1 << std::endl; //DEBUG
+    for(std::set<KeySptr>::iterator k = k1.begin(); k != k1.end(); ++k){
       std::auto_ptr<PMObject> o1 = (*k)->obj_copy();
       std::auto_ptr<PMObject> o2 = cur(*k)->obj_copy();
       if(o1->type() != o2->type()){
@@ -135,7 +146,7 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
 	std::vector<KeySptr> fk1_raw = o1->foreign_keys(db1);
 	std::vector<KeySptr> fk1_transformed; 
 	fk1_transformed.reserve(fk1_raw.size());
-	for(std::vector<KeySptr>::const_iterator it=fk1_raw.begin(); 
+	for(std::vector<KeySptr>::iterator it=fk1_raw.begin(); 
 	    it != fk1_raw.end(); ++it){
 	  fk1_transformed.push_back(cur(*it));
 	}

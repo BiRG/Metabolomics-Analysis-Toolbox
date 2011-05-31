@@ -90,6 +90,9 @@ public:
   class KeySptr:public boost::shared_ptr<Key>, 
 		private boost::equality_comparable<KeySptr>{
   public:
+    ///\brief Create a NULL shared_ptr to a key
+    KeySptr():boost::shared_ptr<Key>(){}
+
     ///\brief Create a shared_ptr to a Key
     ///
     ///\param k the raw pointer to wrap
