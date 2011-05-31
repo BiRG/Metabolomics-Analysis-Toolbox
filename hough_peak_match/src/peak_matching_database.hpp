@@ -90,6 +90,16 @@ namespace HoughPeakMatch{
     ///database will be empty
     bool read(std::istream& in);
 
+    ///\brief Write this database to the given stream
+    ///
+    ///The database is written in the 
+    ///\ref file_format_docs "peak match tool common file format"
+    ///
+    ///\param out the stream to which to write the new contents
+    ///
+    ///\return true on success and false on failure.
+    bool write(std::ostream& out);
+
     ///\brief Remove all objects from the database
     void make_empty();
 

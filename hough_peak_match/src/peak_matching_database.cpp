@@ -377,6 +377,70 @@ namespace HoughPeakMatch{
   }
   
 
+  namespace{
+    template<class InputIter>
+      void write_sequence(std::ostream& out, InputIter begin, InputIter end){
+      while(begin != end){
+	if(!(out << begin->to_text())){
+	  return;
+	}
+	++begin;
+      }
+    }
+  }
+
+  bool PeakMatchingDatabase::write(std::ostream& out){
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   parameterized_peak_groups_.begin(),
+		   parameterized_peak_groups_.end());
+    
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   detected_peak_groups_.begin(),
+		   detected_peak_groups_.end());
+    
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   human_verified_peaks_.begin(),
+		   human_verified_peaks_.end());
+    
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   unverified_peaks_.begin(),
+		   unverified_peaks_.end());
+    
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   unknown_peaks_.begin(),
+		   unknown_peaks_.end());
+    
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   unparameterized_samples_.begin(),
+		   unparameterized_samples_.end());
+    
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   parameterized_samples_.begin(),
+		   parameterized_samples_.end());
+    
+    if(!out){ 
+      return false; }
+    write_sequence(out, 
+		   param_stats_.begin(),
+		   param_stats_.end());
+    
+    return out;
+  }
+
 
   bool PeakMatchingDatabase::satisfies_constraints(){
     using std::pair;

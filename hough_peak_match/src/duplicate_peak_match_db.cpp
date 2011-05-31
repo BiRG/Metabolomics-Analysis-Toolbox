@@ -42,6 +42,6 @@ int main(int argc, char**){
   if(!db.read(std::cin)){
     print_usage_and_exit("ERROR: could not read database from standard input");
   }
-  
-  return 0;
+
+  return !db.write(std::cout);
 }
