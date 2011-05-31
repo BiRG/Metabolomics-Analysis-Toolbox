@@ -45,6 +45,10 @@ TODO:{
     local $TODO="Have not written duplicate_peak_match_db yet";
 
 for my $fn (@input_filenames){
+#Commented code is used to slow down so I can find out where null
+#pointer errors are being generated.
+#    print "Will copy $fn\n";
+#    my $foo = <STDIN>;
     my $dup_fn = $fn;
     $dup_fn =~ s/data/outputs/;
     $dup_fn =~ s/\.db$/.dup.db/;
