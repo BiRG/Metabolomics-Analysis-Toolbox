@@ -26,8 +26,6 @@ for my $i (1..99){
 
 plan tests=>2*($numEquiv+$numNonEquiv);
 
-TODO:{
-    local $TODO = "Have not written yet equivalence testing code yet.";
 for my $i (1..99){
     my $str = pad($i);
     my $fn1 = "data/equivalent_db_pair_${str}.a.db";
@@ -51,6 +49,6 @@ for my $i (1..99){
 	   "Non-equivalent db pair ${str} should be non-equivalent when reversed");
     }
 }
-}
+
 
 
