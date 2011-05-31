@@ -4,6 +4,7 @@ VPATH:=src:obj:src/tests
 CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g $(GCOV_OPTS) $(PREDEFINE)
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
+	duplicate_peak_match_db\
 	tests/006-split_function.compiled.t\
 	tests/007-from_text_line_funcs.compiled.t\
 	tests/008-mockable_stringstream.compiled.t\
@@ -83,6 +84,8 @@ equivalent_db: obj/equivalent_db.o libbirgpeakmatch.a
 simple_hough: obj/simple_hough.o libbirgpeakmatch.a
 
 valid_db: obj/valid_db.o libbirgpeakmatch.a
+
+duplicate_peak_match_db: obj/duplicate_peak_match_db.o libbirgpeakmatch.a
 
 tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o libbirgpeakmatch.a
 

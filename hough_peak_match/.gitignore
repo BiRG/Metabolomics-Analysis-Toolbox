@@ -39,6 +39,7 @@ assign_peaks
 equivalent_db
 valid_db
 stringstream_sandbox
+duplicate_peak_match_db
 
 #####
 # Test executables
