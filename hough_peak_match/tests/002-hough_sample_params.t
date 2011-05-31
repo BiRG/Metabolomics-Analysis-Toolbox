@@ -8,7 +8,7 @@ use warnings;
 
 #######################################################################
 
-use Test::More tests => 10;
+use Test::More tests => 12;
 
 #################
 #
@@ -33,7 +33,7 @@ sub command_line_error_message_is($$$){
     undef $fh;
     
     is($error_message, $expected_error_message, 
-       "hough_sample_params  correct error when $error_condition");
+       "hough_sample_params correct error when $error_condition");
 }
 
 ##################
@@ -43,12 +43,12 @@ sub command_line_error_message_is($$$){
 ##################
 
 command_line_error_message_is(
-    "../hough_sample_params 0.99 0.99 0.99",
+    "../hough_sample_params 0.99 0.99 0.99 < data/valid_db_001.db",
     "data/hough_sample_params_usage_message_wrong_num_args.txt",
     "there are too many arguments.");
 
 command_line_error_message_is(
-    "../hough_sample_params",
+    "../hough_sample_params < data/valid_db_001.db",
     "data/hough_sample_params_usage_message_wrong_num_args.txt",
     "there are too few arguments.");
 
@@ -60,15 +60,25 @@ command_line_error_message_is(
 ##################
 
 command_line_error_message_is(
-    "../hough_sample_params -0.9",
+    "../hough_sample_params -0.9 < data/valid_db_001.db",
     "data/hough_sample_params_usage_message_-0.9_frac_var.txt",
     "fraction of variance is too small.");
 
 command_line_error_message_is(
-    "../hough_sample_params 1.1",
+    "../hough_sample_params 1.1 < data/valid_db_001.db",
     "data/hough_sample_params_usage_message_1.1_frac_var.txt",
     "fraction of variance is too large.");
 
+##################
+# 
+# Check the error mesage and status when there's a bad input database
+#
+##################
+
+command_line_error_message_is(
+    "../hough_sample_params 1 < data/invalid_db_001.db",
+    "data/hough_sample_params_usage_message_invalid_input_db.txt",
+    "input database is invalid.");
 
 #########
 #

@@ -1,6 +1,6 @@
 ///\file
 ///\brief Main routine and supporting code for the hough_sample_params executable
-
+#include "peak_matching_database.hpp"
 #include <sstream>
 #include <iostream>
 #include <cstdlib> //For exit
@@ -62,8 +62,11 @@ int main(int argc, char**argv){
   }
   bool should_remove_sample_params_first=
     argc==3 && argv[argc-2]==string("--remove-sample-params");
-  ///\todo main is stub
-  std::cout << "#fraction_variance="<<fraction_variance 
-	    << "\n#removeSampleParams="<<should_remove_sample_params_first<<"\n";
+
+  HoughPeakMatch::PeakMatchingDatabase db;
+  if(!db.read(std::cin)){
+    print_usage_and_exit("ERROR: could not read database from standard input");
+  }
+  
   return 0;
 }
