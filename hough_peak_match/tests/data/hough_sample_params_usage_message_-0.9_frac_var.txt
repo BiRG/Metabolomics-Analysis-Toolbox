@@ -1,0 +1,21 @@
+Synopsis: hough_sample_params [options] fractionVariance < initial_db > db_with_sample_params
+
+Reads a peak database from standard input. Extracts the set 
+of peak_groups that have a representative in every sample. 
+Creates a set of sample parameters that accounts for at least 
+fractionVariance [0..1] of the variance of the peaks in those 
+peak groups. Outputs a database with these new sample parameters 
+along with a param_stats object added.
+
+If there are already sample_params objects in the database, then 
+three things differ. First, the number of parameters is set to be 
+the same as the number of parameters in the existing objects. 
+Second, only samples not associated with an extant sample_params 
+object are given new sample_params objects. Third, the 
+param_stats object will be updated.
+
+Options:
+  --remove-sample-params  removes all sample_params objects from the 
+                          input database before processing it.
+
+ERROR: fraction of variance must be between 0 and 1, inclusive.  You wrote: -0.9
