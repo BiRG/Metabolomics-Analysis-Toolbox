@@ -129,10 +129,8 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
     if(bad_mapping){
       ++cur; continue;
     }
-    //    std::cerr << "BEGIN\n"; //DEBUG
 
     //Check for equivalence under the mapping
-    //    std::cerr << "K1: " << k1 << std::endl; //DEBUG
     for(std::set<KeySptr>::iterator k = k1.begin(); k != k1.end(); ++k){
       std::auto_ptr<PMObject> o1 = (*k)->obj_copy();
       std::auto_ptr<PMObject> o2 = cur(*k)->obj_copy();
