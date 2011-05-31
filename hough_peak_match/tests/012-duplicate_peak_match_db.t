@@ -4,11 +4,11 @@ use warnings;
 
 #######################################################################
 
-# Exercises hough_sample_params
+# Exercises duplicate_peak_match_db
 
 #######################################################################
 
-use Test::More tests => 12;
+use Test::More tests => 4;
 
 #################
 #
@@ -26,14 +26,14 @@ sub command_line_error_message_is($$$){
     my ($command_line,$error_message_file,$error_condition)=@_;
     my $error_message = `$command_line 2>&1`;
     my $exitValue = $?;
-    is($exitValue, 65280, "hough_sample_params did exit(-1) when $error_condition");
+    is($exitValue, 65280, "duplicate_peak_match_db did exit(-1) when $error_condition");
     
     open(my $fh,"<",$error_message_file) or die $!;
     my $expected_error_message = <$fh>;
     undef $fh;
     
     is($error_message, $expected_error_message, 
-       "hough_sample_params correct error when $error_condition");
+       "duplicate_peak_match_db correct error when $error_condition");
 }
 
 ##################
@@ -43,31 +43,11 @@ sub command_line_error_message_is($$$){
 ##################
 
 command_line_error_message_is(
-    "../hough_sample_params 0.99 0.99 0.99 < data/valid_db_001.db",
-    "data/hough_sample_params_usage_message_wrong_num_args.txt",
+    "../duplicate_peak_match_db 0.99 < data/valid_db_001.db",
+    "data/duplicate_peak_match_db_usage_message_wrong_num_args.txt",
     "there are too many arguments.");
 
-command_line_error_message_is(
-    "../hough_sample_params < data/valid_db_001.db",
-    "data/hough_sample_params_usage_message_wrong_num_args.txt",
-    "there are too few arguments.");
 
-
-##################
-# 
-# Check the error mesage and status when frac_var too large or small
-#
-##################
-
-command_line_error_message_is(
-    "../hough_sample_params -0.9 < data/valid_db_001.db",
-    "data/hough_sample_params_usage_message_-0.9_frac_var.txt",
-    "fraction of variance is too small.");
-
-command_line_error_message_is(
-    "../hough_sample_params 1.1 < data/valid_db_001.db",
-    "data/hough_sample_params_usage_message_1.1_frac_var.txt",
-    "fraction of variance is too large.");
 
 ##################
 # 
@@ -76,31 +56,9 @@ command_line_error_message_is(
 ##################
 
 command_line_error_message_is(
-    "../hough_sample_params 1 < data/invalid_db_001.db",
-    "data/hough_sample_params_usage_message_invalid_input_db.txt",
+    "../duplicate_peak_match_db < data/invalid_db_001.db",
+    "data/duplicate_peak_match_db_usage_message_invalid_input_db.txt",
     "input database is invalid.");
-
-#########
-#
-# 5 peak 3 sample 1 parameter
-#
-#########
-
-my $returnValue=system('../hough_sample_params 0.99 < data/data_basic_005pk_003smp_01param.initial.db > outputs/hough_sample_params-data_basic_005pk_003smp_01param.initial.actual.db');
-
-is($returnValue,0,"hough_sample_params executed successfully on 5pk 3samp 1param");
-
-
-TODO: {
-    local $TODO="hough_sample_params is not finished";
-
-    my $equivalenceResult=`../equivalent_db data/data_basic_005pk_003smp_01param.after_hough_sample_params.db outputs/hough_sample_params-data_basic_005pk_003smp_01param.initial.actual.db`;
-
-    is($equivalenceResult,"Databases ARE equivalent","hough_sample_params produced expected db on 5pk 3samp 1param");
-
-}
-
-
 
 
 
