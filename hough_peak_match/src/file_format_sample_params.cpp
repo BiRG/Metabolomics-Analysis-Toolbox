@@ -38,6 +38,7 @@ namespace HoughPeakMatch{
   std::string FileFormatSampleParams::to_text() const{
     std::ostringstream out;
     out << "sample_params " << sample_id();
+    out.precision(17);//All the precision needed to reconstruct a double
     for(std::vector<double>::const_iterator it = params_.begin();
 	it != params_.end(); ++it){
       out << " " << *it;

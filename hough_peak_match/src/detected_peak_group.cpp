@@ -48,6 +48,7 @@ namespace HoughPeakMatch{
   std::string DetectedPeakGroup::to_text() const{
     using namespace std;
     ostringstream out;
+    out.precision(17);//All the precision needed to reconstruct a double
     out << "detected_peak_group" << " " << id() << " " << ppm() << " ";
     const vector<double> v = params();
     assert(v.size() != 0);//Shouldn't have a space and shouldn't

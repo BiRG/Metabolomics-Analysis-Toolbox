@@ -20,6 +20,7 @@ namespace HoughPeakMatch{
   std::string HumanVerifiedPeak::to_text() const{
     using namespace std;;
     ostringstream o;
+    o.precision(17);//All the precision needed to reconstruct a double
     o << "human_verified_peak " 
       << sample_id() << " " 
       << peak_id() << " " 

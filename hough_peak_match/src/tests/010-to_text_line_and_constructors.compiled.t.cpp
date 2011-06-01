@@ -121,7 +121,7 @@ namespace HoughPeakMatch{
 	is(p.peak_group_id(),13,
 	   "Human verified peak constructor gives correct peak_group_id");
 	ostringstream expected;
-	expected << "human_verified_peak 65537 1073741824 1.11 13" << endl;
+	expected << "human_verified_peak 65537 1073741824 1.1100000000000001 13" << endl;
 	is(p.to_text(), expected.str(),
 	   "Human verified peak to_text gives expected output");
       }
@@ -192,7 +192,7 @@ namespace HoughPeakMatch{
 	is(p.peak_group_id(),21,
 	   "Unverified peak constructor gives correct peak_group_id");
 	ostringstream expected;
-	expected << "unverified_peak 65537 2147483648 1.11 21" << endl;
+	expected << "unverified_peak 65537 2147483648 1.1100000000000001 21" << endl;
 	is(p.to_text(), expected.str(),
 	   "Unverified peak to_text gives expected output");
       }
@@ -261,7 +261,7 @@ namespace HoughPeakMatch{
 	is(p.ppm(), 0.00052,
 	   "Unknown peak constructor gives correct ppm");
 	ostringstream expected;
-	expected << "unknown_peak 2147483648 65537 0.00052" << endl;
+	expected << "unknown_peak 2147483648 65537 0.00051999999999999995" << endl;
 	is(p.to_text(), expected.str(),
 	   "Unknown peak to_text gives expected output");
       }
@@ -408,7 +408,7 @@ namespace HoughPeakMatch{
 			params,params+3,
 			"File format sample params constructor gives correct params");
 	  ostringstream expected;
-	  expected << "sample_params 150 3.8 1 5" << endl;
+	  expected << "sample_params 150 3.7999999999999998 1 5" << endl;
 	  is(p.to_text(), expected.str(),
 	     "File format sample params to_text gives expected output");
 	}
@@ -443,7 +443,7 @@ namespace HoughPeakMatch{
 			params,params+3,
 			"Param stats constructor gives correct params");
 	  ostringstream expected;
-	  expected << "param_stats 0.15 0.1 0" << endl;
+	  expected << "param_stats 0.14999999999999999 0.10000000000000001 0" << endl;
 	  is(p.to_text(), expected.str(),
 	     "Param stats to_text gives expected output");
 	}

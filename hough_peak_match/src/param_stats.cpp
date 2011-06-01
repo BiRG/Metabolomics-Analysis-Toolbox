@@ -38,6 +38,7 @@ namespace HoughPeakMatch{
 
   std::string ParamStats::to_text() const{
     std::ostringstream out;
+    out.precision(17);//All the precision needed to reconstruct a double
     out << "param_stats";
     for(std::vector<double>::const_iterator it = frac_variances_.begin();
 	it != frac_variances_.end(); ++it){
