@@ -676,36 +676,95 @@ namespace HoughPeakMatch{
       }
       return ret;
     }
+
+    ///\brief Return the peak_group_id of its argument
+    struct GetPeakGroupID{
+      ///\brief Return the peak_group_id of its argument
+      ///\param t the object whose peak_group_id field will be returned
+      ///\tparam T the type of object whose field is extracted
+      ///\return the peak_group_id of its argument
+      template<class T>
+      unsigned operator()(const T&t) const{ return t.peak_group_id(); }
+    };
+
+    ///\brief Return the id of its argument
+    struct GetID{
+      ///\brief Return the id of its argument
+      ///\param t the object whose id field will be returned
+      ///\tparam T the type of object whose field is extracted
+      ///\return the id of its argument
+      template<class T>
+      unsigned operator()(const T&t) const{ return t.id(); }
+    };
     
   }
 
   std::set<KeySptr> PeakMatchingDatabase::keys_for_type(ObjectType t) const{
+    std::set<KeySptr> ret;
+
     if      (t == ObjectType("detected_peak_group")){
-      return keys_for_sequence<PeakGroupKey>
+      return ret = keys_for_sequence<PeakGroupKey>
 	(*this, detected_peak_groups_.begin(), detected_peak_groups_.end());
     }else if(t == ObjectType("parameterized_peak_group")){
-      return keys_for_sequence<PeakGroupKey>
+      return ret = keys_for_sequence<PeakGroupKey>
 	(*this, parameterized_peak_groups_.begin(), 
 	 parameterized_peak_groups_.end());
     }else if(t == ObjectType("human_verified_peak")){
-      return keys_for_sequence<PeakKey>
+      return ret = keys_for_sequence<PeakKey>
 	(*this, human_verified_peaks_.begin(), human_verified_peaks_.end());
     }else if(t == ObjectType("unverified_peak")){
-      return keys_for_sequence<PeakKey>
+      return ret =keys_for_sequence<PeakKey>
 	(*this, unverified_peaks_.begin(), unverified_peaks_.end());
     }else if(t == ObjectType("unknown_peak")){
-      return keys_for_sequence<PeakKey>
+      return ret = keys_for_sequence<PeakKey>
 	(*this, unknown_peaks_.begin(), unknown_peaks_.end());
     }else if(t == ObjectType("parameterized_sample")){
-      return keys_for_sequence<SampleKey>
+      return ret = keys_for_sequence<SampleKey>
 	(*this, parameterized_samples_.begin(), parameterized_samples_.end());
     }else if(t == ObjectType("unparameterized_sample")){
-      return keys_for_sequence<SampleKey>
+      return ret = keys_for_sequence<SampleKey>
 	(*this, unparameterized_samples_.begin(), 
 	 unparameterized_samples_.end());
     }else if(t == ObjectType("param_stats")){
-      return keys_for_param_stats_sequence
+      return ret = keys_for_param_stats_sequence
 	(*this, param_stats_.begin(), param_stats_.end());
+    }else if(t == ObjectType("peak_group")){
+      //Return all peak-group ids referenced from known peaks that do
+      //not correspond to a peak_group explicitly represented in a
+      //ParameterizedPeakGroup or DetectedPeakGroup object
+      using std::set; using std::transform; using std::inserter;
+      set<unsigned> all_pg_ids;
+      transform(human_verified_peaks_.begin(), human_verified_peaks_.end(),
+		inserter(all_pg_ids, all_pg_ids.begin()), 
+		GetPeakGroupID());
+      transform(unverified_peaks_.begin(), unverified_peaks_.end(),
+		inserter(all_pg_ids, all_pg_ids.begin()), 
+		GetPeakGroupID());
+
+      set<unsigned> explicitly_represented_pg_ids;
+      transform(parameterized_peak_groups_.begin(),
+		parameterized_peak_groups_.end(),
+		inserter(explicitly_represented_pg_ids,
+			 explicitly_represented_pg_ids.begin()),
+		GetID());
+      transform(detected_peak_groups_.begin(),
+		detected_peak_groups_.end(),
+		inserter(explicitly_represented_pg_ids,
+			 explicitly_represented_pg_ids.begin()),
+		GetID());
+
+      set<unsigned> implicit_pg_ids;
+      set_difference(all_pg_ids.begin(), all_pg_ids.end(),
+		     explicitly_represented_pg_ids.begin(),
+		     explicitly_represented_pg_ids.end(),
+		     inserter(implicit_pg_ids, implicit_pg_ids.begin()));
+
+      //Create keys for all the ids
+      for(set<unsigned>::const_iterator it = implicit_pg_ids.begin();
+	  it != implicit_pg_ids.end(); ++it){
+	ret.insert(new PeakGroupKey(*this, *it));
+      }
+      return ret;
     }else{
       throw std::logic_error("Unknown ObjectType passed to "
 			     "PeakMatchingDatabase::keys_for_type");

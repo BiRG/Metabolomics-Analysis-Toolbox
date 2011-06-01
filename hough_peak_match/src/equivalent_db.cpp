@@ -82,12 +82,13 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
 
   KeyRelation r;
 
-  const unsigned num_otypes = 8;
+  const unsigned num_otypes = 9;
   ObjectType otypes[num_otypes] = 
     {ObjectType("param_stats"), ObjectType("human_verified_peak"), 
      ObjectType("unverified_peak"), ObjectType("unknown_peak"), 
      ObjectType("parameterized_sample"), ObjectType("unparameterized_sample"), 
-     ObjectType("detected_peak_group"), ObjectType("parameterized_peak_group")};
+     ObjectType("detected_peak_group"), ObjectType("parameterized_peak_group"),
+     ObjectType("peak_group")};
 
   for(ObjectType* ot = otypes; ot != otypes+num_otypes; ++ot){
     set<KeySptr> db1_keys = db1.keys_for_type(*ot);
@@ -173,12 +174,13 @@ bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
 	  KeySptr it_xformed = cur(*it);
 	  fk1_transformed.push_back(it_xformed);
 	}
+	if(dbg) std::cerr << "fk1_raw: " << fk1_raw << "\n";//DEBUG
+	if(dbg) std::cerr << "fk1: " << fk1_transformed << "\n";//DEBUG
+
 	std::vector<KeySptr> fk2 = o2->foreign_keys(db2);
+	if(dbg) std::cerr << "fk2: " << fk2 << "\n";//DEBUG
 	if(fk1_transformed != fk2){
 	  if(dbg) std::cerr << "Bad transformed keys\n";//DEBUG
-	  if(dbg) std::cerr << "fk1_raw: " << fk1_raw << "\n";//DEBUG
-	  if(dbg) std::cerr << "fk1: " << fk1_transformed << "\n";//DEBUG
-	  if(dbg) std::cerr << "fk2: " << fk2 << "\n";//DEBUG
 	  bad_mapping = true; break;
 	}
       }
