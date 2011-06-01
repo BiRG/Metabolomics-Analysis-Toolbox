@@ -2,9 +2,13 @@
 ///\brief Main routine and supporting code for the hough_sample_params executable
 #include "remove_sample_params_from.hpp"
 #include "peak_matching_database.hpp"
+#include "peak_group_key.hpp"
+#include "file_format_sample_params.hpp"
 #include <sstream>
 #include <iostream>
 #include <cstdlib> //For exit
+#include <utility>
+#include <set>
 
 ///\brief Print error message and usage information before exiting with an error
 ///
@@ -39,6 +43,70 @@ void print_usage_and_exit(std::string errMsg){
   std::exit(-1);
 }
 
+namespace HoughPeakMatch{
+
+  ///\brief Return keys for those peak-groups that have a representative in
+  ///every sample in \a db
+  ///
+  ///\param db The database whose peak-groups are to be returned
+  ///
+  ///\return keys for those peak-groups that have a representative in
+  ///every sample in \a db
+  std::set<PeakGroupKey> peak_groups_in_all_samples(const PeakMatchingDatabase& db){
+    std::set<PeakGroupKey> ret;
+    ///\todo stub
+    return ret;
+  }
+  
+  ///\brief Calculate the sample parameters for all samples in \a db
+  ///using the peak_groups in \a pg_in_all_samples
+  ///
+  ///Uses PCA on a matrix whose variables are the peak positions of
+  ///the peak in each peak-group in each sample to calculate a set of
+  ///parameters affecting peak positions in each sample that account
+  ///for at least \a frac_variance fraction of the peak_position variance.
+  ///
+  ///\param db The database for whose samples to calculate the parameters
+  ///
+  ///\param pg_in_all_samples the peak groups to use in calculating
+  ///the parameters - each peak group is assumed to have exactly one
+  ///peak in each sample.
+  ///
+  ///\param frac_variance The fraction of the peak-position variance
+  ///that must be captured by the calculated parameters
+  ///
+  ///\return A pair consisting of the parameters inferred for each
+  ///sample and the fractional variances of those parameters
+  std::pair<std::set<FileFormatSampleParams>,ParamStats> 
+  calculate_sample_parameters(const PeakMatchingDatabase& db, 
+			      const std::set<PeakGroupKey>& pg_in_all_samples,
+			      double frac_variance){
+    ///\todo stub
+    std::vector<double> d;
+    return std::make_pair(std::set<FileFormatSampleParams>(),
+			  ParamStats(d.begin(),d.end()));
+  }
+  
+  ///\brief set the parameters for all samples in the database to
+  ///those given in \a params and the param_stats to \a stats
+  ///
+  ///Assumes that the database has no parameterized sample objects and
+  ///no sample_params objects
+  ///
+  ///\param db The database to modify - should have no parameterized
+  ///samples
+  ///
+  ///\param params the sample_params objects to add to the existing samples
+  ///
+  ///\param stats the param_stats object to add to the database
+  void add_params_to_db
+  (PeakMatchingDatabase& db, 
+   const std::set<FileFormatSampleParams>& params,
+   const ParamStats stats){
+    ///\todo stub  
+  }
+}
+
 ///\brief The main routine for hough_sample_params
 ///
 ///\param argc The number of elements in the argv vector
@@ -49,7 +117,7 @@ void print_usage_and_exit(std::string errMsg){
 int main(int argc, char**argv){
   using namespace HoughPeakMatch;
   using std::string;
-  if(argc != 2 && argc != 3){
+  if(argc != 2){
     print_usage_and_exit("ERROR: Wrong number of arguments.");
   }
 
@@ -61,17 +129,31 @@ int main(int argc, char**argv){
 			 "0 and 1, inclusive.  You wrote: "+ 
 			 string(argv[argc-1]));
   }
-  bool should_remove_sample_params_first=
-    argc==3 && argv[argc-2]==string("--remove-sample-params");
 
   PeakMatchingDatabase db;
   if(!db.read(std::cin)){
     print_usage_and_exit("ERROR: could not read database from standard input");
   }
 
-  if(should_remove_sample_params_first){
-    remove_sample_params_from(db);
+  //Remove all references to old parameters from the database,
+  //preserving the rest of its structure.
+  remove_sample_params_from(db);
+
+  db.parameterized_peak_groups().clear();
+  db.detected_peak_groups().clear();
+  db.param_stats().clear();
+
+  std::set<PeakGroupKey> pg_in_all_samples = peak_groups_in_all_samples(db);
+  if(pg_in_all_samples.size() == 0){
+    std::cerr << "WARNING: no known peak groups were in all samples -- "
+      "thus no sample params have been generated.\n";
+    return !db.write(std::cout);  
   }
+
+  std::pair<std::set<FileFormatSampleParams>, ParamStats> params = 
+    calculate_sample_parameters(db, pg_in_all_samples, fraction_variance);
+
+  add_params_to_db(db, params.first, params.second);
   
-  return 0;
+  return !db.write(std::cout);
 }
