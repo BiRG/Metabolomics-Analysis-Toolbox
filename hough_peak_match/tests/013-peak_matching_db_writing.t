@@ -41,9 +41,6 @@ for my $i (1..99){
 plan tests=>scalar(@input_filenames);
 
 
-TODO:{
-    local $TODO="Have not written duplicate_peak_match_db yet";
-
 for my $fn (@input_filenames){
 #Commented code is used to slow down so I can find out where null
 #pointer errors are being generated.
@@ -58,6 +55,5 @@ for my $fn (@input_filenames){
 	"$fn is correctly copied to $dup_fn by duplicate_peak_match_db");
 }
 
-}
 
 
