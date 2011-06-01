@@ -9,6 +9,7 @@
 #include <cstdlib> //For exit
 #include <utility>
 #include <set>
+#include <map>
 
 ///\brief Print error message and usage information before exiting with an error
 ///
@@ -48,13 +49,59 @@ namespace HoughPeakMatch{
   ///\brief Return keys for those peak-groups that have a representative in
   ///every sample in \a db
   ///
+  ///Assumes that there are no detected peak groups, parameterized
+  ///peak groups, or parameterized samples in the database.
+  ///
   ///\param db The database whose peak-groups are to be returned
   ///
   ///\return keys for those peak-groups that have a representative in
   ///every sample in \a db
   std::set<PeakGroupKey> peak_groups_in_all_samples(const PeakMatchingDatabase& db){
+    using std::set; using std::auto_ptr; using std::map; using std::vector;
+    using std::pair;
+    assert(db.detected_peak_groups().size() == 0);
+    assert(db.parameterized_peak_groups().size() == 0);
+    assert(db.parameterized_samples().size() == 0);
+
+    set<unsigned> all_sample_ids;
+    for(vector<UnparameterizedSample>::const_iterator s = 
+	  db.unparameterized_samples().begin();
+	s != db.unparameterized_samples().end(); ++s){
+      all_sample_ids.insert(s->id());
+    }
+    unsigned num_sample_ids = all_sample_ids.size();
+    
+    //Contains ids of peak groups that have multiple peaks in one or
+    //more samples
+    set<unsigned> multiple_entries;
+    //where_represented maps peak group ids to sample ids where that
+    //peak group has a representative
+    map<unsigned, set<unsigned> > where_represented;
+    for(vector<HumanVerifiedPeak>::const_iterator pk = 
+	  db.human_verified_peaks().begin();
+	pk != db.human_verified_peaks().end(); ++pk){
+      unsigned pgid = pk->peak_group_id();
+      pair<set<unsigned>::iterator, bool> 
+	result = where_represented[pgid].insert(pk->sample_id());
+      if(!result.second){ multiple_entries.insert(pgid); }
+    }
+    for(vector<UnverifiedPeak>::const_iterator pk = 
+	  db.unverified_peaks().begin();
+	pk != db.unverified_peaks().end(); ++pk){
+      unsigned pgid = pk->peak_group_id();
+      pair<set<unsigned>::iterator, bool> 
+	result = where_represented[pgid].insert(pk->sample_id());
+      if(!result.second){ multiple_entries.insert(pgid); }
+    }
+
     std::set<PeakGroupKey> ret;
-    ///\todo stub
+    for(map<unsigned, set<unsigned> >::const_iterator pr =
+	  where_represented.begin(); pr != where_represented.end(); ++pr){
+      if(multiple_entries.count(pr->first) == 0 &&
+	 pr->second.size() == num_sample_ids){
+	ret.insert(PeakGroupKey(db, pr->first));
+      }
+    }
     return ret;
   }
   
@@ -82,7 +129,7 @@ namespace HoughPeakMatch{
 			      const std::set<PeakGroupKey>& pg_in_all_samples,
 			      double frac_variance){
     ///\todo stub
-    std::vector<double> d;
+    std::vector<double> d; d.push_back(1);
     return std::make_pair(std::set<FileFormatSampleParams>(),
 			  ParamStats(d.begin(),d.end()));
   }
