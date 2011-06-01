@@ -36,6 +36,13 @@ void print_usage_and_exit(std::string errMsg){
 
 namespace HoughPeakMatch{
 
+///\brief Print a human-readable form of \a set to \a out
+///
+///\param out The stream to print to
+///
+///\param set The set of Key objects to print
+///
+///\return \a out after printing
 std::ostream& operator<<(std::ostream& out, const std::set<KeySptr>& set){
   out << "{KeySet: ";
   std::set<KeySptr>::const_iterator it;
@@ -50,6 +57,13 @@ std::ostream& operator<<(std::ostream& out, const std::set<KeySptr>& set){
   return out << "}";
 }
 
+///\brief Print a human-readable form of \a vec to \a out
+///
+///\param out The stream to print to
+///
+///\param vec The vector of Key objects to print
+///
+///\return \a out after printing
 std::ostream& operator<<(std::ostream& out, const std::vector<KeySptr>& vec){
   out << "{KeyVector: ";
   std::vector<KeySptr>::const_iterator it;
@@ -64,6 +78,16 @@ std::ostream& operator<<(std::ostream& out, const std::vector<KeySptr>& vec){
   return out << "}";
 }
 
+///\brief Return true if \a k1 and \a k2 have the same non-key parameters
+///
+///Non-key parameters are things like ppm, reaction parameters,
+///fractional variances.  Key parameters are things like peak_id that
+///are foreign keys into another "table" of the database.
+///
+///\param k1 the first key to compare
+///\param k2 the second key to compare
+///
+///\return true if \a k1 and \a k2 have the same non-key parameters
 bool have_same_non_key_parameters(KeySptr k1, KeySptr k2){
   std::auto_ptr<PMObject> o1 = k1->obj_copy();
   std::auto_ptr<PMObject> o2 = k2->obj_copy();
@@ -71,6 +95,27 @@ bool have_same_non_key_parameters(KeySptr k1, KeySptr k2){
   return o1->has_same_non_key_parameters(o2.get());
 }
 
+
+///\brief Return true iff the two databases are equivalent
+///
+///two databases are equivalent when there is at least one bijection
+///between object keys and ordering of parameters such that
+///corresponding objects under the bijection have an identical
+///representation after the bijection is applied to their foreign keys
+///and the ordering is applied to their parameters. They are not
+///equivalent if and only if there is no such ordering-bijection pair.
+///
+///There are 3 groups of id numbers: peak_id, sample_id, and
+///peak_group_id. Though integers can be reused between groups, as
+///keys they should be considered distinct. For example sample_id 5
+///and peak_group_id 5 should be considered distinct keys for the
+///purposes of the bijection.
+///
+///\param db1 The first database to compare
+///
+///\param db2 The second database to compare
+///
+///\return true iff the two databases are equivalent
 bool are_equivalent(PeakMatchingDatabase db1, PeakMatchingDatabase db2){
   using std::set;
   UniqueParameterOrdering o1(db1);
