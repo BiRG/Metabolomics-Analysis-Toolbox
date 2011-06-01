@@ -1,5 +1,6 @@
 ///\file
 ///\brief Main routine and supporting code for the duplicate_peak_match_db executable
+#include "remove_sample_params_from.hpp"
 #include "peak_matching_database.hpp"
 #include <sstream>
 #include <iostream>
@@ -32,15 +33,21 @@ void print_usage_and_exit(std::string errMsg){
 ///\param argv The command line arguments to this program - an array of strings
 ///
 ///\return error status to the operating system
-int main(int argc, char**){
+int main(int argc, char**argv){
   using std::string;
-  if(argc != 1){
+  bool should_remove_sample_params = 
+    (argc == 2 && string(argv[1])=="--remove-sample-params");
+  if(!(argc == 1 || should_remove_sample_params)){
     print_usage_and_exit("ERROR: Wrong number of arguments.");
   }
 
   HoughPeakMatch::PeakMatchingDatabase db;
   if(!db.read(std::cin)){
     print_usage_and_exit("ERROR: could not read database from standard input");
+  }
+
+  if(should_remove_sample_params){
+    remove_sample_params_from(db);
   }
 
   return !db.write(std::cout);

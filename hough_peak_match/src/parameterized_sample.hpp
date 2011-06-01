@@ -5,6 +5,7 @@
 #define HOUGH_PEAK_MATCH_PARAMETERIZED_SAMPLE
 
 #include "no_params_exception.hpp"
+#include "unparameterized_sample.hpp"
 #include "sample.hpp"
 #include <vector>
 #include <string>
@@ -57,6 +58,21 @@ public:
   ///
   ///\param params the new parameter values
   void set_params(const std::vector<double>& params){ params_=params; }
+
+
+
+  ///\brief Return a copy of this Sample object without the parameters
+  ///
+  ///\warning The returned copy will have the same id, so if it is
+  ///inserted into the same database then the original should be
+  ///removed -- otherwise the id will no longer uniquely identify the
+  ///sample.
+  //
+  ///\return A copy of this Sample object without the parameters
+  UnparameterizedSample without_params() const{
+    return UnparameterizedSample(id(), sample_class());
+  }
+  
 
   ///\brief Write this ParameterizedSample to a new-line terminated string
   ///

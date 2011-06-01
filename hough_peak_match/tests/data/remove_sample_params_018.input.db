@@ -1,0 +1,14 @@
+#Ensure that databases with different parameter orderings are
+#equivalent. 3 parameters: rearrangement of the columns, peak groups
+#and samples
+
+detected_peak_group 100 100.0 1 2 2
+detected_peak_group 101 100.0 2 3 4
+detected_peak_group 102 100.0 3 4 3
+detected_peak_group 103 100.0 4 1 1
+sample 1 c1
+sample 2 c2
+sample 3 c1
+sample_params 1 1 2 3
+sample_params 2 3 2 1
+sample_params 3 2 1 3

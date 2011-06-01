@@ -208,11 +208,109 @@ namespace HoughPeakMatch{
       return parameterized_samples_;
     }
 
+    ///\brief Return all UnparameterizedSample objects in this database
+    ///\return all UnparameterizedSample objects in this database
+    const std::vector<UnparameterizedSample>& unparameterized_samples() const{
+      return unparameterized_samples_;
+    }
+
     ///\brief Return all ParamStats objects in this database
     ///\return all ParamStats objects in this database
     const std::vector<ParamStats>& param_stats() const {
       return param_stats_;
     }
+
+
+
+    ///\brief Return all ParameterizedPeakGroup objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all ParameterizedPeakGroup objects in this database
+    std::vector<ParameterizedPeakGroup>& 
+    parameterized_peak_groups() {
+      return parameterized_peak_groups_;
+    }
+
+    ///\brief Return all DetectedPeakGroup objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all DetectedPeakGroup objects in this database
+    std::vector<DetectedPeakGroup>& detected_peak_groups() {
+      return detected_peak_groups_;
+    }
+
+    ///\brief Return all HumanVerifiedPeak objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all HumanVerifiedPeak objects in this database
+    std::vector<HumanVerifiedPeak>& human_verified_peaks() {
+      return human_verified_peaks_;
+    }
+
+    ///\brief Return all UnverifiedPeak objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all UnverifiedPeak objects in this database
+    std::vector<UnverifiedPeak>& unverified_peaks() {
+      return unverified_peaks_;
+    }
+
+    ///\brief Return all UnknownPeak objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all UnknownPeak objects in this database
+    std::vector<UnknownPeak>& unknown_peaks() {
+      return unknown_peaks_;
+    }
+
+    ///\brief Return all ParameterizedSample objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all ParameterizedSample objects in this database
+    std::vector<ParameterizedSample>& parameterized_samples() {
+      return parameterized_samples_;
+    }
+
+    ///\brief Return all UnparameterizedSample objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all UnparameterizedSample objects in this database
+    std::vector<UnparameterizedSample>& unparameterized_samples() {
+      return unparameterized_samples_;
+    }
+
+    ///\brief Return all ParamStats objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all ParamStats objects in this database
+    std::vector<ParamStats>& param_stats() {
+      return param_stats_;
+    }
+
 
     ///\return All the keys that would return an object of the given
     ///type in this database

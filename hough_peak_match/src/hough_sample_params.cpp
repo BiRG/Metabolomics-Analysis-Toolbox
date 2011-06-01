@@ -1,5 +1,6 @@
 ///\file
 ///\brief Main routine and supporting code for the hough_sample_params executable
+#include "remove_sample_params_from.hpp"
 #include "peak_matching_database.hpp"
 #include <sstream>
 #include <iostream>
@@ -38,7 +39,6 @@ void print_usage_and_exit(std::string errMsg){
   std::exit(-1);
 }
 
-
 ///\brief The main routine for hough_sample_params
 ///
 ///\param argc The number of elements in the argv vector
@@ -47,6 +47,7 @@ void print_usage_and_exit(std::string errMsg){
 ///
 ///\return error status to the operating system
 int main(int argc, char**argv){
+  using namespace HoughPeakMatch;
   using std::string;
   if(argc != 2 && argc != 3){
     print_usage_and_exit("ERROR: Wrong number of arguments.");
@@ -63,9 +64,13 @@ int main(int argc, char**argv){
   bool should_remove_sample_params_first=
     argc==3 && argv[argc-2]==string("--remove-sample-params");
 
-  HoughPeakMatch::PeakMatchingDatabase db;
+  PeakMatchingDatabase db;
   if(!db.read(std::cin)){
     print_usage_and_exit("ERROR: could not read database from standard input");
+  }
+
+  if(should_remove_sample_params_first){
+    remove_sample_params_from(db);
   }
   
   return 0;
