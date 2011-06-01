@@ -217,6 +217,12 @@ namespace HoughPeakMatch{
     ///\return All the keys that would return an object of the given
     ///type in this database
     ///
+    ///\note When the object type is peak_group, then only the
+    ///peak_groups implicitly defined by reference from a known peak
+    ///are included.  Those explicitly represented by a
+    ///parameterized_peak_group or a detected_peak_group are not
+    ///included.
+    ///
     ///\param t the type of object whose keys should be returned
     ///
     ///\brief Return all the keys that would return an object of the given
