@@ -77,6 +77,7 @@ public:
   }
 
   ///\brief Return this key as a string
+  ///\return this key as a string
   virtual std::string to_string() const = 0;
 };
 #pragma GCC diagnostic warning "-Weffc++"

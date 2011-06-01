@@ -378,6 +378,14 @@ namespace HoughPeakMatch{
   
 
   namespace{
+    ///\brief Write the text-file version the sequence from \a begin
+    ///to \a end to \a out
+    ///
+    ///\param out The stream to write to
+    ///
+    ///\param begin const iterator to first item in the sequence
+    ///
+    ///\param end const iterator to one-past-the-end of the sequence
     template<class InputIter>
       void write_sequence(std::ostream& out, InputIter begin, InputIter end){
       while(begin != end){
