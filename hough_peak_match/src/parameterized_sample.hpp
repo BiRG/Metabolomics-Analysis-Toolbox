@@ -21,7 +21,7 @@ protected:
   ///\brief The parameter vector governing the shifts in this sample
   std::vector<double> params_;
 public:
-  ///\brief Construct an parameterized sample object
+  ///\brief Construct a parameterized sample object
   ///
   ///\param sample_id the id of this sample
   ///
@@ -71,6 +71,20 @@ public:
   ///\return A copy of this Sample object without the parameters
   UnparameterizedSample without_params() const{
     return UnparameterizedSample(id(), sample_class());
+  }
+
+  ///\brief A total ordering on ParameterizedSamples; returns true iff
+  ///*this < \a rhs
+  ///
+  ///\param rhs The right-hand-side of the less-than operator
+  ///
+  ///\return true iff *this < \a rhs
+  bool operator<(const ParameterizedSample& rhs) const{
+    return 
+      (id() < rhs.id()) ||
+      (id() == rhs.id() && sample_class() < rhs.sample_class()) ||
+      (id() == rhs.id() && sample_class() == rhs.sample_class() &&
+       params() < rhs.params());
   }
   
 
