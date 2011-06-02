@@ -282,14 +282,21 @@ namespace HoughPeakMatch{
   ///\param db The database to modify - should have no parameterized
   ///samples
   ///
-  ///\param params the sample_params objects to add to the existing samples
+  ///\param params the parameterized versions of all unparameterized
+  ///samples in the database
   ///
   ///\param stats the param_stats object to add to the database
   void add_params_to_db
   (PeakMatchingDatabase& db, 
    const std::set<ParameterizedSample>& params,
    const ParamStats stats){
-    ///\todo stub  
+    assert(db.unparameterized_samples().size() == params.size());
+    assert(db.parameterized_samples().size() == 0);
+    assert(db.param_stats().size() == 0);
+    db.unparameterized_samples().clear();
+    db.parameterized_samples().insert
+      (db.parameterized_samples().end(), params.begin(), params.end());
+    db.param_stats().push_back(stats);
   }
 }
 
