@@ -35,7 +35,7 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/unique_parameter_ordering.o\
 	obj/remove_sample_params_from.o\
 	obj/sample_key.o
-LDLIBS:=-ltap++
+LDLIBS:=-ltap++ 
 LDFLAGS:=$(GCOV_LDOPTS)
 
 all: mock_executables
@@ -78,7 +78,7 @@ libbirgpeakmatch.a: $(LIBRARYOBJS)
 
 assign_peaks: obj/assign_peaks.o libbirgpeakmatch.a
 
-hough_sample_params: obj/hough_sample_params.o libbirgpeakmatch.a
+hough_sample_params: obj/hough_sample_params.o libbirgpeakmatch.a -lgsl -lgslcblas -lm
 
 equivalent_db: obj/equivalent_db.o libbirgpeakmatch.a
 
