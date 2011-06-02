@@ -1,6 +1,10 @@
 #ifndef BIRG_PEAKS_GSL_MATRIX_HPP
 #define BIRG_PEAKS_GSL_MATRIX_HPP
 
+#ifndef HAVE_INLINE
+#define HAVE_INLINE
+#endif 
+
 #include <gsl/gsl_matrix.h>
 
 namespace GSL{
@@ -45,13 +49,42 @@ public:
   }
 
   ///\brief Return the underlying data pointer - be sure to keep it valid
+  ///
   ///\warning Do not free this pointer 
+  ///
   ///\return the underlying data pointer
   gsl_matrix* ptr(){ return data; }
   
   ///\brief Return the underlying data pointer
+  ///
   ///\return the underlying data pointer 
   const gsl_matrix* ptr() const { return data; }
+
+  ///\brief Return a reference to the element of the matrix at the
+  ///given row and column
+  ///
+  ///\param row the row location of the desired element
+  ///
+  ///\param col the column location of the desired element
+  ///
+  ///\return a reference to the element of the matrix at the
+  ///given row and column
+  double& at(std::size_t row, std::size_t col){
+    return *gsl_matrix_ptr(data, row, col);
+  }
+
+  ///\brief Return the element of the matrix at the given row and
+  ///column
+  ///
+  ///\param row the row location of the desired element
+  ///
+  ///\param col the column location of the desired element
+  ///
+  ///\return the element of the matrix at the given row and column
+  double at(std::size_t row, std::size_t col) const{
+    return gsl_matrix_get(data, row, col);
+  }
+  
   
   ///\brief Deallocates the underlying matrix data with the gsl routine
   ~Matrix(){ gsl_matrix_free(data); data = NULL; }
