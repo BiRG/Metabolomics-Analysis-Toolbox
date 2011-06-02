@@ -47,6 +47,16 @@ public:
     gsl_matrix_memcpy(data, o.data);
     return *this;
   }
+  
+  ///\brief Return the number of rows in this matrix
+  ///
+  ///\return the number of rows in this matrix
+  std::size_t rows() const { return data->size1; }
+
+  ///\brief Return the number of columns in this matrix
+  ///
+  ///\return the number of columns in this matrix
+  std::size_t cols() const { return data->size2; }
 
   ///\brief Return the underlying data pointer - be sure to keep it valid
   ///
@@ -59,6 +69,15 @@ public:
   ///
   ///\return the underlying data pointer 
   const gsl_matrix* ptr() const { return data; }
+
+  ///\brief Return the transpose of this matrix
+  ///
+  ///\return The transpose of this matrix
+  Matrix transpose() const{
+    Matrix ret(cols(),rows());
+    gsl_matrix_transpose_memcpy(ret.ptr(), ptr());
+    return ret;
+  }
 
   ///\brief Return a reference to the element of the matrix at the
   ///given row and column
