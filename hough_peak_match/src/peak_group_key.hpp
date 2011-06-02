@@ -25,6 +25,11 @@ public:
   PeakGroupKey(const PeakMatchingDatabase& database, unsigned peak_group_id)
     :Key(database),peak_group_id_(peak_group_id){}
 
+  ///\brief Return the id of the PeakGroup object accessed by this key.
+  ///
+  ///\return the id of the PeakGroup object accessed by this key.
+  unsigned id() const { return peak_group_id_; }
+
   virtual std::string type_string() const{
     return "peak_group_key";
   }
