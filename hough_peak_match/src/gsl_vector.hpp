@@ -59,6 +59,11 @@ public:
   ///\return the underlying data pointer 
   const gsl_vector* ptr() const { return data; }
 
+  ///\brief Return the number of elements in the vector
+  ///
+  ///\return the number of elements in the vector
+  std::size_t size() const { return data->size; }
+
   ///\brief Return the vector element at index
   ///
   ///\note: unlike the stl vectors this operator[] is range-checked
