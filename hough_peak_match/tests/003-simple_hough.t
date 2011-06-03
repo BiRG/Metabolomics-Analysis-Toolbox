@@ -8,7 +8,7 @@ use warnings;
 
 #######################################################################
 
-use Test::More tests => 2;
+use Test::More skip_all => "Need to write test output for simple_hough";
 
 #########
 #

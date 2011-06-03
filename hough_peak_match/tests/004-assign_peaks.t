@@ -8,7 +8,7 @@ use warnings;
 
 #######################################################################
 
-use Test::More tests => 4;
+use Test::More skip_all => "Need to write test output for assign_peaks";
 
 #########
 #

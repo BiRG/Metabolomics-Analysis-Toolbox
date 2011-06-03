@@ -86,11 +86,11 @@ command_line_error_message_is(
 #
 #########
 
-my $returnValue=system('../hough_sample_params 0.99 < data/data_basic_005pk_003smp_01param.initial.db > outputs/hough_sample_params-data_basic_005pk_003smp_01param.initial.actual.db');
+my $returnValue=system('../hough_sample_params 0.99 < data/test_db_basic-005pk-100smp-01param.before_hough_samp_params.db  > outputs/test_db_basic-005pk-100smp-01param.hough_samp_params.actual.db');
 
 is($returnValue,0,"hough_sample_params executed successfully on 5pk 3samp 1param");
 
 
-my $equivalenceResult=`../equivalent_db data/data_basic_005pk_003smp_01param.after_hough_sample_params.db outputs/hough_sample_params-data_basic_005pk_003smp_01param.initial.actual.db`;
+my $equivalenceResult=`diff data/test_db_basic-005pk-100smp-01param.expected_after_hough_sample_params.db outputs/test_db_basic-005pk-100smp-01param.hough_samp_params.actual.db`;
 
-is($equivalenceResult,"Databases ARE equivalent","hough_sample_params produced expected db on 5pk 3samp 1param");
+is($equivalenceResult,"","hough_sample_params produced expected db on 5pk 100samp 1param");
