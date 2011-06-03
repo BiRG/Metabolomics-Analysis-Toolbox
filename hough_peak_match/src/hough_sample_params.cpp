@@ -125,6 +125,24 @@ namespace HoughPeakMatch{
       }
     }
   }
+
+  ///\brief Return a vector whose ith spot contains the mean for the ith row
+  ///of \a m
+  ///
+  ///\param m The matrix whose rows will have their means calculated
+  ///
+  ///\return A vector whose ith spot contains the mean for the ith row
+  ///of \a m
+  std::vector<double> matrix_row_means(const GSL::Matrix& m){
+    std::vector<double> means(m.rows(),0);
+    for(std::size_t row=0; row < m.rows(); ++row){
+      for(std::size_t col=0; col < m.cols(); ++col){
+	means[row] += m.at(row,col);
+      }
+      means[row] /= m.cols();
+    }
+    return means;
+  }
   
   ///\brief Calculate the sample parameters for all samples in \a db
   ///using the peak_groups in \a pg_in_all_samples
@@ -211,7 +229,8 @@ namespace HoughPeakMatch{
       std::cerr << "Initial peak positions:\n" << peak_pos;
     }
     
-    //Mean center the rows
+    //Mean center the rows (saving the means first)
+    std::vector<double> row_means = matrix_row_means(peak_pos);
     mean_center_rows(peak_pos);
 
     //SVD
@@ -227,16 +246,28 @@ namespace HoughPeakMatch{
     sigma = GSL::Vector(u.cols());
     gsl_linalg_SV_decomp_jacobi(u.ptr(), v.ptr(), sigma.ptr());    
 
-    //Copy the correct matrix to the sample-params object
+    //Copy the correct matrix to the sample-params and peak-params objects
     //Sample params has one row for each sample and each column
     //corresponds to a parameter.  The variance explained by the ith
     //column is proportional to the square of the ith element of sigma
-    GSL::Matrix sample_params(1,1);
+    GSL::Matrix sample_params(1,1),peak_params(1,1);
     if(more_groups_than_samples){
       sample_params = v;
+      peak_params = u;
     }else{
       sample_params = u;
+      peak_params = v;
     }
+
+    //Scale the peak_params by the appropriate singular value before I
+    //destroy the singular values -- thus my peak_params are
+    //Transpose[sigma * Transpose[raw_params]]
+    for(std::size_t row=0; row < peak_params.rows(); ++row){
+      for(std::size_t col=0; col < peak_params.cols(); ++col){
+	peak_params.at(row,col) *= sigma[col];
+      }
+    }
+
 
     //Convert sigmas to fractional variances && determine how many are needed
     {
@@ -280,16 +311,28 @@ namespace HoughPeakMatch{
 					    vars.begin(), vars.end()));
     }
     
-    //Pack results into a pair and return
+    //Convert rows of peak_params matrix to parameterized peak groups
     std::vector<ParameterizedPeakGroup> peak_groups;
+    for(std::size_t row=0; row < peak_params.rows(); ++row){
+      for(std::size_t col=0; col < num_components; ++col){
+	vars.at(col)=peak_params.at(row,col);
+      }
+      unsigned pg_id = row_to_pg_id[row];
+      peak_groups.push_back(ParameterizedPeakGroup
+			    (pg_id, row_means.at(row), 
+			     vars.begin(), vars.end()));
+    }
+
+    //Pack results into a pair and return
     return std::make_pair(std::make_pair(samples, param_stats), peak_groups);
   }
   
   ///\brief set the parameters for all samples in the database to
   ///those given in \a params and the param_stats to \a stats
   ///
-  ///Assumes that the database has no parameterized sample objects and
-  ///no sample_params objects
+  ///Assumes that the database has no parameterized sample objects, no
+  ///detected or parameterized peak groups and no sample_params
+  ///objects
   ///
   ///\param db The database to modify - should have no parameterized
   ///samples
@@ -300,13 +343,17 @@ namespace HoughPeakMatch{
   ///\param stats the param_stats object to add to the database
   void add_params_to_db
   (PeakMatchingDatabase& db, 
-   const std::vector<ParameterizedSample>& params,
+   const std::vector<ParameterizedSample>& samples,
+   const std::vector<ParameterizedPeakGroup>& groups,
    const ParamStats stats){
-    assert(db.unparameterized_samples().size() == params.size());
+    assert(db.unparameterized_samples().size() == samples.size());
     assert(db.parameterized_samples().size() == 0);
+    assert(db.parameterized_peak_groups().size() == 0);
+    assert(db.detected_peak_groups().size() == 0);
     assert(db.param_stats().size() == 0);
     db.unparameterized_samples().clear();
-    db.parameterized_samples()=params;
+    db.parameterized_samples()=samples;
+    db.parameterized_peak_groups() = groups;
     db.param_stats().push_back(stats);
   }
 }
@@ -361,7 +408,7 @@ int main(int argc, char**argv){
     calculate_sample_parameters(db, pg_in_all_samples, fraction_variance, 
 				should_print_matrices);
 
-  add_params_to_db(db, params.first.first, params.first.second);
+  add_params_to_db(db, params.first.first, params.second, params.first.second);
   
   return !db.write(std::cout);
 }
