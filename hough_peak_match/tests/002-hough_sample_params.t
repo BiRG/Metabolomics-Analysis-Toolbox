@@ -94,10 +94,3 @@ is($returnValue,0,"hough_sample_params executed successfully on 5pk 3samp 1param
 my $equivalenceResult=`../equivalent_db data/data_basic_005pk_003smp_01param.after_hough_sample_params.db outputs/hough_sample_params-data_basic_005pk_003smp_01param.initial.actual.db`;
 
 is($equivalenceResult,"Databases ARE equivalent","hough_sample_params produced expected db on 5pk 3samp 1param");
-
-
-
-
-
-
-
