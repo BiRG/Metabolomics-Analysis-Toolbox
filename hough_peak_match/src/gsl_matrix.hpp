@@ -6,6 +6,7 @@
 #endif 
 
 #include <gsl/gsl_matrix.h>
+#include <iostream>
 
 namespace GSL{
 
@@ -109,6 +110,36 @@ public:
   ~Matrix(){ gsl_matrix_free(data); data = NULL; }
 };
 
+///\brief Print a human-readable version of \a m to \a out
+///
+///The printed form of the matrix contains newlines (and ends with a newline)
+///
+///\param out the stream to print to
+///
+///\param m the matrix to print
+///
+///\return \a out after printing
+std::ostream& operator<<(std::ostream& out, const GSL::Matrix& m){
+  out << "{";
+  for(std::size_t row = 0; row < m.rows(); ++row){
+    if(row == 0){
+      out << "{ ";
+    }else{
+      out << " { ";
+    }
+    for(std::size_t col = 0; col < m.cols(); ++col){
+      out << m.at(row,col);
+      if(col+1 < m.cols()){
+	out << ", ";
+      }
+    }
+    out << " }";
+    if(row+1 < m.rows()){ out << "\n"; }
+  }
+  return out << "}\n";
 }
+
+}
+
 
 #endif //BIRG_PEAKS_GSL_MATRIX_HPP
