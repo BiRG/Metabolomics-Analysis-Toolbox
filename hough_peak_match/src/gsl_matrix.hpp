@@ -134,7 +134,7 @@ std::ostream& operator<<(std::ostream& out, const GSL::Matrix& m){
       }
     }
     out << " }";
-    if(row+1 < m.rows()){ out << "\n"; }
+    if(row+1 < m.rows()){ out << ",\n"; }
   }
   return out << "}\n";
 }
