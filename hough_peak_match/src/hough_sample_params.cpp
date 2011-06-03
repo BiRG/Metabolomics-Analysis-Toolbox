@@ -150,7 +150,7 @@ namespace HoughPeakMatch{
   ///
   ///\return A pair consisting of the parameters inferred for each
   ///sample and the fractional variances of those parameters
-  std::pair<std::set<ParameterizedSample>,ParamStats> 
+  std::pair<std::vector<ParameterizedSample>,ParamStats>
   calculate_sample_parameters(const PeakMatchingDatabase& db, 
 			      const std::set<PeakGroupKey>& pg_in_all_samples,
 			      double frac_variance, 
@@ -268,14 +268,14 @@ namespace HoughPeakMatch{
     ParamStats param_stats(vars.begin(), vars.end());
 
     //Convert rows of sample_params matrix to sample parameter objects
-    std::set<ParameterizedSample> samples;
+    std::vector<ParameterizedSample> samples;
     for(std::size_t row=0; row < sample_params.rows(); ++row){
       for(std::size_t col=0; col < num_components; ++col){
 	vars.at(col)=sample_params.at(row,col);
       }
       const UnparameterizedSample &orig=db.unparameterized_samples()[row];
-      samples.insert(ParameterizedSample(orig.id(), orig.sample_class(), 
-					 vars.begin(), vars.end()));
+      samples.push_back(ParameterizedSample(orig.id(), orig.sample_class(), 
+					    vars.begin(), vars.end()));
     }
     
     //Pack results into a pair and return
@@ -297,14 +297,13 @@ namespace HoughPeakMatch{
   ///\param stats the param_stats object to add to the database
   void add_params_to_db
   (PeakMatchingDatabase& db, 
-   const std::set<ParameterizedSample>& params,
+   const std::vector<ParameterizedSample>& params,
    const ParamStats stats){
     assert(db.unparameterized_samples().size() == params.size());
     assert(db.parameterized_samples().size() == 0);
     assert(db.param_stats().size() == 0);
     db.unparameterized_samples().clear();
-    db.parameterized_samples().insert
-      (db.parameterized_samples().end(), params.begin(), params.end());
+    db.parameterized_samples()=params;
     db.param_stats().push_back(stats);
   }
 }
@@ -354,7 +353,7 @@ int main(int argc, char**argv){
     return !db.write(std::cout);  
   }
 
-  std::pair<std::set<ParameterizedSample>, ParamStats> params = 
+  std::pair<std::vector<ParameterizedSample>, ParamStats> params = 
     calculate_sample_parameters(db, pg_in_all_samples, fraction_variance, 
 				should_print_matrices);
 
