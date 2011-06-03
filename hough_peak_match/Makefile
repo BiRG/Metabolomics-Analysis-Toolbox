@@ -82,7 +82,7 @@ hough_sample_params: obj/hough_sample_params.o libbirgpeakmatch.a -lgsl -lgslcbl
 
 equivalent_db: obj/equivalent_db.o libbirgpeakmatch.a
 
-simple_hough: obj/simple_hough.o libbirgpeakmatch.a
+simple_hough: obj/simple_hough.o libbirgpeakmatch.a -lboost_program_options
 
 valid_db: obj/valid_db.o libbirgpeakmatch.a
 
