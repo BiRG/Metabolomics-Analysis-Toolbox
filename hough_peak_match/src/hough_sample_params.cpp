@@ -150,7 +150,9 @@ namespace HoughPeakMatch{
   ///
   ///\return A pair consisting of the parameters inferred for each
   ///sample and the fractional variances of those parameters
-  std::pair<std::vector<ParameterizedSample>,ParamStats>
+  std::pair<std::pair<
+	      std::vector<ParameterizedSample>,ParamStats>,
+	    std::vector<ParameterizedPeakGroup> >
   calculate_sample_parameters(const PeakMatchingDatabase& db, 
 			      const std::set<PeakGroupKey>& pg_in_all_samples,
 			      double frac_variance, 
@@ -279,7 +281,8 @@ namespace HoughPeakMatch{
     }
     
     //Pack results into a pair and return
-    return std::make_pair(samples, param_stats);
+    std::vector<ParameterizedPeakGroup> peak_groups;
+    return std::make_pair(std::make_pair(samples, param_stats), peak_groups);
   }
   
   ///\brief set the parameters for all samples in the database to
@@ -353,11 +356,12 @@ int main(int argc, char**argv){
     return !db.write(std::cout);  
   }
 
-  std::pair<std::vector<ParameterizedSample>, ParamStats> params = 
+  std::pair<std::pair<std::vector<ParameterizedSample>,ParamStats>,
+	    std::vector<ParameterizedPeakGroup> > params = 
     calculate_sample_parameters(db, pg_in_all_samples, fraction_variance, 
 				should_print_matrices);
 
-  add_params_to_db(db, params.first, params.second);
+  add_params_to_db(db, params.first.first, params.first.second);
   
   return !db.write(std::cout);
 }
