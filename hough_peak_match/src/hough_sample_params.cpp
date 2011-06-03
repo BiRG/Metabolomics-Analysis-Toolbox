@@ -108,19 +108,19 @@ namespace HoughPeakMatch{
     return ret;
   }
 
-  ///\brief subtract the mean of each column from each value in the column
+  ///\brief subtract the mean of each row from each value in the row
   ///
-  ///\param m The matrix whose columns will have the mean subtracted
-  void mean_center_columns(GSL::Matrix& m){
-    if(m.rows() < 1){  //Skip empty matrix
+  ///\param m The matrix whose rows will have the mean subtracted
+  void mean_center_rows(GSL::Matrix& m){
+    if(m.cols() < 1){  //Skip empty matrix
       return; }
-    for(std::size_t col = 0; col < m.cols(); ++col){
+    for(std::size_t row = 0; row < m.rows(); ++row){
       double sum = 0;
-      for(std::size_t row = 0; row < m.rows(); ++row){
+      for(std::size_t col = 0; col < m.cols(); ++col){
 	sum += m.at(row,col);
       }
-      double mean = sum / m.rows();
-      for(std::size_t row = 0; row < m.rows(); ++row){
+      double mean = sum / m.cols();
+      for(std::size_t col = 0; col < m.cols(); ++col){
 	m.at(row,col) -= mean;
       }
     }
@@ -145,13 +145,17 @@ namespace HoughPeakMatch{
   ///\param frac_variance The fraction of the peak-position variance
   ///that must be captured by the calculated parameters
   ///
+  ///\param should_print_matrices if true, then some of the generated
+  ///matrices, including peak-position are printed to std::cerr
+  ///
   ///\return A pair consisting of the parameters inferred for each
   ///sample and the fractional variances of those parameters
   std::pair<std::set<ParameterizedSample>,ParamStats> 
   calculate_sample_parameters(const PeakMatchingDatabase& db, 
 			      const std::set<PeakGroupKey>& pg_in_all_samples,
-			      double frac_variance){    
-    using std::map;
+			      double frac_variance, 
+			      bool should_print_matrices){    
+    using std::map; using namespace GSL;
     assert(db.parameterized_samples().size() == 0);
 
     //Make the matrix of peak positions (each column is a sample, each
@@ -200,9 +204,14 @@ namespace HoughPeakMatch{
 	peak_pos.at(row,col)=cur_peak->ppm();
       }
     }
+
+    if(should_print_matrices){
+      std::cerr << "Initial peak positions:\n" << peak_pos;
+    }
     
-    //Mean center the columns
-    mean_center_columns(peak_pos);
+    //Mean center the rows
+    mean_center_rows(peak_pos);
+
     //SVD
     GSL::Matrix u(1,1),v(1,1);
     GSL::Vector sigma(1);
@@ -310,9 +319,11 @@ namespace HoughPeakMatch{
 int main(int argc, char**argv){
   using namespace HoughPeakMatch;
   using std::string;
-  if(argc != 2){
+  if(argc != 2 && argc != 3){
     print_usage_and_exit("ERROR: Wrong number of arguments.");
   }
+
+  bool should_print_matrices = argc==3;
 
   double fraction_variance = -1;
   std::istringstream frac_var_in(argv[argc-1]);
@@ -344,7 +355,8 @@ int main(int argc, char**argv){
   }
 
   std::pair<std::set<ParameterizedSample>, ParamStats> params = 
-    calculate_sample_parameters(db, pg_in_all_samples, fraction_variance);
+    calculate_sample_parameters(db, pg_in_all_samples, fraction_variance, 
+				should_print_matrices);
 
   add_params_to_db(db, params.first, params.second);
   
