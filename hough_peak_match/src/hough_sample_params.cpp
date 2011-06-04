@@ -337,8 +337,11 @@ namespace HoughPeakMatch{
   ///\param db The database to modify - should have no parameterized
   ///samples
   ///
-  ///\param params the parameterized versions of all unparameterized
+  ///\param samples the parameterized versions of all unparameterized
   ///samples in the database
+  ///
+  ///\param groups the parameterized peak groups to add to the
+  ///database
   ///
   ///\param stats the param_stats object to add to the database
   void add_params_to_db
