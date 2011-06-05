@@ -843,4 +843,24 @@ namespace HoughPeakMatch{
 	      param_stats_.begin(), rp);
   }
 
+
+  std::size_t PeakMatchingDatabase::num_classes() const{
+    std::set<std::string> classes;
+    {
+      std::vector<UnparameterizedSample>::const_iterator ups;
+      for(ups = unparameterized_samples().begin(); 
+	  ups != unparameterized_samples().end();  ++ups){
+	classes.insert(ups->sample_class());
+      }
+    }
+    {
+      std::vector<ParameterizedSample>::const_iterator ps;
+      for(ps = parameterized_samples().begin(); 
+	  ps != parameterized_samples().end();  ++ps){
+	classes.insert(ps->sample_class());
+      }
+    }
+    return classes.size();
+  }
+
 }

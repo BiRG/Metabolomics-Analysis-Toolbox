@@ -155,6 +155,12 @@ namespace HoughPeakMatch{
     ///\return An auto_pointer to a newly allocated copy of the
     ///peak_group object specified by peak_group_id 
     std::auto_ptr<PeakGroup> peak_group_copy_from_id(unsigned peak_group_id) const;
+    ///\brief Return the number of sample classes represented in this
+    ///database
+    ///
+    ///\return the number of sample classes represented in this
+    ///database
+    std::size_t num_classes() const;
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the
     /// sample object specified by sample_id
