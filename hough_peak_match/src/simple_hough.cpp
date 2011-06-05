@@ -116,6 +116,73 @@ namespace HoughPeakMatch{
     }
   };
 
+  ///\brief A marker class given to indicate that an iterator should
+  ///start at the beginning
+  class AtBeginning{};
+
+  ///\brief A marker class given to indicate that an iterator should
+  ///start at the beginning
+  class AtEnd{};
+
+  ///\brief Iterates through ppm-slices of a given SimpleAccumulator
+  class SliceIterator{
+    ///\brief A reference to the dims_ structure in the source
+    ///SimpleAccumulator
+    const std::vector<DiscretizedRange>& dims_;
+    
+    ///\brief A reference to the votes structure of the source accumulator
+    std::vector<double>& votes_;
+
+    ///\brief params_indices[i] is the coordinate along dimension
+    ///given by dims_[i+1]
+    std::vector<std::size_t> params_indices_;
+
+    ///\brief true iff the iterator is one-past-the-end
+    ///
+    ///This is used for quick comparisons to the end iterator.  If it
+    ///is true, all other fields are ignored.
+    bool at_end_;
+  public:
+    ///\brief Create a slice iterator that starts at the beginning 
+    ///
+    ///\param tag An empty class telling the compiler in a readable
+    ///way to start the iterator at the beginning
+    ///
+    ///\param dims the dims_ member of a SimpleAccumulator
+    ///
+    ///\param votes the votes_ member of a SimpleAccumulator
+    SliceIterator(const AtBeginning tag, 
+		  const std::vector<DiscretizedRange>& dims,
+		  std::vector<double>& votes);
+
+    ///\brief Create a slice iterator that starts at the end 
+    ///
+    ///\param tag An empty class telling the compiler in a readable
+    ///way to start the iterator at the end
+    ///
+    ///\param dims the dims_ member of a SimpleAccumulator
+    ///
+    ///\param votes the votes_ member of a SimpleAccumulator
+    SliceIterator(const AtEnd tag, 
+		  const std::vector<DiscretizedRange>& dims,
+		  std::vector<double>& votes);
+  };
+
+  SliceIterator::SliceIterator(const AtBeginning, 
+			       const std::vector<DiscretizedRange>& dims,
+			       std::vector<double>& votes)
+    :dims_(dims),votes_(votes),params_indices_(dims.size(),0),at_end_(false){
+    for(std::vector<DiscretizedRange>::const_iterator d = dims.begin();
+	d != dims.end(); ++d){
+      at_end_ = at_end_ || d->num_cells==0;
+    }
+  }
+
+  SliceIterator::SliceIterator(const AtEnd, 
+			       const std::vector<DiscretizedRange>& dims,
+			       std::vector<double>& votes)
+    :dims_(dims),votes_(votes),params_indices_(dims.size(),0),at_end_(true){}
+
   ///\brief A multi-dimensional array for accumulating votes for
   ///peak-group locations
   class SimpleAccumulator{
