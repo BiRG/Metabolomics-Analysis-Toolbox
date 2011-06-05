@@ -38,7 +38,7 @@ namespace HoughPeakMatch{
       return max-min;
     }
     ///\brief Return the fraction of the way along the interval that
-    ///val represents
+    ///\a val represents
     ///
     ///Imagine that val is a point in the interval.  Then if val is at
     ///the maximum end point, it is all the way along the interval and
@@ -47,6 +47,11 @@ namespace HoughPeakMatch{
     ///
     ///If val is not in the interval then it is treated as one of the
     ///end-points.
+    ///
+    ///\param val The value to determine where it is in the interval
+    ///
+    ///\return the fraction of the way along the interval that
+    ///\a val represents
     double fraction(double val){
       assert(max >= min);
       if(max == min || val >= max){ 
@@ -218,8 +223,8 @@ namespace HoughPeakMatch{
     ///parameter explains y% of the variance then the other parameter
     ///will be allocated ceil(\a base_res * y/x) cells.
     ///
-    ///\param ps a ParamStats object giving the fractional variances
-    ///explained for the different parameters
+    ///\param db The database that this accumulator will accumulate
+    ///over
     SimpleAccumulator(DiscretizedRange ppm_dimension,
 		      DiscretizedRange param_base_dimension,
 		      const PeakMatchingDatabase& db);
