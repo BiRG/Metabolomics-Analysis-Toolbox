@@ -171,6 +171,45 @@ namespace HoughPeakMatch{
     SliceIterator(const AtEnd tag, 
 		  const std::vector<DiscretizedRange>& dims,
 		  std::vector<double>& votes);
+
+    ///\brief Return true iff this and \a si differ
+    ///
+    ///\warning The result of this comparison is undefined if the
+    ///iterators are iterating over different collections of votes or
+    ///sets of dimensions
+    ///
+    ///\return true iff this and \a si differ
+    bool operator!=(const SliceIterator& si){
+      if(at_end_ != si.at_end_){
+	return true;
+      }else{
+	if(at_end_){ 
+	  return false;
+	}else{
+	  return params_indices_ != si.params_indices_;
+	}
+      }
+    }
+
+    ///\brief Point to the next slice
+    ///
+    ///\return Return this iterator after incrementing
+    SliceIterator& operator++(){
+      if(at_end_){
+	return *this; }
+      std::size_t idx;
+      for(idx = 0; idx < dims_.size(); ++idx){
+	if((params_indices_.at(idx)+1) < dims_.at(idx).num_cells){
+	  ++params_indices_.at(idx);
+	  break;
+	}else{
+	  params_indices_.at(idx) = 0;
+	}
+      }
+      if(idx == dims_.size()){
+	at_end_ = true;
+      }
+    }
   };
 
   SliceIterator::SliceIterator(const AtBeginning, 
