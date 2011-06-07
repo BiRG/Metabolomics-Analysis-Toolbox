@@ -2,6 +2,7 @@
 ///\brief Main routine and supporting code for the simple_hough executable
 
 #include "peak_matching_database.hpp"
+#include "utils.hpp"
 #include <boost/program_options.hpp>
 #include <boost/math/distributions/normal.hpp>
 #include <iostream>
@@ -34,7 +35,7 @@ namespace HoughPeakMatch{
 
     ///\brief Return the length of the closed interval (max-min)
     ///\return the length of the closed interval (max-min)
-    double length(){ 
+    double length() const{ 
       assert(max >= min);
       return max-min;
     }
@@ -53,7 +54,7 @@ namespace HoughPeakMatch{
     ///
     ///\return the fraction of the way along the interval that
     ///\a val represents
-    double fraction(double val){
+    double fraction(double val) const{
       assert(max >= min);
       if(max == min || val >= max){ 
 	return 1;
@@ -74,7 +75,7 @@ namespace HoughPeakMatch{
     ///
     ///\return true iff \a val is in the interval represented by
     ///this Range
-    bool contains(double val){
+    bool contains(double val) const{
       assert(max >= min);
       return val <= max && val >= min;
     }
@@ -106,7 +107,7 @@ namespace HoughPeakMatch{
     ///
     ///\return the index of the cell into which the given value
     ///falls (-1 if outside range)
-    int which_cell(double val){
+    int which_cell(double val) const{
       if(num_cells == 0){
 	return -1;
       }else if(range.contains(val)){
@@ -121,6 +122,24 @@ namespace HoughPeakMatch{
       }
     }
 
+    ///\brief Return the value that would fall in the center of the
+    ///cell with the given \a index
+    ///
+    ///Whether the index is in bounds or not is ignored
+    ///
+    ///\param index The index of the cell whose center value should be given
+    ///
+    ///\a return the value that would fall in the center of the
+    ///cell with the given \a index
+    double center_value_at(int index) const{
+      if(num_cells > 0){
+	double cell_width = range.length()/num_cells;
+	return (index+0.5)*cell_width;
+      }else{
+	return (range.min+range.max)/2;
+      }
+    }
+
     ///\brief Return the index of the cell into which the given value
     ///would fall if there were a cell for every integer
     ///
@@ -128,7 +147,7 @@ namespace HoughPeakMatch{
     ///
     ///\return the index of the cell into which the given value would
     ///fall if there were a cell for every integer
-    int which_cell_unbounded(double val){
+    int which_cell_unbounded(double val) const{
       if(num_cells == 0 || range.length() == 0){
 	return 0;
       }else{
@@ -148,7 +167,7 @@ namespace HoughPeakMatch{
     ///for all but the last cell.  However, that is significantly more
     ///complicated to implement with no real gains in this context, so
     ///I just reuse my closed interval for all cells.
-    Range cell_bounds(int cell_index){
+    Range cell_bounds(int cell_index) const{
       double cell_width = range.length()/num_cells;
       return Range(cell_index*cell_width, (cell_index+1)*cell_width);
     }
@@ -205,16 +224,19 @@ namespace HoughPeakMatch{
       std::fill(cells_.begin(), cells_.end(), 0);
     }
 
-    ///\brief Accumulate a Gaussian with mean \a mean and the standard
-    ///deviation given on creation of this SliceBuffer
+    ///\brief Accumulate a Gaussian with area \a weight, mean \a mean
+    ///and the standard deviation given on creation of this
+    ///SliceBuffer
     ///
     ///Doesn't add the whole Gaussian, just 5 standard deviations
     ///
     ///\param mean The mean of the Gaussian to add (in ppm)
-    void add_gaussian(double mean);
+    ///
+    ///\param weight The total area of the gaussian to add
+    void add_gaussian(double mean, double weight);
   };
 
-  void SliceBuffer::add_gaussian(double mean){
+  void SliceBuffer::add_gaussian(double mean, double weight){
     using std::size_t; using boost::math::cdf;
     //Ensure this is a sane slice
     if(ppm_range_.num_cells == 0){ 
@@ -231,7 +253,7 @@ namespace HoughPeakMatch{
     boost::math::normal n(mean,std_dev_);
     for(int index = lower_bound; index <= upper_bound; ++index){
       Range cell = ppm_range_.cell_bounds(index);
-      cells_.at(index) += cdf(n, cell.max)-cdf(n, cell.min);
+      cells_.at(index) += weight*(cdf(n, cell.max)-cdf(n, cell.min));
     }
   }
 
@@ -286,6 +308,32 @@ namespace HoughPeakMatch{
 		  const std::vector<DiscretizedRange>& dims,
 		  std::vector<double>& votes);
 
+    ///\brief Return the peak parameter vector in effect at this slice
+    ///
+    ///\return the peak parameter vector in effect at this slice
+    std::vector<double> params() const{
+      std::vector<double> ret; ret.reserve(dims_.size());
+      std::vector<DiscretizedRange>::const_iterator dim = dims_.begin();
+      std::vector<std::size_t>::const_iterator param = params_indices_.begin();
+      for(++dim; dim != dims_.end(); ++dim,++param){
+	ret.push_back(dim->center_value_at(*param));
+      }
+      return ret;
+    }
+
+    ///\brief Set the votes in the slice pointed to by this iterator
+    ///to the max of those votes and those in \a buf
+    ///
+    ///\param buf The votes that will become the new votes if they are
+    ///greater
+    void set_to_max(const SliceBuffer& buf){
+      SliceBuffer::const_iterator b = buf.begin();
+      std::vector<double>::iterator v = votes_.begin();
+      while(v != votes_.end()){
+	*v = std::max(*b,*v);
+      }
+    }
+
     ///\brief Return true iff this and \a si differ
     ///
     ///\warning The result of this comparison is undefined if the
@@ -293,7 +341,7 @@ namespace HoughPeakMatch{
     ///sets of dimensions
     ///
     ///\return true iff this and \a si differ
-    bool operator!=(const SliceIterator& si){
+    bool operator!=(const SliceIterator& si) const{
       if(at_end_ != si.at_end_){
 	return true;
       }else{
@@ -323,6 +371,7 @@ namespace HoughPeakMatch{
       if(idx == dims_.size()){
 	at_end_ = true;
       }
+      return *this;
     }
   };
 
@@ -359,11 +408,13 @@ namespace HoughPeakMatch{
     ///dimensions 0,1,and 2) would be located at
     ///a+dims_[0].num_cells*(b+dims_[1].num_cells*c)
     std::vector<double> votes_;
+
   public:
     ///\brief Create an accumulator that can hold the data from \a db
     ///with the specified resolutions
     ///
-    ///Assumes that the database has exactly one ParamStats object
+    ///Assumes that the database has exactly one ParamStats object.
+    ///The accumulator is created initially zero-filled.
     ///
     ///\param ppm_dimension Describes the range and the number of
     ///cells to use for the ppm location dimension
@@ -402,6 +453,30 @@ namespace HoughPeakMatch{
     static double size_estimate(std::size_t location_res,
 				std::size_t base_res,
 				ParamStats ps);
+
+
+    ///\brief Return a SliceIterator to the first slice
+    ///\return a SliceIterator to the first slice
+    SliceIterator begin_slice(){ 
+      return SliceIterator(AtBeginning(), dims_, votes_); }
+
+    ///\brief Return a SliceIterator to one-past-the-end slice
+    ///\return a SliceIterator to one-past-the-end slice
+    SliceIterator end_slice(){ 
+      return SliceIterator(AtEnd(), dims_, votes_); }
+
+    ///\brief Accumulate the votes for all the peaks in the given database
+    ///
+    ///Accumulates votes all peaks fuzzified by a gaussian of width \a
+    ///std_dev ppm.
+    ///
+    ///Assumes that all samples in the database are parameterized.
+    ///
+    ///\param db The database containing the peaks
+    ///
+    ///\param standard_deviation The standard deviation to use in
+    ///fuzzifying the votes along th ppm axis
+    void accumulate(const PeakMatchingDatabase& db, double standard_deviation);
   };
 
   double SimpleAccumulator::size_estimate(std::size_t location_res,
@@ -462,6 +537,133 @@ namespace HoughPeakMatch{
     votes_.resize(num_cells,0);
   }
   
+  namespace{
+    ///\brief A parameterized sample with all its peaks included
+    struct FlatSample{
+      ///\brief the uniqe id for this sample within the original database
+      unsigned sample_id;
+
+      ///\brief The class of this sample
+      std::string sample_class;
+
+      ///\brief the sample parameters describing the global
+      ///characteristics of this sample
+      std::vector<double> params;
+
+      ///\brief the ppms of the peaks in this sample
+      std::vector<double> ppms;
+
+      ///\brief Create a sample like \a s with no peaks
+      ///
+      ///\param s the sample to copy
+      FlatSample(const ParameterizedSample& s)
+	:sample_id(s.id()), sample_class(s.sample_class()), 
+	 params(s.params()), ppms(){}
+
+      ///\brief Create a sample with no peaks, class, or parameters,
+      ///just the given sample_id
+      ///
+      ///Intended for allowing easy searches of associative
+      ///containers for a sample with the given id
+      ///
+      ///\param sample_id The sample_id of the new sample
+      FlatSample(unsigned sample_id)
+	:sample_id(sample_id), sample_class("!nOT_iN_a_cLASS"),
+	 params(), ppms(){}
+      
+      ///\brief Sort on sample_id
+      ///
+      ///\param rhs the right hand size of the less-than operator
+      ///
+      ///\return true iff sample_id < rhs.sample_id
+      bool operator<(const FlatSample& rhs) const{
+	return sample_id < rhs.sample_id;
+      }
+    };
+  }
+
+  void SimpleAccumulator::accumulate(const PeakMatchingDatabase& db, 
+				     double std_dev){
+    using std::set; using std::vector; using std::string;
+    using std::vector; 
+    //Extract the classes and FlatSamples from the database
+    set<string> classes;
+    set<FlatSample> all_samples;
+    {
+      vector<ParameterizedSample>::const_iterator samp;
+      for(samp = db.parameterized_samples().begin(); 
+	  samp != db.parameterized_samples().end(); ++samp){
+	all_samples.insert(*samp);
+	classes.insert(samp->sample_class());
+      }
+    }{
+      vector<UnknownPeak>::const_iterator peak;
+      for(peak = db.unknown_peaks().begin(); peak != db.unknown_peaks().end();
+	  ++peak){
+	FlatSample key = peak->sample_id();
+	set<FlatSample>::iterator samp = all_samples.find(key);
+	assert(samp != all_samples.end());
+	double ppm =peak->ppm();
+	//The const is there to keep from modifying the ordering in
+	//the set.  The ppms field will not change the ordering, so I
+	//can cast away const-ness
+	FlatSample& flatsamp = const_cast<FlatSample&>(*samp);
+	flatsamp.ppms.push_back(ppm);
+      }
+    }{
+      vector<UnverifiedPeak>::const_iterator peak;
+      for(peak = db.unverified_peaks().begin(); 
+	  peak != db.unverified_peaks().end(); ++peak){
+	FlatSample key = peak->sample_id();
+	set<FlatSample>::iterator samp = all_samples.find(key);
+	assert(samp != all_samples.end());
+	double ppm =peak->ppm();
+	FlatSample& flatsamp = const_cast<FlatSample&>(*samp);
+	flatsamp.ppms.push_back(ppm);
+      }
+    }{
+      vector<HumanVerifiedPeak>::const_iterator peak;
+      for(peak = db.human_verified_peaks().begin(); 
+	  peak != db.human_verified_peaks().end(); ++peak){
+	FlatSample key = peak->sample_id();
+	set<FlatSample>::iterator samp = all_samples.find(key);
+	assert(samp != all_samples.end());
+	double ppm =peak->ppm();
+	FlatSample& flatsamp = const_cast<FlatSample&>(*samp);
+	flatsamp.ppms.push_back(ppm);
+      }
+    }
+
+    for(std::set<string>::const_iterator classs = classes.begin();
+	classs != classes.end(); ++classs){
+      //For each class extract the flat-samples with that class
+      std::vector<FlatSample> samples; samples.reserve(all_samples.size());
+      for(set<FlatSample>::const_iterator samp = all_samples.begin();
+	  samp != all_samples.end(); ++samp){
+	if(samp->sample_class == *classs){
+	  samples.push_back(*samp);
+	}
+      }
+      //Then accumulate weighted gaussians in the buffer for all peaks
+      //in samples of that class
+      double weight = 1.0/samples.size();
+      SliceBuffer buf(dims_[0], std_dev);
+      for(SliceIterator it = begin_slice(); it != end_slice(); ++it){
+	std::vector<double> peak_params = it.params();
+	buf.zero_fill();
+	for(vector<FlatSample>::const_iterator samp = samples.begin();
+	    samp != samples.end(); ++samp){
+	  double shift = dot(peak_params, samp->params);
+	  for(vector<double>::const_iterator ppm = samp->ppms.begin();
+	      ppm != samp->ppms.end(); ++ppm){
+	    double mean = *ppm - shift;
+	    buf.add_gaussian(mean, weight);
+	  }
+	}
+	it.set_to_max(buf);
+      }
+    }
+  }
 }
 
 ///\brief Print error message and usage information before exiting with an error
