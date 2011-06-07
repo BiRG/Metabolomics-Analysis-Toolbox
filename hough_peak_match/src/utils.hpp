@@ -8,6 +8,7 @@
 #include <limits>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 
 namespace HoughPeakMatch{
 
@@ -87,6 +88,30 @@ std::ostream& space_separate(std::ostream &out, const std::vector<T>& v){
     ++it;
   }
   return out;
+}
+
+///\brief dot product of two vectors
+///
+///\a a and \a b must be the same length
+///
+///\param a The first vector, same length as \a b
+///
+///\param b the second vector, same length as \a a
+///
+///\return the dot product of \a a and \a b
+///
+///\throw std::invalid_argument if the vectors are different lengths
+inline double dot(const std::vector<double>& a, const std::vector<double>& b){
+  if(a.size() != b.size()){
+    throw std::invalid_argument
+      ("Different sized arguments to HoughPeakMatch::dot");
+  }
+  double sum = 0;
+  std::vector<double>::const_iterator ita, itb;
+  for(ita = a.begin(), itb = b.begin(); ita != a.end(); ++ita){
+    sum += (*ita) * (*itb);
+  }
+  return sum;
 }
 
 ///\brief dynamic cast that works for autoptrs
