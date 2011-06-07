@@ -333,7 +333,8 @@ namespace HoughPeakMatch{
     void set_to_max(const SliceBuffer& buf){
       SliceBuffer::const_iterator b = buf.begin();
       std::vector<double>::iterator v = votes_.begin();
-      while(v != votes_.end()){
+      std::vector<double>::iterator end = v + dims_[0].num_cells;
+      while(v != end){
 	*v = std::max(*b,*v);
 	++b; ++v;
       }
