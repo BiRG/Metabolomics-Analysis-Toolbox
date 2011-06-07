@@ -3,6 +3,7 @@
 
 #include "peak_matching_database.hpp"
 #include <boost/program_options.hpp>
+#include <boost/math/distributions/normal.hpp>
 #include <iostream>
 #include <cstdlib> //For exit
 #include <algorithm>
@@ -119,7 +120,120 @@ namespace HoughPeakMatch{
 	return -1;
       }
     }
+
+    ///\brief Return the index of the cell into which the given value
+    ///would fall if there were a cell for every integer
+    ///
+    ///\param val The value whose cell index is sought
+    ///
+    ///\return the index of the cell into which the given value would
+    ///fall if there were a cell for every integer
+    int which_cell_unbounded(double val){
+      if(num_cells == 0 || range.length() == 0){
+	return 0;
+      }else{
+	double frac = (val-range.min)/range.length();
+	return (int)(std::floor(frac*num_cells));
+      }
+    }
+
+    ///\brief Returns the range of values contained in the given cell
+    ///
+    ///For any valid cell index, returns the range [lower, upper] of
+    ///values that will fall into that cell.  If the index is invalid,
+    ///returns the bounds as if the cells continued far enough in the
+    ///correct direction to make it a valid index.
+    ///
+    ///Really, the range would be a half-open interval [lower,upper)
+    ///for all but the last cell.  However, that is significantly more
+    ///complicated to implement with no real gains in this context, so
+    ///I just reuse my closed interval for all cells.
+    Range cell_bounds(int cell_index){
+      double cell_width = range.length()/num_cells;
+      return Range(cell_index*cell_width, (cell_index+1)*cell_width);
+    }
   };
+
+  ///\brief A buffer that can hold a 1D slice of a SimpleAccumulator
+  ///along the ppm axis and accumulate Gaussians.
+  ///
+  ///A better name might be SliceGaussianAccumulator but that is too
+  ///long to type all the time
+  class SliceBuffer{
+    ///\brief Describes the size of the slice in both ppm and number
+    ///of accumulators
+    DiscretizedRange ppm_range_;
+
+    ///\brief The standard deviation of the Gaussians to accumulate
+    ///
+    ///Will always be non-negative
+    double std_dev_;    
+    
+    ///\brief The accumulator cells for the slice buffer
+    std::vector<double> cells_;
+  public:
+    ///\brief A constant iterator through the accumulators
+    ///*iterator will give a const double
+    typedef std::vector<double>::const_iterator const_iterator;
+
+    ///\brief Create a zeroed slice buffer that accumulates Gaussians with \a
+    ///standard_deviation
+    ///
+    ///\param standard_deviation The standard deviation of the
+    ///Gaussians to accumulate
+    ///
+    ///\brief Describes the size of the slice in both ppm and number
+    ///of accumulators
+    SliceBuffer(DiscretizedRange ppm_range, double standard_deviation)
+      :ppm_range_(ppm_range),std_dev_(std::abs(standard_deviation)),
+       cells_(ppm_range.num_cells,0) {}
+
+    ///\brief Return an iterator to the beginning of the accumulator cells
+    ///
+    ///\return Return an iterator to the beginning of the accumulator cells
+    const_iterator begin() const{ 
+      return cells_.begin(); }
+
+    ///\brief Return a one-past-the-end iterator to the accumulator cells
+    ///
+    ///\return a one-past-the-end iterator to the accumulator cells
+    const_iterator end() const{ 
+      return cells_.end(); }
+
+    ///\brief Fill the accumulators of this SliceBuffer with zeroes
+    void zero_fill(){
+      std::fill(cells_.begin(), cells_.end(), 0);
+    }
+
+    ///\brief Accumulate a Gaussian with mean \a mean and the standard
+    ///deviation given on creation of this SliceBuffer
+    ///
+    ///Doesn't add the whole Gaussian, just 5 standard deviations
+    ///
+    ///\param mean The mean of the Gaussian to add (in ppm)
+    void add_gaussian(double mean);
+  };
+
+  void SliceBuffer::add_gaussian(double mean){
+    using std::size_t; using boost::math::cdf;
+    //Ensure this is a sane slice
+    if(ppm_range_.num_cells == 0){ 
+      return; 
+    }
+    //Limit to 5 standard deviations
+    int lower_bound = ppm_range_.which_cell_unbounded(mean-5*std_dev_);
+    int upper_bound = ppm_range_.which_cell_unbounded(mean+5*std_dev_);
+    if(lower_bound >= (int)cells_.size()){ return; }
+    if(upper_bound < 0){ return; }
+    if(lower_bound < 0){ lower_bound = 0; }
+    if(upper_bound >= (int)cells_.size()){ upper_bound = cells_.size()-1; }
+    //Within that range add the Gaussian values
+    boost::math::normal n(mean,std_dev_);
+    for(int index = lower_bound; index <= upper_bound; ++index){
+      Range cell = ppm_range_.cell_bounds(index);
+      cells_.at(index) += cdf(n, cell.max)-cdf(n, cell.min);
+    }
+  }
 
   ///\brief A marker class given to indicate that an iterator should
   ///start at the beginning
