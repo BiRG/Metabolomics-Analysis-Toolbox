@@ -129,8 +129,8 @@ namespace HoughPeakMatch{
     ///
     ///\param index The index of the cell whose center value should be given
     ///
-    ///\a return the value that would fall in the center of the
-    ///cell with the given \a index
+    ///\return the value that would fall in the center of the cell
+    ///with the given \a index
     double center_value_at(int index) const{
       if(num_cells > 0){
 	double cell_width = range.length()/num_cells;
@@ -167,6 +167,10 @@ namespace HoughPeakMatch{
     ///for all but the last cell.  However, that is significantly more
     ///complicated to implement with no real gains in this context, so
     ///I just reuse my closed interval for all cells.
+    ///
+    ///\param cell_index the index of the cell whose bounds are sought
+    ///
+    ///\returns the range of values contained in the given cell
     Range cell_bounds(int cell_index) const{
       double cell_width = range.length()/num_cells;
       return Range(cell_index*cell_width, (cell_index+1)*cell_width);
@@ -201,8 +205,8 @@ namespace HoughPeakMatch{
     ///\param standard_deviation The standard deviation of the
     ///Gaussians to accumulate
     ///
-    ///\brief Describes the size of the slice in both ppm and number
-    ///of accumulators
+    ///\param ppm_range Describes the size of the slice in both ppm
+    ///and number of accumulators
     SliceBuffer(DiscretizedRange ppm_range, double standard_deviation)
       :ppm_range_(ppm_range),std_dev_(std::abs(standard_deviation)),
        cells_(ppm_range.num_cells,0) {}
@@ -335,6 +339,8 @@ namespace HoughPeakMatch{
     }
 
     ///\brief Return true iff this and \a si differ
+    ///
+    ///\param si The slice iterator being compared with this one
     ///
     ///\warning The result of this comparison is undefined if the
     ///iterators are iterating over different collections of votes or
@@ -795,7 +801,6 @@ int main(int argc, char**argv){
   DiscretizedRange base_dim(Range(-max_param_value, max_param_value),
 			    base_resolution);
   SimpleAccumulator acc(ppm_dim, base_dim, db);
-  
 
   ///\todo add code for histogram
 
