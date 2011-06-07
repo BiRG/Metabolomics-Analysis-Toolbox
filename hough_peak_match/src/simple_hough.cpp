@@ -335,6 +335,7 @@ namespace HoughPeakMatch{
       std::vector<double>::iterator v = votes_.begin();
       while(v != votes_.end()){
 	*v = std::max(*b,*v);
+	++b; ++v;
       }
     }
 
@@ -801,6 +802,8 @@ int main(int argc, char**argv){
   DiscretizedRange base_dim(Range(-max_param_value, max_param_value),
 			    base_resolution);
   SimpleAccumulator acc(ppm_dim, base_dim, db);
+
+  acc.accumulate(db, standard_deviation);
 
   ///\todo add code for histogram
 
