@@ -9,6 +9,7 @@
 #include <cstdlib> //For exit
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 
 namespace HoughPeakMatch{
   ///\brief A closed interval of the real line represented by its
@@ -173,9 +174,60 @@ namespace HoughPeakMatch{
     ///\returns the range of values contained in the given cell
     Range cell_bounds(int cell_index) const{
       double cell_width = range.length()/num_cells;
-      return Range(cell_index*cell_width, (cell_index+1)*cell_width);
+      return Range(range.min+cell_index*cell_width, 
+		   range.min+(cell_index+1)*cell_width);
     }
   };
+
+  ///\brief Holds a frequency histogram with evenly spaced bins
+  class Histogram{
+    ///\brief The discretization used in this histogram
+    DiscretizedRange r;
+    
+    ///\brief The counts of the bins for the histogram
+    std::vector<std::size_t> counts;
+  public:
+    ///\brief Create a histogram with zeroed counts using bins
+    ///described by \a range
+    ///
+    ///\params range The discretization to use for the bins
+    Histogram(DiscretizedRange range):r(range), counts(range.num_cells,0){}
+
+    ///\brief Add one count to the bin containing \a val
+    ///
+    ///If \a val is not in range, no bin is incremented
+    ///
+    ///\param val the value that determines which bin to increment
+    void add(double val){
+      int idx = r.which_cell(val);
+      if(idx >= 0){
+	++counts.at(idx);
+      }
+    }
+
+    friend std::ostream& operator<<(std::ostream& out, Histogram& h);
+  };
+
+  ///\brief Print \a h to \a out.
+  ///
+  ///\param out The stream on which to print the histogram
+  ///
+  ///\param h The histogram to print
+  ///
+  ///\return \a out after printing
+  std::ostream& operator<<(std::ostream& out, Histogram& h){
+    using std::setw; using std::endl;
+    out << setw(16) << "Bin Min" << setw(16) << "Bin Center" 
+	<< setw(16) << "Bin Max" << setw(16) << "Bin Count" << endl;
+    for(std::size_t i = 0; i < h.r.num_cells; ++i){
+      Range rng = h.r.cell_bounds(i);
+      double center = h.r.center_value_at(i);
+      std::size_t count = h.counts.at(i);
+      out << setw(16) << rng.min << setw(16) << center
+	  << setw(16) << rng.max << setw(16) << count << endl;
+    }
+    return out;
+  }
 
   ///\brief A buffer that can hold a 1D slice of a SimpleAccumulator
   ///along the ppm axis and accumulate Gaussians.
@@ -462,6 +514,13 @@ namespace HoughPeakMatch{
 				std::size_t base_res,
 				ParamStats ps);
 
+    ///\brief Return a histogram of the votes in this accumulator
+    ///
+    ///\param num_bins The number of bins into which to divide the
+    ///range of votes
+    ///
+    ///\return a histogram of the votes in this accumulator
+    Histogram histogram(unsigned num_bins) const;
 
     ///\brief Return a SliceIterator to the first slice
     ///\return a SliceIterator to the first slice
@@ -590,6 +649,21 @@ namespace HoughPeakMatch{
     };
   }
 
+  Histogram SimpleAccumulator::histogram(unsigned num_bins) const{
+    if(votes_.size() == 0){ 
+      Histogram h(DiscretizedRange(Range(0,0),num_bins));
+      return h;
+    }
+    double min = *std::min_element(votes_.begin(), votes_.end());
+    double max = *std::max_element(votes_.begin(), votes_.end());
+    Histogram h(DiscretizedRange(Range(min,max), num_bins));
+    for(std::vector<double>::const_iterator it = votes_.begin();
+	it != votes_.end(); ++it){
+      h.add(*it);
+    }
+    return h;
+  }
+
   void SimpleAccumulator::accumulate(const PeakMatchingDatabase& db, 
 				     double std_dev){
     using std::set; using std::vector; using std::string;
@@ -715,7 +789,7 @@ int main(int argc, char**argv){
   double standard_deviation;
   double max_gb_ram;
   string histogram_file;
-  double histogram_bins;
+  int histogram_bins;
 
   po::options_description opt_desc("Options");
   opt_desc.add_options()
@@ -741,7 +815,8 @@ int main(int argc, char**argv){
     ("histogram",value<string>(&histogram_file), "If present, the "
      "space-separated data for a histogram of the accumulated values "
      "will be written to this file.")
-    ("histogram_bins",value<double>(&histogram_bins), 
+    ("histogram_bins",
+     value<int>(&histogram_bins)->default_value(15), 
      "Gives the number of bins to use for generating a histogram.")
     ;
 
@@ -757,7 +832,9 @@ int main(int argc, char**argv){
   po::variables_map opts;
   po::store
     (po::command_line_parser(argc,argv).options(opt_desc)
-     .positional(pos_opt).run(), opts);
+     .positional(pos_opt)
+     .style(po::command_line_style::default_style ^ 
+	    po::command_line_style::allow_guessing).run(), opts);
   po::notify(opts);
   
 
@@ -806,7 +883,15 @@ int main(int argc, char**argv){
 
   acc.accumulate(db, standard_deviation);
 
-  ///\todo add code for histogram
+  if(opts.count("histogram") > 0){
+    std::ofstream out(histogram_file.c_str());
+    if(out){
+      Histogram h = acc.histogram(histogram_bins);
+      out << h;
+    }else{
+      print_usage_and_exit("Could not open file to write histogram", opt_desc);
+    }
+  }
 
   ///\todo stub
   std::cout << "These parameters would require " << estimated_size
