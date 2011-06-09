@@ -5,6 +5,7 @@
 #include "utils.hpp"
 #include <boost/program_options.hpp>
 #include <boost/math/distributions/normal.hpp>
+#include <boost/gil/gil_all.hpp>
 #include <iostream>
 #include <cstdlib> //For exit
 #include <algorithm>
@@ -135,7 +136,7 @@ namespace HoughPeakMatch{
     double center_value_at(int index) const{
       if(num_cells > 0){
 	double cell_width = range.length()/num_cells;
-	return (index+0.5)*cell_width;
+	return (index+0.5)*cell_width+range.min;
       }else{
 	return (range.min+range.max)/2;
       }
@@ -330,6 +331,10 @@ namespace HoughPeakMatch{
     ///\brief A reference to the votes structure of the source accumulator
     std::vector<double>& votes_;
 
+    ///\brief The index of the current slice, considering the votes as a 1-d
+    ///array of slices
+    std::size_t slice_num_;
+
     ///\brief params_indices[i] is the coordinate along dimension
     ///given by dims_[i+1]
     std::vector<std::size_t> params_indices_;
@@ -368,7 +373,7 @@ namespace HoughPeakMatch{
     ///
     ///\return the peak parameter vector in effect at this slice
     std::vector<double> params() const{
-      std::vector<double> ret; ret.reserve(dims_.size());
+      std::vector<double> ret; ret.reserve(dims_.size()-1);
       std::vector<DiscretizedRange>::const_iterator dim = dims_.begin();
       std::vector<std::size_t>::const_iterator param = params_indices_.begin();
       for(++dim; dim != dims_.end(); ++dim,++param){
@@ -384,8 +389,9 @@ namespace HoughPeakMatch{
     ///greater
     void set_to_max(const SliceBuffer& buf){
       SliceBuffer::const_iterator b = buf.begin();
-      std::vector<double>::iterator v = votes_.begin();
-      std::vector<double>::iterator end = v + dims_[0].num_cells;
+      std::vector<double>::iterator v = 
+	votes_.begin() + slice_num_*dims_.at(0).num_cells;
+      std::vector<double>::iterator end = v + dims_.at(0).num_cells;
       while(v != end){
 	*v = std::max(*b,*v);
 	++b; ++v;
@@ -408,7 +414,8 @@ namespace HoughPeakMatch{
 	if(at_end_){ 
 	  return false;
 	}else{
-	  return params_indices_ != si.params_indices_;
+	  return slice_num_ != si.slice_num_ || 
+	    params_indices_ != si.params_indices_;
 	}
       }
     }
@@ -419,16 +426,17 @@ namespace HoughPeakMatch{
     SliceIterator& operator++(){
       if(at_end_){
 	return *this; }
+      ++slice_num_;
       std::size_t idx;
-      for(idx = 0; idx < dims_.size(); ++idx){
-	if((params_indices_.at(idx)+1) < dims_.at(idx).num_cells){
+      for(idx = 0; idx < params_indices_.size(); ++idx){
+	if((params_indices_.at(idx)+1) < dims_.at(idx+1).num_cells){
 	  ++params_indices_.at(idx);
 	  break;
 	}else{
 	  params_indices_.at(idx) = 0;
 	}
       }
-      if(idx == dims_.size()){
+      if(idx == params_indices_.size()){
 	at_end_ = true;
       }
       return *this;
@@ -438,7 +446,8 @@ namespace HoughPeakMatch{
   SliceIterator::SliceIterator(const AtBeginning, 
 			       const std::vector<DiscretizedRange>& dims,
 			       std::vector<double>& votes)
-    :dims_(dims),votes_(votes),params_indices_(dims.size(),0),at_end_(false){
+    :dims_(dims),votes_(votes),slice_num_(0),
+     params_indices_(dims.size()-1,0),at_end_(false){
     for(std::vector<DiscretizedRange>::const_iterator d = dims.begin();
 	d != dims.end(); ++d){
       at_end_ = at_end_ || d->num_cells==0;
@@ -448,7 +457,8 @@ namespace HoughPeakMatch{
   SliceIterator::SliceIterator(const AtEnd, 
 			       const std::vector<DiscretizedRange>& dims,
 			       std::vector<double>& votes)
-    :dims_(dims),votes_(votes),params_indices_(dims.size(),0),at_end_(true){}
+    :dims_(dims),votes_(votes),slice_num_(0),
+     params_indices_(dims.size()-1,0),at_end_(true){}
 
   ///\brief A multi-dimensional array for accumulating votes for
   ///peak-group locations
@@ -544,6 +554,14 @@ namespace HoughPeakMatch{
     ///\param standard_deviation The standard deviation to use in
     ///fuzzifying the votes along th ppm axis
     void accumulate(const PeakMatchingDatabase& db, double standard_deviation);
+
+    ///\brief Writes images for ppm x dimension for each parameter in turn
+    ///
+    ///\param base_name the image file names are formed by adding a
+    ///suffix to the base_name.
+    ///
+    ///\return true iff all images were successfully written
+    bool write_to_images(std::string base_name);
   };
 
   double SimpleAccumulator::size_estimate(std::size_t location_res,
@@ -573,13 +591,13 @@ namespace HoughPeakMatch{
   (DiscretizedRange ppm_dimension,
    DiscretizedRange param_base_dimension,
    const PeakMatchingDatabase& db)
-    :dims_(1+db.param_stats()[0].frac_variances().size(),param_base_dimension),
+    :dims_(1+db.param_stats().at(0).frac_variances().size(),param_base_dimension),
      votes_(){
     //Set the first dimension to ppm_dimension
     dims_.at(0)=ppm_dimension;
     //Rescale the other dimensions according to their proportion of
     //maximum variance explained
-    ParamStats ps(db.param_stats()[0]);
+    ParamStats ps(db.param_stats().at(0));
     const std::vector<double>& fv = ps.frac_variances();
     if(fv.size() > 0){
       double max_var=*std::max_element(fv.begin(),fv.end());
@@ -724,17 +742,23 @@ namespace HoughPeakMatch{
 	  samp != all_samples.end(); ++samp){
 	if(samp->sample_class == *classs){
 	  samples.push_back(*samp);
+	  if(samp->params.size() != 1){//DEBUG
+	    std::cerr << "Inequal\n";//DEBUG
+	  }//DEBUG
 	}
       }
       //Then accumulate weighted gaussians in the buffer for all peaks
       //in samples of that class
       double weight = 1.0/samples.size();
-      SliceBuffer buf(dims_[0], std_dev);
+      SliceBuffer buf(dims_.at(0), std_dev);
       for(SliceIterator it = begin_slice(); it != end_slice(); ++it){
 	std::vector<double> peak_params = it.params();
 	buf.zero_fill();
 	for(vector<FlatSample>::const_iterator samp = samples.begin();
 	    samp != samples.end(); ++samp){
+	  if(samp->params.size() != 1){//DEBUG
+	    std::cerr << "Inequal\n";//DEBUG
+	  }//DEBUG
 	  double shift = dot(peak_params, samp->params);
 	  for(vector<double>::const_iterator ppm = samp->ppms.begin();
 	      ppm != samp->ppms.end(); ++ppm){
@@ -746,6 +770,135 @@ namespace HoughPeakMatch{
       }
     }
   }
+
+  ///\brief Simple 2D gray-scale image class (since boost::gil gave so
+  ///many headaches
+  ///
+  ///\tparam T the type for a pixel
+  template<class T>
+  class Image{
+    ///\brief The image's pixels (stored row-major)
+    std::vector<T> pix_;
+
+    ///\brief The width of this image in pixels
+    std::size_t width_;
+  public:
+    ///\brief Create an image with the given dimensions and initial value
+    ///\param width the width of the image
+    ///\param height the height of the image
+    ///\param initial_value the initial value for the pixels in the image
+    Image(std::size_t width, std::size_t height, T initial_value)
+      :pix_(width*height, initial_value), width_(width){}
+
+    ///\brief constant iterator of the pixels in this image
+    typedef typename std::vector<T>::const_iterator const_iterator;
+    ///\brief iterator of the pixels in this image
+    typedef typename std::vector<T>::iterator iterator;
+
+    ///\brief Return the pixel at \a x \a y
+    ///\param x The x coordinate of the pixel to return
+    ///\param y The y coordinate of the pixel to return
+    ///\return the pixel at \a x \a y
+    T& operator()(unsigned x, unsigned y){ 
+      return pix_.at(x+y*width_); }
+
+    ///\brief Return the pixel at \a x \a y
+    ///\param x The x coordinate of the pixel to return
+    ///\param y The y coordinate of the pixel to return
+    ///\return the pixel at \a x \a y
+    T operator()(unsigned x, unsigned y) const{ 
+      return pix_.at(x+y*width_); }
+
+    ///\brief Return an iterator to the top-left pixel in the image
+    ///\return an iterator to the top-left pixel in the image
+    const_iterator begin() const{ return pix_.begin(); }
+
+    ///\brief Return an iterator to the one-past-the-end pixel in the image
+    ///\return an iterator to the one-past-the-end pixel in the image
+    const_iterator end() const{ return pix_.end(); }
+
+    ///\brief Return an iterator to the top-left pixel in the image
+    ///\return an iterator to the top-left pixel in the image
+    iterator begin() { return pix_.begin(); }
+
+    ///\brief Return an iterator to the one-past-the-end pixel in the image
+    ///\return an iterator to the one-past-the-end pixel in the image
+    iterator end() { return pix_.end(); }
+
+    ///\brief Return the height of this image
+    ///\return the height of this image
+    std::size_t height() const{ return pix_.size()/width_; }
+
+    ///\brief Return the width of this image
+    ///\return the width of this image
+    std::size_t width() const{ return width_; }
+  };
+
+  ///\brief Write \a im to the file \a filename in pgm format
+  ///
+  ///\param im The image to write
+  ///
+  ///\param filename the name of the file where the image will be
+  ///written -- this will be overwritten
+  ///
+  ///\return true iff writing succeeds
+  bool write_pgm(std::string filename, const Image<unsigned char>& im){
+    std::ofstream out(filename.c_str());
+    if(!out){ 
+      return false;}
+    out << "P5\n" << im.width() << "\n" << im.height() << "\n" << "255\n";
+    if(!out){ 
+      return false;}
+    return out.write(reinterpret_cast<const char*>(&(*im.begin())), 
+		     im.width()*im.height());
+  }
+
+  bool SimpleAccumulator::write_to_images(std::string base_name){
+    using namespace boost::gil;
+    using std::size_t;
+    size_t width = dims_.at(0).num_cells;
+    Range ppm_range = dims_.at(0).range;
+    size_t prev_skip = width;
+    for(size_t dim = 1; dim < dims_.size(); ++dim){
+      //Make a 2D projection onto this dimension and ppm
+      size_t height = dims_.at(dim).num_cells;
+      size_t skip = prev_skip * height;
+      Range vert_range = dims_.at(dim).range;
+      Image<double> projection(width,height,0.0);
+      for(size_t idx = 0; idx < votes_.size(); ++idx){
+	size_t x = idx % width;
+	size_t y = (idx % skip) / prev_skip;
+	projection(x,y) += votes_.at(idx);
+      }
+
+      //Find extrema
+      double max = *std::max_element(projection.begin(), projection.end());
+      double min = *std::min_element(projection.begin(), projection.end());
+      float range = max-min; 
+      if(range <= 0) {
+	range = 1;
+      }
+      double scale = 255/range;
+
+      //Convert to 8-bit
+      Image<unsigned char> projection8(width, height, 0);
+      for (size_t y = 0; y < height; ++y) {
+	for (size_t x = 0; x < width; ++x){
+	  projection8(x,y) = std::floor(scale*(projection(x,y)-min)+0.5);
+	}
+      }
+
+      std::ostringstream name;
+      name << base_name << "_" << dim << ".pgm";
+      if(!write_pgm(name.str(), projection8)){
+	return false;
+      }
+
+      prev_skip = skip;
+    }
+    return true;
+  }
+
 }
 
 ///\brief Print error message and usage information before exiting with an error
@@ -790,6 +943,7 @@ int main(int argc, char**argv){
   double max_gb_ram;
   string histogram_file;
   int histogram_bins;
+  string pgm_base_name;
 
   po::options_description opt_desc("Options");
   opt_desc.add_options()
@@ -818,6 +972,8 @@ int main(int argc, char**argv){
     ("histogram_bins",
      value<int>(&histogram_bins)->default_value(15), 
      "Gives the number of bins to use for generating a histogram.")
+    ("to-pgm", value<string>(&pgm_base_name), "If present, the dimesions of "
+     "Hough accumuators will be written to files beginning with this prefix.")
     ;
 
   const unsigned num_pos_opt = 5;
@@ -891,6 +1047,10 @@ int main(int argc, char**argv){
     }else{
       print_usage_and_exit("Could not open file to write histogram", opt_desc);
     }
+  }
+
+  if(opts.count("to-pgm") > 0){
+    acc.write_to_images(pgm_base_name);
   }
 
   ///\todo stub
