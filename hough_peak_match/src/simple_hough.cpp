@@ -5,7 +5,6 @@
 #include "utils.hpp"
 #include <boost/program_options.hpp>
 #include <boost/math/distributions/normal.hpp>
-#include <boost/gil/gil_all.hpp>
 #include <iostream>
 #include <cstdlib> //For exit
 #include <algorithm>
@@ -177,6 +176,21 @@ namespace HoughPeakMatch{
       double cell_width = range.length()/num_cells;
       return Range(range.min+cell_index*cell_width, 
 		   range.min+(cell_index+1)*cell_width);
+    }
+  };
+
+  ///\brief Represents a closed interval over the integers
+  struct DiscreteRange{
+    ///\brief The minimum element in the range - always maintain <= max
+    int min;
+    ///\brief The maximum element in the range
+    int max;
+
+    ///\brief Create a range [min,max]
+    ///\param min The minimum element in the range
+    ///\param max The maximum element in the range
+    DiscreteRange(int min, int max):min(min), max(max){
+      assert(min <= max);
     }
   };
 
