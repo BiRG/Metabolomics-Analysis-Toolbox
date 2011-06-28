@@ -1,0 +1,417 @@
+#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+% This file was converted from HTML to LaTeX with
+% gnuhtml2latex program
+% (c) Tomasz Wegrzanowski <maniek@beer.com> 1999
+% (c) Gunnar Wolf <gwolf@gwolf.org> 2005-2010
+% Version : 0.4.
+\end_preamble
+\use_default_options false
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Part
+Tests
+\end_layout
+
+\begin_layout Section
+Main test routine
+\end_layout
+
+\begin_layout Standard
+Maybe the main test routine should be modified for the processing errors
+ (no baseline correction etc) to not allow the corrected and uncorrected
+ version of a sample in the same run.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+func main_test(inliers, outliers, descriptive_run_parameters) begin 
+\end_layout
+
+\begin_layout LyX-Code
+  //need to keep total sample size the same for results to be comparable
+\end_layout
+
+\begin_layout LyX-Code
+  //thus fraction_contam rather than using full inliers all the time 
+\end_layout
+
+\begin_layout LyX-Code
+  For fraction_contam in {0 ...
+ 1/4} 
+\end_layout
+
+\begin_layout LyX-Code
+    Repeat 32 times 
+\end_layout
+
+\begin_layout LyX-Code
+      num_inliers = size(inliers)(1-fraction_contam) 
+\end_layout
+
+\begin_layout LyX-Code
+      num_outliers = size(inliers)-num_inliers 
+\end_layout
+
+\begin_layout LyX-Code
+      inlier_spectra=random sample from inliers 
+\end_layout
+
+\begin_layout LyX-Code
+      other_spectra = random sample from outliers 
+\end_layout
+
+\begin_layout LyX-Code
+      For each algorithm 
+\end_layout
+
+\begin_layout LyX-Code
+        For each sensitivity 
+\end_layout
+
+\begin_layout LyX-Code
+          run algorithm on combined 
+\end_layout
+
+\begin_layout LyX-Code
+            predose_spectra and other_spectra 
+\backslash
+end_layout 
+\end_layout
+
+\begin_layout LyX-Code
+          record which spectra were flagged and 
+\end_layout
+
+\begin_layout LyX-Code
+            number of false positives, and 
+\end_layout
+
+\begin_layout LyX-Code
+            false negatives, and 
+\end_layout
+
+\begin_layout LyX-Code
+            fraction_contam, and 
+\end_layout
+
+\begin_layout LyX-Code
+            num_inliers, and //Not duplicate bec of rounding 
+\end_layout
+
+\begin_layout LyX-Code
+            num_outliers, 
+\end_layout
+
+\begin_layout LyX-Code
+            algorithm name, 
+\end_layout
+
+\begin_layout LyX-Code
+            sensitivity, 
+\end_layout
+
+\begin_layout LyX-Code
+            parameters for run 
+\end_layout
+
+\begin_layout LyX-Code
+        end 
+\end_layout
+
+\begin_layout LyX-Code
+      end 
+\end_layout
+
+\begin_layout LyX-Code
+    end 
+\end_layout
+
+\begin_layout LyX-Code
+  end 
+\end_layout
+
+\begin_layout LyX-Code
+end 
+\end_layout
+
+\begin_layout Section
+Pre-dose versus other-dose
+\end_layout
+
+\begin_layout Subsection
+Things tested
+\end_layout
+
+\begin_layout Itemize
+Main distribution is relatively compact 
+\end_layout
+
+\begin_layout Itemize
+Sensitivity to distance as given by dose (though I average over all days
+ rather than focusing on day of maximum effect) 
+\end_layout
+
+\begin_layout Subsection
+Pseudocode
+\end_layout
+
+\begin_layout LyX-Code
+full_predose_spectra = all rats in the pre-dose condition
+\end_layout
+
+\begin_layout LyX-Code
+For other_dose in {0 mg/kg ...
+ 100 mg/kg}
+\end_layout
+
+\begin_layout LyX-Code
+  main_test(full_predose_spectra, non_predose_days_for(other_dose),
+\end_layout
+
+\begin_layout LyX-Code
+    {
+\begin_inset Quotes erd
+\end_inset
+
+predose-vs-other-dose
+\begin_inset Quotes erd
+\end_inset
+
+,other_dose}) 
+\end_layout
+
+\begin_layout LyX-Code
+end
+\end_layout
+
+\begin_layout Section
+All other doses versus pre-dose
+\end_layout
+
+\begin_layout Subsection
+Things tested
+\end_layout
+
+\begin_layout Itemize
+Outlier testing performance when the main distribution is non-Gaussian with
+ a definite progression
+\end_layout
+
+\begin_layout Itemize
+Sensitivity to distance as given by dose (though I average over all days
+ rather than focusing on day of maximum effect) 
+\end_layout
+
+\begin_layout Subsection
+Pseudocode
+\end_layout
+
+\begin_layout LyX-Code
+full_predose_spectra = all rats in the pre-dose condition
+\end_layout
+
+\begin_layout LyX-Code
+For other_dose in {0 mg/kg ...
+ 100 mg/kg and (union of 100 and 50)}
+\end_layout
+
+\begin_layout LyX-Code
+  main_test(on_predose_days_for(other_dose), full_predose_spectra,
+\end_layout
+
+\begin_layout LyX-Code
+            {
+\begin_inset Quotes erd
+\end_inset
+
+other-dose-vs-predose
+\begin_inset Quotes erd
+\end_inset
+
+,other_dose})
+\end_layout
+
+\begin_layout LyX-Code
+end
+\end_layout
+
+\begin_layout Section
+Faulty Baseline-correction testing
+\end_layout
+
+\begin_layout Subsection
+Things tested
+\end_layout
+
+\begin_layout Itemize
+Whether a minor error of leaving out baseline correction will be detected
+ or swamped by noise 
+\end_layout
+
+\begin_layout Subsection
+Pseudocode
+\end_layout
+
+\begin_layout LyX-Code
+For source_spectra in {predose, high_dose, all_spectra}
+\end_layout
+
+\begin_layout LyX-Code
+  main_test(source_spectra, non_baseline_corrected(source_spectra),
+\end_layout
+
+\begin_layout LyX-Code
+            {
+\begin_inset Quotes erd
+\end_inset
+
+faulty-baseline
+\begin_inset Quotes erd
+\end_inset
+
+,source_spectrum_name})
+\end_layout
+
+\begin_layout LyX-Code
+end
+\end_layout
+
+\begin_layout Section
+Faulty Alignment testing
+\end_layout
+
+\begin_layout Subsection
+Things tested
+\end_layout
+
+\begin_layout Itemize
+Whether a more serious error of not aligning to the standard will be detected
+ or swamped by noise 
+\end_layout
+
+\begin_layout Subsection
+Pseudocode
+\end_layout
+
+\begin_layout LyX-Code
+For source_spectra in {predose, high_dose, all_spectra}
+\end_layout
+
+\begin_layout LyX-Code
+    main_test(source_spectra, non_aligned_corrected(source_spectra),
+\end_layout
+
+\begin_layout LyX-Code
+              {
+\begin_inset Quotes erd
+\end_inset
+
+faulty-alignment
+\begin_inset Quotes erd
+\end_inset
+
+,source_spectrum_name})
+\end_layout
+
+\begin_layout LyX-Code
+end
+\end_layout
+
+\begin_layout Section
+Dimensionality testing
+\end_layout
+
+\begin_layout Standard
+Not sure if the resampling provided by binning is really a good test of
+ different dimensionalities.
+ But, if it is, we can repeat the predose test 
+\end_layout
+
+\begin_layout Subsection
+Pseudocode
+\end_layout
+
+\begin_layout LyX-Code
+For bins in {25,50,75,100,125}
+\end_layout
+
+\begin_layout LyX-Code
+  full_predose_spectra = rebin(bins, all rats in the pre-dose condition)
+\end_layout
+
+\begin_layout LyX-Code
+  For other_dose in {0 mg/kg ...
+ 100 mg/kg}
+\end_layout
+
+\begin_layout LyX-Code
+    other_spectra=rebin(bins, non_predose_days_for(other_dose))
+\end_layout
+
+\begin_layout LyX-Code
+    main_test(full_predose_spectra, other_spectra,
+\end_layout
+
+\begin_layout LyX-Code
+              {
+\begin_inset Quotes erd
+\end_inset
+
+predose-vs-other-dose-rebinned
+\begin_inset Quotes erd
+\end_inset
+
+,other_dose,num_bins})
+\end_layout
+
+\begin_layout LyX-Code
+  end
+\end_layout
+
+\begin_layout LyX-Code
+end
+\end_layout
+
+\end_body
+\end_document
