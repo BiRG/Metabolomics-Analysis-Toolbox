@@ -140,7 +140,8 @@ sensitivity parameter
 \end_layout
 
 \begin_layout Itemize
-type of comparison being performed (pre
+type of comparison being performed (e.g.
+ pre-dose vs all-other)
 \end_layout
 
 \begin_layout Itemize
@@ -374,6 +375,10 @@ faulty-alignment
 
 \begin_layout LyX-Code
 end
+\end_layout
+
+\begin_layout LyX-Code
+
 \end_layout
 
 \begin_layout Section
