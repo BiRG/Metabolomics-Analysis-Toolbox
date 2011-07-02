@@ -569,5 +569,87 @@ predose-vs-other-dose-rebinned
 end
 \end_layout
 
+\begin_layout Part
+Datasets needed
+\end_layout
+
+\begin_layout Itemize
+all predose rats
+\end_layout
+
+\begin_layout Itemize
+dose 0 ..
+ 100
+\end_layout
+
+\begin_layout Itemize
+dose 100 and 50 (high dose)
+\end_layout
+
+\begin_layout Itemize
+dose 0 ..
+ 100 on first few days (avoid days in which PC1 and 2 have returned to normal)
+\end_layout
+
+\begin_layout Itemize
+predose, high dose, all without baseline correction
+\end_layout
+
+\begin_layout Itemize
+predose, high dose, all without alignment
+\end_layout
+
+\begin_layout Part
+Outlier Detection Methods
+\end_layout
+
+\begin_layout Section
+Methods in ELKI
+\end_layout
+
+\begin_layout Section
+Methods in LIBRA
+\end_layout
+
+\begin_layout Section
+Methods we will have to implement
+\end_layout
+
+\begin_layout Itemize
+MCD+mahalanobis distance - 3 std dev AND using std-dev threshold as parameter
+\end_layout
+
+\begin_layout Itemize
+SHV and RHM methods from 
+\shape italic
+Outlier Detection in Multivariate Analytical Chemical Data
+\shape default
+ by William J.
+ Egan and Stephen L.
+ Morgan
+\end_layout
+
+\begin_layout Itemize
+Jacknifed Mahalanobis distance from
+\emph on
+ 
+\shape italic
+\emph default
+Prestige centrality-based functional outlier detection in gene expression
+ analysis
+\shape default
+ by Ali Torkamani and Nicholas J.
+ Schork
+\end_layout
+
+\begin_layout Itemize
+Method from Robust statistics in data analysis ― A review: Basic concepts
+ by M.
+ Daszykowski, K.
+ Kaczmarek, Y.
+ Vander Heyden, B.
+ Walczak - involves robust pca and component selection followed by removing
+\end_layout
+
 \end_body
 \end_document
