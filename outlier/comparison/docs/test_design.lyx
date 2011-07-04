@@ -507,6 +507,23 @@ end
 \end_layout
 
 \begin_layout Section
+Synthetic data
+\end_layout
+
+\begin_layout Standard
+I can't be sure that the inliers are really all inliers.
+ Thus the techniques will be rated less sensitive than they really are.
+ Synthetic data from Paul's program will get around the problem, at the
+ expense of not being real and with not knowing how a real change will affect
+ the peaks.
+\end_layout
+
+\begin_layout Standard
+Do this if I have time - probably before the dimensionality testing since
+ this is such an obvious thing for the reviewers to object to.
+\end_layout
+
+\begin_layout Section
 Dimensionality testing
 \end_layout
 
