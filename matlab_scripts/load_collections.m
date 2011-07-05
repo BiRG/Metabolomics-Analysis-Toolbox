@@ -4,11 +4,7 @@ function collections = load_collections
         '*.txt', 'Tab delimited files (*.txt)'; ...
         '*.*', 'All Files (*.*)'}, ...
         'Select one or more files','MultiSelect', 'on');
-if length(filenames) == 0 && filenames == 0
-    filenames = {};
-    pathnames = {};
-end
-if length(filenames) == 0
+if isempty(filenames)
     return
 end
 if ischar(filenames)
