@@ -1,4 +1,4 @@
-function [match_ids,final_score] = match_peaks(answer_maxs,calc_maxs,max_distance)
+function [match_ids,final_score] = match_peaks_dynamic(answer_maxs,calc_maxs,max_distance)
 answer_inxs = 1:length(answer_maxs);
 calc_inxs = 1:length(calc_maxs);
 align_scores = Inf*ones(length(answer_maxs)+1,length(calc_maxs)+1);

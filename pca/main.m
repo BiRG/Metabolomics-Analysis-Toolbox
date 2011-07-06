@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 11-Apr-2011 14:32:41
+% Last Modified by GUIDE v2.5 30-Jun-2011 12:08:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -114,6 +114,8 @@ try
     clear_all(hObject,handles);
     
     set(handles.description_text,'String',handles.collection.description);
+    
+    populate_listboxes(handles);
 
     msgbox('Finished loading collection');
     
@@ -123,6 +125,28 @@ catch ME
     msgbox('Invalid collection ID');
 end
 
+function populate_listboxes(handles)
+flds = fields(handles.collection);
+valid_flds = {};
+for i = 1:length(flds)
+    [rows,cols] = size(handles.collection.(flds{i}));
+    if rows == 1 && cols == handles.collection.num_samples
+        valid_flds{end+1} = flds{i};
+    end
+end
+sorted_valid_flds = sort(valid_flds);
+
+set(handles.model_by_fields_listbox,'String',{'',sorted_valid_flds{:}});
+set(handles.model_by_fields_listbox,'Max',length({'',sorted_valid_flds{:}}));
+
+set(handles.group_by_fields_listbox,'String',{'',sorted_valid_flds{:}});
+set(handles.group_by_fields_listbox,'Max',length({'',sorted_valid_flds{:}}));
+
+set(handles.paired_by_fields_listbox,'String',{'',sorted_valid_flds{:}});
+set(handles.paired_by_fields_listbox,'Max',length({'',sorted_valid_flds{:}}));
+
+set(handles.ignore_by_fields_listbox,'String',{'',sorted_valid_flds{:}});
+set(handles.ignore_by_fields_listbox,'Max',length({'',sorted_valid_flds{:}}));
 
 % --- Executes on selection change in group_by_listbox.
 function group_by_listbox_Callback(hObject, eventdata, handles)
@@ -709,6 +733,8 @@ try
     clear_all(hObject,handles);
     
     set(handles.description_text,'String',handles.collection.description);
+    
+    populate_listboxes(handles);
 
     msgbox('Finished loading collection');
     
@@ -870,4 +896,149 @@ try
     end
     saveas(gcf,[pathname,filename]);
 catch ME
+end
+
+
+% --- Executes on selection change in model_by_fields_listbox.
+function model_by_fields_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to model_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns model_by_fields_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from model_by_fields_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
+
+model_by_fields_listbox(hObject,handles);
+
+function res = get_version_string()
+res = '0r1';
+
+% --- Executes during object creation, after setting all properties.
+function model_by_fields_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to model_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in group_by_fields_listbox.
+function group_by_fields_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to group_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns group_by_fields_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from group_by_fields_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
+
+group_by_fields_listbox(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function group_by_fields_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to group_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in paired_by_fields_listbox.
+function paired_by_fields_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to paired_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns paired_by_fields_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from paired_by_fields_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
+
+paired_by_fields_listbox(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function paired_by_fields_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to paired_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in ignore_by_listbox.
+function ignore_by_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to ignore_by_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns ignore_by_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ignore_by_listbox
+
+
+% --- Executes during object creation, after setting all properties.
+function ignore_by_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ignore_by_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in ignore_by_fields_listbox.
+function ignore_by_fields_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to ignore_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns ignore_by_fields_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ignore_by_fields_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
+
+ignore_by_fields_listbox(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function ignore_by_fields_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ignore_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end

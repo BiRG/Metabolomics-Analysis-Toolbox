@@ -1111,46 +1111,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in model_by_time_pushbutton.
-function model_by_time_pushbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to model_by_time_pushbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[result,message] = validate_state(handles,get_version_string());
-if ~result
-    msgbox(message);
-    return;
-end
-
-model_by_time_pushbutton(hObject,handles);
-
-% --- Executes on button press in model_by_classification_pushbutton.
-function model_by_classification_pushbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to model_by_classification_pushbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[result,message] = validate_state(handles,get_version_string());
-if ~result
-    msgbox(message);
-    return;
-end
-
-model_by_classification_pushbutton(hObject,handles);
-
-% --- Executes on button press in model_by_time_and_classification_pushbutton.
-function model_by_time_and_classification_pushbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to model_by_time_and_classification_pushbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-[result,message] = validate_state(handles,get_version_string());
-if ~result
-    msgbox(message);
-    return;
-end
-
-model_by_time_and_classification_pushbutton(hObject,handles);
-
-
 % --- Executes on button press in about_pushbutton.
 function about_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to about_pushbutton (see GCBO)
