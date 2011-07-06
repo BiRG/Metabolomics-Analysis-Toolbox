@@ -4,6 +4,7 @@ VPATH:=src:obj:src/tests
 CXXFLAGS:=-Wall -Wextra -Weffc++ -pedantic -g $(GCOV_OPTS) $(PREDEFINE)
 EXECUTABLES:=assign_peaks hough_sample_params equivalent_db simple_hough \
 	valid_db\
+	duplicate_peak_match_db\
 	tests/006-split_function.compiled.t\
 	tests/007-from_text_line_funcs.compiled.t\
 	tests/008-mockable_stringstream.compiled.t\
@@ -20,9 +21,21 @@ LIBRARYOBJS:=obj/peak_matching_database.o obj/utils.o \
 	obj/param_stats.o\
 	obj/known_peak.o\
 	obj/file_format_sample.o\
+	obj/sample.o\
+	obj/unparameterized_sample.o\
+	obj/parameterized_sample.o\
 	obj/peak.o \
-	obj/mockable_stringstream.o
-LDLIBS:=-ltap++
+	obj/peak_group.o\
+	obj/mockable_stringstream.o\
+	obj/peak_key.o\
+	obj/peak_group_key.o\
+	obj/param_stats_key.o\
+	obj/key_relation.o\
+	obj/mapping_list.o\
+	obj/unique_parameter_ordering.o\
+	obj/remove_sample_params_from.o\
+	obj/sample_key.o
+LDLIBS:=-ltap++ 
 LDFLAGS:=$(GCOV_LDOPTS)
 
 all: mock_executables
@@ -65,13 +78,15 @@ libbirgpeakmatch.a: $(LIBRARYOBJS)
 
 assign_peaks: obj/assign_peaks.o libbirgpeakmatch.a
 
-hough_sample_params: obj/hough_sample_params.o libbirgpeakmatch.a
+hough_sample_params: obj/hough_sample_params.o libbirgpeakmatch.a -lgsl -lgslcblas -lm
 
 equivalent_db: obj/equivalent_db.o libbirgpeakmatch.a
 
-simple_hough: obj/simple_hough.o libbirgpeakmatch.a
+simple_hough: obj/simple_hough.o libbirgpeakmatch.a -lboost_program_options
 
 valid_db: obj/valid_db.o libbirgpeakmatch.a
+
+duplicate_peak_match_db: obj/duplicate_peak_match_db.o libbirgpeakmatch.a
 
 tests/006-split_function.compiled.t: obj/tests/006-split_function.compiled.t.o libbirgpeakmatch.a
 

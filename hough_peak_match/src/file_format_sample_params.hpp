@@ -17,7 +17,7 @@ namespace HoughPeakMatch{
 ///ways.
 class FileFormatSampleParams{
   ///\brief non-negative integer uniquely identifying the sample
-  ///\brief described by these parameters
+  ///described by these parameters
   unsigned sample_id_;
 
   ///\brief The parameter vector governing the shifts in this sample
@@ -49,7 +49,7 @@ public:
   virtual ~FileFormatSampleParams(){}
 
   ///\brief Creates a FileFormatSampleParams object from a line in a database
-  ///\brief file
+  ///file
   ///
   ///Takes vector of words and creates a FileFormatSampleParams object from
   ///them.  If the words do not define a FileFormatSampleParams object, returns
@@ -84,7 +84,7 @@ public:
   ///
   ///\returns the string representation of this FileFormatSampleParams
   ///from \ref sample_params "the file format documentation"
-  std::string to_text_line() const;  
+  std::string to_text() const;  
 
 
 
@@ -99,11 +99,16 @@ public:
   virtual unsigned id() const { return sample_id_; }
 
   ///\brief Return the parameters determining the shifts in the
-  ///\brief described sample
+  ///described sample
   ///
   ///\return Return the parameters determining the shifts in the
   ///described sample
   virtual const std::vector<double>& params() const{ return params_; }
+
+  ///\brief Set the parameters for this FileFormatSampleParams
+  ///
+  ///\param params the new parameter values
+  void set_params(const std::vector<double>& params){ params_=params; }
 
 };
 

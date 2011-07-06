@@ -1,8 +1,8 @@
 ///\file
 ///\brief Declares the FileFormatSample class
 
-#ifndef HOUGH_PEAK_MATCH_SAMPLE
-#define HOUGH_PEAK_MATCH_SAMPLE
+#ifndef HOUGH_PEAK_MATCH_FILE_FORMAT_SAMPLE
+#define HOUGH_PEAK_MATCH_FILE_FORMAT_SAMPLE
 
 #include <vector>
 #include <string>
@@ -16,11 +16,11 @@ namespace HoughPeakMatch{
 class FileFormatSample{
 protected:
   ///\brief non-negative integer uniquely identifying this sample in
-  ///\brief the database
+  ///the database
   unsigned sample_id_;
 
   ///\brief A string (without white-space) indicating which treatment class
-  ///\brief this sample came from. 
+  ///this sample came from. 
   ////
   ///If two samples have different strings, then they came from
   ///different classes, same string, same classes
@@ -91,9 +91,9 @@ public:
   ///\returns the string representation of this FileFormatSample from
   ///\ref sample "the file format documentation" terminated
   ///with a newline
-  std::string to_text_line() const;
+  std::string to_text() const;
 
 };
 
 }
-#endif //HOUGH_PEAK_MATCH_SAMPLE
+#endif //HOUGH_PEAK_MATCH_FILE_FORMAT_SAMPLE

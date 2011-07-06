@@ -1,0 +1,7 @@
+Synopsis: duplicate_peak_match_db < input > output
+
+Takes a peak-matching database from standard input, parses it 
+and writes an equivalent database to standard output. Used for 
+testing the reading/writing routines.
+
+ERROR: could not read database from standard input

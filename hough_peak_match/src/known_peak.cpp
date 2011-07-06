@@ -1,3 +1,4 @@
+#include "peak_group_key.hpp"
 #include "known_peak.hpp"
 #include "mockable_stringstream.hpp"
 
@@ -23,4 +24,12 @@ namespace HoughPeakMatch{
 
     failed = false; return;
   }
+
+  std::vector<KeySptr> KnownPeak::foreign_keys(const PeakMatchingDatabase& db) const{
+    std::vector<KeySptr> ret; ret.reserve(2);
+    ret.push_back(KeySptr(new SampleKey(db, sample_id())));
+    ret.push_back(KeySptr(new PeakGroupKey(db, peak_group_id())));
+    return ret;
+  }
+
 }

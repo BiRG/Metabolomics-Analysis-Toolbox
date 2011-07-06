@@ -4,6 +4,7 @@
 #ifndef HOUGH_PEAK_MATCH_PEAK
 #define HOUGH_PEAK_MATCH_PEAK
 
+#include "sample_key.hpp"
 #include "pmobject.hpp"
 #include <utility> //For pair, make_pair
 #include <vector>
@@ -16,11 +17,11 @@ namespace HoughPeakMatch{
 class Peak:public PMObject{
 protected:
   ///\brief non-negative integer uniquely identifying the sample to
-  ///\brief which this peak belongs
+  ///which this peak belongs
   unsigned sample_id_;
 
   ///\brief non-negative integer uniquely identifying this peak within
-  ///\brief all peaks belonging to its sample
+  ///all peaks belonging to its sample
   unsigned peak_id_;
 
   ///\brief the measured location of this peak within the sample in ppm
@@ -106,6 +107,13 @@ public:
       return false; }
     const Peak* p = dynamic_cast<const Peak*>(o);
     return ppm() == p->ppm();
+  }
+
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase& db) const{
+    std::vector<KeySptr> ret;
+    KeySptr k =new SampleKey(db, sample_id());
+    ret.push_back(k);
+    return ret;
   }
 
 };

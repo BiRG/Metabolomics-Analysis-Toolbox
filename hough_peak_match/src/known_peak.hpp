@@ -14,7 +14,7 @@ namespace HoughPeakMatch{
 class KnownPeak:public Peak{
 protected:
   ///\brief A non-negative identifier uniquely identifying the peak
-  ///\brief group to which this peak belongs
+  ///group to which this peak belongs
   unsigned peak_group_id_;
   
   ///\brief Construct an uninitialized KnownPeak
@@ -71,6 +71,9 @@ public:
   ///
   ///\return the id of the peak group to which this peak belongs
   virtual unsigned peak_group_id() const { return peak_group_id_; }
+
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase& db) const;
+
 };
 
 }

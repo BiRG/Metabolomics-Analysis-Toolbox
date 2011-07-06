@@ -3,21 +3,27 @@
 
 #ifndef HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
 #define HOUGH_PEAK_MATCH_PEAK_MATCHING_DATABASE
-#include <iostream>
-#include <vector>
-#include <memory> //auto_ptr
 
+#include "unique_parameter_ordering.hpp"
+#include "sample_key.hpp"
+#include "peak_key.hpp"
+#include "key.hpp"
+#include "parameterized_sample.hpp"
+#include "unparameterized_sample.hpp"
 #include "parameterized_peak_group.hpp"
 #include "detected_peak_group.hpp"
 #include "human_verified_peak.hpp"
 #include "unverified_peak.hpp"
 #include "unknown_peak.hpp"
-#include "file_format_sample.hpp"
-#include "file_format_sample_params.hpp"
 #include "param_stats.hpp"
 
+#include <iostream>
+#include <vector>
+#include <set>
+#include <memory> //auto_ptr
+
 ///\brief Holds all the library classes and functions for the Hough
-///\brief peak matching prototype
+///peak matching prototype
 ///
 ///Note: this documentation block is in peak_matching_database.hpp
 namespace HoughPeakMatch{
@@ -58,12 +64,12 @@ namespace HoughPeakMatch{
     ///All UnknownPeak objects in this database
     std::vector<UnknownPeak> unknown_peaks_;
 
-    ///All FileFormatSample objects in this database
-    std::vector<FileFormatSample> samples_;
+    ///All UnparameterizedSample objects in this database
+    std::vector<UnparameterizedSample> unparameterized_samples_;
 
-    ///All FileFormatSampleParams objects in this database
-    std::vector<FileFormatSampleParams> sample_params_;
-
+    ///All ParameterizedSample objects in this database
+    std::vector<ParameterizedSample> parameterized_samples_;
+    
     ///All ParamStats objects in this database
     std::vector<ParamStats> param_stats_;
   public:
@@ -71,7 +77,7 @@ namespace HoughPeakMatch{
     PeakMatchingDatabase():
       parameterized_peak_groups_(),detected_peak_groups_(),
       human_verified_peaks_(),unverified_peaks_(),unknown_peaks_(),
-      samples_(),sample_params_(),param_stats_(){}
+      unparameterized_samples_(), parameterized_samples_(), param_stats_(){}
 
     ///\brief Read database from the given stream replacing current contents
     ///
@@ -84,11 +90,21 @@ namespace HoughPeakMatch{
     ///database will be empty
     bool read(std::istream& in);
 
+    ///\brief Write this database to the given stream
+    ///
+    ///The database is written in the 
+    ///\ref file_format_docs "peak match tool common file format"
+    ///
+    ///\param out the stream to which to write the new contents
+    ///
+    ///\return true on success and false on failure.
+    bool write(std::ostream& out);
+
     ///\brief Remove all objects from the database
     void make_empty();
 
     ///\brief Return true if the database satisfies its constraints,
-    ///\brief false otherwise
+    /// false otherwise
     ///
     ///There are a number of constraints the database must satisfiy to
     ///be in a consistent state.  For example: all sample_id's refered
@@ -105,13 +121,12 @@ namespace HoughPeakMatch{
     ///false otherwise
     bool satisfies_constraints();
 
-#if 0
     ///\brief Returns an auto_pointer to a newly allocated copy of the peak
-    ///\brief object specified by peak_id
+    /// object specified by peak_id
     ///
     ///I use an auto-pointer to a heap allocated copy so one can
     ///downcast the resulting pointer (use auto_ptr_dynamic_cast from
-    ///utils.hpp)
+    ///utils.hpp) and so object life-time issues are explicit
     ///
     ///\param sample_id the id of the sample containing the peak to
     ///copy
@@ -119,53 +134,48 @@ namespace HoughPeakMatch{
     ///\param peak_id the id of the peak to copy within its sample
     ///
     ///\return An auto_pointer to a newly allocated copy of the peak
-    ///object specified by peak_id or to null if there is no such peak
+    ///object specified by sample_id,peak_id or to NULL if there is no
+    ///such peak
     std::auto_ptr<Peak> peak_copy_from_id(unsigned sample_id, unsigned peak_id) const;
 
-#endif
-
     ///\brief Returns an auto_pointer to a newly allocated copy of the
-    ///\brief sample_params object specified by sample_id
-    ///
-    ///I use an auto-pointer to a heap allocated copy because it makes
-    ///it easy to return null and also to ensure that the object's
-    ///deletion semantics are obvious
-    ///
-    ///\param sample_id the id of the sample the copied sample_params describes
-    ///
-    ///\return An auto_pointer to a newly allocated copy of the
-    ///sample_params object specified by sample_id or to null if there
-    ///is no such object
-    std::auto_ptr<FileFormatSampleParams> sample_params_copy_from_id(unsigned sample_id) const;
-
-    ///\brief Returns an auto_pointer to a newly allocated copy of the
-    ///\brief peak_group object specified by peak_group_id
+    /// peak_group object specified by peak_group_id
     ///
     ///I use an auto-pointer to a heap allocated copy because it makes
     ///it easy to return null and also to ensure that the object's
     ///deletion semantics are obvious.  It also allows down-casting to
-    ///the appropriate peak-group object type.
+    ///the appropriate peak-group object type if the object is of a
+    ///derived class like ParameterizedPeakGroup or DetectedPeakGroup.
+    ///
+    ///\note It is impossible for this function to return NULL.  All
+    ///peak_group_ids are implicitly present in the database.
     ///
     ///\param peak_group_id the id of the peak-group to copy
     ///
     ///\return An auto_pointer to a newly allocated copy of the
-    ///peak_group object specified by peak_group_id or to null if there
-    ///is no such object
+    ///peak_group object specified by peak_group_id 
     std::auto_ptr<PeakGroup> peak_group_copy_from_id(unsigned peak_group_id) const;
+    ///\brief Return the number of sample classes represented in this
+    ///database
+    ///
+    ///\return the number of sample classes represented in this
+    ///database
+    std::size_t num_classes() const;
 
     ///\brief Returns an auto_pointer to a newly allocated copy of the
-    ///\brief sample object specified by sample_id
+    /// sample object specified by sample_id
     ///
     ///I use an auto-pointer to a heap allocated copy because it makes
     ///it easy to return null and also to ensure that the object's
-    ///deletion semantics are obvious
+    ///deletion semantics are obvious.  It also allows down-casting to
+    ///the appropriate sample object type.
     ///
     ///\param sample_id the id of the sample the copied sample describes
     ///
     ///\return An auto_pointer to a newly allocated copy of the
     ///sample object specified by sample_id or to null if there
     ///is no such object
-    std::auto_ptr<FileFormatSample> sample_copy_from_id(unsigned sample_id) const;
+    std::auto_ptr<Sample> sample_copy_from_id(unsigned sample_id) const;
 
     ///\brief Return all ParameterizedPeakGroup objects in this database
     ///\return all ParameterizedPeakGroup objects in this database
@@ -198,16 +208,16 @@ namespace HoughPeakMatch{
       return unknown_peaks_;
     }
 
-    ///\brief Return all FileFormatSample objects in this database
-    ///\return all FileFormatSample objects in this database
-    const std::vector<FileFormatSample>& samples() const {
-      return samples_;
+    ///\brief Return all ParameterizedSample objects in this database
+    ///\return all ParameterizedSample objects in this database
+    const std::vector<ParameterizedSample>& parameterized_samples() const {
+      return parameterized_samples_;
     }
 
-    ///\brief Return all FileFormatSampleParams objects in this database
-    ///\return all FileFormatSampleParams objects in this database
-    const std::vector<FileFormatSampleParams>& sample_params() const {
-      return sample_params_;
+    ///\brief Return all UnparameterizedSample objects in this database
+    ///\return all UnparameterizedSample objects in this database
+    const std::vector<UnparameterizedSample>& unparameterized_samples() const{
+      return unparameterized_samples_;
     }
 
     ///\brief Return all ParamStats objects in this database
@@ -216,6 +226,118 @@ namespace HoughPeakMatch{
       return param_stats_;
     }
 
+
+
+    ///\brief Return all ParameterizedPeakGroup objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all ParameterizedPeakGroup objects in this database
+    std::vector<ParameterizedPeakGroup>& 
+    parameterized_peak_groups() {
+      return parameterized_peak_groups_;
+    }
+
+    ///\brief Return all DetectedPeakGroup objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all DetectedPeakGroup objects in this database
+    std::vector<DetectedPeakGroup>& detected_peak_groups() {
+      return detected_peak_groups_;
+    }
+
+    ///\brief Return all HumanVerifiedPeak objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all HumanVerifiedPeak objects in this database
+    std::vector<HumanVerifiedPeak>& human_verified_peaks() {
+      return human_verified_peaks_;
+    }
+
+    ///\brief Return all UnverifiedPeak objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all UnverifiedPeak objects in this database
+    std::vector<UnverifiedPeak>& unverified_peaks() {
+      return unverified_peaks_;
+    }
+
+    ///\brief Return all UnknownPeak objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all UnknownPeak objects in this database
+    std::vector<UnknownPeak>& unknown_peaks() {
+      return unknown_peaks_;
+    }
+
+    ///\brief Return all ParameterizedSample objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all ParameterizedSample objects in this database
+    std::vector<ParameterizedSample>& parameterized_samples() {
+      return parameterized_samples_;
+    }
+
+    ///\brief Return all UnparameterizedSample objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all UnparameterizedSample objects in this database
+    std::vector<UnparameterizedSample>& unparameterized_samples() {
+      return unparameterized_samples_;
+    }
+
+    ///\brief Return all ParamStats objects in this database
+    ///
+    ///\warning The caller is responsible for ensuring that the
+    ///database stays in a consistent state when using the reference
+    ///returned by this routine
+    ///
+    ///\return all ParamStats objects in this database
+    std::vector<ParamStats>& param_stats() {
+      return param_stats_;
+    }
+
+
+    ///\return All the keys that would return an object of the given
+    ///type in this database
+    ///
+    ///\note When the object type is peak_group, then only the
+    ///peak_groups implicitly defined by reference from a known peak
+    ///are included.  Those explicitly represented by a
+    ///parameterized_peak_group or a detected_peak_group are not
+    ///included.
+    ///
+    ///\param t the type of object whose keys should be returned
+    ///
+    ///\brief Return all the keys that would return an object of the given
+    ///type in this database
+    std::set<KeySptr> keys_for_type(ObjectType t) const;
+
+
+    ///\brief Reorders all the parameters in this database according to \a upo
+    ///
+    ///\param upo The ordering for the reordered parameters
+    void reorder_with(const UniqueParameterOrdering& upo);
   };
 
 

@@ -90,13 +90,18 @@ public:
   ///
   ///\returns the string representation of this ParameterizedPeakGroup
   ///from \ref parameterized_peak_group "the file format documentation"
-  std::string to_text_line() const;
+  std::string to_text() const;
 
   
   ///\brief Return the parameters for this ParameterizedPeakGroup
   ///
   ///\return the parameters for this ParameterizedPeakGroup
   const std::vector<double>& params() const{ return params_; }
+
+  ///\brief Set the parameters for this ParameterizedPeakGroup
+  ///
+  ///\param params the new parameter values
+  void set_params(const std::vector<double>& params){ params_=params; }
 
   ///\brief Return the ppm location for this ParameterizedPeakGroup
   ///

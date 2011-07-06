@@ -1,0 +1,29 @@
+
+
+
+
+
+parameterized_peak_group 25 3.58942133 -1.17405428
+parameterized_peak_group 26 1.47868132 -0.447780836
+parameterized_peak_group 27 10.60385 0.670343521
+parameterized_peak_group 28 3.92665492 -0.430933584
+parameterized_peak_group 29 9.25772734 -0.089111547
+sample 7 1
+sample 8 1
+sample 9 1
+unverified_peak 9 22 9.52753628070724 27
+unverified_peak 9 23 4.61857463763488 28
+unverified_peak 9 24 9.40080747857003 29
+unverified_peak 7 12 10.2806995840334 27
+unverified_peak 7 13 4.13439995472008 28
+unverified_peak 7 14 9.30068635414814 29
+unverified_peak 8 17 9.94867180566561 27
+unverified_peak 8 18 4.34784562261201 28
+unverified_peak 8 19 9.34482418503114 29
+unverified_peak 7 10 4.15541097289017 25
+unverified_peak 7 11 1.69454810656872 26
+unverified_peak 8 15 4.73693167354539 25
+unverified_peak 8 16 1.91633838519872 26
+unverified_peak 9 20 5.47451762719196 25
+unverified_peak 9 21 2.1976514906282 26
+param_stats 1

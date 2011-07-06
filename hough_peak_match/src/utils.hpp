@@ -8,6 +8,7 @@
 #include <limits>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 
 namespace HoughPeakMatch{
 
@@ -50,7 +51,7 @@ bool is_special_double(double d);
 bool contains_white_space(const std::string s);
 
 ///\brief Writes a space-separated version of \a v to \a out,
-///\brief returning \a out
+///returning \a out
 ///
 ///The list {1,2,3} will be space separated into "1 2 3" -
 ///spaces only between entries.  ostream_iterator would insert
@@ -89,6 +90,30 @@ std::ostream& space_separate(std::ostream &out, const std::vector<T>& v){
   return out;
 }
 
+///\brief dot product of two vectors
+///
+///\a a and \a b must be the same length
+///
+///\param a The first vector, same length as \a b
+///
+///\param b the second vector, same length as \a a
+///
+///\return the dot product of \a a and \a b
+///
+///\throw std::invalid_argument if the vectors are different lengths
+inline double dot(const std::vector<double>& a, const std::vector<double>& b){
+  if(a.size() != b.size()){
+    throw std::invalid_argument
+      ("Different sized arguments to HoughPeakMatch::dot");
+  }
+  double sum = 0;
+  std::vector<double>::const_iterator ita, itb;
+  for(ita = a.begin(), itb = b.begin(); ita != a.end(); ++ita){
+    sum += (*ita) * (*itb);
+  }
+  return sum;
+}
+
 ///\brief dynamic cast that works for autoptrs
 ///
 ///Use:
@@ -113,9 +138,9 @@ template<typename R, typename T>
 std::auto_ptr<R> auto_ptr_dynamic_cast(std::auto_ptr<T>& in) {
   std::auto_ptr<R> rv;
   R* p;
-  if( p = dynamic_cast<R*>( in.get() ) ) {
+  if( (p = dynamic_cast<R*>( in.get() )) ) {
       in.release();
-      rv = p;
+      rv.reset(p);
   }
   return rv;
 }

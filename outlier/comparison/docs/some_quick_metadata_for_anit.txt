@@ -1,0 +1,23 @@
+ANIT = α-naphthylisothiocyanate
+Time-points: 0=predose, 1,2,3,4 (are days after dose?)
+Dosages: control, 0.1, 1, 10, 20, 50, and 100.  All doses are in mg/kg
+Rat strain: Fisher 344
+
+Rats per group:
+19   control
+6    0.1 mg/kg
+6    1 mg/kg
+7    10 mg/kg
+7    20 mg/kg
+14   50 mg/kg
+9    100 mg/kg
+
+95 samples are from high-dose rats (those with a dose of 100 or 50)
+
+68 samples are from rats in the pre-dose condition.
+72 samples from the high dose rats came in a day besides pre-dose,
+28 samples are from rats who received a dose of 20 in a day besides predose
+76 samples are from rats who received a dose of 0.1, 1,or 10 in a day besides predose
+57 samples are from control samples in a day besides predose
+
+There are a total of 301 samples

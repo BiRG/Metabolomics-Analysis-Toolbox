@@ -1,0 +1,12 @@
+# Here is a pair of db's where the same numbered peaks are in
+# different samples
+
+sample_params 1 -0.482081320837365
+sample_params 2 -0.97739121424512
+sample_params 3 -1.60562958936764
+parameterized_peak_group 2 3.58942133448949 -1.17405428075406
+parameterized_peak_group 3 1.47868132923621 -0.447780836970717
+sample 3 1
+sample 2 1
+sample 1 1
+unverified_peak 3 10 4.15541097289017 2

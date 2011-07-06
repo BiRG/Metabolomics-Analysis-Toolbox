@@ -70,7 +70,7 @@ public:
   ///\returns the string representation of this UnverifiedPeak from
   ///\ref unverified_peak "the file format documentation" terminated
   ///with a newline
-  std::string to_text_line() const;
+  std::string to_text() const;
 
   virtual ObjectType type() const{
     return ObjectType("unverified_peak");

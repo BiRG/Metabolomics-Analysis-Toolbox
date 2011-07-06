@@ -14,7 +14,7 @@ namespace HoughPeakMatch{
 class PeakGroup:public PMObject{
 protected:
   ///\brief Non-negative integer uniquely identifying this peak group
-  ///\brief among all others
+  ///among all others
   unsigned peak_group_id;
 public:
   ///\brief Create an uninitialized PeakGroup object
@@ -44,6 +44,8 @@ public:
       return false; }
     return true;
   }
+
+  virtual std::vector<KeySptr> foreign_keys(const PeakMatchingDatabase&) const;
 
 };
 

@@ -4,6 +4,7 @@
 *.txt text
 *.html text
 *.pl text
+*.csv text
 Makefile text
 Doxyfile text
 *.m text
