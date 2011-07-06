@@ -134,11 +134,16 @@ function stop_using_spectrum_button_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on button press in change_source_button.
-function change_source_button_Callback(hObject, eventdata, handles)
+function change_source_button_Callback(hObject, ~, handles)
 % hObject    handle to change_source_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+collections = load_collections;
+if isempty(collections) 
+    return
+end
+handles.source_collection = collections{1};
+set(handles.unused_list,'String',handles.source_collection.classification);
 
 % --- Executes on button press in pushbutton5.
 function pushbutton5_Callback(hObject, eventdata, handles)
