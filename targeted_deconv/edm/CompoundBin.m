@@ -29,13 +29,15 @@ classdef CompoundBin
         %bin_map_line is an array containing the result of parsing the csv
         %line in the binmap file
         function obj=CompoundBin(bin_map_line)
-            obj.id = bin_map_line{1};
-            obj.compound_descr = bin_map_line{2};
-            obj.bin = SpectrumBin(bin_map_line{3}, bin_map_line{4});
-            obj.multiplicity = bin_map_line{5};
-            obj.is_clean = (isequal(lower(bin_map_line{6}),'clean'));
-            obj.proton_id=bin_map_line{7};
-            obj.id_source=bin_map_line{8};
+            if nargin>0 %Make a default constructor that doesn't initialize
+                obj.id = bin_map_line{1};   
+                obj.compound_descr = bin_map_line{2};
+                obj.bin = SpectrumBin(bin_map_line{3}, bin_map_line{4});
+                obj.multiplicity = bin_map_line{5};
+                obj.is_clean = (isequal(lower(bin_map_line{6}),'clean'));
+                obj.proton_id=bin_map_line{7};
+                obj.id_source=bin_map_line{8};
+            end
         end
         %Getter method calculating the number of peaks from the
         %multiplicity variable

@@ -15,7 +15,7 @@ if isempty(bin_map)
     return;
 end
 
-uiwait(msgbox('Please choose a spectrum collection file in the next screen',...
+uiwait(msgbox('Please choose a spectrum collection file in the next screen. Only the first will be used.',...
     'Please choose a spectrum collection','modal'));
 
 collections = load_collections;
