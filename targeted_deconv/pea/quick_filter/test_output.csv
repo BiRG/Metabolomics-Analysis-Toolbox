@@ -1,0 +1,5 @@
+ID,Metabolite,Bin (Lt),Bin (Rt),Multiplicity
+2,N methylnicotinamide,8.922000,8.880000,d
+3,hippurate,7.857000,7.815000,d
+5,Glucose,5.262000,5.238000,d
+6,Malate,4.335000,4.300000,dd

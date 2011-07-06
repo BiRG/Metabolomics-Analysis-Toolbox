@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 06-Jul-2011 11:00:44
+% Last Modified by GUIDE v2.5 06-Jul-2011 13:53:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -73,19 +73,39 @@ function varargout = main_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on selection change in listbox1.
-function listbox1_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox1 (see GCBO)
+% --- Executes on selection change in no_listbox.
+function no_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to no_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox1
+% Hints: contents = cellstr(get(hObject,'String')) returns no_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from no_listbox
 
+set(handles.yes_listbox,'Value',1);
+
+no_inxs = find(handles.yes_mask == 0);
+no_inx = get(hObject,'Value')-1;
+if no_inx == 0
+    set(handles.metabolite_info_edit,'String',{''});
+    return;
+end
+inx = no_inxs(no_inx);
+update_metabolite_information(handles,inx);
+
+function update_metabolite_information(handles,inx)
+str = {};
+str{1} = sprintf('Name: %s',handles.metabolites{inx}.metabolite);
+str{2} = sprintf('ID: %d',handles.metabolites{inx}.id);
+str{3} = sprintf('Multiplicity: %s',handles.metabolites{inx}.multiplicity);
+str{4} = sprintf('Region: %.4f,%.4f',handles.metabolites{inx}.left,handles.metabolites{inx}.right);
+set(handles.metabolite_info_edit,'String',str);
+
+xlim([handles.metabolites{inx}.right,handles.metabolites{inx}.left]);
 
 % --- Executes during object creation, after setting all properties.
-function listbox1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox1 (see GCBO)
+function no_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to no_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -96,19 +116,29 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in listbox2.
-function listbox2_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox2 (see GCBO)
+% --- Executes on selection change in yes_listbox.
+function yes_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to yes_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox2 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox2
+% Hints: contents = cellstr(get(hObject,'String')) returns yes_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from yes_listbox
 
+set(handles.no_listbox,'Value',1);
+
+yes_inxs = find(handles.yes_mask == 1);
+yes_inx = get(hObject,'Value')-1;
+if yes_inx == 0
+    set(handles.metabolite_info_edit,'String',{''});
+    return;
+end
+inx = yes_inxs(yes_inx);
+update_metabolite_information(handles,inx);
 
 % --- Executes during object creation, after setting all properties.
-function listbox2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox2 (see GCBO)
+function yes_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to yes_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -125,6 +155,26 @@ function add_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if get(handles.all_checkbox,'Value')
+    handles.yes_mask(:) = 1;
+    refresh_both_lists(handles);
+    set(handles.metabolite_info_edit,'String',{''});
+else
+    no_inx = get(handles.no_listbox,'Value')-1;
+    if no_inx == 0
+        return;
+    end
+    no_inxs = find(handles.yes_mask == 0);
+    handles.yes_mask(no_inxs(no_inx)) = 1;
+    refresh_both_lists(handles);
+    yes_inxs = find(handles.yes_mask == 1);
+    yes_inx = find(yes_inxs == no_inxs(no_inx));
+    set(handles.yes_listbox,'Value',yes_inx+1);
+
+    update_metabolite_information(handles,no_inxs(no_inx));
+end
+
+guidata(handles.figure1,handles);
 
 % --- Executes on button press in remove_pushbutton.
 function remove_pushbutton_Callback(hObject, eventdata, handles)
@@ -132,6 +182,27 @@ function remove_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
+if get(handles.all_checkbox,'Value')
+    handles.yes_mask(:) = 0;
+    refresh_both_lists(handles);
+    set(handles.metabolite_info_edit,'String',{''});
+else
+    yes_inx = get(handles.yes_listbox,'Value')-1;
+    if yes_inx == 0
+        return;
+    end
+    yes_inxs = find(handles.yes_mask == 1);
+    handles.yes_mask(yes_inxs(yes_inx)) = 0;
+    refresh_both_lists(handles);
+    no_inxs = find(handles.yes_mask == 0);
+    no_inx = find(no_inxs == yes_inxs(yes_inx));
+    set(handles.no_listbox,'Value',no_inx+1);
+
+    update_metabolite_information(handles,yes_inxs(yes_inx));
+end
+
+guidata(handles.figure1,handles);
 
 % --- Executes on button press in all_checkbox.
 function all_checkbox_Callback(hObject, eventdata, handles)
@@ -149,6 +220,36 @@ function load_collection_pushbutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
+try
+    collections = load_collections;
+    if isempty(collections)
+        return
+    end
+    if length(collections) > 1
+        msgbox('Only load a single collection');
+        return;
+    end
+    handles.collection = collections{1};
+    
+    clear_all(hObject,handles);
+    
+    set(handles.spectrum_listbox,'String',1:handles.collection.num_samples);
+    xl = xlim;
+    plot(handles.collection.x,handles.collection.Y(:,1));
+    set(gca,'xdir','reverse');
+    if xl(1) ~= 0 || xl(2) ~= 1
+        xlim(xl);
+    end    
+    
+    set(handles.description_text,'String',handles.collection.description);
+    
+    msgbox('Finished loading collection');
+    
+    % Update handles structure
+    guidata(hObject, handles);
+catch ME
+    msgbox('Invalid collection');
+end
 
 function collection_id_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to collection_id_edit (see GCBO)
@@ -177,3 +278,117 @@ function get_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to get_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on selection change in spectrum_listbox.
+function spectrum_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to spectrum_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns spectrum_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from spectrum_listbox
+
+contents = cellstr(get(hObject,'String'));
+s_inx = contents{get(hObject,'Value')};
+
+xl = xlim;
+plot(handles.collection.x,handles.collection.Y(:,s_inx));
+set(gca,'xdir','reverse');
+if xl(1) ~= 0 || xl(2) ~= 1
+    xlim(xl);
+end
+
+% --- Executes during object creation, after setting all properties.
+function spectrum_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to spectrum_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function reset_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to reset (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+xlim auto;
+ylim auto;
+xlim auto;
+
+
+% --- Executes on button press in load_no_pushbutton.
+function load_no_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to load_no_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[filename, pathname] = uigetfile('*.csv', 'Pick a metabolite map file');
+if isequal(filename,0) || isequal(pathname,0)
+   return;
+end
+
+handles.metabolites = load_metabolites(pathname,filename);
+handles.yes_mask = zeros(1,length(handles.metabolites));
+refresh_both_lists(handles);
+
+guidata(hObject, handles);
+
+function refresh_both_lists(handles)
+refresh_list(handles.no_listbox,handles.metabolites,find(handles.yes_mask == 0));
+refresh_list(handles.yes_listbox,handles.metabolites,find(handles.yes_mask == 1));
+
+function refresh_list(h,metabolites,inxs)
+names = {};
+for i = 1:length(inxs)
+    names{end+1} = metabolites{inxs(i)}.metabolite;    
+end
+set(h,'String',{'',names{:}});
+set(h,'Value',1);
+
+% --- Executes on button press in load_yes_pushbutton.
+function load_yes_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to load_yes_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in save_pushbutton.
+function save_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to save_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[filename, pathname] = uiputfile('*.csv', 'Pick a metabolite map file');
+if isequal(filename,0) || isequal(pathname,0)
+    return
+end
+yes_inxs = find(handles.yes_mask == 1);
+save_metabolites(pathname,filename,{handles.metabolites{yes_inxs}});
+
+function metabolite_info_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to metabolite_info_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of metabolite_info_edit as text
+%        str2double(get(hObject,'String')) returns contents of metabolite_info_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function metabolite_info_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to metabolite_info_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
