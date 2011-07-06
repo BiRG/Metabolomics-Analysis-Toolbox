@@ -290,7 +290,7 @@ function spectrum_listbox_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from spectrum_listbox
 
 contents = cellstr(get(hObject,'String'));
-s_inx = contents{get(hObject,'Value')};
+s_inx = str2num(contents{get(hObject,'Value')});
 
 xl = xlim;
 plot(handles.collection.x,handles.collection.Y(:,s_inx));
