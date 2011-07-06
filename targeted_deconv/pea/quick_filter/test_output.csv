@@ -1,5 +1,3 @@
-ID,Metabolite,Bin (Lt),Bin (Rt),Multiplicity
-2,N methylnicotinamide,8.922000,8.880000,d
-3,hippurate,7.857000,7.815000,d
-5,Glucose,5.262000,5.238000,d
-6,Malate,4.335000,4.300000,dd
+ID,Metabolite,Bin (Lt),Bin (Rt),Multiplicity,Deconvolution,Proton ID,ID Source
+5,Glucose,5.262000,5.238000,d,overlap,CH,Measured/Chemonx
+7,sarcosine,2.740000,2.650000,half of AB d,overlap,CH2,Measured/Chemonx
