@@ -6,7 +6,25 @@ function interactive_quantify_known( )
 %   particular compounds in one file and the residual spectrum in another
 %   file.
 
+uiwait(msgbox('Please choose a bin map file in the next screen',...
+    'Please choose a bin map file','modal'));
+bin_map = interactive_load_binmap;
 
+if isempty(bin_map)
+    msgbox('No bin map was selected. Goodbye.','Error','error','modal');
+    return;
+end
+
+uiwait(msgbox('Please choose a spectrum collection file in the next screen',...
+    'Please choose a spectrum collection','modal'));
+
+collections = load_collections;
+if isempty(collections)
+    msgbox('No collection was selected. Goodbye.','Error','error','modal');
+    return;
+end
+
+collection = collections{1};
 
 end
 
