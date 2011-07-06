@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 18-Mar-2011 10:06:07
+% Last Modified by GUIDE v2.5 30-Jun-2011 13:49:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -113,6 +113,8 @@ try
 
     set(handles.description_text,'String',handles.collection.description);
     
+    populate_listboxes(handles);
+    
     msgbox('Finished loading collection');
     
     % Update handles structure
@@ -121,6 +123,19 @@ catch ME
     msgbox('Invalid collection ID');
 end
 
+function populate_listboxes(handles)
+flds = fields(handles.collection);
+valid_flds = {};
+for i = 1:length(flds)
+    [rows,cols] = size(handles.collection.(flds{i}));
+    if rows == 1 && cols == handles.collection.num_samples
+        valid_flds{end+1} = flds{i};
+    end
+end
+sorted_valid_flds = sort(valid_flds);
+
+set(handles.group_by_fields_listbox,'String',{'',sorted_valid_flds{:}});
+set(handles.group_by_fields_listbox,'Max',length({'',sorted_valid_flds{:}}));
 
 % --- Executes on selection change in group_by_listbox.
 function group_by_listbox_Callback(hObject, eventdata, handles)
@@ -495,6 +510,8 @@ try
     clear_all(hObject,handles);
     
     set(handles.description_text,'String',handles.collection.description);
+    
+    populate_listboxes(handles);
 
     msgbox('Finished loading collection');
     
@@ -511,9 +528,9 @@ function load_loadings_pushbutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 try
-    [filename, pathname] = uigetfile('*.xlsx', 'Pick an OPLS loadings file');
-    [NUMERIC,TXT,RAW] = xlsread([pathname,filename],'Loadings');
-    x_inx = find(strcmp({TXT{1,:}},'x (ppm)'));
+    [filename, pathname] = uigetfile('*.csv', 'Pick an OPLS loadings file');
+    [NUMERIC,TXT,RAW] = xlsread([pathname,filename]);
+    x_inx = find(strcmp({TXT{1,:}},'x'));
     p_inx = find(strcmp({TXT{1,:}},'P'));
     s_inx = find(strcmp({TXT{1,:}},'Significant?'));
     x = NUMERIC(:,x_inx);
@@ -549,6 +566,7 @@ try
     set(handles.loadings_uitable,'ColumnName',{'x (ppm)','P','abs(P)','Sig?','Left (ppm)','Right (ppm)'});
 catch ME
     msgbox('Invalid loadings');
+    throw(ME);
 end
 
 
@@ -619,4 +637,36 @@ try
     end
     saveas(gcf,[pathname,filename]);
 catch ME
+end
+
+
+function res = get_version_string()
+res = '0r1';
+
+% --- Executes on selection change in group_by_fields_listbox.
+function group_by_fields_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to group_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns group_by_fields_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from group_by_fields_listbox
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
+
+group_by_fields_listbox(hObject,handles);
+
+% --- Executes during object creation, after setting all properties.
+function group_by_fields_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to group_by_fields_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
