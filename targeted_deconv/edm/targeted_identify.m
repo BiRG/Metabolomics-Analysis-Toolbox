@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 06-Jul-2011 16:46:07
+% Last Modified by GUIDE v2.5 07-Jul-2011 10:27:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -64,10 +64,12 @@ if isappdata(0,'collection') && isappdata(0,'bin_map')
     rmappdata(0,'collection');
     rmappdata(0, 'bin_map');
 else
-    msgbox('Either the bin_map or collections were not loaded.','Error','error');
+    uiwait(msgbox('Either the bin_map or collections were not loaded.','Error','error','modal'));
     handles.collection = {};
-    handles.bin_map;
+    handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
 end
+
+set(handles.select_peak_tool,'state','on');
 
 % Update handles structure
 guidata(hObject, handles);
@@ -108,7 +110,7 @@ function zoom_to_bin_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
+% ---9.297,9.265,s,Clean,CH2,Publication-----------------------------------------------------------------
 function select_peak_tool_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to select_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -120,3 +122,104 @@ function deselect_peak_tool_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to deselect_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on selection change in metabolite_menu.
+function metabolite_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to metabolite_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns metabolite_menu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from metabolite_menu
+
+
+% --- Executes during object creation, after setting all properties.
+function metabolite_menu_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to metabolite_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function spectrum_number_edit_box_Callback(hObject, eventdata, handles)
+% hObject    handle to spectrum_number_edit_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of spectrum_number_edit_box as text
+%        str2double(get(hObject,'String')) returns contents of spectrum_number_edit_box as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function spectrum_number_edit_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to spectrum_number_edit_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --------------------------------------------------------------------
+function turn_off_all_tools_but(handles, tool_name)
+% TURN_OFF_ALL_BUT Turns off all tools in the toolbar but the tool with the given name
+% tool_name The name of the tool to be left alone
+if ~isequal(tool_name,'pan_tool')
+    set(handles.pan_tool,'state','off');
+end
+if ~isequal(tool_name,'zoom_in_tool')
+    set(handles.zoom_in_tool,'state','off');
+end
+if ~isequal(tool_name,'zoom_out_tool')
+    set(handles.zoom_out_tool,'state','off');
+end
+if ~isequal(tool_name,'select_peak_tool')
+    set(handles.select_peak_tool,'state','off');
+end
+if ~isequal(tool_name,'deselect_peak_tool')
+    set(handles.deselect_peak_tool,'state','off');
+end
+
+% --------------------------------------------------------------------
+function pan_tool_OnCallback(hObject, ~, handles)
+% hObject    handle to pan_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+turn_off_all_tools_but(handles, 'pan_tool');
+
+% --------------------------------------------------------------------
+function zoom_in_tool_OnCallback(hObject, ~, handles)
+% hObject    handle to zoom_in_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+turn_off_all_tools_but(handles, 'zoom_in_tool');
+
+% --------------------------------------------------------------------
+function zoom_out_tool_OnCallback(hObject, ~, handles)
+% hObject    handle to zoom_out_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+turn_off_all_tools_but(handles, 'zoom_out_tool');
+
+% --------------------------------------------------------------------
+function select_peak_tool_OnCallback(hObject, ~, handles)
+% hObject    handle to select_peak_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+turn_off_all_tools_but(handles, 'select_peak_tool');
+
+% --------------------------------------------------------------------
+function deselect_peak_tool_OnCallback(hObject, ~, handles)
+% hObject    handle to deselect_peak_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+turn_off_all_tools_but(handles, 'deselect_peak_tool');
