@@ -68,6 +68,9 @@ else
     handles.collection = {};
     handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
 end
+%Remove app data from matlab root so it is not sitting around
+rmappdata(0,'collection');
+rmappdata(0, 'bin_map');
 
 set(handles.select_peak_tool,'state','on');
 
