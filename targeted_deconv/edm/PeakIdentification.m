@@ -11,7 +11,8 @@ classdef PeakIdentification
         %identification was made
         spectrum_index
         
-        %The compound bin object within which the peak was found
+        %The compound bin object within which the peak was found - the bin
+        %index is not needed because each bin has a unique identifier
         compound_bin
     end
     
