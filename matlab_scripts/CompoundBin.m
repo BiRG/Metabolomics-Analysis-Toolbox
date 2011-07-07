@@ -23,6 +23,9 @@ classdef CompoundBin
     properties (Dependent)
         %The number of peaks expected in this compound bin
         num_peaks
+        
+        %A nicely formatted version of the multiplicity
+        readable_multiplicity
     end
     
     methods
@@ -55,6 +58,24 @@ classdef CompoundBin
                     num_peaks=4; return;
                 case 'half of ab d'
                     num_peaks=2; return;
+            end
+        end
+        %Getter method calculating a readable version of the multiplicity
+        %from the multiplicity variable
+        function str=get.readable_multiplicity(obj)
+            switch lower(obj.multiplicity)
+                case 's'
+                    str='singlet'; return;
+                case 'd'
+                    str='doublet'; return;
+                case 't'
+                    str='triplet'; return;
+                case 'q'
+                    str='quartet'; return;
+                case 'dd'
+                    str='doublet of doublets'; return;
+                case 'half of ab d'
+                    str='half of AB doublet'; return;
             end
         end
     end

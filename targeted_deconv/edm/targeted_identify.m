@@ -98,7 +98,7 @@ function update_display(handles)
 set(handles.metabolite_menu, 'Value', handles.bin_idx);
 cur_bin=handles.bin_map(handles.bin_idx);
 set(handles.multiplicity_text,'String', strcat('Multiplicity:', ...
-    cur_bin.multiplicity));
+    cur_bin.readable_multiplicity));
 %TODO: finish
 
 % --- Outputs from this function are returned to the command line.
