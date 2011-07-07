@@ -69,7 +69,20 @@ else
     handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
 end
 
+num_bins = length(handles.bin_map);
+metabolite_names{num_bins}='';
+for bin_idx = 1:num_bins
+    cur_bin = handles.bin_map(bin_idx);
+    metabolite_names{bin_idx}=sprintf('%s (%d)', ...
+        cur_bin.compound_descr, cur_bin.id);
+end
+set(handles.metabolite_menu, 'String', metabolite_names);
+
 set(handles.select_peak_tool,'state','on');
+handles.spectrum_idx = 1;
+handles.bin_idx = 1;
+
+update_display(handles);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -77,6 +90,16 @@ guidata(hObject, handles);
 % UIWAIT makes targeted_identify wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
+function update_display(handles)
+% Updates the various UI objects to reflect the state saved in the handles
+% structure
+%
+% handles The handles structure containing the GUI application state
+set(handles.metabolite_menu, 'Value', handles.bin_idx);
+cur_bin=handles.bin_map(handles.bin_idx);
+set(handles.multiplicity_text,'String', strcat('Multiplicity:', ...
+    cur_bin.multiplicity));
+%TODO: finish
 
 % --- Outputs from this function are returned to the command line.
 function varargout = targeted_identify_OutputFcn(hObject, eventdata, handles) 
