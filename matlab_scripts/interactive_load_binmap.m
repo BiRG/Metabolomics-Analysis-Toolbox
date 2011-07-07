@@ -17,7 +17,7 @@ fid = fopen(fullfile(pathname,filename),'r','n','ISO-8859-1');
 if fid == -1
     binmap = {};
     return;
-end= zeros
+end
 
 %Check header to ensure file format is correct
 expected_header={{'ID'},{'Metabolite'},{'Bin (Lt)'},{'Bin (Rt)'},{'multiplicity'},{'Deconvolution'},{'Proton ID'},{'ID Source'}};
