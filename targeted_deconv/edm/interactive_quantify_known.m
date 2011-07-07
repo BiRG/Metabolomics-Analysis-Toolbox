@@ -27,14 +27,11 @@ end
 collection = collections{1};
 
 %Use appdata in matlab root to pass the loaded collections and bins to the
-%gui
+%gui the gui will remove this data when it reads it
 setappdata(0, 'collection', collection);
 setappdata(0, 'bin_map', bin_map);
 
 targeted_identify;
 
-%Remove app data from matlab root so it is not sitting around
-rmappdata(0,'collection');
-rmappdata(0, 'bin_map');
 end
 
