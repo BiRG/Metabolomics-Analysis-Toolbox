@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 29-Mar-2011 09:28:10
+% Last Modified by GUIDE v2.5 08-Jul-2011 15:56:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -745,7 +745,7 @@ collection = getappdata(gcf,'collection');
 reference = getappdata(gcf,'reference');
 
 % Find the best way to divide the spectra up, so that matching can complete
-min_split_distance_ppm = str2num(get(handles.min_split_distance_edit,'String'));
+min_split_distance_ppm = str2num(get(handles.G_edit,'String'));
 peak_locations = reference.x(reference.maxs);
 for s = 1:size(collection.Y,2)
     peak_locations = [peak_locations, collection.x(collection.maxs{s})];
@@ -833,10 +833,11 @@ for b = 1:nBins
 %         end
                 
 %         [match_ids,final_score] = match_peaks_dynamic(x(reference.maxs(reference_bin_inxs(inxs1))),...
-%             x(maxs(bin_inxs(inxs2))),str2num(get(handles.maximum_distance_edit,'String')));
+%             x(maxs(bin_inxs(inxs2))),str2num(get(handles.search_width_edit,'String')));
         
         match_ids = match_peaks_R2(x(reference.maxs(reference_bin_inxs(inxs1))),...
-            x(maxs(bin_inxs(inxs2))),0.2,collection.x(1)-collection.x(2),0.01,0.1);
+            x(maxs(bin_inxs(inxs2))),str2num(get(handles.search_width_edit,'String')),...
+            collection.x(1)-collection.x(2),str2num(get(handles.G_edit,'String')),str2num(get(handles.search_sigma_edit,'String')));
 
 %             [match_ids,final_score] = match_peaks(left,right,x(1)-x(2),...
 %                  x(reference.maxs(reference_bin_inxs(inxs1))),...
@@ -929,18 +930,18 @@ collection = quantify(collection,reference);
 post_collections(gcf,{collection},'_deconvolution',analysis_id);  
 
 
-function maximum_distance_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to maximum_distance_edit (see GCBO)
+function search_width_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to search_width_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of maximum_distance_edit as text
-%        str2double(get(hObject,'String')) returns contents of maximum_distance_edit as a double
+% Hints: get(hObject,'String') returns contents of search_width_edit as text
+%        str2double(get(hObject,'String')) returns contents of search_width_edit as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function maximum_distance_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to maximum_distance_edit (see GCBO)
+function search_width_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to search_width_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1131,18 +1132,18 @@ setappdata(gcf,'dirty',true);
 
 
 
-function min_split_distance_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to min_split_distance_edit (see GCBO)
+function G_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to G_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of min_split_distance_edit as text
-%        str2double(get(hObject,'String')) returns contents of min_split_distance_edit as a double
+% Hints: get(hObject,'String') returns contents of G_edit as text
+%        str2double(get(hObject,'String')) returns contents of G_edit as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function min_split_distance_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to min_split_distance_edit (see GCBO)
+function G_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to G_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1362,6 +1363,29 @@ function window_width_edit_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function window_width_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to window_width_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function search_sigma_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to search_sigma_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of search_sigma_edit as text
+%        str2double(get(hObject,'String')) returns contents of search_sigma_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function search_sigma_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to search_sigma_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

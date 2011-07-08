@@ -10,7 +10,7 @@ for s = 1:length(collection.BETA)
         inxs2 = find(match_ids == xv);
         for k = 1:length(inxs2)
             p = inxs2(k);
-            collection.Y(xv,s) = collection.Y(xv,s) + sum(one_peak_model(BETA(4*(p-1)+(1:4)),collection.x));
+            collection.Y(j,s) = collection.Y(j,s) + sum(one_peak_model(BETA(4*(p-1)+(1:4)),collection.x));
         end
     end
 end
