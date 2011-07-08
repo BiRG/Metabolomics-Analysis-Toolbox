@@ -202,10 +202,7 @@ function metabolite_menu_Callback(hObject, ~, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns metabolite_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from metabolite_menu
-handles.bin_idx = get(hObject,'Value');
-update_display(handles);
-zoom_to_bin(handles);
-guidata(handles.figure1, handles);
+set_bin_idx(get(hObject,'Value'), handles);
 
 % --- Executes during object creation, after setting all properties.
 function metabolite_menu_CreateFcn(hObject, eventdata, handles)
@@ -231,6 +228,19 @@ handles.spectrum_idx = new_val;
 guidata(handles.figure1, handles);
 update_display(handles);
 update_plot(handles);
+
+function set_bin_idx(new_val, handles)
+% Sets handles.bin_idx and also updates the gui - don't call when you
+% update the bin_idx to avoid repeating updates.  I believe (though I
+% haven't verified) that the value in handles in the caller will be
+% unchanged.
+%
+% new_val   the new value of the bin_idx
+% handles   structures with handles and user data
+handles.bin_idx = new_val;
+guidata(handles.figure1, handles);
+update_display(handles);
+zoom_to_bin(handles);
 
 function spectrum_number_edit_box_Callback(hObject, eventdata, handles)
 % hObject    handle to spectrum_number_edit_box (see GCBO)
