@@ -90,6 +90,8 @@ handles.bin_idx = 1;
 
 % Initialize the display components
 update_display(handles);
+update_plot(handles);
+zoom_to_bin(handles);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -100,18 +102,32 @@ guidata(hObject, handles);
 function num=num_identified_for_cur_metabolite(handles)
 % Return the number of identified peaks for current metabolite
 idents = handles.identifications;
-if(length(idents) > 0)
+if(isempty(idents))
+    num = 0;
+else
     bins = [idents.compound_bin];
     binids = bins([bins.id]==handles.bin_idx);
     num = length(binids);
-else
-    num = 0;
 end
 
+function update_plot(handles)
+% Update the plot - needed when the spectrum index changes
+oldlims = xlim;
+plot(handles.collection.x,handles.collection.Y(:,handles.spectrum_idx));
+set(gca,'xdir','reverse');
+if ~ (oldlims(1) == 0 && oldlims(2) == 1)
+    xlim(oldlims)
+end
+
+function zoom_to_bin(handles)
+% Set the plot boundaries to the current bin boundaries.  Needed when bin
+% index changes (and at other times)
+cb=handles.bin_map(handles.bin_idx);
+xlim([cb.bin.right, cb.bin.left]);
 
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
-% structure
+% structure.  Needed when the spectrum index or the bin index changes
 %
 % handles The handles structure containing the GUI application state
 set(handles.metabolite_menu, 'Value', handles.bin_idx);
@@ -129,14 +145,7 @@ set(handles.spectrum_number_edit_box,'String', ...
 set(handles.num_identified_peaks_text,'String', ...
     sprintf('Identified peaks: %d', ...
     num_identified_for_cur_metabolite(handles)));
-%plot the spectrum data
-xl = xlim;
-plot(handles.collection.x,handles.collection.Y(:,handles.spectrum_idx));
-set(gca,'xdir','reverse');
-if xl(1) ~= 0 || xl(2) ~= 1
-    xlim(xl);
-end
-%TODO: finish
+%TODO: finish - update
 
 % --- Outputs from this function are returned to the command line.
 function varargout = targeted_identify_OutputFcn(hObject, eventdata, handles) 
@@ -185,14 +194,17 @@ function deselect_peak_tool_ClickedCallback(hObject, eventdata, handles)
 
 
 % --- Executes on selection change in metabolite_menu.
-function metabolite_menu_Callback(hObject, eventdata, handles)
+function metabolite_menu_Callback(hObject, ~, handles)
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns metabolite_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from metabolite_menu
-
+handles.bin_idx = get(hObject,'Value');
+update_display(handles);
+zoom_to_bin(handles);
+guidata(handles.figure1, handles);
 
 % --- Executes during object creation, after setting all properties.
 function metabolite_menu_CreateFcn(hObject, eventdata, handles)
