@@ -1,4 +1,4 @@
-function match_ids = match_peaks_ga(answer_maxs,calc_maxs,width,xwidth,G,sigma)
+function match_ids = match_peaks_R2(answer_maxs,calc_maxs,width,xwidth,G,sigma)
 x = -width/2:xwidth:width/2;
 
 match_ids = {};
