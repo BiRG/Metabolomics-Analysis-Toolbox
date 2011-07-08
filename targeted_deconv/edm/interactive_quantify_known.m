@@ -15,7 +15,7 @@ if isempty(bin_map)
     return;
 end
 
-uiwait(msgbox('Please choose a spectrum collection file in the next screen',...
+uiwait(msgbox('Please choose a spectrum collection file in the next screen. Only the first will be used.',...
     'Please choose a spectrum collection','modal'));
 
 collections = load_collections;
@@ -25,6 +25,13 @@ if isempty(collections)
 end
 
 collection = collections{1};
+
+%Use appdata in matlab root to pass the loaded collections and bins to the
+%gui the gui will remove this data when it reads it
+setappdata(0, 'collection', collection);
+setappdata(0, 'bin_map', bin_map);
+
+targeted_identify;
 
 end
 

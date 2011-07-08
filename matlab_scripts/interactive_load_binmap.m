@@ -1,6 +1,6 @@
 function [ binmap ] = interactive_load_binmap()
 %INTERACTIVE_LOAD_BINMAP Displays a file dialog and loads the file as a binmap
-%   Returns a binmap (which is just a cell-array of CompoundBin objects)
+%   Returns a binmap (which is just an array of CompoundBin objects)
 %   loaded from a file selected by the user.  If the user does not select a
 %   file, then an empty array is returned
 
@@ -33,9 +33,9 @@ rows = textscan(fid,'%f %q %f %f %q %q %q %q','Delimiter',',');
 
 %Convert rows to bins
 numbins = length(rows{1});
-binmap = cell(1,numbins);
+binmap(numbins)=CompoundBin;
 for idx=1:numbins
-    binmap{idx}=CompoundBin([...
+    binmap(idx)=CompoundBin([...
         rows{1}(idx), rows{2}(idx), rows{3}(idx), rows{4}(idx), ...
         rows{5}(idx), rows{6}(idx), rows{7}(idx), rows{8}(idx), ...
         ]);

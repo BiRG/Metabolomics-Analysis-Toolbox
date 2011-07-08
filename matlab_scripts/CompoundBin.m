@@ -23,19 +23,24 @@ classdef CompoundBin
     properties (Dependent)
         %The number of peaks expected in this compound bin
         num_peaks
+        
+        %A nicely formatted version of the multiplicity
+        readable_multiplicity
     end
     
     methods
         %bin_map_line is an array containing the result of parsing the csv
         %line in the binmap file
         function obj=CompoundBin(bin_map_line)
-            obj.id = bin_map_line{1};
-            obj.compound_descr = bin_map_line{2};
-            obj.bin = SpectrumBin(bin_map_line{3}, bin_map_line{4});
-            obj.multiplicity = bin_map_line{5};
-            obj.is_clean = (isequal(lower(bin_map_line{6}),'clean'));
-            obj.proton_id=bin_map_line{7};
-            obj.id_source=bin_map_line{8};
+            if nargin>0 %Make a default constructor that doesn't initialize
+                obj.id = bin_map_line{1};   
+                obj.compound_descr = bin_map_line{2};
+                obj.bin = SpectrumBin(bin_map_line{3}, bin_map_line{4});
+                obj.multiplicity = bin_map_line{5};
+                obj.is_clean = (isequal(lower(bin_map_line{6}),'clean'));
+                obj.proton_id=bin_map_line{7};
+                obj.id_source=bin_map_line{8};
+            end
         end
         %Getter method calculating the number of peaks from the
         %multiplicity variable
@@ -53,6 +58,24 @@ classdef CompoundBin
                     num_peaks=4; return;
                 case 'half of ab d'
                     num_peaks=2; return;
+            end
+        end
+        %Getter method calculating a readable version of the multiplicity
+        %from the multiplicity variable
+        function str=get.readable_multiplicity(obj)
+            switch lower(obj.multiplicity)
+                case 's'
+                    str='singlet'; return;
+                case 'd'
+                    str='doublet'; return;
+                case 't'
+                    str='triplet'; return;
+                case 'q'
+                    str='quartet'; return;
+                case 'dd'
+                    str='doublet of doublets'; return;
+                case 'half of ab d'
+                    str='half of AB doublet'; return;
             end
         end
     end

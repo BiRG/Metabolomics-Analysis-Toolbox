@@ -248,7 +248,7 @@ try
     % Update handles structure
     guidata(hObject, handles);
 catch ME
-    msgbox('Invalid collection');
+    msgbox(strcat('Invalid collection.  Exception message: ',ME.message));
 end
 
 function collection_id_edit_Callback(hObject, eventdata, handles)

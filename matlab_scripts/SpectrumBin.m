@@ -10,8 +10,10 @@ classdef SpectrumBin
     
     methods
         function obj=SpectrumBin(left,right)
-            obj.left = left;
-            obj.right = right;
+            if nargin>0 %Make a default constructor that doesn't initialize
+                obj.left = left;
+                obj.right = right;
+            end
         end
     end
     
