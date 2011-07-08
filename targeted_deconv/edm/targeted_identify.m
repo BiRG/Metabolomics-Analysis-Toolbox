@@ -55,6 +55,7 @@ function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
 % Choose default command line output for targeted_identify
 handles.output = hObject;
 
+% Initialize the collection and bin_map
 if isappdata(0,'collection') && isappdata(0,'bin_map')
     % Move the app data from the matlab root into handle variables
     handles.collection = getappdata(0,'collection');
@@ -69,6 +70,7 @@ else
     handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
 end
 
+% Initialize the menu of metabolites from the bin ma
 num_bins = length(handles.bin_map);
 metabolite_names{num_bins}='';
 for bin_idx = 1:num_bins
@@ -78,10 +80,15 @@ for bin_idx = 1:num_bins
 end
 set(handles.metabolite_menu, 'String', metabolite_names);
 
+% Start with no identifications
+handles.identifications = [];
+
+% Start with peak_select tool selected
 set(handles.select_peak_tool,'state','on');
 handles.spectrum_idx = 1;
 handles.bin_idx = 1;
 
+% Initialize the display components
 update_display(handles);
 
 % Update handles structure
@@ -89,6 +96,18 @@ guidata(hObject, handles);
 
 % UIWAIT makes targeted_identify wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+
+function num=num_identified_for_cur_metabolite(handles)
+% Return the number of identified peaks for current metabolite
+idents = handles.identifications;
+if(length(idents) > 0)
+    bins = [idents.compound_bin];
+    binids = bins([bins.id]==handles.bin_idx);
+    num = length(binids);
+else
+    num = 0;
+end
+
 
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
@@ -105,6 +124,18 @@ set(handles.source_text,'String',strcat('Source: ', ...
     cur_bin.id_source));
 set(handles.num_expected_peaks_text,'String', ...
     sprintf('Expected peaks: %d', cur_bin.num_peaks));
+set(handles.spectrum_number_edit_box,'String', ...
+    sprintf('%d', handles.spectrum_idx));
+set(handles.num_identified_peaks_text,'String', ...
+    sprintf('Identified peaks: %d', ...
+    num_identified_for_cur_metabolite(handles)));
+%plot the spectrum data
+xl = xlim;
+plot(handles.collection.x,handles.collection.Y(:,handles.spectrum_idx));
+set(gca,'xdir','reverse');
+if xl(1) ~= 0 || xl(2) ~= 1
+    xlim(xl);
+end
 %TODO: finish
 
 % --- Outputs from this function are returned to the command line.
