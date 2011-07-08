@@ -124,6 +124,7 @@ function zoom_to_bin(handles)
 % index changes (and at other times)
 cb=handles.bin_map(handles.bin_idx);
 xlim([cb.bin.right, cb.bin.left]);
+ylim('auto');
 
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
@@ -173,11 +174,11 @@ function next_button_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on button press in zoom_to_bin_button.
-function zoom_to_bin_button_Callback(hObject, eventdata, handles)
+function zoom_to_bin_button_Callback(~, ~, handles)
 % hObject    handle to zoom_to_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+zoom_to_bin(handles);
 
 % ---9.297,9.265,s,Clean,CH2,Publication-----------------------------------------------------------------
 function select_peak_tool_ClickedCallback(hObject, eventdata, handles)
