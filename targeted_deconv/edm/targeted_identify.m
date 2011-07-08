@@ -219,7 +219,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
+function set_spectrum_idx(new_val, handles)
+% Sets handles.spectrum_idx and also updates the gui - don't call when you
+% update the bin_idx to avoid repeating updates.  I believe (though I
+% haven't verified) that the value in handles in the caller will be
+% unchanged.
+%
+% new_val   the new value of the spectrum_idx
+% handles   structures with handles and user data
+handles.spectrum_idx = new_val;
+guidata(handles.figure1, handles);
+update_display(handles);
+update_plot(handles);
 
 function spectrum_number_edit_box_Callback(hObject, eventdata, handles)
 % hObject    handle to spectrum_number_edit_box (see GCBO)
@@ -228,7 +239,17 @@ function spectrum_number_edit_box_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of spectrum_number_edit_box as text
 %        str2double(get(hObject,'String')) returns contents of spectrum_number_edit_box as a double
-
+entry  = str2double(get(hObject,'String'));
+if ~isnan(entry) %If the user typed a number
+    entry = round(entry);
+    if (entry >= 1) && (entry <= handles.collection.num_samples)
+        set_spectrum_idx(entry, handles);
+    else
+        uiwait(msgbox( ...
+            sprintf('Invalid spectrum number.  There are only %d spectra.', ...
+                handles.collection.num_samples), 'Error','error','modal'));
+    end
+end
 
 % --- Executes during object creation, after setting all properties.
 function spectrum_number_edit_box_CreateFcn(hObject, eventdata, handles)
