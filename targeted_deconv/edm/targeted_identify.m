@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 08-Jul-2011 22:17:24
+% Last Modified by GUIDE v2.5 08-Jul-2011 22:30:09
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -121,6 +121,7 @@ set(gca,'xdir','reverse');
 if ~ (oldlims(1) == 0 && oldlims(2) == 1)
     xlim(oldlims)
 end
+set(gca,'ButtonDownFcn',@spectrum_plot_ButtonDownFcn);
 
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
@@ -393,12 +394,15 @@ turn_off_all_tools_but(handles, 'deselect_peak_tool');
 
 
 % --- Executes on mouse press over axes background.
-function spectrum_plot_ButtonDownFcn(~, ~, handles)
+function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
 % hObject    handle to spectrum_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if are_equal(get(handles.select_peak_tool, 'state'),'on')
-    uiwait(msgbox('Select peak'));
-elseif are_equal(get(handles.select_peak_tool, 'state'),'on')
-    uiwait(msgbox('Deselect peak'));
+fig1=get(hObject,'Parent');
+handles = guidata(fig1);
+if isequal(get(handles.select_peak_tool, 'state'),'on')
+    uiwait(msgbox('Select peak was called'));
+elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
+    uiwait(msgbox('Deselect peak was called'));
 end
+%TODO: finish button down for spectrum plot
