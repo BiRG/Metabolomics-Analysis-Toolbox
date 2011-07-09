@@ -164,6 +164,21 @@ function previous_button_Callback(hObject, eventdata, handles)
 % hObject    handle to previous_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+bin_idx = handles.bin_idx;
+spec_idx = handles.spectrum_idx;
+if spec_idx > 1
+    set_spectrum_idx(spec_idx-1, handles);
+else 
+    num_spec = handles.collection.num_samples;
+    if bin_idx > 1
+        set_spectrum_and_bin_idx(num_spec, bin_idx-1, handles);
+        uiwait(msgbox('Changing to previous compound', ...
+            'Changing to previous compound','modal'));
+    else
+        uiwait(msgbox('This is the first spectrum in the first bin.', ...
+            'Can''t go before first spectrum','modal'));
+    end
+end
 
 
 % --- Executes on button press in next_button.
