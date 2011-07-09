@@ -106,7 +106,10 @@ if(isempty(idents))
     num = 0;
 else
     bins = [idents.compound_bin];
-    binids = bins([bins.id]==handles.bin_idx);
+    correct_bin = [bins.id]==handles.bin_idx;
+    specs = [idents.spectrum_index];
+    correct_spec = specs == handles.spectrum_idx;
+    binids = bins(correct_bin & correct_spec);
     num = length(binids);
 end
 
