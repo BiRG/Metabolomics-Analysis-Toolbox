@@ -149,7 +149,7 @@ set(handles.num_identified_peaks_text,'String', ...
 %TODO: finish - update
 
 % --- Outputs from this function are returned to the command line.
-function varargout = targeted_identify_OutputFcn(hObject, eventdata, handles) 
+function varargout = targeted_identify_OutputFcn(~, ~, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -167,10 +167,27 @@ function previous_button_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on button press in next_button.
-function next_button_Callback(hObject, eventdata, handles)
+function next_button_Callback(~, ~, handles)
 % hObject    handle to next_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+bin_idx = handles.bin_idx;
+spec_idx = handles.spectrum_idx;
+num_spec = handles.collection.num_samples;
+if spec_idx < num_spec
+    set_spectrum_idx(spec_idx+1, handles);
+else 
+    num_bins = length(handles.bin_map);
+    if bin_idx < num_bins
+        set_spectrum_and_bin_idx(1, bin_idx+1, handles);
+        uiwait(msgbox('Changing to next compound', ...
+            'Changing to next compound','modal'));
+    else
+        uiwait(msgbox('Will run finishing code here', ...
+            'Placeholder dialog', 'modal'));
+        %TODO: write code for finishing
+    end
+end
 
 
 % --- Executes on button press in zoom_to_bin_button.
@@ -179,20 +196,6 @@ function zoom_to_bin_button_Callback(~, ~, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 zoom_to_bin(handles);
-
-% ---9.297,9.265,s,Clean,CH2,Publication-----------------------------------------------------------------
-function select_peak_tool_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to select_peak_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --------------------------------------------------------------------
-function deselect_peak_tool_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to deselect_peak_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 
 % --- Executes on selection change in metabolite_menu.
 function metabolite_menu_Callback(hObject, ~, handles)
@@ -205,7 +208,7 @@ function metabolite_menu_Callback(hObject, ~, handles)
 set_bin_idx(get(hObject,'Value'), handles);
 
 % --- Executes during object creation, after setting all properties.
-function metabolite_menu_CreateFcn(hObject, eventdata, handles)
+function metabolite_menu_CreateFcn(hObject, ~, ~)
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -215,6 +218,18 @@ function metabolite_menu_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
+% Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
+% I believe (though I haven't verified) that the value in handles in the 
+% caller will be unchanged.
+handles.spectrum_idx = new_spec;
+handles.bin_idx = new_bin;
+guidata(handles.figure1, handles);
+update_display(handles);
+update_plot(handles);
+zoom_to_bin(handles);
+
 
 function set_spectrum_idx(new_val, handles)
 % Sets handles.spectrum_idx and also updates the gui - don't call when you
@@ -262,7 +277,7 @@ if ~isnan(entry) %If the user typed a number
 end
 
 % --- Executes during object creation, after setting all properties.
-function spectrum_number_edit_box_CreateFcn(hObject, eventdata, handles)
+function spectrum_number_edit_box_CreateFcn(hObject, ~, ~)
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -294,35 +309,35 @@ if ~isequal(tool_name,'deselect_peak_tool')
 end
 
 % --------------------------------------------------------------------
-function pan_tool_OnCallback(hObject, ~, handles)
+function pan_tool_OnCallback(~, ~, handles)
 % hObject    handle to pan_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 turn_off_all_tools_but(handles, 'pan_tool');
 
 % --------------------------------------------------------------------
-function zoom_in_tool_OnCallback(hObject, ~, handles)
+function zoom_in_tool_OnCallback(~, ~, handles)
 % hObject    handle to zoom_in_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 turn_off_all_tools_but(handles, 'zoom_in_tool');
 
 % --------------------------------------------------------------------
-function zoom_out_tool_OnCallback(hObject, ~, handles)
+function zoom_out_tool_OnCallback(~, ~, handles)
 % hObject    handle to zoom_out_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 turn_off_all_tools_but(handles, 'zoom_out_tool');
 
 % --------------------------------------------------------------------
-function select_peak_tool_OnCallback(hObject, ~, handles)
+function select_peak_tool_OnCallback(~, ~, handles)
 % hObject    handle to select_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 turn_off_all_tools_but(handles, 'select_peak_tool');
 
 % --------------------------------------------------------------------
-function deselect_peak_tool_OnCallback(hObject, ~, handles)
+function deselect_peak_tool_OnCallback(~, ~, handles)
 % hObject    handle to deselect_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
