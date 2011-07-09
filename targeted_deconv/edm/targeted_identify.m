@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 07-Jul-2011 10:27:17
+% Last Modified by GUIDE v2.5 08-Jul-2011 22:17:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -390,3 +390,15 @@ function deselect_peak_tool_OnCallback(~, ~, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 turn_off_all_tools_but(handles, 'deselect_peak_tool');
+
+
+% --- Executes on mouse press over axes background.
+function spectrum_plot_ButtonDownFcn(~, ~, handles)
+% hObject    handle to spectrum_plot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if are_equal(get(handles.select_peak_tool, 'state'),'on')
+    uiwait(msgbox('Select peak'));
+elseif are_equal(get(handles.select_peak_tool, 'state'),'on')
+    uiwait(msgbox('Deselect peak'));
+end
