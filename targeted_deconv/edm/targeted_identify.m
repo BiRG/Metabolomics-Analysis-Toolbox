@@ -146,7 +146,37 @@ set(handles.spectrum_number_edit_box,'String', ...
 set(handles.num_identified_peaks_text,'String', ...
     sprintf('Identified peaks: %d', ...
     num_identified_for_cur_metabolite(handles)));
-%TODO: finish - update
+
+bin_idx = handles.bin_idx;
+num_bins = length(handles.bin_map);
+num_spec = handles.collection.num_samples;
+spec_idx = handles.spectrum_idx;
+if spec_idx == 1
+    if bin_idx == 1
+        set(handles.previous_button, 'String', 'No previous');
+        set(handles.previous_button, 'Enable', 'off');
+    else
+        set(handles.previous_button, 'String', 'Previous bin');
+        set(handles.previous_button, 'Enable', 'on');
+    end
+elseif spec_idx > 1
+    set(handles.previous_button, 'String', 'Previous spectrum');
+    set(handles.previous_button, 'Enable', 'on');
+end
+
+if spec_idx == num_spec
+    if bin_idx == num_bins
+        set(handles.next_button, 'String', 'Finish');
+        set(handles.next_button, 'Enable', 'on');
+    else
+        set(handles.next_button, 'String', 'Next bin');
+        set(handles.next_button, 'Enable', 'on');
+    end
+elseif spec_idx < num_spec
+    set(handles.next_button, 'String', 'Next spectrum');
+    set(handles.next_button, 'Enable', 'on');    
+end
+%TODO: finish - update plot and 'cleanness'
 
 % --- Outputs from this function are returned to the command line.
 function varargout = targeted_identify_OutputFcn(~, ~, handles) 
