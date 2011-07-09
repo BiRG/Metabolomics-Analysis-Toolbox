@@ -122,6 +122,10 @@ if ~ (oldlims(1) == 0 && oldlims(2) == 1)
     xlim(oldlims)
 end
 set(gca,'ButtonDownFcn',@spectrum_plot_ButtonDownFcn);
+children = get(gca,'Children');
+for child_handle=children
+    set(child_handle, 'ButtonDownFcn', @spectrum_plot_ButtonDownFcn);
+end
 
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
@@ -398,10 +402,16 @@ function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
 % hObject    handle to spectrum_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if ~strcmpi(get(hObject,'Type'),'axes')
+   hObject = findobj('Children',hObject);
+end
+
 fig1=get(hObject,'Parent');
+mouse_pos = get(hObject,'CurrentPoint');
+x_pos=mouse_pos(1,1);
 handles = guidata(fig1);
 if isequal(get(handles.select_peak_tool, 'state'),'on')
-    uiwait(msgbox('Select peak was called'));
+    uiwait(msgbox(sprintf('Select peak was called x=%f',x_pos)));
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     uiwait(msgbox('Deselect peak was called'));
 end
