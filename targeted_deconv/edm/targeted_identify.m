@@ -397,21 +397,42 @@ function deselect_peak_tool_OnCallback(~, ~, handles)
 turn_off_all_tools_but(handles, 'deselect_peak_tool');
 
 
+function idx = index_of_nearest_x_to(val, handles)
+% Return the index of the value closest to val in the x values of the
+% collection.
+%
+% handles structure with handles and user data (see GUIDATA)
+xvals = handles.collection.x;
+diffs = abs(val - xvals);
+mindiff = min(diffs);
+idx = find(diffs-mindiff, 1, 'first');
+
 % --- Executes on mouse press over axes background.
 function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
 % hObject    handle to spectrum_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% If called on a graphics object, set to the containing axes object
 if ~strcmpi(get(hObject,'Type'),'axes')
    hObject = findobj('Children',hObject);
 end
 
-fig1=get(hObject,'Parent');
+% Get the coordinates
 mouse_pos = get(hObject,'CurrentPoint');
 x_pos=mouse_pos(1,1);
+
+% Get the handles structure
+fig1=get(hObject,'Parent');
 handles = guidata(fig1);
+
+% Run the appropriate tool
 if isequal(get(handles.select_peak_tool, 'state'),'on')
-    uiwait(msgbox(sprintf('Select peak was called x=%f',x_pos)));
+    xidx = index_of_nearest_x_to(x_pos, handles);
+    newid = PeakIdentification(x_pos, xidx, handles.spectrum_idx, ...
+        handles.bin_idx);
+    handles.identifications = [handles.identifications newid];
+    guidata(fig1, handles);
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     uiwait(msgbox('Deselect peak was called'));
 end
