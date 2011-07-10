@@ -7,7 +7,7 @@ classdef PeakIdentification
         %The ppm identified as the peak
         ppm
         
-        %The index of the height value in the spectrum
+        %The 1-based index of the height value in the spectrum
         height_index
         
         %The (1-based) index of the spectrum in the spectrum collection in which this
@@ -20,7 +20,8 @@ classdef PeakIdentification
     end
     
     methods
-        function obj=PeakIdentification(ppm, height_index, spectrum_index, compound_bin)
+        function obj=PeakIdentification(ppm, height_index, spectrum_index, ...
+                compound_bin)
             if nargin > 0 %Default constructor will not initialize
                 obj.ppm = ppm;
                 obj.height_index = height_index;

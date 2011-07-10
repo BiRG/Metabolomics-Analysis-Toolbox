@@ -106,7 +106,7 @@ if(isempty(idents))
     num = 0;
 else
     bins = [idents.compound_bin];
-    correct_bin = [bins.id]==handles.bin_idx;
+    correct_bin = [bins.id]==handles.bin_map(handles.bin_idx).id;
     specs = [idents.spectrum_index];
     correct_spec = specs == handles.spectrum_idx;
     binids = bins(correct_bin & correct_spec);
@@ -405,7 +405,7 @@ function idx = index_of_nearest_x_to(val, handles)
 xvals = handles.collection.x;
 diffs = abs(val - xvals);
 mindiff = min(diffs);
-idx = find(diffs-mindiff, 1, 'first');
+idx = find(diffs==mindiff, 1, 'first');
 
 % --- Executes on mouse press over axes background.
 function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
@@ -430,9 +430,10 @@ handles = guidata(fig1);
 if isequal(get(handles.select_peak_tool, 'state'),'on')
     xidx = index_of_nearest_x_to(x_pos, handles);
     newid = PeakIdentification(x_pos, xidx, handles.spectrum_idx, ...
-        handles.bin_idx);
+        handles.bin_map(handles.bin_idx));
     handles.identifications = [handles.identifications newid];
     guidata(fig1, handles);
+    update_display(handles);
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     uiwait(msgbox('Deselect peak was called'));
 end
