@@ -198,8 +198,9 @@ varargout{1} = handles.output;
 
 
 % --- Executes on button press in previous_button.
-function previous_button_Callback(hObject, eventdata, handles)
-% hObject    handle to previous_button (see GCBO)
+function previous_button_Callback(~, ~, handles)
+% hObject    handle to previous_button (see GCBO) - this is the first argument 
+%            (that is now replaced by ~) 
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 bin_idx = handles.bin_idx;
@@ -310,7 +311,7 @@ guidata(handles.figure1, handles);
 update_display(handles);
 zoom_to_bin(handles);
 
-function spectrum_number_edit_box_Callback(hObject, eventdata, handles)
+function spectrum_number_edit_box_Callback(hObject, ~, handles)
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -438,3 +439,20 @@ elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     uiwait(msgbox('Deselect peak was called'));
 end
 %TODO: finish button down for spectrum plot
+
+function dont_call_this_function_it_exists_to_remove_spurious_warnings()
+% This function calls all those functions that matlab erroneously thinks
+% are not called when this function doesn't call them.
+ previous_button_Callback(hObject, eventdata, handles)
+ next_button_Callback;
+ zoom_to_bin_button_Callback;
+ metabolite_menu_Callback;
+ spectrum_number_edit_box_Callback;
+ pan_tool_OnCallback;
+ zoom_in_tool_OnCallback;
+ zoom_out_tool_OnCallback;
+ select_peak_tool_OnCallback;
+ deselect_peak_tool_OnCallback;
+ spectrum_number_edit_box_CreateFcn;
+ metabolite_menu_CreateFcn;
+ dont_call_this_function_it_exists_to_remove_spurious_warnings;
