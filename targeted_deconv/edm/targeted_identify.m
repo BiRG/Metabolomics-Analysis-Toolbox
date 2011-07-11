@@ -169,9 +169,12 @@ end
 
 %Reset the button-down function on the generated plot
 set(gca,'ButtonDownFcn',@spectrum_plot_ButtonDownFcn);
+
+%Make the child-objects non-clickable so that all clicks are on the axes
+%object
 children = get(gca,'Children');
 for child_handle=children
-    set(child_handle, 'ButtonDownFcn', @spectrum_plot_ButtonDownFcn);
+    set(child_handle, 'HitTest', 'off');
 end
 
 function zoom_to_bin(handles)
@@ -452,6 +455,22 @@ function deselect_peak_tool_OnCallback(~, ~, handles)
 turn_off_all_tools_but(handles, 'deselect_peak_tool');
 
 
+function idx = min_idx(vals)
+min_val = min(vals);
+idx = find(vals == min_val, 1, 'first');
+
+function idx = index_of_nearest_point_to(target, points_x, points_y)
+% Return the index of the point closest to target in the points described
+% by points_x and points_y
+%
+% target   the point whose closest neighbor is being found (in form [x y] )
+% points_x the x coordinates of the neighbor points
+% points_y the y coordinates of the neighbor points
+dx = points_x - target(1);
+dy = points_y - target(2);
+dists = sqrt(dx.^2+dy.^2);
+idx = min_idx(dists);
+
 function idx = index_of_nearest_x_to(val, handles)
 % Return the index of the value closest to val in the x values of the
 % collection.
@@ -459,8 +478,7 @@ function idx = index_of_nearest_x_to(val, handles)
 % handles structure with handles and user data (see GUIDATA)
 xvals = handles.collection.x;
 diffs = abs(val - xvals);
-mindiff = min(diffs);
-idx = find(diffs==mindiff, 1, 'first');
+idx = min_idx(diffs);
 
 % --- Executes on mouse press over axes background.
 function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
@@ -475,7 +493,13 @@ end
 
 % Get the coordinates
 mouse_pos = get(hObject,'CurrentPoint');
-x_pos=mouse_pos(1,1);
+if ~isequal(size(mouse_pos), [2,3])
+    uiwait(msgbox('Please click elsewhere.','Please click elsewhere.',...
+        'modal'));
+    return;
+end
+x_pos = mouse_pos(1,1);
+y_pos = mouse_pos(1,2);
 
 % Get the handles structure
 fig1=get(hObject,'Parent');
@@ -483,12 +507,24 @@ handles = guidata(fig1);
 
 % Run the appropriate tool
 if isequal(get(handles.select_peak_tool, 'state'),'on')
+    %Select peak
     xidx = index_of_nearest_x_to(x_pos, handles);
     newid = PeakIdentification(x_pos, xidx, handles.spectrum_idx, ...
         handles.bin_map(handles.bin_idx));
     set_identifications([handles.identifications newid],handles);
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
-    uiwait(msgbox('Deselect peak was called'));
+    
+    %Deselect peak
+    ids = peak_identifications_for_cur_metabolite(handles);
+    id_x = [ids.ppm];
+    id_idx = [ids.height_index];
+    id_y = handles.collection.Y(:, handles.spectrum_idx);
+    id_y = (id_y(id_idx))';
+    idx = index_of_nearest_point_to([x_pos, y_pos], id_x, id_y);
+    to_remove = ids(idx);
+    new_ids = handles.identifications;
+    new_ids(new_ids == to_remove) = [];
+    set_identifications(new_ids, handles);
 end
 %TODO: finish button down for spectrum plot
 
