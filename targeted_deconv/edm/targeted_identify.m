@@ -127,7 +127,6 @@ function draw_circle(center, radius_inches, color)
 % color         The color of the circle to plot
 center_x = center(1);
 center_y = center(2);
-num_sides = 8;
 oldunits = get(gca, 'Units');
 set(gca, 'Units','inches');
 rect = get(gca, 'Position'); %Bounding rectangle for plot in pixels
