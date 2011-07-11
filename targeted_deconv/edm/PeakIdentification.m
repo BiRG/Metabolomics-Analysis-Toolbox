@@ -29,6 +29,14 @@ classdef PeakIdentification
                 obj.compound_bin = compound_bin;
             end
         end
+        
+        function ret=eq(a,b)
+            pp = [a.ppm] == [b.ppm];
+            hi = [a.height_index] == [b.height_index];
+            si = [a.spectrum_index] == [b.spectrum_index];
+            cb = [a.compound_bin] == [b.compound_bin];
+            ret = pp & hi & si & cb;
+        end
     end
     
 end

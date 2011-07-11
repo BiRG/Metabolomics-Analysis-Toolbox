@@ -78,6 +78,20 @@ classdef CompoundBin
                     str='half of AB doublet'; return;
             end
         end
+        
+        %Equality testing (called by operator ==)
+        function r = eq(a,b)
+            i = [a.id] == [b.id];
+            cd = strcmp({a.compound_descr},{b.compound_descr});
+            bn = [a.bin] == [b.bin];
+            mu = strcmpi({a.multiplicity},{b.multiplicity});
+            ic = [a.is_clean] == [b.is_clean];
+            pi = strcmp({a.proton_id}, {b.proton_id});
+            is = strcmp({a.id_source}, {b.id_source});
+            
+            r = i & cd & bn & mu & ic & pi & is;
+        end
+
     end
     
 end
