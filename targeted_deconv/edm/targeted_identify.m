@@ -140,10 +140,9 @@ yl = ylim;
 
 rx = radius_inches*(xl(2)-xl(1))/width;  %X radius
 ry = radius_inches*(yl(2)-yl(1))/height; %Y radius
-poly_x=rx*cos((0:num_sides)*(2*pi/num_sides));
-poly_y=ry*sin((0:num_sides)*(2*pi/num_sides));
-
-line('XData',poly_x+center_x, 'YData', poly_y+center_y, 'Color', color);
+rectangle('Position', ...
+        [center_x-rx, center_y-ry, 2*rx, 2*ry], ...
+        'Curvature', [1,1], 'EdgeColor', color);
 
 function draw_identification(peak_id_obj, collection)
 % Draws the selected peak identification on the current plot
