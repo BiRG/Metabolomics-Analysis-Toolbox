@@ -1,22 +1,45 @@
-function [smoothed_y,maxs,mins] = smooth(y,height_threshold,options)
+function [smoothed_y,maxs,mins] = wavelet_smooth(y,height_threshold,options)
+%WAVELET_SMOOTH Smooths the input and returns its maxima and minima
+%
+% Smooths the input y values (treating them as evenly-spaced samples of a
+% function) using wavelet denoising then triangle smoothing.  Then finds 
+% the local maxima and minima of the smoothed function where the maxima 
+% have a height greater than height_threshold.
+%
+% y                 the input function values (evenly spaced)
+% height_threshold  the minimum height of a detected maximum
+% options           a struct containing values to be passed to wden.  If
+%                   fields are not present then they are assigned default
+%                   values.
+%
+%                   Recognized options are: 
+%                   tptr, sorh, scal, level, wname
+%
+%                   Level is equivalent to N in the wden help page.  All
+%                   the other options have the same name.
+%
+%                   The defaults are (in the same order as above):
+%                   sqtwolog, s, mln, 3, db3
+
+
 level = 3;
-if exist('options') && isfield(options,'level')
+if exist('options','var') && isfield(options,'level')
     level = options.level;
 end
 tptr = 'sqtwolog';
-if exist('options') && isfield(options,'tptr')
+if exist('options','var') && isfield(options,'tptr')
     tptr = options.tptr;
 end
 sorh = 's';
-if exist('options') && isfield(options,'sorh')
+if exist('options','var') && isfield(options,'sorh')
     sorh = options.sorh;
 end
 scal = 'mln';
-if exist('options') && isfield(options,'scal')
+if exist('options','var') && isfield(options,'scal')
     scal = options.scal;
 end
 wname = 'db3';
-if exist('options') && isfield(options,'wname')
+if exist('options','var') && isfield(options,'wname')
     wname = options.wname;
 end
 
@@ -42,10 +65,11 @@ for i = 1:length(smoothed_maxs)
     mx_inx = smoothed_maxs(i);
     left_inx = smoothed_mins(i,1);
     right_inx = smoothed_mins(i,2);
-    max_height = max([abs(smoothed_y(mx_inx)-smoothed_y(left_inx)),abs(smoothed_y(mx_inx)-smoothed_y(right_inx))]);
+    max_height = max([abs(smoothed_y(mx_inx)-smoothed_y(left_inx)), ...
+                      abs(smoothed_y(mx_inx)-smoothed_y(right_inx))]);
     if max_height >= height_threshold
-        mins(end+1,:) = smoothed_mins(i,:);
-        maxs(end+1) = smoothed_maxs(i);
+        mins(end+1,:) = smoothed_mins(i,:); %#ok<AGROW>
+        maxs(end+1) = smoothed_maxs(i); %#ok<AGROW>
     end
 end
 
@@ -66,8 +90,8 @@ for i = 1:length(maxs)
         end
     end
     if below
-        maxs(i) = NaN;
-        mins(i,:) = [NaN NaN];
+        maxs(i) = NaN; %#ok<AGROW>
+        mins(i,:) = [NaN NaN]; %#ok<AGROW>
 %         maxs = maxs([1:i-1,i+1:end]);
 %         mins = mins([1:i-1,i+1:end],:);
     end
