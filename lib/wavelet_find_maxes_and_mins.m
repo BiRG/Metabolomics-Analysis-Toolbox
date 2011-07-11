@@ -9,7 +9,8 @@ function [maxes,mins,y_smoothed] = wavelet_find_maxes_and_mins(y,noise_std)
 % noise_std  The noise standard deviation
 %
 % maxes      The maxima of the smoothed function
-% mins       The minima of the smoothed function
+% mins       The two bracketing minima of the smoothed function for the
+%            local maximum at the same index
 % y_smoothed The y_values after wavelet smoothing
 
 

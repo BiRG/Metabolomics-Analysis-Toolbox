@@ -1,4 +1,11 @@
-function [ mins ] = find_mins( I, maxs )
+function [ mins ] = find_bracketing_minima( I, maxs )
+%find_bracketing_minima - Returns the indices of the minima that bracket each maximum in maxs
+%
+% I    the function values
+% maxs the indices of the internal local maxima in i
+%
+% mins mins(i) one is the local minim to the left of maxs(i) and the other
+%      is to the right
 mins = [];
 for i=1:length(maxs)
     inx = maxs(i);

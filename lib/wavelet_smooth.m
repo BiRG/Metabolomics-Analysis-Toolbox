@@ -20,6 +20,11 @@ function [smoothed_y,maxs,mins] = wavelet_smooth(y,height_threshold,options)
 %
 %                   The defaults are (in the same order as above):
 %                   sqtwolog, s, mln, 3, db3
+%
+% smoothed_y The y_values after wavelet smoothing
+% maxs       The maxima of the smoothed function
+% mins       The two bracketing minima of the smoothed function for the
+%            local maximum at the same index
 
 
 level = 3;
@@ -57,8 +62,8 @@ for i = 1:length(smoothed_y)
     smoothed_y(i) = mean(smoothed_y(inxs));
 end
 
-smoothed_maxs = find_maxs(smoothed_y);
-smoothed_mins = find_mins(smoothed_y,smoothed_maxs);
+smoothed_maxs = find_internal_local_maxima(smoothed_y);
+smoothed_mins = find_bracketing_minima(smoothed_y,smoothed_maxs);
 maxs = [];
 mins = [];
 for i = 1:length(smoothed_maxs)
