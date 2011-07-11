@@ -99,28 +99,77 @@ guidata(hObject, handles);
 % UIWAIT makes targeted_identify wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-function num=num_identified_for_cur_metabolite(handles)
-% Return the number of identified peaks for current metabolite
+
+function ids=peak_identifications_for_cur_metabolite(handles)
+% Return the list of the peaks identified for the current metabolite
 idents = handles.identifications;
 if(isempty(idents))
-    num = 0;
+    ids = [];
 else
     bins = [idents.compound_bin];
     correct_bin = [bins.id]==handles.bin_map(handles.bin_idx).id;
     specs = [idents.spectrum_index];
     correct_spec = specs == handles.spectrum_idx;
-    binids = bins(correct_bin & correct_spec);
-    num = length(binids);
+    ids = idents(correct_bin & correct_spec);
 end
 
+function num=num_identified_for_cur_metabolite(handles)
+% Return the number of identified peaks for current metabolite
+num = length(peak_identifications_for_cur_metabolite(handles));
+
+function draw_circle(center, radius_inches, color)
+% Draws a circle on the current axes at the center location (in data 
+% coordinates).  The radius of the circle drawn is in inches.
+%
+% center        The center of the circle to draw (in data coordinates).
+%               Pass as [x y]
+% radius_inches The radius of the circle as plotted on the screen in inches
+% color         The color of the circle to plot
+center_x = center(1);
+center_y = center(2);
+num_sides = 8;
+oldunits = get(gca, 'Units');
+set(gca, 'Units','inches');
+rect = get(gca, 'Position'); %Bounding rectangle for plot in pixels
+width = rect(3);
+height = rect(4);
+set(gca, 'Units', oldunits);
+
+xl = xlim;
+yl = ylim;
+
+rx = radius_inches*(xl(2)-xl(1))/width;  %X radius
+ry = radius_inches*(yl(2)-yl(1))/height; %Y radius
+poly_x=rx*cos((0:num_sides)*(2*pi/num_sides));
+poly_y=ry*sin((0:num_sides)*(2*pi/num_sides));
+
+line('XData',poly_x+center_x, 'YData', poly_y+center_y, 'Color', color);
+
+function draw_identification(peak_id_obj, collection)
+% Draws the selected peak identification on the current plot
+%
+% peak_id_obj The PeakIdentification object to draw
+% collection  The collection referenced by that object
+pid = peak_id_obj;
+spectrum = collection.Y(:,pid.spectrum_index);
+center = [pid.ppm, spectrum(pid.height_index)];
+draw_circle(center, 0.0625, 'g');
+
 function update_plot(handles)
-% Update the plot - needed when the spectrum index changes
+% Update the plot - needed when the spectrum index changes or the
+% identifications change
 oldlims = xlim;
 plot(handles.collection.x,handles.collection.Y(:,handles.spectrum_idx));
 set(gca,'xdir','reverse');
 if ~ (oldlims(1) == 0 && oldlims(2) == 1)
     xlim(oldlims)
 end
+
+for id=peak_identifications_for_cur_metabolite(handles)
+    draw_identification(id, handles.collection);
+end
+
+%Reset the button-down function on the generated plot
 set(gca,'ButtonDownFcn',@spectrum_plot_ButtonDownFcn);
 children = get(gca,'Children');
 for child_handle=children
@@ -136,7 +185,8 @@ ylim('auto');
 
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
-% structure.  Needed when the spectrum index or the bin index changes
+% structure.  Needed when the spectrum index or the bin index or 
+% identifications list changes
 %
 % handles The handles structure containing the GUI application state
 set(handles.metabolite_menu, 'Value', handles.bin_idx);
@@ -272,6 +322,12 @@ function metabolite_menu_CreateFcn(hObject, ~, ~)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+function set_identifications(new_identifications, handles)
+handles.identifications = new_identifications;
+guidata(handles.figure1, handles);
+update_display(handles);
+update_plot(handles);
 
 function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
 % Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
@@ -432,9 +488,7 @@ if isequal(get(handles.select_peak_tool, 'state'),'on')
     xidx = index_of_nearest_x_to(x_pos, handles);
     newid = PeakIdentification(x_pos, xidx, handles.spectrum_idx, ...
         handles.bin_map(handles.bin_idx));
-    handles.identifications = [handles.identifications newid];
-    guidata(fig1, handles);
-    update_display(handles);
+    set_identifications([handles.identifications newid],handles);
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     uiwait(msgbox('Deselect peak was called'));
 end
