@@ -101,6 +101,16 @@ guidata(hObject, handles);
 % UIWAIT makes targeted_identify wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
+function y = y_values_in_cur_bin(handles)
+% Return the y values that fall within the current bin (choosing the
+% indices of the bin boundaries to be the closest x values to the bin
+% boundaries)
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+bin = handles.bin_map(bin_idx).bin;
+low_idx = index_of_nearest_x_to(bin.left, handles);
+high_idx = index_of_nearest_x_to(bin.right, handles);
+y = handles.collection.Y(low_idx:high_idx, spectrum_idx);
 
 function pks = get_cur_peaks(handles)
 % Return the peaks for the current bin and spectrum.  Either uses
@@ -121,9 +131,8 @@ if isempty(pks)
     noise_std = std(col.Y(1:noise_points, spectrum_idx));
     bin = handles.bin_map(bin_idx).bin;
     low_idx = index_of_nearest_x_to(bin.left, handles);
-    high_idx = index_of_nearest_x_to(bin.right, handles);
     [peak_idx, ~, ~] = wavelet_find_maxes_and_mins ...
-        (col.Y(low_idx:high_idx, spectrum_idx), noise_std);
+        (y_values_in_cur_bin(handles), noise_std);
     pks = col.x((low_idx-1)+peak_idx);
     handles.peaks{bin_idx, spectrum_idx} = pks;
     guidata(handles.figure1, handles);
@@ -215,9 +224,10 @@ for id=peak_identifications_for_cur_metabolite(handles)
 end
 
 %Draw peak location lines
-yl = ylim;
+cur_y = y_values_in_cur_bin(handles);
+y_bounds = [min(cur_y), max(cur_y)];
 for ppm = get_cur_peaks(handles)
-    line('XData', [ppm,ppm], 'YData', yl, 'Color', 'c');
+    line('XData', [ppm,ppm], 'YData', y_bounds, 'Color', 'c');
 end
 
 %Reset the button-down function on the generated plot
