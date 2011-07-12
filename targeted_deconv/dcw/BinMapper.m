@@ -22,7 +22,7 @@ function varargout = BinMapper(varargin)
 
 % Edit the above text to modify the response to help BinMapper
 
-% Last Modified by GUIDE v2.5 12-Jul-2011 14:31:42
+% Last Modified by GUIDE v2.5 12-Jul-2011 17:56:47
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -76,19 +76,73 @@ function varargout = BinMapper_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
+% --- Clears the main axes object.
+function clearGraph(handles)
+% hObject    handle to select_spectrum_popup (see GCBO)
+% handles    empty - handles not created until after all CreateFcns called
+axes(handles.axes1);
+cla;
+
+
+% --- Draws all stored bins, the working bin, and the currently selected
+%     spectrum (or all spectra if the mode is Overlay).
+function redrawGraph(handles)
+% hObject    handle to select_spectrum_popup (see GCBO)
+% handles    empty - handles not created until after all CreateFcns called
+
+popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
+popupSpectrumNum = get(handles.select_spectrum_popup, 'Value');
+spectralDispMode = get(handles.individual_mode_radiobutton, 'Value');
+
+clearGraph(handles);
+
+axes(handles.axes1);
+hold on;
+if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
+        && popupCollectionNum > 0 )
+    % At least one collection has been loaded & selected. Proceed.
+    
+    if ( spectralDispMode == get(handles.individual_mode_radiobutton, 'Max') )
+        
+        % We are in individual spectrum display mode.
+        % Draw the selected spectrum.
+        plot(handles.collections{popupCollectionNum}.x, ...
+            handles.collections{popupCollectionNum}.Y(:,popupSpectrumNum));
+        
+    else
+        
+        % Not in individual mode. Populate the graph with all spectra
+        % overlaid and disable the spectra popup.
+        plot(handles.collections{popupCollectionNum}.x, ...
+            handles.collections{popupCollectionNum}.Y);
+    end;
+end;
+
+% Fetch the y-axis limits for the axes object. This bounds the top and
+% bottom of the bin boundaries.
+axesObjLimit = get(handles.axes1, 'YLim');
+
+% Draw the working bin bounds, if appropriate.
+if ( isfield(handles, 'workingLowerBound') )
+    xseries = [handles.workingLowerBound handles.workingLowerBound];
+    plot(xseries, axesObjLimit, '-.g');
+end;
+if ( isfield(handles, 'workingUpperBound') )
+    xseries = [handles.workingUpperBound handles.workingUpperBound];
+    plot(xseries, axesObjLimit, '-.r');
+end;
+
+% Draw all stored bin bounds.
+% TODO DCW
+
+hold off;
+
+
 % --- Executes during object deletion, before destroying properties.
 function figure1_DeleteFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% Delete the 'collections' variable.
-% -- DCW -- collectionsLoadChk = evalin('base', 'exist(''collections'', ''var'')');
-% -- DCW -- if ( collectionsLoadChk == 1 )
-% -- DCW --     evalin('base', 'delete collections');
-% -- DCW -- end;
-
-% --- hook
-function redrawGraph(hObject)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -105,8 +159,8 @@ end;
 
 
 % --- Executes during object creation, after setting all properties.
-function select_spectra_popup_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to select_spectra_popup (see GCBO)
+function select_spectrum_popup_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to select_spectrum_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -226,41 +280,45 @@ function load_collection_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.axes1);
-
 % Fetch the spectra from flatfiles.
 handles.collections = load_collections();
 guidata(hObject, handles);
-msgbox('Finished loading collection');
+msgbox('Finished loading collection', 'Action Complete', 'help', 'modal');
 
 % Set the spectral display radio buttons to default.
 set(handles.individual_mode_radiobutton,'Value', ...
     get(handles.individual_mode_radiobutton,'Max'));
 
 if ( ~isempty(handles.collections) )
-    cla;
+    
+    clearGraph(handles);
+    
     % Build the select collection popup string.
     collectionCount = length(handles.collections);
     collectionPopupStr = '|'; % Include a blank line @ top
     for i = 1:collectionCount
         one_filename = handles.collections{i}.filename;
-        collectionPopupStr = [collectionPopupStr, one_filename];
+        collectionPopupStr = [collectionPopupStr, one_filename, '|'];
     end;
     finalStrLen = length(collectionPopupStr);
     if (finalStrLen > 1)
         collectionPopupStr = collectionPopupStr(1:finalStrLen-1); % Drop the extra pipe char.
     end;
-    set(handles.select_collection_popup,'String',collectionPopupStr);
-    set(handles.select_collection_popup,'Enable','on');
-    set(handles.select_spectra_popup,'String','^ Select a collection first');
-    set(handles.select_spectra_popup,'Enable','off');
-    set(handles.lower_bound_mode_radiobutton,'Enable','on');
-    set(handles.upper_bound_mode_radiobutton,'Enable','on');
+    set(handles.select_collection_popup, 'Value', 1);
+    set(handles.select_collection_popup, 'String', collectionPopupStr);
+    set(handles.select_collection_popup, 'Enable', 'on');
+    set(handles.select_spectrum_popup, 'Value', 1);
+    set(handles.select_spectrum_popup, 'String', '^ Select a collection first');
+    set(handles.select_spectrum_popup, 'Enable', 'off');
+    set(handles.lower_bound_mode_radiobutton, 'Enable', 'on');
+    set(handles.upper_bound_mode_radiobutton, 'Enable', 'on');
 else
+    set(handles.select_collection_popup, 'Value', 1);
     set(handles.select_collection_popup,'String','[ NO COLLECTION LOADED ]');
     set(handles.select_collection_popup,'Enable','off');
-    set(handles.select_spectra_popup,'String','[ NO COLLECTION LOADED ]');
-    set(handles.select_spectra_popup,'Enable','off');
+    set(handles.select_spectrum_popup, 'Value', 1);
+    set(handles.select_spectrum_popup,'String','[ NO COLLECTION LOADED ]');
+    set(handles.select_spectrum_popup,'Enable','off');
     set(handles.lower_bound_mode_radiobutton,'Enable','off');
     set(handles.upper_bound_mode_radiobutton,'Enable','off');
 end;
@@ -272,17 +330,13 @@ function select_collection_popup_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns select_collection_popup contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from select_collection_popup
 popupCollectionNum = get(hObject, 'Value') - 1; % Popup entries are 1-indexed.
 spectralDispMode = get(handles.individual_mode_radiobutton, 'Value');
-axes(handles.axes1);
+
 if ( popupCollectionNum > 0 )
-    % A collection has been selected. Take the necessary steps.
-    
-    % Populate the spectra popup menu with the contents of the
-    % collection.
-    set(handles.select_spectra_popup,'Enable','on');
+    % A collection has been selected. Populate the spectra popup menu with
+    % the contents of the collection.
+    set(handles.select_spectrum_popup,'Enable','on');
     sampleCount = ...
         handles.collections{popupCollectionNum}.num_samples;
     spectraIDsStr = '';
@@ -293,55 +347,44 @@ if ( popupCollectionNum > 0 )
     if ( finalStrLen > 1 ) % Make sure we don't try to trim from an empty spectra list.
         spectraIDsStr = spectraIDsStr(1:finalStrLen-1); % Drop the extra pipe char.
     end;
-    set(handles.select_spectra_popup, 'String', spectraIDsStr);
+    set(handles.select_spectrum_popup, 'String', spectraIDsStr);
     
     if ( spectralDispMode == get(handles.individual_mode_radiobutton, 'Max') )
         
-        % We are in individual spectrum display mode.
-        % Select & draw the selected spectrum.
-        set(handles.select_spectra_popup, 'Value', 1);
-        plot(handles.collections{popupCollectionNum}.x, ...
-            handles.collections{popupCollectionNum}.Y(:,1));
+        % User has switched to individual spectrum display mode.
+        % Enable the spectrum popup and select first spectrum.
+        set(handles.select_spectrum_popup, 'Enable', 'on');
+        set(handles.select_spectrum_popup, 'Value', 1);
         
     else
         
-        % Not in individual mode. Populate the graph with all spectra
-        % overlaid and disable the spectra popup.
-        plot(handles.collections{popupCollectionNum}.x, ...
-            handles.collections{popupCollectionNum}.Y);
-        set(handles.select_spectra_popup, 'Enable', 'off');
+        % User has switched out of individual mode.
+        % Disable the spectra popup.
+        set(handles.select_spectrum_popup, 'Enable', 'off');
     end;
+    
+    redrawGraph(handles);
 else
     
     % Blank line was selected on collection popup menu. Disable spectra
     % popup & clear the axes
-    cla;
-    % The following statement remedies a warning which causes the popup to
-    % not be rendered.
-    set(handles.select_spectra_popup, 'Value', 1);
-    set(handles.select_spectra_popup, 'String', '^ Select a collection first');
-    set(handles.select_spectra_popup, 'Enable', 'off');
+    clearGraph(handles);
+    set(handles.select_spectrum_popup, 'Value', 1); % Surpresses a warning & popup bug.
+    set(handles.select_spectrum_popup, 'String', '^ Select a collection first');
+    set(handles.select_spectrum_popup, 'Enable', 'off');
 end;
 
 
-% --- Executes on selection change in select_spectra_popup.
-function select_spectra_popup_Callback(hObject, eventdata, handles)
-% hObject    handle to select_spectra_popup (see GCBO)
+% --- Executes on selection change in select_spectrum_popup.
+function select_spectrum_popup_Callback(hObject, eventdata, handles)
+% hObject    handle to select_spectrum_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns select_spectra_popup contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from select_spectra_popup
+% Hints: contents = cellstr(get(hObject,'String')) returns select_spectrum_popup contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from select_spectrum_popup
 
-popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
-popupSpectrumNum = get(hObject, 'Value');
-%stringStuff = [ 'Selected Collection #: ', num2str(popupCollectionNum), ...
-%    '    Selected Spectrum #: ', num2str(popupSpectrumNum) ];
-%Smsgbox(stringStuff);
-axes(handles.axes1);
-plot(handles.collections{popupCollectionNum}.x, ...
-    handles.collections{popupCollectionNum}.Y(:,popupSpectrumNum));
-
+redrawGraph(handles);
 
 % --- Executes when selected object is changed in spectra_display_mode_uipanel.
 function spectra_display_mode_uipanel_SelectionChangeFcn(hObject, eventdata, handles)
@@ -351,28 +394,25 @@ function spectra_display_mode_uipanel_SelectionChangeFcn(hObject, eventdata, han
 %	OldValue: handle of the previously selected object or empty if none was selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
-popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1;
+
+popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
+
 switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
+    
     case 'overlaid_mode_radiobutton'
         % Disable the spectra popup menu.
-        set(handles.select_spectra_popup,'Enable','off');
-        
-        % Display all spectra in the collection as an overlay.
-        axes(handles.axes1);
-        plot(handles.collections{popupCollectionNum}.x, ...
-            handles.collections{popupCollectionNum}.Y);
+        set(handles.select_spectrum_popup,'Enable','off');
+        redrawGraph(handles);
         
     case 'individual_mode_radiobutton'
         % Display only one spectra in the collection at a time.
         if ( popupCollectionNum > 0 )
-            set(handles.select_spectra_popup,'Enable','on');
-            popupSpectrumNum = get(handles.select_spectra_popup, 'Value');
-            axes(handles.axes1);
-            plot(handles.collections{popupCollectionNum}.x, ...
-                handles.collections{popupCollectionNum}.Y(:,popupSpectrumNum));
+            set(handles.select_spectrum_popup,'Enable','on');
+            redrawGraph(handles);
         else
-            set(handles.select_spectra_popup,'Enable','off');
+            set(handles.select_spectrum_popup,'Enable','off');
         end;
+        
     otherwise
         % Make sure the individual mode is selected.
         set(eventdata.NewValue,'Tag','individual_mode_radiobutton');
@@ -398,17 +438,27 @@ function axes1_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to axes1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-clickCoords = get(gca,'CurrentPoint');
-clickXCoord = clickCoords(1,1);
-boundMode = get(handles.upper_bound_mode_radiobutton, 'Value');
-if ( boundMode == get(handles.upper_bound_mode_radiobutton, 'Max') )
-    % We're selecting the upper x bound.
-    handles.workingUpperBound = clickXCoord;
-else
-    % We're selecting the lower x bound.
-    handles.workingLowerBound = clickXCoord;
+popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
+if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
+        && popupCollectionNum > 0 )
+    
+    % A collection has been loaded and selected.
+    clickCoords = get(gca,'CurrentPoint');
+    clickXCoord = clickCoords(1,1);
+    boundMode = get(handles.upper_bound_mode_radiobutton, 'Value');
+    if ( boundMode == get(handles.upper_bound_mode_radiobutton, 'Max') )
+        % User has selected upper x bound.
+        handles.workingUpperBound = clickXCoord;
+        set(handles.upper_bound_edit, 'String', num2str(clickXCoord,'%.4e'));
+    else
+        % User has selected lower x bound.
+        handles.workingLowerBound = clickXCoord;
+        set(handles.lower_bound_edit, 'String', num2str(clickXCoord,'%.4e'));
+    end;
+    guidata(hObject, handles);
+    redrawGraph(handles);
+
 end;
-guidata(hObject, handles);
 
 
 % --- Executes on button press in append_bin_button.
@@ -445,30 +495,13 @@ function lower_bound_edit_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of lower_bound_edit as text
 %        str2double(get(hObject,'String')) returns contents of lower_bound_edit as a double
 [userLowerBound, convResult] = str2num(get(hObject,'String'));
-popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
-popupSpectrumNum = get(hObject, 'Value');
 if ( convResult )
-    % Update GUI data.
+    % Update GUI & data.
     handles.workingLowerBound = userLowerBound;
     guidata(hObject, handles);
-    
-    % Redraw the axes with the new bounds.
-    axes(handles.axes1);
-    cla;
-    if ( isfield(handles, 'collections') )
-        plot(handles.collections{popupCollectionNum}.x, ...
-            handles.collections{popupCollectionNum}.Y{popupSpectrumNum});
-    end;
-    axesObjHeight = get(handles.axes1, 'YLim');
-    yseries = [0 axesObjHeight(2)];
-    xseries1 = [userLowerBound userLowerBound];
-    if ( isfield(handles, 'workingUpperBound') )
-        xseries2 = [handles.workingUpperBound handles.workingUpperBound];
-        plot(xseries1, yseries, '-.g', xseries2, yseries, '-.r');
-    else
-        plot(xseries1, yseries, '-.g');
-    end;
+    redrawGraph(handles);
 else
+    % Non-numeric value entered into the lower bound field.
 end;
 
 
@@ -480,30 +513,13 @@ function upper_bound_edit_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of upper_bound_edit as text
 %        str2double(get(hObject,'String')) returns contents of upper_bound_edit as a double
 [userUpperBound, convResult] = str2num(get(hObject,'String'));
-popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
-popupSpectrumNum = get(hObject, 'Value');
 if ( convResult )
-    % Update GUI data.
+    % Update GUI & data.
     handles.workingUpperBound = userUpperBound;
     guidata(hObject, handles);
-    
-    % Redraw the axes with the new bounds.
-    axes(handles.axes1);
-    cla;
-    if ( isfield(handles, 'collections') )
-        plot(handles.collections{popupCollectionNum}.x, ...
-            handles.collections{popupCollectionNum}.Y{popupSpectrumNum});
-    end;
-    axesObjHeight = get(handles.axes1, 'YLim');
-    yseries = [0 axesObjHeight(2)];
-    xseries2 = [userUpperBound userUpperBound];
-    if ( isfield(handles, 'workingLowerBound') )
-        xseries1 = [handles.workingLowerBound handles.workingLowerBound];
-        plot(xseries1, yseries, '-.g', xseries2, yseries, '-.r');
-    else
-        plot(xseries2, yseries, '-.r');
-    end;
+    redrawGraph(handles);
 else
+    % Non-numeric value entered into the upper bound field.
 end;
 
 
