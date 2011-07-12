@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 08-Jul-2011 22:30:09
+% Last Modified by GUIDE v2.5 12-Jul-2011 17:09:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,10 +84,9 @@ set(handles.metabolite_menu, 'String', metabolite_names);
 handles.identifications = [];
 
 % Start witn no detected peaks (but preallocate the array)
-handles.peaks(num_bins, handles.collection.num_samples)=[];
+handles.peaks = zeros(num_bins, handles.collection.num_samples);
 
-% Start with peak_select tool selected
-set(handles.select_peak_tool,'state','on');
+% Start with no tool selected
 handles.spectrum_idx = 1;
 handles.bin_idx = 1;
 
@@ -432,61 +431,26 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --------------------------------------------------------------------
-function turn_off_all_tools_but(handles, tool_name)
-% TURN_OFF_ALL_BUT Turns off all tools in the toolbar but the tool with the given name
-% tool_name The name of the tool to be left alone
-if ~isequal(tool_name,'pan_tool')
-    set(handles.pan_tool,'state','off');
-end
-if ~isequal(tool_name,'zoom_in_tool')
-    set(handles.zoom_in_tool,'state','off');
-end
-if ~isequal(tool_name,'zoom_out_tool')
-    set(handles.zoom_out_tool,'state','off');
-end
-if ~isequal(tool_name,'select_peak_tool')
-    set(handles.select_peak_tool,'state','off');
-end
-if ~isequal(tool_name,'deselect_peak_tool')
-    set(handles.deselect_peak_tool,'state','off');
-end
+function reset_plot_to_non_interactive(handles)
+% Disables interactive panning or zoom mode 
+zoom(handles.figure1, 'off');
+pan(handles.figure1, 'off');
 
 % --------------------------------------------------------------------
-function pan_tool_OnCallback(~, ~, handles)
-% hObject    handle to pan_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'pan_tool');
-
-% --------------------------------------------------------------------
-function zoom_in_tool_OnCallback(~, ~, handles)
-% hObject    handle to zoom_in_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'zoom_in_tool');
-
-% --------------------------------------------------------------------
-function zoom_out_tool_OnCallback(~, ~, handles)
-% hObject    handle to zoom_out_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'zoom_out_tool');
-
-% --------------------------------------------------------------------
-function select_peak_tool_OnCallback(~, ~, handles)
+function select_peak_tool_ClickedCallback(hObject, ~, handles)
 % hObject    handle to select_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'select_peak_tool');
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
 
 % --------------------------------------------------------------------
-function deselect_peak_tool_OnCallback(~, ~, handles)
+function deselect_peak_tool_ClickedCallback(hObject, ~, handles)
 % hObject    handle to deselect_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'deselect_peak_tool');
-
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
 
 function idx = min_idx(vals)
 min_val = min(vals);
@@ -577,3 +541,5 @@ function dont_call_this_function_it_exists_to_remove_spurious_warnings()
  spectrum_number_edit_box_CreateFcn;
  metabolite_menu_CreateFcn;
  dont_call_this_function_it_exists_to_remove_spurious_warnings;
+
+
