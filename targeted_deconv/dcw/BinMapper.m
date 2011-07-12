@@ -455,17 +455,18 @@ if ( convResult )
     % Redraw the axes with the new bounds.
     axes(handles.axes1);
     cla;
-    if ( isprop(handles, 'collections') )
+    if ( isfield(handles, 'collections') )
         plot(handles.collections{popupCollectionNum}.x, ...
             handles.collections{popupCollectionNum}.Y{popupSpectrumNum});
     end;
     axesObjHeight = get(handles.axes1, 'YLim');
     yseries = [0 axesObjHeight(2)];
-    xseries = [userLowerBound userLowerBound];
-    plot(xseries, yseries, '-.g');
-    if ( isprop(handles, 'workingUpperBound') )
-        xseries = [handles.workingUpperBound handles.workingUpperBound];
-        plot(xseries, yseries, '-.r');
+    xseries1 = [userLowerBound userLowerBound];
+    if ( isfield(handles, 'workingUpperBound') )
+        xseries2 = [handles.workingUpperBound handles.workingUpperBound];
+        plot(xseries1, yseries, '-.g', xseries2, yseries, '-.r');
+    else
+        plot(xseries1, yseries, '-.g');
     end;
 else
 end;
@@ -489,17 +490,18 @@ if ( convResult )
     % Redraw the axes with the new bounds.
     axes(handles.axes1);
     cla;
-    if ( isprop(handles, 'collections') )
+    if ( isfield(handles, 'collections') )
         plot(handles.collections{popupCollectionNum}.x, ...
             handles.collections{popupCollectionNum}.Y{popupSpectrumNum});
     end;
     axesObjHeight = get(handles.axes1, 'YLim');
     yseries = [0 axesObjHeight(2)];
-    xseries = [userUpperBound userUpperBound];
-    plot(xseries, yseries, '-.r');
-    if ( isprop(handles, 'workingLowerBound') )
-        xseries = [handles.workingLowerBound handles.workingLowerBound];
-        plot(xseries, yseries, '-.g');
+    xseries2 = [userUpperBound userUpperBound];
+    if ( isfield(handles, 'workingLowerBound') )
+        xseries1 = [handles.workingLowerBound handles.workingLowerBound];
+        plot(xseries1, yseries, '-.g', xseries2, yseries, '-.r');
+    else
+        plot(xseries2, yseries, '-.r');
     end;
 else
 end;
