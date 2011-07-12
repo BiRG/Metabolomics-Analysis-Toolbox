@@ -83,6 +83,9 @@ set(handles.metabolite_menu, 'String', metabolite_names);
 % Start with no identifications
 handles.identifications = [];
 
+% Start witn no detected peaks (but preallocate the array)
+handles.peaks(num_bins, handles.collection.num_samples)=[];
+
 % Start with peak_select tool selected
 set(handles.select_peak_tool,'state','on');
 handles.spectrum_idx = 1;
@@ -98,6 +101,36 @@ guidata(hObject, handles);
 
 % UIWAIT makes targeted_identify wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+
+
+function pks = get_peaks(bin_idx, spectrum_idx, handles)
+% Return the peaks for the given bin in the given spectrum.  Either uses
+% those already calculated and/or modified by the user or (if they haven't
+% been calculated yet) calculates them.
+%
+% bin_idx       The index of the bin where the peaks lie
+% spectrum_idx  The index of the spectrum in the current collection where
+%               the peaks lie
+% handles       The user and GUI data structure
+pks = handles.peaks(bin_idx, spectrum_idx);
+if isempty(pks)
+    %TODO: detect peaks
+end
+
+
+function set_peaks(bin_idx, spectrum_idx, newval, handles)
+% Set the peaks for the given bin in the given spectrum.  Updates the gui
+% and the guidata stored in handles.figure1.
+%
+% bin_idx       The index of the bin where the peaks lie
+% spectrum_idx  The index of the spectrum in the current collection where
+%               the peaks lie
+% new_val       The new value to use for the peaks
+% handles       The user and GUI data structure
+
+%TODO: set peaks and update the gui
+
+
 
 
 function ids=peak_identifications_for_cur_metabolite(handles)
