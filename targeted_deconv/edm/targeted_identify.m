@@ -420,7 +420,7 @@ update_plot(handles);
 
 function set_bin_idx(new_val, handles)
 % Sets handles.bin_idx and also updates the gui - don't call when you
-% update the bin_idx to avoid repeating updates.  I believe (though I
+% update the spectrum_idx to avoid repeating updates.  I believe (though I
 % haven't verified) that the value in handles in the caller will be
 % unchanged.
 %
@@ -429,6 +429,8 @@ function set_bin_idx(new_val, handles)
 handles.bin_idx = new_val;
 guidata(handles.figure1, handles);
 update_display(handles);
+zoom_to_bin(handles);
+update_plot(handles);
 zoom_to_bin(handles);
 
 function spectrum_number_edit_box_Callback(hObject, ~, handles)
