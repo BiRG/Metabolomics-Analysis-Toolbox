@@ -508,6 +508,16 @@ xvals = handles.collection.x;
 diffs = abs(val - xvals);
 idx = min_idx(diffs);
 
+function idx = index_of_nearest_peak_to(val, handles)
+% Return the index of the value closest to val in the x coordinates of the 
+% peaks for this bin and spectrum
+%
+% handles structure with handles and user data (see GUIDATA)
+pks = get_cur_peaks(handles);
+diffs = abs(val - pks);
+idx = min_idx(diffs);
+
+
 % --- Executes on mouse press over axes background.
 function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
 % hObject    handle to spectrum_plot (see GCBO)
@@ -536,8 +546,11 @@ handles = guidata(fig1);
 % Run the appropriate tool
 if isequal(get(handles.select_peak_tool, 'state'),'on')
     %Select peak
-    xidx = index_of_nearest_x_to(x_pos, handles);
-    newid = PeakIdentification(x_pos, xidx, handles.spectrum_idx, ...
+    peak_idx = index_of_nearest_peak_to(x_pos, handles);
+    pks = get_cur_peaks(handles);
+    ppm = pks(peak_idx);
+    xidx = index_of_nearest_x_to(ppm, handles);
+    newid = PeakIdentification(ppm, xidx, handles.spectrum_idx, ...
         handles.bin_map(handles.bin_idx));
     set_identifications([handles.identifications newid],handles);
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
