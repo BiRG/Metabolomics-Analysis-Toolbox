@@ -84,7 +84,7 @@ set(handles.metabolite_menu, 'String', metabolite_names);
 handles.identifications = [];
 
 % Start witn no detected peaks (but preallocate the array)
-handles.peaks = zeros(num_bins, handles.collection.num_samples);
+handles.peaks = cell(num_bins, handles.collection.num_samples);
 
 % Start with no tool selected
 handles.spectrum_idx = 1;
@@ -102,22 +102,35 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 
 
-function pks = get_peaks(bin_idx, spectrum_idx, handles)
-% Return the peaks for the given bin in the given spectrum.  Either uses
+function pks = get_cur_peaks(handles)
+% Return the peaks for the current bin and spectrum.  Either uses
 % those already calculated and/or modified by the user or (if they haven't
-% been calculated yet) calculates them.
+% been calculated yet) calculates them.  Does not update the GUI if the
+% peaks are calculated.
 %
 % bin_idx       The index of the bin where the peaks lie
 % spectrum_idx  The index of the spectrum in the current collection where
 %               the peaks lie
 % handles       The user and GUI data structure
-pks = handles.peaks(bin_idx, spectrum_idx);
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+pks = handles.peaks{bin_idx, spectrum_idx};
 if isempty(pks)
-    %TODO: detect peaks
+    col = handles.collection;
+    noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
+    noise_std = std(col.Y(1:noise_points, spectrum_idx));
+    bin = handles.bin_map(bin_idx).bin;
+    low_idx = index_of_nearest_x_to(bin.left, handles);
+    high_idx = index_of_nearest_x_to(bin.right, handles);
+    [peak_idx, ~, ~] = wavelet_find_maxes_and_mins ...
+        (col.Y(low_idx:high_idx, spectrum_idx), noise_std);
+    pks = col.x((low_idx-1)+peak_idx);
+    handles.peaks{bin_idx, spectrum_idx} = pks;
+    guidata(handles.figure1, handles);
 end
 
 
-function set_peaks(bin_idx, spectrum_idx, newval, handles)
+function set_peaks(bin_idx, spectrum_idx, new_val, handles)
 % Set the peaks for the given bin in the given spectrum.  Updates the gui
 % and the guidata stored in handles.figure1.
 %
@@ -127,9 +140,9 @@ function set_peaks(bin_idx, spectrum_idx, newval, handles)
 % new_val       The new value to use for the peaks
 % handles       The user and GUI data structure
 
-%TODO: set peaks and update the gui
-
-
+handles.peaks{bin_idx, spectrum_idx} = new_val;
+guidata(handles.figure1, handles);
+update_plot(handles);
 
 
 function ids=peak_identifications_for_cur_metabolite(handles)
@@ -185,6 +198,7 @@ spectrum = collection.Y(:,pid.spectrum_index);
 center = [pid.ppm, spectrum(pid.height_index)];
 draw_circle(center, 0.0625, 'g');
 
+
 function update_plot(handles)
 % Update the plot - needed when the spectrum index changes or the
 % identifications change
@@ -195,8 +209,15 @@ if ~ (oldlims(1) == 0 && oldlims(2) == 1)
     xlim(oldlims)
 end
 
+%Draw peak identification circles
 for id=peak_identifications_for_cur_metabolite(handles)
     draw_identification(id, handles.collection);
+end
+
+%Draw peak location lines
+yl = ylim;
+for ppm = get_cur_peaks(handles)
+    line('XData', [ppm,ppm], 'YData', yl, 'Color', 'c');
 end
 
 %Reset the button-down function on the generated plot
