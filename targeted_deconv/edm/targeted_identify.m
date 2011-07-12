@@ -459,7 +459,7 @@ idx = find(vals == min_val, 1, 'first');
 function idx = index_of_nearest_point_to(target, points_x, points_y)
 % Return the index of the point closest to target in the points described
 % by points_x and points_y
-%
+%deselect_peak_tool_ClickedCallback
 % target   the point whose closest neighbor is being found (in form [x y] )
 % points_x the x coordinates of the neighbor points
 % points_y the y coordinates of the neighbor points
@@ -532,12 +532,9 @@ function dont_call_this_function_it_exists_to_remove_spurious_warnings()
  next_button_Callback;
  zoom_to_bin_button_Callback;
  metabolite_menu_Callback;
+ select_peak_tool_ClickedCallback;
+ deselect_peak_tool_ClickedCallback;
  spectrum_number_edit_box_Callback;
- pan_tool_OnCallback;
- zoom_in_tool_OnCallback;
- zoom_out_tool_OnCallback;
- select_peak_tool_OnCallback;
- deselect_peak_tool_OnCallback;
  spectrum_number_edit_box_CreateFcn;
  metabolite_menu_CreateFcn;
  dont_call_this_function_it_exists_to_remove_spurious_warnings;
