@@ -22,7 +22,7 @@ function varargout = BinMapper(varargin)
 
 % Edit the above text to modify the response to help BinMapper
 
-% Last Modified by GUIDE v2.5 12-Jul-2011 13:44:05
+% Last Modified by GUIDE v2.5 12-Jul-2011 14:31:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -86,6 +86,9 @@ function figure1_DeleteFcn(hObject, eventdata, handles)
 % -- DCW -- if ( collectionsLoadChk == 1 )
 % -- DCW --     evalin('base', 'delete collections');
 % -- DCW -- end;
+
+% --- hook
+function redrawGraph(hObject)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -397,8 +400,8 @@ function axes1_ButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 clickCoords = get(gca,'CurrentPoint');
 clickXCoord = clickCoords(1,1);
-boundMode = get(handles.upper_mode_radiobutton, 'Value');
-if ( boundMode == get(handles.upper_mode_radiobutton, 'Max') )
+boundMode = get(handles.upper_bound_mode_radiobutton, 'Value');
+if ( boundMode == get(handles.upper_bound_mode_radiobutton, 'Max') )
     % We're selecting the upper x bound.
     handles.workingUpperBound = clickXCoord;
 else
@@ -442,7 +445,29 @@ function lower_bound_edit_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of lower_bound_edit as text
 %        str2double(get(hObject,'String')) returns contents of lower_bound_edit as a double
 [userLowerBound, convResult] = str2num(get(hObject,'String'));
+popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
+popupSpectrumNum = get(hObject, 'Value');
 if ( convResult )
+    % Update GUI data.
+    handles.workingLowerBound = userLowerBound;
+    guidata(hObject, handles);
+    
+    % Redraw the axes with the new bounds.
+    axes(handles.axes1);
+    cla;
+    if ( isfield(handles, 'collections') )
+        plot(handles.collections{popupCollectionNum}.x, ...
+            handles.collections{popupCollectionNum}.Y{popupSpectrumNum});
+    end;
+    axesObjHeight = get(handles.axes1, 'YLim');
+    yseries = [0 axesObjHeight(2)];
+    xseries1 = [userLowerBound userLowerBound];
+    if ( isfield(handles, 'workingUpperBound') )
+        xseries2 = [handles.workingUpperBound handles.workingUpperBound];
+        plot(xseries1, yseries, '-.g', xseries2, yseries, '-.r');
+    else
+        plot(xseries1, yseries, '-.g');
+    end;
 else
 end;
 
@@ -455,7 +480,29 @@ function upper_bound_edit_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of upper_bound_edit as text
 %        str2double(get(hObject,'String')) returns contents of upper_bound_edit as a double
 [userUpperBound, convResult] = str2num(get(hObject,'String'));
+popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
+popupSpectrumNum = get(hObject, 'Value');
 if ( convResult )
+    % Update GUI data.
+    handles.workingUpperBound = userUpperBound;
+    guidata(hObject, handles);
+    
+    % Redraw the axes with the new bounds.
+    axes(handles.axes1);
+    cla;
+    if ( isfield(handles, 'collections') )
+        plot(handles.collections{popupCollectionNum}.x, ...
+            handles.collections{popupCollectionNum}.Y{popupSpectrumNum});
+    end;
+    axesObjHeight = get(handles.axes1, 'YLim');
+    yseries = [0 axesObjHeight(2)];
+    xseries2 = [userUpperBound userUpperBound];
+    if ( isfield(handles, 'workingLowerBound') )
+        xseries1 = [handles.workingLowerBound handles.workingLowerBound];
+        plot(xseries1, yseries, '-.g', xseries2, yseries, '-.r');
+    else
+        plot(xseries2, yseries, '-.r');
+    end;
 else
 end;
 
