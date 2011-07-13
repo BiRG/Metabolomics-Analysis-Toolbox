@@ -22,7 +22,7 @@ function varargout = BinMapper(varargin)
 
 % Edit the above text to modify the response to help BinMapper
 
-% Last Modified by GUIDE v2.5 12-Jul-2011 17:56:47
+% Last Modified by GUIDE v2.5 12-Jul-2011 23:47:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -89,7 +89,6 @@ cla;
 function redrawGraph(handles)
 % hObject    handle to select_spectrum_popup (see GCBO)
 % handles    empty - handles not created until after all CreateFcns called
-
 popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
 popupSpectrumNum = get(handles.select_spectrum_popup, 'Value');
 spectralDispMode = get(handles.individual_mode_radiobutton, 'Value');
@@ -133,7 +132,18 @@ if ( isfield(handles, 'workingUpperBound') )
 end;
 
 % Draw all stored bin bounds.
-% TODO DCW
+if ( isfield(handles, 'storedBinsLowerBounds') )
+    for i = 1:length(handles.storedBinsLowerBounds)
+        xseries = ...
+            [ handles.storedBinsLowerBounds(i) ...
+            handles.storedBinsLowerBounds(i) ];
+        plot(xseries, axesObjLimit, 'Color', [.67 1 1], 'LineStyle', '-.');
+        xseries = ...
+            [ handles.storedBinsUpperBounds(i) ...
+            handles.storedBinsUpperBounds(i) ];
+        plot(xseries, axesObjLimit, 'Color', [1 .67 0], 'LineStyle', '-.');
+    end;
+end;
 
 hold off;
 
@@ -150,9 +160,6 @@ function select_collection_popup_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to select_collection_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end;
@@ -163,9 +170,6 @@ function select_spectrum_popup_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to select_spectrum_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end;
@@ -176,9 +180,6 @@ function mapped_bins_listbox_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to mapped_bins_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: listbox controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -189,9 +190,6 @@ function metabolite_name_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to metabolite_name_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -202,9 +200,6 @@ function lower_bound_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to lower_bound_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -215,9 +210,6 @@ function upper_bound_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to upper_bound_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -227,9 +219,6 @@ function id_source_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to id_source_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -240,9 +229,6 @@ function deconvolution_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to deconvolution_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -253,9 +239,6 @@ function multiplicity_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to multiplicity_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -266,9 +249,6 @@ function proton_id_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to proton_id_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -283,15 +263,20 @@ function load_collection_button_Callback(hObject, eventdata, handles)
 % Fetch the spectra from flatfiles.
 handles.collections = load_collections();
 guidata(hObject, handles);
-msgbox('Finished loading collection', 'Action Complete', 'help', 'modal');
+if ( ~isempty(handles.collections) )
+    msgbox('Finished loading collection', 'Action Complete', ...
+        'help', 'modal');
+end;
 
-% Set the spectral display radio buttons to default.
+% Set spectral display radio buttons & bin management buttons to default.
 set(handles.individual_mode_radiobutton,'Value', ...
     get(handles.individual_mode_radiobutton,'Max'));
+set(handles.append_bin_button, 'Enable', 'off');
+set(handles.retrieve_bin_button, 'Enable', 'off');
+set(handles.delete_bin_button, 'Enable', 'off');
+clearGraph(handles);
 
 if ( ~isempty(handles.collections) )
-    
-    clearGraph(handles);
     
     % Build the select collection popup string.
     collectionCount = length(handles.collections);
@@ -329,7 +314,6 @@ function select_collection_popup_Callback(hObject, eventdata, handles)
 % hObject    handle to select_collection_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 popupCollectionNum = get(hObject, 'Value') - 1; % Popup entries are 1-indexed.
 spectralDispMode = get(handles.individual_mode_radiobutton, 'Value');
 
@@ -355,23 +339,32 @@ if ( popupCollectionNum > 0 )
         % Enable the spectrum popup and select first spectrum.
         set(handles.select_spectrum_popup, 'Enable', 'on');
         set(handles.select_spectrum_popup, 'Value', 1);
+        set(handles.append_bin_button, 'Enable', 'on');
+        set(handles.retrieve_bin_button, 'Enable', 'on');
+        set(handles.delete_bin_button, 'Enable', 'on');
         
     else
         
         % User has switched out of individual mode.
         % Disable the spectra popup.
         set(handles.select_spectrum_popup, 'Enable', 'off');
+        set(handles.append_bin_button, 'Enable', 'off');
+        set(handles.retrieve_bin_button, 'Enable', 'off');
+        set(handles.delete_bin_button, 'Enable', 'off');
     end;
     
     redrawGraph(handles);
 else
     
     % Blank line was selected on collection popup menu. Disable spectra
-    % popup & clear the axes
+    % popup, append button, & clear the axes
     clearGraph(handles);
     set(handles.select_spectrum_popup, 'Value', 1); % Surpresses a warning & popup bug.
     set(handles.select_spectrum_popup, 'String', '^ Select a collection first');
     set(handles.select_spectrum_popup, 'Enable', 'off');
+    set(handles.append_bin_button, 'Enable', 'off');
+    set(handles.retrieve_bin_button, 'Enable', 'off');
+    set(handles.delete_bin_button, 'Enable', 'off');
 end;
 
 
@@ -380,10 +373,6 @@ function select_spectrum_popup_Callback(hObject, eventdata, handles)
 % hObject    handle to select_spectrum_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns select_spectrum_popup contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from select_spectrum_popup
-
 redrawGraph(handles);
 
 % --- Executes when selected object is changed in spectra_display_mode_uipanel.
@@ -394,23 +383,31 @@ function spectra_display_mode_uipanel_SelectionChangeFcn(hObject, eventdata, han
 %	OldValue: handle of the previously selected object or empty if none was selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
-
 popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
 
 switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
     
     case 'overlaid_mode_radiobutton'
         % Disable the spectra popup menu.
-        set(handles.select_spectrum_popup,'Enable','off');
+        set(handles.select_spectrum_popup, 'Enable', 'off');
+        set(handles.append_bin_button, 'Enable', 'off');
+        set(handles.retrieve_bin_button, 'Enable', 'off');
+        set(handles.delete_bin_button, 'Enable', 'off');
         redrawGraph(handles);
         
     case 'individual_mode_radiobutton'
-        % Display only one spectra in the collection at a time.
+        % Display only one spectrum in the collection at a time.
         if ( popupCollectionNum > 0 )
-            set(handles.select_spectrum_popup,'Enable','on');
+            set(handles.select_spectrum_popup, 'Enable', 'on');
+            set(handles.append_bin_button, 'Enable', 'on');
+            set(handles.retrieve_bin_button, 'Enable', 'on');
+            set(handles.delete_bin_button, 'Enable', 'on');
             redrawGraph(handles);
         else
-            set(handles.select_spectrum_popup,'Enable','off');
+            set(handles.select_spectrum_popup, 'Enable', 'off');
+            set(handles.append_bin_button, 'Enable', 'off');
+            set(handles.retrieve_bin_button, 'Enable', 'off');
+            set(handles.delete_bin_button, 'Enable', 'off');
         end;
         
     otherwise
@@ -422,6 +419,55 @@ end;
 % --- Executes on button press in load_binmap_button.
 function load_binmap_button_Callback(hObject, eventdata, handles)
 % hObject    handle to load_binmap_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[filename, pathname] = uigetfile( ...
+    {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
+    '*.*', 'All Files (*.*)'} );
+if ( ~isempty(filename) )
+    fid = fopen([pathname filename]);
+    binmapHeaders = textscan(fid, '%q %q %q %q %q %q %q %q', 1, ...
+        'Delimiter', ',\t');
+    binmapData = textscan(fid, '%d %q %f %f %q %q %q %q', ...
+        'Delimiter', ',\t');
+    fclose(fid);
+    binIDsArray = binmapData{1};
+    recordCount = length(binIDsArray);
+    handles.storedBinsMetabolites = binmapData{2};
+    handles.storedBinsLowerBounds = binmapData{4};
+    handles.storedBinsUpperBounds = binmapData{3};
+    handles.storedBinsMultiplicity = binmapData{5};
+    handles.storedBinsDeconv = binmapData{6};
+    handles.storedBinsProtonID = binmapData{7};
+    handles.storedBinsIDSource = binmapData{8};
+    handles.storedBinsCollectionID = zeros(recordCount, 1);
+    handles.storedBinsSpectrumID = zeros(recordCount, 1);
+    guidata(hObject, handles);
+    stringPropCell = {};
+    for i = 1:recordCount
+        stringPropCell{i} = [ num2str(binIDsArray(i), '%d') ',' ...
+            handles.storedBinsMetabolites{i} ',' ...
+            num2str(handles.storedBinsLowerBounds(i), '%.3f') ',' ...
+            num2str(handles.storedBinsUpperBounds(i), '%.3f') ];
+    end;
+    set(handles.mapped_bins_listbox, 'String', stringPropCell);
+    msgbox('Finished loading Binmap', 'Action Complete', ...
+        'help', 'modal');
+else
+    msgbox('No binmap opened.', 'Warning', 'warn', 'modal');
+end;
+
+
+% --- Executes on button press in delete_bin_button.
+function delete_bin_button_Callback(hObject, eventdata, handles)
+% hObject    handle to delete_bin_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in retrieve_bin_button.
+function retrieve_bin_button_Callback(hObject, eventdata, handles)
+% hObject    handle to retrieve_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -449,15 +495,45 @@ if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
     if ( boundMode == get(handles.upper_bound_mode_radiobutton, 'Max') )
         % User has selected upper x bound.
         handles.workingUpperBound = clickXCoord;
-        set(handles.upper_bound_edit, 'String', num2str(clickXCoord,'%.4e'));
+        set(handles.upper_bound_edit, 'String', num2str(clickXCoord,'%.5e'));
     else
         % User has selected lower x bound.
         handles.workingLowerBound = clickXCoord;
-        set(handles.lower_bound_edit, 'String', num2str(clickXCoord,'%.4e'));
+        set(handles.lower_bound_edit, 'String', num2str(clickXCoord,'%.5e'));
     end;
     guidata(hObject, handles);
     redrawGraph(handles);
+    
+end;
 
+
+function lower_bound_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to lower_bound_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[userLowerBound, convResult] = str2num(get(hObject,'String'));
+if ( convResult )
+    % Update GUI & data.
+    handles.workingLowerBound = userLowerBound;
+    guidata(hObject, handles);
+    redrawGraph(handles);
+else
+    % Non-numeric value entered into the lower bound field.
+end;
+
+
+function upper_bound_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to upper_bound_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[userUpperBound, convResult] = str2num(get(hObject,'String'));
+if ( convResult )
+    % Update GUI & data.
+    handles.workingUpperBound = userUpperBound;
+    guidata(hObject, handles);
+    redrawGraph(handles);
+else
+    % Non-numeric value entered into the upper bound field.
 end;
 
 
@@ -474,9 +550,6 @@ function mapped_bins_listbox_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns mapped_bins_listbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from mapped_bins_listbox
-
 
 function metabolite_name_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to metabolite_name_edit (see GCBO)
@@ -485,42 +558,6 @@ function metabolite_name_edit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of metabolite_name_edit as text
 %        str2double(get(hObject,'String')) returns contents of metabolite_name_edit as a double
-
-
-function lower_bound_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to lower_bound_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of lower_bound_edit as text
-%        str2double(get(hObject,'String')) returns contents of lower_bound_edit as a double
-[userLowerBound, convResult] = str2num(get(hObject,'String'));
-if ( convResult )
-    % Update GUI & data.
-    handles.workingLowerBound = userLowerBound;
-    guidata(hObject, handles);
-    redrawGraph(handles);
-else
-    % Non-numeric value entered into the lower bound field.
-end;
-
-
-function upper_bound_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to upper_bound_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of upper_bound_edit as text
-%        str2double(get(hObject,'String')) returns contents of upper_bound_edit as a double
-[userUpperBound, convResult] = str2num(get(hObject,'String'));
-if ( convResult )
-    % Update GUI & data.
-    handles.workingUpperBound = userUpperBound;
-    guidata(hObject, handles);
-    redrawGraph(handles);
-else
-    % Non-numeric value entered into the upper bound field.
-end;
 
 
 function id_source_edit_Callback(hObject, eventdata, handles)
@@ -557,4 +594,3 @@ function proton_id_edit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of proton_id_edit as text
 %        str2double(get(hObject,'String')) returns contents of proton_id_edit as a double
-
