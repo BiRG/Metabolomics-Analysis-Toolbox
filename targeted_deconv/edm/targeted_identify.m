@@ -153,6 +153,31 @@ handles.peaks{bin_idx, spectrum_idx} = new_val;
 guidata(handles.figure1, handles);
 update_plot(handles);
 
+function add_peak(ppm, handles)
+% Adds a peak to the list of peaks for the current bin and spectrum 
+%
+% ppm      parts per million location of the new peak
+% handles  The user and GUI data structure
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+pks = handles.peaks{bin_idx, spectrum_idx};
+set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
+
+function remove_peak(ppm, handles)
+% Removes a peak at the given ppm from the list of peaks for the 
+% current bin and spectrum .  If there is no such peak, does nothing.
+%
+% ppm      parts per million location of the peak to remove
+% handles  The user and GUI data structure
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+pks = handles.peaks{bin_idx, spectrum_idx};
+matches = pks==ppm;
+if any(matches)
+    pks(matches)=[];
+    set_peaks(bin_idx, spectrum_idx, pks, handles);
+end
+
 
 function ids=peak_identifications_for_cur_metabolite(handles)
 % Return the list of the peaks identified for the current metabolite
@@ -486,7 +511,7 @@ putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolba
 reset_plot_to_non_interactive(handles);
 
 % --------------------------------------------------------------------
-function add_peak_tool_ClickedCallback(hObject, eventdata, handles)
+function add_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to add_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -494,7 +519,7 @@ putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolba
 reset_plot_to_non_interactive(handles);
 
 % --------------------------------------------------------------------
-function remove_peak_tool_ClickedCallback(hObject, eventdata, handles)
+function remove_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to remove_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -563,6 +588,7 @@ handles = guidata(fig1);
 
 % Run the appropriate tool
 if isequal(get(handles.select_peak_tool, 'state'),'on')
+    
     %Select peak
     peak_idx = index_of_nearest_peak_to(x_pos, handles);
     pks = get_cur_peaks(handles);
@@ -584,6 +610,16 @@ elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     new_ids = handles.identifications;
     new_ids(new_ids == to_remove) = [];
     set_identifications(new_ids, handles);
+elseif isequal(get(handles.add_peak_tool, 'state'),'on')
+    
+    %Add peak
+    x_idx = index_of_nearest_x_to(x_pos, handles);
+    add_peak(handles.collection.x(x_idx), handles);
+elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
+    
+    %Remove peak
+    x_idx = index_of_nearest_x_to(x_pos, handles);
+    remove_peak(handles.collection.x(x_idx), handles);
 end
 %TODO: finish button down for spectrum plot
 
