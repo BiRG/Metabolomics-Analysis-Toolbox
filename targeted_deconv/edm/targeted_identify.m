@@ -230,7 +230,7 @@ function draw_identification(peak_id_obj, collection)
 pid = peak_id_obj;
 spectrum = collection.Y(:,pid.spectrum_index);
 center = [pid.ppm, spectrum(pid.height_index)];
-draw_circle(center, 0.0625, 'g');
+draw_circle(center, 0.0625, 'r');
 
 
 function update_plot(handles)
