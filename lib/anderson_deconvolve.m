@@ -1,5 +1,5 @@
 % --- Executes on button press in deconvolution_button.
-function deconvolution_button_Callback(hObject, eventdata, handles)
+function anderson_deconvolve(handles)
 % hObject    handle to deconvolution_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -7,13 +7,13 @@ function deconvolution_button_Callback(hObject, eventdata, handles)
 append_to_log(handles,sprintf('Starting deconvolution'));
 
 collection = getappdata(gcf,'collection');
-[num_variables,num_spectra] = size(collection.Y);
+[~,num_spectra] = size(collection.Y);
 if ~isfield(collection,'maxs')
     msgbox('Find peaks before running deconvolution');
     return
 end
 % First time
-if isempty(find(collection.BETA{1}(1:4:end) ~= 0))
+if isempty(find(collection.BETA{1}(1:4:end) ~= 0, 1))
     collection.x_baseline_BETA = {};
     collection.baseline_BETA = {};
     collection.y_baseline = {};
@@ -46,18 +46,7 @@ for s = 1:num_spectra
     m_inxs = find(xl(1) <= X & X <= xl(2));
     if ~isempty(m_inxs)
         stdin = create_hadoop_input(collection.x',collection.Y(:,s),collection.maxs{s}(m_inxs),collection.mins{s}(m_inxs,:),[],options);
-%         scpfrommatlab('w100pea','localhost','localhost','birglab!','hadoop_input.txt','deconvolution/hadoop_input.txt')
-
-%             fid = fopen('hadoop_input.txt','r');
-%             stdin = char(fread(fid,[1,Inf],'char'));
-%             fclose(fid);
-
         stdin = mapper(stdin,[]);
-
-%             fid = fopen('mapper_output.txt','r');
-%             stdin = char(fread(fid,[1,Inf],'char'));
-%             fclose(fid);
-
         options = {};
         options.baseline_width = str2num(get(handles.baseline_width_edit,'String'));
         options.min_width = round(str2num(get(handles.min_width_edit,'String'))/xwidth);
@@ -72,7 +61,6 @@ for s = 1:num_spectra
         collection.BETA{s} = results.BETA;
         collection.y_fit{s} = results.solution.y_fit;
         collection.x_baseline_BETA{s} = results.x_baseline_BETA;
-%             collection.baseline_BETA{s} = results.baseline_BETA;
         collection.y_baseline{s} = results.y_baseline;
         collection.dirty(s) = false;
 
@@ -238,24 +226,24 @@ for inx = 1:length(data)
         num_maxima = length(BETA0_r)/4 + length(BETA0_a)/4;
         x = [x_r';x_a'];
         y = [y_r';y_a'];
-        BETA0 = [BETA0_r';BETA0_a';y_r(1);y_a(1);y_a(end)];
-        x_baseline_BETA = [x_r(1);x_a(1);x_a(end)];
+        BETA0 = [BETA0_r';BETA0_a';y_r(1);y_a(1);y_a(end)]; %#ok<COLND>
+        x_baseline_BETA = [x_r(1);x_a(1);x_a(end)]; %#ok<COLND>
         lb = [lb_r';lb_a';0;0;0];
         ub = [ub_r';ub_a';max(y);max(y);max(y)];
     elseif r == data{inx}.num_regions
         num_maxima = length(BETA0_b)/4 + length(BETA0_r)/4;
         x = [x_b';x_r'];
         y = [y_b';y_r'];
-        BETA0 = [BETA0_b';BETA0_r';y_b(1);y_r(1);y_r(end)];
-        x_baseline_BETA = [x_b(1);x_r(1);x_r(end)];
+        BETA0 = [BETA0_b';BETA0_r';y_b(1);y_r(1);y_r(end)]; %#ok<COLND>
+        x_baseline_BETA = [x_b(1);x_r(1);x_r(end)]; %#ok<COLND>
         lb = [lb_b';lb_r';0;0;0];
         ub = [ub_b';ub_r';max(y);max(y);max(y)];
     else
         num_maxima = length(BETA0_b)/4 + length(BETA0_r)/4 + length(BETA0_a)/4;
         x = [x_b';x_r';x_a'];
         y = [y_b';y_r';y_a'];
-        BETA0 = [BETA0_b';BETA0_r';BETA0_a';y_b(1);y_r(1);y_a(1);y_a(end)];
-        x_baseline_BETA = [x_b(1);x_r(1);x_a(1);x_a(end)];
+        BETA0 = [BETA0_b';BETA0_r';BETA0_a';y_b(1);y_r(1);y_a(1);y_a(end)]; %#ok<COLND>
+        x_baseline_BETA = [x_b(1);x_r(1);x_a(1);x_a(end)]; %#ok<COLND>
         lb = [lb_b';lb_r';lb_a';0;0;0;0];
         ub = [ub_b';ub_r';ub_a';max(y);max(y);max(y);max(y)];
     end
@@ -342,14 +330,6 @@ if ~isempty(prev_BETA)
     end
 end
 
-% target_number = 3;
-% for i = 1:length(data)
-%     if length(data{i}.BETAs) ~= target_number
-%         data{i}
-%     end
-% end
-
-% noise_std = std(y(1:30)); % Use first 30 points
 xwidth = x(1)-x(2);
 baseline_width_inx = round(options.baseline_width/xwidth);
 x_baseline_BETA = x(1:baseline_width_inx:end);
@@ -495,8 +475,6 @@ for r = 1:length(regions)-1
                     num_changed = num_changed + 1;
                 end
             end
-            %[solution,baseline_BETA,y_baseline] = fitness(solution,x,y,y_baseline,x_baseline_BETA,baseline_BETA,baseline_lb,baseline_ub);
-%             fprintf('r2: %.4f, # changed: %d\n',solution.r2,num_changed);
             if num_changed == 0 && prev_num_changed == 0
                 break;
             else
@@ -507,53 +485,16 @@ for r = 1:length(regions)-1
 end
 
 
-% % Evolve the best solution up to a maximum number of generations or until
-% % we stop changing
-% prev_num_changed = NaN;
-% for g = 1:options.num_generations
-%     order_inxs = randperm(num_peaks); % Randomly pick the order to change the peaks
-%     num_changed = 0;
-%     for i = 1:length(order_inxs)
-%         k = order_inxs(i);
-%         scores = zeros(1,num_iterations);
-%         temps = cell(1,num_iterations);
-%         for j = 1:num_iterations
-%             temp = solution;
-%             temp.pinxs(k) = j;
-%             [temp,baseline_BETA,y_baseline] = fitness(temp,x,y,x_baseline_BETA,baseline_BETA);
-%             scores(j) = temp.r2;
-%             temps{j} = temp;
-%         end
-%         [v,ix] = max(scores);
-%         if ix ~= solution.pinxs(k) % New solution
-%             solution = temps{ix};
-%             num_changed = num_changed + 1;
-%         end
-%     end
-%     %[solution,baseline_BETA,y_baseline] = fitness(solution,x,y,y_baseline,x_baseline_BETA,baseline_BETA,baseline_lb,baseline_ub);
-%     fprintf('r2: %.4f, # changed: %d\n',solution.r2,num_changed);
-%     if num_changed == 0 && prev_num_changed == 0
-%         break;
-%     else
-%         prev_num_changed = num_changed;
-%     end
-% end
-
 results = {};
 results.solution = solution;
 BETA = [];
 for k = 1:length(sorted_key_inxs)
     inx = sorted_key_inxs(k);
-% for inx = 1:length(data)
     BETA = [BETA;data{inx}.BETAs{solution.pinxs(inx)}];
 end
 results.BETA = BETA;
 results.x_baseline_BETA = x_baseline_BETA;
-% results.baseline_BETA = baseline_BETA;
 results.y_baseline = y_baseline;
 
 fprintf('r2: %.4f\n',solution.r2);
 
-% plot(x,y,x,solution.y_fit,x,solution.y_peaks,x,y_baseline);
-% set(gca,'xdir','reverse');
-% legend('Exp','Fit','Peaks','Baseline');
