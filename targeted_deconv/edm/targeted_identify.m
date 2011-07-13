@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 12-Jul-2011 17:09:56
+% Last Modified by GUIDE v2.5 12-Jul-2011 19:46:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -485,6 +485,22 @@ function deselect_peak_tool_ClickedCallback(hObject, ~, handles)
 putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
 reset_plot_to_non_interactive(handles);
 
+% --------------------------------------------------------------------
+function add_peak_tool_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to add_peak_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
+
+% --------------------------------------------------------------------
+function remove_peak_tool_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to remove_peak_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
+
 function idx = min_idx(vals)
 min_val = min(vals);
 idx = find(vals == min_val, 1, 'first');
@@ -584,5 +600,3 @@ function dont_call_this_function_it_exists_to_remove_spurious_warnings()
  spectrum_number_edit_box_CreateFcn;
  metabolite_menu_CreateFcn;
  dont_call_this_function_it_exists_to_remove_spurious_warnings;
-
-
