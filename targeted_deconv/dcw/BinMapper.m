@@ -22,7 +22,7 @@ function varargout = BinMapper(varargin)
 
 % Edit the above text to modify the response to help BinMapper
 
-% Last Modified by GUIDE v2.5 12-Jul-2011 23:47:05
+% Last Modified by GUIDE v2.5 13-Jul-2011 12:16:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -120,25 +120,25 @@ end;
 axesObjLimit = get(handles.axes1, 'YLim');
 
 % Draw the working bin bounds, if appropriate.
-if ( isfield(handles, 'workingLowerBound') )
-    xseries = [handles.workingLowerBound handles.workingLowerBound];
+if ( isfield(handles, 'workingLeftBound') )
+    xseries = [handles.workingLeftBound handles.workingLeftBound];
     plot(xseries, axesObjLimit, '-.g');
 end;
-if ( isfield(handles, 'workingUpperBound') )
-    xseries = [handles.workingUpperBound handles.workingUpperBound];
+if ( isfield(handles, 'workingRightBound') )
+    xseries = [handles.workingRightBound handles.workingRightBound];
     plot(xseries, axesObjLimit, '-.r');
 end;
 
 % Draw all stored bin bounds.
-if ( isfield(handles, 'storedBinsLowerBounds') )
-    for i = 1:length(handles.storedBinsLowerBounds)
+if ( isfield(handles, 'storedBinsLeftBounds') )
+    for i = 1:length(handles.storedBinsLeftBounds)
         xseries = ...
-            [ handles.storedBinsLowerBounds(i) ...
-            handles.storedBinsLowerBounds(i) ];
+            [ handles.storedBinsLeftBounds(i) ...
+            handles.storedBinsLeftBounds(i) ];
         plot(xseries, axesObjLimit, 'Color', [.67 1 1], 'LineStyle', '-.');
         xseries = ...
-            [ handles.storedBinsUpperBounds(i) ...
-            handles.storedBinsUpperBounds(i) ];
+            [ handles.storedBinsRightBounds(i) ...
+            handles.storedBinsRightBounds(i) ];
         plot(xseries, axesObjLimit, 'Color', [1 .67 0], 'LineStyle', '-.');
     end;
 end;
@@ -153,15 +153,15 @@ stringPropCell = '';
 if (handles.currentStoredBinCount == 1)
     stringPropCell = [ num2str(handles.storedBinsIDs, '%d') ',' ...
         handles.storedBinsMetabolites{1} ',' ...
-        num2str(handles.storedBinsLowerBounds, '%.3f') ',' ...
-        num2str(handles.storedBinsUpperBounds, '%.3f') ];
+        num2str(handles.storedBinsLeftBounds, '%.3f') ',' ...
+        num2str(handles.storedBinsRightBounds, '%.3f') ];
 else
     stringPropCell = {};
     for i = 1:handles.currentStoredBinCount
         stringPropCell{i} = [ num2str(handles.storedBinsIDs(i), '%d') ',' ...
             handles.storedBinsMetabolites{i} ',' ...
-            num2str(handles.storedBinsLowerBounds(i), '%.3f') ',' ...
-            num2str(handles.storedBinsUpperBounds(i), '%.3f') ];
+            num2str(handles.storedBinsLeftBounds(i), '%.3f') ',' ...
+            num2str(handles.storedBinsRightBounds(i), '%.3f') ];
     end;
 end;
 set(handles.mapped_bins_listbox, 'String', stringPropCell);
@@ -208,8 +208,8 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function lower_bound_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to lower_bound_edit (see GCBO)
+function left_bound_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to left_bound_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -218,8 +218,8 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function upper_bound_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to upper_bound_edit (see GCBO)
+function right_bound_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to right_bound_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -307,8 +307,8 @@ if ( ~isempty(handles.collections) )
     set(handles.select_spectrum_popup, 'Value', 1);
     set(handles.select_spectrum_popup, 'String', '^ Select a collection first');
     set(handles.select_spectrum_popup, 'Enable', 'off');
-    set(handles.lower_bound_mode_radiobutton, 'Enable', 'on');
-    set(handles.upper_bound_mode_radiobutton, 'Enable', 'on');
+    set(handles.left_bound_mode_radiobutton, 'Enable', 'on');
+    set(handles.right_bound_mode_radiobutton, 'Enable', 'on');
 else
     set(handles.select_collection_popup, 'Value', 1);
     set(handles.select_collection_popup,'String','[ NO COLLECTION LOADED ]');
@@ -316,8 +316,8 @@ else
     set(handles.select_spectrum_popup, 'Value', 1);
     set(handles.select_spectrum_popup,'String','[ NO COLLECTION LOADED ]');
     set(handles.select_spectrum_popup,'Enable','off');
-    set(handles.lower_bound_mode_radiobutton,'Enable','off');
-    set(handles.upper_bound_mode_radiobutton,'Enable','off');
+    set(handles.left_bound_mode_radiobutton,'Enable','off');
+    set(handles.right_bound_mode_radiobutton,'Enable','off');
 end;
 
 
@@ -400,22 +400,22 @@ popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup 
 switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
     
     case 'overlaid_mode_radiobutton'
-        % Disable the spectra popup menu.
+        % Disable the spectra popup menu & do not allow bin appending.
         set(handles.select_spectrum_popup, 'Enable', 'off');
         set(handles.append_bin_button, 'Enable', 'off');
-        set(handles.retrieve_bin_button, 'Enable', 'off');
-        set(handles.delete_bin_button, 'Enable', 'off');
         redrawGraph(handles);
         
     case 'individual_mode_radiobutton'
         % Display only one spectrum in the collection at a time.
         if ( popupCollectionNum > 0 )
+            % A collection is selected.
             set(handles.select_spectrum_popup, 'Enable', 'on');
             set(handles.append_bin_button, 'Enable', 'on');
             set(handles.retrieve_bin_button, 'Enable', 'on');
             set(handles.delete_bin_button, 'Enable', 'on');
             redrawGraph(handles);
         else
+            % No collection is actually selected to display.
             set(handles.select_spectrum_popup, 'Enable', 'off');
             set(handles.append_bin_button, 'Enable', 'off');
             set(handles.retrieve_bin_button, 'Enable', 'off');
@@ -447,14 +447,14 @@ if ( ~isempty(filename) )
     handles.storedBinsIDs = binmapData{1};
     handles.currentStoredBinCount = length(handles.storedBinsIDs);
     handles.storedBinsMetabolites = binmapData{2};
-    handles.storedBinsLowerBounds = binmapData{4};
-    handles.storedBinsUpperBounds = binmapData{3};
+    handles.storedBinsLeftBounds = binmapData{3};
+    handles.storedBinsRightBounds = binmapData{4};
     handles.storedBinsMultiplicities = binmapData{5};
     handles.storedBinsDeconv = binmapData{6};
     handles.storedBinsProtonIDs = binmapData{7};
     handles.storedBinsIDSources = binmapData{8};
     
-    % -- DCW: For later tracking.
+    % -- DCW: TODO: Add collection and spectrum ID to format
     handles.storedBinsCollectionID = ...
         zeros(handles.currentStoredBinCount, 1);
     handles.storedBinsSpectrumID = ...
@@ -482,6 +482,7 @@ function retrieve_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to retrieve_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% -- DCW: TODO: Zoom in on bin @ retrieval.
 selectedBin = get(handles.mapped_bins_listbox, 'Value');
 set(handles.metabolite_name_edit, 'String', ...
     handles.storedBinsMetabolites{selectedBin});
@@ -491,14 +492,14 @@ set(handles.proton_id_edit, 'String', ...
     handles.storedBinsProtonIDs{selectedBin});
 set(handles.deconvolution_edit, 'String', ...
     handles.storedBinsDeconv{selectedBin});
-set(handles.lower_bound_edit, 'String', ...
-    num2str(handles.storedBinsLowerBounds(selectedBin),'%.5e'));
-set(handles.upper_bound_edit, 'String', ...
-    num2str(handles.storedBinsUpperBounds(selectedBin),'%.5e'));
+set(handles.left_bound_edit, 'String', ...
+    num2str(handles.storedBinsLeftBounds(selectedBin),'%.5e'));
+set(handles.right_bound_edit, 'String', ...
+    num2str(handles.storedBinsRightBounds(selectedBin),'%.5e'));
 set(handles.multiplicity_edit, 'String', ...
     handles.storedBinsMultiplicities{selectedBin});
-handles.workingLowerBound = handles.storedBinsLowerBounds(selectedBin);
-handles.workingUpperBound = handles.storedBinsUpperBounds(selectedBin);
+handles.workingLeftBound = handles.storedBinsLeftBounds(selectedBin);
+handles.workingRightBound = handles.storedBinsRightBounds(selectedBin);
 guidata(hObject, handles);
 
 
@@ -531,8 +532,8 @@ if ( ~isequal(filename, 0) && ~isequal(pathname, 0) )
             fprintf(fid, '%d,%s,%.8e,%.8e,%s,%s,%s,%s\n', ...
                 handles.storedBinsIDs(i), ...
                 handles.storedBinsMetabolites{i}, ...
-                handles.storedBinsLowerBounds(i), ...
-                handles.storedBinsUpperBounds(i), ...
+                handles.storedBinsLeftBounds(i), ...
+                handles.storedBinsRightBounds(i), ...
                 handles.storedBinsMultiplicities{i}, ...
                 handles.storedBinsDeconv{i}, ...
                 handles.storedBinsProtonIDs{i}, ...
@@ -555,15 +556,15 @@ if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
     % A collection has been loaded and selected.
     clickCoords = get(gca,'CurrentPoint');
     clickXCoord = clickCoords(1,1);
-    boundMode = get(handles.upper_bound_mode_radiobutton, 'Value');
-    if ( boundMode == get(handles.upper_bound_mode_radiobutton, 'Max') )
-        % User has selected upper x bound.
-        handles.workingUpperBound = clickXCoord;
-        set(handles.upper_bound_edit, 'String', num2str(clickXCoord,'%.5e'));
+    boundMode = get(handles.right_bound_mode_radiobutton, 'Value');
+    if ( boundMode == get(handles.right_bound_mode_radiobutton, 'Max') )
+        % User has selected right x bound.
+        handles.workingRightBound = clickXCoord;
+        set(handles.right_bound_edit, 'String', num2str(clickXCoord,'%.5e'));
     else
-        % User has selected lower x bound.
-        handles.workingLowerBound = clickXCoord;
-        set(handles.lower_bound_edit, 'String', num2str(clickXCoord,'%.5e'));
+        % User has selected left x bound.
+        handles.workingLeftBound = clickXCoord;
+        set(handles.left_bound_edit, 'String', num2str(clickXCoord,'%.5e'));
     end;
     guidata(hObject, handles);
     redrawGraph(handles);
@@ -571,33 +572,33 @@ if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
 end;
 
 
-function lower_bound_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to lower_bound_edit (see GCBO)
+function left_bound_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to left_bound_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[userLowerBound, convResult] = str2num(get(hObject,'String'));
+[userLeftBound, convResult] = str2num(get(hObject,'String'));
 if ( convResult )
     % Update GUI & data.
-    handles.workingLowerBound = userLowerBound;
+    handles.workingLeftBound = userLeftBound;
     guidata(hObject, handles);
     redrawGraph(handles);
 else
-    % Non-numeric value entered into the lower bound field.
+    % Non-numeric value entered into the left bound field.
 end;
 
 
-function upper_bound_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to upper_bound_edit (see GCBO)
+function right_bound_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to right_bound_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[userUpperBound, convResult] = str2num(get(hObject,'String'));
+[userRightBound, convResult] = str2num(get(hObject,'String'));
 if ( convResult )
     % Update GUI & data.
-    handles.workingUpperBound = userUpperBound;
+    handles.workingRightBound = userRightBound;
     guidata(hObject, handles);
     redrawGraph(handles);
 else
-    % Non-numeric value entered into the upper bound field.
+    % Non-numeric value entered into the right bound field.
 end;
 
 
@@ -612,10 +613,10 @@ if ( isfield(handles, 'storedBinsIDs') )
     handles.storedBinsIDs(handles.currentStoredBinCount) = nextBinID;
     handles.storedBinsMetabolites{handles.currentStoredBinCount} = ...
         get(handles.metabolite_name_edit, 'String');
-    handles.storedBinsLowerBounds(handles.currentStoredBinCount) = ...
-        str2num(get(handles.lower_bound_edit, 'String'));
-    handles.storedBinsUpperBounds(handles.currentStoredBinCount) = ...
-        str2num(get(handles.upper_bound_edit, 'String'));
+    handles.storedBinsLeftBounds(handles.currentStoredBinCount) = ...
+        str2num(get(handles.left_bound_edit, 'String'));
+    handles.storedBinsRightBounds(handles.currentStoredBinCount) = ...
+        str2num(get(handles.right_bound_edit, 'String'));
     handles.storedBinsMultiplicities{handles.currentStoredBinCount} = ...
         get(handles.multiplicity_edit, 'String');
     handles.storedBinsDeconv{handles.currentStoredBinCount} = ...
@@ -635,10 +636,10 @@ else
     handles.storedBinsMetabolites = {};
     handles.storedBinsMetabolites{1} = ...
         get(handles.metabolite_name_edit, 'String');
-    handles.storedBinsLowerBounds = ...
-        str2num(get(handles.lower_bound_edit, 'String'));
-    handles.storedBinsUpperBounds = ...
-        str2num(get(handles.upper_bound_edit, 'String'));
+    handles.storedBinsLeftBounds = ...
+        str2num(get(handles.left_bound_edit, 'String'));
+    handles.storedBinsRightBounds = ...
+        str2num(get(handles.right_bound_edit, 'String'));
     handles.storedBinsMultiplicities = {};
     handles.storedBinsMultiplicities{1} = ...
         get(handles.multiplicity_edit, 'String');
