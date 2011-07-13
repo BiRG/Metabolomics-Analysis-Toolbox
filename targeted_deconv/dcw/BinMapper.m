@@ -78,7 +78,6 @@ varargout{1} = handles.output;
 
 % --- Clears the main axes object.
 function clearGraph(handles)
-% hObject    handle to select_spectrum_popup (see GCBO)
 % handles    empty - handles not created until after all CreateFcns called
 axes(handles.axes1);
 cla;
@@ -87,7 +86,6 @@ cla;
 % --- Draws all stored bins, the working bin, and the currently selected
 %     spectrum (or all spectra if the mode is Overlay).
 function redrawGraph(handles)
-% hObject    handle to select_spectrum_popup (see GCBO)
 % handles    empty - handles not created until after all CreateFcns called
 popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
 popupSpectrumNum = get(handles.select_spectrum_popup, 'Value');
@@ -148,11 +146,25 @@ end;
 hold off;
 
 
-% --- Executes during object deletion, before destroying properties.
-function figure1_DeleteFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
+% --- Fill the Mapped Bins listbox on the GUI
+function repopulateMappedBinsList(handles)
 % handles    structure with handles and user data (see GUIDATA)
+stringPropCell = '';
+if (handles.currentStoredBinCount == 1)
+    stringPropCell = [ num2str(handles.storedBinsIDs, '%d') ',' ...
+        handles.storedBinsMetabolites{1} ',' ...
+        num2str(handles.storedBinsLowerBounds, '%.3f') ',' ...
+        num2str(handles.storedBinsUpperBounds, '%.3f') ];
+else
+    stringPropCell = {};
+    for i = 1:handles.currentStoredBinCount
+        stringPropCell{i} = [ num2str(handles.storedBinsIDs(i), '%d') ',' ...
+            handles.storedBinsMetabolites{i} ',' ...
+            num2str(handles.storedBinsLowerBounds(i), '%.3f') ',' ...
+            num2str(handles.storedBinsUpperBounds(i), '%.3f') ];
+    end;
+end;
+set(handles.mapped_bins_listbox, 'String', stringPropCell);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -426,31 +438,38 @@ function load_binmap_button_Callback(hObject, eventdata, handles)
     '*.*', 'All Files (*.*)'} );
 if ( ~isempty(filename) )
     fid = fopen([pathname filename]);
-    binmapHeaders = textscan(fid, '%q %q %q %q %q %q %q %q', 1, ...
+    handles.binmapHeaders = textscan(fid, ...
+        '%q %q %q %q %q %q %q %q', 1, ...
         'Delimiter', ',\t');
     binmapData = textscan(fid, '%d %q %f %f %q %q %q %q', ...
         'Delimiter', ',\t');
     fclose(fid);
-    binIDsArray = binmapData{1};
-    recordCount = length(binIDsArray);
+    handles.storedBinsIDs = binmapData{1};
+    handles.currentStoredBinCount = length(handles.storedBinsIDs);
     handles.storedBinsMetabolites = binmapData{2};
     handles.storedBinsLowerBounds = binmapData{4};
     handles.storedBinsUpperBounds = binmapData{3};
-    handles.storedBinsMultiplicity = binmapData{5};
+    handles.storedBinsMultiplicities = binmapData{5};
     handles.storedBinsDeconv = binmapData{6};
-    handles.storedBinsProtonID = binmapData{7};
-    handles.storedBinsIDSource = binmapData{8};
-    handles.storedBinsCollectionID = zeros(recordCount, 1);
-    handles.storedBinsSpectrumID = zeros(recordCount, 1);
+    handles.storedBinsProtonIDs = binmapData{7};
+    handles.storedBinsIDSources = binmapData{8};
+    
+    % -- DCW: For later tracking.
+    handles.storedBinsCollectionID = ...
+        zeros(handles.currentStoredBinCount, 1);
+    handles.storedBinsSpectrumID = ...
+        zeros(handles.currentStoredBinCount, 1);
+    
     guidata(hObject, handles);
-    stringPropCell = {};
-    for i = 1:recordCount
-        stringPropCell{i} = [ num2str(binIDsArray(i), '%d') ',' ...
-            handles.storedBinsMetabolites{i} ',' ...
-            num2str(handles.storedBinsLowerBounds(i), '%.3f') ',' ...
-            num2str(handles.storedBinsUpperBounds(i), '%.3f') ];
+    repopulateMappedBinsList(handles);
+    
+    % A collection has already been loaded and selected. Redraw.
+    if ( isfield(handles, 'collections') && ...
+            ~isempty(handles.collections) && ...
+            get(handles.select_collection_popup, 'Value') > 1 )
+        redrawGraph(handles);
     end;
-    set(handles.mapped_bins_listbox, 'String', stringPropCell);
+    
     msgbox('Finished loading Binmap', 'Action Complete', ...
         'help', 'modal');
 else
@@ -458,25 +477,70 @@ else
 end;
 
 
-% --- Executes on button press in delete_bin_button.
-function delete_bin_button_Callback(hObject, eventdata, handles)
-% hObject    handle to delete_bin_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on button press in retrieve_bin_button.
 function retrieve_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to retrieve_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+selectedBin = get(handles.mapped_bins_listbox, 'Value');
+set(handles.metabolite_name_edit, 'String', ...
+    handles.storedBinsMetabolites{selectedBin});
+set(handles.id_source_edit, 'String', ...
+    handles.storedBinsIDSources{selectedBin});
+set(handles.proton_id_edit, 'String', ...
+    handles.storedBinsProtonIDs{selectedBin});
+set(handles.deconvolution_edit, 'String', ...
+    handles.storedBinsDeconv{selectedBin});
+set(handles.lower_bound_edit, 'String', ...
+    num2str(handles.storedBinsLowerBounds(selectedBin),'%.5e'));
+set(handles.upper_bound_edit, 'String', ...
+    num2str(handles.storedBinsUpperBounds(selectedBin),'%.5e'));
+set(handles.multiplicity_edit, 'String', ...
+    handles.storedBinsMultiplicities{selectedBin});
+handles.workingLowerBound = handles.storedBinsLowerBounds(selectedBin);
+handles.workingUpperBound = handles.storedBinsUpperBounds(selectedBin);
+guidata(hObject, handles);
 
+
+% --- Executes on button press in delete_bin_button.
+function delete_bin_button_Callback(hObject, eventdata, handles)
+% hObject    handle to delete_bin_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+msgbox('Feature not yet implemented.', ...
+    'Under Construction', 'warn', 'modal');
 
 % --- Executes on button press in save_binmap_button.
 function save_binmap_button_Callback(hObject, eventdata, handles)
 % hObject    handle to save_binmap_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% -- DCW: TODO: Correctly escape or otherwise handle string fields which
+%               contain commas or other delimiting characters.
+targetfile = '';
+[filename, pathname] = uiputfile( ...
+    {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
+    '*.*', 'All Files (*.*)'} );
+if ( ~isequal(filename, 0) && ~isequal(pathname, 0) )
+    targetfile = fullfile(pathname,filename);
+    [fid message] = fopen(targetfile, 'w');
+    if ( fid > 0 )
+        fprintf(fid, ['ID,Metabolite,Bin (Lt),Bin (Rt),multiplicity,'...
+            'Deconvolution,Proton ID,ID Source\n']);
+        for i = 1:handles.currentStoredBinCount
+            fprintf(fid, '%d,%s,%.8e,%.8e,%s,%s,%s,%s\n', ...
+                handles.storedBinsIDs(i), ...
+                handles.storedBinsMetabolites{i}, ...
+                handles.storedBinsLowerBounds(i), ...
+                handles.storedBinsUpperBounds(i), ...
+                handles.storedBinsMultiplicities{i}, ...
+                handles.storedBinsDeconv{i}, ...
+                handles.storedBinsProtonIDs{i}, ...
+                handles.storedBinsIDSources{i});
+        end;
+        fclose(fid);
+    end;
+end;
 
 
 % --- Executes on mouse press over axes background.
@@ -540,6 +604,68 @@ end;
 % --- Executes on button press in append_bin_button.
 function append_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to append_bin_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if ( isfield(handles, 'storedBinsIDs') )
+    nextBinID = max(handles.storedBinsIDs)+1;
+    handles.currentStoredBinCount = handles.currentStoredBinCount+1;
+    handles.storedBinsIDs(handles.currentStoredBinCount) = nextBinID;
+    handles.storedBinsMetabolites{handles.currentStoredBinCount} = ...
+        get(handles.metabolite_name_edit, 'String');
+    handles.storedBinsLowerBounds(handles.currentStoredBinCount) = ...
+        str2num(get(handles.lower_bound_edit, 'String'));
+    handles.storedBinsUpperBounds(handles.currentStoredBinCount) = ...
+        str2num(get(handles.upper_bound_edit, 'String'));
+    handles.storedBinsMultiplicities{handles.currentStoredBinCount} = ...
+        get(handles.multiplicity_edit, 'String');
+    handles.storedBinsDeconv{handles.currentStoredBinCount} = ...
+        get(handles.deconvolution_edit, 'String');
+    handles.storedBinsProtonIDs{handles.currentStoredBinCount} = ...
+        get(handles.proton_id_edit, 'String');
+    handles.storedBinsIDSources{handles.currentStoredBinCount} = ...
+        get(handles.id_source_edit, 'String');
+    handles.storedBinsCollectionID(handles.currentStoredBinCount) = ...
+        0; % -- DCW: For later tracking.
+    handles.storedBinsSpectrumID(handles.currentStoredBinCount) = ...
+        0; % -- DCW: For later tracking.
+else
+    nextBinID = 1;
+    handles.currentStoredBinCount = 1;
+    handles.storedBinsIDs = nextBinID;
+    handles.storedBinsMetabolites = {};
+    handles.storedBinsMetabolites{1} = ...
+        get(handles.metabolite_name_edit, 'String');
+    handles.storedBinsLowerBounds = ...
+        str2num(get(handles.lower_bound_edit, 'String'));
+    handles.storedBinsUpperBounds = ...
+        str2num(get(handles.upper_bound_edit, 'String'));
+    handles.storedBinsMultiplicities = {};
+    handles.storedBinsMultiplicities{1} = ...
+        get(handles.multiplicity_edit, 'String');
+    handles.storedBinsDeconv = {};
+    handles.storedBinsDeconv{1} = ...
+        get(handles.deconvolution_edit, 'String');
+    handles.storedBinsProtonIDs = {};
+    handles.storedBinsProtonIDs{1} = ...
+        get(handles.proton_id_edit, 'String');
+    handles.storedBinsIDSources = {};
+    handles.storedBinsIDSources{1} = ...
+        get(handles.id_source_edit, 'String');
+    handles.storedBinsCollectionID = ...
+        0; % -- DCW: For later tracking.
+    handles.storedBinsSpectrumID = ...
+        0; % -- DCW: For later tracking.
+end;
+guidata(hObject, handles);
+repopulateMappedBinsList(handles);
+
+
+% -- DCW: Spare callbacks & other hooks
+
+
+% --- Executes during object deletion, before destroying properties.
+function figure1_DeleteFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
