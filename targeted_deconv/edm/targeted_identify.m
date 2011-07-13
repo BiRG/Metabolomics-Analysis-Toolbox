@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 08-Jul-2011 22:30:09
+% Last Modified by GUIDE v2.5 12-Jul-2011 19:46:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -83,8 +83,10 @@ set(handles.metabolite_menu, 'String', metabolite_names);
 % Start with no identifications
 handles.identifications = [];
 
-% Start with peak_select tool selected
-set(handles.select_peak_tool,'state','on');
+% Start witn no detected peaks (but preallocate the array)
+handles.peaks = cell(num_bins, handles.collection.num_samples);
+
+% Start with no tool selected
 handles.spectrum_idx = 1;
 handles.bin_idx = 1;
 
@@ -98,6 +100,83 @@ guidata(hObject, handles);
 
 % UIWAIT makes targeted_identify wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+
+function y = y_values_in_cur_bin(handles)
+% Return the y values that fall within the current bin (choosing the
+% indices of the bin boundaries to be the closest x values to the bin
+% boundaries)
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+bin = handles.bin_map(bin_idx).bin;
+low_idx = index_of_nearest_x_to(bin.left, handles);
+high_idx = index_of_nearest_x_to(bin.right, handles);
+y = handles.collection.Y(low_idx:high_idx, spectrum_idx);
+
+function pks = get_cur_peaks(handles)
+% Return the peaks for the current bin and spectrum.  Either uses
+% those already calculated and/or modified by the user or (if they haven't
+% been calculated yet) calculates them.  Does not update the GUI if the
+% peaks are calculated.
+%
+% bin_idx       The index of the bin where the peaks lie
+% spectrum_idx  The index of the spectrum in the current collection where
+%               the peaks lie
+% handles       The user and GUI data structure
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+pks = handles.peaks{bin_idx, spectrum_idx};
+if isempty(pks)
+    col = handles.collection;
+    noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
+    noise_std = std(col.Y(1:noise_points, spectrum_idx));
+    bin = handles.bin_map(bin_idx).bin;
+    low_idx = index_of_nearest_x_to(bin.left, handles);
+    [peak_idx, ~, ~] = wavelet_find_maxes_and_mins ...
+        (y_values_in_cur_bin(handles), noise_std);
+    pks = col.x((low_idx-1)+peak_idx);
+    handles.peaks{bin_idx, spectrum_idx} = pks;
+    guidata(handles.figure1, handles);
+end
+
+
+function set_peaks(bin_idx, spectrum_idx, new_val, handles)
+% Set the peaks for the given bin in the given spectrum.  Updates the gui
+% and the guidata stored in handles.figure1.
+%
+% bin_idx       The index of the bin where the peaks lie
+% spectrum_idx  The index of the spectrum in the current collection where
+%               the peaks lie
+% new_val       The new value to use for the peaks
+% handles       The user and GUI data structure
+
+handles.peaks{bin_idx, spectrum_idx} = new_val;
+guidata(handles.figure1, handles);
+update_plot(handles);
+
+function add_peak(ppm, handles)
+% Adds a peak to the list of peaks for the current bin and spectrum 
+%
+% ppm      parts per million location of the new peak
+% handles  The user and GUI data structure
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+pks = handles.peaks{bin_idx, spectrum_idx};
+set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
+
+function remove_peak(ppm, handles)
+% Removes a peak at the given ppm from the list of peaks for the 
+% current bin and spectrum .  If there is no such peak, does nothing.
+%
+% ppm      parts per million location of the peak to remove
+% handles  The user and GUI data structure
+bin_idx = handles.bin_idx;
+spectrum_idx = handles.spectrum_idx;
+pks = handles.peaks{bin_idx, spectrum_idx};
+matches = pks==ppm;
+if any(matches)
+    pks(matches)=[];
+    set_peaks(bin_idx, spectrum_idx, pks, handles);
+end
 
 
 function ids=peak_identifications_for_cur_metabolite(handles)
@@ -153,6 +232,7 @@ spectrum = collection.Y(:,pid.spectrum_index);
 center = [pid.ppm, spectrum(pid.height_index)];
 draw_circle(center, 0.0625, 'g');
 
+
 function update_plot(handles)
 % Update the plot - needed when the spectrum index changes or the
 % identifications change
@@ -163,8 +243,16 @@ if ~ (oldlims(1) == 0 && oldlims(2) == 1)
     xlim(oldlims)
 end
 
+%Draw peak identification circles
 for id=peak_identifications_for_cur_metabolite(handles)
     draw_identification(id, handles.collection);
+end
+
+%Draw peak location lines
+cur_y = y_values_in_cur_bin(handles);
+y_bounds = [min(cur_y), max(cur_y)];
+for ppm = get_cur_peaks(handles)
+    line('XData', [ppm,ppm], 'YData', y_bounds, 'Color', 'c');
 end
 
 %Reset the button-down function on the generated plot
@@ -357,7 +445,7 @@ update_plot(handles);
 
 function set_bin_idx(new_val, handles)
 % Sets handles.bin_idx and also updates the gui - don't call when you
-% update the bin_idx to avoid repeating updates.  I believe (though I
+% update the spectrum_idx to avoid repeating updates.  I believe (though I
 % haven't verified) that the value in handles in the caller will be
 % unchanged.
 %
@@ -366,6 +454,8 @@ function set_bin_idx(new_val, handles)
 handles.bin_idx = new_val;
 guidata(handles.figure1, handles);
 update_display(handles);
+zoom_to_bin(handles);
+update_plot(handles);
 zoom_to_bin(handles);
 
 function spectrum_number_edit_box_Callback(hObject, ~, handles)
@@ -399,61 +489,42 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --------------------------------------------------------------------
-function turn_off_all_tools_but(handles, tool_name)
-% TURN_OFF_ALL_BUT Turns off all tools in the toolbar but the tool with the given name
-% tool_name The name of the tool to be left alone
-if ~isequal(tool_name,'pan_tool')
-    set(handles.pan_tool,'state','off');
-end
-if ~isequal(tool_name,'zoom_in_tool')
-    set(handles.zoom_in_tool,'state','off');
-end
-if ~isequal(tool_name,'zoom_out_tool')
-    set(handles.zoom_out_tool,'state','off');
-end
-if ~isequal(tool_name,'select_peak_tool')
-    set(handles.select_peak_tool,'state','off');
-end
-if ~isequal(tool_name,'deselect_peak_tool')
-    set(handles.deselect_peak_tool,'state','off');
-end
+function reset_plot_to_non_interactive(handles)
+% Disables interactive panning or zoom mode 
+zoom(handles.figure1, 'off');
+pan(handles.figure1, 'off');
 
 % --------------------------------------------------------------------
-function pan_tool_OnCallback(~, ~, handles)
-% hObject    handle to pan_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'pan_tool');
-
-% --------------------------------------------------------------------
-function zoom_in_tool_OnCallback(~, ~, handles)
-% hObject    handle to zoom_in_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'zoom_in_tool');
-
-% --------------------------------------------------------------------
-function zoom_out_tool_OnCallback(~, ~, handles)
-% hObject    handle to zoom_out_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'zoom_out_tool');
-
-% --------------------------------------------------------------------
-function select_peak_tool_OnCallback(~, ~, handles)
+function select_peak_tool_ClickedCallback(hObject, ~, handles)
 % hObject    handle to select_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'select_peak_tool');
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
 
 % --------------------------------------------------------------------
-function deselect_peak_tool_OnCallback(~, ~, handles)
+function deselect_peak_tool_ClickedCallback(hObject, ~, handles)
 % hObject    handle to deselect_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-turn_off_all_tools_but(handles, 'deselect_peak_tool');
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
 
+% --------------------------------------------------------------------
+function add_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
+% hObject    handle to add_peak_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
+
+% --------------------------------------------------------------------
+function remove_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
+% hObject    handle to remove_peak_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
+reset_plot_to_non_interactive(handles);
 
 function idx = min_idx(vals)
 min_val = min(vals);
@@ -462,7 +533,7 @@ idx = find(vals == min_val, 1, 'first');
 function idx = index_of_nearest_point_to(target, points_x, points_y)
 % Return the index of the point closest to target in the points described
 % by points_x and points_y
-%
+%deselect_peak_tool_ClickedCallback
 % target   the point whose closest neighbor is being found (in form [x y] )
 % points_x the x coordinates of the neighbor points
 % points_y the y coordinates of the neighbor points
@@ -479,6 +550,16 @@ function idx = index_of_nearest_x_to(val, handles)
 xvals = handles.collection.x;
 diffs = abs(val - xvals);
 idx = min_idx(diffs);
+
+function idx = index_of_nearest_peak_to(val, handles)
+% Return the index of the value closest to val in the x coordinates of the 
+% peaks for this bin and spectrum
+%
+% handles structure with handles and user data (see GUIDATA)
+pks = get_cur_peaks(handles);
+diffs = abs(val - pks);
+idx = min_idx(diffs);
+
 
 % --- Executes on mouse press over axes background.
 function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
@@ -507,9 +588,13 @@ handles = guidata(fig1);
 
 % Run the appropriate tool
 if isequal(get(handles.select_peak_tool, 'state'),'on')
+    
     %Select peak
-    xidx = index_of_nearest_x_to(x_pos, handles);
-    newid = PeakIdentification(x_pos, xidx, handles.spectrum_idx, ...
+    peak_idx = index_of_nearest_peak_to(x_pos, handles);
+    pks = get_cur_peaks(handles);
+    ppm = pks(peak_idx);
+    xidx = index_of_nearest_x_to(ppm, handles);
+    newid = PeakIdentification(ppm, xidx, handles.spectrum_idx, ...
         handles.bin_map(handles.bin_idx));
     set_identifications([handles.identifications newid],handles);
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
@@ -525,6 +610,16 @@ elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     new_ids = handles.identifications;
     new_ids(new_ids == to_remove) = [];
     set_identifications(new_ids, handles);
+elseif isequal(get(handles.add_peak_tool, 'state'),'on')
+    
+    %Add peak
+    x_idx = index_of_nearest_x_to(x_pos, handles);
+    add_peak(handles.collection.x(x_idx), handles);
+elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
+    
+    %Remove peak
+    x_idx = index_of_nearest_x_to(x_pos, handles);
+    remove_peak(handles.collection.x(x_idx), handles);
 end
 %TODO: finish button down for spectrum plot
 
@@ -535,12 +630,9 @@ function dont_call_this_function_it_exists_to_remove_spurious_warnings()
  next_button_Callback;
  zoom_to_bin_button_Callback;
  metabolite_menu_Callback;
+ select_peak_tool_ClickedCallback;
+ deselect_peak_tool_ClickedCallback;
  spectrum_number_edit_box_Callback;
- pan_tool_OnCallback;
- zoom_in_tool_OnCallback;
- zoom_out_tool_OnCallback;
- select_peak_tool_OnCallback;
- deselect_peak_tool_OnCallback;
  spectrum_number_edit_box_CreateFcn;
  metabolite_menu_CreateFcn;
  dont_call_this_function_it_exists_to_remove_spurious_warnings;
