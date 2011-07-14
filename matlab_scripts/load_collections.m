@@ -4,7 +4,7 @@ function collections = load_collections
         '*.txt', 'Tab delimited files (*.txt)'; ...
         '*.*', 'All Files (*.*)'}, ...
         'Select one or more files','MultiSelect', 'on');
-if isempty(filenames) | filenames==0
+if ( ~iscell(filenames) && filenames == 0 )
     collections = {};
     return;
 end

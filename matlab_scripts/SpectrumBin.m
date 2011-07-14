@@ -15,6 +15,11 @@ classdef SpectrumBin
                 obj.right = right;
             end
         end
+        
+        % Equality operation -- called by operator==
+        function r=eq(a,b)
+            r=([a.left] == [b.left]) & ([a.right] == [b.right]);
+        end
     end
     
 end
