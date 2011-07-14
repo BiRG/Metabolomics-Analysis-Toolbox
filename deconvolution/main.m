@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 08-Jul-2011 15:56:46
+% Last Modified by GUIDE v2.5 14-Jul-2011 14:03:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -745,7 +745,7 @@ collection = getappdata(gcf,'collection');
 reference = getappdata(gcf,'reference');
 
 % Find the best way to divide the spectra up, so that matching can complete
-min_split_distance_ppm = str2num(get(handles.G_edit,'String'));
+min_split_distance_ppm = str2num(get(handles.min_split_distance_edit,'String'));
 peak_locations = reference.x(reference.maxs);
 for s = 1:size(collection.Y,2)
     peak_locations = [peak_locations, collection.x(collection.maxs{s})];
@@ -835,13 +835,14 @@ for b = 1:nBins
 %         [match_ids,final_score] = match_peaks_dynamic(x(reference.maxs(reference_bin_inxs(inxs1))),...
 %             x(maxs(bin_inxs(inxs2))),str2num(get(handles.search_width_edit,'String')));
         
-        match_ids = match_peaks_R2(x(reference.maxs(reference_bin_inxs(inxs1))),...
-            x(maxs(bin_inxs(inxs2))),str2num(get(handles.search_width_edit,'String')),...
-            collection.x(1)-collection.x(2),str2num(get(handles.G_edit,'String')),str2num(get(handles.search_sigma_edit,'String')));
+%         match_ids = match_peaks_R2(x(reference.maxs(reference_bin_inxs(inxs1))),...
+%             x(maxs(bin_inxs(inxs2))),str2num(get(handles.search_width_edit,'String')),...
+%             collection.x(1)-collection.x(2),str2num(get(handles.min_split_distance_edit,'String')),str2num(get(handles.search_sigma_edit,'String')));
 
-%             [match_ids,final_score] = match_peaks(left,right,x(1)-x(2),...
-%                  x(reference.maxs(reference_bin_inxs(inxs1))),...
-%                  x(maxs(bin_inxs(inxs2))));
+        max_distance = 20;
+        answer_maxs = x(reference.maxs(reference_bin_inxs(inxs1)));
+        calc_maxs = x(maxs(bin_inxs(inxs2)));
+        [match_ids,final_score] = match_peaks_dynamic(answer_maxs,calc_maxs,max_distance);
 
          for i = 1:length(match_ids)
              if match_ids{i}(1) ~= 0 && match_ids{i}(2) ~= 0 % Nothing to match in axes2
@@ -1132,18 +1133,18 @@ setappdata(gcf,'dirty',true);
 
 
 
-function G_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to G_edit (see GCBO)
+function min_split_distance_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to min_split_distance_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of G_edit as text
-%        str2double(get(hObject,'String')) returns contents of G_edit as a double
+% Hints: get(hObject,'String') returns contents of min_split_distance_edit as text
+%        str2double(get(hObject,'String')) returns contents of min_split_distance_edit as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function G_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to G_edit (see GCBO)
+function min_split_distance_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to min_split_distance_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1394,3 +1395,27 @@ function search_sigma_edit_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in save_match_pushbutton.
+function save_match_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to save_match_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+collection = getappdata(gcf,'collection');
+reference = getappdata(gcf,'reference');
+[filename, pathname] = uiputfile('*.csv', 'Save match as');
+f = fopen([pathname,filename],'w');
+fprintf(f,join(reference.x(reference.maxs),','));
+fprintf(f,'\n');
+fprintf(f,join(reference.max_ids,','));
+fprintf(f,'\n');
+for s = 1:collection.num_samples
+    x_maxs = collection.x(collection.maxs{s});
+    fprintf(f,join(x_maxs,','));
+    fprintf(f,'\n');
+    fprintf(f,join(collection.match_ids{s},','));
+    fprintf(f,'\n');
+end
+fclose(f);

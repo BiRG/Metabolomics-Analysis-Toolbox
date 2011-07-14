@@ -36,12 +36,13 @@ end
 match_ids = collection.match_ids{s};
 t_error = false;
 inxs2 = find(collection.include_mask{s} == 1);
-new_match_ids = [];
 for i = 1:length(hlabels)
     try
         v = str2num(get(hlabels(i),'String'));
         
         if v == 0 % No match for this one
+            set(hlabels(i),'color','g');
+            match_ids(inxs2(i)) = v;
             continue;
         end
         
@@ -52,23 +53,6 @@ for i = 1:length(hlabels)
             continue;
         end
         
-%         % Now check for duplicates
-%         if ~isempty(find(new_match_ids == v))
-%             error = true;
-%             set(hlabels(i),'color','r');
-%             inxs = find(match_ids == v);
-%             set(hlabels(inxs),'color','r');
-%             continue;
-%         end
-        
-%         % Check to make sure it is within bounds of reference peaks
-%         reference_match_ids = 1:length(inxs1);
-%         if isempty(find(v == reference_match_ids))
-%             t_error = true;
-%             set(hlabels(i),'color','r');
-%             continue;
-%         end
-
         % Make sure it has a match
         if isempty(find(v == max_ids))
             t_error = true;
@@ -76,7 +60,6 @@ for i = 1:length(hlabels)
             continue;
         end
         
-        new_match_ids(end+1) = v;
         set(hlabels(i),'color','k');
         match_ids(inxs2(i)) = v;
     catch ME
