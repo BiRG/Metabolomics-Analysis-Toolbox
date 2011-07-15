@@ -22,7 +22,7 @@ function varargout = select_bin_subset(varargin)
 
 % Edit the above text to modify the response to help select_bin_subset
 
-% Last Modified by GUIDE v2.5 14-Jul-2011 21:12:47
+% Last Modified by GUIDE v2.5 15-Jul-2011 10:06:52
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -172,28 +172,30 @@ if ( ischar(filename) )
             mat2cell(binLoadings{3}, vectorOfOnes, 1) ...
             mat2cell(logical(binLoadings{4}), vectorOfOnes, 1) ];
         
-        if ( isfield(handles, 'binListCount') && ...
-                handles.binListCount ~= handles.binLoadingsCount )
-            msgbox(['Mismatched record counts!' 10 13 10 13 ...
-                'Bin list record count: ' ...
-                num2str(handles.binListCount) 10 13 ...
-                'Bin loadings record count: ' ...
-                num2str(handles.binLoadingsCount) ], ...
-                'Unmatched file record counts','error','modal');
-        else
             dataOnTable = get(handles.binlist_uitable, 'Data');
-            nanCellArray = mat2cell( ...
-                NaN(handles.binLoadingsCount, 1), ...
-                vectorOfOnes, 1);
-            if ( isempty(dataOnTable) )
-                binLoadings = [ binLoadings(:,4) nanCellArray ...
-                    nanCellArray binLoadings(:,3) binLoadings(:,4) ];
-            else
-                binLoadings = [ binLoadings(:,4) dataOnTable(:,2:3) ...
-                    binLoadings(:,2) binLoadings(:,4) ];
-            end;
-            set(handles.binlist_uitable, 'Data', binLoadings);
-        end;
+            max_error_match = str2num(get(handles.max_error_match_edit,'String')); % ppm
+            for i = 1:length(binLoadings(:,1))
+                x = binLoadings{i,1};
+                p = binLoadings{i,2};
+                s = binLoadings{i,4};
+                matched = false;
+                for j = 1:length(dataOnTable(:,2))
+                    left = dataOnTable{j,2};
+                    right = dataOnTable{j,3};
+                    center = (left+right)/2;
+                    if abs(center-x) < max_error_match
+                        dataOnTable{j,4} = p;
+                        dataOnTable{j,5} = s;
+                        dataOnTable{j,1} = s;
+                        matched = true;
+                        break;
+                    end
+                end
+                if ~matched
+                    fprintf('%f not matched\n',x);
+                end
+            end
+            set(handles.binlist_uitable, 'Data', dataOnTable);
     else
         msgbox(['Unable to open loadings file ' fullpath '!'], ...
             'Could not open file', 'error', 'modal');
@@ -216,10 +218,15 @@ if ( isfield(handles, 'binListCount') )
         fid = fopen(fullpath, 'w');
         if ( fid > 2 )
             source = get(handles.binlist_uitable, 'Data');
+            first = true;
             for i = 1:handles.binListCount
                 if ( source{i,1} )
+                    if ~first
+                        fprintf(fid,';');
+                    end
                     % The "include?" box was selected for this row.
-                    fprintf(fid, '%f,%f;', source{i,2}, source{i,3});
+                    fprintf(fid, '%f,%f', source{i,2}, source{i,3});
+                    first = false;
                 end;
             end;
             fclose(fid);
@@ -232,3 +239,26 @@ else
     msgbox('Please load a bin list file first.', ...
         'No bin list data to save', 'error', 'modal');
 end;
+
+
+
+function max_error_match_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to max_error_match_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of max_error_match_edit as text
+%        str2double(get(hObject,'String')) returns contents of max_error_match_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function max_error_match_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to max_error_match_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
