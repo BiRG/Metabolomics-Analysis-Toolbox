@@ -22,7 +22,7 @@ function varargout = select_bin_subset(varargin)
 
 % Edit the above text to modify the response to help select_bin_subset
 
-% Last Modified by GUIDE v2.5 15-Jul-2011 10:06:52
+% Last Modified by GUIDE v2.5 17-Jul-2011 21:20:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -74,6 +74,19 @@ function varargout = select_bin_subset_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+
+
+% --- Executes during object creation, after setting all properties.
+function max_error_match_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to max_error_match_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 
 % --- Executes on button press in load_binlist_button.
@@ -241,7 +254,6 @@ else
 end;
 
 
-
 function max_error_match_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to max_error_match_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -251,14 +263,29 @@ function max_error_match_edit_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of max_error_match_edit as a double
 
 
-% --- Executes during object creation, after setting all properties.
-function max_error_match_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to max_error_match_edit (see GCBO)
+% --- Executes on button press in sort_inclusion_button.
+function sort_inclusion_button_Callback(hObject, eventdata, handles)
+% hObject    handle to sort_inclusion_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+% handles    structure with handles and user data (see GUIDATA)
 
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+
+% --- Executes on button press in sort_bounds_button.
+function sort_bounds_button_Callback(hObject, eventdata, handles)
+% hObject    handle to sort_bounds_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in sort_prob_button.
+function sort_prob_button_Callback(hObject, eventdata, handles)
+% hObject    handle to sort_prob_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in sort_sig_button.
+function sort_sig_button_Callback(hObject, eventdata, handles)
+% hObject    handle to sort_sig_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
