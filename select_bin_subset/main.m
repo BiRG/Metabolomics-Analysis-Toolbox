@@ -63,6 +63,8 @@ guidata(hObject, handles);
 
 % Clear the table initially.
 set(handles.binlist_uitable, 'Data', {});
+handles.sortMode = 1;
+guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -185,30 +187,30 @@ if ( ischar(filename) )
             mat2cell(binLoadings{3}, vectorOfOnes, 1) ...
             mat2cell(logical(binLoadings{4}), vectorOfOnes, 1) ];
         
-            dataOnTable = get(handles.binlist_uitable, 'Data');
-            max_error_match = str2num(get(handles.max_error_match_edit,'String')); % ppm
-            for i = 1:length(binLoadings(:,1))
-                x = binLoadings{i,1};
-                p = binLoadings{i,2};
-                s = binLoadings{i,4};
-                matched = false;
-                for j = 1:length(dataOnTable(:,2))
-                    left = dataOnTable{j,2};
-                    right = dataOnTable{j,3};
-                    center = (left+right)/2;
-                    if abs(center-x) < max_error_match
-                        dataOnTable{j,4} = p;
-                        dataOnTable{j,5} = s;
-                        dataOnTable{j,1} = s;
-                        matched = true;
-                        break;
-                    end
-                end
-                if ~matched
-                    fprintf('%f not matched\n',x);
+        dataOnTable = get(handles.binlist_uitable, 'Data');
+        max_error_match = str2num(get(handles.max_error_match_edit,'String')); % ppm
+        for i = 1:length(binLoadings(:,1))
+            x = binLoadings{i,1};
+            p = binLoadings{i,2};
+            s = binLoadings{i,4};
+            matched = false;
+            for j = 1:length(dataOnTable(:,2))
+                left = dataOnTable{j,2};
+                right = dataOnTable{j,3};
+                center = (left+right)/2;
+                if abs(center-x) < max_error_match
+                    dataOnTable{j,4} = p;
+                    dataOnTable{j,5} = s;
+                    dataOnTable{j,1} = s;
+                    matched = true;
+                    break;
                 end
             end
-            set(handles.binlist_uitable, 'Data', dataOnTable);
+            if ~matched
+                fprintf('%f not matched\n',x);
+            end
+        end
+        set(handles.binlist_uitable, 'Data', dataOnTable);
     else
         msgbox(['Unable to open loadings file ' fullpath '!'], ...
             'Could not open file', 'error', 'modal');
@@ -263,11 +265,25 @@ function max_error_match_edit_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of max_error_match_edit as a double
 
 
-% --- Executes on button press in sort_inclusion_button.
-function sort_inclusion_button_Callback(hObject, eventdata, handles)
-% hObject    handle to sort_inclusion_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+% --- Replace last occurrence of "Desc" in sourceString with "Asc"
+function newString = replaceDescWithAsc(sourceString)
+newString = regexprep(sourceString, 'Desc(.*)$', 'Asc$1');
+
+
+% --- Replace last occurrence of "Asc" in sourceString with "Desc"
+function newString = replaceAscWithDesc(sourceString)
+newString = regexprep(sourceString, 'Asc(.*)$', 'Desc$1');
+
+
+% --- Switches the "Asc" to "Desc" and vice-versa.
+function switchSortDirLabel(hObject, sortMode)
+if ( sortMode > 0 )
+    set(hObject, 'String', ...
+        replaceDescWithAsc(get(hObject, 'String')));
+else
+    set(hObject, 'String', ...
+        replaceAscWithDesc(get(hObject, 'String')));
+end;
 
 
 % --- Executes on button press in sort_bounds_button.
@@ -275,6 +291,22 @@ function sort_bounds_button_Callback(hObject, eventdata, handles)
 % hObject    handle to sort_bounds_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+%msgbox(['Bounds button clicked. ' 10 13 ...
+%    'hObject''s Tag property: ' get(hObject, 'Tag')], ...
+%    '', 'help', 'modal');
+if ( abs(handles.sortMode) == 1 )
+    switchSortDirLabel(hObject, handles.sortMode);
+    handles.sortMode = -handles.sortMode;
+else
+    handles.sortMode = 1;
+end;
+dataOnTable = get(handles.binlist_uitable, 'Data');
+dataOnTable = sortrows(dataOnTable, 2);
+if ( handles.sortMode > 0 )
+    dataOnTable = flipud(dataOnTable);
+end;
+set(handles.binlist_uitable, 'Data', dataOnTable);
+guidata(hObject, handles);
 
 
 % --- Executes on button press in sort_prob_button.
@@ -282,6 +314,42 @@ function sort_prob_button_Callback(hObject, eventdata, handles)
 % hObject    handle to sort_prob_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+%msgbox(['Probability button clicked. ' 10 13 ...
+%    'hObject''s Tag property: ' get(hObject, 'Tag')], ...
+%    '', 'help', 'modal');
+if ( abs(handles.sortMode) == 2 )
+    switchSortDirLabel(hObject, handles.sortMode);
+    handles.sortMode = -handles.sortMode;
+else
+    handles.sortMode = 2;
+end;
+dataOnTable = get(handles.binlist_uitable, 'Data');
+dataOnTable = sortrows(dataOnTable, 4);
+if ( handles.sortMode > 0 )
+    dataOnTable = flipud(dataOnTable);
+end;
+set(handles.binlist_uitable, 'Data', dataOnTable);
+guidata(hObject, handles);
+
+
+% --- Executes on button press in sort_inclusion_button.
+function sort_inclusion_button_Callback(hObject, eventdata, handles)
+% hObject    handle to sort_inclusion_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+msgbox('Feature not yet implemented.','Sorry...','warn', 'modal');
+%if ( abs(handles.sortMode) == 3 )
+%    handles.sortMode = -handles.sortMode;
+%else
+%    handles.sortMode = 3;
+%end;
+%dataOnTable = get(handles.binlist_uitable, 'Data');
+%dataOnTable = sortrows(dataOnTable, 1);
+%if ( handles.sortMode > 0 )
+%    dataOnTable = flipud(dataOnTable);
+%end;
+%set(handles.binlist_uitable, 'Data', dataOnTable);
+%guidata(hObject, handles);
 
 
 % --- Executes on button press in sort_sig_button.
@@ -289,3 +357,16 @@ function sort_sig_button_Callback(hObject, eventdata, handles)
 % hObject    handle to sort_sig_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+msgbox('Feature not yet implemented.','Sorry...','warn', 'modal');
+%if ( abs(handles.sortMode) == 4 )
+%    handles.sortMode = -handles.sortMode;
+%else
+%    handles.sortMode = 4;
+%end;
+%dataOnTable = get(handles.binlist_uitable, 'Data');
+%dataOnTable = sortrows(dataOnTable, 5);
+%if ( handles.sortMode > 0 )
+%    dataOnTable = flipud(dataOnTable);
+%end;
+%set(handles.binlist_uitable, 'Data', dataOnTable);
+%guidata(hObject, handles);
