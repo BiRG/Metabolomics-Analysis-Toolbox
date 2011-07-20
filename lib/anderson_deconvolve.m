@@ -1,18 +1,53 @@
-% --- Executes on button press in deconvolution_button.
-function anderson_deconvolve(handles)
-% hObject    handle to deconvolution_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-append_to_log(handles,sprintf('Starting deconvolution'));
+function new_collection = anderson_deconvolve(collection, ...
+    min_width, max_width, num_iterations, baseline_width, x_limits)
+%Deconvolve the given spectral collection and return the deconvolved
+%version ... see anderson_deconvolve_spectrum for explanation of the
+%options
 
-collection = getappdata(gcf,'collection');
+%append_to_log(handles,sprintf('Starting deconvolution'));
+
 [~,num_spectra] = size(collection.Y);
+% Perform deconvolution
+for s = 1:num_spectra
+    new_collection = anderson_deconvolve_spectrum(collection,s, ...
+        min_width, max_width, num_iterations, baseline_width, x_limits);
+end
+
+function new_collection = anderson_deconvolve_spectrum(collection, s, ...
+    min_width, max_width, num_iterations, baseline_width, x_limits)
+%Deconvolves spectrum s in the given collection, returning the collection
+%with the fields for spectrum s set appropriately - new fields are:
+% x_baseline_BETA 
+% baseline_BETA
+% y_baseline 
+% y_fit
+% dirty
+%
+% Things will not be recalculated unless dirty(s) is set to true on entry
+% or the array dirty(s) is not a field.
+%
+% collection the collection from which the spectrum comes.  maxs and mins must be fields of collection
+%
+% min_width the minimum width in x values of the segments into which to divide the
+%           spectrum for processing
+%
+% max_width the maximum width in x valuse for the processing segments
+%
+% num_iterations - number of iterations to run the algorithm for
+%
+% baseline_width - I'm not sure what this does.  Glancing at the code,
+%                  My guess is that it is the distance between the control 
+%                  points for the baseline height.
+%
+% x_limits - the x bounds over-which to compute the deconvolution - as they
+%            would be returned by the command xlim with no arguments
 if ~isfield(collection,'maxs')
-    msgbox('Find peaks before running deconvolution');
+    uiwait(msgbox('Find peaks before running deconvolution'));
     return
 end
-% First time
+
+% First deconvolution - add deconvolution fields
 if isempty(find(collection.BETA{1}(1:4:end) ~= 0, 1))
     collection.x_baseline_BETA = {};
     collection.baseline_BETA = {};
@@ -21,63 +56,61 @@ if isempty(find(collection.BETA{1}(1:4:end) ~= 0, 1))
     collection.dirty = [];
     collection.dirty(1:length(collection.BETA)) = true;
 end
+
 % Perform deconvolution
-for s = 1:num_spectra
-    x = collection.x;
-    xwidth = collection.x(1) - collection.x(2);
-    maxs = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
-    if ~getappdata(gcf,'dirty') && ~collection.dirty(s) % Check if anything changed
-        append_to_log(handles,sprintf('No deconvolution required for spectrum %d/%d',s,num_spectra));
-        continue;
-    end
-    % A peak has been added
-    prev_BETA = collection.BETA{s};
-    prev_maxs = maxs;
-    if length(maxs) ~= length(collection.maxs{s}) && ~isempty(maxs)
-        collection.BETA{s} = []; % Reinitialize
-    end
-    options = {};
-    options.min_width = round(str2num(get(handles.min_width_edit,'String'))/xwidth);
-    options.max_width = round(str2num(get(handles.max_width_edit,'String'))/xwidth);
-    options.num_iterations = round(str2num(get(handles.num_iterations_edit,'String')));
-    % Only optimize those peaks within the current zoom
-    xl = xlim;
-    X = collection.x(collection.maxs{s});
-    m_inxs = find(xl(1) <= X & X <= xl(2));
-    if ~isempty(m_inxs)
-        stdin = create_hadoop_input(collection.x',collection.Y(:,s),collection.maxs{s}(m_inxs),collection.mins{s}(m_inxs,:),[],options);
-        stdin = mapper(stdin,[]);
-        options = {};
-        options.baseline_width = str2num(get(handles.baseline_width_edit,'String'));
-        options.min_width = round(str2num(get(handles.min_width_edit,'String'))/xwidth);
-        options.max_width = round(str2num(get(handles.max_width_edit,'String'))/xwidth);
-        options.num_generations = 100;
-        o_inxs = find(collection.x(prev_maxs) < xl(1) | collection.x(prev_maxs) > xl(2)); % Find only those outside of the region
-        o_prev_BETA = [];
-        for q = 1:length(o_inxs)
-            o_prev_BETA = [o_prev_BETA;prev_BETA(4*(o_inxs(q)-1)+(1:4))];
-        end
-        results = reducer(collection.x',collection.Y(:,s),stdin,o_prev_BETA,collection.x(prev_maxs(o_inxs)),options);
-        collection.BETA{s} = results.BETA;
-        collection.y_fit{s} = results.solution.y_fit;
-        collection.x_baseline_BETA{s} = results.x_baseline_BETA;
-        collection.y_baseline{s} = results.y_baseline;
-        collection.dirty(s) = false;
-
-        % Update the max indices
-        collection.maxs{s} = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
-
-        append_to_log(handles,sprintf('Finished spectrum %d/%d',s,num_spectra));
-    else
-        append_to_log(handles,sprintf('No peaks within current zoom for spectrum %d/%d',s,num_spectra));
-    end
+x = collection.x;
+xwidth = collection.x(1) - collection.x(2);
+maxs = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
+if ~collection.dirty(s) % Check if anything changed
+    append_to_log(handles,sprintf('No deconvolution required for spectrum %d/%d',s,num_spectra));
+    return;
 end
-setappdata(gcf,'collection',collection);
-setappdata(gcf,'dirty',false);
+% A peak has been added
+prev_BETA = collection.BETA{s};
+prev_maxs = maxs;
+if length(maxs) ~= length(collection.maxs{s}) && ~isempty(maxs)
+    collection.BETA{s} = []; % Reinitialize
+end
+options = {};
+options.min_width = min_width/xwidth;
+options.max_width = max_width/xwidth;
+options.num_iterations = num_iterations;
+% Only optimize those peaks within the current zoom
+xl = x_limits;
+X = collection.x(collection.maxs{s});
+m_inxs = find(xl(1) <= X & X <= xl(2));
+if ~isempty(m_inxs)
+    stdin = create_hadoop_input(collection.x',collection.Y(:,s),collection.maxs{s}(m_inxs),collection.mins{s}(m_inxs,:),[],options);
+    stdin = mapper(stdin,[]);
+    options = {};
+    options.baseline_width = baseline_width;
+    options.min_width = min_width/xwidth;
+    options.max_width = max_width/xwidth;
+    options.num_generations = 100;
+    o_inxs = find(collection.x(prev_maxs) < xl(1) | collection.x(prev_maxs) > xl(2)); % Find only those outside of the region
+    o_prev_BETA = [];
+    for q = 1:length(o_inxs)
+        o_prev_BETA = [o_prev_BETA;prev_BETA(4*(o_inxs(q)-1)+(1:4))];
+    end
+    results = reducer(collection.x',collection.Y(:,s),stdin,o_prev_BETA,collection.x(prev_maxs(o_inxs)),options);
+    collection.BETA{s} = results.BETA;
+    collection.y_fit{s} = results.solution.y_fit;
+    collection.x_baseline_BETA{s} = results.x_baseline_BETA;
+    collection.y_baseline{s} = results.y_baseline;
+    collection.dirty(s) = false;
+    
+    % Update the max indices
+    collection.maxs{s} = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
+    
+    %append_to_log(handles,sprintf('Finished spectrum %d/%d',s,num_spectra));
+else
+    %append_to_log(handles,sprintf('No peaks within current zoom for spectrum %d/%d',s,num_spectra));
+end
+    
+new_collection = collection;
 
-refresh_axes2(handles);
-
-append_to_log(handles,sprintf('Finished deconvolution'));
+%refresh_axes2(handles);
+%append_to_log(handles,sprintf('Finished deconvolution'));
 
 function output = create_hadoop_input(x,y,all_maxs,all_mins,outfile,options)
 % x (d x 1) and y (d x 1)
