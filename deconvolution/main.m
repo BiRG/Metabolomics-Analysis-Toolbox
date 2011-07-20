@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 14-Jul-2011 14:03:01
+% Last Modified by GUIDE v2.5 20-Jul-2011 13:01:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1419,3 +1419,24 @@ for s = 1:collection.num_samples
     fprintf(f,'\n');
 end
 fclose(f);
+
+
+% --- Executes on button press in hide_legend_checkbox.
+function hide_legend_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to hide_legend_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of hide_legend_checkbox
+
+axis2_legend = getappdata(gcf,'axis2_legend');
+if isempty(axis2_legend)
+    return;
+end
+
+if get(handles.hide_legend_checkbox,'Value')
+    set(axis2_legend,'Visible','off');
+else
+    set(axis2_legend,'Visible','on');
+end
+
