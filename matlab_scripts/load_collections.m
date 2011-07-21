@@ -13,9 +13,9 @@ if ischar(filenames)
     filenames = {};
     filenames{end+1} = old_filenames;
 end
-pathnames = {};
+pathnames{length(filenames)} = [];
 for i = 1:length(filenames)
-    pathnames{end+1} = pathname;
+    pathnames{i} = pathname;
 end
 
 txt_filenames = {};
@@ -34,7 +34,7 @@ for k = 1:length(filenames)
     end
 end
 
-collections = {};
+collections{length(txt_filenames)} = [];
 for i = 1:length(txt_filenames)
-    collections{i} = load_collection(txt_filenames{i},txt_pathnames{i})
+    collections{i} = load_collection(txt_filenames{i},txt_pathnames{i});
 end
