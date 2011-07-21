@@ -65,10 +65,15 @@ set(hbaseline,'visible','on');
 set(hresidual,'visible','on');
 
 if ~dirty && isfield(collection,'BETA') && ~isempty(find(collection.BETA{s}(1:4:end) ~= 0)) && ~collection.dirty(s)
-    legend([hp2,hbaseline,hresidual],{get_legend(collection,s),'Baseline','Residual'});
+    axis2_legend = legend([hp2,hbaseline,hresidual],{get_legend(collection,s),'Baseline','Residual'});
 else
-    legend([hp2],{get_legend(collection,s)});
+    axis2_legend = legend([hp2],{get_legend(collection,s)});
 end
+
+if get(handles.hide_legend_checkbox,'Value')
+    set(axis2_legend,'Visible','off');
+end
+setappdata(gcf,'axis2_legend',axis2_legend);
 
 refresh_spectrum_peaks_listbox(handles);
 update_match(handles);
