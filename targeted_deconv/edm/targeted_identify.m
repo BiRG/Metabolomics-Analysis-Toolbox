@@ -244,15 +244,26 @@ if ~ (oldlims(1) == 0 && oldlims(2) == 1)
 end
 
 %Draw peak identification circles
-for id=peak_identifications_for_cur_metabolite(handles)
+ids = peak_identifications_for_cur_metabolite(handles);
+for id=ids
     draw_identification(id, handles.collection);
 end
 
 %Draw peak location lines
 cur_y = y_values_in_cur_bin(handles);
 y_bounds = [min(cur_y), max(cur_y)];
+if isempty(ids)
+    id_ppms = [];
+else
+    id_ppms = [ids.ppm];
+end
 for ppm = get_cur_peaks(handles)
-    line('XData', [ppm,ppm], 'YData', y_bounds, 'Color', 'c');
+    if any(id_ppms==ppm)
+        line_color = 'r';
+    else
+        line_color = 'c';
+    end
+    line('XData', [ppm,ppm], 'YData', y_bounds, 'Color', line_color);
 end
 
 %Reset the button-down function on the generated plot
@@ -607,15 +618,17 @@ elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     
     %Deselect peak
     ids = peak_identifications_for_cur_metabolite(handles);
-    id_x = [ids.ppm];
-    id_idx = [ids.height_index];
-    id_y = handles.collection.Y(:, handles.spectrum_idx);
-    id_y = (id_y(id_idx))';
-    idx = index_of_nearest_point_to([x_pos, y_pos], id_x, id_y);
-    to_remove = ids(idx);
-    new_ids = handles.identifications;
-    new_ids(new_ids == to_remove) = [];
-    set_identifications(new_ids, handles);
+    if ~isempty(ids) %Skip removing when there are no identified peaks
+        id_x = [ids.ppm];
+        id_idx = [ids.height_index];
+        id_y = handles.collection.Y(:, handles.spectrum_idx);
+        id_y = (id_y(id_idx))';
+        idx = index_of_nearest_point_to([x_pos, y_pos], id_x, id_y);
+        to_remove = ids(idx);
+        new_ids = handles.identifications;
+        new_ids(new_ids == to_remove) = [];
+        set_identifications(new_ids, handles);
+    end
 elseif isequal(get(handles.add_peak_tool, 'state'),'on')
     
     %Add peak
