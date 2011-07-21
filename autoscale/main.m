@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 04-Apr-2011 17:01:06
+% Last Modified by GUIDE v2.5 21-Jul-2011 16:03:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -431,5 +431,3 @@ function scaling_popupmenu_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
