@@ -276,12 +276,16 @@ for child_handle=children
     set(child_handle, 'HitTest', 'off');
 end
 
+function zoom_to_interval(right, left)
+% Set the plot boundaries to the interval [right, left]
+xlim([right, left]);
+ylim('auto');
+
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
 % index changes (and at other times)
 cb=handles.bin_map(handles.bin_idx);
-xlim([cb.bin.right, cb.bin.left]);
-ylim('auto');
+zoom_to_interval(cb.bin.right, cb.bin.left);
 
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
