@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 22-Jul-2011 16:54:58
+% Last Modified by GUIDE v2.5 22-Jul-2011 18:18:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -681,4 +681,3 @@ function dont_call_this_function_it_exists_to_remove_spurious_warnings()
  spectrum_number_edit_box_CreateFcn;
  metabolite_menu_CreateFcn;
  dont_call_this_function_it_exists_to_remove_spurious_warnings;
-
