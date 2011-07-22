@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 12-Jul-2011 19:46:32
+% Last Modified by GUIDE v2.5 22-Jul-2011 16:54:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -646,6 +646,28 @@ elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
 end
 %TODO: finish button down for spectrum plot
 
+function zoom_plot(zoom_factor, handles)
+% Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
+% factor, expanding or contracting it around its current center
+cur_interval = xlim(handles.spectrum_plot);
+center = mean(cur_interval);
+new_interval=((cur_interval - center)*zoom_factor)+center;
+zoom_to_interval(new_interval(1), new_interval(2));
+
+% --------------------------------------------------------------------
+function zoom_in_tool_ClickedCallback(~, ~, handles) %#ok<DEFNU>
+% hObject    handle to zoom_in_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+zoom_plot(3/5, handles);
+
+% --------------------------------------------------------------------
+function zoom_out_tool_ClickedCallback(~, ~, handles)  %#ok<DEFNU>
+% hObject    handle to zoom_out_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+zoom_plot(5/3, handles);
+
 function dont_call_this_function_it_exists_to_remove_spurious_warnings()
 % This function calls all those functions that matlab erroneously thinks
 % are not called when this function doesn't call them.
@@ -659,3 +681,4 @@ function dont_call_this_function_it_exists_to_remove_spurious_warnings()
  spectrum_number_edit_box_CreateFcn;
  metabolite_menu_CreateFcn;
  dont_call_this_function_it_exists_to_remove_spurious_warnings;
+
