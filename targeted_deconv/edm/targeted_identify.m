@@ -393,9 +393,27 @@ else
     else
         uiwait(msgbox('Please enter a file to save the identified peaks to', ...
             'Select identified file','modal'));
-
-        uiwait(msgbox('Now a enter a file for the reidual data', ...
+        
+        id_name = 0; 
+        while(id_name == 0)
+            [id_name,id_path] = uiputfile('*.txt', ...
+            'Select file for the identified peaks');
+        end
+        
+        uiwait(msgbox('Now a enter a file for the residual data', ...
             'Select identified file','modal'));
+        
+        resid_name = 0; 
+        while(resid_name == 0)
+            [resid_name,resid_path] = uiputfile('*.txt', ...
+            'Select file for the residual data');
+            if strcmp(resid_name, id_name) && strcmp(resid_path, id_path)
+                resid_name = 0;
+                uiwait(msgbox('You cannot use the same file for both the identified peaks and residual data', ...
+                    'Error','error','modal'));
+            end
+        end
+        
         
         uiwait(msgbox('Will run finishing code here', ...
             'Placeholder dialog', 'modal'));
