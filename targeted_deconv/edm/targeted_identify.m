@@ -373,6 +373,20 @@ else
     end
 end
 
+function name=unique_name(base, extension)
+% Return a unique filename in the current directory using base and
+% extension.  The name returned will be of the form base_xxxxxx.extension.
+%
+% Note: there is a race condition between checking for the existence of the
+% file name and the name being used.  The file may be created some-time
+% between that.
+for i=0:999999
+    name=sprintf('%s_%06d.%s',base,i,extension);
+    if ~exist(name, 'file')
+        return
+    end
+end
+
 
 % --- Executes on button press in next_button.
 function next_button_Callback(~, ~, handles)
@@ -414,6 +428,13 @@ else
             end
         end
         
+        pkid_name=unique_name('please email to eric_moyer_at_yahoo.com',...
+            'mat');
+        collection = handles.collection; %#ok<NASGU>
+        bin_map = handles.bin_map; %#ok<NASGU>
+        peaks = handles.peaks; %#ok<NASGU>
+        identifications = handles.identifications; %#ok<NASGU>
+        save(pkid_name, 'collection','bin_map','peaks','identifications');
         
         uiwait(msgbox('Will run finishing code here', ...
             'Placeholder dialog', 'modal'));
