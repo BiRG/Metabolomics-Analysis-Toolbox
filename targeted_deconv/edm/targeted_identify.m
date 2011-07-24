@@ -165,7 +165,9 @@ set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
 
 function remove_peak(ppm, handles)
 % Removes a peak at the given ppm from the list of peaks for the 
-% current bin and spectrum .  If there is no such peak, does nothing.
+% current bin and spectrum .  If there is no such peak, does nothing.  If
+% there is an identification for the current metabolite at that ppm, also 
+% removes the identification.
 %
 % ppm      parts per million location of the peak to remove
 % handles  The user and GUI data structure
@@ -174,8 +176,22 @@ spectrum_idx = handles.spectrum_idx;
 pks = handles.peaks{bin_idx, spectrum_idx};
 matches = pks==ppm;
 if any(matches)
+    %Remove peak
     pks(matches)=[];
     set_peaks(bin_idx, spectrum_idx, pks, handles);
+    handles = guidata(handles.figure1);
+    
+    %Remove identification at the same place
+    ids = peak_identifications_for_cur_metabolite(handles);
+    if ~isempty(ids)
+        id_ppm = [ids.ppm];
+        to_remove = ids(id_ppm == ppm);
+        if ~isempty(to_remove)
+            new_ids = handles.identifications;
+            new_ids(new_ids == to_remove) = [];
+            set_identifications(new_ids, handles);
+        end
+    end
 end
 
 
