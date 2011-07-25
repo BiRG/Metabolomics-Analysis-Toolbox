@@ -59,7 +59,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes targeted_deconv_start wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.figure1);hObject
 
 
 % --- Outputs from this function are returned to the command line.
@@ -198,7 +198,15 @@ end
 
 
 % --- Executes on button press in bin_map_browse_button.
-function bin_map_browse_button_Callback(hObject, ~, handles) %#ok<DEFNU>
+function bin_map_browse_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to bin_map_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[filename,pathname] = uigetfile('*.csv','Select a bin map file');
+
+if ~ischar(filename)
+    return;
+else
+    fullpath=fullfile(pathname, filename);
+    set(handles.bin_map_filename_box, 'String', fullpath);
+end
