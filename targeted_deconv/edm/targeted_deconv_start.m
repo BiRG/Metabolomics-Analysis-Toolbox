@@ -6,7 +6,7 @@ function varargout = targeted_deconv_start(varargin)
 %      H = TARGETED_DECONV_START returns the handle to a new TARGETED_DECONV_START or the handle to
 %      the existing singleton*.
 %
-%      TARGETED_DECONV_START('CALLBACK',hObject,eventData,handles,...) calls the local
+%      TARGETED_DECONV_START('CALLBACK',hObject,~,handles,...) calls the local
 %      function named CALLBACK in TARGETED_DECONV_START.M with the given input arguments.
 %
 %      TARGETED_DECONV_START('Property','Value',...) creates a new TARGETED_DECONV_START or raises the
@@ -45,7 +45,7 @@ end
 
 
 % --- Executes just before targeted_deconv_start is made visible.
-function targeted_deconv_start_OpeningFcn(hObject, eventdata, handles, varargin)
+function targeted_deconv_start_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -63,7 +63,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = targeted_deconv_start_OutputFcn(hObject, eventdata, handles) 
+function varargout = targeted_deconv_start_OutputFcn(hObject, ~, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -74,21 +74,21 @@ varargout{1} = handles.output;
 
 
 % --- Executes on button press in done_button.
-function done_button_Callback(hObject, eventdata, handles)
+function done_button_Callback(hObject, ~, handles)
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 % --- Executes on button press in cancel_button.
-function cancel_button_Callback(hObject, eventdata, handles)
+function cancel_button_Callback(hObject, ~, handles)
 % hObject    handle to cancel_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 
-function continue_filename_box_Callback(hObject, eventdata, handles)
+function continue_filename_box_Callback(hObject, ~, handles)
 % hObject    handle to continue_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -98,7 +98,7 @@ function continue_filename_box_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function continue_filename_box_CreateFcn(hObject, eventdata, handles)
+function continue_filename_box_CreateFcn(hObject, ~, handles)
 % hObject    handle to continue_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -111,14 +111,14 @@ end
 
 
 % --- Executes on button press in continue_browse_button.
-function continue_browse_button_Callback(hObject, eventdata, handles)
+function continue_browse_button_Callback(hObject, ~, handles)
 % hObject    handle to continue_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 
-function collection_filename_box_Callback(hObject, eventdata, handles)
+function collection_filename_box_Callback(hObject, ~, handles)
 % hObject    handle to collection_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -128,7 +128,7 @@ function collection_filename_box_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function collection_filename_box_CreateFcn(hObject, eventdata, handles)
+function collection_filename_box_CreateFcn(hObject, ~, handles)
 % hObject    handle to collection_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -141,7 +141,7 @@ end
 
 
 % --- Executes on button press in collection_filename_browse_button.
-function collection_filename_browse_button_Callback(hObject, eventdata, handles)
+function collection_filename_browse_button_Callback(hObject, ~, handles)
 % hObject    handle to collection_filename_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -162,7 +162,7 @@ if length(v) ~= 1 || isnan(v)
 end
 
 % --- Executes during object creation, after setting all properties.
-function collection_id_box_CreateFcn(hObject, eventdata, handles)
+function collection_id_box_CreateFcn(hObject, ~, handles)
 % hObject    handle to collection_id_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -175,7 +175,7 @@ end
 
 
 
-function bin_map_filename_box_Callback(hObject, eventdata, handles)
+function bin_map_filename_box_Callback(hObject, ~, handles)
 % hObject    handle to bin_map_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -185,7 +185,7 @@ function bin_map_filename_box_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function bin_map_filename_box_CreateFcn(hObject, eventdata, handles)
+function bin_map_filename_box_CreateFcn(hObject, ~, handles)
 % hObject    handle to bin_map_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -198,7 +198,7 @@ end
 
 
 % --- Executes on button press in bin_map_browse_button.
-function bin_map_browse_button_Callback(hObject, eventdata, handles)
+function bin_map_browse_button_Callback(hObject, ~, handles)
 % hObject    handle to bin_map_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
