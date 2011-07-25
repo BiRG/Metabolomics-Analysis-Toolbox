@@ -175,7 +175,9 @@ end
 
 function remove_peak(ppm, handles)
 % Removes a peak at the given ppm from the list of peaks for the 
-% current bin and spectrum .  If there is no such peak, does nothing.
+% current bin and spectrum .  If there is no such peak, does nothing.  If
+% there is an identification for the current metabolite at that ppm, also 
+% removes the identification.
 %
 % ppm      parts per million location of the peak to remove
 % handles  The user and GUI data structure
@@ -387,6 +389,20 @@ else
     end
 end
 
+function name=unique_name(base, extension)
+% Return a unique filename in the current directory using base and
+% extension.  The name returned will be of the form base_xxxxxx.extension.
+%
+% Note: there is a race condition between checking for the existence of the
+% file name and the name being used.  The file may be created some-time
+% between that.
+for i=0:999999
+    name=sprintf('%s_%06d.%s',base,i,extension);
+    if ~exist(name, 'file')
+        return
+    end
+end
+
 
 % --- Executes on button press in next_button.
 function next_button_Callback(~, ~, handles)
@@ -407,9 +423,34 @@ else
     else
         uiwait(msgbox('Please enter a file to save the identified peaks to', ...
             'Select identified file','modal'));
-
-        uiwait(msgbox('Now a enter a file for the reidual data', ...
+        
+        id_name = 0; 
+        while(id_name == 0)
+            [id_name,id_path] = uiputfile('*.txt', ...
+            'Select file for the identified peaks');
+        end
+        
+        uiwait(msgbox('Now a enter a file for the residual data', ...
             'Select identified file','modal'));
+        
+        resid_name = 0; 
+        while(resid_name == 0)
+            [resid_name,resid_path] = uiputfile('*.txt', ...
+            'Select file for the residual data');
+            if strcmp(resid_name, id_name) && strcmp(resid_path, id_path)
+                resid_name = 0;
+                uiwait(msgbox('You cannot use the same file for both the identified peaks and residual data', ...
+                    'Error','error','modal'));
+            end
+        end
+        
+        pkid_name=unique_name('please email to eric_moyer_at_yahoo.com',...
+            'mat');
+        collection = handles.collection; %#ok<NASGU>
+        bin_map = handles.bin_map; %#ok<NASGU>
+        peaks = handles.peaks; %#ok<NASGU>
+        identifications = handles.identifications; %#ok<NASGU>
+        save(pkid_name, 'collection','bin_map','peaks','identifications');
         
         uiwait(msgbox('Will run finishing code here', ...
             'Placeholder dialog', 'modal'));
