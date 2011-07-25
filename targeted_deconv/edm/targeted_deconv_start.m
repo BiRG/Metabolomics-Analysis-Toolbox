@@ -148,14 +148,18 @@ function collection_filename_browse_button_Callback(hObject, eventdata, handles)
 
 
 
-function collection_id_box_Callback(hObject, eventdata, handles)
+function collection_id_box_Callback(hObject, ~, ~) %#ok<DEFNU>
 % hObject    handle to collection_id_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: get(hObject,'String') returns contents of collection_id_box as text
 %        str2double(get(hObject,'String')) returns contents of collection_id_box as a double
-
+v = str2double(get(hObject,'String'));
+if length(v) ~= 1 || isnan(v)
+    uiwait(msgbox('The collection id must be a number.','Error','error'));
+    set(hObject,'String','Or enter collection id here');
+end
 
 % --- Executes during object creation, after setting all properties.
 function collection_id_box_CreateFcn(hObject, eventdata, handles)
