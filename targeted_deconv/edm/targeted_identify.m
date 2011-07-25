@@ -182,6 +182,9 @@ function remove_peak(ppm, handles)
 pks = get_cur_peaks(handles);
 matches = pks==ppm;
 if any(matches)
+    remove_identification(ppm, handles);
+    handles = guidata(handles.figure1);
+
     pks(matches)=[];
     
     bin_idx = handles.bin_idx;
@@ -444,6 +447,22 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function remove_identification(ppm, handles)
+% Removes the identification at the given ppm - if there is no
+% identification there, does nothing
+ids = peak_identifications_for_cur_metabolite(handles);
+if ~isempty(ids)
+    id_x = [ids.ppm];
+    to_remove = ids(id_x == ppm);
+    if ~isempty(to_remove)
+        new_ids = handles.identifications;
+        for id_to_remove=to_remove %Remove each ident'n one at a time
+            new_ids(new_ids == id_to_remove) = [];
+        end
+        set_identifications(new_ids, handles);
+    end
+end
+    
 function set_identifications(new_identifications, handles)
 handles.identifications = new_identifications;
 guidata(handles.figure1, handles);
@@ -640,23 +659,19 @@ if isequal(get(handles.select_peak_tool, 'state'),'on')
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     
     %Deselect peak
-    ids = peak_identifications_for_cur_metabolite(handles);
-    if ~isempty(ids) %Skip removing when there are no identified peaks
-        id_x = [ids.ppm];
-        id_idx = [ids.height_index];
-        id_y = handles.collection.Y(:, handles.spectrum_idx);
-        id_y = (id_y(id_idx))';
-        idx = index_of_nearest_point_to([x_pos, y_pos], id_x, id_y);
-        to_remove = ids(idx);
-        new_ids = handles.identifications;
-        new_ids(new_ids == to_remove) = [];
-        set_identifications(new_ids, handles);
+    peak_idx = index_of_nearest_peak_to(x_pos, handles);
+    if peak_idx > 0 % Do nothing if there are no peaks
+        pks = get_cur_peaks(handles);
+        ppm = pks(peak_idx);
+        remove_identification(ppm, handles);
     end
+    
 elseif isequal(get(handles.add_peak_tool, 'state'),'on')
     
     %Add peak
     x_idx = index_of_nearest_x_to(x_pos, handles);
     add_peak(handles.collection.x(x_idx), handles);
+
 elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
     
     %Remove peak
@@ -665,6 +680,7 @@ elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
         pks = get_cur_peaks(handles);
         remove_peak(pks(pk_idx), handles);
     end
+    
 end
 %TODO: finish button down for spectrum plot
 
