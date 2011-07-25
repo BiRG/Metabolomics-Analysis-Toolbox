@@ -22,7 +22,7 @@ function varargout = targeted_deconv_start(varargin)
 
 % Edit the above text to modify the response to help targeted_deconv_start
 
-% Last Modified by GUIDE v2.5 25-Jul-2011 15:16:10
+% Last Modified by GUIDE v2.5 25-Jul-2011 17:29:20
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -141,12 +141,22 @@ end
 
 
 % --- Executes on button press in collection_filename_browse_button.
-function collection_filename_browse_button_Callback(hObject, ~, handles) %#ok<DEFNU>
+function collection_filename_browse_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to collection_filename_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
+[filename, pathname] = uigetfile( ...
+       {'*.zip', 'Zip files (*.zip)'; ...
+        '*.txt', 'Tab delimited files (*.txt)'; ...
+        '*.*', 'All Files (*.*)'}, ...
+        'Select a spectrum collection','MultiSelect', 'off');
+    
+if ~ischar(filename)
+    return;
+else
+    fullpath=fullfile(pathname, filename);
+    set(handles.collection_filename_box, 'String', fullpath);
+end
 
 function collection_id_box_Callback(hObject, ~, ~) %#ok<DEFNU>
 % hObject    handle to collection_id_box (see GCBO)
