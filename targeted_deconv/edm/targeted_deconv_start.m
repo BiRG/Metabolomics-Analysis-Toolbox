@@ -74,18 +74,44 @@ varargout{1} = handles.output;
 
 
 % --- Executes on button press in done_button.
-function done_button_Callback(hObject, ~, handles) %#ok<DEFNU>
+function done_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+bin_map = load_binmap(get(handles.bin_map_filename_box,'String'));
+if isempty(bin_map)
+    uiwait(msgbox('Could not read the bin map from the given file', ...
+        'Error','error'));
+    return;
+end
+
+collections = load_collections_noninteractive(...
+    {get(handles.collection_filename_box,'String')},{''});
+if isempty(collections)
+    return; %Error message already printed by load_collections_noninteractive
+end
+collection = collections{1};
+if ~isstruct(collection)
+    return; %Error message already printed by load_collections_noninteractive
+end    
+
+%Pass the new data to the figure
+setappdata(0, 'collection', collection);
+setappdata(0, 'bin_map', bin_map);
+
+%Start the new figure
+targeted_identify;
+
+%Close this dialog
+delete(handles.figure1);
 
 
 % --- Executes on button press in cancel_button.
-function cancel_button_Callback(hObject, ~, handles) %#ok<DEFNU>
+function cancel_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to cancel_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+delete(handles.figure1);
 
 % --- Executes during object creation, after setting all properties.
 function continue_filename_box_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
