@@ -174,16 +174,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
-function bin_map_filename_box_Callback(hObject, ~, handles) %#ok<DEFNU>
-% hObject    handle to bin_map_filename_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of bin_map_filename_box as text
-%        str2double(get(hObject,'String')) returns contents of bin_map_filename_box as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function bin_map_filename_box_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
 % hObject    handle to bin_map_filename_box (see GCBO)
