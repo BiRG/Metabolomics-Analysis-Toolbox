@@ -368,7 +368,7 @@ varargout{1} = handles.output;
 
 
 % --- Executes on button press in previous_button.
-function previous_button_Callback(~, ~, handles)
+function previous_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to previous_button (see GCBO) - this is the first argument 
 %            (that is now replaced by ~) 
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -405,7 +405,7 @@ end
 
 
 % --- Executes on button press in next_button.
-function next_button_Callback(~, ~, handles)
+function next_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to next_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -460,14 +460,14 @@ end
 
 
 % --- Executes on button press in zoom_to_bin_button.
-function zoom_to_bin_button_Callback(~, ~, handles)
+function zoom_to_bin_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to zoom_to_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 zoom_to_bin(handles);
 
 % --- Executes on selection change in metabolite_menu.
-function metabolite_menu_Callback(hObject, ~, handles)
+function metabolite_menu_Callback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -477,7 +477,7 @@ function metabolite_menu_Callback(hObject, ~, handles)
 set_bin_idx(get(hObject,'Value'), handles);
 
 % --- Executes during object creation, after setting all properties.
-function metabolite_menu_CreateFcn(hObject, ~, ~)
+function metabolite_menu_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -550,7 +550,7 @@ zoom_to_bin(handles);
 update_plot(handles);
 zoom_to_bin(handles);
 
-function spectrum_number_edit_box_Callback(hObject, ~, handles)
+function spectrum_number_edit_box_Callback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -570,7 +570,7 @@ if ~isnan(entry) %If the user typed a number
 end
 
 % --- Executes during object creation, after setting all properties.
-function spectrum_number_edit_box_CreateFcn(hObject, ~, ~)
+function spectrum_number_edit_box_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -587,7 +587,7 @@ zoom(handles.figure1, 'off');
 pan(handles.figure1, 'off');
 
 % --------------------------------------------------------------------
-function select_peak_tool_ClickedCallback(hObject, ~, handles)
+function select_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to select_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -595,7 +595,7 @@ putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolba
 reset_plot_to_non_interactive(handles);
 
 % --------------------------------------------------------------------
-function deselect_peak_tool_ClickedCallback(hObject, ~, handles)
+function deselect_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to deselect_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -745,17 +745,3 @@ function zoom_out_tool_ClickedCallback(~, ~, handles)  %#ok<DEFNU>
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 zoom_plot(5/3, handles);
-
-function dont_call_this_function_it_exists_to_remove_spurious_warnings()
-% This function calls all those functions that matlab erroneously thinks
-% are not called when this function doesn't call them.
- previous_button_Callback(hObject, eventdata, handles)
- next_button_Callback;
- zoom_to_bin_button_Callback;
- metabolite_menu_Callback;
- select_peak_tool_ClickedCallback;
- deselect_peak_tool_ClickedCallback;
- spectrum_number_edit_box_Callback;
- spectrum_number_edit_box_CreateFcn;
- metabolite_menu_CreateFcn;
- dont_call_this_function_it_exists_to_remove_spurious_warnings;
