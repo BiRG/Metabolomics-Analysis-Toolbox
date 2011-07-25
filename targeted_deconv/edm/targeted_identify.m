@@ -622,7 +622,7 @@ function idx = min_idx(vals)
 min_val = min(vals);
 idx = find(vals == min_val, 1, 'first');
 
-function idx = index_of_nearest_point_to(target, points_x, points_y)
+function idx = index_of_nearest_point_to(target, points_x, points_y) %#ok<DEFNU>
 % Return the index of the point closest to target in the points described
 % by points_x and points_y
 %deselect_peak_tool_ClickedCallback
@@ -678,7 +678,6 @@ if ~isequal(size(mouse_pos), [2,3])
     return;
 end
 x_pos = mouse_pos(1,1);
-y_pos = mouse_pos(1,2);
 
 % Get the handles structure
 fig1=get(hObject,'Parent');
