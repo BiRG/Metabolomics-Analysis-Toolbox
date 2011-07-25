@@ -111,20 +111,21 @@ end
 
 
 % --- Executes on button press in continue_browse_button.
-function continue_browse_button_Callback(hObject, ~, handles) %#ok<DEFNU>
+function continue_browse_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to continue_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
-
-function collection_filename_box_Callback(hObject, ~, handles) %#ok<DEFNU>
-% hObject    handle to collection_filename_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of collection_filename_box as text
-%        str2double(get(hObject,'String')) returns contents of collection_filename_box as a double
+[filename, pathname] = uigetfile( ...
+       {'*.session', 'Saved session files (*.session)'; ...
+        '*.*', 'All Files (*.*)'}, ...
+        'Select a saved session','MultiSelect', 'off');
+    
+if ~ischar(filename)
+    return;
+else
+    fullpath=fullfile(pathname, filename);
+    set(handles.continue_filename_box, 'String', fullpath);
+end
 
 
 % --- Executes during object creation, after setting all properties.
