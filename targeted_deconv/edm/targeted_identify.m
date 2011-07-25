@@ -70,7 +70,7 @@ else
     handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
 end
 
-% Initialize the menu of metabolites from the bin ma
+% Initialize the menu of metabolites from the bin map
 num_bins = length(handles.bin_map);
 metabolite_names{num_bins}='';
 for bin_idx = 1:num_bins
@@ -85,6 +85,11 @@ handles.identifications = [];
 
 % Start witn no detected peaks (but preallocate the array)
 handles.peaks = cell(num_bins, handles.collection.num_samples);
+for b=1:num_bins
+    for s=1:handles.collection.num_samples
+        handles.peaks{b,s}='Uninitialized';
+    end
+end
 
 % Start with no tool selected
 handles.spectrum_idx = 1;
@@ -125,7 +130,7 @@ function pks = get_cur_peaks(handles)
 bin_idx = handles.bin_idx;
 spectrum_idx = handles.spectrum_idx;
 pks = handles.peaks{bin_idx, spectrum_idx};
-if isempty(pks)
+if ischar(pks) && strcmp(pks,'Uninitialized')
     col = handles.collection;
     noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
     noise_std = std(col.Y(1:noise_points, spectrum_idx));
@@ -154,14 +159,19 @@ guidata(handles.figure1, handles);
 update_plot(handles);
 
 function add_peak(ppm, handles)
-% Adds a peak to the list of peaks for the current bin and spectrum 
+% Adds a peak to the list of peaks for the current bin and spectrum (if the
+% ppm is not already marked as having a peak)
 %
 % ppm      parts per million location of the new peak
 % handles  The user and GUI data structure
-bin_idx = handles.bin_idx;
-spectrum_idx = handles.spectrum_idx;
-pks = handles.peaks{bin_idx, spectrum_idx};
-set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
+pks = get_cur_peaks(handles);
+matches = pks == ppm;
+if ~any(matches)
+    bin_idx = handles.bin_idx;
+    spectrum_idx = handles.spectrum_idx;
+ 
+    set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
+end
 
 function remove_peak(ppm, handles)
 % Removes a peak at the given ppm from the list of peaks for the 
@@ -169,12 +179,13 @@ function remove_peak(ppm, handles)
 %
 % ppm      parts per million location of the peak to remove
 % handles  The user and GUI data structure
-bin_idx = handles.bin_idx;
-spectrum_idx = handles.spectrum_idx;
-pks = handles.peaks{bin_idx, spectrum_idx};
+pks = get_cur_peaks(handles);
 matches = pks==ppm;
 if any(matches)
     pks(matches)=[];
+    
+    bin_idx = handles.bin_idx;
+    spectrum_idx = handles.spectrum_idx;
     set_peaks(bin_idx, spectrum_idx, pks, handles);
 end
 
