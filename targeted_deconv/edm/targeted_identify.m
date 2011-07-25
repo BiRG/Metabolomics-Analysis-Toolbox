@@ -585,12 +585,18 @@ idx = min_idx(diffs);
 
 function idx = index_of_nearest_peak_to(val, handles)
 % Return the index of the value closest to val in the x coordinates of the 
-% peaks for this bin and spectrum
+% peaks for this bin and spectrum or 0 if there are no peaks
 %
 % handles structure with handles and user data (see GUIDATA)
 pks = get_cur_peaks(handles);
-diffs = abs(val - pks);
-idx = min_idx(diffs);
+if isempty(pks)
+    idx = 0;
+    return;
+else
+    diffs = abs(val - pks);
+    idx = min_idx(diffs);
+    return;
+end
 
 
 % --- Executes on mouse press over axes background.
@@ -623,12 +629,14 @@ if isequal(get(handles.select_peak_tool, 'state'),'on')
     
     %Select peak
     peak_idx = index_of_nearest_peak_to(x_pos, handles);
-    pks = get_cur_peaks(handles);
-    ppm = pks(peak_idx);
-    xidx = index_of_nearest_x_to(ppm, handles);
-    newid = PeakIdentification(ppm, xidx, handles.spectrum_idx, ...
-        handles.bin_map(handles.bin_idx));
-    set_identifications([handles.identifications newid],handles);
+    if peak_idx > 0 %Do nothing if there are no peaks
+        pks = get_cur_peaks(handles);
+        ppm = pks(peak_idx);
+        xidx = index_of_nearest_x_to(ppm, handles);
+        newid = PeakIdentification(ppm, xidx, handles.spectrum_idx, ...
+            handles.bin_map(handles.bin_idx));
+        set_identifications([handles.identifications newid],handles);
+    end
 elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
     
     %Deselect peak
@@ -652,8 +660,11 @@ elseif isequal(get(handles.add_peak_tool, 'state'),'on')
 elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
     
     %Remove peak
-    x_idx = index_of_nearest_x_to(x_pos, handles);
-    remove_peak(handles.collection.x(x_idx), handles);
+    pk_idx = index_of_nearest_peak_to(x_pos, handles);
+    if pk_idx > 0
+        pks = get_cur_peaks(handles);
+        remove_peak(pks(pk_idx), handles);
+    end
 end
 %TODO: finish button down for spectrum plot
 
