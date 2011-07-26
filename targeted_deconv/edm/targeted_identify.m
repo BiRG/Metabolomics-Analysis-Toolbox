@@ -43,6 +43,31 @@ else
 end
 % End initialization code - DO NOT EDIT
 
+function col=bogus_collection
+% Return a collection object just made up as a space filler when the gui is
+% started in an inappropriate manner
+col.filename = 'not a real file';
+col.input_names={'Collection ID','Type','Description',...
+    'Processing log','Base sample ID','Time','Classification',...
+    'Sample ID','Subject ID','Sample Description','Weight',...
+    'Units of weight','Species'};
+col.x=[1 2 3];
+col.Y=[1 5 1]';
+col.num_samples=1;
+col.collection_id='-100';
+col.type='SpectraCollection';
+col.description=['Bogus data used for testing ',...
+    'targeted_identify.m'];
+col.processing_log='No processing done';
+col.base_sample_id=1;
+col.time=0;
+col.classification={'no_class'};
+col.sample_id={'no_sample_id'};
+col.subject_id={1};
+col.sample_description={'no_descr'};
+col.weight={'no_weight'};
+col.units_of_weight={'no_units'};
+col.species={'no_species'};
 
 % --- Executes just before targeted_identify is made visible.
 function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
@@ -66,7 +91,7 @@ if isappdata(0,'collection') && isappdata(0,'bin_map')
     rmappdata(0, 'bin_map');
 else
     uiwait(msgbox('Either the bin_map or collections were not loaded.','Error','error','modal'));
-    handles.collection = {};
+    handles.collection = bogus_collection;
     handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
 end
 
@@ -133,6 +158,11 @@ pks = handles.peaks{bin_idx, spectrum_idx};
 if ischar(pks) && strcmp(pks,'Uninitialized')
     col = handles.collection;
     noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
+    %If there are too few points, use them all as noise
+    ysize = size(col.Y);
+    if noise_points > ysize(1)
+        noise_points = ysize(1);
+    end
     noise_std = std(col.Y(1:noise_points, spectrum_idx));
     bin = handles.bin_map(bin_idx).bin;
     low_idx = index_of_nearest_x_to(bin.left, handles);

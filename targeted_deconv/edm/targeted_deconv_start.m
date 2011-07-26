@@ -165,76 +165,79 @@ end
 
 % Try to continue a saved session
 if continue_filename_is_initialized(handles)
-    %TODO write
-    uiwait(msgbox(['Continuing from a saved session is not ',...
-        'implemented.  Please choose a different method.'],...
-        'Error','error'));
-    set(handles.continue_filename_box,'String',...
-        handles.uninitialized_continue_filename);
-        % Remember to set preferences and change preference reading code 
-        % when you write this
-    return;
-end
-
-% Failing that load the bin map and collection separately
-
-% Start by loading the bin map
-if ~bin_map_filename_is_initialized(handles)
-    uiwait(msgbox('No valid bin map file was given.','Error','error'));
-    return;
-end
-
-bin_map_filename = get(handles.bin_map_filename_box,'String');
-bin_map = load_binmap(bin_map_filename);
-if isempty(bin_map)
-    uiwait(msgbox('Could not read the bin map from the given file', ...
-        'Error','error'));
-    return;
-end
-setpref('Targeted_Deconvolution','last_bin_map_filename', ...
-    bin_map_filename);
-
-
-% Now load the collection.  If there is a filename, load it from the
-% filename, otherwise, load it from the web site
-
-if collection_filename_is_initialized(handles)
-    collection_filename = get(handles.collection_filename_box,'String');
-    collections = load_collections_noninteractive({collection_filename},{''});
-    if isempty(collections)
-        return; %Error message already printed by load_collections_noninteractive
-    end
-    collection = collections{1};
-    if ~isstruct(collection)
-        return; %Error message already printed by load_collections_noninteractive
-    end
-    setpref('Targeted_Deconvolution','load_collection_from_file', 1);
-    setpref('Targeted_Deconvolution','last_collection_filename', ...
-        collection_filename);
-else
-    if collection_id_is_initialized(handles)
-        collection_id_str = get(handles.collection_id_box, 'String');
-        collection_id = str2double(collection_id_str);
-        [collection, message] = get_collection(collection_id);
-        if isempty(collection)
-            uiwait(msgbox(['Could not download collection #',...
-                collection_id_str, ':', message],'Error','error'));
-            return;
-        end
-        setpref('Targeted_Deconvolution','load_collection_from_file', 0);
-        setpref('Targeted_Deconvolution','last_collection_id_string', ...
-            collection_id_str);
+    fn = get(handles.continue_filename_box,'String'); 
+    setpref('Targeted_Deconvolution','last_continue_filename', fn);
+    load(fn, '-mat','session_data');
+    if exist('session_data','var')
+        setappdata(0,'saved_session_data', session_data);
     else
-        uiwait(msgbox(['You must either enter a valid collection id ',...
-            'for the BIRG web site or a valid filename from which ',...
-            'to load the spectrum collection.'],'Error','error'));
+        uiwait(msgbox('Could not read saved session data','Error','error'));
+        set(handles.continue_filename_box,'String', ...
+            handles.uninitialized_continue_filename);
         return;
     end
-end
+else
 
-%Pass the new data to the figure
-setappdata(0, 'collection', collection);
-setappdata(0, 'bin_map', bin_map);
+    % Failing that load the bin map and collection separately
+
+    % Start by loading the bin map
+    if ~bin_map_filename_is_initialized(handles)
+        uiwait(msgbox('No valid bin map file was given.','Error','error'));
+        return;
+    end
+
+    bin_map_filename = get(handles.bin_map_filename_box,'String');
+    bin_map = load_binmap(bin_map_filename);
+    if isempty(bin_map)
+        uiwait(msgbox('Could not read the bin map from the given file', ...
+            'Error','error'));
+        return;
+    end
+    setpref('Targeted_Deconvolution','last_bin_map_filename', ...
+        bin_map_filename);
+
+
+    % Now load the collection.  If there is a filename, load it from the
+    % filename, otherwise, load it from the web site
+
+    if collection_filename_is_initialized(handles)
+        collection_filename = get(handles.collection_filename_box,'String');
+        collections = load_collections_noninteractive({collection_filename},{''});
+        if isempty(collections)
+            return; %Error message already printed by load_collections_noninteractive
+        end
+        collection = collections{1};
+        if ~isstruct(collection)
+            return; %Error message already printed by load_collections_noninteractive
+        end
+        setpref('Targeted_Deconvolution','load_collection_from_file', 1);
+        setpref('Targeted_Deconvolution','last_collection_filename', ...
+            collection_filename);
+    else
+        if collection_id_is_initialized(handles)
+            collection_id_str = get(handles.collection_id_box, 'String');
+            collection_id = str2double(collection_id_str);
+            [collection, message] = get_collection(collection_id);
+            if isempty(collection)
+                uiwait(msgbox(['Could not download collection #',...
+                    collection_id_str, ':', message],'Error','error'));
+                return;
+            end
+            setpref('Targeted_Deconvolution','load_collection_from_file', 0);
+            setpref('Targeted_Deconvolution','last_collection_id_string', ...
+                collection_id_str);
+        else
+            uiwait(msgbox(['You must either enter a valid collection id ',...
+                'for the BIRG web site or a valid filename from which ',...
+                'to load the spectrum collection.'],'Error','error'));
+            return;
+        end
+    end
+
+    %Pass the new data to the figure
+    setappdata(0, 'collection', collection);
+    setappdata(0, 'bin_map', bin_map);
+end
 
 %Start the new figure
 targeted_identify;
