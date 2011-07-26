@@ -55,8 +55,25 @@ function targeted_deconv_start_OpeningFcn(hObject, ~, handles, varargin)
 % Choose default command line output for targeted_deconv_start
 handles.output = hObject;
 
-%Set default bin-map filename to the last one loaded (if such a preference
-%exists)
+% Set the uninitialized text box values (I do it here rather than in GUIDE
+% so I am sure to have the same values when I check for uninitialized
+% values in the done button - no possibility of changing it in GUIDE and 
+% forgetting to change it in the done button or elsewhere I might need it.)
+handles.uninitialized_bin_map_filename = 'Put filename here';
+handles.uninitialized_collection_filename = 'Put filename here';
+handles.uninitialized_collection_id = 'Or enter collection id here';
+handles.uninitialized_continue_filename = 'Put saved session filename here';
+set(handles.bin_map_filename_box, 'String', ...
+    handles.uninitialized_bin_map_filename);
+set(handles.collection_filename_box, 'String', ...
+    handles.uninitialized_collection_filename);
+set(handles.collection_id_box, 'String', ...
+    handles.uninitialized_collection_id);
+set(handles.continue_filename_box, 'String', ...
+    handles.uninitialized_continue_filename);
+
+% Set default bin-map filename to the last one loaded (if such a preference
+% exists)
 if ispref('Targeted_Deconvolution','last_bin_map_filename')
     set(handles.bin_map_filename_box,'String', ...
         getpref('Targeted_Deconvolution','last_bin_map_filename'));
