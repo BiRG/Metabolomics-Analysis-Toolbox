@@ -88,6 +88,12 @@ if ispref('Targeted_Deconvolution','load_collection_from_file')
                 getpref('Targeted_Deconvolution', ...
                 'last_collection_filename'));
         end
+    else
+        if ispref('Targeted_Deconvolution','last_collection_id_string')
+            set(handles.collection_id_box, 'String', ...
+                getpref('Targeted_Deconvolution', ...
+                'last_collection_id_string'));
+        end
     end
 end
 
@@ -151,7 +157,13 @@ function done_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% First, try to continue a saved session
+
+% Reset all preferences so it is easy to set new values on success
+if ispref('Targeted_Deconvolution')
+    rmpref('Targeted_Deconvolution'); 
+end
+
+% Try to continue a saved session
 if continue_filename_is_initialized(handles)
     %TODO write
     uiwait(msgbox(['Continuing from a saved session is not ',...
@@ -201,14 +213,17 @@ if collection_filename_is_initialized(handles)
         collection_filename);
 else
     if collection_id_is_initialized(handles)
-        uiwait(msgbox(['Loading spectra from the web-site is not', ...
-            'implemented yet.  Please load from a file.'],'Error', ...
-            'error'));
-        set(handles.collection_id_box,'String',...
-            handles.uninitialized_collection_id);
-        % Remember to set preferences and change preference reading code 
-        % when you write this
-        return;
+        collection_id_str = get(handles.collection_id_box, 'String');
+        collection_id = str2double(collection_id_str);
+        [collection, message] = get_collection(collection_id);
+        if isempty(collection)
+            uiwait(msgbox(['Could not download collection #',...
+                collection_id_str, ':', message],'Error','error'));
+            return;
+        end
+        setpref('Targeted_Deconvolution','load_collection_from_file', 0);
+        setpref('Targeted_Deconvolution','last_collection_id_string', ...
+            collection_id_str);
     else
         uiwait(msgbox(['You must either enter a valid collection id ',...
             'for the BIRG web site or a valid filename from which ',...
