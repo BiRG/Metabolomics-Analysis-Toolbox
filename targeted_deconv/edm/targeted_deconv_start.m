@@ -97,6 +97,13 @@ if ispref('Targeted_Deconvolution','load_collection_from_file')
     end
 end
 
+%Set default continuation filename to the last one loaded if there is a 
+%preference for it
+if ispref('Targeted_Deconvolution','last_continue_filename')
+    set(handles.continue_filename_box,'String', ...
+        getpref('Targeted_Deconvolution','last_continue_filename') );
+end
+
 % Update handles structure
 guidata(hObject, handles);
 

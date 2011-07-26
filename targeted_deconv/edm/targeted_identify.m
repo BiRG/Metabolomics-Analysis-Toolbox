@@ -69,31 +69,30 @@ col.weight={'no_weight'};
 col.units_of_weight={'no_units'};
 col.species={'no_species'};
 
-% --- Executes just before targeted_identify is made visible.
-function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
-% This function has no output args, see OutputFcn.
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to targeted_identify (see VARARGIN)
+function out_handles = init_handles_and_gui_from_session_data(handles, session_data)
+% Given saved session data (in session_data) as well as handles to the gui 
+% components, in handles, initializes the gui and user data from that saved
+% session.  Returns the new value of the handles object after the saved 
+% user data has been restored to it
+%
+% Note that display components are not initialized 
+set(handles.metabolite_menu,'String', session_data.metabolite_menu_string);
+handles.collection = session_data.collection;
+handles.bin_map = session_data.bin_map;
+handles.identifications = session_data.identifications;
+handles.peaks = session_data.peaks;
+handles.spectrum_idx = session_data.spectrum_idx;
+handles.bin_idx = session_data.bin_idx;
 
-% Choose default command line output for targeted_identify
-handles.output = hObject;
+out_handles = handles;
 
-% Initialize the collection and bin_map
-if isappdata(0,'collection') && isappdata(0,'bin_map')
-    % Move the app data from the matlab root into handle variables
-    handles.collection = getappdata(0,'collection');
-    handles.bin_map = getappdata(0,'bin_map');
 
-    %Remove app data from matlab root so it is not sitting around
-    rmappdata(0,'collection');
-    rmappdata(0, 'bin_map');
-else
-    uiwait(msgbox('Either the bin_map or collections were not loaded.','Error','error','modal'));
-    handles.collection = bogus_collection;
-    handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
-end
+function out_handles = init_handles_and_gui_from_scratch(handles)
+% Takes a handles structure that has handles for the gui components and a
+% bin_map and a collection and initializes the rest of the gui state from
+% that.  Returns the new value for the handles structure
+%
+% Note that display components are not initialized 
 
 % Initialize the menu of metabolites from the bin map
 num_bins = length(handles.bin_map);
@@ -119,6 +118,46 @@ end
 % Start with no tool selected
 handles.spectrum_idx = 1;
 handles.bin_idx = 1;
+
+out_handles = handles;
+
+% --- Executes just before targeted_identify is made visible.
+function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to targeted_identify (see VARARGIN)
+
+% Choose default command line output for targeted_identify
+handles.output = hObject;
+
+% Initialize the gui and handles structure using data passed in from
+% targeted_deconv_start
+if isappdata(0,'collection') && isappdata(0,'bin_map')
+    % Move the app data from the matlab root into handle variables
+    handles.collection = getappdata(0,'collection');
+    handles.bin_map = getappdata(0,'bin_map');
+
+    %Remove app data from matlab root so it is not sitting around
+    rmappdata(0,'collection');
+    rmappdata(0, 'bin_map');
+
+    handles = init_handles_and_gui_from_scratch(handles);
+elseif isappdata(0,'saved_session_data')
+    session_data = getappdata(0,'saved_session_data');
+    handles = init_handles_and_gui_from_session_data(handles, session_data);
+    
+    %Remove app data from matlab root so it is not sitting around
+    rmappdata(0,'saved_session_data');
+else
+    uiwait(msgbox('Either the bin_map or collections were not loaded.','Error','error','modal'));
+    handles.collection = bogus_collection;
+    handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
+    
+    handles = init_handles_and_gui_from_scratch(handles);
+end
+
 
 % Initialize the display components
 update_display(handles);
