@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 26-Jul-2011 09:26:08
+% Last Modified by GUIDE v2.5 26-Jul-2011 14:21:41
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -751,3 +751,10 @@ function zoom_out_tool_ClickedCallback(~, ~, handles)  %#ok<DEFNU>
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 zoom_plot(5/3, handles);
+
+
+% --- Executes on button press in save_and_quit_button.
+function save_and_quit_button_Callback(hObject, ~, handles) %#ok<DEFNU>
+% hObject    handle to save_and_quit_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
