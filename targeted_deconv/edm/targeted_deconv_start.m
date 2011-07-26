@@ -55,6 +55,25 @@ function targeted_deconv_start_OpeningFcn(hObject, ~, handles, varargin)
 % Choose default command line output for targeted_deconv_start
 handles.output = hObject;
 
+%Set default bin-map filename to the last one loaded (if such a preference
+%exists)
+if ispref('Targeted_Deconvolution','last_bin_map_filename')
+    set(handles.bin_map_filename_box,'String', ...
+        getpref('Targeted_Deconvolution','last_bin_map_filename'));
+end
+
+%Set default collection filename if there is a preference for it and if the
+%last load was from a file rather than from the website
+if ispref('Targeted_Deconvolution','load_collection_from_file')
+    if getpref('Targeted_Deconvolution','load_collection_from_file')
+        if ispref('Targeted_Deconvolution','last_collection_filename')
+            set(handles.collection_filename_box,'String', ...
+                getpref('Targeted_Deconvolution', ...
+                'last_collection_filename'));
+        end
+    end
+end
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -78,22 +97,29 @@ function done_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-bin_map = load_binmap(get(handles.bin_map_filename_box,'String'));
+bin_map_filename = get(handles.bin_map_filename_box,'String');
+bin_map = load_binmap(bin_map_filename);
 if isempty(bin_map)
     uiwait(msgbox('Could not read the bin map from the given file', ...
         'Error','error'));
     return;
 end
+setpref('Targeted_Deconvolution','last_bin_map_filename', ...
+    bin_map_filename);
 
-collections = load_collections_noninteractive(...
-    {get(handles.collection_filename_box,'String')},{''});
+
+collection_filename = get(handles.collection_filename_box,'String');
+collections = load_collections_noninteractive({collection_filename},{''});
 if isempty(collections)
     return; %Error message already printed by load_collections_noninteractive
 end
 collection = collections{1};
 if ~isstruct(collection)
     return; %Error message already printed by load_collections_noninteractive
-end    
+end
+setpref('Targeted_Deconvolution','load_collection_from_file', 1);
+setpref('Targeted_Deconvolution','last_collection_filename', ...
+    collection_filename);
 
 %Pass the new data to the figure
 setappdata(0, 'collection', collection);
