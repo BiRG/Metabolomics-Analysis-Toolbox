@@ -754,7 +754,44 @@ zoom_plot(5/3, handles);
 
 
 % --- Executes on button press in save_and_quit_button.
-function save_and_quit_button_Callback(hObject, ~, handles) %#ok<DEFNU>
+function save_and_quit_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to save_and_quit_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% The session file is just a .mat file that contains a struct
+% (named session_data) 
+%
+% Session data has fields:  (unless otherwise specified, they come from
+% handles.field_name)
+% collection
+% bin_map
+% identifcations
+% peaks
+% spectrum_idx
+% bin_idx
+% metabolite_menu_string (from get(handles.metabolite_menu,'String'); )
+
+%Get the file to save to
+[filename,pathname]=uiputfile('*.session',...
+    'Choose a file in which to save your session');
+
+%If the user cancelled, do nothing
+if ~ischar(filename)
+    return;
+end
+
+%Save
+fullname = fullfile(pathname, filename);
+session_data.metabolite_menu_string = get(handles.metabolite_menu,'String');
+session_data.collection = handles.collection;
+session_data.bin_map = handles.bin_map;
+session_data.identifications = handles.identifications;
+session_data.peaks = handles.peaks;
+session_data.spectrum_idx = handles.spectrum_idx;
+session_data.bin_idx = handles.bin_idx;
+
+save(fullname, 'session_data');
+
+%Quit
+delete(handles.figure1);
