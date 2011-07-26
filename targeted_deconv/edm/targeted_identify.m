@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 22-Jul-2011 18:18:00
+% Last Modified by GUIDE v2.5 26-Jul-2011 09:26:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -510,6 +510,22 @@ guidata(handles.figure1, handles);
 update_display(handles);
 update_plot(handles);
 
+function result=is_identified(ppm, handles)
+% Returns true if there is an identification at the given ppm, false
+% otherwise
+%
+% ppm     The ppm at which to check the existence of an identification
+% handles The gui global data structure
+ids = peak_identifications_for_cur_metabolite(handles);
+if isempty(ids)
+    result = 0;
+    return;
+else
+    id_x = [ids.ppm];
+    result = any(id_x == ppm);
+    return;
+end
+
 function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
 % Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
 % I believe (though I haven't verified) that the value in handles in the 
@@ -587,16 +603,8 @@ zoom(handles.figure1, 'off');
 pan(handles.figure1, 'off');
 
 % --------------------------------------------------------------------
-function select_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
-% hObject    handle to select_peak_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
-reset_plot_to_non_interactive(handles);
-
-% --------------------------------------------------------------------
-function deselect_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
-% hObject    handle to deselect_peak_tool (see GCBO)
+function toggle_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
+% hObject    handle to toggle_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
@@ -625,7 +633,7 @@ idx = find(vals == min_val, 1, 'first');
 function idx = index_of_nearest_point_to(target, points_x, points_y) %#ok<DEFNU>
 % Return the index of the point closest to target in the points described
 % by points_x and points_y
-%deselect_peak_tool_ClickedCallback
+%
 % target   the point whose closest neighbor is being found (in form [x y] )
 % points_x the x coordinates of the neighbor points
 % points_y the y coordinates of the neighbor points
@@ -659,6 +667,8 @@ else
 end
 
 
+
+
 % --- Executes on mouse press over axes background.
 function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
 % hObject    handle to spectrum_plot (see GCBO)
@@ -684,26 +694,22 @@ fig1=get(hObject,'Parent');
 handles = guidata(fig1);
 
 % Run the appropriate tool
-if isequal(get(handles.select_peak_tool, 'state'),'on')
+if isequal(get(handles.toggle_peak_tool, 'state'),'on')
     
-    %Select peak
     peak_idx = index_of_nearest_peak_to(x_pos, handles);
-    if peak_idx > 0 %Do nothing if there are no peaks
+    if peak_idx > 0 % do nothing if there are no peaks
         pks = get_cur_peaks(handles);
-        ppm = pks(peak_idx);
-        xidx = index_of_nearest_x_to(ppm, handles);
-        newid = PeakIdentification(ppm, xidx, handles.spectrum_idx, ...
-            handles.bin_map(handles.bin_idx));
-        set_identifications([handles.identifications newid],handles);
-    end
-elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
-    
-    %Deselect peak
-    peak_idx = index_of_nearest_peak_to(x_pos, handles);
-    if peak_idx > 0 % Do nothing if there are no peaks
-        pks = get_cur_peaks(handles);
-        ppm = pks(peak_idx);
-        remove_identification(ppm, handles);
+        peak_ppm = pks(peak_idx);
+        if is_identified(peak_ppm, handles)
+            %Deselect peak
+            remove_identification(peak_ppm, handles);
+        else
+            %Select peak
+            xidx = index_of_nearest_x_to(peak_ppm, handles);
+            newid = PeakIdentification(peak_ppm, xidx, handles.spectrum_idx, ...
+                handles.bin_map(handles.bin_idx));
+            set_identifications([handles.identifications newid],handles);
+        end
     end
     
 elseif isequal(get(handles.add_peak_tool, 'state'),'on')
