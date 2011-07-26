@@ -22,7 +22,7 @@ function varargout = targeted_deconv_start(varargin)
 
 % Edit the above text to modify the response to help targeted_deconv_start
 
-% Last Modified by GUIDE v2.5 25-Jul-2011 17:29:20
+% Last Modified by GUIDE v2.5 26-Jul-2011 12:29:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,7 +57,7 @@ handles.output = hObject;
 
 % Set the uninitialized text box values (I do it here rather than in GUIDE
 % so I am sure to have the same values when I check for uninitialized
-% values in the done button - no possibility of changing it in GUIDE and 
+% values - no possibility of changing it in GUIDE and 
 % forgetting to change it in the done button or elsewhere I might need it.)
 handles.uninitialized_bin_map_filename = 'Put filename here';
 handles.uninitialized_collection_filename = 'Put filename here';
@@ -109,11 +109,69 @@ function varargout = targeted_deconv_start_OutputFcn(~, ~, handles)
 varargout{1} = handles.output;
 
 
+function result = collection_id_is_initialized(handles)
+% Returns true if the collection id box is initialized
+result = contains_valid_collection_id(handles.collection_id_box);
+
+function result = collection_filename_is_initialized(handles)
+% Returns true if the collection filename box is initialized
+result = contains_initialized_filename(handles.collection_filename_box, ...
+    handles.uninitialized_collection_filename);
+
+function result = bin_map_filename_is_initialized(handles)
+% Returns true if the bin_map filename box is initialized
+result = contains_initialized_filename(handles.bin_map_filename_box, ...
+    handles.uninitialized_bin_map_filename);
+
+function result = continue_filename_is_initialized(handles)
+% Returns true if the continue filename box is initialized
+result = contains_initialized_filename(handles.continue_filename_box, ...
+    handles.uninitialized_continue_filename);
+
+function result = contains_initialized_filename(box_handle, ...
+    uninitialized_value)
+% Returns true if the edit box given by box_handle contains an initialized
+% filename.  An initialized filename 1) is not the empty string.
+% 2) is not uninitialized_value.  and 3) exists.  I check for the first two
+% to ensure that there won't be strange behavior if someone makes a file
+% named something like 'Put filename here' on the matlab path.
+s = get(box_handle, 'String');
+result = ~strcmp(s, uninitialized_value) && ~strcmp(s, '') ...
+    && exist(s, 'file');
+
+function result=contains_valid_collection_id(box_handle)
+% Returns true if the edit_box with the handle box_handle has a valid
+% collection id as its string property
+v = str2double(get(box_handle,'String'));
+result = ~(length(v) ~= 1 || isnan(v));
+
+
 % --- Executes on button press in done_button.
 function done_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% First, try to continue a saved session
+if continue_filename_is_initialized(handles)
+    %TODO write
+    uiwait(msgbox(['Continuing from a saved session is not ',...
+        'implemented.  Please choose a different method.'],...
+        'Error','error'));
+    set(handles.continue_filename_box,'String',...
+        handles.uninitialized_continue_filename);
+        % Remember to set preferences and change preference reading code 
+        % when you write this
+    return;
+end
+
+% Failing that load the bin map and collection separately
+
+% Start by loading the bin map
+if ~bin_map_filename_is_initialized(handles)
+    uiwait(msgbox('No valid bin map file was given.','Error','error'));
+    return;
+end
+
 bin_map_filename = get(handles.bin_map_filename_box,'String');
 bin_map = load_binmap(bin_map_filename);
 if isempty(bin_map)
@@ -125,18 +183,39 @@ setpref('Targeted_Deconvolution','last_bin_map_filename', ...
     bin_map_filename);
 
 
-collection_filename = get(handles.collection_filename_box,'String');
-collections = load_collections_noninteractive({collection_filename},{''});
-if isempty(collections)
-    return; %Error message already printed by load_collections_noninteractive
+% Now load the collection.  If there is a filename, load it from the
+% filename, otherwise, load it from the web site
+
+if collection_filename_is_initialized(handles)
+    collection_filename = get(handles.collection_filename_box,'String');
+    collections = load_collections_noninteractive({collection_filename},{''});
+    if isempty(collections)
+        return; %Error message already printed by load_collections_noninteractive
+    end
+    collection = collections{1};
+    if ~isstruct(collection)
+        return; %Error message already printed by load_collections_noninteractive
+    end
+    setpref('Targeted_Deconvolution','load_collection_from_file', 1);
+    setpref('Targeted_Deconvolution','last_collection_filename', ...
+        collection_filename);
+else
+    if collection_id_is_initialized(handles)
+        uiwait(msgbox(['Loading spectra from the web-site is not', ...
+            'implemented yet.  Please load from a file.'],'Error', ...
+            'error'));
+        set(handles.collection_id_box,'String',...
+            handles.uninitialized_collection_id);
+        % Remember to set preferences and change preference reading code 
+        % when you write this
+        return;
+    else
+        uiwait(msgbox(['You must either enter a valid collection id ',...
+            'for the BIRG web site or a valid filename from which ',...
+            'to load the spectrum collection.'],'Error','error'));
+        return;
+    end
 end
-collection = collections{1};
-if ~isstruct(collection)
-    return; %Error message already printed by load_collections_noninteractive
-end
-setpref('Targeted_Deconvolution','load_collection_from_file', 1);
-setpref('Targeted_Deconvolution','last_collection_filename', ...
-    collection_filename);
 
 %Pass the new data to the figure
 setappdata(0, 'collection', collection);
@@ -216,19 +295,23 @@ if ~ischar(filename)
 else
     fullpath=fullfile(pathname, filename);
     set(handles.collection_filename_box, 'String', fullpath);
+    set(handles.collection_id_box,'String', ...
+        handles.uninitialized_collection_id);
 end
 
-function collection_id_box_Callback(hObject, ~, ~) %#ok<DEFNU>
+function collection_id_box_Callback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to collection_id_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: get(hObject,'String') returns contents of collection_id_box as text
 %        str2double(get(hObject,'String')) returns contents of collection_id_box as a double
-v = str2double(get(hObject,'String'));
-if length(v) ~= 1 || isnan(v)
+if contains_valid_collection_id(hObject)
+    set(handles.collection_filename_box,'String', ...
+        handles.uninitialized_collection_filename);
+else
     uiwait(msgbox('The collection id must be a number.','Error','error'));
-    set(hObject,'String','Or enter collection id here');
+    set(hObject,'String',handles.uninitialized_collection_id);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -270,3 +353,31 @@ else
     fullpath=fullfile(pathname, filename);
     set(handles.bin_map_filename_box, 'String', fullpath);
 end
+
+
+
+function bin_map_filename_box_Callback(~, ~, ~) %#ok<DEFNU>
+% hObject    handle to bin_map_filename_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%NOTE: this function needs to be present even if blank - it will be called
+%by the gui no matter what
+
+
+function collection_filename_box_Callback(~, ~, ~) %#ok<DEFNU>
+% hObject    handle to collection_filename_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%NOTE: this function needs to be present even if blank - it will be called
+%by the gui no matter what
+
+
+function continue_filename_box_Callback(~, ~, ~) %#ok<DEFNU>
+% hObject    handle to continue_filename_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%NOTE: this function needs to be present even if blank - it will be called
+%by the gui no matter what
