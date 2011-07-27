@@ -1,7 +1,13 @@
 function [collection,message] = get_collection(collection_id,username,password)
+% Gets the given collection from the birg website using the given username 
+% and password.  If called without any of the parameters, displays dialogs
+% to get them from the user.
+%
+% Returns the collection or {} on error.  If there is an error, message
+% contains an error message for the user.
 message = [];
 
-if ~exist('username') || ~exist('password')
+if ~exist('username','var') || ~exist('password','var')
     [username,password] = logindlg;
     if isempty(username) && isempty(password)
         collection = {};
@@ -10,7 +16,7 @@ if ~exist('username') || ~exist('password')
     end
 end
 
-if ~exist('collection_id') || isempty(collection_id)
+if ~exist('collection_id','var') || isempty(collection_id)
     prompt={'Collection ID:'};
     name='Enter the collection ID from the website';
     numlines=1;
@@ -21,22 +27,27 @@ if ~exist('collection_id') || isempty(collection_id)
         collection = {};
         return;
     end
-    collection_id = str2num(answer{1});
+    collection_id = str2double(answer{1});
+    if isnan(collection_id) || length(collection_id) ~= 1
+        message = 'You must enter a number as the collection ID';
+        collection = {};
+        return;
+    end
 end
 
 url = sprintf('http://birg.cs.wright.edu/omics_analysis/collections/%d.xml',collection_id);
 try
-    [xml,status] = urlread(url,'get',{'name',username,'password',password});
-    if ~isempty(regexp(xml,'password'))
+    [xml,urlstatus] = urlread(url,'get',{'name',username,'password',password});
+    if ~isempty(regexp(xml,'password', 'once'))
         message = 'Invalid password';
         collection = {};
         return;
     end
-    if status == 0
-        error(sprintf('urlread failed with status 0: %s',url));
+    if urlstatus == 0
+        error('urlread failed with status 0: %s',url); %#ok<SPERR>
     end
 catch ME
-    status
+    disp(urlstatus);
     throw(ME);
 end
 n = regexp(xml,'<data>(.*)</data>','tokens');

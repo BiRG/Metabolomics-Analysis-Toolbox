@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 12-Jul-2011 19:46:32
+% Last Modified by GUIDE v2.5 26-Jul-2011 14:21:41
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -43,34 +43,58 @@ else
 end
 % End initialization code - DO NOT EDIT
 
+function col=bogus_collection
+% Return a collection object just made up as a space filler when the gui is
+% started in an inappropriate manner
+col.filename = 'not a real file';
+col.input_names={'Collection ID','Type','Description',...
+    'Processing log','Base sample ID','Time','Classification',...
+    'Sample ID','Subject ID','Sample Description','Weight',...
+    'Units of weight','Species'};
+col.x=[1 2 3];
+col.Y=[1 5 1]';
+col.num_samples=1;
+col.collection_id='-100';
+col.type='SpectraCollection';
+col.description=['Bogus data used for testing ',...
+    'targeted_identify.m'];
+col.processing_log='No processing done';
+col.base_sample_id=1;
+col.time=0;
+col.classification={'no_class'};
+col.sample_id={'no_sample_id'};
+col.subject_id={1};
+col.sample_description={'no_descr'};
+col.weight={'no_weight'};
+col.units_of_weight={'no_units'};
+col.species={'no_species'};
 
-% --- Executes just before targeted_identify is made visible.
-function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
-% This function has no output args, see OutputFcn.
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to targeted_identify (see VARARGIN)
+function out_handles = init_handles_and_gui_from_session_data(handles, session_data)
+% Given saved session data (in session_data) as well as handles to the gui 
+% components, in handles, initializes the gui and user data from that saved
+% session.  Returns the new value of the handles object after the saved 
+% user data has been restored to it
+%
+% Note that display components are not initialized 
+set(handles.metabolite_menu,'String', session_data.metabolite_menu_string);
+handles.collection = session_data.collection;
+handles.bin_map = session_data.bin_map;
+handles.identifications = session_data.identifications;
+handles.peaks = session_data.peaks;
+handles.spectrum_idx = session_data.spectrum_idx;
+handles.bin_idx = session_data.bin_idx;
 
-% Choose default command line output for targeted_identify
-handles.output = hObject;
+out_handles = handles;
 
-% Initialize the collection and bin_map
-if isappdata(0,'collection') && isappdata(0,'bin_map')
-    % Move the app data from the matlab root into handle variables
-    handles.collection = getappdata(0,'collection');
-    handles.bin_map = getappdata(0,'bin_map');
 
-    %Remove app data from matlab root so it is not sitting around
-    rmappdata(0,'collection');
-    rmappdata(0, 'bin_map');
-else
-    uiwait(msgbox('Either the bin_map or collections were not loaded.','Error','error','modal'));
-    handles.collection = {};
-    handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
-end
+function out_handles = init_handles_and_gui_from_scratch(handles)
+% Takes a handles structure that has handles for the gui components and a
+% bin_map and a collection and initializes the rest of the gui state from
+% that.  Returns the new value for the handles structure
+%
+% Note that display components are not initialized 
 
-% Initialize the menu of metabolites from the bin ma
+% Initialize the menu of metabolites from the bin map
 num_bins = length(handles.bin_map);
 metabolite_names{num_bins}='';
 for bin_idx = 1:num_bins
@@ -85,10 +109,55 @@ handles.identifications = [];
 
 % Start witn no detected peaks (but preallocate the array)
 handles.peaks = cell(num_bins, handles.collection.num_samples);
+for b=1:num_bins
+    for s=1:handles.collection.num_samples
+        handles.peaks{b,s}='Uninitialized';
+    end
+end
 
 % Start with no tool selected
 handles.spectrum_idx = 1;
 handles.bin_idx = 1;
+
+out_handles = handles;
+
+% --- Executes just before targeted_identify is made visible.
+function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to targeted_identify (see VARARGIN)
+
+% Choose default command line output for targeted_identify
+handles.output = hObject;
+
+% Initialize the gui and handles structure using data passed in from
+% targeted_deconv_start
+if isappdata(0,'collection') && isappdata(0,'bin_map')
+    % Move the app data from the matlab root into handle variables
+    handles.collection = getappdata(0,'collection');
+    handles.bin_map = getappdata(0,'bin_map');
+
+    %Remove app data from matlab root so it is not sitting around
+    rmappdata(0,'collection');
+    rmappdata(0, 'bin_map');
+
+    handles = init_handles_and_gui_from_scratch(handles);
+elseif isappdata(0,'saved_session_data')
+    session_data = getappdata(0,'saved_session_data');
+    handles = init_handles_and_gui_from_session_data(handles, session_data);
+    
+    %Remove app data from matlab root so it is not sitting around
+    rmappdata(0,'saved_session_data');
+else
+    uiwait(msgbox('Either the bin_map or collections were not loaded.','Error','error','modal'));
+    handles.collection = bogus_collection;
+    handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
+    
+    handles = init_handles_and_gui_from_scratch(handles);
+end
+
 
 % Initialize the display components
 update_display(handles);
@@ -125,9 +194,14 @@ function pks = get_cur_peaks(handles)
 bin_idx = handles.bin_idx;
 spectrum_idx = handles.spectrum_idx;
 pks = handles.peaks{bin_idx, spectrum_idx};
-if isempty(pks)
+if ischar(pks) && strcmp(pks,'Uninitialized')
     col = handles.collection;
     noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
+    %If there are too few points, use them all as noise
+    ysize = size(col.Y);
+    if noise_points > ysize(1)
+        noise_points = ysize(1);
+    end
     noise_std = std(col.Y(1:noise_points, spectrum_idx));
     bin = handles.bin_map(bin_idx).bin;
     low_idx = index_of_nearest_x_to(bin.left, handles);
@@ -154,27 +228,38 @@ guidata(handles.figure1, handles);
 update_plot(handles);
 
 function add_peak(ppm, handles)
-% Adds a peak to the list of peaks for the current bin and spectrum 
+% Adds a peak to the list of peaks for the current bin and spectrum (if the
+% ppm is not already marked as having a peak)
 %
 % ppm      parts per million location of the new peak
 % handles  The user and GUI data structure
-bin_idx = handles.bin_idx;
-spectrum_idx = handles.spectrum_idx;
-pks = handles.peaks{bin_idx, spectrum_idx};
-set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
+pks = get_cur_peaks(handles);
+matches = pks == ppm;
+if ~any(matches)
+    bin_idx = handles.bin_idx;
+    spectrum_idx = handles.spectrum_idx;
+ 
+    set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
+end
 
 function remove_peak(ppm, handles)
 % Removes a peak at the given ppm from the list of peaks for the 
-% current bin and spectrum .  If there is no such peak, does nothing.
+% current bin and spectrum .  If there is no such peak, does nothing.  If
+% there is an identification for the current metabolite at that ppm, also 
+% removes the identification.
 %
 % ppm      parts per million location of the peak to remove
 % handles  The user and GUI data structure
-bin_idx = handles.bin_idx;
-spectrum_idx = handles.spectrum_idx;
-pks = handles.peaks{bin_idx, spectrum_idx};
+pks = get_cur_peaks(handles);
 matches = pks==ppm;
 if any(matches)
+    remove_identification(ppm, handles);
+    handles = guidata(handles.figure1);
+
     pks(matches)=[];
+    
+    bin_idx = handles.bin_idx;
+    spectrum_idx = handles.spectrum_idx;
     set_peaks(bin_idx, spectrum_idx, pks, handles);
 end
 
@@ -244,15 +329,26 @@ if ~ (oldlims(1) == 0 && oldlims(2) == 1)
 end
 
 %Draw peak identification circles
-for id=peak_identifications_for_cur_metabolite(handles)
+ids = peak_identifications_for_cur_metabolite(handles);
+for id=ids
     draw_identification(id, handles.collection);
 end
 
 %Draw peak location lines
 cur_y = y_values_in_cur_bin(handles);
 y_bounds = [min(cur_y), max(cur_y)];
+if isempty(ids)
+    id_ppms = [];
+else
+    id_ppms = [ids.ppm];
+end
 for ppm = get_cur_peaks(handles)
-    line('XData', [ppm,ppm], 'YData', y_bounds, 'Color', 'c');
+    if any(id_ppms==ppm)
+        line_color = 'r';
+    else
+        line_color = 'c';
+    end
+    line('XData', [ppm,ppm], 'YData', y_bounds, 'Color', line_color);
 end
 
 %Reset the button-down function on the generated plot
@@ -265,12 +361,16 @@ for child_handle=children
     set(child_handle, 'HitTest', 'off');
 end
 
+function zoom_to_interval(right, left)
+% Set the plot boundaries to the interval [right, left]
+xlim([right, left]);
+ylim('auto');
+
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
 % index changes (and at other times)
 cb=handles.bin_map(handles.bin_idx);
-xlim([cb.bin.right, cb.bin.left]);
-ylim('auto');
+zoom_to_interval(cb.bin.right, cb.bin.left);
 
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
@@ -337,7 +437,7 @@ varargout{1} = handles.output;
 
 
 % --- Executes on button press in previous_button.
-function previous_button_Callback(~, ~, handles)
+function previous_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to previous_button (see GCBO) - this is the first argument 
 %            (that is now replaced by ~) 
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -358,9 +458,23 @@ else
     end
 end
 
+function name=unique_name(base, extension)
+% Return a unique filename in the current directory using base and
+% extension.  The name returned will be of the form base_xxxxxx.extension.
+%
+% Note: there is a race condition between checking for the existence of the
+% file name and the name being used.  The file may be created some-time
+% between that.
+for i=0:999999
+    name=sprintf('%s_%06d.%s',base,i,extension);
+    if ~exist(name, 'file')
+        return
+    end
+end
+
 
 % --- Executes on button press in next_button.
-function next_button_Callback(~, ~, handles)
+function next_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to next_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -378,9 +492,34 @@ else
     else
         uiwait(msgbox('Please enter a file to save the identified peaks to', ...
             'Select identified file','modal'));
-
-        uiwait(msgbox('Now a enter a file for the reidual data', ...
+        
+        id_name = 0; 
+        while(id_name == 0)
+            [id_name,id_path] = uiputfile('*.txt', ...
+            'Select file for the identified peaks');
+        end
+        
+        uiwait(msgbox('Now a enter a file for the residual data', ...
             'Select identified file','modal'));
+        
+        resid_name = 0; 
+        while(resid_name == 0)
+            [resid_name,resid_path] = uiputfile('*.txt', ...
+            'Select file for the residual data');
+            if strcmp(resid_name, id_name) && strcmp(resid_path, id_path)
+                resid_name = 0;
+                uiwait(msgbox('You cannot use the same file for both the identified peaks and residual data', ...
+                    'Error','error','modal'));
+            end
+        end
+        
+        pkid_name=unique_name('please email to eric_moyer_at_yahoo.com',...
+            'mat');
+        collection = handles.collection; %#ok<NASGU>
+        bin_map = handles.bin_map; %#ok<NASGU>
+        peaks = handles.peaks; %#ok<NASGU>
+        identifications = handles.identifications; %#ok<NASGU>
+        save(pkid_name, 'collection','bin_map','peaks','identifications');
         
         uiwait(msgbox('Will run finishing code here', ...
             'Placeholder dialog', 'modal'));
@@ -390,14 +529,14 @@ end
 
 
 % --- Executes on button press in zoom_to_bin_button.
-function zoom_to_bin_button_Callback(~, ~, handles)
+function zoom_to_bin_button_Callback(~, ~, handles) %#ok<DEFNU>
 % hObject    handle to zoom_to_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 zoom_to_bin(handles);
 
 % --- Executes on selection change in metabolite_menu.
-function metabolite_menu_Callback(hObject, ~, handles)
+function metabolite_menu_Callback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -407,7 +546,7 @@ function metabolite_menu_Callback(hObject, ~, handles)
 set_bin_idx(get(hObject,'Value'), handles);
 
 % --- Executes during object creation, after setting all properties.
-function metabolite_menu_CreateFcn(hObject, ~, ~)
+function metabolite_menu_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -418,11 +557,43 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function remove_identification(ppm, handles)
+% Removes the identification at the given ppm - if there is no
+% identification there, does nothing
+ids = peak_identifications_for_cur_metabolite(handles);
+if ~isempty(ids)
+    id_x = [ids.ppm];
+    to_remove = ids(id_x == ppm);
+    if ~isempty(to_remove)
+        new_ids = handles.identifications;
+        for id_to_remove=to_remove %Remove each ident'n one at a time
+            new_ids(new_ids == id_to_remove) = [];
+        end
+        set_identifications(new_ids, handles);
+    end
+end
+    
 function set_identifications(new_identifications, handles)
 handles.identifications = new_identifications;
 guidata(handles.figure1, handles);
 update_display(handles);
 update_plot(handles);
+
+function result=is_identified(ppm, handles)
+% Returns true if there is an identification at the given ppm, false
+% otherwise
+%
+% ppm     The ppm at which to check the existence of an identification
+% handles The gui global data structure
+ids = peak_identifications_for_cur_metabolite(handles);
+if isempty(ids)
+    result = 0;
+    return;
+else
+    id_x = [ids.ppm];
+    result = any(id_x == ppm);
+    return;
+end
 
 function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
 % Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
@@ -464,7 +635,7 @@ zoom_to_bin(handles);
 update_plot(handles);
 zoom_to_bin(handles);
 
-function spectrum_number_edit_box_Callback(hObject, ~, handles)
+function spectrum_number_edit_box_Callback(hObject, ~, handles) %#ok<DEFNU>
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -484,7 +655,7 @@ if ~isnan(entry) %If the user typed a number
 end
 
 % --- Executes during object creation, after setting all properties.
-function spectrum_number_edit_box_CreateFcn(hObject, ~, ~)
+function spectrum_number_edit_box_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -501,16 +672,8 @@ zoom(handles.figure1, 'off');
 pan(handles.figure1, 'off');
 
 % --------------------------------------------------------------------
-function select_peak_tool_ClickedCallback(hObject, ~, handles)
-% hObject    handle to select_peak_tool (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
-reset_plot_to_non_interactive(handles);
-
-% --------------------------------------------------------------------
-function deselect_peak_tool_ClickedCallback(hObject, ~, handles)
-% hObject    handle to deselect_peak_tool (see GCBO)
+function toggle_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
+% hObject    handle to toggle_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
@@ -536,10 +699,10 @@ function idx = min_idx(vals)
 min_val = min(vals);
 idx = find(vals == min_val, 1, 'first');
 
-function idx = index_of_nearest_point_to(target, points_x, points_y)
+function idx = index_of_nearest_point_to(target, points_x, points_y) %#ok<DEFNU>
 % Return the index of the point closest to target in the points described
 % by points_x and points_y
-%deselect_peak_tool_ClickedCallback
+%
 % target   the point whose closest neighbor is being found (in form [x y] )
 % points_x the x coordinates of the neighbor points
 % points_y the y coordinates of the neighbor points
@@ -559,12 +722,20 @@ idx = min_idx(diffs);
 
 function idx = index_of_nearest_peak_to(val, handles)
 % Return the index of the value closest to val in the x coordinates of the 
-% peaks for this bin and spectrum
+% peaks for this bin and spectrum or 0 if there are no peaks
 %
 % handles structure with handles and user data (see GUIDATA)
 pks = get_cur_peaks(handles);
-diffs = abs(val - pks);
-idx = min_idx(diffs);
+if isempty(pks)
+    idx = 0;
+    return;
+else
+    diffs = abs(val - pks);
+    idx = min_idx(diffs);
+    return;
+end
+
+
 
 
 % --- Executes on mouse press over axes background.
@@ -586,59 +757,110 @@ if ~isequal(size(mouse_pos), [2,3])
     return;
 end
 x_pos = mouse_pos(1,1);
-y_pos = mouse_pos(1,2);
 
 % Get the handles structure
 fig1=get(hObject,'Parent');
 handles = guidata(fig1);
 
 % Run the appropriate tool
-if isequal(get(handles.select_peak_tool, 'state'),'on')
+if isequal(get(handles.toggle_peak_tool, 'state'),'on')
     
-    %Select peak
     peak_idx = index_of_nearest_peak_to(x_pos, handles);
-    pks = get_cur_peaks(handles);
-    ppm = pks(peak_idx);
-    xidx = index_of_nearest_x_to(ppm, handles);
-    newid = PeakIdentification(ppm, xidx, handles.spectrum_idx, ...
-        handles.bin_map(handles.bin_idx));
-    set_identifications([handles.identifications newid],handles);
-elseif isequal(get(handles.deselect_peak_tool, 'state'),'on')
+    if peak_idx > 0 % do nothing if there are no peaks
+        pks = get_cur_peaks(handles);
+        peak_ppm = pks(peak_idx);
+        if is_identified(peak_ppm, handles)
+            %Deselect peak
+            remove_identification(peak_ppm, handles);
+        else
+            %Select peak
+            xidx = index_of_nearest_x_to(peak_ppm, handles);
+            newid = PeakIdentification(peak_ppm, xidx, handles.spectrum_idx, ...
+                handles.bin_map(handles.bin_idx));
+            set_identifications([handles.identifications newid],handles);
+        end
+    end
     
-    %Deselect peak
-    ids = peak_identifications_for_cur_metabolite(handles);
-    id_x = [ids.ppm];
-    id_idx = [ids.height_index];
-    id_y = handles.collection.Y(:, handles.spectrum_idx);
-    id_y = (id_y(id_idx))';
-    idx = index_of_nearest_point_to([x_pos, y_pos], id_x, id_y);
-    to_remove = ids(idx);
-    new_ids = handles.identifications;
-    new_ids(new_ids == to_remove) = [];
-    set_identifications(new_ids, handles);
 elseif isequal(get(handles.add_peak_tool, 'state'),'on')
     
     %Add peak
     x_idx = index_of_nearest_x_to(x_pos, handles);
     add_peak(handles.collection.x(x_idx), handles);
+
 elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
     
     %Remove peak
-    x_idx = index_of_nearest_x_to(x_pos, handles);
-    remove_peak(handles.collection.x(x_idx), handles);
+    pk_idx = index_of_nearest_peak_to(x_pos, handles);
+    if pk_idx > 0
+        pks = get_cur_peaks(handles);
+        remove_peak(pks(pk_idx), handles);
+    end
+    
 end
 %TODO: finish button down for spectrum plot
 
-function dont_call_this_function_it_exists_to_remove_spurious_warnings()
-% This function calls all those functions that matlab erroneously thinks
-% are not called when this function doesn't call them.
- previous_button_Callback(hObject, eventdata, handles)
- next_button_Callback;
- zoom_to_bin_button_Callback;
- metabolite_menu_Callback;
- select_peak_tool_ClickedCallback;
- deselect_peak_tool_ClickedCallback;
- spectrum_number_edit_box_Callback;
- spectrum_number_edit_box_CreateFcn;
- metabolite_menu_CreateFcn;
- dont_call_this_function_it_exists_to_remove_spurious_warnings;
+function zoom_plot(zoom_factor, handles)
+% Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
+% factor, expanding or contracting it around its current center
+cur_interval = xlim(handles.spectrum_plot);
+center = mean(cur_interval);
+new_interval=((cur_interval - center)*zoom_factor)+center;
+zoom_to_interval(new_interval(1), new_interval(2));
+
+% --------------------------------------------------------------------
+function zoom_in_tool_ClickedCallback(~, ~, handles) %#ok<DEFNU>
+% hObject    handle to zoom_in_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+zoom_plot(3/5, handles);
+
+% --------------------------------------------------------------------
+function zoom_out_tool_ClickedCallback(~, ~, handles)  %#ok<DEFNU>
+% hObject    handle to zoom_out_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+zoom_plot(5/3, handles);
+
+
+% --- Executes on button press in save_and_quit_button.
+function save_and_quit_button_Callback(~, ~, handles) %#ok<DEFNU>
+% hObject    handle to save_and_quit_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% The session file is just a .mat file that contains a struct
+% (named session_data) 
+%
+% Session data has fields:  (unless otherwise specified, they come from
+% handles.field_name)
+% collection
+% bin_map
+% identifcations
+% peaks
+% spectrum_idx
+% bin_idx
+% metabolite_menu_string (from get(handles.metabolite_menu,'String'); )
+
+%Get the file to save to
+[filename,pathname]=uiputfile('*.session',...
+    'Choose a file in which to save your session');
+
+%If the user cancelled, do nothing
+if ~ischar(filename)
+    return;
+end
+
+%Save
+fullname = fullfile(pathname, filename);
+session_data.metabolite_menu_string = get(handles.metabolite_menu,'String');
+session_data.collection = handles.collection;
+session_data.bin_map = handles.bin_map;
+session_data.identifications = handles.identifications;
+session_data.peaks = handles.peaks;
+session_data.spectrum_idx = handles.spectrum_idx;
+session_data.bin_idx = handles.bin_idx;
+
+save(fullname, 'session_data');
+
+%Quit
+delete(handles.figure1);

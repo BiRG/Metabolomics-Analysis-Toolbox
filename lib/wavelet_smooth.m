@@ -53,7 +53,12 @@ deb = y(1);
 
 % De-noise signal using soft fixed form thresholding 
 % and unknown noise option. 
-smoothed_y = wden(y-deb,tptr,sorh,scal,level,wname)+deb;
+if exist('wden','builtin')
+    smoothed_y = wden(y-deb,tptr,sorh,scal,level,wname)+deb;
+else
+    smoothed_y = y;
+end
+
 % smoothed_y = max(smoothed_y,y);
 % Now apply triangle smoothing
 n = 3;

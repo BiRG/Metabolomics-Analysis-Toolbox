@@ -1,8 +1,13 @@
 function collection = load_collection(filename,pathname)
+% Returns the collection stored in the given file.  The file must be a text file and [pathname,
+% filename] must be the needed path to the file.
+
 %% Read the data once skipping the header information on the first pass
 ifid = fopen([pathname,filename]);
 if strcmp(ifid,'"stdin"') == 1 || ifid < 0
-    msgbox(['Cannot open file ',pathname,filename]);
+    msgbox(['Cannot open the file "',pathname,filename,'"'], ...
+        'Error','error');
+    collection = 0;
     return
 end
 
@@ -27,6 +32,13 @@ while line ~= -1
     end
     line = fgetl(ifid);
 end
+if ~isfield(collection,'x')
+    msgbox(['The file "',fullfile(pathname,filename), ...
+        '" is not a spectrum collection'], ...
+        'Error','error');
+    collection = 0;
+    return;
+end
 collection.x = collection.x';
 fclose(ifid);
 
@@ -34,6 +46,7 @@ fclose(ifid);
 ifid = fopen([pathname,filename]);
 if strcmp(ifid,'"stdin"') == 1 || ifid < 0
     msgbox(['Cannot open file ',pathname,filename]);
+    collection = 0;
     return
 end
 
