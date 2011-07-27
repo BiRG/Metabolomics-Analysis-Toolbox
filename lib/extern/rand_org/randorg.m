@@ -35,6 +35,8 @@ function Out = randorg(n, range, varargin)
 % Tested on R14SP3 (7.1) and on R2009b
 % 17 jun 2010 - Created
 % 21 jun 2010 - Reduced default range to preserve the quota. Edited description.
+% 27 jul 2011 - Made no-quota the result of trying to check the quota on a
+%               machine that cannot access the internet
 
 % Print quota
 if nargin == 0
