@@ -1,6 +1,7 @@
 clc
 
 addpath([pwd,'/lib']);
+addpath([pwd,'/lib/extern/randorg']);
 addpath([pwd,'/matlab_scripts']);
 addpath([pwd,'/matlab_scripts/cursors']);
 addpath([pwd,'/lib/dab']);
