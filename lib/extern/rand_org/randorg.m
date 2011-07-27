@@ -38,7 +38,13 @@ function Out = randorg(n, range, varargin)
 
 % Print quota
 if nargin == 0
-    Out = sscanf(urlread('http://www.random.org/quota/?format=plain'),'%d');
+    [quota_string, success] = ...
+        urlread('http://www.random.org/quota/?format=plain');
+    if success
+        Out = sscanf(quota_string,'%d');
+    else
+        Out = -1; % Treat not being able to connect as no quota
+    end
     return
 end
 
