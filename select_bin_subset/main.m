@@ -22,7 +22,7 @@ function varargout = select_bin_subset(varargin)
 
 % Edit the above text to modify the response to help select_bin_subset
 
-% Last Modified by GUIDE v2.5 17-Jul-2011 21:20:01
+% Last Modified by GUIDE v2.5 27-Jul-2011 14:13:28
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -111,13 +111,8 @@ if ( ischar(filename) )
         handles.binListCount = length(binBounds{1});
         guidata(hObject,handles);
         
-        % -- DCW: Do the source bin bounds need to be sorted?
-        %binBounds = [ binBounds{1} binBounds{2} ];
-        %binBounds = flipud(sortrows(binBounds, 1));
-        
         % Need the data to be stored in a cell of cells.
         vectorOfOnes = ones(1, handles.binListCount);
-        %binBounds = mat2cell(binBounds, vectorOfOnes, [1 1]);
         binBounds = [ ...
             mat2cell(binBounds{1}, vectorOfOnes, 1) ...
             mat2cell(binBounds{2}, vectorOfOnes, 1) ];
@@ -132,18 +127,18 @@ if ( ischar(filename) )
                 'Unmatched file record counts','error','modal');
         else
             dataOnTable = get(handles.binlist_uitable, 'Data');
-            logicalCellArray = mat2cell( ...
+            cellsOfLogical = mat2cell( ...
                 false(handles.binListCount, 1), ...
                 vectorOfOnes, 1);
-            nanCellArray = mat2cell( ...
+            cellsOfNaN = mat2cell( ...
                 NaN(handles.binListCount, 1), ...
                 vectorOfOnes, 1);
             if ( isempty(dataOnTable) )
-                binBounds = [ logicalCellArray binBounds ...
-                    nanCellArray logicalCellArray ];
+                binBounds = [ cellsOfLogical cellsOfNaN binBounds ...
+                    cellsOfNaN cellsOfLogical ];
             else
-                binBounds = [ dataOnTable(:, 1) binBounds ...
-                    dataOnTable(:, 4) dataOnTable(:, 5) ];
+                binBounds = [ dataOnTable(:, 1) dataOnTable(:, 2) ...
+                    binBounds dataOnTable(:, 4) dataOnTable(:, 5) ];
             end;
             set(handles.binlist_uitable, 'Data', binBounds);
         end;
@@ -173,14 +168,8 @@ if ( ischar(filename) )
         handles.binLoadingsCount = length(binLoadings{1});
         guidata(hObject,handles);
         
-        % -- DCW: Do the source loadings need to be sorted?
-        %binLoadings = [ binLoadings{1} binLoadings{2} ...
-        %    binLoadings{3} binLoadings{4} ];
-        %binLoadings = flipud(sortrows(binLoadings, 1));
-        
         % Need the data to be stored in a cell of cells.
         vectorOfOnes = ones(1, handles.binLoadingsCount);
-        %binLoadings = mat2cell(binLoadings, vectorOfOnes, [1 1 1 1]);
         binLoadings = [ ...
             mat2cell(binLoadings{1}, vectorOfOnes, 1) ...
             mat2cell(binLoadings{2}, vectorOfOnes, 1) ...
@@ -188,29 +177,80 @@ if ( ischar(filename) )
             mat2cell(logical(binLoadings{4}), vectorOfOnes, 1) ];
         
         dataOnTable = get(handles.binlist_uitable, 'Data');
-        max_error_match = str2num(get(handles.max_error_match_edit,'String')); % ppm
-        for i = 1:length(binLoadings(:,1))
-            x = binLoadings{i,1};
-            p = binLoadings{i,2};
-            s = binLoadings{i,4};
-            matched = false;
-            for j = 1:length(dataOnTable(:,2))
-                left = dataOnTable{j,2};
-                right = dataOnTable{j,3};
-                center = (left+right)/2;
-                if abs(center-x) < max_error_match
-                    dataOnTable{j,4} = p;
-                    dataOnTable{j,5} = s;
-                    dataOnTable{j,1} = s;
-                    matched = true;
-                    break;
+        if ( isempty(dataOnTable) || isnan(dataOnTable{1,3}) )
+            % Either the table is blank or only an OPLS loadings file has
+            % been loaded. Replace existing table data.
+            cellsOfNaN = mat2cell( ...
+                nan(handles.binLoadingsCount, 1), vectorOfOnes, 1 );
+            dataOnTable = [      ...
+                binLoadings(:,4) ... % Default "Include?".
+                binLoadings(:,1) ... % Bin center.
+                cellsOfNaN       ... % Indicating no bin bounds
+                cellsOfNaN       ... %     have been loaded.
+                binLoadings(:,2) ... % P score.
+                binLoadings(:,4) ... % Significance.
+                ];
+        else
+            % Fetch user's match threshold (given in radial ppm).
+            max_error_match = ...
+                str2double(get(handles.max_error_match_edit,'String'));
+            recordsOnTableCount = length(dataOnTable);
+            matchingErrorString = '';
+            sourceBinBoundsMatched = false(recordsOnTableCount, 1);
+            for i = 1:handles.binLoadingsCount
+                concentration = binLoadings{i,1};
+                pScore = binLoadings{i,2};
+                isSignificant = binLoadings{i,4};
+                matched = false;
+                for j = 1:recordsOnTableCount
+                    left = dataOnTable{j,3};
+                    right = dataOnTable{j,4};
+                    center = (left+right)/2;
+                    if ( abs(center-concentration) < max_error_match )
+                        dataOnTable{j,1} = isSignificant;
+                        dataOnTable{j,2} = concentration;
+                        dataOnTable{j,3} = left;
+                        dataOnTable{j,4} = right;
+                        dataOnTable{j,5} = pScore;
+                        dataOnTable{j,6} = isSignificant;
+                        matched = true;
+                        sourceBinBoundsMatched(i) = true;
+                        break;
+                    end
                 end
-            end
-            if ~matched
-                fprintf('%f not matched\n',x);
+                if ( ~matched )
+                    matchingErrorString = ...
+                        [matchingErrorString 10 13 ...
+                        num2str(concentration, '%f') ...
+                        ' not matched'];
+                end
             end
         end
         set(handles.binlist_uitable, 'Data', dataOnTable);
+        if ( ~isempty(matchingErrorString) )
+            msgbox(['Unable to match the following loadings centers:' ...
+                10 13 matchingErrorString], ...
+                'Some bin loadings unable to be matched', ...
+                'warn', 'modal');
+        end
+        matchingErrorString = '';
+        sBBMLen = length(sourceBinBoundsMatched);
+        for i = 1:sBBMLen
+            if ( ~sourceBinBoundsMatched(i) )
+                matchingErrorString = ...
+                    [matchingErrorString 10 13  ...
+                    'No loadings for bin number ' ...
+                    num2str(i, '%d')];
+            end
+        end
+        if ( ~isempty(matchingErrorString) )
+            % Some of the source bin boundaries went unchecked and
+            % unmatched. Report them.
+            msgbox(['Unable to match the following bin boundaries:' ...
+                10 13 matchingErrorString], ...
+                'Some bin bounds unable to be matched', ...
+                'warn', 'modal');
+        end
     else
         msgbox(['Unable to open loadings file ' fullpath '!'], ...
             'Could not open file', 'error', 'modal');
@@ -218,9 +258,9 @@ if ( ischar(filename) )
 end;
 
 
-% --- Executes on button press in save_binlist_subset_button.
-function save_binlist_subset_button_Callback(hObject, eventdata, handles)
-% hObject    handle to save_binlist_subset_button (see GCBO)
+% --- Executes on button press in save_binmap_subset_button.
+function save_binmap_subset_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_binmap_subset_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if ( isfield(handles, 'binListCount') )
@@ -232,15 +272,29 @@ if ( isfield(handles, 'binListCount') )
         fullpath = [pathname filename];
         fid = fopen(fullpath, 'w');
         if ( fid > 2 )
-            source = get(handles.binlist_uitable, 'Data');
+            dataOnTable = get(handles.binlist_uitable, 'Data');
+            first = true;
+            % DCW -- TODO: produce a subset, THEN print to file
+            for i = 1:handles.binListCount
+                % The "Include?" box was selected for this row.
+                if ( dataOnTable{i,1} )
+                    if ~first
+                        fprintf(fid, ';');
+                    end
+                    fprintf(fid, '%f,%f', dataOnTable{i,2}, dataOnTable{i,3});
+                    first = false;
+                end;
+            end;
+            fprintf(fid, '\n');
+            % Print the 'sum' strings;
             first = true;
             for i = 1:handles.binListCount
-                if ( source{i,1} )
+                if ( dataOnTable{i,1} )
+                    % The "Include?" box was selected for this row.
                     if ~first
-                        fprintf(fid,';');
+                        fprintf(fid, ';');
                     end
-                    % The "include?" box was selected for this row.
-                    fprintf(fid, '%f,%f', source{i,2}, source{i,3});
+                    fprintf(fid, 'sum');
                     first = false;
                 end;
             end;
@@ -370,3 +424,4 @@ msgbox('Feature not yet implemented.','Sorry...','warn', 'modal');
 %end;
 %set(handles.binlist_uitable, 'Data', dataOnTable);
 %guidata(hObject, handles);
+
