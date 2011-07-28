@@ -72,9 +72,11 @@ classdef PeakIdentification
         %
         % Objects are equal if their fields are all equal.
         % Arrays are equal if they have the same size and their
-        % corresponding elements are all equal.
-            if length(a) == length(b)
-                if isempty(a)
+        % corresponding elements are all equal.  Or if one is an object
+            if length(a) == length(b) || length(a) == 1 || length(b) == 1
+                if isempty(a) && isempty(b)
+                    ret = 1;
+                elseif isempty(a) || isempty(b)
                     ret = 0;
                 else
                     pp = [a.ppm] == [b.ppm];
@@ -82,9 +84,9 @@ classdef PeakIdentification
                     si = [a.spectrum_index] == [b.spectrum_index];
                     cb = [a.compound_bin] == [b.compound_bin];
                     wa = [a.was_automatic] == [b.was_automatic];
-                    un = [a.user_name] == [b.user_name];
-                    au = [a.account_uuid] == [b.account_uuid];
-                    ds = [a.date_string] == [b.date_string];
+                    un = strcmp({a.user_name},{b.user_name});
+                    au = strcmp({a.account_uuid},{b.account_uuid});
+                    ds = strcmp({a.date_string},{b.date_string});
                     ret = pp & hi & si & cb & wa & un & au & ds;
                 end
             else
