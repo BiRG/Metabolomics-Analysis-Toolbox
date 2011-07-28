@@ -121,6 +121,37 @@ handles.bin_idx = 1;
 
 out_handles = handles;
 
+function uname = get_username
+%GET_USERNAME returns the current username (gets from user if not in prefs)
+% Checks the preferences for the current username, and if found returns it.
+% Otherise puts up a dialog asking the user and then stores the name in the
+% preferences.
+if ispref('Targeted_Deconvolution_ID','username')
+    uname = getpref('Targeted_Deconvolution_ID','username');
+else
+    uname = [];
+    while isempty(uname)
+        uname = inputdlg({['Enter your full name - to give credit for peak ',...
+            'identifications']},'Enter user name');
+        if ~isempty(uname)
+            uname = uname{1};
+        end
+    end
+    setpref('Targeted_Deconvolution_ID','username', uname);
+end
+
+function account_id = get_account_id
+%GET_account_ID returns a uuid for this account
+% Checks the preferences for a previously set uuid.  If not, uses
+% random_uuid to generate a new one and saves it in the preferences
+if ispref('Targeted_Deconvolution_ID','account_id')
+    account_id = getpref('Targeted_Deconvolution_ID','account_id');
+else
+    account_id = random_uuid;
+    setpref('Targeted_Deconvolution_ID', 'account_id', account_id);
+end
+
+
 % --- Executes just before targeted_identify is made visible.
 function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -308,7 +339,7 @@ rectangle('Position', ...
         'Curvature', [1,1], 'EdgeColor', color);
 
 function draw_identification(peak_id_obj, collection)
-% Draws the selected peak identification on the current plot
+% DRAW_IDENTIFICATION Draws the selected peak identification on the current plot
 %
 % peak_id_obj The PeakIdentification object to draw
 % collection  The collection referenced by that object
@@ -776,7 +807,8 @@ if isequal(get(handles.toggle_peak_tool, 'state'),'on')
             %Select peak
             xidx = index_of_nearest_x_to(peak_ppm, handles);
             newid = PeakIdentification(peak_ppm, xidx, handles.spectrum_idx, ...
-                handles.bin_map(handles.bin_idx));
+                handles.bin_map(handles.bin_idx), ...
+                0, get_username, get_account_id, datestr(clock));
             set_identifications([handles.identifications newid],handles);
         end
     end
