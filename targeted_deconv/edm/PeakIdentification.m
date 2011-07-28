@@ -75,9 +75,15 @@ classdef PeakIdentification
         % corresponding elements are all equal.  Or if one is an object
             if length(a) == length(b) || length(a) == 1 || length(b) == 1
                 if isempty(a) && isempty(b)
-                    ret = 1;
+                    ret = [];
                 elseif isempty(a) || isempty(b)
-                    ret = 0;
+                    if (isempty(a) && length(b) == 1) || ...
+                            (isempty(b) && length(a) == 1)
+                        ret = [];
+                    else
+                        error(['Error using ==> eq - Can''t ', ...
+                            'compare nonscalar with empty array']);
+                    end
                 else
                     pp = [a.ppm] == [b.ppm];
                     hi = [a.height_index] == [b.height_index];
@@ -90,7 +96,8 @@ classdef PeakIdentification
                     ret = pp & hi & si & cb & wa & un & au & ds;
                 end
             else
-                ret = 0;
+                error(['Error using ==> eq - Can''t ', ...
+                    'compare Matrices of different dimensions']);
             end
         end
     end
