@@ -76,6 +76,13 @@ function out_handles = init_handles_and_gui_from_session_data(handles, session_d
 % user data has been restored to it
 %
 % Note that display components are not initialized 
+if(session_data.version ~= 0.1)
+    uiwait(msgbox(['This session data was generated from a ', ...
+        'different version of the targeted deconvolution program (#', ...
+        sprintf('%0.2f',session_data.version), ...
+        ')  Things may not work as expected.'],'Warning','Warning'));
+end
+
 set(handles.metabolite_menu,'String', session_data.metabolite_menu_string);
 handles.collection = session_data.collection;
 handles.bin_map = session_data.bin_map;
@@ -83,6 +90,7 @@ handles.identifications = session_data.identifications;
 handles.peaks = session_data.peaks;
 handles.spectrum_idx = session_data.spectrum_idx;
 handles.bin_idx = session_data.bin_idx;
+handles.already_autoidentified = session_data.already_autoidentified;
 
 out_handles = handles;
 
@@ -106,6 +114,10 @@ set(handles.metabolite_menu, 'String', metabolite_names);
 
 % Start with no identifications
 handles.identifications = [];
+
+% Start with no existing autoidentifications
+handles.already_autoidentified = ...
+    zeros(num_bins, handles.collection.num_samples);
 
 % Start witn no detected peaks (but preallocate the array)
 handles.peaks = cell(num_bins, handles.collection.num_samples);
@@ -641,25 +653,37 @@ function new_handles = potentially_autoidentify(handles)
 % be expected.  Returns the new value of the handles structure.  Also sets 
 % the guidata.
 
-%If no current identifications
-ids = peak_identifications_for_cur_metabolite(handles);
-if isempty(ids)
-    %If clean bin
-    bin = handles.bin_map(handles.bin_idx);
-    if bin.is_clean
-        %If correct number of peaks
-        pks = get_cur_peaks(handles);
-        if length(pks) == bin.num_peaks
-            new_ids(bin.num_peaks)=PeakIdentification;
-            for i = 1:bin.num_peaks
-                ppm = pks(i);
-                xidx = index_of_nearest_x_to(ppm, handles);
-                new_ids(i) = PeakIdentification(ppm, xidx, ...
-                    handles.spectrum_idx, bin, ...
-                    1, get_username, get_account_id, datestr(clock)); 
+%If no autoidentification has been done on this bin
+if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
+    %If no current identifications
+    ids = peak_identifications_for_cur_metabolite(handles);
+    if isempty(ids)
+        %If clean bin
+        bin = handles.bin_map(handles.bin_idx);
+        if bin.is_clean
+            %If correct number of peaks
+            pks = get_cur_peaks(handles);
+            if length(pks) == bin.num_peaks
+                % Do autoidentification:
+                
+                %First mark as identified
+                handles.already_autoidentified(handles.bin_idx, ...
+                    handles.spectrum_idx) = 1;
+                
+                %Then make identification objects for all peaks in the bin
+                new_ids(bin.num_peaks)=PeakIdentification;
+                for i = 1:bin.num_peaks
+                    ppm = pks(i);
+                    xidx = index_of_nearest_x_to(ppm, handles);
+                    new_ids(i) = PeakIdentification(ppm, xidx, ...
+                        handles.spectrum_idx, bin, ...
+                        1, get_username, get_account_id, datestr(clock)); 
+                end
+                
+                %Finally add them to the identifications for the gui
+                set_identifications([handles.identifications new_ids], handles);
+                handles = guidata(handles.figure1);
             end
-            set_identifications([handles.identifications new_ids], handles);
-            handles = guidata(handles.figure1);
         end
     end
 end
@@ -913,6 +937,10 @@ function save_and_quit_button_Callback(~, ~, handles) %#ok<DEFNU>
 % peaks
 % spectrum_idx
 % bin_idx
+% already_autoidentified
+% version (set to a special number indicating the version of this program
+%          - this should be increased for any changes to the data or field
+%          names being saved)
 % metabolite_menu_string (from get(handles.metabolite_menu,'String'); )
 
 %Get the file to save to
@@ -926,6 +954,7 @@ end
 
 %Save
 fullname = fullfile(pathname, filename);
+session_data.version = 0.1;
 session_data.metabolite_menu_string = get(handles.metabolite_menu,'String');
 session_data.collection = handles.collection;
 session_data.bin_map = handles.bin_map;
@@ -933,6 +962,7 @@ session_data.identifications = handles.identifications;
 session_data.peaks = handles.peaks;
 session_data.spectrum_idx = handles.spectrum_idx;
 session_data.bin_idx = handles.bin_idx;
+session_data.already_autoidentified = handles.already_autoidentified;
 
 save(fullname, 'session_data');
 
