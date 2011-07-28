@@ -116,8 +116,13 @@ for b=1:num_bins
 end
 
 % Start with no tool selected
+
+% Start at the first bin and spectrum
 handles.spectrum_idx = 1;
 handles.bin_idx = 1;
+
+% Autoidentify the first bin and spectrum
+handles = potentially_autoidentify(handles);
 
 out_handles = handles;
 
@@ -192,6 +197,7 @@ end
 
 % Initialize the display components
 update_display(handles);
+zoom_to_bin(handles);
 update_plot(handles);
 zoom_to_bin(handles);
 
@@ -513,8 +519,10 @@ bin_idx = handles.bin_idx;
 spec_idx = handles.spectrum_idx;
 num_spec = handles.collection.num_samples;
 if spec_idx < num_spec
+    %Same compound
     set_spectrum_idx(spec_idx+1, handles);
 else 
+    %Next compound
     num_bins = length(handles.bin_map);
     if bin_idx < num_bins
         set_spectrum_and_bin_idx(1, bin_idx+1, handles);
@@ -626,12 +634,44 @@ else
     return;
 end
 
+function new_handles = potentially_autoidentify(handles)
+% Autoidentifies peaks if the current bin is clean, no identifications are
+% extant for the current bin and spectrum, and the current spectrum has the 
+% same number of peaks as would
+% be expected.  Returns the new value of the handles structure.  Also sets 
+% the guidata.
+
+%If no current identifications
+ids = peak_identifications_for_cur_metabolite(handles);
+if isempty(ids)
+    %If clean bin
+    bin = handles.bin_map(handles.bin_idx);
+    if bin.is_clean
+        %If correct number of peaks
+        pks = get_cur_peaks(handles);
+        if length(pks) == bin.num_peaks
+            new_ids(bin.num_peaks)=PeakIdentification;
+            for i = 1:bin.num_peaks
+                ppm = pks(i);
+                xidx = index_of_nearest_x_to(ppm, handles);
+                new_ids(i) = PeakIdentification(ppm, xidx, ...
+                    handles.spectrum_idx, bin, ...
+                    1, get_username, get_account_id, datestr(clock)); 
+            end
+            set_identifications([handles.identifications new_ids], handles);
+            handles = guidata(handles.figure1);
+        end
+    end
+end
+new_handles = handles;
+
 function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
 % Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
 % I believe (though I haven't verified) that the value in handles in the 
 % caller will be unchanged.
 handles.spectrum_idx = new_spec;
 handles.bin_idx = new_bin;
+handles = potentially_autoidentify(handles);
 guidata(handles.figure1, handles);
 update_display(handles);
 update_plot(handles);
@@ -647,6 +687,7 @@ function set_spectrum_idx(new_val, handles)
 % new_val   the new value of the spectrum_idx
 % handles   structures with handles and user data
 handles.spectrum_idx = new_val;
+handles = potentially_autoidentify(handles);
 guidata(handles.figure1, handles);
 update_display(handles);
 update_plot(handles);
@@ -660,6 +701,7 @@ function set_bin_idx(new_val, handles)
 % new_val   the new value of the bin_idx
 % handles   structures with handles and user data
 handles.bin_idx = new_val;
+handles = potentially_autoidentify(handles);
 guidata(handles.figure1, handles);
 update_display(handles);
 zoom_to_bin(handles);
