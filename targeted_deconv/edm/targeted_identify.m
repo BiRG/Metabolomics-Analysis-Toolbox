@@ -530,6 +530,24 @@ function next_button_Callback(~, ~, handles) %#ok<DEFNU>
 bin_idx = handles.bin_idx;
 spec_idx = handles.spectrum_idx;
 num_spec = handles.collection.num_samples;
+
+%Warn if the number of identified peaks is not what is expected
+num_ident = num_identified_for_cur_metabolite(handles);
+bin = handles.bin_map(bin_idx);
+if bin.num_peaks ~= num_ident
+    response = questdlg([bin.readable_multiplicity, ' should have ', ...
+        sprintf('%d',bin.num_peaks), ...
+        ' peaks, but you have identified ', sprintf('%d', num_ident), ...
+        ' peaks.  Would you like to fix this or ignore it?'], ...
+        'Unexpected number of identifications', ...
+        'Fix peak identifications', 'Leave identifications as they are',...
+        'Fix peak identifications');
+    if strcmp(response,'Fix peak identifications')
+        return;
+    end
+end
+
+%Go to the next compund
 if spec_idx < num_spec
     %Same compound
     set_spectrum_idx(spec_idx+1, handles);
