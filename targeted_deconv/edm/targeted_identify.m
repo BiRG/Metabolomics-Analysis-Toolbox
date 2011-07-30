@@ -442,6 +442,11 @@ set(handles.spectrum_number_edit_box,'String', ...
 set(handles.num_identified_peaks_text,'String', ...
     sprintf('Identified peaks: %d', ...
     num_identified_for_cur_metabolite(handles)));
+if cur_bin.is_clean
+    set(handles.clean_text,'String','Clean bin');
+else
+    set(handles.clean_text,'String','Not a clean bin');
+end
 
 bin_idx = handles.bin_idx;
 num_bins = length(handles.bin_map);
