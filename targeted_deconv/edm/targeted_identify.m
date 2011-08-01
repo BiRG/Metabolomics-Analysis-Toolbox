@@ -631,7 +631,8 @@ else
         
         
         %Send the labeled spectral data to eric
-        pkid_name=unique_name('please email to eric_moyer_at_yahoo.com',...
+        pkid_name=unique_name(...
+            fullfile(id_path,'please email to eric_moyer_at_yahoo.com'),...
             'mat');
         zip_name = [pkid_name '.zip'];
         collection = handles.collection; %#ok<NASGU>
