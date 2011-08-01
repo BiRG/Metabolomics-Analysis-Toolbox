@@ -16,7 +16,7 @@ function send_email_from_birg_autobug(recipients, subject, message, attachments)
 % See also SENDMAIL
 
 %Set preferences releated to email saving current values
-preffield = {'Email', 'SMTP_Username', 'SMTP_Password', 'SMTP_Server'};
+preffield = {'E_mail', 'SMTP_Username', 'SMTP_Password', 'SMTP_Server'};
 newpref = {'birg.autobug@gmail.com','birg.autobug@gmail.com', ...
     'CSSXDW9CnPHX', 'smtp.gmail.com'};
 for i = 1:4
@@ -69,13 +69,13 @@ end
 
 %Restore preferences
 for i = 1:4
-    if isfield(oldprefs, preffield{i})
+    if exist('oldprefs','var') && isfield(oldprefs, preffield{i})
         setpref('Internet', preffield{i}, oldprefs.(preffield{i}));
     else
         rmpref('Internet', preffield{i});
     end
 end
-
+    
 if ischar(error_message)
     error(error_message);
 end
