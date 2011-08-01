@@ -573,7 +573,10 @@ if bin.num_peaks ~= num_ident
     end
 end
 
-
+function ret=am_connected_to_internet
+% Returns true if can access certain www sites, false otherwise
+[~, success] = urlread('http://www.google.com/');
+ret = success;
 
 % --- Executes on button press in next_button.
 function next_button_Callback(~, ~, handles) %#ok<DEFNU>
@@ -626,14 +629,41 @@ else
             end
         end
         
+        
+        %Send the labeled spectral data to eric
         pkid_name=unique_name('please email to eric_moyer_at_yahoo.com',...
             'mat');
+        zip_name = [pkid_name '.zip'];
         collection = handles.collection; %#ok<NASGU>
         bin_map = handles.bin_map; %#ok<NASGU>
         peaks = handles.peaks; %#ok<NASGU>
         identifications = handles.identifications; %#ok<NASGU>
         save(pkid_name, 'collection','bin_map','peaks','identifications');
+        zip(zip_name, pkid_name);
+        delete(pkid_name);
         
+        if am_connected_to_internet
+            dir_info = dir(zip_name);
+            if dir_info.bytes < 20*1024*1024 %20 MB attachment limit
+                send_email_from_birg_autobug('eric_moyer@yahoo.com', ...
+                    ['Spectrum Identifications from ' get_username ' on ' ...
+                    datestr(clock)], ...
+                    'The identifications are in the attachment', ...
+                    {zip_name} ...
+                );
+                delete(zip_name);
+            else
+                uiwait(msgbox(['Could not automatically send large data file.  ', ...
+                    'Please e-mail the file "' zip_name ...
+                    '" to eric_moyer@yahoo.com.  Thank you.']));
+            end
+        else
+            uiwait(msgbox(['You are not connected to the Internet.  ', ...
+                'Please e-mail the file "' zip_name ...
+                '" to eric_moyer@yahoo.com.  Thank you.']));
+        end
+        
+        %Finish any pending deconvolutions and store the data
         uiwait(msgbox('Will run finishing code here', ...
             'Placeholder dialog', 'modal'));
         %TODO: write code for finishing
