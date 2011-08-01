@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 26-Jul-2011 14:21:41
+% Last Modified by GUIDE v2.5 01-Aug-2011 17:00:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1093,3 +1093,10 @@ save(fullname, 'session_data');
 
 %Quit
 delete(handles.figure1);
+
+
+% --- Executes on mouse press over figure background.
+function figure1_ButtonDownFcn(~, ~, ~) %#ok<DEFNU>
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
