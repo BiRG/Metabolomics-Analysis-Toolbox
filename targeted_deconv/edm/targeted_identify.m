@@ -170,7 +170,7 @@ end
 
 
 % --- Executes just before targeted_identify is made visible.
-function targeted_identify_OpeningFcn(hObject, ~, handles, varargin)
+function targeted_identify_OpeningFcn(hObject, unused, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -257,7 +257,7 @@ if ischar(pks) && strcmp(pks,'Uninitialized')
     noise_std = std(col.Y(1:noise_points, spectrum_idx));
     bin = handles.bin_map(bin_idx).bin;
     low_idx = index_of_nearest_x_to(bin.left, handles);
-    [peak_idx, ~, ~] = wavelet_find_maxes_and_mins ...
+    [peak_idx, unused, unused] = wavelet_find_maxes_and_mins ...
         (y_values_in_cur_bin(handles), noise_std);
     pks = col.x((low_idx-1)+peak_idx);
     handles.peaks{bin_idx, spectrum_idx} = pks;
@@ -483,7 +483,7 @@ end
 %TODO: finish - update plot and 'cleanness'
 
 % --- Outputs from this function are returned to the command line.
-function varargout = targeted_identify_OutputFcn(~, ~, handles) 
+function varargout = targeted_identify_OutputFcn(unused2, unused, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -494,7 +494,7 @@ varargout{1} = handles.output;
 
 
 % --- Executes on button press in previous_button.
-function previous_button_Callback(~, ~, handles) %#ok<DEFNU>
+function previous_button_Callback(unused1, unused, handles) %#ok<DEFNU>
 % hObject    handle to previous_button (see GCBO) - this is the first argument 
 %            (that is now replaced by ~) 
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -575,11 +575,11 @@ end
 
 function ret=am_connected_to_internet
 % Returns true if can access certain www sites, false otherwise
-[~, success] = urlread('http://www.google.com/');
+[unused, success] = urlread('http://www.google.com/');
 ret = success;
 
 % --- Executes on button press in next_button.
-function next_button_Callback(~, ~, handles) %#ok<DEFNU>
+function next_button_Callback(unused1, unused, handles) %#ok<DEFNU>
 % hObject    handle to next_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -673,14 +673,14 @@ end
 
 
 % --- Executes on button press in zoom_to_bin_button.
-function zoom_to_bin_button_Callback(~, ~, handles) %#ok<DEFNU>
+function zoom_to_bin_button_Callback(unused1, unused, handles) %#ok<DEFNU>
 % hObject    handle to zoom_to_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 zoom_to_bin(handles);
 
 % --- Executes on selection change in metabolite_menu.
-function metabolite_menu_Callback(hObject, ~, handles) %#ok<DEFNU>
+function metabolite_menu_Callback(hObject, unused, handles) %#ok<DEFNU>
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -700,7 +700,7 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function metabolite_menu_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
+function metabolite_menu_CreateFcn(hObject, unused1, unused) %#ok<DEFNU>
 % hObject    handle to metabolite_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -806,7 +806,7 @@ function new_handles = warn_if_no_confirmation_check(handles)
 if ~(handles.did_expected_peaks_confirmation_check)
 
     %Generate error message and send it to the developers
-    [stack_trace, ~]=dbstack('-completenames');
+    [stack_trace, unused]=dbstack('-completenames');
     error_message{3+4*length(stack_trace)}='';
     error_message{1} = ['No check to see if a confirmation dialog was '...
         'needed was performed before changing spectrum_idx or bin_idx'];
@@ -882,7 +882,7 @@ zoom_to_bin(handles);
 update_plot(handles);
 zoom_to_bin(handles);
 
-function spectrum_number_edit_box_Callback(hObject, ~, handles) %#ok<DEFNU>
+function spectrum_number_edit_box_Callback(hObject, unused, handles) %#ok<DEFNU>
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -908,7 +908,7 @@ if ~isnan(entry) %If the user typed a number
 end
 
 % --- Executes during object creation, after setting all properties.
-function spectrum_number_edit_box_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
+function spectrum_number_edit_box_CreateFcn(hObject, unused1, unused) %#ok<DEFNU>
 % hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -925,7 +925,7 @@ zoom(handles.figure1, 'off');
 pan(handles.figure1, 'off');
 
 % --------------------------------------------------------------------
-function toggle_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
+function toggle_peak_tool_ClickedCallback(hObject, unused, handles) %#ok<DEFNU>
 % hObject    handle to toggle_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -933,7 +933,7 @@ putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolba
 reset_plot_to_non_interactive(handles);
 
 % --------------------------------------------------------------------
-function add_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
+function add_peak_tool_ClickedCallback(hObject, unused, handles) %#ok<DEFNU>
 % hObject    handle to add_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -941,7 +941,7 @@ putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolba
 reset_plot_to_non_interactive(handles);
 
 % --------------------------------------------------------------------
-function remove_peak_tool_ClickedCallback(hObject, ~, handles) %#ok<DEFNU>
+function remove_peak_tool_ClickedCallback(hObject, unused, handles) %#ok<DEFNU>
 % hObject    handle to remove_peak_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -992,7 +992,7 @@ end
 
 
 % --- Executes on mouse press over axes background.
-function spectrum_plot_ButtonDownFcn(hObject, ~, ~)
+function spectrum_plot_ButtonDownFcn(hObject, unused1, unused)
 % hObject    handle to spectrum_plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -1062,14 +1062,14 @@ new_interval=((cur_interval - center)*zoom_factor)+center;
 zoom_to_interval(new_interval(1), new_interval(2));
 
 % --------------------------------------------------------------------
-function zoom_in_tool_ClickedCallback(~, ~, handles) %#ok<DEFNU>
+function zoom_in_tool_ClickedCallback(unused1, unused, handles) %#ok<DEFNU>
 % hObject    handle to zoom_in_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 zoom_plot(3/5, handles);
 
 % --------------------------------------------------------------------
-function zoom_out_tool_ClickedCallback(~, ~, handles)  %#ok<DEFNU>
+function zoom_out_tool_ClickedCallback(unused1, unused, handles)  %#ok<DEFNU>
 % hObject    handle to zoom_out_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -1077,7 +1077,7 @@ zoom_plot(5/3, handles);
 
 
 % --- Executes on button press in save_and_quit_button.
-function save_and_quit_button_Callback(~, ~, handles) %#ok<DEFNU>
+function save_and_quit_button_Callback(unused1, unused, handles) %#ok<DEFNU>
 % hObject    handle to save_and_quit_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -1127,7 +1127,7 @@ delete(handles.figure1);
 
 
 % --- Executes on mouse press over figure background.
-function figure1_ButtonDownFcn(~, ~, ~) %#ok<DEFNU>
+function figure1_ButtonDownFcn(unused2, unused1, unused) %#ok<DEFNU>
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
