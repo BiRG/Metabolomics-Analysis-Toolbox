@@ -295,7 +295,7 @@ if ( isfield(handles, 'binListCount') )
                         fprintf(fid, ';');
                     end
                     fprintf(fid, '%f,%f', ...
-                        dataOnTable{i,4}, dataOnTable{i,3});
+                        dataOnTable{i,3}, dataOnTable{i,4});
                     first = false;
                 end;
             end;
