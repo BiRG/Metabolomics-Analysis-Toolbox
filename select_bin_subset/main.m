@@ -22,7 +22,7 @@ function varargout = select_bin_subset(varargin)
 
 % Edit the above text to modify the response to help select_bin_subset
 
-% Last Modified by GUIDE v2.5 27-Jul-2011 14:13:28
+% Last Modified by GUIDE v2.5 01-Aug-2011 21:31:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -61,10 +61,8 @@ guidata(hObject, handles);
 % UIWAIT makes select_bin_subset wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-% Clear the table initially.
-set(handles.binlist_uitable, 'Data', {});
-handles.sortMode = 1;
-guidata(hObject, handles);
+% Initialize the environment.
+app_init(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -89,6 +87,21 @@ function max_error_match_edit_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Initialize environment
+function app_init(hObject, handles)
+% hObject    handle to load_loadings_button (see GCBO)
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.binlist_uitable, 'Data', {}); % Clear the table initially.
+handles.sortMode = 1;
+if ( isfield(handles, 'binListCount') )
+    handles = rmfield(handles, 'binListCount');
+end;
+if ( isfield(handles, 'binLoadingsCount') )
+    handles = rmfield(handles, 'binLoadingsCount');
+end;
+guidata(hObject, handles);
 
 
 % --- Executes on button press in load_binlist_button.
@@ -138,7 +151,7 @@ if ( ischar(filename) )
                     cellsOfNaN cellsOfLogical ];
             else
                 binBounds = [ dataOnTable(:, 1) dataOnTable(:, 2) ...
-                    binBounds dataOnTable(:, 4) dataOnTable(:, 5) ];
+                    binBounds dataOnTable(:, 5) dataOnTable(:, 6) ];
             end;
             set(handles.binlist_uitable, 'Data', binBounds);
         end;
@@ -177,6 +190,7 @@ if ( ischar(filename) )
             mat2cell(logical(binLoadings{4}), vectorOfOnes, 1) ];
         
         dataOnTable = get(handles.binlist_uitable, 'Data');
+        matchingErrorString = '';
         if ( isempty(dataOnTable) || isnan(dataOnTable{1,3}) )
             % Either the table is blank or only an OPLS loadings file has
             % been loaded. Replace existing table data.
@@ -195,7 +209,6 @@ if ( ischar(filename) )
             max_error_match = ...
                 str2double(get(handles.max_error_match_edit,'String'));
             recordsOnTableCount = length(dataOnTable);
-            matchingErrorString = '';
             sourceBinBoundsMatched = false(recordsOnTableCount, 1);
             for i = 1:handles.binLoadingsCount
                 concentration = binLoadings{i,1};
@@ -225,36 +238,36 @@ if ( ischar(filename) )
                         ' not matched'];
                 end
             end
-        end
-        set(handles.binlist_uitable, 'Data', dataOnTable);
-        if ( ~isempty(matchingErrorString) )
-            msgbox(['Unable to match the following loadings centers:' ...
-                10 13 matchingErrorString], ...
-                'Some bin loadings unable to be matched', ...
-                'warn', 'modal');
-        end
-        matchingErrorString = '';
-        sBBMLen = length(sourceBinBoundsMatched);
-        for i = 1:sBBMLen
-            if ( ~sourceBinBoundsMatched(i) )
-                matchingErrorString = ...
-                    [matchingErrorString 10 13  ...
-                    'No loadings for bin number ' ...
-                    num2str(i, '%d')];
+            if ( ~isempty(matchingErrorString) )
+                msgbox(['Unable to match the following loadings centers:' ...
+                    10 13 matchingErrorString], ...
+                    'Some bin loadings unable to be matched', ...
+                    'warn', 'modal');
             end
-        end
-        if ( ~isempty(matchingErrorString) )
-            % Some of the source bin boundaries went unchecked and
-            % unmatched. Report them.
-            msgbox(['Unable to match the following bin boundaries:' ...
-                10 13 matchingErrorString], ...
-                'Some bin bounds unable to be matched', ...
-                'warn', 'modal');
+            matchingErrorString = '';
+            sBBMLen = length(sourceBinBoundsMatched);
+            for i = 1:sBBMLen
+                if ( ~sourceBinBoundsMatched(i) )
+                    matchingErrorString = ...
+                        [matchingErrorString 10 13  ...
+                        'No loadings for bin number ' ...
+                        num2str(i, '%d')];
+                end
+            end
+            if ( ~isempty(matchingErrorString) )
+                % Some of the source bin boundaries went unchecked and
+                % unmatched. Report them.
+                msgbox(['Unable to match the following bin boundaries:' ...
+                    10 13 matchingErrorString], ...
+                    'Some bin bounds unable to be matched', ...
+                    'warn', 'modal');
+            end
         end
     else
         msgbox(['Unable to open loadings file ' fullpath '!'], ...
             'Could not open file', 'error', 'modal');
     end;
+    set(handles.binlist_uitable, 'Data', dataOnTable);
 end;
 
 
@@ -378,7 +391,7 @@ else
     handles.sortMode = 2;
 end;
 dataOnTable = get(handles.binlist_uitable, 'Data');
-dataOnTable = sortrows(dataOnTable, 4);
+dataOnTable = sortrows(dataOnTable, 5);
 if ( handles.sortMode > 0 )
     dataOnTable = flipud(dataOnTable);
 end;
@@ -425,3 +438,10 @@ msgbox('Feature not yet implemented.','Sorry...','warn', 'modal');
 %set(handles.binlist_uitable, 'Data', dataOnTable);
 %guidata(hObject, handles);
 
+
+% --- Executes on button press in clear_table_button.
+function clear_table_button_Callback(hObject, eventdata, handles)
+% hObject    handle to clear_table_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+app_init(hObject, handles)
