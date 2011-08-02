@@ -18,4 +18,4 @@ for i = 1:length(filenames)
     pathnames{i} = pathname;
 end
 
-collections = load_collections_non_interactive(filenames, pathnames);
+collections = load_collections_noninteractive(filenames, pathnames);
