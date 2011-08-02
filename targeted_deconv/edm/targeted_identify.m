@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 26-Jul-2011 14:21:41
+% Last Modified by GUIDE v2.5 01-Aug-2011 17:00:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -205,6 +205,9 @@ else
     
     handles = init_handles_and_gui_from_scratch(handles);
 end
+
+% Confirmation check is always zero in all cases
+handles.did_expected_peaks_confirmation_check = 0;
 
 
 % Initialize the display components
@@ -496,6 +499,11 @@ function previous_button_Callback(~, ~, handles) %#ok<DEFNU>
 %            (that is now replaced by ~) 
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+if ~change_is_ok
+    return;
+end
+
 bin_idx = handles.bin_idx;
 spec_idx = handles.spectrum_idx;
 if spec_idx > 1
@@ -526,15 +534,27 @@ for i=0:999999
     end
 end
 
-
-% --- Executes on button press in next_button.
-function next_button_Callback(~, ~, handles) %#ok<DEFNU>
-% hObject    handle to next_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function [change_is_ok, new_handles] = changing_spectrum_or_bin_is_ok(handles)
+% Confirms that changing spectrum_idx or bin_idx is ok with the user.
+%
+% In the case where the user might not want to change the spectrum or bin
+% due to not having identified the correct number of peaks, pops up a
+% warning and returns the user's response.  Otherwise just says the 
+% change is ok.  In all cases modifies handles to 
+% set new_handles.did_expected_peaks_confirmation_check to true so that
+% subsequent calls to set_spectrum_idx and friends will not display an
+% error message.  Also changes guidata for handles.figure1 to new_handles.
+%
+% Callers should call this as:
+%
+% [change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+%
+% To keep an updated copy of the handles structure;
 bin_idx = handles.bin_idx;
-spec_idx = handles.spectrum_idx;
-num_spec = handles.collection.num_samples;
+new_handles = handles;
+new_handles.did_expected_peaks_confirmation_check = 1;
+guidata(handles.figure1, new_handles);
+change_is_ok = 1;
 
 %Warn if the number of identified peaks is not what is expected
 num_ident = num_identified_for_cur_metabolite(handles);
@@ -548,8 +568,30 @@ if bin.num_peaks ~= num_ident
         'Fix peak identifications', 'Leave identifications as they are',...
         'Fix peak identifications');
     if strcmp(response,'Fix peak identifications')
+        change_is_ok = 0;
         return;
     end
+end
+
+function ret=am_connected_to_internet
+% Returns true if can access certain www sites, false otherwise
+[~, success] = urlread('http://www.google.com/');
+ret = success;
+
+% --- Executes on button press in next_button.
+function next_button_Callback(~, ~, handles) %#ok<DEFNU>
+% hObject    handle to next_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+bin_idx = handles.bin_idx;
+spec_idx = handles.spectrum_idx;
+num_spec = handles.collection.num_samples;
+
+%Get confirmation from the user in situations where it might not be good to
+%change the bin or spectrum. Do nothing if not ok to change.
+[change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+if ~change_is_ok
+    return;
 end
 
 %Go to the next compund
@@ -587,14 +629,42 @@ else
             end
         end
         
-        pkid_name=unique_name('please email to eric_moyer_at_yahoo.com',...
+        
+        %Send the labeled spectral data to eric
+        pkid_name=unique_name(...
+            fullfile(id_path,'please email to eric_moyer_at_yahoo.com'),...
             'mat');
+        zip_name = [pkid_name '.zip'];
         collection = handles.collection; %#ok<NASGU>
         bin_map = handles.bin_map; %#ok<NASGU>
         peaks = handles.peaks; %#ok<NASGU>
         identifications = handles.identifications; %#ok<NASGU>
         save(pkid_name, 'collection','bin_map','peaks','identifications');
+        zip(zip_name, pkid_name);
+        delete(pkid_name);
         
+        if am_connected_to_internet
+            dir_info = dir(zip_name);
+            if dir_info.bytes < 20*1024*1024 %20 MB attachment limit
+                send_email_from_birg_autobug('eric_moyer@yahoo.com', ...
+                    ['Spectrum Identifications from ' get_username ' on ' ...
+                    datestr(clock)], ...
+                    'The identifications are in the attachment', ...
+                    {zip_name} ...
+                );
+                delete(zip_name);
+            else
+                uiwait(msgbox(['Could not automatically send large data file.  ', ...
+                    'Please e-mail the file "' zip_name ...
+                    '" to eric_moyer@yahoo.com.  Thank you.']));
+            end
+        else
+            uiwait(msgbox(['You are not connected to the Internet.  ', ...
+                'Please e-mail the file "' zip_name ...
+                '" to eric_moyer@yahoo.com.  Thank you.']));
+        end
+        
+        %Finish any pending deconvolutions and store the data
         uiwait(msgbox('Will run finishing code here', ...
             'Placeholder dialog', 'modal'));
         %TODO: write code for finishing
@@ -617,7 +687,17 @@ function metabolite_menu_Callback(hObject, ~, handles) %#ok<DEFNU>
 
 % Hints: contents = cellstr(get(hObject,'String')) returns metabolite_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from metabolite_menu
-set_bin_idx(get(hObject,'Value'), handles);
+
+%Check that changing bin is ok
+[change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+if change_is_ok
+    %If so, change the bin
+    set_bin_idx(get(hObject,'Value'), handles);
+else
+    %If not ok, change the menu back to its earlier value
+    set(handles.metabolite_menu,'Value', handles.bin_idx);
+end
+
 
 % --- Executes during object creation, after setting all properties.
 function metabolite_menu_CreateFcn(hObject, ~, ~) %#ok<DEFNU>
@@ -712,10 +792,55 @@ if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
 end
 new_handles = handles;
 
+function new_handles = warn_if_no_confirmation_check(handles)
+% Makes a warning dialog and sends an email to developers if there the
+% confirmation check has not been called.  Return handles with confirmation
+% check turned off again.
+%
+% This check was written because many paths can cause the changing of a bin
+% or spectrum index and all of them should have a confirmation message
+% displayed if the number of identified peaks is not the expected.  This
+% function detects if the program got to a spectrum/bin idx changing
+% routine without first executing a confirmation check.
+
+if ~(handles.did_expected_peaks_confirmation_check)
+
+    %Generate error message and send it to the developers
+    [stack_trace, ~]=dbstack('-completenames');
+    error_message{3+4*length(stack_trace)}='';
+    error_message{1} = ['No check to see if a confirmation dialog was '...
+        'needed was performed before changing spectrum_idx or bin_idx'];
+    error_message{2} = 'Stack trace follows:';
+    error_message{3} = '';
+    for i = 1:length(stack_trace)
+        frame = stack_trace(i);
+        error_message{3+4*i-3} = '';
+        error_message{3+4*i-2} = ['File: ' frame.file];
+        error_message{3+4*i-1} = sprintf('Line: %d', frame.line);
+        error_message{3+4*i-0} = ['Function name: ' frame.name];
+    end
+
+    send_email_from_birg_autobug('eric_moyer@yahoo.com', ...
+        'No confirmation check done in targeted deconvolution', ...
+        error_message);
+
+    % Display a message so things are caught during debugging
+    msgbox(['You can safely ignore this dialog box.  It is a debugging '...
+        'tool for programmers.  Just click ok.  We are sorry for the '...
+        'inconvenience.  It will be fixed in the next version.'], ...
+        'Ignore this dialog box', 'modal');
+end
+
+% Reset the confirmation check flag
+new_handles = handles;
+new_handles.did_expected_peaks_confirmation_check = 0;
+
+
 function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
 % Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
 % I believe (though I haven't verified) that the value in handles in the 
 % caller will be unchanged.
+handles = warn_if_no_confirmation_check(handles);
 handles.spectrum_idx = new_spec;
 handles.bin_idx = new_bin;
 handles = potentially_autoidentify(handles);
@@ -733,6 +858,7 @@ function set_spectrum_idx(new_val, handles)
 %
 % new_val   the new value of the spectrum_idx
 % handles   structures with handles and user data
+handles = warn_if_no_confirmation_check(handles);
 handles.spectrum_idx = new_val;
 handles = potentially_autoidentify(handles);
 guidata(handles.figure1, handles);
@@ -747,6 +873,7 @@ function set_bin_idx(new_val, handles)
 %
 % new_val   the new value of the bin_idx
 % handles   structures with handles and user data
+handles = warn_if_no_confirmation_check(handles);
 handles.bin_idx = new_val;
 handles = potentially_autoidentify(handles);
 guidata(handles.figure1, handles);
@@ -766,7 +893,13 @@ entry  = str2double(get(hObject,'String'));
 if ~isnan(entry) %If the user typed a number
     entry = round(entry);
     if (entry >= 1) && (entry <= handles.collection.num_samples)
-        set_spectrum_idx(entry, handles);
+        [change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+        if change_is_ok
+            set_spectrum_idx(entry, handles);
+        else
+            %Set the edit box back to the number of the current spectrum
+            set(hObject, 'String', sprintf('%d', handles.spectrum_idx));
+        end
     else
         uiwait(msgbox( ...
             sprintf('Invalid spectrum number.  There are only %d spectra.', ...
@@ -991,3 +1124,10 @@ save(fullname, 'session_data');
 
 %Quit
 delete(handles.figure1);
+
+
+% --- Executes on mouse press over figure background.
+function figure1_ButtonDownFcn(~, ~, ~) %#ok<DEFNU>
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
