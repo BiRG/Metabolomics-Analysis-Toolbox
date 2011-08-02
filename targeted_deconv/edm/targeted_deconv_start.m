@@ -22,7 +22,7 @@ function varargout = targeted_deconv_start(varargin)
 
 % Edit the above text to modify the response to help targeted_deconv_start
 
-% Last Modified by GUIDE v2.5 26-Jul-2011 12:29:56
+% Last Modified by GUIDE v2.5 01-Aug-2011 17:01:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -406,3 +406,10 @@ function continue_filename_box_Callback(~, ~, ~) %#ok<DEFNU>
 
 %NOTE: this function needs to be present even if blank - it will be called
 %by the gui no matter what
+
+
+% --- Executes on mouse press over figure background.
+function figure1_ButtonDownFcn(~, ~, ~) %#ok<DEFNU>
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
