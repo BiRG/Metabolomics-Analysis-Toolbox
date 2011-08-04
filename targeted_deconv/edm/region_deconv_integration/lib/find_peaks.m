@@ -10,7 +10,7 @@ collection.Y_smooth = [];
 for s = 1:num_spectra
     noise_std = std(collection.Y(1:min_width,s));
     % Find the minimums so we can divide the spectra appropriately
-    [maxs,mins,y_smooth] = find_maxs_mins(collection.x,collection.Y(:,s),noise_std); % Find the peak locations
+    [maxs,mins,y_smooth] = wavelet_find_maxes_and_mins(collection.Y(:,s),noise_std); % Find the peak locations
     collection.maxs{s} = maxs;
     collection.mins{s} = mins;
     collection.include_mask{s} = 0*maxs+1; % Include all by default
