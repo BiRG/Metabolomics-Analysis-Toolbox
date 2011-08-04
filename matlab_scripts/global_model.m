@@ -1,4 +1,4 @@
-function data = global_model(BETA,x,num_maxima,x_baseline_BETA)
+function [data,y_baseline] = global_model(BETA,x,num_maxima,x_baseline_BETA)
 nRep = 4; % Number of repeating elements
 M = @(j) (abs(BETA(nRep*(j-1)+1)));
 G = @(j) (abs(BETA(nRep*(j-1)+2)));
@@ -23,4 +23,5 @@ else
 end
 last_inx = nRep*num_maxima;
 remainder = BETA(last_inx+1:end);
-data = data + baseline_piecewise_interp(remainder,x_baseline_BETA,x);
+y_baseline = baseline_piecewise_interp(remainder,x_baseline_BETA,x);
+data = data + y_baseline;
