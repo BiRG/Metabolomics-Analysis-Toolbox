@@ -1,7 +1,8 @@
 clc
 
 addpath([pwd,'/lib']);
-addpath([pwd,'/lib/extern/rand_org']);
+addpath([pwd,'/lib/extern/munkres']);  %Linear assignment problem
+addpath([pwd,'/lib/extern/rand_org']); %True random numbers
 addpath([pwd,'/matlab_scripts']);
 addpath([pwd,'/matlab_scripts/cursors']);
 addpath([pwd,'/lib/dab']);
