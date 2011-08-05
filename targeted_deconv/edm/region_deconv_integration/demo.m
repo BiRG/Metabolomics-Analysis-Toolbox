@@ -19,7 +19,7 @@ region_left = 8.6;
 region_right = 8.41;
 
 % Options
-x_baseline_width = 0.1;
+x_baseline_width = 0.6;
 
 x = collection.x;
 y = interpolate_zeros(x,collection.Y(:,s));
