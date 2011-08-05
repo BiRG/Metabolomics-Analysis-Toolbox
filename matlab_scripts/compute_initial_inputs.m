@@ -1,19 +1,27 @@
-function [BETA0,lb,ub] = compute_initial_inputs(x,y,all_X,fit_inxs,X)
+function [BETA0,lb,ub] = compute_initial_inputs(x,y,peak_x,fit_inxs,X)
+%Computes starting values for the deconvolution fitting routines
+% x        The x values of the spectrum being fit
+% y        The corresponding y values
+% peak_x   The x values of the peaks
+% fit_inxs Not sure what this does: set it to 1:length(x)
+% X        Not sure what this does: pass x again
 min_M = 0.00001;
 min_G = 0.00001;
 % Compute the initial values for the width/height and offset
 BETA0 = [];
 lb = [];
 ub = [];
-% Assign all of the Xs to the closest index in x
-max_inxs = zeros(size(all_X));
+% For each peak ppm (or whatever unit) location, put the index of the 
+% value closest to it in the x array into the cooresponding slot in
+% max_inxs
+max_inxs = zeros(size(peak_x));
 for mx_inx = 1:length(max_inxs)
-    diff = abs(x - all_X(mx_inx));
-    [vs,inxs] = sort(diff);
+    diff = abs(x - peak_x(mx_inx));
+    [unused,inxs] = sort(diff); %#ok<ASGLU>
     max_inxs(mx_inx) = inxs(1);
 end
 for mx_inx = 1:length(X)
-    inx = find(all_X == X(mx_inx));
+    inx = find(peak_x == X(mx_inx));
     % Left
     if inx-1 >= 1
         temp_inxs = max_inxs(inx-1):max_inxs(inx)-1;
@@ -23,12 +31,12 @@ for mx_inx = 1:length(X)
     if isempty(temp_inxs)
         temp_inxs = max_inxs(inx);
     end
-    [mn,ix]=min(y(temp_inxs));
+    [unused,ix]=min(y(temp_inxs)); %#ok<ASGLU>
     left_inx = temp_inxs(ix);
     ub_x0 = x(left_inx);
     
     % Right
-    if inx+1 <= length(all_X)
+    if inx+1 <= length(peak_x)
         temp_inxs = max_inxs(inx)+1:max_inxs(inx+1);
     else
         temp_inxs = max_inxs(inx)+1:fit_inxs(end);
@@ -36,7 +44,7 @@ for mx_inx = 1:length(X)
     if isempty(temp_inxs)
         temp_inxs = max_inxs(inx);
     end
-    [mn,ix]=min(y(temp_inxs));
+    [unused,ix]=min(y(temp_inxs)); %#ok<ASGLU>
     right_inx = temp_inxs(ix);
     lb_x0 = x(right_inx);
     
