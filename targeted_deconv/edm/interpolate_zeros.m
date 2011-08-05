@@ -34,22 +34,25 @@ function y_without_zeros = interpolate_zeros(x,y)
 % 
 %      1     2     3     4     5     6     7     7     7     7
 % 
+%
 % >>interpolate_zeros(1:10, [0 0 0 1:7])
 % 
 % ans =
 % 
 %      1     1     1     1     2     3     4     5     6     7
-% 
+%
+%
 % >>interpolate_zeros(1:10, [1:3 0 0 0 7:10])
 % 
 % ans =
 % 
 %      1     2     3     4     5     6     7     8     9    10
-% 
+%
+%
 % >>interpolate_zeros(1:10, zeros(1,10))
 % Warning: Interpolate zeros was passed an array consisting of only 10 zeros.  No interpolation was
 % possible.  It was returned unchanged. 
-% > In interpolate_zeros at 67
+% > In interpolate_zeros at 70
 % 
 % ans =
 % 
@@ -84,14 +87,17 @@ xi = [];
 inxs = [];
 y = y_without_zeros; % Base interpolation off of the fixed input
 for i = 2:length(y) % We know the first is not zero
-    if y(i) == 0
+    %If a value is zero, add it to the list of zero indices
+    if y(i) == 0  
         xi(end+1) = x(i); %#ok<AGROW>
         inxs(end+1) = i; %#ok<AGROW>
         if isempty(xs)
             xs(end+1) = x(i-1); %#ok<AGROW>
             ys(end+1) = y(i-1); %#ok<AGROW>
         end
-    elseif ~isempty(xi)
+    %If we have a non-zero value and undealt-with zero indices, 
+    %interpolate from the last nonzero value to this one
+    elseif ~isempty(xi) 
         xs(end+1) = x(i); %#ok<AGROW>
         ys(end+1) = y(i); %#ok<AGROW>
         y_without_zeros(inxs) = interp1(xs,ys,xi,'linear');
