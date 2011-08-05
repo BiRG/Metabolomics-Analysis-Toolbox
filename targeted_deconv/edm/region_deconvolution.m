@@ -4,7 +4,9 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 % This is code from Paul Anderson.  I am adding these comments 
 % after-the-fact.
 %
+% ------------------------------------------------------------------------
 % Input Arguments
+% ------------------------------------------------------------------------
 %
 % x                  The x values for the input spectrum (frequently ppm)
 %
@@ -32,7 +34,9 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 % region             The region to deconvolve - given as a pair:
 %                    [max x, min x]
 %
+% ------------------------------------------------------------------------
 % Output Parameters
+% ------------------------------------------------------------------------
 %
 % BETA               The parameters of the peaks (see BETA0).  Will have
 %                    the same dimensions as BETA0
@@ -60,6 +64,24 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 %
 % peak_BETA          The values of the deconvolved peaks (only those in the
 %                    region)
+%
+% ------------------------------------------------------------------------
+% Example Code:
+% ------------------------------------------------------------------------
+%
+% 
+% region_left = 8.6;
+% region_right = 8.41;
+% x_baseline_width = 0.6;
+%
+% [BETA0,lb,ub] = compute_initial_inputs(x,y,maxes_x,1:length(x),maxes_x);
+%
+% [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =...
+%   region_deconvolution(x, y, BETA0, lb, ub, x_baseline_width,...
+%                        [region_left;region_right] );
+%
+% %Plot original, fitted, and baseline
+% plot(x(fit_inxs),y(fit_inxs),x(fit_inxs),y_fit,x(fit_inxs),y_baseline);
 BETA = BETA0;
 
 fit_inxs = find(region(1) >= x & x >= region(2)); % To do: this should adapt to the location of the maxima
