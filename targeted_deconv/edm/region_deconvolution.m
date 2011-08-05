@@ -1,4 +1,64 @@
 function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region)
+% Deconvolves a region of a spectrum
+%
+% This is code from Paul Anderson.  I am adding these comments 
+% after-the-fact.
+%
+% Input Arguments
+%
+% x                  The x values for the input spectrum (frequently ppm)
+%
+% y                  The y values for the input spectrum
+%
+% BETA0              A 1 dimensional array of doubles.
+%
+%                    Every 4 items are the starting parameters for one peak
+%                    in the order M, G, P, x0.
+%
+%                    M  is the height parameter
+%                    G  is the width parameter,
+%                    P  is the proportion of Lorenzianness (1=lorenzian,
+%                       0=gaussian)
+%                    x0 is the location parameter, the location of the 
+%                       peak.
+%
+% lb                 The lower bound on the corresponding entry in BETA0
+%
+% ub                 The upper bound on the corresponding entry in BETA0
+%
+% x_baseline_width   Not sure about this, probably the interval between the
+%                    points that can be adjusted on the baseline
+%
+% region             The region to deconvolve - given as a pair:
+%                    [max x, min x]
+%
+% Output Parameters
+%
+% BETA               The parameters of the peaks (see BETA0).  Will have
+%                    the same dimensions as BETA0
+%
+% baseline_BETA      The parameters of the baseline.  Maybe the heights of
+%                    the baseline at the control points?
+%
+% fit_inxs           The indices over which the fit took place.  So you can
+%                    plot(x(fit_inxs), y_fit) to get the fitted curve
+%
+% y_fit              The fitted points, a 1d array of doubles of same
+%                    dimension as fit_inxs covering the x's in the region
+%
+% y_baseline         The calculated baseline values for each of the fitted
+%                    indices
+%
+% R2                 Supposed to be the squared fraction of the variance 
+%                    of the sample accounted for by the fitted model.  I
+%                    have to think about it more, but I think that there is
+%                    an error in the calculation and that (1-sqrt(1-R2))^2
+%                    would give the real value of that quantity
+%
+% peak_inxs          The indexes of the x values in the region 
+%
+% peak_BETA          The values of the deconvolved peaks (only those in the
+%                    region)
 BETA = BETA0;
 
 fit_inxs = find(region(1) >= x & x >= region(2)); % To do: this should adapt to the location of the maxima
