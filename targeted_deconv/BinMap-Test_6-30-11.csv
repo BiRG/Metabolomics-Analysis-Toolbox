@@ -11,3 +11,4 @@ ID,Metabolite,Bin (Lt),Bin (Rt),multiplicity,Deconvolution,Proton ID,ID Source
 10,alpha-ketoglutarate,2.473,2.43,t,clean,g CH2/CH2,Pub/Measured/Chemonx
 11,succinate,2.425,2.405,s,clean,CH2,Measured/Chemonx
 12,N acetylglutamate,2.055,2.025,s,overlap,CH3,Publication
+-100000,Allantonin,6.15,6.00,s,overlap,unknown,EricTesting
