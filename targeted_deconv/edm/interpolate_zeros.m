@@ -1,6 +1,30 @@
 function y_without_zeros = interpolate_zeros(x,y)
-% Construct a special y for the baseline function, where the zero regions
-% are interpolated
+% Construct a special y where the zero regions are interpolated.  
+%
+% Used for calculating the baseline function in region_deconvolution.
+%
+% Minor bugs:
+%
+% If the first value is zero then it will be left unchanged.  If the last 
+% values are a string of zeros, they will be left as is.
+%
+% -------------------------------------------------------------------------
+% Input arguments
+% -------------------------------------------------------------------------
+%
+% x   The x values for the input spectrum (frequently ppm)
+%
+% y   The y values for the input spectrum
+%
+% -------------------------------------------------------------------------
+% Output parameters
+% -------------------------------------------------------------------------
+%
+% y_without_zeros  Identical to y except that all regions with zeros have
+%                  been replaced by a line drawn between the non-zeros at
+%                  the end-points.
+
+
 xs = [];
 ys = [];
 xi = [];
