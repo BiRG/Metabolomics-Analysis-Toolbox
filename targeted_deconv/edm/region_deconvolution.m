@@ -4,7 +4,9 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 % This is code from Paul Anderson.  I am adding these comments 
 % after-the-fact.
 %
+% -------------------------------------------------------------------------
 % Input Arguments
+% -------------------------------------------------------------------------
 %
 % x                  The x values for the input spectrum (frequently ppm)
 %
@@ -32,7 +34,9 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 % region             The region to deconvolve - given as a pair:
 %                    [max x, min x]
 %
+% -------------------------------------------------------------------------
 % Output Parameters
+% -------------------------------------------------------------------------
 %
 % BETA               The parameters of the peaks (see BETA0).  Will have
 %                    the same dimensions as BETA0
