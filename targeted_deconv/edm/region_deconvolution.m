@@ -49,11 +49,12 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 % y_baseline         The calculated baseline values for each of the fitted
 %                    indices
 %
-% R2                 Supposed to be the squared fraction of the variance 
-%                    of the sample accounted for by the fitted model.  I
-%                    have to think about it more, but I think that there is
-%                    an error in the calculation and that (1-sqrt(1-R2))^2
-%                    would give the real value of that quantity
+% R2                 A fit quality metric.  If s is the sum of squared 
+%                    error for the fit and v is the variance of the 
+%                    original function.  R2=1-s/v.  R2 of 1 is a perfect 
+%                    fit.  Note that R2 can conceivably be negative for a 
+%                    very bad fit (no such fit will likely be forthcoming 
+%                    from this program on normal NMR data, though.)
 %
 % peak_inxs          The indexes of the x values in the region 
 %
