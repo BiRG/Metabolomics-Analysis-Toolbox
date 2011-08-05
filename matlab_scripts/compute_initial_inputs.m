@@ -16,7 +16,7 @@ function [BETA0,lb,ub] = compute_initial_inputs(x,y,peak_x,fit_inxs,X)
 %
 % fit_inxs Not sure what this does: set it to 1:length(x)
 %
-% X        Not sure what this does: pass x again
+% X        Not sure: The subset of the peak x values that we want to fit
 %
 %
 % -------------------------------------------------------------------------
@@ -58,14 +58,17 @@ for mx_inx = 1:length(max_inxs)
     max_inxs(mx_inx) = inxs(1);
 end
 for mx_inx = 1:length(X)
+    % Inx is the index of the peak at the current x location 
     inx = find(peak_x == X(mx_inx));
+    
     % Left
     if inx-1 >= 1
         temp_inxs = max_inxs(inx-1):max_inxs(inx)-1;
     else
+        %The peak is the first peak
         temp_inxs = fit_inxs(1):max_inxs(inx)-1;
     end
-    if isempty(temp_inxs)
+    if isempty(temp_inxs) 
         temp_inxs = max_inxs(inx);
     end
     [unused,ix]=min(y(temp_inxs)); %#ok<ASGLU>
