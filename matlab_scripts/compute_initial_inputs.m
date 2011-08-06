@@ -1,10 +1,47 @@
 function [BETA0,lb,ub] = compute_initial_inputs(x,y,peak_x,fit_inxs,X)
 %Computes starting values for the deconvolution fitting routines
+%
+% These documentation comments are being put-in after the fact for code
+% written by Paul Anderson.
+%
+% -------------------------------------------------------------------------
+% Input arguments
+% -------------------------------------------------------------------------
+%
 % x        The x values of the spectrum being fit
+%
 % y        The corresponding y values
+%
 % peak_x   The x values of the peaks
+%
 % fit_inxs Not sure what this does: set it to 1:length(x)
-% X        Not sure what this does: pass x again
+%
+% X        Not sure: The subset of the peak x values that we want to fit
+%
+%
+% -------------------------------------------------------------------------
+% Output parameters
+% -------------------------------------------------------------------------
+%
+% BETA0              A 1 dimensional array of doubles.
+%
+%                    Every 4 items are the starting parameters for one peak
+%                    in the order M, G, P, x0.
+%
+%                    M  is the height parameter
+%                    G  is the width parameter,
+%                    P  is the proportion of Lorenzianness (1=lorenzian,
+%                       0=gaussian)
+%                    x0 is the location parameter, the location of the 
+%                       peak.
+%
+% lb                 The lower bound on the corresponding entry in BETA0
+%                    -- used in constraining the optimization
+%
+% ub                 The upper bound on the corresponding entry in BETA0
+%                    -- used in constraining the optimization
+%
+
 min_M = 0.00001;
 min_G = 0.00001;
 % Compute the initial values for the width/height and offset
@@ -21,14 +58,17 @@ for mx_inx = 1:length(max_inxs)
     max_inxs(mx_inx) = inxs(1);
 end
 for mx_inx = 1:length(X)
+    % Inx is the index of the peak at the current x location 
     inx = find(peak_x == X(mx_inx));
+    
     % Left
     if inx-1 >= 1
         temp_inxs = max_inxs(inx-1):max_inxs(inx)-1;
     else
+        %The peak is the first peak
         temp_inxs = fit_inxs(1):max_inxs(inx)-1;
     end
-    if isempty(temp_inxs)
+    if isempty(temp_inxs) 
         temp_inxs = max_inxs(inx);
     end
     [unused,ix]=min(y(temp_inxs)); %#ok<ASGLU>
