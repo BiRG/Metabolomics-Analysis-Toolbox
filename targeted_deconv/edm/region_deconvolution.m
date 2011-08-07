@@ -60,7 +60,10 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 %                    very bad fit (no such fit will likely be forthcoming 
 %                    from this program on normal NMR data, though.)
 %
-% peak_inxs          The indexes of the x values in the region 
+% peak_inxs          The peak numbers that were in the region.  You should
+%                    be able to do BETA(4*(peak_inxs)+variable) to get a
+%                    slice of that sub-variable for all the peaks in the
+%                    region.  (M is -3, G is -2, etc)
 %
 % peak_BETA          The values of the deconvolved peaks (only those in the
 %                    region)
