@@ -21,8 +21,10 @@ def get_updated_deconv_for(bin, spectrum):
 #Plotting:
 
 if should_display_deconv:
-    d=get_deconv_for(bin, spectrum)
-    plot_deconv(d)
+    if extant_deconv_for(bin, spectrum):
+        d=get_deconv_for(bin, spectrum)
+        plot_deconv(d)
+
     if deconv_is_up_to_date(bin, spectrum):
         hide_update_deconv_button
         #Note: deconv_is_up_to_date must be false if there is
