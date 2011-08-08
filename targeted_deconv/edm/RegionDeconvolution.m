@@ -5,8 +5,6 @@ classdef RegionDeconvolution
     %   properties returned from the region_deconvolution function.  Thus
     %   there is some uncertainty about their interpretation
     
-    %TODO: finish constructor
-    
     properties
         % An array of GaussianLorenzian objects for the peaks that were in
         % the region that was deconvolved
@@ -80,7 +78,53 @@ classdef RegionDeconvolution
                 [region_max;region_min]); %#ok<ASGLU>
             obj.peaks = GaussLorentzPeak(peak_BETA);
         end
+        
+        function peaks=peak_at(obj, x)
+        % Return all peak objects which have their maximum at x
+        %
+        % -----------------------------------------------------------------
+        % Usage
+        % -----------------------------------------------------------------
+        % peak = rd.peak_at(x)
+        %
+        % -----------------------------------------------------------------
+        % Input Arguments
+        % -----------------------------------------------------------------
+        % obj   The RegionDeconvolution in which to search for the peak.  
+        %       Must be a single object not an array.
+        %
+        % x     The x value of the maximum of the peak.  Must be a scalar
+        %
+        %
+        % -----------------------------------------------------------------
+        % Outputs
+        % -----------------------------------------------------------------
+        %
+        % peak  A GaussLorentzPeak object describing the peak with a 
+        %       maximum at the given x or [] if there was no such peak
+        %
+        % -----------------------------------------------------------------
+        % Examples:
+        % -----------------------------------------------------------------
+        %
+        % p=rd.peak_at(1.5); if ~isempty(p); fprintf('We found them'); end
+        
+            if isempty(obj.peaks)
+                peaks=[];
+                return;
+            elseif length(obj) > 1
+                error(['RegionDeconvolution.peak_at is not ', ...
+                    'implemented for operation on an array of ', ...
+                    'RegionDeconvolution objects.']);
+            elseif length(x) > 1
+                error(['RegionDeconvolution.peak_at is not ', ...
+                    'implemented for operation on an array of ', ...
+                    'x objects.']);
+            end
+            
+            exes = [obj.peaks.location];
+            peaks = obj.peaks(exes == x);
+        end
     end
-    
 end
 
