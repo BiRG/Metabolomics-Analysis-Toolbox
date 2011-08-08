@@ -258,6 +258,25 @@ low_idx = index_of_nearest_x_to(bin.left, handles);
 high_idx = index_of_nearest_x_to(bin.right, handles);
 y = handles.collection.Y(low_idx:high_idx, spectrum_idx);
 
+function name=unique_name(base, extension)
+% Return a unique filename in the current directory using base and
+% extension.  The name returned will be of the form base_xxxxxx.extension.
+%
+% Note: there is a race condition between checking for the existence of the
+% file name and the name being used.  The file may be created some-time
+% between that.
+for i=0:999999
+    name=sprintf('%s_%06d.%s',base,i,extension);
+    if ~exist(name, 'file')
+        return
+    end
+end
+
+function ret=am_connected_to_internet
+% Returns true if can access certain www sites, false otherwise
+[unused, success] = urlread('http://www.google.com/'); %#ok<ASGLU>
+ret = success;
+
 % --- Outputs from this function are returned to the command line.
 function varargout = targeted_identify_OutputFcn(unused2, unused, handles)  %#ok<INUSL>
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -550,6 +569,14 @@ function zoom_to_interval(right, left)
 xlim([right, left]);
 ylim('auto');
 
+function zoom_plot(zoom_factor, handles)
+% Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
+% factor, expanding or contracting it around its current center
+cur_interval = xlim(handles.spectrum_plot);
+center = mean(cur_interval);
+new_interval=((cur_interval - center)*zoom_factor)+center;
+zoom_to_interval(new_interval(1), new_interval(2));
+
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
 % index changes (and at other times)
@@ -747,6 +774,52 @@ end
 new_handles = handles;
 new_handles.did_expected_peaks_confirmation_check = 0;
 
+% ------------------------------------------------------------------------
+%
+% Conversion from x values to indices of various arrays
+%
+% ------------------------------------------------------------------------
+
+function idx = min_idx(vals)
+min_val = min(vals);
+idx = find(vals == min_val, 1, 'first');
+
+function idx = index_of_nearest_point_to(target, points_x, points_y) %#ok<DEFNU>
+% Return the index of the point closest to target in the points described
+% by points_x and points_y
+%
+% target   the point whose closest neighbor is being found (in form [x y] )
+% points_x the x coordinates of the neighbor points
+% points_y the y coordinates of the neighbor points
+dx = points_x - target(1);
+dy = points_y - target(2);
+dists = sqrt(dx.^2+dy.^2);
+idx = min_idx(dists);
+
+function idx = index_of_nearest_x_to(val, handles)
+% Return the index of the value closest to val in the x values of the
+% collection.
+%
+% handles structure with handles and user data (see GUIDATA)
+xvals = handles.collection.x;
+diffs = abs(val - xvals);
+idx = min_idx(diffs);
+
+function idx = index_of_nearest_peak_to(val, handles)
+% Return the index of the value closest to val in the x coordinates of the 
+% peaks for this bin and spectrum or 0 if there are no peaks
+%
+% handles structure with handles and user data (see GUIDATA)
+pks = get_cur_peaks(handles);
+if isempty(pks)
+    idx = 0;
+    return;
+else
+    diffs = abs(val - pks);
+    idx = min_idx(diffs);
+    return;
+end
+
 
 % ------------------------------------------------------------------------
 %
@@ -805,25 +878,6 @@ else
             'Can''t go before first spectrum','modal'));
     end
 end
-
-function name=unique_name(base, extension)
-% Return a unique filename in the current directory using base and
-% extension.  The name returned will be of the form base_xxxxxx.extension.
-%
-% Note: there is a race condition between checking for the existence of the
-% file name and the name being used.  The file may be created some-time
-% between that.
-for i=0:999999
-    name=sprintf('%s_%06d.%s',base,i,extension);
-    if ~exist(name, 'file')
-        return
-    end
-end
-
-function ret=am_connected_to_internet
-% Returns true if can access certain www sites, false otherwise
-[unused, success] = urlread('http://www.google.com/'); %#ok<ASGLU>
-ret = success;
 
 % --- Executes on button press in next_button.
 function next_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
@@ -999,47 +1053,6 @@ function remove_peak_tool_ClickedCallback(hObject, unused, handles) %#ok<INUSL,D
 putdowntext('thisisnotamatlabbutton',hObject); % Call undocumented matlab toolbar button change routine
 reset_plot_to_non_interactive(handles);
 
-function idx = min_idx(vals)
-min_val = min(vals);
-idx = find(vals == min_val, 1, 'first');
-
-function idx = index_of_nearest_point_to(target, points_x, points_y) %#ok<DEFNU>
-% Return the index of the point closest to target in the points described
-% by points_x and points_y
-%
-% target   the point whose closest neighbor is being found (in form [x y] )
-% points_x the x coordinates of the neighbor points
-% points_y the y coordinates of the neighbor points
-dx = points_x - target(1);
-dy = points_y - target(2);
-dists = sqrt(dx.^2+dy.^2);
-idx = min_idx(dists);
-
-function idx = index_of_nearest_x_to(val, handles)
-% Return the index of the value closest to val in the x values of the
-% collection.
-%
-% handles structure with handles and user data (see GUIDATA)
-xvals = handles.collection.x;
-diffs = abs(val - xvals);
-idx = min_idx(diffs);
-
-function idx = index_of_nearest_peak_to(val, handles)
-% Return the index of the value closest to val in the x coordinates of the 
-% peaks for this bin and spectrum or 0 if there are no peaks
-%
-% handles structure with handles and user data (see GUIDATA)
-pks = get_cur_peaks(handles);
-if isempty(pks)
-    idx = 0;
-    return;
-else
-    diffs = abs(val - pks);
-    idx = min_idx(diffs);
-    return;
-end
-
-
 
 
 % --- Executes on mouse press over axes background.
@@ -1102,14 +1115,6 @@ elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
     end
     
 end
-
-function zoom_plot(zoom_factor, handles)
-% Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
-% factor, expanding or contracting it around its current center
-cur_interval = xlim(handles.spectrum_plot);
-center = mean(cur_interval);
-new_interval=((cur_interval - center)*zoom_factor)+center;
-zoom_to_interval(new_interval(1), new_interval(2));
 
 % --------------------------------------------------------------------
 function zoom_in_tool_ClickedCallback(unused1, unused, handles) %#ok<INUSL,DEFNU>
