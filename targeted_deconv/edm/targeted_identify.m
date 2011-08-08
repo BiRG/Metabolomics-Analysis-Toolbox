@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 01-Aug-2011 17:00:31
+% Last Modified by GUIDE v2.5 08-Aug-2011 13:59:20
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -42,6 +42,14 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
+
+
+% ------------------------------------------------------------------------
+%
+% Initialization and OpeningFncn
+%
+% ------------------------------------------------------------------------
+
 
 function col=bogus_collection
 % Return a collection object just made up as a space filler when the gui is
@@ -91,6 +99,7 @@ handles.peaks = session_data.peaks;
 handles.spectrum_idx = session_data.spectrum_idx;
 handles.bin_idx = session_data.bin_idx;
 handles.already_autoidentified = session_data.already_autoidentified;
+handles.deconvolutions = session_data.deconvolutions;
 
 out_handles = handles;
 
@@ -104,6 +113,7 @@ function out_handles = init_handles_and_gui_from_scratch(handles)
 
 % Initialize the menu of metabolites from the bin map
 num_bins = length(handles.bin_map);
+num_samples = handles.collection.num_samples;
 metabolite_names{num_bins}='';
 for bin_idx = 1:num_bins
     cur_bin = handles.bin_map(bin_idx);
@@ -117,13 +127,22 @@ handles.identifications = [];
 
 % Start with no existing autoidentifications
 handles.already_autoidentified = ...
-    zeros(num_bins, handles.collection.num_samples);
+    zeros(num_bins, num_samples);
 
-% Start witn no detected peaks (but preallocate the array)
-handles.peaks = cell(num_bins, handles.collection.num_samples);
+% Start with no detected peaks (but preallocate the array)
+handles.peaks = cell(num_bins, num_samples);
 for b=1:num_bins
     for s=1:handles.collection.num_samples
         handles.peaks{b,s}='Uninitialized';
+    end
+end
+
+% Start with deconvolutions as a matrix of empty CachedValue
+% objects
+handles.deconvolutions(num_bins, num_samples) = CachedValue;
+for b=1:num_bins
+    for s=1:num_samples
+        handles.deconvolutions(b,s)=CachedValue;
     end
 end
 
@@ -222,6 +241,12 @@ guidata(hObject, handles);
 % UIWAIT makes targeted_identify wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
+% ------------------------------------------------------------------------
+%
+% Misc
+%
+% ------------------------------------------------------------------------
+
 function y = y_values_in_cur_bin(handles)
 % Return the y values that fall within the current bin (choosing the
 % indices of the bin boundaries to be the closest x values to the bin
@@ -232,6 +257,22 @@ bin = handles.bin_map(bin_idx).bin;
 low_idx = index_of_nearest_x_to(bin.left, handles);
 high_idx = index_of_nearest_x_to(bin.right, handles);
 y = handles.collection.Y(low_idx:high_idx, spectrum_idx);
+
+% --- Outputs from this function are returned to the command line.
+function varargout = targeted_identify_OutputFcn(unused2, unused, handles)  %#ok<INUSL>
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+% ------------------------------------------------------------------------
+%
+% Peaks
+%
+% ------------------------------------------------------------------------
 
 function pks = get_cur_peaks(handles)
 % Return the peaks for the current bin and spectrum.  Either uses
@@ -263,7 +304,6 @@ if ischar(pks) && strcmp(pks,'Uninitialized')
     handles.peaks{bin_idx, spectrum_idx} = pks;
     guidata(handles.figure1, handles);
 end
-
 
 function set_peaks(bin_idx, spectrum_idx, new_val, handles)
 % Set the peaks for the given bin in the given spectrum.  Updates the gui
@@ -315,6 +355,12 @@ if any(matches)
     set_peaks(bin_idx, spectrum_idx, pks, handles);
 end
 
+
+% ------------------------------------------------------------------------
+%
+% Identifications
+%
+% ------------------------------------------------------------------------
 
 function ids=peak_identifications_for_cur_metabolite(handles)
 % Return the list of the peaks identified for the current metabolite
@@ -369,6 +415,92 @@ spectrum = collection.Y(:,pid.spectrum_index);
 center = [pid.ppm, spectrum(pid.height_index)];
 draw_circle(center, 0.0625, 'r');
 
+function remove_identification(ppm, handles)
+% Removes the identification at the given ppm - if there is no
+% identification there, does nothing
+ids = peak_identifications_for_cur_metabolite(handles);
+if ~isempty(ids)
+    id_x = [ids.ppm];
+    to_remove = ids(id_x == ppm);
+    if ~isempty(to_remove)
+        new_ids = handles.identifications;
+        for id_to_remove=to_remove %Remove each ident'n one at a time
+            new_ids(new_ids == id_to_remove) = [];
+        end
+        set_identifications(new_ids, handles);
+    end
+end
+    
+function set_identifications(new_identifications, handles)
+handles.identifications = new_identifications;
+guidata(handles.figure1, handles);
+update_display(handles);
+update_plot(handles);
+
+function result=is_identified(ppm, handles)
+% Returns true if there is an identification at the given ppm, false
+% otherwise
+%
+% ppm     The ppm at which to check the existence of an identification
+% handles The gui global data structure
+ids = peak_identifications_for_cur_metabolite(handles);
+if isempty(ids)
+    result = 0;
+    return;
+else
+    id_x = [ids.ppm];
+    result = any(id_x == ppm);
+    return;
+end
+
+function new_handles = potentially_autoidentify(handles)
+% Autoidentifies peaks if the current bin is clean, no identifications are
+% extant for the current bin and spectrum, and the current spectrum has the 
+% same number of peaks as would
+% be expected.  Returns the new value of the handles structure.  Also sets 
+% the guidata.
+
+%If no autoidentification has been done on this bin
+if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
+    %If no current identifications
+    ids = peak_identifications_for_cur_metabolite(handles);
+    if isempty(ids)
+        %If clean bin
+        bin = handles.bin_map(handles.bin_idx);
+        if bin.is_clean
+            %If correct number of peaks
+            pks = get_cur_peaks(handles);
+            if length(pks) == bin.num_peaks
+                % Do autoidentification:
+                
+                %First mark as identified
+                handles.already_autoidentified(handles.bin_idx, ...
+                    handles.spectrum_idx) = 1;
+                
+                %Then make identification objects for all peaks in the bin
+                new_ids(bin.num_peaks)=PeakIdentification;
+                for i = 1:bin.num_peaks
+                    ppm = pks(i);
+                    xidx = index_of_nearest_x_to(ppm, handles);
+                    new_ids(i) = PeakIdentification(ppm, xidx, ...
+                        handles.spectrum_idx, bin, ...
+                        1, get_username, get_account_id, datestr(clock)); 
+                end
+                
+                %Finally add them to the identifications for the gui
+                set_identifications([handles.identifications new_ids], handles);
+                handles = guidata(handles.figure1);
+            end
+        end
+    end
+end
+new_handles = handles;
+
+% ------------------------------------------------------------------------
+%
+% Plotting and Display
+%
+% ------------------------------------------------------------------------
 
 function update_plot(handles)
 % Update the plot - needed when the spectrum index changes or the
@@ -482,16 +614,170 @@ elseif spec_idx < num_spec
 end
 %TODO: finish - update plot and 'cleanness'
 
-% --- Outputs from this function are returned to the command line.
-function varargout = targeted_identify_OutputFcn(unused2, unused, handles)  %#ok<INUSL>
-% varargout  cell array for returning output args (see VARARGOUT);
-% hObject    handle to figure
+% ------------------------------------------------------------------------
+%
+% Spectrum idx and Bin idx
+%
+% ------------------------------------------------------------------------
+
+function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
+% Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
+% I believe (though I haven't verified) that the value in handles in the 
+% caller will be unchanged.
+handles = warn_if_no_confirmation_check(handles);
+handles.spectrum_idx = new_spec;
+handles.bin_idx = new_bin;
+handles = potentially_autoidentify(handles);
+guidata(handles.figure1, handles);
+update_display(handles);
+update_plot(handles);
+zoom_to_bin(handles);
+
+function set_spectrum_idx(new_val, handles)
+% Sets handles.spectrum_idx and also updates the gui - don't call when you
+% update the bin_idx to avoid repeating updates.  I believe (though I
+% haven't verified) that the value in handles in the caller will be
+% unchanged.
+%
+% new_val   the new value of the spectrum_idx
+% handles   structures with handles and user data
+handles = warn_if_no_confirmation_check(handles);
+handles.spectrum_idx = new_val;
+handles = potentially_autoidentify(handles);
+guidata(handles.figure1, handles);
+update_display(handles);
+update_plot(handles);
+
+function set_bin_idx(new_val, handles)
+% Sets handles.bin_idx and also updates the gui - don't call when you
+% update the spectrum_idx to avoid repeating updates.  I believe (though I
+% haven't verified) that the value in handles in the caller will be
+% unchanged.
+%
+% new_val   the new value of the bin_idx
+% handles   structures with handles and user data
+handles = warn_if_no_confirmation_check(handles);
+handles.bin_idx = new_val;
+handles = potentially_autoidentify(handles);
+guidata(handles.figure1, handles);
+update_display(handles);
+zoom_to_bin(handles);
+update_plot(handles);
+zoom_to_bin(handles);
+
+function [change_is_ok, new_handles] = changing_spectrum_or_bin_is_ok(handles)
+% Confirms that changing spectrum_idx or bin_idx is ok with the user.
+%
+% In the case where the user might not want to change the spectrum or bin
+% due to not having identified the correct number of peaks, pops up a
+% warning and returns the user's response.  Otherwise just says the 
+% change is ok.  In all cases modifies handles to 
+% set new_handles.did_expected_peaks_confirmation_check to true so that
+% subsequent calls to set_spectrum_idx and friends will not display an
+% error message.  Also changes guidata for handles.figure1 to new_handles.
+%
+% Callers should call this as:
+%
+% [change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+%
+% To keep an updated copy of the handles structure;
+bin_idx = handles.bin_idx;
+new_handles = handles;
+new_handles.did_expected_peaks_confirmation_check = 1;
+guidata(handles.figure1, new_handles);
+change_is_ok = 1;
+
+%Warn if the number of identified peaks is not what is expected
+num_ident = num_identified_for_cur_metabolite(handles);
+bin = handles.bin_map(bin_idx);
+if bin.num_peaks ~= num_ident
+    response = questdlg([bin.readable_multiplicity, ' should have ', ...
+        sprintf('%d',bin.num_peaks), ...
+        ' peaks, but you have identified ', sprintf('%d', num_ident), ...
+        ' peaks.  Would you like to fix this or ignore it?'], ...
+        'Unexpected number of identifications', ...
+        'Fix peak identifications', 'Leave identifications as they are',...
+        'Fix peak identifications');
+    if strcmp(response,'Fix peak identifications')
+        change_is_ok = 0;
+        return;
+    end
+end
+
+function new_handles = warn_if_no_confirmation_check(handles)
+% Makes a warning dialog and sends an email to developers if there the
+% confirmation check has not been called.  Return handles with confirmation
+% check turned off again.
+%
+% This check was written because many paths can cause the changing of a bin
+% or spectrum index and all of them should have a confirmation message
+% displayed if the number of identified peaks is not the expected.  This
+% function detects if the program got to a spectrum/bin idx changing
+% routine without first executing a confirmation check.
+
+if ~(handles.did_expected_peaks_confirmation_check)
+
+    %Generate error message and send it to the developers
+    [stack_trace, unused]=dbstack('-completenames'); %#ok<NASGU>
+    error_message{3+4*length(stack_trace)}='';
+    error_message{1} = ['No check to see if a confirmation dialog was '...
+        'needed was performed before changing spectrum_idx or bin_idx'];
+    error_message{2} = 'Stack trace follows:';
+    error_message{3} = '';
+    for i = 1:length(stack_trace)
+        frame = stack_trace(i);
+        error_message{3+4*i-3} = '';
+        error_message{3+4*i-2} = ['File: ' frame.file];
+        error_message{3+4*i-1} = sprintf('Line: %d', frame.line);
+        error_message{3+4*i-0} = ['Function name: ' frame.name];
+    end
+
+    send_email_from_birg_autobug('eric_moyer@yahoo.com', ...
+        'No confirmation check done in targeted deconvolution', ...
+        error_message);
+
+    % Display a message so things are caught during debugging
+    msgbox(['You can safely ignore this dialog box.  It is a debugging '...
+        'tool for programmers.  Just click ok.  We are sorry for the '...
+        'inconvenience.  It will be fixed in the next version.'], ...
+        'Ignore this dialog box', 'modal');
+end
+
+% Reset the confirmation check flag
+new_handles = handles;
+new_handles.did_expected_peaks_confirmation_check = 0;
+
+
+% ------------------------------------------------------------------------
+%
+% UI Callbacks
+%
+% ------------------------------------------------------------------------
+
+function spectrum_number_edit_box_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to spectrum_number_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Get default command line output from handles structure
-varargout{1} = handles.output;
-
+% Hints: get(hObject,'String') returns contents of spectrum_number_edit_box as text
+%        str2double(get(hObject,'String')) returns contents of spectrum_number_edit_box as a double
+entry  = str2double(get(hObject,'String'));
+if ~isnan(entry) %If the user typed a number
+    entry = round(entry);
+    if (entry >= 1) && (entry <= handles.collection.num_samples)
+        [change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+        if change_is_ok
+            set_spectrum_idx(entry, handles);
+        else
+            %Set the edit box back to the number of the current spectrum
+            set(hObject, 'String', sprintf('%d', handles.spectrum_idx));
+        end
+    else
+        uiwait(msgbox( ...
+            sprintf('Invalid spectrum number.  There are only %d spectra.', ...
+                handles.collection.num_samples), 'Error','error','modal'));
+    end
+end
 
 % --- Executes on button press in previous_button.
 function previous_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
@@ -531,45 +817,6 @@ for i=0:999999
     name=sprintf('%s_%06d.%s',base,i,extension);
     if ~exist(name, 'file')
         return
-    end
-end
-
-function [change_is_ok, new_handles] = changing_spectrum_or_bin_is_ok(handles)
-% Confirms that changing spectrum_idx or bin_idx is ok with the user.
-%
-% In the case where the user might not want to change the spectrum or bin
-% due to not having identified the correct number of peaks, pops up a
-% warning and returns the user's response.  Otherwise just says the 
-% change is ok.  In all cases modifies handles to 
-% set new_handles.did_expected_peaks_confirmation_check to true so that
-% subsequent calls to set_spectrum_idx and friends will not display an
-% error message.  Also changes guidata for handles.figure1 to new_handles.
-%
-% Callers should call this as:
-%
-% [change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
-%
-% To keep an updated copy of the handles structure;
-bin_idx = handles.bin_idx;
-new_handles = handles;
-new_handles.did_expected_peaks_confirmation_check = 1;
-guidata(handles.figure1, new_handles);
-change_is_ok = 1;
-
-%Warn if the number of identified peaks is not what is expected
-num_ident = num_identified_for_cur_metabolite(handles);
-bin = handles.bin_map(bin_idx);
-if bin.num_peaks ~= num_ident
-    response = questdlg([bin.readable_multiplicity, ' should have ', ...
-        sprintf('%d',bin.num_peaks), ...
-        ' peaks, but you have identified ', sprintf('%d', num_ident), ...
-        ' peaks.  Would you like to fix this or ignore it?'], ...
-        'Unexpected number of identifications', ...
-        'Fix peak identifications', 'Leave identifications as they are',...
-        'Fix peak identifications');
-    if strcmp(response,'Fix peak identifications')
-        change_is_ok = 0;
-        return;
     end
 end
 
@@ -709,202 +956,6 @@ function metabolite_menu_CreateFcn(hObject, unused1, unused) %#ok<INUSD,DEFNU>
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
-end
-
-function remove_identification(ppm, handles)
-% Removes the identification at the given ppm - if there is no
-% identification there, does nothing
-ids = peak_identifications_for_cur_metabolite(handles);
-if ~isempty(ids)
-    id_x = [ids.ppm];
-    to_remove = ids(id_x == ppm);
-    if ~isempty(to_remove)
-        new_ids = handles.identifications;
-        for id_to_remove=to_remove %Remove each ident'n one at a time
-            new_ids(new_ids == id_to_remove) = [];
-        end
-        set_identifications(new_ids, handles);
-    end
-end
-    
-function set_identifications(new_identifications, handles)
-handles.identifications = new_identifications;
-guidata(handles.figure1, handles);
-update_display(handles);
-update_plot(handles);
-
-function result=is_identified(ppm, handles)
-% Returns true if there is an identification at the given ppm, false
-% otherwise
-%
-% ppm     The ppm at which to check the existence of an identification
-% handles The gui global data structure
-ids = peak_identifications_for_cur_metabolite(handles);
-if isempty(ids)
-    result = 0;
-    return;
-else
-    id_x = [ids.ppm];
-    result = any(id_x == ppm);
-    return;
-end
-
-function new_handles = potentially_autoidentify(handles)
-% Autoidentifies peaks if the current bin is clean, no identifications are
-% extant for the current bin and spectrum, and the current spectrum has the 
-% same number of peaks as would
-% be expected.  Returns the new value of the handles structure.  Also sets 
-% the guidata.
-
-%If no autoidentification has been done on this bin
-if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
-    %If no current identifications
-    ids = peak_identifications_for_cur_metabolite(handles);
-    if isempty(ids)
-        %If clean bin
-        bin = handles.bin_map(handles.bin_idx);
-        if bin.is_clean
-            %If correct number of peaks
-            pks = get_cur_peaks(handles);
-            if length(pks) == bin.num_peaks
-                % Do autoidentification:
-                
-                %First mark as identified
-                handles.already_autoidentified(handles.bin_idx, ...
-                    handles.spectrum_idx) = 1;
-                
-                %Then make identification objects for all peaks in the bin
-                new_ids(bin.num_peaks)=PeakIdentification;
-                for i = 1:bin.num_peaks
-                    ppm = pks(i);
-                    xidx = index_of_nearest_x_to(ppm, handles);
-                    new_ids(i) = PeakIdentification(ppm, xidx, ...
-                        handles.spectrum_idx, bin, ...
-                        1, get_username, get_account_id, datestr(clock)); 
-                end
-                
-                %Finally add them to the identifications for the gui
-                set_identifications([handles.identifications new_ids], handles);
-                handles = guidata(handles.figure1);
-            end
-        end
-    end
-end
-new_handles = handles;
-
-function new_handles = warn_if_no_confirmation_check(handles)
-% Makes a warning dialog and sends an email to developers if there the
-% confirmation check has not been called.  Return handles with confirmation
-% check turned off again.
-%
-% This check was written because many paths can cause the changing of a bin
-% or spectrum index and all of them should have a confirmation message
-% displayed if the number of identified peaks is not the expected.  This
-% function detects if the program got to a spectrum/bin idx changing
-% routine without first executing a confirmation check.
-
-if ~(handles.did_expected_peaks_confirmation_check)
-
-    %Generate error message and send it to the developers
-    [stack_trace, unused]=dbstack('-completenames'); %#ok<NASGU>
-    error_message{3+4*length(stack_trace)}='';
-    error_message{1} = ['No check to see if a confirmation dialog was '...
-        'needed was performed before changing spectrum_idx or bin_idx'];
-    error_message{2} = 'Stack trace follows:';
-    error_message{3} = '';
-    for i = 1:length(stack_trace)
-        frame = stack_trace(i);
-        error_message{3+4*i-3} = '';
-        error_message{3+4*i-2} = ['File: ' frame.file];
-        error_message{3+4*i-1} = sprintf('Line: %d', frame.line);
-        error_message{3+4*i-0} = ['Function name: ' frame.name];
-    end
-
-    send_email_from_birg_autobug('eric_moyer@yahoo.com', ...
-        'No confirmation check done in targeted deconvolution', ...
-        error_message);
-
-    % Display a message so things are caught during debugging
-    msgbox(['You can safely ignore this dialog box.  It is a debugging '...
-        'tool for programmers.  Just click ok.  We are sorry for the '...
-        'inconvenience.  It will be fixed in the next version.'], ...
-        'Ignore this dialog box', 'modal');
-end
-
-% Reset the confirmation check flag
-new_handles = handles;
-new_handles.did_expected_peaks_confirmation_check = 0;
-
-
-function set_spectrum_and_bin_idx(new_spec, new_bin, handles)
-% Sets handles.spectrum_idx and handles.bin_idx and also updates the gui 
-% I believe (though I haven't verified) that the value in handles in the 
-% caller will be unchanged.
-handles = warn_if_no_confirmation_check(handles);
-handles.spectrum_idx = new_spec;
-handles.bin_idx = new_bin;
-handles = potentially_autoidentify(handles);
-guidata(handles.figure1, handles);
-update_display(handles);
-update_plot(handles);
-zoom_to_bin(handles);
-
-
-function set_spectrum_idx(new_val, handles)
-% Sets handles.spectrum_idx and also updates the gui - don't call when you
-% update the bin_idx to avoid repeating updates.  I believe (though I
-% haven't verified) that the value in handles in the caller will be
-% unchanged.
-%
-% new_val   the new value of the spectrum_idx
-% handles   structures with handles and user data
-handles = warn_if_no_confirmation_check(handles);
-handles.spectrum_idx = new_val;
-handles = potentially_autoidentify(handles);
-guidata(handles.figure1, handles);
-update_display(handles);
-update_plot(handles);
-
-function set_bin_idx(new_val, handles)
-% Sets handles.bin_idx and also updates the gui - don't call when you
-% update the spectrum_idx to avoid repeating updates.  I believe (though I
-% haven't verified) that the value in handles in the caller will be
-% unchanged.
-%
-% new_val   the new value of the bin_idx
-% handles   structures with handles and user data
-handles = warn_if_no_confirmation_check(handles);
-handles.bin_idx = new_val;
-handles = potentially_autoidentify(handles);
-guidata(handles.figure1, handles);
-update_display(handles);
-zoom_to_bin(handles);
-update_plot(handles);
-zoom_to_bin(handles);
-
-function spectrum_number_edit_box_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
-% hObject    handle to spectrum_number_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of spectrum_number_edit_box as text
-%        str2double(get(hObject,'String')) returns contents of spectrum_number_edit_box as a double
-entry  = str2double(get(hObject,'String'));
-if ~isnan(entry) %If the user typed a number
-    entry = round(entry);
-    if (entry >= 1) && (entry <= handles.collection.num_samples)
-        [change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
-        if change_is_ok
-            set_spectrum_idx(entry, handles);
-        else
-            %Set the edit box back to the number of the current spectrum
-            set(hObject, 'String', sprintf('%d', handles.spectrum_idx));
-        end
-    else
-        uiwait(msgbox( ...
-            sprintf('Invalid spectrum number.  There are only %d spectra.', ...
-                handles.collection.num_samples), 'Error','error','modal'));
-    end
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -1051,7 +1102,6 @@ elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
     end
     
 end
-%TODO: finish button down for spectrum plot
 
 function zoom_plot(zoom_factor, handles)
 % Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
@@ -1094,6 +1144,7 @@ function save_and_quit_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFN
 % spectrum_idx
 % bin_idx
 % already_autoidentified
+% deconvolutions
 % version (set to a special number indicating the version of this program
 %          - this should be increased for any changes to the data or field
 %          names being saved)
@@ -1119,6 +1170,7 @@ session_data.peaks = handles.peaks;
 session_data.spectrum_idx = handles.spectrum_idx;
 session_data.bin_idx = handles.bin_idx;
 session_data.already_autoidentified = handles.already_autoidentified;
+session_data.deconvolutions = handles.deconvolutions;
 
 save(fullname, 'session_data');
 
@@ -1129,5 +1181,20 @@ delete(handles.figure1);
 % --- Executes on mouse press over figure background.
 function figure1_ButtonDownFcn(unused2, unused1, unused) %#ok<INUSD,DEFNU>
 % hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in should_show_deconv_box.
+function should_show_deconv_box_Callback(hObject, eventdata, handles) %#ok<DEFNU>
+% hObject    handle to should_show_deconv_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Hint: get(hObject,'Value') returns toggle state of should_show_deconv_box
+
+
+% --- Executes on button press in update_deconv_button.
+function update_deconv_button_Callback(hObject, eventdata, handles) %#ok<DEFNU>
+% hObject    handle to update_deconv_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
