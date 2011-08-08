@@ -14,21 +14,21 @@ def get_deconv_for(bin, spectrum):
     return deconv_for(bin, spectrum)
 
 def get_updated_deconv_for(bin, spectrum):
-    if !deconvolution_is_up_to_date(bin, spectrum):
+    if !deconv_is_up_to_date(bin, spectrum):
         delete_deconv_for(bin, spectrum)
     return get_deconv_for(bin, spectrum)
 
 #Plotting:
 
-if should_display_deconvolution:
-    d=get_deconvolution_for(bin, spectrum)
-    plot_deconvolution(d)
-    if deconvolution_is_up_to_date(bin, spectrum):
-        hide_update_deconvolution_button
-        #Note: deconvolution_is_up_to_date must be false if there is
+if should_display_deconv:
+    d=get_deconv_for(bin, spectrum)
+    plot_deconv(d)
+    if deconv_is_up_to_date(bin, spectrum):
+        hide_update_deconv_button
+        #Note: deconv_is_up_to_date must be false if there is
         #no extant deconvolution
     else:
-        display_update_deconvolution_button
+        display_update_deconv_button
 
 #Output
 
