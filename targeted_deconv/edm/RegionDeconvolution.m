@@ -5,7 +5,7 @@ classdef RegionDeconvolution
     %   properties returned from the region_deconvolution function.  Thus
     %   there is some uncertainty about their interpretation
     
-    properties
+    properties (SetAccess=private)
         % An array of GaussianLorenzian objects for the peaks that were in
         % the region that was deconvolved
         peaks
