@@ -335,8 +335,10 @@ function set_peaks(bin_idx, spectrum_idx, new_val, handles)
 % handles       The user and GUI data structure
 
 handles.peaks{bin_idx, spectrum_idx} = new_val;
+handles.deconvolutions(bin_idx, spectrum_idx).invalidate;
 guidata(handles.figure1, handles);
 update_plot(handles);
+update_display(handles);
 
 function add_peak(ppm, handles)
 % Adds a peak to the list of peaks for the current bin and spectrum (if the
@@ -381,8 +383,9 @@ end
 %
 % ------------------------------------------------------------------------
 
-function ids=peak_identifications_for_cur_metabolite(handles)
-% Return the list of the peaks identified for the current metabolite
+function ids=cur_peak_identifications(handles)
+% Return the list of the peaks identified for the current metabolite and
+% spectrum
 idents = handles.identifications;
 if(isempty(idents))
     ids = [];
@@ -394,9 +397,37 @@ else
     ids = idents(correct_bin & correct_spec);
 end
 
-function num=num_identified_for_cur_metabolite(handles)
-% Return the number of identified peaks for current metabolite
-num = length(peak_identifications_for_cur_metabolite(handles));
+function handles = update_peak_identifications_for(bin_idx, spec_idx, ...
+    old_ppms, new_ppms, handles)
+% Translate ppms for identifications
+%
+% Change any identifications for the bin & spectrum that have a ppm closest
+% to old_ppms(i) to have a ppm equal to new_ppms(i).  Return the modified
+% handles structure.
+idents = handles.identifications;
+if(isempty(idents))
+    id_indices = [];
+else
+    bins = [idents.compound_bin];
+    correct_bin = [bins.id]==handles.bin_map(bin_idx).id;
+    specs = [idents.spectrum_index];
+    correct_spec = specs == spec_idx;
+    id_indices = find(correct_bin & correct_spec);
+end
+
+for id_idx = id_indices
+    id = idents(id_idx);
+    diffs = abs(id.ppm - old_ppms);
+    nearest_ppm_idx = min_idx(diffs);
+    idents(id_idx).ppm = new_ppms(nearest_ppm_idx);
+end
+
+handles = set_identifications(idents, handles);
+
+
+function num=cur_num_identified(handles)
+% Return the number of identified peaks for current metabolite and spectrum
+num = length(cur_peak_identifications(handles));
 
 function draw_circle(center, radius_inches, color)
 % Draws a circle on the current axes at the center location (in data 
@@ -437,7 +468,7 @@ draw_circle(center, 0.0625, 'r');
 function remove_identification(ppm, handles)
 % Removes the identification at the given ppm - if there is no
 % identification there, does nothing
-ids = peak_identifications_for_cur_metabolite(handles);
+ids = cur_peak_identifications(handles);
 if ~isempty(ids)
     id_x = [ids.ppm];
     to_remove = ids(id_x == ppm);
@@ -450,7 +481,7 @@ if ~isempty(ids)
     end
 end
     
-function set_identifications(new_identifications, handles)
+function handles = set_identifications(new_identifications, handles)
 handles.identifications = new_identifications;
 guidata(handles.figure1, handles);
 update_display(handles);
@@ -462,7 +493,7 @@ function result=is_identified(ppm, handles)
 %
 % ppm     The ppm at which to check the existence of an identification
 % handles The gui global data structure
-ids = peak_identifications_for_cur_metabolite(handles);
+ids = cur_peak_identifications(handles);
 if isempty(ids)
     result = 0;
     return;
@@ -482,7 +513,7 @@ function new_handles = potentially_autoidentify(handles)
 %If no autoidentification has been done on this bin
 if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
     %If no current identifications
-    ids = peak_identifications_for_cur_metabolite(handles);
+    ids = cur_peak_identifications(handles);
     if isempty(ids)
         %If clean bin
         bin = handles.bin_map(handles.bin_idx);
@@ -522,8 +553,12 @@ new_handles = handles;
 % ------------------------------------------------------------------------
 
 function update_plot(handles)
-% Update the plot - needed when the spectrum index changes or the
-% identifications change
+% Update the plot - needed when the spectrum index changes, the
+% identifications change, the deconvolution display state changes, or the
+% current deconvolution is updated
+if ishold
+    hold off;
+end
 oldlims = xlim;
 plot(handles.collection.x,handles.collection.Y(:,handles.spectrum_idx));
 set(gca,'xdir','reverse');
@@ -531,8 +566,23 @@ if ~ (oldlims(1) == 0 && oldlims(2) == 1)
     xlim(oldlims)
 end
 
+%Draw deconvolution
+if get(handles.should_show_deconv_box,'Value')
+    hold on;
+    cv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
+    if cv.exists
+        deconv = cv.value;
+        fit_x = handles.collection.x(deconv.fit_indices);
+        plot(fit_x, deconv.y_baseline, 'Color', 'y');    %Yellow baseline
+        plot(fit_x, deconv.y_fitted,'Color',[.5,.5,.5]); %Gray fitted
+        for pk = deconv.peaks
+            plot(fit_x, pk.at(fit_x),'Color','m'); %Magenta peaks
+        end
+    end
+end
+
 %Draw peak identification circles
-ids = peak_identifications_for_cur_metabolite(handles);
+ids = cur_peak_identifications(handles);
 for id=ids
     draw_identification(id, handles.collection);
 end
@@ -564,29 +614,11 @@ for child_handle=children
     set(child_handle, 'HitTest', 'off');
 end
 
-function zoom_to_interval(right, left)
-% Set the plot boundaries to the interval [right, left]
-xlim([right, left]);
-ylim('auto');
-
-function zoom_plot(zoom_factor, handles)
-% Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
-% factor, expanding or contracting it around its current center
-cur_interval = xlim(handles.spectrum_plot);
-center = mean(cur_interval);
-new_interval=((cur_interval - center)*zoom_factor)+center;
-zoom_to_interval(new_interval(1), new_interval(2));
-
-function zoom_to_bin(handles)
-% Set the plot boundaries to the current bin boundaries.  Needed when bin
-% index changes (and at other times)
-cb=handles.bin_map(handles.bin_idx);
-zoom_to_interval(cb.bin.right, cb.bin.left);
-
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
-% structure.  Needed when the spectrum index or the bin index or 
-% identifications list changes
+% structure.  Needed when the spectrum index, the bin index, or the
+% identifications list changes.  Also needed when the display deconvolution
+% state changes or the current deconvolution is updated.
 %
 % handles The handles structure containing the GUI application state
 set(handles.metabolite_menu, 'Value', handles.bin_idx);
@@ -603,11 +635,24 @@ set(handles.spectrum_number_edit_box,'String', ...
     sprintf('%d', handles.spectrum_idx));
 set(handles.num_identified_peaks_text,'String', ...
     sprintf('Identified peaks: %d', ...
-    num_identified_for_cur_metabolite(handles)));
+    cur_num_identified(handles)));
 if cur_bin.is_clean
     set(handles.clean_text,'String','Clean bin');
 else
     set(handles.clean_text,'String','Not a clean bin');
+end
+
+%Show or hide update deconvolution button depending on whether the current
+%deconvolution is updated
+if get(handles.should_show_deconv_box,'Value')
+    deconv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
+    if deconv.is_updated
+        set(handles.update_deconv_button, 'Visible', 'off');    
+    else
+        set(handles.update_deconv_button, 'Visible', 'on');
+    end
+else
+    set(handles.update_deconv_button, 'Visible', 'off');
 end
 
 bin_idx = handles.bin_idx;
@@ -640,6 +685,25 @@ elseif spec_idx < num_spec
     set(handles.next_button, 'Enable', 'on');    
 end
 %TODO: finish - update plot and 'cleanness'
+
+function zoom_to_interval(right, left)
+% Set the plot boundaries to the interval [right, left]
+xlim([right, left]);
+ylim('auto');
+
+function zoom_plot(zoom_factor, handles)
+% Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
+% factor, expanding or contracting it around its current center
+cur_interval = xlim(handles.spectrum_plot);
+center = mean(cur_interval);
+new_interval=((cur_interval - center)*zoom_factor)+center;
+zoom_to_interval(new_interval(1), new_interval(2));
+
+function zoom_to_bin(handles)
+% Set the plot boundaries to the current bin boundaries.  Needed when bin
+% index changes (and at other times)
+cb=handles.bin_map(handles.bin_idx);
+zoom_to_interval(cb.bin.right, cb.bin.left);
 
 % ------------------------------------------------------------------------
 %
@@ -715,7 +779,7 @@ guidata(handles.figure1, new_handles);
 change_is_ok = 1;
 
 %Warn if the number of identified peaks is not what is expected
-num_ident = num_identified_for_cur_metabolite(handles);
+num_ident = cur_num_identified(handles);
 bin = handles.bin_map(bin_idx);
 if bin.num_peaks ~= num_ident
     response = questdlg([bin.readable_multiplicity, ' should have ', ...
@@ -1191,15 +1255,63 @@ function figure1_ButtonDownFcn(unused2, unused1, unused) %#ok<INUSD,DEFNU>
 
 
 % --- Executes on button press in should_show_deconv_box.
-function should_show_deconv_box_Callback(hObject, eventdata, handles) %#ok<DEFNU>
+function should_show_deconv_box_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to should_show_deconv_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Hint: get(hObject,'Value') returns toggle state of should_show_deconv_box
+update_plot(handles);
+update_display(handles);
+
+function handles = recalculate_deconv(bin_idx, spec_idx, handles)
+
+% Get the peaks (all the extra junk is because of caching)
+old_bin_idx = handles.bin_idx;
+old_spec_idx = handles.spectrum_idx;
+handles.bin_idx = bin_idx;
+handles.spectrum_idx = spec_idx;
+pks = get_cur_peaks(handles);
+handles = guidata(handles.figure1);
+handles.bin_idx = old_bin_idx;
+handles.spec_idx = old_spec_idx;
+guidata(handles.figure1, handles);
+
+% Calculate the deconvolution
+bin = handles.bin_map(bin_idx).bin;
+bin_width = 2*(bin.left - bin.right);
+d=RegionDeconvolution(handles.collection.x, ...
+    handles.collection.Y(:, spec_idx), ...
+    pks, bin_width, bin.right, bin.left);
+
+handles.deconvolutions(bin_idx, spec_idx).update_to(d);
+
+% Find new location for each peak
+new_pks = [d.peaks.location];
+costs = zeros(length(pks), length(new_pks)); % Row:old peak, col: new peak
+for i=1:length(pks)
+    costs(i,:) = abs(new_pks - pks(i));
+end
+new_idxs = munkres(costs);
+new_pk_val = new_pks(new_idxs); %new_pk_val(i) is value to replace pks(i)
+
+% Update the identifications and peak locations
+handles = update_peak_identifications_for(bin_idx, spec_idx, pks, ...
+    new_pk_val, handles);
+handles.peaks{bin_idx, spec_idx} = new_pks;
+guidata(handles.figure1, handles);
 
 
 % --- Executes on button press in update_deconv_button.
-function update_deconv_button_Callback(hObject, eventdata, handles) %#ok<DEFNU>
+function update_deconv_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to update_deconv_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+bin_idx = handles.bin_idx;
+spec_idx = handles.spectrum_idx;
+
+recalculate_deconv(bin_idx, spec_idx, handles);
+handles = guidata(handles.figure1);
+
+update_plot(handles);
+update_display(handles);
+    
