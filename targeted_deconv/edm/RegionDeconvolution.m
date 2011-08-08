@@ -38,6 +38,48 @@ classdef RegionDeconvolution
     end
     
     methods
+        function obj=RegionDeconvolution(x, y, peak_xs, ...
+                baseline_width, region_min, region_max)
+        %Deconvolve a region in a spectrum
+        %
+        % -----------------------------------------------------------------
+        % Usage
+        % -----------------------------------------------------------------
+        % obj = RegionDeconvolution(x, y, peak_xs, baseline_width, ...
+        %    region_min, region_max)
+        % -----------------------------------------------------------------
+        % Input Arguments
+        % -----------------------------------------------------------------
+        % x               The x values for the spectrum
+        %
+        % y               The y values for the spectrum
+        %
+        % peak_xs         The x values of the peaks in the spectrum
+        %
+        % baseline_width  The wider this is, the less control points the
+        %                 baseline has in a given area, thus, the more 
+        %                 rigid the baseline
+        %
+        % region_min      The minimum x value in the region to be
+        %                 deconvolved
+        %
+        % region_max      The maximum x value in the region to be
+        %                 deconvolved
+        %
+        % -----------------------------------------------------------------
+        % Examples:
+        % -----------------------------------------------------------------
+        %
+        % load('collection.mat');  c=collection; d=RegionDeconvolution(c.x, c.Y, c.x(c.maxs{1}), 8.6-8.41, 8.41, 8.6)
+        %
+            [BETA0,lb,ub] = compute_initial_inputs(x,y, peak_xs, ...
+                1:length(x), peak_xs);
+            [unused, obj.baseline_BETA, obj.fit_indices, obj.y_fitted, ...
+                obj.y_baseline,obj.R2, unused, peak_BETA] = ...
+                region_deconvolution(x,y,BETA0,lb,ub, baseline_width, ...
+                [region_max;region_min]); %#ok<ASGLU>
+            obj.peaks = GaussLorentzPeak(peak_BETA);
+        end
     end
     
 end
