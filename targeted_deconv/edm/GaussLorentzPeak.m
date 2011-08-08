@@ -146,9 +146,12 @@ classdef GaussLorentzPeak
         % GaussLorentzPeak
             if nargin > 0 %If 0 args, don't initialize - default constructor
                 if length(array) == 4
-                    objs.height = array(1);
-                    objs.half_height_width = array(2);
-                    objs.lorentzianness = array(3);
+                    objs.height = abs(array(1));
+                    objs.half_height_width = abs(array(2));
+                    objs.lorentzianness = abs(array(3));
+                    if objs.lorentzianness > 1
+                        objs.lorentzianness = 1; 
+                    end
                     objs.location = array(4);
                 elseif mod(length(array),4) == 0 && ~isempty(array)
                     num_objs = length(array)/4;
