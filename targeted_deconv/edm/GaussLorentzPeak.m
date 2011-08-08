@@ -81,7 +81,10 @@ classdef GaussLorentzPeak
     %
     % % Plot using at function
     % >> g=GaussLorentzPeak([1,1,0.5,0]); x=-3:0.1:3; plot(x,g.at(x))
-    
+    %
+    %
+    % % Plot a vector of peaks using the at function
+    % g = [GaussLorentzPeak([1,1,1,0]),GaussLorentzPeak([1,1,0,0])]; x=[-3:0.1:3];plot(x,[g.at(x)])    
     
     properties (SetAccess=private)
         % The height of the maximum of the peak.  A scalar.
@@ -172,17 +175,26 @@ classdef GaussLorentzPeak
         function sigma = get.sigma(obj)
         %Calculates the sigma value for the Gaussian portion of the
         %Gaussian-Lorentzian curve
-            sigma = obj.half_height_width / (2 * sqrt(2*log(2)));
+            sigma = obj.half_height_width ./ (2 * sqrt(2*log(2)));
         end
         
         function h=at(obj, x)
         %Calculates the heights of this peak at the x values in x
-            dx2=(x-obj.location).^2; % Squared distance to peak location
-            G2=obj.half_height_width^2; %Squared half-height width
-            L = G2 ./ (4*dx2 + G2);  % Lorentzian height
-            s22 = -G2/(4*log(2));    % Negative twice Gaussian sigma
-            N = exp(dx2 ./ s22);     % Gaussian height
-            h=obj.height*(obj.lorentzianness*L + (1-obj.lorentzianness)*N);            
+            if length(obj) == 1
+                dx2=(x-obj.location).^2; % Squared distance to peak location
+                G2=obj.half_height_width^2; %Squared half-height width
+                L = G2 ./ (4*dx2 + G2);  % Lorentzian height
+                s22 = -G2/(4*log(2));    % Negative twice Gaussian sigma
+                N = exp(dx2 ./ s22);     % Gaussian height
+                h=obj.height*(obj.lorentzianness*L + (1-obj.lorentzianness)*N);
+            else
+                %If speed is an issue, we can fully vectorize everything
+                %here
+                h=zeros(length(obj),length(x));
+                for i=1:length(obj)
+                    h(i,:)=obj(i).at(x);
+                end
+            end
         end
     end
     
