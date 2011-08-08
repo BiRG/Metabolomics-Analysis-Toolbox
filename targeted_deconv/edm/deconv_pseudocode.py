@@ -1,5 +1,5 @@
 
-def get_deconv_for(bin, spectrum)
+def get_deconv_for(bin, spectrum):
     if no_extant_deconv_for(bin, spectrum):
         calc_deconv_for(bin, spectrum)
         update_peak_locations_and_identifications_for(bin, spectrum)
@@ -13,12 +13,23 @@ def get_deconv_for(bin, spectrum)
         #to be seen.
     return deconv_for(bin, spectrum)
 
+def get_updated_deconv_for(bin, spectrum):
+    if !deconvolution_is_up_to_date(bin, spectrum):
+        delete_deconv_for(bin, spectrum)
+    return get_deconv_for(bin, spectrum)
+
 #Plotting:
 
 if should_display_deconvolution:
-    plot_deconvolution(get_deconvolution_for(bin, spectrum))
+    d=get_deconvolution_for(bin, spectrum)
+    plot_deconvolution(d)
+    if deconvolution_is_up_to_date(bin, spectrum):
+        hide_update_deconvolution_button
+        #Note: deconvolution_is_up_to_date must be false if there is
+        #no extant deconvolution
+    else:
+        display_update_deconvolution_button
 
-                       
 #Output
 
 c = handles.collection
@@ -38,7 +49,7 @@ for spectrum in spectra:
     y_idx = 1 #The index of the start of the next block of y values to fill
     for bin in bins:
         #Calculate the areas under the deconvolved, identified peaks
-        d = get_deconv_for(bin, spectrum)
+        d = get_updated_deconv_for(bin, spectrum)
         update_handles() #So identifications are updated if necessary
         idents = get_idents_for(bin, spectrum)
         areas = zeros(1, length(idents))
