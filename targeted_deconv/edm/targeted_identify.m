@@ -130,11 +130,9 @@ handles.already_autoidentified = ...
     zeros(num_bins, num_samples);
 
 % Start with no detected peaks (but preallocate the array)
-handles.peaks = cell(num_bins, num_samples);
-for b=1:num_bins
-    for s=1:handles.collection.num_samples
-        handles.peaks{b,s}='Uninitialized';
-    end
+handles.peaks = cell(1,num_samples);
+for s=1:handles.collection.num_samples
+	handles.peaks{s}='Uninitialized';
 end
 
 % Start with deconvolutions as a matrix of empty CachedValue
@@ -293,19 +291,14 @@ varargout{1} = handles.output;
 %
 % ------------------------------------------------------------------------
 
-function pks = get_cur_peaks(handles)
-% Return the peaks for the current bin and spectrum.  Either uses
+function pks = get_spectrum_peaks(handles)
+% Return the peaks for the current spectrum.  Either uses
 % those already calculated and/or modified by the user or (if they haven't
 % been calculated yet) calculates them.  Does not update the GUI if the
-% peaks are calculated.
-%
-% bin_idx       The index of the bin where the peaks lie
-% spectrum_idx  The index of the spectrum in the current collection where
-%               the peaks lie
-% handles       The user and GUI data structure
-bin_idx = handles.bin_idx;
+% peaks are calculated.  But does update the guidata for handles.figure1
 spectrum_idx = handles.spectrum_idx;
-pks = handles.peaks{bin_idx, spectrum_idx};
+pks = handles.peaks{spectrum_idx};
+%Calculate the peaks
 if ischar(pks) && strcmp(pks,'Uninitialized')
     col = handles.collection;
     noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
@@ -315,28 +308,64 @@ if ischar(pks) && strcmp(pks,'Uninitialized')
         noise_points = ysize(1);
     end
     noise_std = std(col.Y(1:noise_points, spectrum_idx));
-    bin = handles.bin_map(bin_idx).bin;
-    low_idx = index_of_nearest_x_to(bin.left, handles);
     [peak_idx, unused, unused] = wavelet_find_maxes_and_mins ...
-        (y_values_in_cur_bin(handles), noise_std); %#ok<NASGU,ASGLU>
-    pks = col.x((low_idx-1)+peak_idx);
-    handles.peaks{bin_idx, spectrum_idx} = pks;
+        (col.Y(:,spectrum_idx), noise_std); %#ok<NASGU,ASGLU>
+    pks = col.x(peak_idx);
+    handles.peaks{spectrum_idx} = pks;
     guidata(handles.figure1, handles);
 end
 
-function set_peaks(bin_idx, spectrum_idx, new_val, handles)
-% Set the peaks for the given bin in the given spectrum.  Updates the gui
-% and the guidata stored in handles.figure1.
+function indices = bins_affected_by_peak_change(bin_map, old_x, new_x)
+% Indices of bins whose deconvolution would be affected by changing the list of peaks in old_x to that in new_x
 %
-% bin_idx       The index of the bin where the peaks lie
+% Specifically, take all the peaks in old_x that lie in the bin plus their
+% neighbors (any peaks lacking neighbors lower or upper neighbors are given
+% neighbors of -infinity and +infinity respectively).  Each bin gets a 
+% range.  If any peaks change (are added or removed in that range) then the
+% bin is affected by the change.
+%
+% The bins are assumed to have finite boundaries
+%
+% bin_map The list of bins
+% old_x   The list of peak locations prior to the change
+% new_x   The list of peak locations subsequent to the change
+ub = zeros(length(bin_map)); %ub(i) = upper bound for changes to bin i
+lb = zeros(length(bin_map)); %lb(i) = lower bound for changes to bin i
+augmented_old_x = sort([old_x, -inf, inf],'ascend');
+for i=1:length(bin_map)
+    bin = bin_map(i).bin; 
+    ub(i) = augmented_old_x(find(bin.left < augmented_old_x,1,'first'));
+    lb(i) = augmented_old_x(find(bin.right > augmented_old_x, 1, 'last'));
+end
+changed_x = setxor(old_x, new_x);
+changed_bin = zeros(length(bin_map));
+for i=1:length(bin_map)
+    changed_bin(i)=any((ub(i) > changed_x) & (lb(i) < changed_x));
+end
+indices = find(changed_bin);
+
+function handles=set_spectrum_peaks_no_gui(spectrum_idx, new_val, handles)
+% Just like set_spectrum_peaks but does not update the gui (note that you
+% will need to update both the plot and display after calling this routine)
+changed_indices = bins_affected_by_peak_change(handles.bin_map, ...
+    handles.peaks{spectrum_idx}, new_val);
+for bin_idx = changed_indices
+    handles.deconvolutions(bin_idx, spectrum_idx).invalidate;
+end
+handles.peaks{spectrum_idx} = new_val;
+guidata(handles.figure1, handles);
+
+
+function handles=set_spectrum_peaks(spectrum_idx, new_val, handles)
+% Set the peaks for the given spectrum.  Updates deconvolution 
+% valid states and the guidata stored in handles.figure1.  Updates the gui. 
+% Returns the new value of handles
+%
 % spectrum_idx  The index of the spectrum in the current collection where
 %               the peaks lie
 % new_val       The new value to use for the peaks
 % handles       The user and GUI data structure
-
-handles.peaks{bin_idx, spectrum_idx} = new_val;
-handles.deconvolutions(bin_idx, spectrum_idx).invalidate;
-guidata(handles.figure1, handles);
+handles = set_spectrum_peaks_no_gui(spectrum_idx, new_val, handles);
 update_plot(handles);
 update_display(handles);
 
@@ -1297,7 +1326,7 @@ new_pk_val = new_pks(new_idxs); %new_pk_val(i) is value to replace pks(i)
 % Update the identifications and peak locations
 handles = update_peak_identifications_for(bin_idx, spec_idx, pks, ...
     new_pk_val, handles);
-handles.peaks{bin_idx, spec_idx} = new_pks;
+handles = set_spectrum_peaks_no_gui(spec_idx, new_pks, handles);
 guidata(handles.figure1, handles);
 
 
