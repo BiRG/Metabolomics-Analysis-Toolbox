@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 08-Aug-2011 13:59:20
+% Last Modified by GUIDE v2.5 11-Aug-2011 11:56:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -285,6 +285,36 @@ function varargout = targeted_identify_OutputFcn(unused2, unused, handles)  %#ok
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
+
+function new_val=substitute(old_val, from, to)
+% Substitutes to(i) for every occurrence of from(i) in old_val
+%
+% Working from low to high i, first replaces every occurrence of from(1)
+% with to(1), then, in the new array, every occurrence of from(2) with
+% to(2).  Until it runs out of from values.  From and to must be the same
+% size.
+%
+% old_value  The original value of the array in which the substitution
+%            takes placs
+% 
+% from       The values to be replaced in old_value
+%
+% to         to(i) is the value with which to replace from(i)
+%
+%
+%
+% new_val    old_val after the replacements have been made
+
+if length(from) ~= length(to)
+    error('"From" and "to" arrays must be the same size in substitue');
+end
+new_val = old_val;
+for i=1:length(from)
+    matches = new_val == from(i);
+    new_val(matches) = to(i);
+end
+
+
 % ------------------------------------------------------------------------
 %
 % Peaks
@@ -315,6 +345,15 @@ if ischar(pks) && strcmp(pks,'Uninitialized')
     guidata(handles.figure1, handles);
 end
 
+function pks = get_spectrum_and_bin_peaks(handles)
+% Return the peaks in the current bin and current spectrum.  Uses
+% get_spectrum_peaks so may initialize peaks changing the value for
+% guidata(handles.figure1).  Does not update the GUI.
+pks = get_spectrum_peaks(handles);
+bin_idx = handles.bin_idx;
+bin = handles.bin_map(bin_idx).bin;
+pks = pks(pks <= bin.left & pks >= bin.right);
+
 function indices = bins_affected_by_peak_change(bin_map, old_x, new_x)
 % Indices of bins whose deconvolution would be affected by changing the list of peaks in old_x to that in new_x
 %
@@ -338,9 +377,9 @@ for i=1:length(bin_map)
     lb(i) = augmented_old_x(find(bin.right > augmented_old_x, 1, 'last'));
 end
 changed_x = setxor(old_x, new_x);
-changed_bin = zeros(length(bin_map));
+changed_bin = zeros(1,length(bin_map));
 for i=1:length(bin_map)
-    changed_bin(i)=any((ub(i) > changed_x) & (lb(i) < changed_x));
+    changed_bin(i)=any((ub(i) >= changed_x) & (lb(i) <= changed_x));
 end
 indices = find(changed_bin);
 
@@ -349,8 +388,10 @@ function handles=set_spectrum_peaks_no_gui(spectrum_idx, new_val, handles)
 % will need to update both the plot and display after calling this routine)
 changed_indices = bins_affected_by_peak_change(handles.bin_map, ...
     handles.peaks{spectrum_idx}, new_val);
-for bin_idx = changed_indices
-    handles.deconvolutions(bin_idx, spectrum_idx).invalidate;
+if ~isempty(changed_indices)
+    for bin_idx = changed_indices
+        handles.deconvolutions(bin_idx, spectrum_idx).invalidate;
+    end
 end
 handles.peaks{spectrum_idx} = new_val;
 guidata(handles.figure1, handles);
@@ -370,29 +411,28 @@ update_plot(handles);
 update_display(handles);
 
 function add_peak(ppm, handles)
-% Adds a peak to the list of peaks for the current bin and spectrum (if the
+% Adds a peak to the list of peaks for the spectrum (if the
 % ppm is not already marked as having a peak)
 %
 % ppm      parts per million location of the new peak
 % handles  The user and GUI data structure
-pks = get_cur_peaks(handles);
+pks = get_spectrum_peaks(handles);
 matches = pks == ppm;
 if ~any(matches)
-    bin_idx = handles.bin_idx;
     spectrum_idx = handles.spectrum_idx;
  
-    set_peaks(bin_idx, spectrum_idx, [pks, ppm], handles);
+    set_spectrum_peaks(spectrum_idx, sort([pks, ppm]), handles);
 end
 
 function remove_peak(ppm, handles)
 % Removes a peak at the given ppm from the list of peaks for the 
-% current bin and spectrum .  If there is no such peak, does nothing.  If
+% current spectrum.  If there is no such peak, does nothing.  If
 % there is an identification for the current metabolite at that ppm, also 
 % removes the identification.
 %
 % ppm      parts per million location of the peak to remove
 % handles  The user and GUI data structure
-pks = get_cur_peaks(handles);
+pks = get_spectrum_peaks(handles);
 matches = pks==ppm;
 if any(matches)
     remove_identification(ppm, handles);
@@ -400,9 +440,8 @@ if any(matches)
 
     pks(matches)=[];
     
-    bin_idx = handles.bin_idx;
     spectrum_idx = handles.spectrum_idx;
-    set_peaks(bin_idx, spectrum_idx, pks, handles);
+    set_spectrum_peaks(spectrum_idx, pks, handles);
 end
 
 
@@ -548,7 +587,7 @@ if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
         bin = handles.bin_map(handles.bin_idx);
         if bin.is_clean
             %If correct number of peaks
-            pks = get_cur_peaks(handles);
+            pks = get_spectrum_and_bin_peaks(handles);
             if length(pks) == bin.num_peaks
                 % Do autoidentification:
                 
@@ -624,7 +663,7 @@ if isempty(ids)
 else
     id_ppms = [ids.ppm];
 end
-for ppm = get_cur_peaks(handles)
+for ppm = get_spectrum_peaks(handles)
     if any(id_ppms==ppm)
         line_color = 'r';
     else
@@ -674,11 +713,12 @@ end
 %Show or hide update deconvolution button depending on whether the current
 %deconvolution is updated
 if get(handles.should_show_deconv_box,'Value')
+    set(handles.update_deconv_button, 'Visible', 'on');
     deconv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
     if deconv.is_updated
-        set(handles.update_deconv_button, 'Visible', 'off');    
+        set(handles.update_deconv_button, 'String', 'Recalculate Peaks');    
     else
-        set(handles.update_deconv_button, 'Visible', 'on');
+        set(handles.update_deconv_button, 'String', 'Update Peaks');
     end
 else
     set(handles.update_deconv_button, 'Visible', 'off');
@@ -900,10 +940,10 @@ idx = min_idx(diffs);
 
 function idx = index_of_nearest_peak_to(val, handles)
 % Return the index of the value closest to val in the x coordinates of the 
-% peaks for this bin and spectrum or 0 if there are no peaks
+% peaks for this spectrum or 0 if there are no peaks
 %
 % handles structure with handles and user data (see GUIDATA)
-pks = get_cur_peaks(handles);
+pks = get_spectrum_peaks(handles);
 if isempty(pks)
     idx = 0;
     return;
@@ -1175,9 +1215,10 @@ handles = guidata(fig1);
 % Run the appropriate tool
 if isequal(get(handles.toggle_peak_tool, 'state'),'on')
     
+    % Toggle peak identification
     peak_idx = index_of_nearest_peak_to(x_pos, handles);
     if peak_idx > 0 % do nothing if there are no peaks
-        pks = get_cur_peaks(handles);
+        pks = get_spectrum_peaks(handles);
         peak_ppm = pks(peak_idx);
         if is_identified(peak_ppm, handles)
             %Deselect peak
@@ -1203,7 +1244,7 @@ elseif isequal(get(handles.remove_peak_tool, 'state'),'on')
     %Remove peak
     pk_idx = index_of_nearest_peak_to(x_pos, handles);
     if pk_idx > 0
-        pks = get_cur_peaks(handles);
+        pks = get_spectrum_peaks(handles);
         remove_peak(pks(pk_idx), handles);
     end
     
@@ -1299,7 +1340,7 @@ old_bin_idx = handles.bin_idx;
 old_spec_idx = handles.spectrum_idx;
 handles.bin_idx = bin_idx;
 handles.spectrum_idx = spec_idx;
-pks = get_cur_peaks(handles);
+pks = get_spectrum_peaks(handles);
 handles = guidata(handles.figure1);
 handles.bin_idx = old_bin_idx;
 handles.spec_idx = old_spec_idx;
@@ -1316,18 +1357,22 @@ handles.deconvolutions(bin_idx, spec_idx).update_to(d);
 
 % Find new location for each peak
 new_pks = [d.peaks.location];
-costs = zeros(length(pks), length(new_pks)); % Row:old peak, col: new peak
-for i=1:length(pks)
-    costs(i,:) = abs(new_pks - pks(i));
+old_pks = get_spectrum_and_bin_peaks(handles);
+costs = zeros(length(old_pks), length(new_pks)); % Row:old peak, col: new peak
+for i=1:length(old_pks)
+    costs(i,:) = abs(new_pks - old_pks(i));
 end
 new_idxs = munkres(costs);
-new_pk_val = new_pks(new_idxs); %new_pk_val(i) is value to replace pks(i)
+new_pk_val = new_pks(new_idxs); %new_pk_val(i) is value to replace old_pks(i)
 
 % Update the identifications and peak locations
-handles = update_peak_identifications_for(bin_idx, spec_idx, pks, ...
+handles = update_peak_identifications_for(bin_idx, spec_idx, old_pks, ...
     new_pk_val, handles);
-handles = set_spectrum_peaks_no_gui(spec_idx, new_pks, handles);
+
+translated_pks = substitute(pks, old_pks, new_pks);
+handles = set_spectrum_peaks_no_gui(spec_idx, translated_pks, handles);
 guidata(handles.figure1, handles);
+
 
 
 % --- Executes on button press in update_deconv_button.
@@ -1338,8 +1383,12 @@ function update_deconv_button_Callback(hObject, eventdata, handles) %#ok<INUSL,D
 bin_idx = handles.bin_idx;
 spec_idx = handles.spectrum_idx;
 
-recalculate_deconv(bin_idx, spec_idx, handles);
-handles = guidata(handles.figure1);
+handles = recalculate_deconv(bin_idx, spec_idx, handles);
+
+%Mark current bin as up-to-date even if it moved the peaks in the bin -
+%other bins that depend on it will still be marked as not up-to-date
+cur_value=handles.deconvolutions(bin_idx, spec_idx).value;
+handles.deconvolutions(bin_idx, spec_idx).update_to(cur_value);
 
 update_plot(handles);
 update_display(handles);
