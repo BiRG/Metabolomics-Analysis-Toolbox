@@ -59,7 +59,7 @@ for spectrum in spectra:
         areas = zeros(1, length(idents))
         for i in 1..idents.size():
             p = d.get_peak_at(idents(i).ppm)
-            a(i) = p.area
+            areas(i) = p.area
         #Fill in the y values using the areas
         c.Y(y_idx, spectrum) = sum(areas)
         for i = 1..length(areas):        
