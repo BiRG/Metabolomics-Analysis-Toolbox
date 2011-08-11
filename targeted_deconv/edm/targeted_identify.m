@@ -348,12 +348,22 @@ end
 %
 % ------------------------------------------------------------------------
 
-function pks = get_spectrum_peaks(handles)
-% Return the peaks for the current spectrum.  Either uses
-% those already calculated and/or modified by the user or (if they haven't
-% been calculated yet) calculates them.  Does not update the GUI if the
-% peaks are calculated.  But does update the guidata for handles.figure1
-spectrum_idx = handles.spectrum_idx;
+function pks = get_spectrum_peaks(handles, spectrum_idx)
+% Return the peaks for the current spectrum (or the argument).  
+%
+% Either uses those peaks already calculated and/or modified by the user 
+% or (if they haven't been calculated yet) calculates them.  Does not 
+% update the GUI if the peaks are calculated.  But does update the 
+% guidata for handles.figure1
+%
+% handles       The global handles structure.  If spectrum_idx is not 
+%               passed as an argument, sets it from handles.spectrum_idx
+%
+% spectrum_idx  The index of the spectrum whose peaks should be returned.
+%               Optional argument.
+if nargin < 2
+    spectrum_idx = handles.spectrum_idx;
+end
 pks = handles.peaks{spectrum_idx};
 %Calculate the peaks
 if ischar(pks) && strcmp(pks,'Uninitialized')
@@ -372,12 +382,32 @@ if ischar(pks) && strcmp(pks,'Uninitialized')
     guidata(handles.figure1, handles);
 end
 
-function pks = get_spectrum_and_bin_peaks(handles)
-% Return the peaks in the current bin and current spectrum.  Uses
-% get_spectrum_peaks so may initialize peaks changing the value for
+function pks = get_spectrum_and_bin_peaks(handles, bin_idx, spectrum_idx)
+% Return the peaks in the current bin and current spectrum or those passed as arguments.  
+%
+% Uses get_spectrum_peaks so may initialize peaks changing the value for
 % guidata(handles.figure1).  Does not update the GUI.
-pks = get_spectrum_peaks(handles);
-bin_idx = handles.bin_idx;
+%
+% handles       The global handles structure.  If spectrum_idx is not 
+%               passed as an argument, sets it from handles.spectrum_idx.
+%               bin_idx is treated similarly but init'd from
+%               handles.bin_idx
+%
+% spectrum_idx  The index of the spectrum whose peaks should be returned.
+%               Optional argument.  If absent, uses current spectrum from
+%               handles.
+%
+% bin_idx       The index of the bin in handles.bin_map into which returned
+%               peaks must fall.  Optional argument.  If absent, uses the
+%               current bin from handles.
+if nargin >= 3
+    pks = get_spectrum_peaks(handles, spectrum_idx);
+else
+    pks = get_spectrum_peaks(handles);
+end
+if nargin <= 1
+    bin_idx = handles.bin_idx;
+end
 bin = handles.bin_map(bin_idx).bin;
 pks = pks(pks <= bin.left & pks >= bin.right);
 
@@ -500,7 +530,7 @@ end
 function ids=cur_peak_identifications(handles)
 % Return the list of the peak identification objests for the current 
 % metabolite and spectrum
-ids = peak_identifications_for(handles.bin_idx, handles.spec_idx);
+ids = peak_identifications_for(handles.bin_idx, handles.spectrum_idx, handles);
 
 function handles = update_peak_identifications_for(bin_idx, spec_idx, ...
     old_ppms, new_ppms, handles)
@@ -1074,6 +1104,9 @@ else
             end
         end
         
+        fraction_done = 0;
+        wait_bar_handle = waitbar(fraction_done,['Final processing: ' ...
+            'Compressing identifications']);
         
         %Send the labeled spectral data to eric
         pkid_name=unique_name(...
@@ -1088,6 +1121,10 @@ else
         zip(zip_name, pkid_name);
         delete(pkid_name);
         clear('collection','bin_map','peaks','identifications');
+        
+        fraction_done = 0.1;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Sending identifications to BIRG']);
         
         if am_connected_to_internet
             dir_info = dir(zip_name);
@@ -1113,6 +1150,10 @@ else
         % -----------------------------------------------------------------
         % Finish any pending deconvolutions and store the data
         % -----------------------------------------------------------------
+        
+        fraction_done = 0.15;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Initializing collections']);
         
         dec = handles.collection; %deconvolved
         res = handles.collection; %residual
@@ -1155,6 +1196,13 @@ else
             x_idx = x_idx + bin.num_peaks + 1;
         end
         
+        fraction_done = 0.16;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Updating deconvolutions']);
+        
+        n_bin_spec = num_bins * num_spec;
+        bin_spec_completed = 0;
+        
         % Create the y-values for the deconvolved collection
         identified_peaks = cell(num_bins, num_spec); %save the peaks for the residual calculation
         for spec_idx = 1:num_spec
@@ -1163,7 +1211,7 @@ else
                 % Calculate the areas under the deconvolved, identified
                 % peaks
                 if ~handles.deconvolutions(bin_idx, spec_idx).is_updated
-                    handles = recalculate_deconvolutions(bin_idx, spec_idx);
+                    handles = recalculate_deconv(bin_idx, spec_idx, handles);
                 end
                 d = handles.deconvolutions(bin_idx, spec_idx).value;
                 idents = peak_identifications_for(bin_idx, ...
@@ -1183,8 +1231,19 @@ else
                 
                 bin = handles.bin_map(bin_idx);
                 block_idx = block_idx + bin.num_peaks + 1;
+                bin_spec_completed = bin_spec_completed + 1;
+                waitbar(fraction_done+ ...
+                    0.64*bin_spec_completed / n_bin_spec, ...
+                    wait_bar_handle, sprintf(['Final ' ...
+                    'processing: Updating deconvolutions ... %d of %d'], ...
+                    bin_spec_completed, n_bin_spec));
             end
         end
+        
+        fraction_done = 0.80;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Calculating residuals']);
+        bin_spec_completed = 0;
         
         % Subtract the deconvolved peaks from the current y values of the
         % residual
@@ -1194,15 +1253,31 @@ else
                 for p = identified_peaks{bin_idx, spec_idx}
                     peak_sum = peak_sum + p.at(res.x);
                 end
+                bin_spec_completed = bin_spec_completed + 1;
             end
             res.Y(:, spec_idx) = res.Y(:, spec_idx) - peak_sum;
+            waitbar(fraction_done + ...
+                0.1*bin_spec_completed / n_bin_spec, ...
+                wait_bar_handle, sprintf(['Final ' ...
+                'processing: Calculating residuals ... %d of %d'], ...
+                bin_spec_completed, n_bin_spec));
         end
         
         %Save the two generated collections
+        fraction_done = 0.9;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Saving deconvolved file']);
+        
         save_collection(fullfile(id_path, id_name), dec);
+        
+        fraction_done = 0.95;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Saving residual file']);
+
         save_collection(fullfile(resid_path, resid_name), res);
         
         %Quit
+        delete(wait_bar_handle);
         delete(handles.figure1);
     end
 end
@@ -1459,7 +1534,7 @@ handles.deconvolutions(bin_idx, spec_idx).update_to(d);
 
 % Find new location for each peak
 new_pks = [d.peaks.location];
-old_pks = get_spectrum_and_bin_peaks(handles);
+old_pks = get_spectrum_and_bin_peaks(handles, bin_idx, spec_idx);
 costs = zeros(length(old_pks), length(new_pks)); % Row:old peak, col: new peak
 for i=1:length(old_pks)
     costs(i,:) = abs(new_pks - old_pks(i));
