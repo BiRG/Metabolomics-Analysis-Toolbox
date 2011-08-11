@@ -72,22 +72,7 @@ classdef RegionDeconvolution
         %
             [BETA0,lb,ub] = compute_initial_inputs(x,y, peak_xs, ...
                 1:length(x), peak_xs);
-            %Keep upper and lower bounds within the region
-            for loc_idx = 4:4:length(lb)
-                if BETA0(loc_idx) < region_min
-                    BETA0(loc_idx) = region_min;
-                elseif BETA0(loc_idx) > region_max
-                    BETA0(loc_idx) = region_max;
-                end
-                
-                if lb(loc_idx) < region_min
-                    lb(loc_idx) = region_min;
-                end
-                
-                if ub(loc_idx) > region_max
-                    ub(loc_idx) = region_max;
-                end
-            end
+
             [unused, obj.baseline_BETA, obj.fit_indices, obj.y_fitted, ...
                 obj.y_baseline,obj.R2, unused, peak_BETA] = ...
                 region_deconvolution(x,y,BETA0,lb,ub, baseline_width, ...
