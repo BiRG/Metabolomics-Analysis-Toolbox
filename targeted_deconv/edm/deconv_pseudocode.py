@@ -32,10 +32,11 @@ if should_display_deconv:
     else:
         display_update_deconv_button
 
-#Output
+#Output deconvolved areas
 
 c = handles.collection
-c.processing += "; Extracted peaks for nulcei (insert list of bins here)"
+c.processing_log += "; Extracted peaks for nulcei (insert list of bins here)"
+# Create the x values
 num_x = 0
 for bin in bins:
     num_x += bin.num_peaks + 1
@@ -47,6 +48,7 @@ for bin in bins:
         c.x(cur_idx + i) = bin.id * 1000 + i
     cur_idx += 1 + bin.num_peaks 
 
+# Extract the y values
 for spectrum in spectra:
     y_idx = 1 #The index of the start of the next block of y values to fill
     for bin in bins:
