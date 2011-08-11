@@ -275,6 +275,33 @@ function ret=am_connected_to_internet
 [unused, success] = urlread('http://www.google.com/'); %#ok<ASGLU>
 ret = success;
 
+function draw_circle(center, radius_inches, color)
+% Draws a circle on the current axes at the center location (in data 
+% coordinates).  The radius of the circle drawn is in inches.
+%
+% center        The center of the circle to draw (in data coordinates).
+%               Pass as [x y]
+% radius_inches The radius of the circle as plotted on the screen in inches
+% color         The color of the circle to plot
+center_x = center(1);
+center_y = center(2);
+oldunits = get(gca, 'Units');
+set(gca, 'Units','inches');
+rect = get(gca, 'Position'); %Bounding rectangle for plot in pixels
+width = rect(3);
+height = rect(4);
+set(gca, 'Units', oldunits);
+
+xl = xlim;
+yl = ylim;
+
+rx = radius_inches*(xl(2)-xl(1))/width;  %X radius
+ry = radius_inches*(yl(2)-yl(1))/height; %Y radius
+rectangle('Position', ...
+        [center_x-rx, center_y-ry, 2*rx, 2*ry], ...
+        'Curvature', [1,1], 'EdgeColor', color);
+
+
 % --- Outputs from this function are returned to the command line.
 function varargout = targeted_identify_OutputFcn(unused2, unused, handles)  %#ok<INUSL>
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -451,19 +478,29 @@ end
 %
 % ------------------------------------------------------------------------
 
-function ids=cur_peak_identifications(handles)
-% Return the list of the peaks identified for the current metabolite and
-% spectrum
+function ids = peak_identifications_for(bin_idx, spec_idx, handles)
+% Return the list of the peak identification objests for the given
+% metabolite bin and spectrum
+%
+% bin_idx  The index of the metabolite bin in the bin_map
+%
+% spec_idx The index of the spectrum in the collection
 idents = handles.identifications;
 if(isempty(idents))
     ids = [];
 else
     bins = [idents.compound_bin];
-    correct_bin = [bins.id]==handles.bin_map(handles.bin_idx).id;
+    correct_bin = [bins.id]==handles.bin_map(bin_idx).id;
     specs = [idents.spectrum_index];
-    correct_spec = specs == handles.spectrum_idx;
+    correct_spec = specs == spec_idx;
     ids = idents(correct_bin & correct_spec);
 end
+
+
+function ids=cur_peak_identifications(handles)
+% Return the list of the peak identification objests for the current 
+% metabolite and spectrum
+ids = peak_identifications_for(handles.bin_idx, handles.spec_idx);
 
 function handles = update_peak_identifications_for(bin_idx, spec_idx, ...
     old_ppms, new_ppms, handles)
@@ -496,32 +533,6 @@ handles = set_identifications(idents, handles);
 function num=cur_num_identified(handles)
 % Return the number of identified peaks for current metabolite and spectrum
 num = length(cur_peak_identifications(handles));
-
-function draw_circle(center, radius_inches, color)
-% Draws a circle on the current axes at the center location (in data 
-% coordinates).  The radius of the circle drawn is in inches.
-%
-% center        The center of the circle to draw (in data coordinates).
-%               Pass as [x y]
-% radius_inches The radius of the circle as plotted on the screen in inches
-% color         The color of the circle to plot
-center_x = center(1);
-center_y = center(2);
-oldunits = get(gca, 'Units');
-set(gca, 'Units','inches');
-rect = get(gca, 'Position'); %Bounding rectangle for plot in pixels
-width = rect(3);
-height = rect(4);
-set(gca, 'Units', oldunits);
-
-xl = xlim;
-yl = ylim;
-
-rx = radius_inches*(xl(2)-xl(1))/width;  %X radius
-ry = radius_inches*(yl(2)-yl(1))/height; %Y radius
-rectangle('Position', ...
-        [center_x-rx, center_y-ry, 2*rx, 2*ry], ...
-        'Curvature', [1,1], 'EdgeColor', color);
 
 function draw_identification(peak_id_obj, collection)
 % DRAW_IDENTIFICATION Draws the selected peak identification on the current plot
@@ -1076,6 +1087,7 @@ else
         save(pkid_name, 'collection','bin_map','peaks','identifications');
         zip(zip_name, pkid_name);
         delete(pkid_name);
+        clear('collection','bin_map','peaks','identifications');
         
         if am_connected_to_internet
             dir_info = dir(zip_name);
@@ -1098,10 +1110,100 @@ else
                 '" to eric_moyer@yahoo.com.  Thank you.']));
         end
         
-        %Finish any pending deconvolutions and store the data
-        uiwait(msgbox('Will run finishing code here', ...
-            'Placeholder dialog', 'modal'));
-        %TODO: write code for finishing
+        % -----------------------------------------------------------------
+        % Finish any pending deconvolutions and store the data
+        % -----------------------------------------------------------------
+        
+        dec = handles.collection; %deconvolved
+        res = handles.collection; %residual
+        num_spec = dec.num_samples;
+        
+        % Create new processing messages
+        num_bins = length(handles.bin_map);
+        
+        bin_names = '';
+        for bin_idx = 1:num_bins
+            cur_bin = handles.bin_map(bin_idx);
+            if bin_idx == num_bins
+                separator = '';
+            else
+                separator = ',';
+            end
+            bin_names=sprintf('%s %s (%d)%s', ...
+                bin_names, cur_bin.compound_descr, cur_bin.id, separator);
+        end
+        dec.processing_log = [dec.processing_log, '  Extracted peak ', ...
+            'areas for: ', bin_names, '.'];
+        res.processing_log = [res.processing_log, '  Extracted ', ...
+            'residual after subtracting peaks for: ', bin_names, '.'];
+        
+        % Create x-values for deconvolved collection
+        num_x = 0;
+        for b = handles.bin_map;
+            num_x = num_x + b.num_peaks + 1;
+        end
+        dec.x = zeros(1,num_x);
+        dec.Y = zeros(num_x, num_spec);
+        clear('b','num_x');
+        
+        x_idx = 1;
+        for bin = handles.bin_map;
+            dec.x(x_idx) = bin.id * 1000;
+            for i = 1:bin.num_peaks
+                dec.x(x_idx + i) = bin.id * 1000 + i;
+            end
+            x_idx = x_idx + bin.num_peaks + 1;
+        end
+        
+        % Create the y-values for the deconvolved collection
+        identified_peaks = cell(num_bins, num_spec); %save the peaks for the residual calculation
+        for spec_idx = 1:num_spec
+            block_idx = 1; %Index of start of next block of y values to fill
+            for bin_idx = 1:num_bins
+                % Calculate the areas under the deconvolved, identified
+                % peaks
+                if ~handles.deconvolutions(bin_idx, spec_idx).is_updated
+                    handles = recalculate_deconvolutions(bin_idx, spec_idx);
+                end
+                d = handles.deconvolutions(bin_idx, spec_idx).value;
+                idents = peak_identifications_for(bin_idx, ...
+                    spec_idx, handles);
+                areas = zeros(1, length(idents));
+                identified_peaks{bin_idx, spec_idx}(length(idents)) = ...
+                    GaussLorentzPeak;
+                for i = 1:length(idents)
+                    p = d.peak_at(idents(i).ppm);
+                    identified_peaks{bin_idx, spec_idx}(i) = p;
+                    areas(i) = p.area;
+                end
+                dec.Y(block_idx, spec_idx) = sum(areas);
+                for i = 1:length(areas)
+                    dec.Y(block_idx + i, spec_idx) = areas(i);
+                end
+                
+                bin = handles.bin_map(bin_idx);
+                block_idx = block_idx + bin.num_peaks + 1;
+            end
+        end
+        
+        % Subtract the deconvolved peaks from the current y values of the
+        % residual
+        for spec_idx = 1:num_spec
+            peak_sum = zeros(length(res.x),1);
+            for bin_idx = 1:num_bins
+                for p = identified_peaks{bin_idx, spec_idx}
+                    peak_sum = peak_sum + p.at(res.x);
+                end
+            end
+            res.Y(:, spec_idx) = res.Y(:, spec_idx) - peak_sum;
+        end
+        
+        %Save the two generated collections
+        save_collection(fullfile(id_path, id_name), dec);
+        save_collection(fullfile(resid_path, resid_name), res);
+        
+        %Quit
+        delete(handles.figure1);
     end
 end
 
