@@ -16,7 +16,7 @@ classdef RegionDeconvolution
         baseline_BETA      
 
         % The indices over which the fit took place.  So you can
-        % plot(x(fit_inxs), y_fit) to get the fitted curve
+        % plot(x(fit_inxs), y_fitted) to get the fitted curve
         fit_indices
 
         % The fitted points, a 1d array of doubles of same
