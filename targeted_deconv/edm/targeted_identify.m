@@ -665,6 +665,12 @@ function update_plot(handles)
 % Update the plot - needed when the spectrum index changes, the
 % identifications change, the deconvolution display state changes, or the
 % current deconvolution is updated
+
+%Save the current figure and update only the plot on the targeted_identify
+%figure
+old_figure = get(0,'CurrentFigure');
+set(0,'CurrentFigure', handles.figure1);
+
 if ishold
     hold off;
 end
@@ -722,6 +728,9 @@ children = get(gca,'Children');
 for child_handle=children
     set(child_handle, 'HitTest', 'off');
 end
+
+%Restore the current figure to its initial value
+set(0,'CurrentFigure', old_figure);
 
 function update_display(handles)
 % Updates the various UI objects to reflect the state saved in the handles
@@ -1125,7 +1134,8 @@ else
         fraction_done = 0.1;
         waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
             'Sending identifications to BIRG']);
-        
+        %{ 
+        TODO put back this section
         if am_connected_to_internet
             dir_info = dir(zip_name);
             if dir_info.bytes < 20*1024*1024 %20 MB attachment limit
@@ -1146,7 +1156,8 @@ else
                 'Please e-mail the file "' zip_name ...
                 '" to eric_moyer@yahoo.com.  Thank you.']));
         end
-        
+        %}
+            
         % -----------------------------------------------------------------
         % Finish any pending deconvolutions and store the data
         % -----------------------------------------------------------------
@@ -1227,16 +1238,15 @@ else
                 dec.Y(block_idx, spec_idx) = sum(areas);
                 for i = 1:length(areas)
                     dec.Y(block_idx + i, spec_idx) = areas(i);
-                end
-                
+                end                
                 bin = handles.bin_map(bin_idx);
                 block_idx = block_idx + bin.num_peaks + 1;
                 bin_spec_completed = bin_spec_completed + 1;
-                waitbar(fraction_done+ ...
-                    0.64*bin_spec_completed / n_bin_spec, ...
-                    wait_bar_handle, sprintf(['Final ' ...
+                fd = fraction_done + (0.64*bin_spec_completed / n_bin_spec);
+                msg = sprintf(['Final ' ...
                     'processing: Updating deconvolutions ... %d of %d'], ...
-                    bin_spec_completed, n_bin_spec));
+                    bin_spec_completed, n_bin_spec); %Unused for now
+                waitbar( fd, wait_bar_handle, msg );
             end
         end
         
@@ -1256,9 +1266,8 @@ else
                 bin_spec_completed = bin_spec_completed + 1;
             end
             res.Y(:, spec_idx) = res.Y(:, spec_idx) - peak_sum;
-            waitbar(fraction_done + ...
-                0.1*bin_spec_completed / n_bin_spec, ...
-                wait_bar_handle, sprintf(['Final ' ...
+            fd = fraction_done + 0.1*bin_spec_completed / n_bin_spec;
+            waitbar( fd,  wait_bar_handle, sprintf(['Final ' ...
                 'processing: Calculating residuals ... %d of %d'], ...
                 bin_spec_completed, n_bin_spec));
         end
@@ -1512,16 +1521,9 @@ update_display(handles);
 
 function handles = recalculate_deconv(bin_idx, spec_idx, handles)
 
-% Get the peaks (all the extra junk is because of caching)
-old_bin_idx = handles.bin_idx;
-old_spec_idx = handles.spectrum_idx;
-handles.bin_idx = bin_idx;
-handles.spectrum_idx = spec_idx;
-pks = get_spectrum_peaks(handles);
+% Get the peaks 
+pks = get_spectrum_peaks(handles, spec_idx);
 handles = guidata(handles.figure1);
-handles.bin_idx = old_bin_idx;
-handles.spec_idx = old_spec_idx;
-guidata(handles.figure1, handles);
 
 % Calculate the deconvolution
 bin = handles.bin_map(bin_idx).bin;
