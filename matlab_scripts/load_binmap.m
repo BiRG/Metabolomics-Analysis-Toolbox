@@ -12,7 +12,7 @@ if fid == -1
 end
 
 %Check header to ensure file format is correct
-expected_header={{'ID'},{'Metabolite'},{'Bin (Lt)'},{'Bin (Rt)'},{'multiplicity'},{'Deconvolution'},{'Proton ID'},{'ID Source'}};
+expected_header={{'ID'},{'Metabolite'},{'Bin (Lt)'},{'Bin (Rt)'},{'Multiplicity'},{'Deconvolution'},{'Proton ID'},{'ID Source'}};
 header = textscan(fid, '%q %q %q %q %q %q %q %q',1,'Delimiter',',');
 if ~isequal(header,expected_header)
     msgbox('The bin-map header did not match the expected bin map header.','Error','error');

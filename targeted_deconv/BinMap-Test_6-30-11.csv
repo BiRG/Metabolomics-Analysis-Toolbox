@@ -1,4 +1,4 @@
-ID,Metabolite,Bin (Lt),Bin (Rt),multiplicity,Deconvolution,Proton ID,ID Source
+ID,Metabolite,Bin (Lt),Bin (Rt),Multiplicity,Deconvolution,Proton ID,ID Source
 1,N methylnicotinamide,9.297,9.265,s,Clean,CH2,Publication
 2,N methylnicotinamide,8.922,8.88,d,Clean,CH6,Publication
 3,hippurate,7.857,7.815,d,overlap,"H2, H4",Measured/Chemonx
