@@ -83,8 +83,9 @@ classdef GaussLorentzPeak
     % >> g=GaussLorentzPeak([1,1,0.5,0]); x=-3:0.1:3; plot(x,g.at(x))
     %
     %
-    % % Plot a vector of peaks using the at function
-    % g = [GaussLorentzPeak([1,1,1,0]),GaussLorentzPeak([1,1,0,0])]; x=[-3:0.1:3];plot(x,[g.at(x)])    
+    % % Plot a vector of peaks using the at function (note the syntax for
+    % % creating a vector of peaks from a vector of parameters)
+    % >> g = GaussLorentzPeak([1,1,1,0,1,1,0,0]); x=[-3:0.1:3];plot(x,[g.at(x)]) 
     
     properties (SetAccess=private)
         % The height of the maximum of the peak.  A scalar.
@@ -132,16 +133,38 @@ classdef GaussLorentzPeak
     end
     
     methods
-        function obj=GaussLorentzPeak(array)
+        function objs=GaussLorentzPeak(array)
         % GaussLorentzPeak(array): [M,G,P,x0]=array
         %
         % The components of array are (in order) assigned to height,
-        % half_height_width, lorentzianness, location
+        % half_height_width, lorentzianness, location.
+        %
+        % If there are more 4 elements of array, then each group of 4 is
+        % assigned to a new peak and the array of those peaks is returned
+        % 
+        % If no arguments are given, creates an uninitialized
+        % GaussLorentzPeak
             if nargin > 0 %If 0 args, don't initialize - default constructor
-                obj.height = array(1);
-                obj.half_height_width = array(2);
-                obj.lorentzianness = array(3);
-                obj.location = array(4);
+                if length(array) == 4
+                    objs.height = abs(array(1));
+                    objs.half_height_width = abs(array(2));
+                    objs.lorentzianness = abs(array(3));
+                    if objs.lorentzianness > 1
+                        objs.lorentzianness = 1; 
+                    end
+                    objs.location = array(4);
+                elseif mod(length(array),4) == 0 && ~isempty(array)
+                    num_objs = length(array)/4;
+                    objs(num_objs) = GaussLorentzPeak();
+                    for i = 1:num_objs
+                        i4=4*i;
+                        objs(i)=GaussLorentzPeak(array((i4-3):i4));
+                    end
+                else
+                    error(['The array passed to the GaussLorentzPeak ', ...
+                        'constructor must have a length that is a ', ...
+                        'multiple of 4']);
+                end
             end
         end
         
