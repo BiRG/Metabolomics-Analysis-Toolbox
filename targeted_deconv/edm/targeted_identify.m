@@ -1112,6 +1112,20 @@ else
             end
         end
         
+        excel_compat_name = 0; 
+        while(excel_compat_name == 0)
+            [excel_compat_name,excel_compat_path] = uiputfile('*.csv', ...
+                'Select file for the excel compatible deconvolved data');
+            fullexcelname = fullfile(excel_compat_path,excel_compat_name);
+            if strcmp(fullexcelname, fullfile(id_path, id_name)) || ...
+               strcmp(fullexcelname, fullfile(resid_path, resid_name))
+                excel_compat_name = 0;
+                uiwait(msgbox('You cannot resuse a file name.  Please choose a different name', ...
+                    'Error','error','modal'));
+            end
+            clear('fullexcelname');
+        end
+        
         fraction_done = 0;
         wait_bar_handle = waitbar(fraction_done,['Final processing: ' ...
             'Compressing identifications']);
@@ -1153,7 +1167,7 @@ else
                 'Please e-mail the file "' zip_name ...
                 '" to eric_moyer@yahoo.com.  Thank you.']));
         end
-            
+        
         % -----------------------------------------------------------------
         % Finish any pending deconvolutions and store the data
         % -----------------------------------------------------------------
@@ -1278,11 +1292,58 @@ else
         
         save_collection(fullfile(id_path, id_name), dec);
         
-        fraction_done = 0.95;
+        fraction_done = 0.91;
         waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
             'Saving residual file']);
 
         save_collection(fullfile(resid_path, resid_name), res);
+        
+        %Save the deconvolved peaks in a nice csv format
+
+        fraction_done = 0.99;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Saving excel compatible peak file']);
+
+        excel_fid=fopen(fullfile(excel_compat_path, excel_compat_name),'w');
+        if excel_fid==-1
+            warning('targeted_identify:no_csv', ...
+                'Could not open %s to write csv file.', ...
+                fullfile(excel_compat_path, excel_compat_name));
+        else
+            % Write header
+            fprintf(excel_fid, '"Metabolite Name","ID","Peak"');
+            for spec_idx = 1:num_spec
+                fprintf(excel_fid, ',"Spectrum %d"', spec_idx);
+            end
+            fprintf(excel_fid,'\n');
+            
+            % Write rows
+            block_idx = 1; % Index of start of next block of y values to fill/copy
+            for bin_idx = 1:num_bins
+                bin = handles.bin_map(bin_idx);
+                block_offset = 0; % Number of rows to descend into block
+                while block_offset < bin.num_peaks + 1
+                    %Row-descriptive text
+                    fprintf(excel_fid, '"%s",%d', ...
+                        bin.compound_descr, bin.id);
+                    if block_offset == 0
+                        fprintf(excel_fid,',"Sum"');
+                    else
+                        fprintf(excel_fid,',"Peak %d"', block_offset);
+                    end
+                    %Peak areas
+                    for spec_idx = 1:num_spec
+                        fprintf(excel_fid,',%f', ...
+                            dec.Y(block_idx + block_offset, spec_idx));
+                    end
+                    fprintf(excel_fid,'\n');
+                    block_offset = block_offset + 1;
+                end
+                block_idx = block_idx + bin.num_peaks + 1;
+            end
+            
+            fclose(excel_fid);
+        end
         
         %Quit
         delete(wait_bar_handle);
