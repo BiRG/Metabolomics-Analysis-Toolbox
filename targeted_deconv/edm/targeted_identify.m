@@ -1260,8 +1260,11 @@ else
         for spec_idx = 1:num_spec
             peak_sum = zeros(length(res.x),1);
             for bin_idx = 1:num_bins
-                for p = identified_peaks{bin_idx, spec_idx}
-                    peak_sum = peak_sum + p.at(res.x);
+                ip = identified_peaks{bin_idx, spec_idx};
+                if ~isempty(ip)
+                    for p = ip
+                        peak_sum = peak_sum + p.at(res.x)';
+                    end
                 end
                 bin_spec_completed = bin_spec_completed + 1;
             end
