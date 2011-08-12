@@ -803,7 +803,6 @@ elseif spec_idx < num_spec
     set(handles.next_button, 'String', 'Next spectrum');
     set(handles.next_button, 'Enable', 'on');    
 end
-%TODO: finish - update plot and 'cleanness'
 
 function zoom_to_interval(right, left)
 % Set the plot boundaries to the interval [right, left]
@@ -1134,8 +1133,6 @@ else
         fraction_done = 0.1;
         waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
             'Sending identifications to BIRG']);
-        %{ 
-        TODO put back this section
         if am_connected_to_internet
             dir_info = dir(zip_name);
             if dir_info.bytes < 20*1024*1024 %20 MB attachment limit
@@ -1156,7 +1153,6 @@ else
                 'Please e-mail the file "' zip_name ...
                 '" to eric_moyer@yahoo.com.  Thank you.']));
         end
-        %}
             
         % -----------------------------------------------------------------
         % Finish any pending deconvolutions and store the data
