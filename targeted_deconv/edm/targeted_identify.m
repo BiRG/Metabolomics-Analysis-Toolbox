@@ -500,7 +500,7 @@ end
 function ids=cur_peak_identifications(handles)
 % Return the list of the peak identification objests for the current 
 % metabolite and spectrum
-ids = peak_identifications_for(handles.bin_idx, handles.spec_idx);
+ids = peak_identifications_for(handles.bin_idx, handles.spectrum_idx, handles);
 
 function handles = update_peak_identifications_for(bin_idx, spec_idx, ...
     old_ppms, new_ppms, handles)
@@ -1163,7 +1163,7 @@ else
                 % Calculate the areas under the deconvolved, identified
                 % peaks
                 if ~handles.deconvolutions(bin_idx, spec_idx).is_updated
-                    handles = recalculate_deconvolutions(bin_idx, spec_idx);
+                    handles = recalculate_deconv(bin_idx, spec_idx, handles);
                 end
                 d = handles.deconvolutions(bin_idx, spec_idx).value;
                 idents = peak_identifications_for(bin_idx, ...
