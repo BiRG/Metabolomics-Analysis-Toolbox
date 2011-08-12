@@ -1,22 +1,19 @@
 function metabolites = load_metabolites(pathname,filename)
-metabolites = {};
-[NUMERIC,TXT,RAW] = xlsread([pathname,filename]);
-x_inx = find(strcmpi({TXT{1,:}},'ID'));
-m_inx = find(strcmpi({TXT{1,:}},'Metabolite'));
-left_inx = find(strcmpi({TXT{1,:}},'Bin (Lt)'));
-right_inx = find(strcmpi({TXT{1,:}},'Bin (Rt)'));
-multiplicity_inx = find(strcmpi({TXT{1,:}},'multiplicity'));
-d_inx = find(strcmpi({TXT{1,:}},'deconvolution'));
-p_inx = find(strcmpi({TXT{1,:}},'Proton ID'));
-id_source_inx = find(strcmpi({TXT{1,:}},'ID Source'));
+bm = load_binmap(fullfile(pathname, filename));
 
-for i = 1:size(RAW,1)-1
-    metabolites{i}.id = RAW{i+1,x_inx};
-    metabolites{i}.metabolite = RAW{i+1,m_inx};
-    metabolites{i}.left = RAW{i+1,left_inx};
-    metabolites{i}.right = RAW{i+1,right_inx};
-    metabolites{i}.multiplicity = RAW{i+1,multiplicity_inx};
-    metabolites{i}.deconvolution = RAW{i+1,d_inx};
-    metabolites{i}.proton_id = RAW{i+1,p_inx};
-    metabolites{i}.id_source = RAW{i+1,id_source_inx};
+metabolites = cell(1,length(bm));
+
+for i = 1:length(bm)
+    metabolites{i}.id = bm(i).id;
+    metabolites{i}.metabolite = bm(i).compound_descr;
+    metabolites{i}.left = bm(i).bin.left;
+    metabolites{i}.right = bm(i).bin.right;
+    metabolites{i}.multiplicity = bm(i).multiplicity;
+    if bm(i).is_clean
+        metabolites{i}.deconvolution = 'Clean';
+    else
+        metabolites{i}.deconvolution = 'Overlap';
+    end
+    metabolites{i}.proton_id = bm(i).proton_id;
+    metabolites{i}.id_source = bm(i).id_source;
 end
