@@ -322,6 +322,8 @@ else
     set(handles.collection_filename_box, 'String', fullpath);
     set(handles.collection_id_box,'String', ...
         handles.uninitialized_collection_id);
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
 end
 
 function collection_id_box_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
@@ -334,6 +336,8 @@ function collection_id_box_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
 if contains_valid_collection_id(hObject)
     set(handles.collection_filename_box,'String', ...
         handles.uninitialized_collection_filename);
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
 else
     uiwait(msgbox('The collection id must be a number.','Error','error'));
     set(hObject,'String',handles.uninitialized_collection_id);
@@ -377,26 +381,38 @@ if ~ischar(filename)
 else
     fullpath=fullfile(pathname, filename);
     set(handles.bin_map_filename_box, 'String', fullpath);
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
 end
 
 
 
-function bin_map_filename_box_Callback(unused2, unused1, unused) %#ok<INUSD,DEFNU>
+function bin_map_filename_box_Callback(hObject, unused1, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to bin_map_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 %NOTE: this function needs to be present even if blank - it will be called
 %by the gui no matter what
+fname = get(hObject, 'String');
+if exist(fname, 'file')
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
+end
+    
 
-
-function collection_filename_box_Callback(unused2, unused1, unused) %#ok<INUSD,DEFNU>
+function collection_filename_box_Callback(hObject, unused1, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to collection_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 %NOTE: this function needs to be present even if blank - it will be called
 %by the gui no matter what
+fname = get(hObject, 'String');
+if exist(fname, 'file')
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
+end
 
 
 function continue_filename_box_Callback(unused2, unused1, unused) %#ok<INUSD,DEFNU>
