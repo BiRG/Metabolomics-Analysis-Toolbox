@@ -23,7 +23,7 @@ min_num_samples_in_cluster = 40;
     num_opls_fact,press,q2,SE,P_ortho,Y_pred,Q2s] = opls_script_strat_splot(data,Y,CV);
 
 % Plot the results
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 % Figure properties
 set(0,'DefaultAxesFontName','arial');
