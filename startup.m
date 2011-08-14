@@ -1,7 +1,7 @@
 clc
 
-addpath([pwd,'/lib/extern/munkres']);  %Linear assignment problem
-addpath([pwd,'/lib/extern/rand_org']); %True random numbers
+addpath([pwd,'/lib/munkres']);  %Linear assignment problem
+addpath([pwd,'/lib/rand_org']); %True random numbers
 addpath([pwd,'/common_scripts']);
 addpath([pwd,'/common_scripts/cursors']);
 addpath([pwd,'/common_scripts/dab']);
