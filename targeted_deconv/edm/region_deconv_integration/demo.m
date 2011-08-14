@@ -1,5 +1,3 @@
-addpath('lib');
-
 % It's a large collection, so I've saved a collection with the peaks
 % identified
 %

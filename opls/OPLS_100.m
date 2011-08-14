@@ -1,7 +1,7 @@
 %% Using an ID, download OPLS results from the website and show the scores
 %% plot
 
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 % Figure properties
 set(0,'DefaultAxesFontName','arial');

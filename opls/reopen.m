@@ -1,5 +1,5 @@
 function reopen(disk_file_id)
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 username = [];
 password = [];

@@ -59,7 +59,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % Add shared MATLAB scripts to the path
-addpath('../../matlab_scripts');
+addpath('../../common_scripts');
 
 % UIWAIT makes BinMapper wait for user response (see UIRESUME)
 % uiwait(handles.figure1);

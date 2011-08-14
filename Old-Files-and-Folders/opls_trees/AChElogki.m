@@ -1,4 +1,4 @@
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 load('AChElogki-999.mat');
 
 % QSAR data analysis

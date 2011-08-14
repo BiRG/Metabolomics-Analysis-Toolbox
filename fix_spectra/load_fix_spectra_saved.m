@@ -1,6 +1,6 @@
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 addpath('../quantification');
-addpath('../matlab_scripts/cursors');
+addpath('../common_scripts/cursors');
 addpath('../visualization');
 
 open_figures;

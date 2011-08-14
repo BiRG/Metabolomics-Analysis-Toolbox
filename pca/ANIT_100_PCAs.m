@@ -1,5 +1,5 @@
 function ANIT_100_PCAs
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 % Figure properties
 set(0,'DefaultAxesFontName','arial');

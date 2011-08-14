@@ -1,5 +1,4 @@
-addpath('../matlab_scripts');
-addpath('../lib');
+addpath('../common_scripts');
 
 num_columns = 2;
 
