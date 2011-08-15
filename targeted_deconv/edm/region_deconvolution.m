@@ -92,7 +92,7 @@ y_region = y(fit_inxs);
 x_region = x(fit_inxs);
 
 % Construct region
-X = BETA0(4:4:end);
+X = BETA0(4:4:end); %Later expl: X is x coordinates of the peaks - here initial
 inxs = find(region(1) >= X & X >= region(2));
 lb_region = [];
 ub_region = [];
@@ -124,6 +124,8 @@ if num_maxima > 0
     BETA(4*(inxs-1)+2) = BETA_region(2:4:4*num_maxima);
     BETA(4*(inxs-1)+3) = BETA_region(3:4:4*num_maxima);
     BETA(4*(inxs-1)+4) = BETA_region(4:4:4*num_maxima);
+else
+    BETA_region=[];
 end
 
 [y_fit,y_baseline] = global_model(BETA_region,x_region',num_maxima,x_baseline_BETA);

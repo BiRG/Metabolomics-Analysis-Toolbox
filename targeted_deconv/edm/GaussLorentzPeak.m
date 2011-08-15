@@ -139,8 +139,10 @@ classdef GaussLorentzPeak
         % The components of array are (in order) assigned to height,
         % half_height_width, lorentzianness, location.
         %
-        % If there are more 4 elements of array, then each group of 4 is
-        % assigned to a new peak and the array of those peaks is returned
+        % If there are more than 4 elements of array, then each group of 4 is
+        % assigned to a new peak and the array of those peaks is returned.
+        %
+        % If an empty array is passed, an empty array is returned
         % 
         % If no arguments are given, creates an uninitialized
         % GaussLorentzPeak
@@ -160,6 +162,9 @@ classdef GaussLorentzPeak
                         i4=4*i;
                         objs(i)=GaussLorentzPeak(array((i4-3):i4));
                     end
+                elseif isempty(array)
+                    % Leave objs empty
+                    objs(1)=[];
                 else
                     error(['The array passed to the GaussLorentzPeak ', ...
                         'constructor must have a length that is a ', ...
