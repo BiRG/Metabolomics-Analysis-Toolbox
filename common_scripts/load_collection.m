@@ -73,12 +73,12 @@ while line ~= -1
                     if ~isempty(fields{i})
                         all_empty = false;
                     end
-                    v = str2num(fields{i});
-                    if ~isempty(v)
+                    [v, num_read] = sscanf('%f',fields{i});
+                    if ~isempty(v) && num_read == 1
                         values(i-1) = v;
                     elseif ~isempty(fields{i}) % contains string
                         found_str = true;
-                    end                    
+                    end
                 end
                 if found_str || all_empty
                     values = [];
