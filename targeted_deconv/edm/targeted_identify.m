@@ -1235,29 +1235,41 @@ else
             for bin_idx = 1:num_bins
                 % Calculate the areas under the deconvolved, identified
                 % peaks
+                
+                % Update the deconvolutions and initialized the
+                % identified_peaks entry
                 if ~handles.deconvolutions(bin_idx, spec_idx).is_updated
                     handles = recalculate_deconv(bin_idx, spec_idx, handles);
                 end
                 d = handles.deconvolutions(bin_idx, spec_idx).value;
                 idents = peak_identifications_for(bin_idx, ...
                     spec_idx, handles);
-                areas = zeros(1, length(idents));
                 if isempty(idents)
                     identified_peaks{bin_idx, spec_idx} = [];
                 else
                     identified_peaks{bin_idx, spec_idx}(length(idents)) = ...
                         GaussLorentzPeak;
                 end
+                
+                % Fill in the areas array, leaving 0's where a peak was not
+                % identified
+                bin = handles.bin_map(bin_idx);
+                num_peaks = bin.num_peaks;
+                areas = zeros(1, num_peaks);
+                                
                 for i = 1:length(idents)
                     p = d.peak_at(idents(i).ppm);
                     identified_peaks{bin_idx, spec_idx}(i) = p;
                     areas(i) = p.area;
                 end
+                
+                % Fill in the y values using the areas
                 dec.Y(block_idx, spec_idx) = sum(areas);
                 for i = 1:length(areas)
                     dec.Y(block_idx + i, spec_idx) = areas(i);
-                end                
-                bin = handles.bin_map(bin_idx);
+                end
+                
+                % Advance to next bin, updating the waitbar
                 block_idx = block_idx + bin.num_peaks + 1;
                 bin_spec_completed = bin_spec_completed + 1;
                 fd = fraction_done + (0.64*bin_spec_completed / n_bin_spec);
