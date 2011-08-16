@@ -411,39 +411,27 @@ end
 bin = handles.bin_map(bin_idx).bin;
 pks = pks(pks <= bin.left & pks >= bin.right);
 
-function indices = bins_affected_by_peak_change(bin_map, old_x, new_x)
-% Indices of bins whose deconvolution would be affected by changing the list of peaks in old_x to that in new_x
+function indices = bins_invalidated_by_peak_change(bin_map, old_x, new_x)
+% Indices of bins whose extant deconvolution is invalidated by changing the list of peaks in old_x to that in new_x
 %
-% Specifically, take all the peaks in old_x that lie in the bin plus their
-% neighbors (any peaks lacking neighbors lower or upper neighbors are given
-% neighbors of -infinity and +infinity respectively).  Each bin gets a 
-% range.  If any peaks change (are added or removed in that range) then the
-% bin is affected by the change.
-%
-% The bins are assumed to have finite boundaries
+% If any peaks change (are added or removed) in the range covered by a bin 
+% then the bin is invalidated by the change.
 %
 % bin_map The list of bins
 % old_x   The list of peak locations prior to the change
 % new_x   The list of peak locations subsequent to the change
-ub = zeros(length(bin_map)); %ub(i) = upper bound for changes to bin i
-lb = zeros(length(bin_map)); %lb(i) = lower bound for changes to bin i
-augmented_old_x = sort([old_x, -inf, inf],'ascend');
-for i=1:length(bin_map)
-    bin = bin_map(i).bin; 
-    ub(i) = augmented_old_x(find(bin.left < augmented_old_x,1,'first'));
-    lb(i) = augmented_old_x(find(bin.right > augmented_old_x, 1, 'last'));
-end
 changed_x = setxor(old_x, new_x);
 changed_bin = zeros(1,length(bin_map));
 for i=1:length(bin_map)
-    changed_bin(i)=any((ub(i) >= changed_x) & (lb(i) <= changed_x));
+    changed_bin(i)=any((bin_map(i).bin.left >= changed_x) & ...
+        (bin_map(i).bin.right <= changed_x));
 end
 indices = find(changed_bin);
 
 function handles=set_spectrum_peaks_no_gui(spectrum_idx, new_val, handles)
 % Just like set_spectrum_peaks but does not update the gui (note that you
 % will need to update both the plot and display after calling this routine)
-changed_indices = bins_affected_by_peak_change(handles.bin_map, ...
+changed_indices = bins_invalidated_by_peak_change(handles.bin_map, ...
     handles.peaks{spectrum_idx}, new_val);
 if ~isempty(changed_indices)
     for bin_idx = changed_indices
