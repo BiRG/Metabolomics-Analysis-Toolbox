@@ -1,0 +1,9 @@
+Eric,
+
+I have put in the shared folder a collection of spectra (VeVe 48 vs DsFu 48.fig) from two groups: control (Veve 48) and D-serine (DsFu) groups.
+
+Here is what I would like you to check for me. Use the D-serine spectrum collection ID#10824 to deconvolute the peaks at about 6.837 ppm and 6.824 ppm. Use also the control spectrum collection ID # 10825 to deconvolute the same peaks. Compare the deconvolution output for the two groups to see how D-serine treated group stands (increase or decrease) relative to the control group. Now, open VeVe 48 vs DsFu 48.fig and look for the same peaks (6.837 ppm and 6.824 ppm) and see if the trend you are observing correlates with the deconvolution output. In other words, check if the direction (increase or decrease) of DsFu relative to the control (VeVe) is also observed with the deconvolution output.
+
+Thanks
+
+Isaie
