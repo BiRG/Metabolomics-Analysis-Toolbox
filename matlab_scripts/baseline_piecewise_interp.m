@@ -1,6 +1,6 @@
 function data = baseline_piecewise_interp(baseline_BETA,x_baseline_BETA,xi)
 if ~isempty(baseline_BETA)
-    data = interp1(x_baseline_BETA,baseline_BETA,xi,'linear',0);
+    data = interp1(x_baseline_BETA,baseline_BETA,xi,'cubic',0);
 
 %     % Whittacker smoother algorithm
 %     % Weights (0 = ignore this intensity)
