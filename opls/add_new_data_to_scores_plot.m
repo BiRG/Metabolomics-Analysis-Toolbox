@@ -1,5 +1,5 @@
 function [metadata,metadata_headers,opls_scores] = add_new_data_to_scores_plot(X,Y,num_opls_fact,metadata,metadata_headers,opls_scores)
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 %%%%%%%%%%%%
 % Run OPLS again to create w_ortho (OSC), p_ortho, and w

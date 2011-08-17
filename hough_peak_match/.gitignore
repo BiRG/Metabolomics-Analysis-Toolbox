@@ -1,4 +1,22 @@
 #####
+# Files temporarily hidden while I am working on other projects
+#
+# RRRRR    EEEEEE  M       M   OOO   V   V  EEEEEE
+# R    R   E       MM     MM  O   O  V   V  E
+# RRRRR    EEE     M M   M M  O   O   V V   EEE
+# R   R    E       M  M M  M  O   O   V V   E
+# R    R   EEEEEE  M   M   M   OOO     V    EEEEEE
+#
+#####
+
+detected_after_6std_dev_loc_max.png
+detected_after_blur.png
+foo.cpp
+hist.txt
+pgms_1.pgm
+
+
+#####
 # Compilation intermediate files
 #####
 obj/*.o
@@ -54,3 +72,4 @@ tests/011-pmobject_method_overloads.compiled.t
 # Generated documentation
 #####
 doc/html
+

@@ -11,8 +11,8 @@
 %   down - zooms in the y axis
 %   up/down - cycles through the spectra
 %   left/right - cycles through the regions
-addpath('../matlab_scripts');
-addpath('../matlab_scripts/cursors');
+addpath('../common_scripts');
+addpath('../common_scripts/cursors');
 
 % Fix spectra
 fix_spectra_h = figure;

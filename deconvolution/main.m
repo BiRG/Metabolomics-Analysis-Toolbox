@@ -54,11 +54,10 @@ function main_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for main
 handles.output = hObject;
 
-addpath('../matlab_scripts');
-addpath('../matlab_scripts/cursors');
+addpath('../common_scripts');
+addpath('../common_scripts/cursors');
 addpath('dab');
 addpath('visualize_deconvolution');
-addpath('../lib');
 
 handles.collection = {};
 handles.dirty = true;

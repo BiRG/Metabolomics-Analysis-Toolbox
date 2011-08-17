@@ -1,8 +1,7 @@
-addpath('../matlab_scripts');
-addpath('../matlab_scripts/cursors');
+addpath('../common_scripts');
+addpath('../common_scripts/cursors');
 addpath('dab');
 addpath('visualize_deconvolution');
-addpath('../lib');
 
 [filename,pathname] = uigetfile('*.fig','Select saved figure');
 

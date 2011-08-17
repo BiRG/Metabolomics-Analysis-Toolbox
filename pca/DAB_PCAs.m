@@ -1,6 +1,6 @@
 % Create PCA graphs and normalize them so that the scales are comparable
 
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 % Figure properties
 set(0,'DefaultAxesFontName','arial');

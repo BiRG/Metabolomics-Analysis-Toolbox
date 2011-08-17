@@ -9,8 +9,8 @@
 %   pagedown - zoom in the x axis
 %   home - zooms out the y axis
 %   down - zooms in the y axis
-addpath('../matlab_scripts');
-addpath('../matlab_scripts/cursors');
+addpath('../common_scripts');
+addpath('../common_scripts/cursors');
 addpath('molecule_viewer');
 
 % Start

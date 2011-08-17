@@ -52,7 +52,7 @@ function Main_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to Main (see VARARGIN)
 
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 % Choose default command line output for Main
 handles.output = hObject;

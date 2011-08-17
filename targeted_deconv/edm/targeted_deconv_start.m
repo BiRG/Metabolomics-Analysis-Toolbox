@@ -45,7 +45,7 @@ end
 
 
 % --- Executes just before targeted_deconv_start is made visible.
-function targeted_deconv_start_OpeningFcn(hObject, unused, handles, varargin)
+function targeted_deconv_start_OpeningFcn(hObject, unused, handles, varargin) %#ok<INUSL>
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -112,7 +112,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = targeted_deconv_start_OutputFcn(unused, unused1, handles) 
+function varargout = targeted_deconv_start_OutputFcn(unused, unused1, handles)  %#ok<INUSL>
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -160,7 +160,7 @@ result = ~(length(v) ~= 1 || isnan(v));
 
 
 % --- Executes on button press in done_button.
-function done_button_Callback(unused, unused1, handles) %#ok<DEFNU>
+function done_button_Callback(unused, unused1, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -254,14 +254,14 @@ delete(handles.figure1);
 
 
 % --- Executes on button press in cancel_button.
-function cancel_button_Callback(unused1, unused, handles) %#ok<DEFNU>
+function cancel_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to cancel_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 delete(handles.figure1);
 
 % --- Executes during object creation, after setting all properties.
-function continue_filename_box_CreateFcn(hObject, unused1, unused) %#ok<DEFNU>
+function continue_filename_box_CreateFcn(hObject, unused1, unused) %#ok<INUSD,DEFNU>
 % hObject    handle to continue_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -274,7 +274,7 @@ end
 
 
 % --- Executes on button press in continue_browse_button.
-function continue_browse_button_Callback(unused1, unused, handles) %#ok<DEFNU>
+function continue_browse_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to continue_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -292,7 +292,7 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function collection_filename_box_CreateFcn(hObject, unused1, unused) %#ok<DEFNU>
+function collection_filename_box_CreateFcn(hObject, unused1, unused) %#ok<INUSD,DEFNU>
 % hObject    handle to collection_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -305,7 +305,7 @@ end
 
 
 % --- Executes on button press in collection_filename_browse_button.
-function collection_filename_browse_button_Callback(unused1, unused, handles) %#ok<DEFNU>
+function collection_filename_browse_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to collection_filename_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -322,9 +322,11 @@ else
     set(handles.collection_filename_box, 'String', fullpath);
     set(handles.collection_id_box,'String', ...
         handles.uninitialized_collection_id);
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
 end
 
-function collection_id_box_Callback(hObject, unused, handles) %#ok<DEFNU>
+function collection_id_box_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to collection_id_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -334,13 +336,15 @@ function collection_id_box_Callback(hObject, unused, handles) %#ok<DEFNU>
 if contains_valid_collection_id(hObject)
     set(handles.collection_filename_box,'String', ...
         handles.uninitialized_collection_filename);
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
 else
     uiwait(msgbox('The collection id must be a number.','Error','error'));
     set(hObject,'String',handles.uninitialized_collection_id);
 end
 
 % --- Executes during object creation, after setting all properties.
-function collection_id_box_CreateFcn(hObject, unused1, unused) %#ok<DEFNU>
+function collection_id_box_CreateFcn(hObject, unused1, unused) %#ok<INUSD,DEFNU>
 % hObject    handle to collection_id_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -353,7 +357,7 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function bin_map_filename_box_CreateFcn(hObject, unused1, unused) %#ok<DEFNU>
+function bin_map_filename_box_CreateFcn(hObject, unused1, unused) %#ok<INUSD,DEFNU>
 % hObject    handle to bin_map_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -366,7 +370,7 @@ end
 
 
 % --- Executes on button press in bin_map_browse_button.
-function bin_map_browse_button_Callback(unused1, unused, handles) %#ok<DEFNU>
+function bin_map_browse_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to bin_map_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -377,29 +381,41 @@ if ~ischar(filename)
 else
     fullpath=fullfile(pathname, filename);
     set(handles.bin_map_filename_box, 'String', fullpath);
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
 end
 
 
 
-function bin_map_filename_box_Callback(unused2, unused1, unused) %#ok<DEFNU>
+function bin_map_filename_box_Callback(hObject, unused1, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to bin_map_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 %NOTE: this function needs to be present even if blank - it will be called
 %by the gui no matter what
+fname = get(hObject, 'String');
+if exist(fname, 'file')
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
+end
+    
 
-
-function collection_filename_box_Callback(unused2, unused1, unused) %#ok<DEFNU>
+function collection_filename_box_Callback(hObject, unused1, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to collection_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 %NOTE: this function needs to be present even if blank - it will be called
 %by the gui no matter what
+fname = get(hObject, 'String');
+if exist(fname, 'file')
+    set(handles.continue_filename_box,'String', ...
+        handles.uninitialized_continue_filename);
+end
 
 
-function continue_filename_box_Callback(unused2, unused1, unused) %#ok<DEFNU>
+function continue_filename_box_Callback(unused2, unused1, unused) %#ok<INUSD,DEFNU>
 % hObject    handle to continue_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -409,7 +425,7 @@ function continue_filename_box_Callback(unused2, unused1, unused) %#ok<DEFNU>
 
 
 % --- Executes on mouse press over figure background.
-function figure1_ButtonDownFcn(unused2, unused1, unused0) %#ok<DEFNU>
+function figure1_ButtonDownFcn(unused2, unused1, unused0) %#ok<INUSD,DEFNU>
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

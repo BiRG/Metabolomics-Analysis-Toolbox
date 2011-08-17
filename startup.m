@@ -1,10 +1,10 @@
 clc
 
-addpath([pwd,'/lib']);
-addpath([pwd,'/lib/extern/rand_org']);
-addpath([pwd,'/matlab_scripts']);
-addpath([pwd,'/matlab_scripts/cursors']);
-addpath([pwd,'/lib/dab']);
+addpath([pwd,'/lib/munkres']);  %Linear assignment problem
+addpath([pwd,'/lib/rand_org']); %True random numbers
+addpath([pwd,'/common_scripts']);
+addpath([pwd,'/common_scripts/cursors']);
+addpath([pwd,'/common_scripts/dab']);
 
 fprintf('Metabolomics Analysis Toolbox\n\n');
 fprintf('Summary of functionality:\n');

@@ -1,0 +1,12 @@
+ID,Metabolite,Bin (Lt),Bin (Rt),Multiplicity,Deconvolution,Proton ID,ID Source
+1,U7462,7.47,7.456,s,Clean,,
+2,Histidine,7.078,7.068,s,Clean,CH6,Publication
+3,U6837,6.843,6.831,s,clean,,
+4,U6823,6.83,6.82,s,Clean,,
+5,Homovanillate,6.79,6.73,dd,overlap,,
+6,Glucose,4.69,4.6,d,clean,CH,Publication
+7,Lactate,1.35,1.32,d,Clean,CH3,Pub/Measured/Chemonx
+8,Choline,3.212,3.2,s,Clean,N(CH3)3,Publication
+9,Tyrosine,3.176,3.148,d,clean,,
+10,U2784,2.792,2.778,s,clean,g CH2/CH2,Pub/Measured/Chemonx
+11,citrate,2.585,2.515,half of AB d,clean,CH2,Measured/Chemonx

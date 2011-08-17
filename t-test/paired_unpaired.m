@@ -1,5 +1,5 @@
 % Performs a t-test with control (unpaired) and with pre (paired)
-addpath('../matlab_scripts');
+addpath('../common_scripts');
 
 collection = get_collection;
    
