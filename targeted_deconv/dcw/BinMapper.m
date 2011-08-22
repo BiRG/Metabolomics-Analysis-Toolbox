@@ -78,7 +78,7 @@ varargout{1} = handles.output;
 
 % --- Clears the main axes object.
 function clearGraph(handles)
-% handles    empty - handles not created until after all CreateFcns called
+% handles    structure with handles and user data (see GUIDATA)
 axes(handles.axes1);
 cla;
 
@@ -86,7 +86,7 @@ cla;
 % --- Draws all stored bins, the working bin, and the currently selected
 %     spectrum (or all spectra if the mode is Overlay).
 function redrawGraph(handles)
-% handles    empty - handles not created until after all CreateFcns called
+% handles    structure with handles and user data (see GUIDATA)
 popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
 popupSpectrumNum = get(handles.select_spectrum_popup, 'Value');
 spectralDispMode = get(handles.individual_mode_radiobutton, 'Value');
@@ -508,8 +508,9 @@ function delete_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to delete_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-msgbox('Feature not yet implemented.', ...
+msgbox('Don''t ever click this button again! Ever!', ...
     'Under Construction', 'warn', 'modal');
+
 
 % --- Executes on button press in save_binmap_button.
 function save_binmap_button_Callback(hObject, eventdata, handles)
