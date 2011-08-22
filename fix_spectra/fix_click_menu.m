@@ -73,7 +73,7 @@ elseif strcmp(str{s},'Set noise regions')
     set_noise_regions;
 elseif strcmp(str{s},'Fix baseline')
     fix_baseline
-elseif strcmp(str{s},'Edit baseline region')
+elseif strcmp(str{s},'Edit region')
     set_edit
 elseif strcmp(str{s},'Create new region')
     create_new
