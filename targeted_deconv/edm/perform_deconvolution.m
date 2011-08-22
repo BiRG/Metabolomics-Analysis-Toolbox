@@ -4,6 +4,8 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 % Returns the best fit model starting at BETA0 given x_baseline_BETA, the
 % x and y coordinates to fit, and the bounds on the parameters.
 %
+% Note: if upper bound is lower than lower bound, they are swapped
+%
 % As with region_deconvolution, these documentation comments are being
 % put-in after the fact.
 %
@@ -79,6 +81,14 @@ options = optimset('lsqcurvefit');
 %options = optimset(options,'MaxIter',10);
 options = optimset(options,'Display','off');
 %options = optimset(options,'MaxFunEvals',100);
+
+% Swap bounds if they are inconsistent with their labels
+to_swap = ub < lb;
+tmp = ub(to_swap);
+ub(to_swap)=lb(to_swap);
+lb(to_swap)=tmp;
+
+% Do the fit
 [BETA,R,RESIDUAL,EXITFLAG] = lsqcurvefit(model,BETA0,x,y,lb,ub,options); %#ok<ASGLU>
 
 if EXITFLAG < 0
