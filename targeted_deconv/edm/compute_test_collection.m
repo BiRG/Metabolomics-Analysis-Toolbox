@@ -61,7 +61,7 @@ end
 collection.filename = 'not_yet_saved_to_a_file.txt';
 collection.input_names= {'Collection ID'    'Type'    'Description' ...
     'Processing log'};
-collection.x=1:65536;
+collection.x=65536:-1:1;
 collection.Y=zeros(length(collection.x),num_spectra); %Will fill in values later
 collection.num_samples = num_spectra;
 collection.collection_id = '-101';
