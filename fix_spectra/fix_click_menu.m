@@ -27,8 +27,6 @@ function fix_click_menu(hObject, eventdata, handles) %#ok<INUSD>
 %
 % Because this is a callback no examples are needed.
 
-mouse = get(gca,'CurrentPoint');
-
 str = {'Get collection(s)','Load collections', ...
 ...%'','Set noise regions', ...
 	'','Load regions','Create signal map','Create new region', ...
@@ -164,7 +162,7 @@ elseif strcmp(str{s},'Finalize')
             for s = 1:collections{c}.num_samples
                 delete(collections{c}.handles{s});
             end
-        catch
+        catch unused %#ok<NASGU>
         end
         if ~isempty(add_processing_log)
             collections{c}.processing_log = [collections{c}.processing_log,' ',add_processing_log];
@@ -194,7 +192,7 @@ elseif strcmp(str{s},'Post collections')
     numlines=1;
     defaultanswer={''};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
-    analysis_id = str2num(answer{1});
+    analysis_id = str2double(answer{1});
     post_collections(gcf,collections,suffix,analysis_id);
 elseif strcmp(str{s},'Set zoom x distance')
     prompt={'x distance:'};
@@ -202,13 +200,13 @@ elseif strcmp(str{s},'Set zoom x distance')
     numlines=1  ;
     defaultanswer={'0.005'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
-    setappdata(gcf,'xdist',str2num(answer{1}));
+    setappdata(gcf,'xdist',str2double(answer{1}));
 elseif strcmp(str{s},'Set zoom y distance')
     prompt={'y distance:'};
     name='Set zoom y distance';
     numlines=1;
     collections = getappdata(gcf,'collections');
-    [x,Y,labels] = combine_collections(collections);
+    [unused,Y,labels] = combine_collections(collections); %#ok<ASGLU>
     max_spectrum = Y(:,1)';jjj
     min_spectrum = Y(:,1)';
     for s = 1:length(labels)
@@ -218,7 +216,7 @@ elseif strcmp(str{s},'Set zoom y distance')
     ydist = max(max_spectrum)*0.005;    
     defaultanswer={num2str(ydist)};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
-    setappdata(gcf,'ydist',str2num(answer{1}));
+    setappdata(gcf,'ydist',str2double(answer{1}));
 elseif strcmp(str{s},'Save figures')
     indir = uigetdir;
     if indir == 0
