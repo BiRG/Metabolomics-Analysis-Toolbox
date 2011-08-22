@@ -1,4 +1,4 @@
-function [ collection, bin_map, deconvolved, peak_objects, bin_ids ] = compute_test_collection( num_spectra, noise_amplitude )
+function [ collection, bin_map, deconvolved, deconv_peak_obj, peak_obj ] = compute_test_collection( num_spectra, noise_amplitude )
 %Computes a test spectral collection and its correct deconvolution
 %   Computes a spectral collection for testing region deconvolution with a
 %   given amplitude of Gaussian white noise.  The correct bin_map and
@@ -17,48 +17,52 @@ function [ collection, bin_map, deconvolved, peak_objects, bin_ids ] = compute_t
 % Output parameters
 % -------------------------------------------------------------------------
 %
-% collection   The spectral collection object generated
+% collection      The spectral collection object generated
 %
-% bin_map      An array of CompoundBin objects for use in deconvolving the
-%              spectrum
+% bin_map         An array of CompoundBin objects for use in deconvolving
+%                 the spectrum
 %
-% deconvolved  A spectral collection containing the deconvolved peaks
+% deconvolved     A spectral collection containing the deconvolved peaks
 %
-% peak_objects The GaussLorentzPeak objects used to generate the spectrum.
-%              This is a matrix accessed as: 
-%              peak_objects(peak_number, spectrum_idx)
+% deconv_peak_obj All GaussLorentzPeak objects used in the deconvolution.
+%                 This is a cell array containing arrays of
+%                 GaussLorentzPeak objects
+%                 deconv_peak_obj{bin_idx, spectrum_idx} will be an array
+%                 of all the peaks in that bin sorted in order of x values
 %
-%              Within a bin, all peak objects are sorted by their location 
-%              parameter
-%
-% bin_ids      A parallel matrix to peak_objects giving the bin for each
-%              peak.  A bin of 0 means that this peak should not be
-%              identified
+% peak_obj        All GaussLorentzPeak objects used to generate the
+%                 spectrum.  This is a matrix accessed as: 
+%                 peak_obj(peak_number, spectrum_idx)
 %
 % -------------------------------------------------------------------------
 % Examples
 % -------------------------------------------------------------------------
 %
-% [collection, bin_map, deconvolved, peak_objects] =
+% [collection, bin_map, deconvolved, deconv_peak_obj, peak_obj] =
 %         compute_test_collection(1,0.3)
 %
 % Will generate a collection with 1 spectrum with and noise of 0.3 units
 
-%First compound - a lorentzian singlet smack-dab in the middle of the first 100 x values
-bin_map=CompoundBin({1000000,'Unobtanium 0001',1,100,'s','clean','U01', ...
+% First compound - a lorentzian singlet smack-dab in the middle of 
+% the first 100 x values
+cur_bin=1;
+bin_map=CompoundBin({1000000,'Unobtanium 0001',100,1,'s','clean','U01', ...
     'TestSpectrum'});
 
+noise = noise_amplitude;
 peak_num = 1;
 for i=1:num_spectra
-    peak_objects(peak_num,i)=GaussLorentzPeak( [5+3*rand(1),10,1,50] ); %#ok<AGROW>
-    bin_ids(peak_num, i)=1000000;  %#ok<AGROW>
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(5+3*rand(1))*noise, ...
+        10,1,50] ); %#ok<AGROW>
+    deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
 end
 
-%Create the collection
+% Create the collection
 collection.filename = 'not_yet_saved_to_a_file.txt';
 collection.input_names= {'Collection ID'    'Type'    'Description' ...
     'Processing log'};
-collection.x=1:65536;
+collection.x=65536:-1:1;
+collection.Y=zeros(length(collection.x),num_spectra); %Will fill in values later
 collection.num_samples = num_spectra;
 collection.collection_id = '-101';
 collection.type = 'SpectraCollection';
@@ -66,25 +70,58 @@ collection.description = ['Artificially generated spectrum ' ...
     'collection for testing targeted deconvolution'];
 collection.processing_log = 'Generated.';
 
-total_peaks = size(bin_ids)(1);
+% Calculate the Y values
+s=size(peak_obj);
+num_peaks = s(1);
 for spec=1:num_spectra
-    peak = 1;
-    
-    while peak <= total_peaks
-        
-        
-    end
+    sum=zeros(length(collection.x),1);
+	for peak=1:num_peaks
+        g=peak_obj(peak,spec);
+        y=g.at(collection.x);
+        sum = sum + y';
+	end
+    collection.Y(:, spec)=sum;
 end
 
-%Create the deconvolved collection
-collection.filename = 'not_yet_saved_to_a_file.txt';
-collection.input_names= {'Collection ID'    'Type'    'Description' ...
+% Create the deconvolved collection
+num_peaks_in_bin = [bin_map.num_peaks];
+total_peaks = sum(num_peaks_in_bin);
+num_deconvolved_x = length(bin_map)+total_peaks;
+deconvolved.filename = 'not_yet_saved_to_a_file.txt';
+deconvolved.input_names = {'Collection ID'    'Type'    'Description' ...
     'Processing log'};
-collection.x=1:65536;
-collection.num_samples = num_spectra;
-collection.collection_id = '-102';
-collection.type = 'SpectraCollection';
-collection.description = ['Deconvolved artificially generated spectrum ' ...
+deconvolved.x=1:num_deconvolved_x;
+deconvolved.Y=zeros(length(deconvolved.x), num_spectra);
+deconvolved.num_samples = num_spectra;
+deconvolved.collection_id = '-102';
+deconvolved.type = 'SpectraCollection';
+deconvolved.description = ['Deconvolved artificially generated spectrum ' ...
     'collection for testing targeted deconvolution'];
-collection.processing_log = 'Generated. Deconvolved.';
+deconvolved.processing_log = 'Generated. Deconvolved from first principles.';
+
+% Calculate the deconvolved x values
+block_start = 1;
+for bin=1:length(bin_map)
+    base_id = bin_map(bin).id * 1000;
+    deconvolved.x(block_start) = base_id;
+    for peak_idx=1:bin_map(bin).num_peaks
+        deconvolved.x(block_start + peak_idx) = base_id + peak_idx;
+    end
+    block_start = block_start + bin_map(bin).num_peaks + 1;
+end
+
+% Calculate the deconvolved Y values
+for spec=1:num_spectra
+    block_start = 1;
+    for bin=1:length(bin_map)
+        peaks=deconv_peak_obj{bin, spec};
+        area_sum = 0;
+        for peak_idx=1:length(peaks)
+            p=peaks(peak_idx);
+            deconvolved.Y(block_start+peak_idx, spec)=p.area;
+            area_sum = area_sum + p.area;
+        end
+        deconvolved.Y(block_start, spec)=area_sum;
+        block_start = block_start + bin_map(bin).num_peaks + 1;
+    end
 end

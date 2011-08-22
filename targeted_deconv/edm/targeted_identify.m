@@ -254,6 +254,11 @@ spectrum_idx = handles.spectrum_idx;
 bin = handles.bin_map(bin_idx).bin;
 low_idx = index_of_nearest_x_to(bin.left, handles);
 high_idx = index_of_nearest_x_to(bin.right, handles);
+if low_idx > high_idx
+    t = low_idx; 
+    low_idx = high_idx;
+    high_idx = t;
+end
 y = handles.collection.Y(low_idx:high_idx, spectrum_idx);
 
 function name=unique_name(base, extension)
