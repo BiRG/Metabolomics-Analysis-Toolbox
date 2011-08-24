@@ -104,6 +104,22 @@ for i=1:num_spectra
 end
 
 
+% Fifth compound - a very narrow and short lorentzian singlet smack-dab in the middle of 
+% the fifth 100 x values 
+cur_bin=cur_bin + 1;
+cur_id = cur_bin+999999;
+bin_map(cur_bin) = ...
+    CompoundBin({cur_id,'2 wide 6+/-1 high singlet',500,401,'s','clean','U05', ...
+    'TestSpectrum'});
+
+peak_num = peak_num + 1;
+for i=1:num_spectra
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(6+2*rand(1)-1)*noise, ...
+        1,1,450] ); %#ok<AGROW>
+    deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
+end
+
+
 
 % Create the collection
 collection.filename = 'not_yet_saved_to_a_file.txt';
