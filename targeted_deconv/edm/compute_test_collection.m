@@ -46,7 +46,8 @@ function [ collection, bin_map, deconvolved, deconv_peak_obj, peak_obj ] = compu
 % First compound - a lorentzian singlet smack-dab in the middle of 
 % the first 100 x values
 cur_bin=1;
-bin_map=CompoundBin({1000000,'20 wide 20+/-1 high singlet',100,1,'s','clean','U01', ...
+cur_id = cur_bin+999999;
+bin_map=CompoundBin({cur_id,'20 wide 20+/-1 high singlet',100,1,'s','clean','U01', ...
     'TestSpectrum'});
 
 noise = noise_amplitude;
@@ -60,17 +61,48 @@ end
 % Second compound - a smaller lorentzian singlet smack-dab in the middle of 
 % the second 100 x values
 cur_bin=cur_bin + 1;
+cur_id = cur_bin+999999;
 bin_map(cur_bin) = ...
-    CompoundBin({1000001,'20 wide 6+/-1 high singlet',200,101,'s','clean','U02', ...
+    CompoundBin({cur_id,'20 wide 6+/-1 high singlet',200,101,'s','clean','U02', ...
     'TestSpectrum'});
 
-noise = noise_amplitude;
 peak_num = peak_num + 1;
 for i=1:num_spectra
     peak_obj(peak_num,i)=GaussLorentzPeak( [(6+2*rand(1)-1)*noise, ...
         10,1,150] ); %#ok<AGROW>
     deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
 end
+
+% Third compound - a now make the previous singlet half-gaussian 
+cur_bin=cur_bin + 1;
+cur_id = cur_bin+999999;
+bin_map(cur_bin) = ...
+    CompoundBin({cur_id,'20 wide 6+/-1 high singlet - half gaussian',... 
+        300,201,'s','clean','U03', ...
+        'TestSpectrum'});
+
+peak_num = peak_num + 1;
+for i=1:num_spectra
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(6+2*rand(1)-1)*noise, ...
+        10,0.5,250] ); %#ok<AGROW>
+    deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
+end
+
+% Fourth compound - a very narrow (but tall) lorentzian singlet smack-dab in the middle of 
+% the fourth 100 x values
+cur_bin=cur_bin + 1;
+cur_id = cur_bin+999999;
+bin_map(cur_bin) = ...
+    CompoundBin({cur_id,'2 wide 20+/-1 high singlet',400,301,'s','clean','U04', ...
+    'TestSpectrum'});
+
+peak_num = peak_num + 1;
+for i=1:num_spectra
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(20+2*rand(1)-1)*noise, ...
+        1,1,350] ); %#ok<AGROW>
+    deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
+end
+
 
 
 % Create the collection
