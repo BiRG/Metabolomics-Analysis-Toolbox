@@ -120,6 +120,68 @@ for i=1:num_spectra
 end
 
 
+% Sixth compound - a peak in the middle of a very congested area
+% composed of the values from 550-650, all peaks in the area are seen.  All
+% congesting peaks are 10 wide and range from 10 to 20 (+/-1) high
+cur_bin=cur_bin + 1;
+cur_id = cur_bin+999999;
+bin_map(cur_bin) = ...
+    CompoundBin({cur_id,'10w 40+/-1h singlet congested all seen',650, 550,'s','clean','U05', ...
+    'TestSpectrum'});
+
+peak_num = peak_num + 1;
+for i=1:num_spectra
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(40+2*rand(1)-1)*noise, ...
+        5,1,600] ); %#ok<AGROW>
+    deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
+end
+
+
+congestion_xs=[597	598	608	606	581 599	590	605	632	577 564	587];
+congestion_hs=[13	10	20	18	13	13	12	14	14	12	10	13];
+num_congestion=length(congestion_xs);
+for congestion_idx = 1:num_congestion
+    for i=1:num_spectra
+        h=congestion_hs(congestion_idx);
+        x=congestion_xs(congestion_idx);
+        peak_obj(peak_num+congestion_idx,i)=...
+            GaussLorentzPeak( [(h+2*rand(1)-1)*noise, ...
+            5,1,x] ); %#ok<AGROW>
+    end
+end
+peak_num=peak_num+num_congestion;
+
+% Seventh compound - a peak in the middle of a less congested area
+% composed of the values from 750-850, all peaks in the area are seen.  All
+% congesting peaks are 10 wide and range from 10 to 20 (+/-1) high
+cur_bin=cur_bin + 1;
+cur_id = cur_bin+999999;
+bin_map(cur_bin) = ...
+    CompoundBin({cur_id,'10w 40+/-1h singlet less congested all seen',850, 750,'s','overlap','U05', ...
+    'TestSpectrum'});
+
+peak_num = peak_num + 1;
+for i=1:num_spectra
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(40+2*rand(1)-1)*noise, ...
+        5,1,800] ); %#ok<AGROW>
+    deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
+end
+
+
+congestion_xs=[828	823	777	821	813];
+congestion_hs=[10	19	16	20	15];
+num_congestion=length(congestion_xs);
+for congestion_idx = 1:num_congestion
+    for i=1:num_spectra
+        h=congestion_hs(congestion_idx);
+        x=congestion_xs(congestion_idx);
+        peak_obj(peak_num+congestion_idx,i)=...
+            GaussLorentzPeak( [(h+2*rand(1)-1)*noise, ...
+            5,1,x] ); %#ok<AGROW>
+    end
+end
+peak_num=peak_num+num_congestion; %#ok<NASGU>  This will be copied
+
 
 % Create the collection
 collection.filename = 'not_yet_saved_to_a_file.txt';
