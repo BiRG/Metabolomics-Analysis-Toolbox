@@ -1305,11 +1305,15 @@ else
         
         save_collection(fullfile(id_path, id_name), dec);
         
-        fraction_done = 0.91;
-        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
-            'Saving residual file']);
+        if ~exist('dont_write_residuals.foobarbaz','file')
+            % Only write the residuals if the debug file doesn't exist
+            % (since writing the residuals can take a long time).
+            fraction_done = 0.91;
+            waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+                'Saving residual file']);
 
-        save_collection(fullfile(resid_path, resid_name), res);
+            save_collection(fullfile(resid_path, resid_name), res);
+        end
         
         %Save the deconvolved peaks in a nice csv format
 
