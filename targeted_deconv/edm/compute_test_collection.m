@@ -38,7 +38,7 @@ function [ collection, bin_map, deconvolved, deconv_peak_obj, peak_obj ] = compu
 % Examples
 % -------------------------------------------------------------------------
 %
-% [collection, bin_map, deconvolved, deconv_peak_obj, peak_obj] =
+% [collection, bin_map, deconvolved, deconv_peak_obj, peak_obj] = ...
 %         compute_test_collection(1,0.3)
 %
 % Will generate a collection with 1 spectrum with and noise of 0.3 units
@@ -46,22 +46,38 @@ function [ collection, bin_map, deconvolved, deconv_peak_obj, peak_obj ] = compu
 % First compound - a lorentzian singlet smack-dab in the middle of 
 % the first 100 x values
 cur_bin=1;
-bin_map=CompoundBin({1000000,'Unobtanium 0001',100,1,'s','clean','U01', ...
+bin_map=CompoundBin({1000000,'20 wide 20+/-1 high singlet',100,1,'s','clean','U01', ...
     'TestSpectrum'});
 
 noise = noise_amplitude;
 peak_num = 1;
 for i=1:num_spectra
-    peak_obj(peak_num,i)=GaussLorentzPeak( [(5+3*rand(1))*noise, ...
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(20+2*rand(1)-1)*noise, ...
         10,1,50] ); %#ok<AGROW>
     deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
 end
+
+% Second compound - a smaller lorentzian singlet smack-dab in the middle of 
+% the second 100 x values
+cur_bin=cur_bin + 1;
+bin_map(cur_bin) = ...
+    CompoundBin({1000001,'20 wide 6+/-1 high singlet',200,101,'s','clean','U02', ...
+    'TestSpectrum'});
+
+noise = noise_amplitude;
+peak_num = peak_num + 1;
+for i=1:num_spectra
+    peak_obj(peak_num,i)=GaussLorentzPeak( [(6+2*rand(1)-1)*noise, ...
+        10,1,150] ); %#ok<AGROW>
+    deconv_peak_obj{cur_bin, i}=peak_obj(peak_num,i); %#ok<AGROW>
+end
+
 
 % Create the collection
 collection.filename = 'not_yet_saved_to_a_file.txt';
 collection.input_names= {'Collection ID'    'Type'    'Description' ...
     'Processing log'};
-collection.x=65536:-1:1;
+collection.x=1024:-1:1;
 collection.Y=zeros(length(collection.x),num_spectra); %Will fill in values later
 collection.num_samples = num_spectra;
 collection.collection_id = '-101';
@@ -82,6 +98,10 @@ for spec=1:num_spectra
 	end
     collection.Y(:, spec)=sum;
 end
+
+% Add noise
+noise_val = normrnd(0, noise_amplitude, size(collection.Y));
+collection.Y = collection.Y + noise_val;
 
 % Create the deconvolved collection
 num_peaks_in_bin = [bin_map.num_peaks];
