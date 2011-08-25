@@ -1,0 +1,8 @@
+ID,Metabolite,Bin (Lt),Bin (Rt),Multiplicity,Deconvolution,Proton ID,ID Source
+1000000,"20 wide 20+/-1 high singlet",100.000000,1.000000,"s","clean","U01","TestSpectrum"
+1000001,"20 wide 6+/-1 high singlet",200.000000,101.000000,"s","clean","U02","TestSpectrum"
+1000002,"20 wide 6+/-1 high singlet - half gaussian",300.000000,201.000000,"s","clean","U03","TestSpectrum"
+1000003,"2 wide 20+/-1 high singlet",400.000000,301.000000,"s","clean","U04","TestSpectrum"
+1000004,"2 wide 6+/-1 high singlet",500.000000,401.000000,"s","clean","U05","TestSpectrum"
+1000005,"10w 40+/-1h singlet congested all seen",650.000000,550.000000,"s","clean","U05","TestSpectrum"
+1000006,"10w 40+/-1h singlet less congested all seen",850.000000,750.000000,"s","overlap","U05","TestSpectrum"
