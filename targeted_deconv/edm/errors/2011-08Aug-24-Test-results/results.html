@@ -1,0 +1,545 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Results of targeted deconvolution test</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.2  (Unix)">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGEDBY" CONTENT="Eric Moyer">
+	<META NAME="CHANGED" CONTENT="20110825;18382300">
+	<META NAME="CHANGEDBY" CONTENT="Eric Moyer">
+	<STYLE TYPE="text/css">
+	<!--
+		H2.ctl { font-family: "Lohit Hindi" }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<H1>Results of first targeted deconvolution test</H1>
+<H2 CLASS="western">Abstract</H2>
+<P><EM>Good news:</EM>For isolated peaks with a good SNR (I used
+20:1), the software works fine (though error doubles if the peaks are
+very narrow (half-height width of 2 samples)).</P>
+<P><EM>Bad news:</EM>For peaks with low SNR or in a congested area,
+the errors are 20% and up.</P>
+<P><EM>Good news:</EM>It is likely that I can fix the majority of the
+problem for the low peaks and the moderately congested areas. My
+highly congested area may be so congested that there is really no
+hope for any algorithm.</P>
+<H2 CLASS="western">Methods</H2>
+<P>I tested the targeted deconvolution by creating 20 spectra with 7
+bins each. The bins with a single peak had the peak at the center and
+a 100 sample width. Bins with multiple peaks were 200 samples wide
+but only had peaks in the center 100 samples, giving 50 samples for
+the signal to die out and not affect the other bins very much. 100
+samples is the number of x values in 0.0430 ppm in the ANIT study.</P>
+<P>A picture of one generated spectrum follows:</P>
+<P><IMG SRC="results.figure.test-spectrum.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=880 HEIGHT=376 BORDER=0>
+</P>
+<H2 CLASS="western">Discussion</H2>
+<P><BR><BR>
+</P>
+<H1>Raw Results</H1>
+<TABLE WIDTH=883 CELLPADDING=2 CELLSPACING=0 STYLE="page-break-before: always">
+	<COL WIDTH=78>
+	<COL WIDTH=76>
+	<COL WIDTH=77>
+	<COL WIDTH=77>
+	<COL WIDTH=77>
+	<COL WIDTH=76>
+	<COL WIDTH=102>
+	<COL WIDTH=67>
+	<COL WIDTH=77>
+	<COL WIDTH=137>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=78 STYLE="; border: none; padding: 0in">
+				<P>Perfect Peaks</P>
+			</TH>
+			<TH WIDTH=76 STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Mean pct</P>
+			</TH>
+			<TH WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Std dev</P>
+			</TH>
+			<TH WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Mean % difference</P>
+			</TH>
+			<TH WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Std dev % dfference</P>
+			</TH>
+			<TH WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Lorentzian-ness</P>
+			</TH>
+			<TH WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Half Height Width (samples)</P>
+			</TH>
+			<TH WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">SNR of Target<BR>(x±1:1)</P>
+			</TH>
+			<TH WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Number of Peaks</P>
+			</TH>
+			<TH WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">ID</P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#00ff00" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Yes</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">5.14</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6.11</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-3.64 
+				</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">7.15</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000000000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#00ff00" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Yes</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">22.32</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">15.24</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-18.88</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">19.53</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000001000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#00ff00" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Yes</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">21.45</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">15.05</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1.41</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">26.62</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">0.5</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000002000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#00ff00" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Yes</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">9.71</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">7.48</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-1.65</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">12.34</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">2</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000003000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#00ff00" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Yes</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">45.19</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">41.91</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">19.90</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">59.07</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">2</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000004000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#00ff00" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Yes</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">51.32</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">21.94</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-49.46</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">26.05</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">10</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">40</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">12</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000005000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#00ff00" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">Yes</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">8.54</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">12.54</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-7.07</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">13.47</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">10</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">40</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">5</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000006000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#ff0000" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">No</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">5.11</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6.09</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-3.67</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">7.10</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000000000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#ff0000" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">No</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">22.24</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">15.28</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-18.80</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">19.55</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000001000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#ff0000" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">No</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20.59</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">15.18</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1.88</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">25.94</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">0.5</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000002000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#ff0000" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">No</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">9.71</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">7.48</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-1.65</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">12.34</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">2</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">20</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000003000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#ff0000" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">No</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">44.36</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">39.18</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">8.19</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">59.46</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">2</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">6</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000004000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#ff0000" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">No</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">31.04</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">38.69</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">25.57</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">42.70</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">10</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">40</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">12</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000005000</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=78 BGCOLOR="#ff0000" STYLE="border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">No</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">30.26</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">18.84</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">-29.99</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">19.28</P>
+			</TD>
+			<TD WIDTH=76 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1</P>
+			</TD>
+			<TD WIDTH=102 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">10</P>
+			</TD>
+			<TD WIDTH=67 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">40</P>
+			</TD>
+			<TD WIDTH=77 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">5</P>
+			</TD>
+			<TD WIDTH=137 STYLE="; border: none; padding: 0in">
+				<P STYLE="border: none; padding: 0in">1000006000</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>
