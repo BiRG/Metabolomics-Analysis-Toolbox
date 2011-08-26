@@ -1,10 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+      "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Results of targeted deconvolution test</title>
   <style type="text/css">
           <!--
+table
+{
+border-collapse:collapse;
+}
+table,th, td
+{
+border: 1px solid black;
+}
+table.horizontal
+{
+border: none
+}
+table.horizontal th
+{
+border: none
+}
 td.yes {background-color:green; }
 td.no {background-color:red; }
 -->
@@ -12,7 +29,7 @@ td.no {background-color:red; }
   </style>
 </head>
 
-<body xml:lang="en-US" lang="en-US" dir="ltr">
+<body lang="en-US" dir="ltr">
 <h1>Results of first targeted deconvolution test</h1>
 
 <h2>Abstract</h2>
@@ -44,7 +61,7 @@ the other peaks had SNRs that ranged from 10-20. </p>
 
 <h3>Peak Centers and SNRs for Most Congested Region (1000005)</h3>
 
-<table>
+<table class="horizontal">
   <tbody>
     <tr>
       <th><p>Center</p>
@@ -109,15 +126,11 @@ the other peaks had SNRs that ranged from 10-20. </p>
   </tbody>
 </table>
 
-<p><br />
-<br />
-</p>
-
 <p>The target peak is at 600.</p>
 
 <h3>Peak Centers and SNR for Moderately Congested Region (1000006)</h3>
 
-<table>
+<table class="horizontal">
   <tbody>
     <tr>
       <th><p>Center</p>
@@ -154,17 +167,13 @@ the other peaks had SNRs that ranged from 10-20. </p>
   </tbody>
 </table>
 
-<p><br />
-<br />
-</p>
-
 <p>The target peak is at 800.</p>
 
 <h3>Sample Generated Spectrum</h3>
 
 <p>A picture of one generated spectrum follows:</p>
 
-<p><img src="results.figure.test-spectrum.png" name="test-spectrum" /> </p>
+<p><img src="results.figure.test-spectrum.png" name="test-spectrum"> </p>
 
 <p>The target peaks are circled in red, the bin identifiers are written by the
 peaks in purple, and below the congested regions, the number of peaks in the
@@ -197,15 +206,158 @@ detecting the peak location rather than using the true location.</p>
 <p>The congested areas performed much worse than the isolated peaks. However,
 with a-priori known peak locations, the moderately congested area (1000006) had
 livable error with a mean of 8.54%. When the locations were not known, that
-error went up to.</p>
+error went up to 30.26%.</p>
+
+<p>The worst error was for the highly congested area. Individual estimates were
+more than double the actual in some cases. On average, even with perfect peaks,
+it returned an error of 51%, greatly underestimating the size of the peak most
+of the time.</p>
 
 <h2>Discussion</h2>
 
-<p><br />
-<br />
-</p>
+<p>One easy to overlook factor in the measurement of the individual peaks with
+low SNR is that the small area magnifies the percentage error for the same
+absolute error. If a peak has an area of 20 and the estimate is off by 1, this
+is a 5% error. But if it has an area of 2 and the estimate is off by 1, this is
+a 50% error. A lower SNR intrinsically means that the estimation error will be
+larger. However, I would think that we can surely do better than 20% for the
+wider small peaks.</p>
 
-<h1>Raw Results</h1>
+<p>To understand the poor performance, I looked carefully at the deconvolutions
+for ids 1000006 and 1000001 (bins 6 and 1 respectively) in the detected peaks
+condition. Not knowing the what the errors were for each spectrum, I divided
+the spectra into two groups depending on whether the deconvolutions looked
+reasonable or not to my eye. For bin 1, I called the deconvolution reasonable
+if the baseline seemed to be in the right place and not too curved. For bin 6,
+I additionally called deconvolutions with peaks that were way too wide
+unreasonable.</p>
+
+<p>For bin 1, I selected 8 spectra as having reasonable deconvolutions and 12
+as unreasonable. For bin 6, only 6 spectra were reasonable and 14 were
+unreasonable. In bin 1, the reasonable spectra had a mean error of 9.8% whereas
+the unreasonable spectra had a mean error of 31%. In bin 6, the difference was
+even more pronounced. The reasonable spectra had a mean error of 6% versus 41%
+for the unreasonable spectra. </p>
+
+<h3>Examples from Bin 1</h3>
+
+<p>The estimated baseline is in yellow, the estimated peaks are in magenta. The
+fitted curve (the baseline + sum of peaks) is in gray. The original spectrum is
+in blue.</p>
+
+<h4>Reasonable</h4>
+
+<p><img alt="Reasonable deconvolution of a spectrum in bin 1"
+src="results.figure.bin-1-reasonable-deconvolution.png" width="876"
+height="379"></p>
+
+<h4>Unreasonable</h4>
+
+<p><img
+alt="Unreasonable deconvolution of the spectrum in bin 1 due to bad baseline"
+src="results.figure.bin-1-unreasonable-deconvolution.png" width="872"
+height="379"></p>
+
+<h3>Examples from Bin 6</h3>
+
+<h4>Reasonable</h4>
+
+<p><img alt="Reasonable deconvolution of the spectrum in bin 6"
+src="results.figure.reasonable-deconvolution.png" width="889" height="382"></p>
+
+<h4>Unreasonable because of baseline</h4>
+
+<p><img
+alt="A deconvolution of a spectrum in bin 6 that is unreasonable because of its highly curved baseline"
+src="results.figure.unreasonable-deconvolution-baseline.png" width="885"
+height="381"></p>
+
+<h4>Unreasonable because of broad peak</h4>
+
+<p><img
+alt="A deconvolution of a spectrum in bin 6 that is unreasonable because of its positing of a broad peak that is not seen in the peaks above"
+src="results.figure.unreasonable-deconvolution-broad-peak.png" width="889"
+height="380"></p>
+
+<h3>Bad Baseline</h3>
+
+<p>The two bins I examined in detail shared the common problem of bad baseline
+estimation. In bin 1, this was the only factor I used in selecting my
+unreasonable deconvolutions. In bin 6, 9 of the 14 spectra I selected were
+selected because of bad baseline estimation. </p>
+
+<p>I believe I can fix much of the problem by allowing the user to add simple
+constraints on the baseline. If the baseline is constrained to be a constant or
+a straight line then it can't curve up very much to take area away from actual
+peaks. By making this a user-settable parameter, I can give the user the
+ability to allow the baseline to curve when he feels that it needs to. This
+estimation is likely to work because my eyeball selection of peaks with good
+baselines was able to substantially reduce the error on this test set.</p>
+
+<h3>Big Peaks</h3>
+
+<p>The big peaks are another problem. They are much less common when there is a
+perfect information on the location of peaks. (14 under detected peaks and 5
+under perfect peaks). This is partially caused by the reduction in bad baseline
+fits under perfect peak locations (9 under detected and 3 under perfect). Since
+the bad baseline is highly correlated with having a broad peak in bin 6, one
+would expect the decrease.</p>
+
+<p>However, there are several cases in both the perfect condition (2, 5, 14)
+and in the detected condition (1, 8, 9, 12, 15) where there is a broad peak but
+the baseline is reasonable.</p>
+
+<p>The cause of this phenomenon is not obvious. It appears that they are a bad
+and broad local minimum in the search space for correct peak widths. Maybe
+introducing a bit of randomization in the initial conditions could provide a
+way out.</p>
+
+<p>This will take some experimentation to solve.</p>
+
+<h3>Limited Resolution</h3>
+
+<p><img alt="Deconvolution of bin 5"
+src="results.figure.bin-5-deconvolution.png" width="883" height="382"></p>
+
+<p>The worst errors in the test came from bin 5 (spectrum 12 pictured above -
+the error is 66%). I believe a lot of the problems stem from the fact that
+there are peaks at 597, 598, 599, and 600. Those peaks are located at adjacent
+samples, so it is hard for any technique to resolve them. Even though their sum
+is different than it would be if they were of different heights and widths the
+noise makes distinguishing such small variations very challenging. To
+deconvolve those peaks would take a lot more a-priori information than we have
+available right now. In certain circumstances with a number of different
+spectra it might be possible to use the information encoded in the peak-shifts
+to locate which peak is where in each spectrum. However, at the moment,
+resolving these peaks is, at best, a difficult research topic at best; it may
+be impossible.</p>
+
+<p>The reason this spectrum has so many close peaks is that I got my initial
+peak locations from random.org - which generates true random numbers. I then
+moved peaks away from the target peak to make it visible. However, I was
+looking at the list of numbers in unsorted order and I overlooked 597, 598, and
+599 as being close to 600 since they didn't start with 6. I left this in there
+because I was almost done with the final test when I figured out what had
+happened and I didn't want to spend another 4 hours re-doing the 140
+deconvolutions.</p>
+
+<h2>Future Work</h2>
+
+<p>My next step will be to modify the architecture of the targeted
+deconvolution to allow different models with different types of constraints.
+Then I will implement baseline constraints and retest the code with them.</p>
+
+<p>From there, I am not sure where I will go. I may look at the areas of the
+spectrum that Isaie is interested in and try to simulate them with artificial
+spectra and look at the performance of the code on those spectra. This would
+give us more confidence in the results if the performance is acceptable, or a
+target to shoot for if it is not.</p>
+
+<p>I may also implement a few more constraints - treating peaks under the
+influence of j-coupling differently will speed up the estimation and also
+improve its quality.</p>
+
+<h1>Raw Results Summary</h1>
 
 <table>
   <thead>
@@ -218,13 +370,13 @@ error went up to.</p>
       </th>
       <th><p>Mean % difference</p>
       </th>
-      <th><p>Std dev % dfference</p>
+      <th><p>Std dev % difference</p>
       </th>
       <th><p>Lorentzian-ness</p>
       </th>
       <th><p>Half Height Width (samples)</p>
       </th>
-      <th><p>SNR of Target<br />
+      <th><p>SNR of Target<br>
         (x±1:1)</p>
       </th>
       <th><p>Number of Peaks</p>
@@ -545,12 +697,12 @@ error went up to.</p>
   </tbody>
 </table>
 
-<p><br />
-<br />
+<p><br>
+<br>
 </p>
 
-<p><br />
-<br />
+<p><br>
+<br>
 </p>
 </body>
 </html>
