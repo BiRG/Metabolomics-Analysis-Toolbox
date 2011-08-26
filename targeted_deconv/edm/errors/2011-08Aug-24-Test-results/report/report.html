@@ -1,713 +1,556 @@
-<HTML>
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE>Results of targeted deconvolution test</TITLE>
-	<style type="text/css">
-	  <!--
-	     td.yes {background-color:green; }
-	     td.no  {background-color:red; }
-	    -->
-	</style>
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Results of targeted deconvolution test</title>
+  <style type="text/css">
+          <!--
+td.yes {background-color:green; }
+td.no {background-color:red; }
+-->
 
-</HEAD>
-<BODY LANG="en-US" DIR="LTR">
-<H1>Results of first targeted deconvolution test</H1>
-<H2>Abstract</H2>
-<P><EM>Good news:</EM>For isolated peaks with a good SNR (I used
-20:1), the software works fine (though error doubles if the peaks are
-very narrow (half-height width of 2 samples)).</P>
-<P><EM>Bad news:</EM>For peaks with low SNR or in a congested area,
-the errors are 20% and up.</P>
-<P><EM>Good news:</EM>It is likely that I can fix the majority of the
-problem for the low peaks and the moderately congested areas. My
-highly congested area may be so congested that there is really no
-hope for any algorithm.</P>
-<H2>Methods</H2>
-<P>I tested the targeted deconvolution by creating 20 spectra with 7
-bins each. The bins with a single peak had the peak at the center and
-a 100 sample width. Bins with multiple peaks were 200 samples wide
-but only had peaks in the center 100 samples, giving 50 samples for
-the signal to die out and not affect the other bins very much. 100
-samples is the number of x values in 0.0430 ppm in the ANIT study.
-After generation of the signal, white pseudo-random zero-mean
-Gaussian noise with a standard deviation of 0.3 units was added. 
-</P>
-<P>In the congested regions, all peaks were purely Lorentzian and had
-a half-height width of 10 samples. The target peak had a SNR of about
-40:1 and the other peaks had SNRs that ranged from 10-20. 
-</P>
-<H3>Peak Centers and SNRs for Most Congested Region (1000005)</H3>
-<TABLE>
-	<TR>
-		<TH>
-			<P>Center</P>
-		</TH>
-		<TD>
-			<P>564</P>
-		</TD>
-		<TD>
-			<P>577</P>
-		</TD>
-		<TD>
-			<P>581</P>
-		</TD>
-		<TD>
-			<P>587</P>
-		</TD>
-		<TD>
-			<P>590</P>
-		</TD>
-		<TD>
-			<P>597</P>
-		</TD>
-		<TD>
-			<P>598</P>
-		</TD>
-		<TD>
-			<P>599</P>
-		</TD>
-		<TD>
-			<P>600</P>
-		</TD>
-		<TD>
-			<P>605</P>
-		</TD>
-		<TD>
-			<P>606</P>
-		</TD>
-		<TD>
-			<P>608</P>
-		</TD>
-		<TD>
-			<P>632</P>
-		</TD>
-	</TR>
-	<TR>
-		<TH>
-			<P>Base SNR</P>
-		</TH>
-		<TD>
-			<P>10</P>
-		</TD>
-		<TD>
-			<P>12</P>
-		</TD>
-		<TD>
-			<P>13</P>
-		</TD>
-		<TD>
-			<P>13</P>
-		</TD>
-		<TD>
-			<P>12</P>
-		</TD>
-		<TD>
-			<P>13</P>
-		</TD>
-		<TD>
-			<P>10</P>
-		</TD>
-		<TD>
-			<P>13</P>
-		</TD>
-		<TD>
-			<P>40</P>
-		</TD>
-		<TD>
-			<P>14</P>
-		</TD>
-		<TD>
-			<P>18</P>
-		</TD>
-		<TD>
-			<P>20</P>
-		</TD>
-		<TD>
-			<P>14</P>
-		</TD>
-	</TR>
-</TABLE>
-<P><BR><BR>
-</P>
-<P>The target peak is at 600.</P>
-<H3>Peak Centers and SNR for Moderately Congested Region (1000006)</H3>
-<TABLE>
-	<TR>
-		<TH>
-			<P>Center</P>
-		</TH>
-		<TD>
-			<P>777</P>
-		</TD>
-		<TD>
-			<P>800</P>
-		</TD>
-		<TD>
-			<P>813</P>
-		</TD>
-		<TD>
-			<P>821</P>
-		</TD>
-		<TD>
-			<P>823</P>
-		</TD>
-		<TD>
-			<P>828</P>
-		</TD>
-	</TR>
-	<TR>
-		<TH>
-			<P>Base SNR</P>
-		</TH>
-		<TD>
-			<P>16</P>
-		</TD>
-		<TD>
-			<P>40</P>
-		</TD>
-		<TD>
-			<P>15</P>
-		</TD>
-		<TD>
-			<P>20</P>
-		</TD>
-		<TD>
-			<P>19</P>
-		</TD>
-		<TD>
-			<P>10</P>
-		</TD>
-	</TR>
-</TABLE>
-<P><BR><BR>
-</P>
-<P>The target peak is at 800.</P>
-<H3>Sample Generated Spectrum</H3>
-<P>A picture of one generated spectrum follows:</P>
-<P><IMG SRC="results.figure.test-spectrum.png" NAME="test-spectrum">
-</P>
-<P>The target peaks are circled in red, the bin identifiers are
-written by the peaks in purple, and below the congested regions, the
-number of peaks in the region is written in green.</P>
-<H2>Results</H2>
-<H3>Isolated Peaks</H3>
-<P>For the isolated peaks, the error in estimation was the same
-whether the peaks were detected or known a-priori. For the congested
-areas, there was a difference between perfectly known peak locations
-and detected locations, but it depended on the characteristics of the
-congested area. 
-</P>
-<P>Of the tall, isolated peaks, estimation was consistent with a
-slight bias towards underestimation. Error doubled when the peak was
-made very narrow.</P>
-<P>The short isolated peaks had much higher errors than the tall
-peaks. Lorentzian-ness did not appreciably affect the absolute error.
-However, it did significantly change the bias. The half-Lorentzian
-peak had a bias on the order of 10% of the fully Lorentzian peak in
-both the perfect and detected peak conditions.</P>
-<P>The narrow, short peaks had twice the error of any other isolated
-peak. They were highly biased toward overestimation. This bias was
-mitigated somewhat by detecting the peak location rather than using
-the true location.</P>
-<H3>Congested Areas</H3>
-<P>The congested areas performed much worse than the isolated peaks.
-However, with a-priori known peak locations, the moderately congested
-area (1000006) had livable error with a mean of 8.54%. When the
-locations were not known, that error went up to.</P>
-<H2>Discussion</H2>
-<P><BR><BR>
-</P>
-<H1>Raw Results</H1>
-<TABLE>
-	<THEAD>
-		<TR>
-			<TH>
-				<P>Perfect Peaks</P>
-			</TH>
-			<TH>
-				<P>Mean pct</P>
-			</TH>
-			<TH>
-				<P>Std dev</P>
-			</TH>
-			<TH>
-				<P>Mean % difference</P>
-			</TH>
-			<TH>
-				<P>Std dev % dfference</P>
-			</TH>
-			<TH>
-				<P>Lorentzian-ness</P>
-			</TH>
-			<TH>
-				<P>Half Height Width (samples)</P>
-			</TH>
-			<TH>
-				<P>SNR of Target<BR>(x±1:1)</P>
-			</TH>
-			<TH>
-				<P>Number of Peaks</P>
-			</TH>
-			<TH>
-				<P>ID</P>
-			</TH>
-		</TR>
-	</THEAD>
-	<TBODY>
-		<TR>
-			<TD CLASS="yes">
-				<P>Yes</P>
-			</TD>
-			<TD>
-				<P>5.14</P>
-			</TD>
-			<TD>
-				<P>6.11</P>
-			</TD>
-			<TD>
-				<P>-3.64 
-				</P>
-			</TD>
-			<TD>
-				<P>7.15</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000000</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="yes">
-				<P>Yes</P>
-			</TD>
-			<TD>
-				<P>22.32</P>
-			</TD>
-			<TD>
-				<P>15.24</P>
-			</TD>
-			<TD>
-				<P>-18.88</P>
-			</TD>
-			<TD>
-				<P>19.53</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000001</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="yes">
-				<P>Yes</P>
-			</TD>
-			<TD>
-				<P>21.45</P>
-			</TD>
-			<TD>
-				<P>15.05</P>
-			</TD>
-			<TD>
-				<P>1.41</P>
-			</TD>
-			<TD>
-				<P>26.62</P>
-			</TD>
-			<TD>
-				<P>0.5</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000002</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="yes">
-				<P>Yes</P>
-			</TD>
-			<TD>
-				<P>9.71</P>
-			</TD>
-			<TD>
-				<P>7.48</P>
-			</TD>
-			<TD>
-				<P>-1.65</P>
-			</TD>
-			<TD>
-				<P>12.34</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>2</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000003</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="yes">
-				<P>Yes</P>
-			</TD>
-			<TD>
-				<P>45.19</P>
-			</TD>
-			<TD>
-				<P>41.91</P>
-			</TD>
-			<TD>
-				<P>19.90</P>
-			</TD>
-			<TD>
-				<P>59.07</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>2</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000004</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="yes">
-				<P>Yes</P>
-			</TD>
-			<TD>
-				<P>51.32</P>
-			</TD>
-			<TD>
-				<P>21.94</P>
-			</TD>
-			<TD>
-				<P>-49.46</P>
-			</TD>
-			<TD>
-				<P>26.05</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>10</P>
-			</TD>
-			<TD>
-				<P>40</P>
-			</TD>
-			<TD>
-				<P>13</P>
-			</TD>
-			<TD>
-				<P>1000005</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="yes">
-				<P>Yes</P>
-			</TD>
-			<TD>
-				<P>8.54</P>
-			</TD>
-			<TD>
-				<P>12.54</P>
-			</TD>
-			<TD>
-				<P>-7.07</P>
-			</TD>
-			<TD>
-				<P>13.47</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>10</P>
-			</TD>
-			<TD>
-				<P>40</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1000006</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="no">
-				<P>No</P>
-			</TD>
-			<TD>
-				<P>5.11</P>
-			</TD>
-			<TD>
-				<P>6.09</P>
-			</TD>
-			<TD>
-				<P>-3.67</P>
-			</TD>
-			<TD>
-				<P>7.10</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000000</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="no">
-				<P>No</P>
-			</TD>
-			<TD>
-				<P>22.24</P>
-			</TD>
-			<TD>
-				<P>15.28</P>
-			</TD>
-			<TD>
-				<P>-18.80</P>
-			</TD>
-			<TD>
-				<P>19.55</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000001</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="no">
-				<P>No</P>
-			</TD>
-			<TD>
-				<P>20.59</P>
-			</TD>
-			<TD>
-				<P>15.18</P>
-			</TD>
-			<TD>
-				<P>1.88</P>
-			</TD>
-			<TD>
-				<P>25.94</P>
-			</TD>
-			<TD>
-				<P>0.5</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000002</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="no">
-				<P>No</P>
-			</TD>
-			<TD>
-				<P>9.71</P>
-			</TD>
-			<TD>
-				<P>7.48</P>
-			</TD>
-			<TD>
-				<P>-1.65</P>
-			</TD>
-			<TD>
-				<P>12.34</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>2</P>
-			</TD>
-			<TD>
-				<P>20</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000003</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="no">
-				<P>No</P>
-			</TD>
-			<TD>
-				<P>44.36</P>
-			</TD>
-			<TD>
-				<P>39.18</P>
-			</TD>
-			<TD>
-				<P>8.19</P>
-			</TD>
-			<TD>
-				<P>59.46</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>2</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>1000004</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="no">
-				<P>No</P>
-			</TD>
-			<TD>
-				<P>31.04</P>
-			</TD>
-			<TD>
-				<P>38.69</P>
-			</TD>
-			<TD>
-				<P>25.57</P>
-			</TD>
-			<TD>
-				<P>42.70</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>10</P>
-			</TD>
-			<TD>
-				<P>40</P>
-			</TD>
-			<TD>
-				<P>13</P>
-			</TD>
-			<TD>
-				<P>1000005</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD CLASS="no">
-				<P>No</P>
-			</TD>
-			<TD>
-				<P>30.26</P>
-			</TD>
-			<TD>
-				<P>18.84</P>
-			</TD>
-			<TD>
-				<P>-29.99</P>
-			</TD>
-			<TD>
-				<P>19.28</P>
-			</TD>
-			<TD>
-				<P>1</P>
-			</TD>
-			<TD>
-				<P>10</P>
-			</TD>
-			<TD>
-				<P>40</P>
-			</TD>
-			<TD>
-				<P>6</P>
-			</TD>
-			<TD>
-				<P>1000006</P>
-			</TD>
-		</TR>
-	</TBODY>
-</TABLE>
-<P><BR><BR>
-</P>
-<P><BR><BR>
-</P>
-</BODY>
-</HTML>
+  </style>
+</head>
+
+<body xml:lang="en-US" lang="en-US" dir="ltr">
+<h1>Results of first targeted deconvolution test</h1>
+
+<h2>Abstract</h2>
+
+<p><em>Good news:</em>For isolated peaks with a good SNR (I used 20:1), the
+software works fine (though error doubles if the peaks are very narrow
+(half-height width of 2 samples)).</p>
+
+<p><em>Bad news:</em>For peaks with low SNR or in a congested area, the errors
+are 20% and up.</p>
+
+<p><em>Good news:</em>It is likely that I can fix the majority of the problem
+for the low peaks and the moderately congested areas. My highly congested area
+may be so congested that there is really no hope for any algorithm.</p>
+
+<h2>Methods</h2>
+
+<p>I tested the targeted deconvolution by creating 20 spectra with 7 bins each.
+The bins with a single peak had the peak at the center and a 100 sample width.
+Bins with multiple peaks were 200 samples wide but only had peaks in the center
+100 samples, giving 50 samples for the signal to die out and not affect the
+other bins very much. 100 samples is the number of x values in 0.0430 ppm in
+the ANIT study. After generation of the signal, white pseudo-random zero-mean
+Gaussian noise with a standard deviation of 0.3 units was added. </p>
+
+<p>In the congested regions, all peaks were purely Lorentzian and had a
+half-height width of 10 samples. The target peak had a SNR of about 40:1 and
+the other peaks had SNRs that ranged from 10-20. </p>
+
+<h3>Peak Centers and SNRs for Most Congested Region (1000005)</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <th><p>Center</p>
+      </th>
+      <td><p>564</p>
+      </td>
+      <td><p>577</p>
+      </td>
+      <td><p>581</p>
+      </td>
+      <td><p>587</p>
+      </td>
+      <td><p>590</p>
+      </td>
+      <td><p>597</p>
+      </td>
+      <td><p>598</p>
+      </td>
+      <td><p>599</p>
+      </td>
+      <td><p>600</p>
+      </td>
+      <td><p>605</p>
+      </td>
+      <td><p>606</p>
+      </td>
+      <td><p>608</p>
+      </td>
+      <td><p>632</p>
+      </td>
+    </tr>
+    <tr>
+      <th><p>Base SNR</p>
+      </th>
+      <td><p>10</p>
+      </td>
+      <td><p>12</p>
+      </td>
+      <td><p>13</p>
+      </td>
+      <td><p>13</p>
+      </td>
+      <td><p>12</p>
+      </td>
+      <td><p>13</p>
+      </td>
+      <td><p>10</p>
+      </td>
+      <td><p>13</p>
+      </td>
+      <td><p>40</p>
+      </td>
+      <td><p>14</p>
+      </td>
+      <td><p>18</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>14</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+<br />
+</p>
+
+<p>The target peak is at 600.</p>
+
+<h3>Peak Centers and SNR for Moderately Congested Region (1000006)</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <th><p>Center</p>
+      </th>
+      <td><p>777</p>
+      </td>
+      <td><p>800</p>
+      </td>
+      <td><p>813</p>
+      </td>
+      <td><p>821</p>
+      </td>
+      <td><p>823</p>
+      </td>
+      <td><p>828</p>
+      </td>
+    </tr>
+    <tr>
+      <th><p>Base SNR</p>
+      </th>
+      <td><p>16</p>
+      </td>
+      <td><p>40</p>
+      </td>
+      <td><p>15</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>19</p>
+      </td>
+      <td><p>10</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+<br />
+</p>
+
+<p>The target peak is at 800.</p>
+
+<h3>Sample Generated Spectrum</h3>
+
+<p>A picture of one generated spectrum follows:</p>
+
+<p><img src="results.figure.test-spectrum.png" name="test-spectrum" /> </p>
+
+<p>The target peaks are circled in red, the bin identifiers are written by the
+peaks in purple, and below the congested regions, the number of peaks in the
+region is written in green.</p>
+
+<h2>Results</h2>
+
+<h3>Isolated Peaks</h3>
+
+<p>For the isolated peaks, the error in estimation was the same whether the
+peaks were detected or known a-priori. For the congested areas, there was a
+difference between perfectly known peak locations and detected locations, but
+it depended on the characteristics of the congested area. </p>
+
+<p>Of the tall, isolated peaks, estimation was consistent with a slight bias
+towards underestimation. Error doubled when the peak was made very narrow.</p>
+
+<p>The short isolated peaks had much higher errors than the tall peaks.
+Lorentzian-ness did not appreciably affect the absolute error. However, it did
+significantly change the bias. The half-Lorentzian peak had a bias on the order
+of 10% of the fully Lorentzian peak in both the perfect and detected peak
+conditions.</p>
+
+<p>The narrow, short peaks had twice the error of any other isolated peak. They
+were highly biased toward overestimation. This bias was mitigated somewhat by
+detecting the peak location rather than using the true location.</p>
+
+<h3>Congested Areas</h3>
+
+<p>The congested areas performed much worse than the isolated peaks. However,
+with a-priori known peak locations, the moderately congested area (1000006) had
+livable error with a mean of 8.54%. When the locations were not known, that
+error went up to.</p>
+
+<h2>Discussion</h2>
+
+<p><br />
+<br />
+</p>
+
+<h1>Raw Results</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th><p>Perfect Peaks</p>
+      </th>
+      <th><p>Mean pct</p>
+      </th>
+      <th><p>Std dev</p>
+      </th>
+      <th><p>Mean % difference</p>
+      </th>
+      <th><p>Std dev % dfference</p>
+      </th>
+      <th><p>Lorentzian-ness</p>
+      </th>
+      <th><p>Half Height Width (samples)</p>
+      </th>
+      <th><p>SNR of Target<br />
+        (x±1:1)</p>
+      </th>
+      <th><p>Number of Peaks</p>
+      </th>
+      <th><p>ID</p>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="yes"><p>Yes</p>
+      </td>
+      <td><p>5.14</p>
+      </td>
+      <td><p>6.11</p>
+      </td>
+      <td><p>-3.64 </p>
+      </td>
+      <td><p>7.15</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000000</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="yes"><p>Yes</p>
+      </td>
+      <td><p>22.32</p>
+      </td>
+      <td><p>15.24</p>
+      </td>
+      <td><p>-18.88</p>
+      </td>
+      <td><p>19.53</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000001</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="yes"><p>Yes</p>
+      </td>
+      <td><p>21.45</p>
+      </td>
+      <td><p>15.05</p>
+      </td>
+      <td><p>1.41</p>
+      </td>
+      <td><p>26.62</p>
+      </td>
+      <td><p>0.5</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000002</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="yes"><p>Yes</p>
+      </td>
+      <td><p>9.71</p>
+      </td>
+      <td><p>7.48</p>
+      </td>
+      <td><p>-1.65</p>
+      </td>
+      <td><p>12.34</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>2</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000003</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="yes"><p>Yes</p>
+      </td>
+      <td><p>45.19</p>
+      </td>
+      <td><p>41.91</p>
+      </td>
+      <td><p>19.90</p>
+      </td>
+      <td><p>59.07</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>2</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000004</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="yes"><p>Yes</p>
+      </td>
+      <td><p>51.32</p>
+      </td>
+      <td><p>21.94</p>
+      </td>
+      <td><p>-49.46</p>
+      </td>
+      <td><p>26.05</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>10</p>
+      </td>
+      <td><p>40</p>
+      </td>
+      <td><p>13</p>
+      </td>
+      <td><p>1000005</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="yes"><p>Yes</p>
+      </td>
+      <td><p>8.54</p>
+      </td>
+      <td><p>12.54</p>
+      </td>
+      <td><p>-7.07</p>
+      </td>
+      <td><p>13.47</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>10</p>
+      </td>
+      <td><p>40</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1000006</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="no"><p>No</p>
+      </td>
+      <td><p>5.11</p>
+      </td>
+      <td><p>6.09</p>
+      </td>
+      <td><p>-3.67</p>
+      </td>
+      <td><p>7.10</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000000</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="no"><p>No</p>
+      </td>
+      <td><p>22.24</p>
+      </td>
+      <td><p>15.28</p>
+      </td>
+      <td><p>-18.80</p>
+      </td>
+      <td><p>19.55</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000001</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="no"><p>No</p>
+      </td>
+      <td><p>20.59</p>
+      </td>
+      <td><p>15.18</p>
+      </td>
+      <td><p>1.88</p>
+      </td>
+      <td><p>25.94</p>
+      </td>
+      <td><p>0.5</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000002</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="no"><p>No</p>
+      </td>
+      <td><p>9.71</p>
+      </td>
+      <td><p>7.48</p>
+      </td>
+      <td><p>-1.65</p>
+      </td>
+      <td><p>12.34</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>2</p>
+      </td>
+      <td><p>20</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000003</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="no"><p>No</p>
+      </td>
+      <td><p>44.36</p>
+      </td>
+      <td><p>39.18</p>
+      </td>
+      <td><p>8.19</p>
+      </td>
+      <td><p>59.46</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>2</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>1000004</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="no"><p>No</p>
+      </td>
+      <td><p>31.04</p>
+      </td>
+      <td><p>38.69</p>
+      </td>
+      <td><p>25.57</p>
+      </td>
+      <td><p>42.70</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>10</p>
+      </td>
+      <td><p>40</p>
+      </td>
+      <td><p>13</p>
+      </td>
+      <td><p>1000005</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="no"><p>No</p>
+      </td>
+      <td><p>30.26</p>
+      </td>
+      <td><p>18.84</p>
+      </td>
+      <td><p>-29.99</p>
+      </td>
+      <td><p>19.28</p>
+      </td>
+      <td><p>1</p>
+      </td>
+      <td><p>10</p>
+      </td>
+      <td><p>40</p>
+      </td>
+      <td><p>6</p>
+      </td>
+      <td><p>1000006</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+<br />
+</p>
+
+<p><br />
+<br />
+</p>
+</body>
+</html>
