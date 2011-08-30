@@ -15,8 +15,22 @@ eric_test_*.session
 please email to eric_moyer_at_yahoo.com_*.mat
 please email to eric_moyer_at_yahoo.com_*.mat.zip
 
+########
+# Files used in examining test collection
+########
+foo.bins.csv
+foo.dec.correct.xy.txt
+foo.dec.xy.txt
+foo.excel.dec.csv
+foo.resid.xy.txt
+foo.xy.txt
+
 #######
 # File to keep emails from being sent (keeps testing the 
 # code from spamming my inbox
 #######
 dont_send_emails.foobarbaz
+#######
+# File to avoid writing residuals (makes testing faster)
+#######
+dont_write_residuals.foobarbaz

@@ -1,0 +1,15 @@
+"Results for Bin 1000001"													
+													
+"Unreasonable"													
+"Error %"		54.15	23.26	39.44	4.49	36.96	25.13	21.14	24.42	18.71	44.93	31.85	41.58
+"Spectrum"		2	3	6	7	8	11	13	14	16	17	18	19
+													
+"Mean error % on Unreasonable"	30.505												
+"Standard Deviation"	13.6019580809663												
+													
+"Reasonable"													
+"Error %"		24.31	5.02	2.83	10.03	8.15	14.58	10.6	3.23				
+"Spectrum"		1	4	5	9	10	12	15	20				
+													
+"Mean error % on Unreasonable"	9.84375												
+"Standard Deviation"	7.08502230564086												

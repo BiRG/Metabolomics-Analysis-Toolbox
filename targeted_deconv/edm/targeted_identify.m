@@ -105,9 +105,10 @@ out_handles = handles;
 
 
 function out_handles = init_handles_and_gui_from_scratch(handles)
-% Takes a handles structure that has handles for the gui components and a
-% bin_map and a collection and initializes the rest of the gui state from
-% that.  Returns the new value for the handles structure
+% Takes a handles structure that has handles for the gui components, a
+% bin_map and a collection as well as possibly a peaks cell array, and 
+% initializes the rest of the gui state from that.  Returns the new value 
+% for the handles structure
 %
 % Note that display components are not initialized 
 
@@ -129,10 +130,13 @@ handles.identifications = [];
 handles.already_autoidentified = ...
     zeros(num_bins, num_samples);
 
-% Start with no detected peaks (but preallocate the array)
-handles.peaks = cell(1,num_samples);
-for s=1:handles.collection.num_samples
-	handles.peaks{s}='Uninitialized';
+% If there is no predefined peaks structure, start with no detected 
+% peaks (but preallocate the array)
+if ~isfield(handles, 'peaks')
+    handles.peaks = cell(1,num_samples);
+    for s=1:handles.collection.num_samples
+        handles.peaks{s}='Uninitialized';
+    end
 end
 
 % Start with deconvolutions as a matrix of empty CachedValue
@@ -204,11 +208,19 @@ if isappdata(0,'collection') && isappdata(0,'bin_map')
     handles.collection = getappdata(0,'collection');
     handles.bin_map = getappdata(0,'bin_map');
 
-    %Remove app data from matlab root so it is not sitting around
-    rmappdata(0,'collection');
+    % Remove app data from matlab root so it is not sitting around
+    rmappdata(0, 'collection');
     rmappdata(0, 'bin_map');
 
+    % If there is peak app data, set it up too, then remove it
+    if isappdata(0, 'peaks')
+        handles.peaks = getappdata(0, 'peaks');
+        rmappdata(0, 'peaks');
+    end
+    
+    % Initialize everything else from scratch
     handles = init_handles_and_gui_from_scratch(handles);
+    
 elseif isappdata(0,'saved_session_data')
     session_data = getappdata(0,'saved_session_data');
     handles = init_handles_and_gui_from_session_data(handles, session_data);
@@ -254,6 +266,11 @@ spectrum_idx = handles.spectrum_idx;
 bin = handles.bin_map(bin_idx).bin;
 low_idx = index_of_nearest_x_to(bin.left, handles);
 high_idx = index_of_nearest_x_to(bin.right, handles);
+if low_idx > high_idx
+    t = low_idx; 
+    low_idx = high_idx;
+    high_idx = t;
+end
 y = handles.collection.Y(low_idx:high_idx, spectrum_idx);
 
 function name=unique_name(base, extension)
@@ -1300,11 +1317,15 @@ else
         
         save_collection(fullfile(id_path, id_name), dec);
         
-        fraction_done = 0.91;
-        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
-            'Saving residual file']);
+        if ~exist('dont_write_residuals.foobarbaz','file')
+            % Only write the residuals if the debug file doesn't exist
+            % (since writing the residuals can take a long time).
+            fraction_done = 0.91;
+            waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+                'Saving residual file']);
 
-        save_collection(fullfile(resid_path, resid_name), res);
+            save_collection(fullfile(resid_path, resid_name), res);
+        end
         
         %Save the deconvolved peaks in a nice csv format
 

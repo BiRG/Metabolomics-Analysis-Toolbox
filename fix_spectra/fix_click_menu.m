@@ -1,14 +1,44 @@
-function fix_click_menu(hObject, eventdata, handles)
-mouse = get(gca,'CurrentPoint');
+function fix_click_menu(hObject, eventdata, handles) %#ok<INUSD>
+% Display main menu for fix_spectra and dispatch resulting calls
+%
+% This is a call-back for the left-click action on the main figure for
+% fix_spectra.  It displays the menu of potential actions, does the set-up,
+% and calls the requisite other functions to execute the actions.
+%
+% The menu options and their actions are linked by the menu option text, so
+% a maintenance programmer should be sure to change the appropriate strcmp
+% calls when he changes the menu text.
+%
+% -------------------------------------------------------------------------
+% Input arguments
+% -------------------------------------------------------------------------
+% 
+% All inputs are ignored
+%
+% -------------------------------------------------------------------------
+% Output parameters
+% -------------------------------------------------------------------------
+% 
+% None
+%
+% -------------------------------------------------------------------------
+% Examples
+% -------------------------------------------------------------------------
+%
+% Because this is a callback no examples are needed.
 
-str = {'Get collection(s)','Load collections'};
-% str = {str{:},'','Set noise regions'};
-str = {str{:},'','Load regions','Create signal map','Create new region','Edit region','Delete region','Clear regions','Fix baseline','','Set reference','Normalize to reference','Zero regions'};
-str = {str{:},'','Save regions','Finalize','Save collections','Post collections','Save figures','Save images'};
-str = {str{:},'','Set zoom x distance','Set zoom y distance'};
-[s,v] = listdlg('PromptString','Select an action',...
+str = {'Get collection(s)','Load collections', ...
+...%'','Set noise regions', ...
+	'','Load regions','Create signal map','Create new region', ...
+       'Edit region','Delete region','Clear regions','Fix baseline', ...
+    '','Set reference','Normalize to reference','Zero regions', ...
+    '','Save regions','Finalize','Save collections', ...
+       'Post collections','Save figures','Save images', ...
+	'','Set zoom x distance','Set zoom y distance'};
+
+[s,unused] = listdlg('PromptString','Select an action',...
               'SelectionMode','single',...
-              'ListString',str);
+              'ListString',str); %#ok<NASGU>
 
 if isempty(s)
     return
@@ -22,7 +52,7 @@ if strcmp(str{s},'Load collections')
         return
     end
     if ~isempty(loaded_collections)
-        collections = {loaded_collections{:},collections{:}};
+        collections = [loaded_collections, collections];
     end
     setappdata(gcf,'spectrum_inx',0);
     setappdata(gcf,'collection_inx',1);
@@ -55,7 +85,7 @@ elseif strcmp(str{s},'Get collection(s)')
  
     % Add the newly loaded collections onto the end of the current list
     if ~isempty(loaded_collections)
-        collections = {loaded_collections{:},collections{:}};
+        collections = [loaded_collections,collections];
     end
     
     setappdata(gcf,'spectrum_inx',0);
@@ -73,7 +103,7 @@ elseif strcmp(str{s},'Set noise regions')
     set_noise_regions;
 elseif strcmp(str{s},'Fix baseline')
     fix_baseline
-elseif strcmp(str{s},'Edit baseline region')
+elseif strcmp(str{s},'Edit region')
     set_edit
 elseif strcmp(str{s},'Create new region')
     create_new
@@ -96,23 +126,23 @@ elseif strcmp(str{s},'Set reference')
     numlines=1  ;
     defaultanswer={'0.03','-0.03','0.0'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
-    left = str2num(answer{1});
-    right = str2num(answer{2});
-    new_position = str2num(answer{3});
+    left = str2double(answer{1});
+    right = str2double(answer{2});
+    new_position = str2double(answer{3});
     collections = getappdata(gcf,'collections');
     for c = 1:length(collections)
         collections{c}.Y_fixed = collections{c}.Y;
         nm = size(collections{c}.Y);
         inxs = find(left >= collections{c}.x & collections{c}.x >= right);
-        [temp,temp_inxs] = sort(abs(collections{c}.x - new_position),'ascend');
+        [unused,temp_inxs] = sort(abs(collections{c}.x - new_position),'ascend'); %#ok<ASGLU>
         zero_inx = temp_inxs(1);
         for s = 1:collections{c}.num_samples
-            [mx,tinx] = max(collections{c}.Y(inxs,s));
+            [unused,tinx] = max(collections{c}.Y(inxs,s)); %#ok<ASGLU>
             inx = inxs(tinx);
             new_inxs = (1:nm(1)) + (zero_inx - inx);
             disp(zero_inx-inx)
-            temp_inxs = find(new_inxs > 0 & new_inxs <= nm(1));
-            new_inxs = new_inxs(temp_inxs);
+            in_range = new_inxs > 0 & new_inxs <= nm(1);
+            new_inxs = new_inxs(in_range);
             collections{c}.Y_fixed(new_inxs,s) = collections{c}.Y(new_inxs-(zero_inx - inx),s);
         end
     end
@@ -132,7 +162,7 @@ elseif strcmp(str{s},'Finalize')
             for s = 1:collections{c}.num_samples
                 delete(collections{c}.handles{s});
             end
-        catch
+        catch unused %#ok<NASGU>
         end
         if ~isempty(add_processing_log)
             collections{c}.processing_log = [collections{c}.processing_log,' ',add_processing_log];
@@ -162,7 +192,7 @@ elseif strcmp(str{s},'Post collections')
     numlines=1;
     defaultanswer={''};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
-    analysis_id = str2num(answer{1});
+    analysis_id = str2double(answer{1});
     post_collections(gcf,collections,suffix,analysis_id);
 elseif strcmp(str{s},'Set zoom x distance')
     prompt={'x distance:'};
@@ -170,13 +200,13 @@ elseif strcmp(str{s},'Set zoom x distance')
     numlines=1  ;
     defaultanswer={'0.005'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
-    setappdata(gcf,'xdist',str2num(answer{1}));
+    setappdata(gcf,'xdist',str2double(answer{1}));
 elseif strcmp(str{s},'Set zoom y distance')
     prompt={'y distance:'};
     name='Set zoom y distance';
     numlines=1;
     collections = getappdata(gcf,'collections');
-    [x,Y,labels] = combine_collections(collections);
+    [unused,Y,labels] = combine_collections(collections); %#ok<ASGLU>
     max_spectrum = Y(:,1)';jjj
     min_spectrum = Y(:,1)';
     for s = 1:length(labels)
@@ -186,7 +216,7 @@ elseif strcmp(str{s},'Set zoom y distance')
     ydist = max(max_spectrum)*0.005;    
     defaultanswer={num2str(ydist)};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
-    setappdata(gcf,'ydist',str2num(answer{1}));
+    setappdata(gcf,'ydist',str2double(answer{1}));
 elseif strcmp(str{s},'Save figures')
     indir = uigetdir;
     if indir == 0

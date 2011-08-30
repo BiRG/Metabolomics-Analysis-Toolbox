@@ -78,7 +78,7 @@ varargout{1} = handles.output;
 
 % --- Clears the main axes object.
 function clearGraph(handles)
-% handles    empty - handles not created until after all CreateFcns called
+% handles    structure with handles and user data (see GUIDATA)
 axes(handles.axes1);
 cla;
 
@@ -86,7 +86,7 @@ cla;
 % --- Draws all stored bins, the working bin, and the currently selected
 %     spectrum (or all spectra if the mode is Overlay).
 function redrawGraph(handles)
-% handles    empty - handles not created until after all CreateFcns called
+% handles    structure with handles and user data (see GUIDATA)
 popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
 popupSpectrumNum = get(handles.select_spectrum_popup, 'Value');
 spectralDispMode = get(handles.individual_mode_radiobutton, 'Value');
@@ -150,18 +150,20 @@ hold off;
 function repopulateMappedBinsList(handles)
 % handles    structure with handles and user data (see GUIDATA)
 stringPropCell = '';
-if (handles.currentStoredBinCount == 1)
-    stringPropCell = [ num2str(handles.storedBinsIDs, '%d') ',' ...
-        handles.storedBinsMetabolites{1} ',' ...
-        num2str(handles.storedBinsLeftBounds, '%.3f') ',' ...
-        num2str(handles.storedBinsRightBounds, '%.3f') ];
-else
-    stringPropCell = {};
-    for i = 1:handles.currentStoredBinCount
-        stringPropCell{i} = [ num2str(handles.storedBinsIDs(i), '%d') ',' ...
-            handles.storedBinsMetabolites{i} ',' ...
-            num2str(handles.storedBinsLeftBounds(i), '%.3f') ',' ...
-            num2str(handles.storedBinsRightBounds(i), '%.3f') ];
+if ( isfield(handles, 'currentStoredBinCount') )
+    if (handles.currentStoredBinCount == 1)
+        stringPropCell = [ num2str(handles.storedBinsIDs, '%d') ',' ...
+            handles.storedBinsMetabolites{1} ',' ...
+            num2str(handles.storedBinsLeftBounds, '%.3f') ',' ...
+            num2str(handles.storedBinsRightBounds, '%.3f') ];
+    else
+        stringPropCell = {};
+        for i = 1:handles.currentStoredBinCount
+            stringPropCell{i} = [ num2str(handles.storedBinsIDs(i), '%d') ',' ...
+                handles.storedBinsMetabolites{i} ',' ...
+                num2str(handles.storedBinsLeftBounds(i), '%.3f') ',' ...
+                num2str(handles.storedBinsRightBounds(i), '%.3f') ];
+        end;
     end;
 end;
 set(handles.mapped_bins_listbox, 'String', stringPropCell);
@@ -280,14 +282,16 @@ if ( ~isempty(handles.collections) )
         'help', 'modal');
 end;
 
-% Set spectral display radio buttons & bin management buttons to default.
+% Set spectral display radio buttons & bin display
+% management buttons to their defaults.
 set(handles.individual_mode_radiobutton,'Value', ...
     get(handles.individual_mode_radiobutton,'Max'));
 set(handles.append_bin_button, 'Enable', 'off');
 set(handles.retrieve_bin_button, 'Enable', 'off');
-set(handles.delete_bin_button, 'Enable', 'off');
 clearGraph(handles);
 
+% Rechecking to allow for some operations to occur after the user
+% has been notified of the successful collection load.
 if ( ~isempty(handles.collections) )
     
     % Build the select collection popup string.
@@ -353,7 +357,6 @@ if ( popupCollectionNum > 0 )
         set(handles.select_spectrum_popup, 'Value', 1);
         set(handles.append_bin_button, 'Enable', 'on');
         set(handles.retrieve_bin_button, 'Enable', 'on');
-        set(handles.delete_bin_button, 'Enable', 'on');
         
     else
         
@@ -362,7 +365,6 @@ if ( popupCollectionNum > 0 )
         set(handles.select_spectrum_popup, 'Enable', 'off');
         set(handles.append_bin_button, 'Enable', 'off');
         set(handles.retrieve_bin_button, 'Enable', 'off');
-        set(handles.delete_bin_button, 'Enable', 'off');
     end;
     
     redrawGraph(handles);
@@ -376,7 +378,6 @@ else
     set(handles.select_spectrum_popup, 'Enable', 'off');
     set(handles.append_bin_button, 'Enable', 'off');
     set(handles.retrieve_bin_button, 'Enable', 'off');
-    set(handles.delete_bin_button, 'Enable', 'off');
 end;
 
 
@@ -412,14 +413,12 @@ switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
             set(handles.select_spectrum_popup, 'Enable', 'on');
             set(handles.append_bin_button, 'Enable', 'on');
             set(handles.retrieve_bin_button, 'Enable', 'on');
-            set(handles.delete_bin_button, 'Enable', 'on');
             redrawGraph(handles);
         else
             % No collection is actually selected to display.
             set(handles.select_spectrum_popup, 'Enable', 'off');
             set(handles.append_bin_button, 'Enable', 'off');
             set(handles.retrieve_bin_button, 'Enable', 'off');
-            set(handles.delete_bin_button, 'Enable', 'off');
         end;
         
     otherwise
@@ -436,7 +435,8 @@ function load_binmap_button_Callback(hObject, eventdata, handles)
 [filename, pathname] = uigetfile( ...
     {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
     '*.*', 'All Files (*.*)'} );
-if ( ~isempty(filename) )
+set(handles.delete_bin_button, 'Enable', 'off');
+if ( ischar(filename) && ~isempty(filename) )
     fid = fopen([pathname filename]);
     handles.binmapHeaders = textscan(fid, ...
         '%q %q %q %q %q %q %q %q', 1, ...
@@ -463,12 +463,14 @@ if ( ~isempty(filename) )
     guidata(hObject, handles);
     repopulateMappedBinsList(handles);
     
-    % A collection has already been loaded and selected. Redraw.
+    % A collection has already been loaded and selected. Redraw graph.
     if ( isfield(handles, 'collections') && ...
             ~isempty(handles.collections) && ...
             get(handles.select_collection_popup, 'Value') > 1 )
         redrawGraph(handles);
     end;
+    
+    set(handles.delete_bin_button, 'Enable', 'on');
     
     msgbox('Finished loading Binmap', 'Action Complete', ...
         'help', 'modal');
@@ -482,25 +484,49 @@ function retrieve_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to retrieve_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% -- DCW: TODO: Zoom in on bin @ retrieval.
-selectedBin = get(handles.mapped_bins_listbox, 'Value');
-set(handles.metabolite_name_edit, 'String', ...
-    handles.storedBinsMetabolites{selectedBin});
-set(handles.id_source_edit, 'String', ...
-    handles.storedBinsIDSources{selectedBin});
-set(handles.proton_id_edit, 'String', ...
-    handles.storedBinsProtonIDs{selectedBin});
-set(handles.deconvolution_edit, 'String', ...
-    handles.storedBinsDeconv{selectedBin});
-set(handles.left_bound_edit, 'String', ...
-    num2str(handles.storedBinsLeftBounds(selectedBin),'%.5e'));
-set(handles.right_bound_edit, 'String', ...
-    num2str(handles.storedBinsRightBounds(selectedBin),'%.5e'));
-set(handles.multiplicity_edit, 'String', ...
-    handles.storedBinsMultiplicities{selectedBin});
-handles.workingLeftBound = handles.storedBinsLeftBounds(selectedBin);
-handles.workingRightBound = handles.storedBinsRightBounds(selectedBin);
-guidata(hObject, handles);
+marginWidthProportion = 0.2;
+
+selectedListboxIdx = get(handles.mapped_bins_listbox, 'Value');
+if ( isfield(handles, 'currentStoredBinCount') && ...
+        handles.currentStoredBinCount > 0 )
+    % Error check, just in case...
+    if ( isnumeric(selectedListboxIdx) && ...
+            selectedListboxIdx > 0 && ...
+            selectedListboxIdx < handles.currentStoredBinCount+1 )
+        
+        set(handles.metabolite_name_edit, 'String', ...
+            handles.storedBinsMetabolites{selectedListboxIdx});
+        set(handles.id_source_edit, 'String', ...
+            handles.storedBinsIDSources{selectedListboxIdx});
+        set(handles.proton_id_edit, 'String', ...
+            handles.storedBinsProtonIDs{selectedListboxIdx});
+        set(handles.deconvolution_edit, 'String', ...
+            handles.storedBinsDeconv{selectedListboxIdx});
+        set(handles.multiplicity_edit, 'String', ...
+            handles.storedBinsMultiplicities{selectedListboxIdx});
+        
+        leftBound = handles.storedBinsLeftBounds(selectedListboxIdx);
+        rightBound = handles.storedBinsRightBounds(selectedListboxIdx);
+        set(handles.left_bound_edit, 'String', num2str(leftBound, '%.5e'));
+        set(handles.right_bound_edit, 'String', ...
+            num2str(rightBound, '%.5e'));
+        handles.workingLeftBound = leftBound;
+        handles.workingRightBound = rightBound;
+        
+        % Remap the axes and redraw, leaving some wiggle room past the
+        % bounds. No check is needed as this button should only be enabled
+        % when there is at least one collection loaded.
+        boundDiff = abs(leftBound - rightBound)*marginWidthProportion;
+        newXLim = [ rightBound - boundDiff   leftBound + boundDiff ];
+        set(handles.axes1, 'XLim', newXLim);
+        
+        guidata(hObject, handles);
+        redrawGraph(handles);
+    end;
+else
+    msgbox('Cannot retrieve bin metadata: No binmap loaded.', ...
+        'Cannot Complete Request', 'error', 'modal');
+end;
 
 
 % --- Executes on button press in delete_bin_button.
@@ -508,8 +534,43 @@ function delete_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to delete_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-msgbox('Feature not yet implemented.', ...
-    'Under Construction', 'warn', 'modal');
+selectedListboxIdx = get(handles.mapped_bins_listbox, 'Value');
+% Surpress an "Integer out of range" warning
+if (selectedListboxIdx > handles.currentStoredBinCount-1)
+    set(handles.mapped_bins_listbox, 'Value', ...
+        handles.currentStoredBinCount-1);
+end;
+% Error check, just in case...
+if (isnumeric(selectedListboxIdx) && ...
+        isfield(handles, 'currentStoredBinCount') &&...
+        selectedListboxIdx > 0 && ...
+        selectedListboxIdx < handles.currentStoredBinCount+1)
+    handles.storedBinsIDs(selectedListboxIdx)            = [];
+    handles.storedBinsMetabolites(selectedListboxIdx)    = [];
+    handles.storedBinsLeftBounds(selectedListboxIdx)     = [];
+    handles.storedBinsRightBounds(selectedListboxIdx)    = [];
+    handles.storedBinsMultiplicities(selectedListboxIdx) = [];
+    handles.storedBinsDeconv(selectedListboxIdx)         = [];
+    handles.storedBinsProtonIDs(selectedListboxIdx)      = [];
+    handles.storedBinsIDSources(selectedListboxIdx)      = [];
+    handles.storedBinsCollectionID(selectedListboxIdx)   = [];
+    handles.storedBinsSpectrumID(selectedListboxIdx)     = [];
+    handles.currentStoredBinCount = handles.currentStoredBinCount-1;
+end;
+if (handles.currentStoredBinCount == 0)
+    set(hObject, 'Enable', 'off');
+    set(handles.mapped_bins_listbox, 'Value', 1); % Default value for an empty listbox
+end;
+guidata(hObject, handles);
+repopulateMappedBinsList(handles);
+
+% A collection has already been loaded and selected. Redraw graph.
+if ( isfield(handles, 'collections') && ...
+        ~isempty(handles.collections) && ...
+        get(handles.select_collection_popup, 'Value') > 1 )
+    redrawGraph(handles);
+end;
+
 
 % --- Executes on button press in save_binmap_button.
 function save_binmap_button_Callback(hObject, eventdata, handles)
@@ -522,7 +583,8 @@ targetfile = '';
 [filename, pathname] = uiputfile( ...
     {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
     '*.*', 'All Files (*.*)'} );
-if ( ~isequal(filename, 0) && ~isequal(pathname, 0) )
+if ( ischar(filename) && ischar(pathname) && ...
+        ~isempty(filename) && ~isempty(pathname) )
     targetfile = fullfile(pathname,filename);
     [fid message] = fopen(targetfile, 'w');
     if ( fid > 0 )
@@ -608,6 +670,7 @@ function append_bin_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if ( isfield(handles, 'storedBinsIDs') )
+    % We've got bins loaded already. Append the new bin to the structure.
     nextBinID = max(handles.storedBinsIDs)+1;
     handles.currentStoredBinCount = handles.currentStoredBinCount+1;
     handles.storedBinsIDs(handles.currentStoredBinCount) = nextBinID;
@@ -630,6 +693,8 @@ if ( isfield(handles, 'storedBinsIDs') )
     handles.storedBinsSpectrumID(handles.currentStoredBinCount) = ...
         0; % -- DCW: For later tracking.
 else
+    % No bins yet exist. Initialize the listbox and the abstract structues
+    % with the user-provided values.
     nextBinID = 1;
     handles.currentStoredBinCount = 1;
     handles.storedBinsIDs = nextBinID;
@@ -661,19 +726,28 @@ guidata(hObject, handles);
 repopulateMappedBinsList(handles);
 
 
+% --- Executes on selection change in mapped_bins_listbox.
+function mapped_bins_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to mapped_bins_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+selectedListboxIdx = get(hObject, 'Value');
+% Error check, just in case...
+if (isnumeric(selectedListboxIdx) && ...
+        isfield(handles, 'currentStoredBinCount') &&...
+        selectedListboxIdx > 0 && ...
+        selectedListboxIdx < handles.currentStoredBinCount+1)
+end;
+guidata(hObject, handles);
+repopulateMappedBinsList(handles);
+
+
 % -- DCW: Spare callbacks & other hooks
 
 
 % --- Executes during object deletion, before destroying properties.
 function figure1_DeleteFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on selection change in mapped_bins_listbox.
-function mapped_bins_listbox_Callback(hObject, eventdata, handles)
-% hObject    handle to mapped_bins_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
