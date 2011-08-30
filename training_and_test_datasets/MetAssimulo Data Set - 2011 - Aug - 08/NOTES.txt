@@ -1,0 +1,1 @@
+Defaults of the MetAssimulo-v1.1 were kept. The only change was that 20 replicates were produced for each mixture.
