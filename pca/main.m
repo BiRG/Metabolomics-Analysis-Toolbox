@@ -254,7 +254,7 @@ clear_before_run(hObject,handles);
 x_pc_inx = str2num(get(handles.x_edit,'String'));
 y_pc_inx = str2num(get(handles.y_edit,'String'));
 
-%% Run PCA
+% Run PCA
 [COEFF, SCORE, LATENT, TSQUARED] = princomp(X');
 % save('X');
 handles.model = {};
@@ -481,7 +481,7 @@ for g = 1:length(handles.group_by_inxs)
             end
             if get(handles.ids_radiobutton,'Value')
                 for i = 1:length(inxs)
-                    text(score(inxs(i),x_pc_inx),score(inxs(i),y_pc_inx),num2str(handles.collection.subject_id(inxs(i))),'VerticalAlignment','top');
+                    text(score(inxs(i),x_pc_inx),score(inxs(i),y_pc_inx),num2str(handles.collection.subject_id{inxs(i)}),'VerticalAlignment','top');
                 end
             end
         else
