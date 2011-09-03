@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 11-Aug-2011 11:56:10
+% Last Modified by GUIDE v2.5 03-Sep-2011 16:01:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1661,3 +1661,49 @@ handles.deconvolutions(bin_idx, spec_idx).update_to(cur_value);
 update_plot(handles);
 update_display(handles);
     
+
+
+% --- Executes on selection change in baseline_menu.
+function baseline_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to baseline_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns baseline_menu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from baseline_menu
+
+
+% --- Executes during object creation, after setting all properties.
+function baseline_menu_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to baseline_menu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function baseline_area_penalty_edit_box_Callback(hObject, eventdata, handles)
+% hObject    handle to baseline_area_penalty_edit_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of baseline_area_penalty_edit_box as text
+%        str2double(get(hObject,'String')) returns contents of baseline_area_penalty_edit_box as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function baseline_area_penalty_edit_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to baseline_area_penalty_edit_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
