@@ -44,7 +44,7 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 % BETA      The parameters of the peaks (see BETA0).  Will have the same
 %           dimensions as BETA0
 %
-% EXITFLAG  The same as the exit flag from LSQCURVEFIT.  Quoting from 
+% EXITFLAG  The same as the exit flag from LSQNONLIN.  Quoting from 
 %           there:
 %
 %                    
@@ -73,7 +73,8 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 %           -3 Regularization parameter became too large 
 %              (levenberg-marquardt algorithm). 
 %
-%           -4 Optimization could not make further progress.
+%           -4 Line search could not sufficiently decrease the residual 
+%              along the current search direction.
 
 model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y));
 
