@@ -1,4 +1,4 @@
-function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA)
+function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA,baseline_area_penalty)
 %Helper function doing the curve fitting for region_deconvolution.
 %
 % Returns the best fit model starting at BETA0 given x_baseline_BETA, the
@@ -13,29 +13,37 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 % Input arguments
 % -------------------------------------------------------------------------
 %
-% x                  The x values for the input spectrum (frequently ppm)
+% x                      The x values for the input spectrum (frequently 
+%                        ppm)
 %
-% y                  The y values for the input spectrum
+% y                      The y values for the input spectrum
 %
-% BETA0              A 1 dimensional array of doubles.
+% BETA0                  A 1 dimensional array of doubles.
 %
-%                    Every 4 items are the starting parameters for one peak
-%                    in the order M, G, P, x0.
+%                        Every 4 items are the starting parameters for one
+%                        peak in the order M, G, P, x0.
 %
-%                    M  is the height parameter
-%                    G  is the width parameter,
-%                    P  is the proportion of Lorenzianness (1=lorenzian,
-%                       0=gaussian)
-%                    x0 is the location parameter, the location of the 
-%                       peak.
+%                        M  is the height parameter
+%                        G  is the width parameter,
+%                        P  is the proportion of Lorenzianness 
+%                           (1=lorenzian, 0=gaussian)
+%                        x0 is the location parameter, the location of 
+%                           the peak.
 %
-% lb                 The lower bound on the corresponding entry in BETA0
+% lb                     The lower bound on the corresponding entry in
+%                        BETA0
 %
-% ub                 The upper bound on the corresponding entry in BETA0
+% ub                     The upper bound on the corresponding entry in BETA0
 %
-% x_baseline_width   Not sure about this, probably the interval between the
-%                    points that can be adjusted on the baseline.  Same as
-%                    the parameter to region_deconvolution
+% x_baseline_width       Not sure about this, probably the interval
+%                        between the points that can be adjusted on the
+%                        baseline.  Same as the parameter to
+%                        region_deconvolution.
+%
+% baseline_area_penalty  This is multiplied by the area under the baseline
+%                        curve and added as a term to the end of the list
+%                        of errors whose sum of squares is beign taken.
+%                        This allows regularizing according to area.
 %
 % -------------------------------------------------------------------------
 % Output parameters
@@ -76,7 +84,7 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 %           -4 Line search could not sufficiently decrease the residual 
 %              along the current search direction.
 
-model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y));
+model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y, baseline_area_penalty));
 
 options = optimset('lsqnonlin');
 %options = optimset(options,'MaxIter',10);

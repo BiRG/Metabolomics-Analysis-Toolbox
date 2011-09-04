@@ -1,4 +1,4 @@
-function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region)
+function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,baseline_area_penalty)
 % Deconvolves a region of a spectrum
 %
 % This is code from Paul Anderson.  I am adding these comments 
@@ -33,6 +33,11 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 %
 % region             The region to deconvolve - given as a pair:
 %                    [max x, min x]
+%
+% baseline_area_penalty  This is multiplied by the area under the baseline
+%                        curve and added as a term to the end of the list
+%                        of errors whose sum of squares is beign taken.
+%                        This allows regularizing according to area.
 %
 % ------------------------------------------------------------------------
 % Output Parameters
@@ -119,7 +124,7 @@ num_maxima = length(inxs);
 
 if num_maxima > 0
     [BETA_region,EXITFLAG] = ...
-        perform_deconvolution(x_region',y_region,BETA0_region,lb_region,ub_region,x_baseline_BETA);
+        perform_deconvolution(x_region',y_region,BETA0_region,lb_region,ub_region,x_baseline_BETA, baseline_area_penalty);
     BETA(4*(inxs-1)+1) = BETA_region(1:4:4*num_maxima);
     BETA(4*(inxs-1)+2) = BETA_region(2:4:4*num_maxima);
     BETA(4*(inxs-1)+3) = BETA_region(3:4:4*num_maxima);
@@ -128,8 +133,8 @@ else
     BETA_region=[];
 end
 
-[y_errs,y_baseline] = regularized_model(BETA_region,x_region',num_maxima,x_baseline_BETA, y_region);
-y_fit = y_errs + y_region;
+[y_errs,y_baseline] = regularized_model(BETA_region,x_region',num_maxima,x_baseline_BETA, y_region, baseline_area_penalty);
+y_fit = y_errs(1:end-1) + y_region;
 
 R2 = 1 - sum((y_fit - y_region).^2)/sum((mean(y_region) - y_region).^2);
 

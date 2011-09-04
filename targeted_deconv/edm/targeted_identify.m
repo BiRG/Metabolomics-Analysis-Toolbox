@@ -1617,9 +1617,19 @@ handles = guidata(handles.figure1);
 % Calculate the deconvolution
 bin = handles.bin_map(bin_idx).bin;
 bin_width = 2*(bin.left - bin.right);
+
+%TODO: don't use the text box directly for the area penalty, rather set it
+%for each spectrum
+baseline_area_penalty = str2double(...
+    get(handles.baseline_area_penalty_edit_box, ...
+    'String'));
+if isnan(baseline_area_penalty)
+    baseline_area_penalty = 0;
+end
+
 d=RegionDeconvolution(handles.collection.x, ...
     handles.collection.Y(:, spec_idx), ...
-    pks, bin_width, bin.right, bin.left);
+    pks, bin_width, bin.right, bin.left, baseline_area_penalty);
 
 handles.deconvolutions(bin_idx, spec_idx).update_to(d);
 
