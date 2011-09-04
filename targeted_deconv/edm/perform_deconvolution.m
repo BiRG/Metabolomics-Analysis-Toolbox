@@ -75,9 +75,9 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 %
 %           -4 Optimization could not make further progress.
 
-model = @(PARAMS,x_) (global_model(PARAMS,x_,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA));
+model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y));
 
-options = optimset('lsqcurvefit');
+options = optimset('lsqnonlin');
 %options = optimset(options,'MaxIter',10);
 options = optimset(options,'Display','off');
 %options = optimset(options,'MaxFunEvals',100);
@@ -89,12 +89,9 @@ ub(to_swap)=lb(to_swap);
 lb(to_swap)=tmp;
 
 % Do the fit
-[BETA,R,RESIDUAL,EXITFLAG] = lsqcurvefit(model,BETA0,x,y,lb,ub,options); %#ok<ASGLU>
+[BETA,R,RESIDUAL,EXITFLAG] = lsqnonlin(model_func,BETA0,lb,ub,options); %#ok<ASGLU>
 
 if EXITFLAG < 0
     BETA = BETA0;
     fprintf('EXITFLAG: %d',EXITFLAG);
 end
-
-% y_fit = global_model(BETA,x,y);
-

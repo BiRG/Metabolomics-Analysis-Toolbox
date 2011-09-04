@@ -128,7 +128,8 @@ else
     BETA_region=[];
 end
 
-[y_fit,y_baseline] = global_model(BETA_region,x_region',num_maxima,x_baseline_BETA);
+[y_errs,y_baseline] = regularized_model(BETA_region,x_region',num_maxima,x_baseline_BETA, y_region);
+y_fit = y_errs + y_region;
 
 R2 = 1 - sum((y_fit - y_region).^2)/sum((mean(y_region) - y_region).^2);
 
