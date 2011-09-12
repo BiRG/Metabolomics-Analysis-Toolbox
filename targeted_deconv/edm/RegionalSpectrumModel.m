@@ -29,10 +29,90 @@ classdef RegionalSpectrumModel
         % Multiplied by area of the baseline and then added to the list of
         % terms whose sum of squares is to be minimized
         baseline_area_penalty
+        
+        % Multiplied by a measurement of the variation of the estimated
+        % linewidth to penalize those solutions with a much greater
+        % linewidth
+        linewidth_variation_penalty
     end
     
-    methods
+    methods(Static)
+        function cellarray=baseline_types()
+        % A cell array of the acceptable baseline types for models
+        %
+        % -----------------------------------------------------------------
+        % Usage
+        % -----------------------------------------------------------------
+        %
+        % cellarray=baseline_types()
+        % 
+        % -----------------------------------------------------------------
+        % Input Arguments
+        % -----------------------------------------------------------------
+        %
+        % None
+        %
+        % -----------------------------------------------------------------
+        % Examples:
+        % -----------------------------------------------------------------
+        %
+        % >> c=RegionalSpectrumModel.baseline_types
+        %
+        %
         
+            cellarray={'spline','constant','line_up','line_down','v'};
+        end
+    end
+    methods
+        function obj=RegionalSpectrumModel(baseline_type, ...
+                baseline_area_penalty, linewidth_variation_penalty)
+        % Create a RegionalSpectrumModel
+        %
+        % -----------------------------------------------------------------
+        % Usage
+        % -----------------------------------------------------------------
+        %
+        % obj=RegionalSpectrumModel(...
+        %     baseline_type, baseline_area_penalty, ...
+        %     linewidth_variation_penalty)
+        %
+        % or
+        % 
+        % uninitialized = RegionalSpectrumModel();
+        %
+        % -----------------------------------------------------------------
+        % Input Arguments
+        % -----------------------------------------------------------------
+        %
+        % baseline_type         - string value of the baseline_type
+        %                         property
+        %
+        % baseline_area_penalty - real numerical value of the
+        %                         baseline_area_penalty property
+        %
+        % linewidth_variation_penalty - real numerical value of the
+        %                         linewidth_variation_penalty property
+        %
+        % -----------------------------------------------------------------
+        % Examples:
+        % -----------------------------------------------------------------
+        %
+        % m=RegionalSpectrumModel('line-up', 10, 1);
+        %
+        % or
+        %
+        % m=RegionalSpectrumModel();
+            if nargin > 0
+                if ~strcmpi(baseline_type, ...
+                        RegionalSpectrumModel.baseline_types) 
+                    error('RegionalSpectrumModel:bad_baseline', ...
+                        ['Unknown baseline type: "' baseline_type '"']);
+                end
+                obj.baseline_type = baseline_type;
+                obj.baseline_area_penalty = baseline_area_penalty;
+                obj.linewidth_variation_penalty = linewidth_variation_penalty;
+            end
+        end
     end
     
 end
