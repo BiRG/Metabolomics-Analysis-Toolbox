@@ -97,7 +97,7 @@ classdef RegionalSpectrumModel
         % Examples:
         % -----------------------------------------------------------------
         %
-        % m=RegionalSpectrumModel('line-up', 10, 1);
+        % m=RegionalSpectrumModel('line_up', 10, 1);
         %
         % or
         %
