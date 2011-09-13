@@ -37,14 +37,15 @@ classdef RegionDeconvolution
     
     methods
         function obj=RegionDeconvolution(x, y, peak_xs, ...
-                baseline_width, region_min, region_max)
+                baseline_width, region_min, region_max, ...
+                model)
         %Deconvolve a region in a spectrum
         %
         % -----------------------------------------------------------------
         % Usage
         % -----------------------------------------------------------------
         % obj = RegionDeconvolution(x, y, peak_xs, baseline_width, ...
-        %    region_min, region_max)
+        %    region_min, region_max, model)
         %
         % or
         % 
@@ -69,11 +70,14 @@ classdef RegionDeconvolution
         % region_max      The maximum x value in the region to be
         %                 deconvolved
         %
+        % model           The RegionalSpectrumModel giving the assumptions
+        %                 for this deconvolution
+        %
         % -----------------------------------------------------------------
         % Examples:
         % -----------------------------------------------------------------
         %
-        % load('collection.mat');  c=collection; d=RegionDeconvolution(c.x, c.Y, c.x(c.maxs{1}), 8.6-8.41, 8.41, 8.6)
+        % load('collection.mat');  c=collection; m=RegionalSpectrumModel; d=RegionDeconvolution(c.x, c.Y, c.x(c.maxs{1}), 8.6-8.41, 8.41, 8.6, m)
         %
             if nargin > 0
                 [BETA0,lb,ub] = compute_initial_inputs(x,y, peak_xs, ...
@@ -82,7 +86,8 @@ classdef RegionDeconvolution
                 [unused, obj.baseline_BETA, obj.fit_indices, obj.y_fitted, ...
                     obj.y_baseline,obj.R2, unused, peak_BETA] = ...
                     region_deconvolution(x,y,BETA0,lb,ub, baseline_width, ...
-                    [region_max;region_min]); %#ok<ASGLU>
+                    [region_max;region_min], ...
+                    model); %#ok<ASGLU>
                 obj.peaks = GaussLorentzPeak(peak_BETA);
             end
         end
