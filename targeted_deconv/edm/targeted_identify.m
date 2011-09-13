@@ -84,7 +84,7 @@ function out_handles = init_handles_and_gui_from_session_data(handles, session_d
 % user data has been restored to it
 %
 % Note that display components are not initialized 
-if(session_data.version ~= 0.1)
+if(session_data.version ~= 0.2)
     uiwait(msgbox(['This session data was generated from a ', ...
         'different version of the targeted deconvolution program (#', ...
         sprintf('%0.2f',session_data.version), ...
@@ -100,6 +100,16 @@ handles.spectrum_idx = session_data.spectrum_idx;
 handles.bin_idx = session_data.bin_idx;
 handles.already_autoidentified = session_data.already_autoidentified;
 handles.deconvolutions = session_data.deconvolutions;
+if session_data.version < 0.2
+    % In earlier versions, there were no model objects, so set the models to
+    % the default
+    num_spec = collection.num_samples;
+    num_bins = length(bin_map);
+    handles.models(num_bins, num_spec)=RegionalSpectrumModel;
+else
+    % Otherwise set to the saved models
+    handles.models = session_data.models;
+end
 
 out_handles = handles;
 
@@ -138,6 +148,9 @@ if ~isfield(handles, 'peaks')
         handles.peaks{s}='Uninitialized';
     end
 end
+
+% Start with default model for each bin/spectrum combination
+handles.models(num_bins, num_samples)=RegionalSpectrumModel;
 
 % Start with deconvolutions as a matrix of empty CachedValue
 % objects
@@ -1559,6 +1572,7 @@ function save_and_quit_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFN
 % bin_idx
 % already_autoidentified
 % deconvolutions
+% models
 % version (set to a special number indicating the version of this program
 %          - this should be increased for any changes to the data or field
 %          names being saved)
@@ -1575,7 +1589,7 @@ end
 
 %Save
 fullname = fullfile(pathname, filename);
-session_data.version = 0.1;
+session_data.version = 0.2;
 session_data.metabolite_menu_string = get(handles.metabolite_menu,'String');
 session_data.collection = handles.collection;
 session_data.bin_map = handles.bin_map;
@@ -1585,6 +1599,7 @@ session_data.spectrum_idx = handles.spectrum_idx;
 session_data.bin_idx = handles.bin_idx;
 session_data.already_autoidentified = handles.already_autoidentified;
 session_data.deconvolutions = handles.deconvolutions;
+session_data.models = handles.models;
 
 save(fullname, 'session_data');
 
