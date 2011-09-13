@@ -1746,7 +1746,13 @@ function baseline_area_penalty_edit_box_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of baseline_area_penalty_edit_box as text
 %        str2double(get(hObject,'String')) returns contents of baseline_area_penalty_edit_box as a double
-
+v = str2double(get(hObject,'String'));
+if ~isnan(v)
+    m=handles.models(handles.bin_idx, handles.spectrum_idx);
+    m.baseline_area_penalty = v;
+    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+    guidata(handles.figure1, handles);
+end
 
 % --- Executes during object creation, after setting all properties.
 function baseline_area_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#ok<INUSD,DEFNU>
@@ -1762,17 +1768,24 @@ end
 
 
 
-function width_variance_penalty_edit_box_Callback(hObject, eventdata, handles)
+function width_variance_penalty_edit_box_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to width_variance_penalty_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: get(hObject,'String') returns contents of width_variance_penalty_edit_box as text
 %        str2double(get(hObject,'String')) returns contents of width_variance_penalty_edit_box as a double
+v = str2double(get(hObject,'String'));
+if ~isnan(v)
+    m=handles.models(handles.bin_idx, handles.spectrum_idx);
+    m.linewidth_variation_penalty = v;
+    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+    guidata(handles.figure1, handles);
+end
 
 
 % --- Executes during object creation, after setting all properties.
-function width_variance_penalty_edit_box_CreateFcn(hObject, eventdata, handles)
+function width_variance_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#ok<INUSD,DEFNU>
 % hObject    handle to width_variance_penalty_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
