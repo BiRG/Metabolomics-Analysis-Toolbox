@@ -58,9 +58,10 @@ area = sum(abs(areas));
 % Calculate the peak width variation
 if length(x) > 1
     line_widths = BETA(2:nRep:last_inx);
-    min_width = min(line_widths);
-    max_width = max(line_widths);
-    line_width_diff = max_width - min_width;
+%    min_width = min(line_widths);
+%    max_width = max(line_widths);
+%    line_width_diff = max_width - min_width;
+    line_width_diff = std(line_widths);
 else
     line_width_diff = 0;
 end
