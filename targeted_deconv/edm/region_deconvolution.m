@@ -1,8 +1,8 @@
-function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,baseline_area_penalty)
+function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,model)
 % Deconvolves a region of a spectrum
 %
-% This is code from Paul Anderson.  I am adding these comments 
-% after-the-fact.
+% This is code modified from Paul Anderson.  These comments 
+% were first added as part of exploring the code.
 %
 % ------------------------------------------------------------------------
 % Input Arguments
@@ -34,11 +34,8 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 % region             The region to deconvolve - given as a pair:
 %                    [max x, min x]
 %
-% baseline_area_penalty  This is multiplied by the area under the baseline
-%                        curve and added as a term to the end of the list
-%                        of errors whose sum of squares is beign taken.
-%                        This allows regularizing according to area.
-%
+% model              A RegionalSpectrumModel giving the assumptions for
+%                    this deconvolution
 % ------------------------------------------------------------------------
 % Output Parameters
 % ------------------------------------------------------------------------
@@ -76,7 +73,7 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 % ------------------------------------------------------------------------
 % Example Code:
 % ------------------------------------------------------------------------
-%
+% TODO: update example to include RegionalSpectrumModel
 % 
 % region_left = 8.6;
 % region_right = 8.41;
@@ -110,12 +107,43 @@ for i = 1:length(inxs)
 end
 
 region_width = region(1)-region(2);
-number_baseline_points_to_insert = round(region_width/x_baseline_width);
-x_baseline_BETA = linspace(region(1),region(2),number_baseline_points_to_insert+2)';
-xwidth = x(1)-x(2);
-baseline_BETA = (y(round((x(1)-x_baseline_BETA)/xwidth)+1) + 0*x_baseline_BETA)/2; % Initialize
-lb_baseline = 0*baseline_BETA + min([y_region;0]);
-ub_baseline = 0*baseline_BETA + max(y_region);
+switch model.baseline_type
+    case 'spline'
+        number_baseline_points_to_insert = round(region_width/x_baseline_width);
+        x_baseline_BETA = linspace(region(1),region(2),number_baseline_points_to_insert+2)';
+        xwidth = x(1)-x(2);
+        baseline_BETA = (y(round((x(1)-x_baseline_BETA)/xwidth)+1) + 0*x_baseline_BETA)/2; % Initialize
+        lb_baseline = 0*baseline_BETA + min([y_region;0]);
+        ub_baseline = 0*baseline_BETA + max(y_region);
+    case 'v'
+        baseline_BETA = [0;0;0];
+        x_baseline_BETA = [region(1), (region(1)+region(2))/2, region(2)];
+        lb_baseline = [0;0;1];
+        ymax = max(y_region);
+        ub_baseline = [ymax;1;inf];
+    case 'line_up'
+        baseline_BETA = [0;0];
+        x_baseline_BETA = baseline_BETA; %Will not be used
+        lb_baseline = [0;-inf];
+        ymax = max(y_region);
+        ub_baseline = [ymax;0];
+    case 'line_down'
+        baseline_BETA = [0;0];
+        x_baseline_BETA = baseline_BETA; %Will not be used
+        lb_baseline = [0;0];
+        ymax = max(y_region);
+        ub_baseline = [ymax;inf];
+    case 'constant'
+        baseline_BETA = 0;
+        x_baseline_BETA = baseline_BETA; %Will not be used
+        lb_baseline = 0;
+        ymax = max(y_region);
+        ub_baseline = ymax;
+    otherwise
+        error('region_deconvolution:unknown_baseline',...
+            ['Unknown baseline type "' model.baseline_type ...
+            '" in model passed to region_deconvolution']);
+end
 
 BETA0_region = [BETA0_region;baseline_BETA];
 lb_region = [lb_region;lb_baseline];
@@ -124,7 +152,7 @@ num_maxima = length(inxs);
 
 if num_maxima > 0
     [BETA_region,EXITFLAG] = ...
-        perform_deconvolution(x_region',y_region,BETA0_region,lb_region,ub_region,x_baseline_BETA, baseline_area_penalty);
+        perform_deconvolution(x_region',y_region,BETA0_region,lb_region,ub_region,x_baseline_BETA, model);
     BETA(4*(inxs-1)+1) = BETA_region(1:4:4*num_maxima);
     BETA(4*(inxs-1)+2) = BETA_region(2:4:4*num_maxima);
     BETA(4*(inxs-1)+3) = BETA_region(3:4:4*num_maxima);
@@ -133,8 +161,8 @@ else
     BETA_region=[];
 end
 
-[y_errs,y_baseline] = regularized_model(BETA_region,x_region',num_maxima,x_baseline_BETA, y_region, baseline_area_penalty);
-y_fit = y_errs(1:end-1) + y_region;
+[y_errs,y_baseline] = regularized_model(BETA_region,x_region',num_maxima,x_baseline_BETA, y_region, model);
+y_fit = y_errs(1:end-2) + y_region;
 
 R2 = 1 - sum((y_fit - y_region).^2)/sum((mean(y_region) - y_region).^2);
 

@@ -1,4 +1,4 @@
-function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA,baseline_area_penalty)
+function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA, model)
 %Helper function doing the curve fitting for region_deconvolution.
 %
 % Returns the best fit model starting at BETA0 given x_baseline_BETA, the
@@ -40,10 +40,8 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 %                        baseline.  Same as the parameter to
 %                        region_deconvolution.
 %
-% baseline_area_penalty  This is multiplied by the area under the baseline
-%                        curve and added as a term to the end of the list
-%                        of errors whose sum of squares is beign taken.
-%                        This allows regularizing according to area.
+% model                  RegionalSpectrumModel giving the assumptions
+%                        governing this deconvolution
 %
 % -------------------------------------------------------------------------
 % Output parameters
@@ -84,7 +82,7 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 %           -4 Line search could not sufficiently decrease the residual 
 %              along the current search direction.
 
-model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y, baseline_area_penalty));
+model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y, model));
 
 options = optimset('lsqnonlin');
 %options = optimset(options,'MaxIter',10);

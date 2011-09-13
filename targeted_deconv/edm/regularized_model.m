@@ -1,7 +1,5 @@
-function [errors, y_baseline] = regularized_model(BETA,x,num_maxima,x_baseline_BETA, orig_data, baseline_area_penalty)
-% Note: right now this is not regularized - I am just testing that I can
-% modify the function for lsqnonlin rather than lsqcurvefit.  I'll convert
-% it into a regularized fit later.
+function [errors, y_baseline] = regularized_model(BETA,x,num_maxima,x_baseline_BETA, orig_data, model)
+% TODO: document usage and parameters
 %
 % Assumes x_baseline is in sorted order
 
@@ -25,9 +23,25 @@ end
 last_inx = nRep*num_maxima;
 
 % Calculate the baseline using the rest of the parameters in BETA (the
-% remainder of the parameters) as baseline parameters
+% remainder of the parameters) as baseline parameters - switch depending on
+% the type of baseline function
 remainder = BETA(last_inx+1:end);
-y_baseline = baseline_piecewise_interp(remainder,x_baseline_BETA,x);
+switch model.baseline_type
+    case 'spline'
+        y_baseline = baseline_piecewise_interp(remainder,x_baseline_BETA,x);
+    case 'v'
+        y_for_v = [remainder(1); remainder(1)*remainder(2); ...
+            remainder(1)*remainder(2)*remainder(3)];
+        y_baseline = baseline_piecewise_interp(y_for_v, x_baseline_BETA, x);
+    case {'line_up','line_down'}
+        y_baseline = (x-min(x))*remainder(2)+remainder(1);
+    case 'constant'
+        y_baseline = ones(size(x))*remainder(1);
+    otherwise
+        error('regularized_model:bad_baseline_type', ...
+            'Unknown baseline type "%s" passed to regularized_model.m', ...
+            model.baseline);
+end
 fitted_data = fitted_data + y_baseline;
 
 % Calculate the area by calculating rectangles (half-rectangles on the ends)
@@ -41,6 +55,18 @@ end
 areas = y_baseline .* dx;
 area = sum(abs(areas));
 
-% Tack the area penalty onto the end of the end of the list of individual
+% Calculate the peak width variation
+if length(x) > 1
+    line_widths = BETA(2:nRep:last_inx);
+    min_width = min(line_widths);
+    max_width = max(line_widths);
+    line_width_diff = max_width - min_width;
+else
+    line_width_diff = 0;
+end
+
+
+% Tack the regularization penalties onto the end of the list of individual
 % height errors
-errors = [fitted_data - orig_data; area*baseline_area_penalty];
+errors = [fitted_data - orig_data; area*model.baseline_area_penalty; ...
+    line_width_diff * model.linewidth_variation_penalty];
