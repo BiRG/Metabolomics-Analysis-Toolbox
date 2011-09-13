@@ -1716,17 +1716,35 @@ update_display(handles);
 
 
 % --- Executes on selection change in baseline_menu.
-function baseline_menu_Callback(hObject, eventdata, handles)
+function baseline_menu_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to baseline_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns baseline_menu contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from baseline_menu
-
+idx = get(hObject,'Value');
+m = handles.models(handles.bin_idx, handles.spectrum_idx);
+switch idx
+    case 1
+        m.baseline_type = 'spline';
+    case 2
+        m.baseline_type = 'v';
+    case 3
+        m.baseline_type = 'line_up';
+    case 4
+        m.baseline_type = 'line_down';
+    case 5
+        m.baseline_type = 'constant';
+    otherwise
+        error('targeted_identify:bad_baseline_option', ...
+            'Unknown value (%d) for baseline menu index', idx);
+end
+handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+guidata(handles.figure1, handles);
 
 % --- Executes during object creation, after setting all properties.
-function baseline_menu_CreateFcn(hObject, unused, unused2) %#ok<INUSD>
+function baseline_menu_CreateFcn(hObject, unused, unused2) %#ok<DEFNU,INUSD>
 % hObject    handle to baseline_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
