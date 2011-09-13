@@ -84,6 +84,9 @@ classdef RegionalSpectrumModel
         % Input Arguments
         % -----------------------------------------------------------------
         %
+        % With no arguments, sets the type to spline, and the penalties to
+        % 0, so the code behaves as in previous versions
+        %
         % baseline_type         - string value of the baseline_type
         %                         property
         %
@@ -111,6 +114,10 @@ classdef RegionalSpectrumModel
                 obj.baseline_type = baseline_type;
                 obj.baseline_area_penalty = baseline_area_penalty;
                 obj.linewidth_variation_penalty = linewidth_variation_penalty;
+            else
+                obj.baseline_type = 'spline';
+                obj.baseline_area_penalty = 0;
+                obj.linewidth_variation_penalty = 0;
             end
         end
     end
