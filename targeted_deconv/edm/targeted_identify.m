@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 03-Sep-2011 16:01:36
+% Last Modified by GUIDE v2.5 12-Sep-2011 21:23:02
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -778,8 +778,35 @@ else
     set(handles.clean_text,'String','Not a clean bin');
 end
 
-%Show or hide update deconvolution button depending on whether the current
-%deconvolution is updated
+% Set the baseline_menu to the correct entry
+model = handles.models(handles.bin_idx, handles.spectrum_idx);
+switch model.baseline_type
+    case 'spline'
+        value_idx = 1;
+    case 'line_up'
+        value_idx = 3;
+    case 'line_down'
+        value_idx = 4;
+    case 'constant'
+        value_idx = 5;
+    case 'v'
+        value_idx = 2;
+    otherwise
+        error('targeted_identify:bad_line_type', ...
+            ['Unknown line type "%s" in spectrum model for ' ...
+            'bin: %d spectrum: %d'], line_type, cur_bin, ...
+            handles.spectrum_idx);
+end
+set(handles.baseline_menu, 'Value', value_idx);
+
+% Set the regularization boxes
+set(handles.baseline_area_penalty_edit_box, 'String', ...
+    num2str(model.baseline_area_penalty,5));
+set(handles.width_variance_penalty_edit_box, 'String', ...
+    num2str(model.linewidth_variation_penalty,5));
+
+% Show or hide update deconvolution button depending on whether the current
+% deconvolution is updated
 if get(handles.should_show_deconv_box,'Value')
     set(handles.update_deconv_button, 'Visible', 'on');
     deconv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
@@ -1699,7 +1726,7 @@ function baseline_menu_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function baseline_menu_CreateFcn(hObject, eventdata, handles)
+function baseline_menu_CreateFcn(hObject, unused, unused2) %#ok<INUSD>
 % hObject    handle to baseline_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -1722,8 +1749,31 @@ function baseline_area_penalty_edit_box_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function baseline_area_penalty_edit_box_CreateFcn(hObject, eventdata, handles)
+function baseline_area_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#ok<INUSD,DEFNU>
 % hObject    handle to baseline_area_penalty_edit_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function width_variance_penalty_edit_box_Callback(hObject, eventdata, handles)
+% hObject    handle to width_variance_penalty_edit_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of width_variance_penalty_edit_box as text
+%        str2double(get(hObject,'String')) returns contents of width_variance_penalty_edit_box as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function width_variance_penalty_edit_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to width_variance_penalty_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
