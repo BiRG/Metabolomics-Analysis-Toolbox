@@ -1,0 +1,7 @@
+Collection ID	-102
+Type	SpectraCollection
+Description	Deconvolved artificially generated spectrum collection for testing targeted deconvolution
+Processing log	Generated. Deconvolved from first principles.
+X	Y1	Y2	Y3	Y4	Y5
+1000000000.000000	34.274244	34.067733	29.106924	32.828545	25.982040
+1000000001.000000	34.274244	34.067733	29.106924	32.828545	25.982040
