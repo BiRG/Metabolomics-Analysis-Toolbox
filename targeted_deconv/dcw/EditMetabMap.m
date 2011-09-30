@@ -1,35 +1,37 @@
-function varargout = BinMapper(varargin)
-% BINMAPPER MATLAB code for BinMapper.fig
-%      BINMAPPER, by itself, creates a new BINMAPPER or raises the existing
-%      singleton*.
+function varargout = EditMetabMap(varargin)
+% EDITMETABMAP MATLAB code for EditMetabMap.fig
+%      EDITMETABMAP, by itself, creates a new EDITMETABMAP or raises the
+%      existing singleton*.
 %
-%      H = BINMAPPER returns the handle to a new BINMAPPER or the handle to
-%      the existing singleton*.
+%      H = EDITMETABMAP returns the handle to a new EDITMETABMAP or the
+%      handle to the existing singleton*.
 %
-%      BINMAPPER('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in BINMAPPER.M with the given input arguments.
+%      EDITMETABMAP('CALLBACK',hObject,eventData,handles,...) calls the
+%      local function named CALLBACK in EDITMETABMAP.M with the given input
+%      arguments.
 %
-%      BINMAPPER('Property','Value',...) creates a new BINMAPPER or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before BinMapper_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to BinMapper_OpeningFcn via varargin.
+%      EDITMETABMAP('Property','Value',...) creates a new EDITMETABMAP or
+%      raises the existing singleton*.  Starting from the left, property
+%      value pairs are applied to the GUI before EditMetabMap_OpeningFcn
+%      gets called.  An unrecognized property name or invalid value makes
+%      property application stop.  All inputs are passed to
+%      EditMetabMap_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help BinMapper
+% Edit the above text to modify the response to help EditMetabMap
 
-% Last Modified by GUIDE v2.5 13-Jul-2011 12:16:13
+% Last Modified by GUIDE v2.5 30-Sep-2011 01:02:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @BinMapper_OpeningFcn, ...
-    'gui_OutputFcn',  @BinMapper_OutputFcn, ...
+    'gui_OpeningFcn', @EditMetabMap_OpeningFcn, ...
+    'gui_OutputFcn',  @EditMetabMap_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,15 +46,15 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before BinMapper is made visible.
-function BinMapper_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before EditMetabMap is made visible.
+function EditMetabMap_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to BinMapper (see VARARGIN)
+% varargin   command line arguments to EditMetabMap (see VARARGIN)
 
-% Choose default command line output for BinMapper
+% Choose default command line output for EditMetabMap
 handles.output = hObject;
 
 % Update handles structure
@@ -61,12 +63,12 @@ guidata(hObject, handles);
 % Add shared MATLAB scripts to the path
 addpath('../../common_scripts');
 
-% UIWAIT makes BinMapper wait for user response (see UIRESUME)
+% UIWAIT makes EditMetabMap wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = BinMapper_OutputFcn(hObject, eventdata, handles)
+function varargout = EditMetabMap_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -99,7 +101,8 @@ if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
         && popupCollectionNum > 0 )
     % At least one collection has been loaded & selected. Proceed.
     
-    if ( spectralDispMode == get(handles.individual_mode_radiobutton, 'Max') )
+    if ( spectralDispMode == ...
+            get(handles.individual_mode_radiobutton, 'Max') )
         
         % We are in individual spectrum display mode.
         % Draw the selected spectrum.
@@ -152,15 +155,15 @@ function repopulateMappedBinsList(handles)
 stringPropCell = '';
 if ( isfield(handles, 'currentStoredBinCount') )
     if (handles.currentStoredBinCount == 1)
-        stringPropCell = [ num2str(handles.storedBinsIDs, '%d') ',' ...
-            handles.storedBinsMetabolites{1} ',' ...
+        stringPropCell = [ handles.storedBinsMetabolites{1} ',' ...
+            num2str(handles.storedBinsPeakNums, '%d') ',' ...
             num2str(handles.storedBinsLeftBounds, '%.3f') ',' ...
             num2str(handles.storedBinsRightBounds, '%.3f') ];
     else
         stringPropCell = {};
         for i = 1:handles.currentStoredBinCount
-            stringPropCell{i} = [ num2str(handles.storedBinsIDs(i), '%d') ',' ...
-                handles.storedBinsMetabolites{i} ',' ...
+            stringPropCell{i} = [ handles.storedBinsMetabolites{i} ',' ...
+                num2str(handles.storedBinsPeakNums(i), '%d') ',' ...
                 num2str(handles.storedBinsLeftBounds(i), '%.3f') ',' ...
                 num2str(handles.storedBinsRightBounds(i), '%.3f') ];
         end;
@@ -192,16 +195,6 @@ end;
 % --- Executes during object creation, after setting all properties.
 function mapped_bins_listbox_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to mapped_bins_listbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes during object creation, after setting all properties.
-function metabolite_name_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to metabolite_name_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -263,6 +256,67 @@ function proton_id_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to proton_id_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function hmdb_id_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to hmdb_id_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function metabolite_name_popup_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to metabolite_name_popup (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+fid = fopen('Me.tab');
+if (fid > 0)
+    metabIDHeaders = textscan(fid, '%q %q', 1, 'Delimiter', ',\t');
+    metabIDs = textscan(fid, '%q %q', 'Delimiter', ',\t');
+    fclose(fid);
+    handles.metabIDs = sortrows([['0';metabIDs{1}] [' ';metabIDs{2}]], 2);
+    guidata(hObject, handles);
+    set(hObject, 'String', handles.metabIDs(:,2));
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function new_metab_name_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to new_metab_name_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function peak_num_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to peak_num_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -427,32 +481,34 @@ switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
 end;
 
 
-% --- Executes on button press in load_binmap_button.
-function load_binmap_button_Callback(hObject, eventdata, handles)
-% hObject    handle to load_binmap_button (see GCBO)
+% --- Executes on button press in load_metabmap_button.
+function load_metabmap_button_Callback(hObject, eventdata, handles)
+% hObject    handle to load_metabmap_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [filename, pathname] = uigetfile( ...
     {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
     '*.*', 'All Files (*.*)'} );
-set(handles.delete_bin_button, 'Enable', 'off');
 if ( ischar(filename) && ~isempty(filename) )
     fid = fopen([pathname filename]);
     handles.binmapHeaders = textscan(fid, ...
-        '%q %q %q %q %q %q %q %q', 1, ...
+        '%q %q %q %q %q %q %q %q %q %q %q', 1, ...
         'Delimiter', ',\t');
-    binmapData = textscan(fid, '%d %q %f %f %q %q %q %q', ...
+    binmapData = textscan(fid, '%d %d %q %f %f %q %q %q %d %q %q', ...
         'Delimiter', ',\t');
     fclose(fid);
-    handles.storedBinsIDs = binmapData{1};
-    handles.currentStoredBinCount = length(handles.storedBinsIDs);
-    handles.storedBinsMetabolites = binmapData{2};
-    handles.storedBinsLeftBounds = binmapData{3};
-    handles.storedBinsRightBounds = binmapData{4};
-    handles.storedBinsMultiplicities = binmapData{5};
-    handles.storedBinsDeconv = binmapData{6};
-    handles.storedBinsProtonIDs = binmapData{7};
-    handles.storedBinsIDSources = binmapData{8};
+    handles.storedBinsMetabIDs = binmapData{1};
+    handles.currentStoredBinCount = length(handles.storedBinsMetabIDs);
+    handles.storedBinsPeakNums = binmapData{2};
+    handles.storedBinsMetabolites = binmapData{3};
+    handles.storedBinsLeftBounds = binmapData{4};
+    handles.storedBinsRightBounds = binmapData{5};
+    handles.storedBinsMultiplicities = binmapData{6};
+    handles.storedBinsDeconv = binmapData{7};
+    handles.storedBinsProtonIDs = binmapData{8};
+    handles.storedBinsHmdbIDs = binmapData{9};
+    handles.storedBinsChenomx = binmapData{10};
+    handles.storedBinsSources = binmapData{11};
     
     % -- DCW: TODO: Add collection and spectrum ID to format
     handles.storedBinsCollectionID = ...
@@ -492,36 +548,54 @@ if ( isfield(handles, 'currentStoredBinCount') && ...
     % Error check, just in case...
     if ( isnumeric(selectedListboxIdx) && ...
             selectedListboxIdx > 0 && ...
-            selectedListboxIdx < handles.currentStoredBinCount+1 )
+            selectedListboxIdx < handles.currentStoredBinCount + 1 )
         
-        set(handles.metabolite_name_edit, 'String', ...
-            handles.storedBinsMetabolites{selectedListboxIdx});
-        set(handles.id_source_edit, 'String', ...
-            handles.storedBinsIDSources{selectedListboxIdx});
-        set(handles.proton_id_edit, 'String', ...
-            handles.storedBinsProtonIDs{selectedListboxIdx});
-        set(handles.deconvolution_edit, 'String', ...
-            handles.storedBinsDeconv{selectedListboxIdx});
-        set(handles.multiplicity_edit, 'String', ...
-            handles.storedBinsMultiplicities{selectedListboxIdx});
-        
-        leftBound = handles.storedBinsLeftBounds(selectedListboxIdx);
-        rightBound = handles.storedBinsRightBounds(selectedListboxIdx);
-        set(handles.left_bound_edit, 'String', num2str(leftBound, '%.5e'));
-        set(handles.right_bound_edit, 'String', ...
-            num2str(rightBound, '%.5e'));
-        handles.workingLeftBound = leftBound;
-        handles.workingRightBound = rightBound;
-        
-        % Remap the axes and redraw, leaving some wiggle room past the
-        % bounds. No check is needed as this button should only be enabled
-        % when there is at least one collection loaded.
-        boundDiff = abs(leftBound - rightBound)*marginWidthProportion;
-        newXLim = [ rightBound - boundDiff   leftBound + boundDiff ];
-        set(handles.axes1, 'XLim', newXLim);
-        
-        guidata(hObject, handles);
-        redrawGraph(handles);
+        metabName = handles.storedBinsMetabolites{selectedListboxIdx};
+        [metabIDTableRow, ~] = ...
+            find(ismember(upper(handles.metabIDs), upper(metabName)));
+        if (length(metabIDTableRow) == 1)
+            set(handles.metabolite_name_popup, 'Value', metabIDTableRow);
+            set(handles.id_source_edit, 'String', ...
+                handles.storedBinsSources{selectedListboxIdx});
+            set(handles.proton_id_edit, 'String', ...
+                handles.storedBinsProtonIDs{selectedListboxIdx});
+            set(handles.deconvolution_edit, 'String', ...
+                handles.storedBinsDeconv{selectedListboxIdx});
+            set(handles.multiplicity_edit, 'String', ...
+                handles.storedBinsMultiplicities{selectedListboxIdx});
+            set(handles.hmdb_id_edit, 'String', ...
+                handles.storedBinsHmdbIDs(selectedListboxIdx));
+            set(handles.peak_num_edit, 'String', ...
+                handles.storedBinsPeakNums(selectedListboxIdx));
+            chenomxColVal = ...
+                handles.storedBinsChenomx{selectedListboxIdx};
+            if (chenomxColVal == 'X')
+                set(handles.chenomx_checkbox, 'Value', 1.0);
+            else
+                set(handles.chenomx_checkbox, 'Value', 0.0);
+            end;
+            
+            leftBound = handles.storedBinsLeftBounds(selectedListboxIdx);
+            rightBound = handles.storedBinsRightBounds(selectedListboxIdx);
+            set(handles.left_bound_edit, 'String', num2str(leftBound, '%.5e'));
+            set(handles.right_bound_edit, 'String', ...
+                num2str(rightBound, '%.5e'));
+            handles.workingLeftBound = leftBound;
+            handles.workingRightBound = rightBound;
+            
+            % Remap the axes and redraw, leaving some wiggle room past the
+            % bounds. No check is needed as this button should only be enabled
+            % when there is at least one collection loaded.
+            boundDiff = abs(leftBound - rightBound)*marginWidthProportion;
+            newXLim = [ rightBound - boundDiff   leftBound + boundDiff ];
+            set(handles.axes1, 'XLim', newXLim);
+            
+            guidata(hObject, handles);
+            redrawGraph(handles);
+        else
+            msgbox('No match/Multiple matches found.', ...
+                'Cannot Complete Request', 'error', 'modal');
+        end;
     end;
 else
     msgbox('Cannot retrieve bin metadata: No binmap loaded.', ...
@@ -545,16 +619,19 @@ if (isnumeric(selectedListboxIdx) && ...
         isfield(handles, 'currentStoredBinCount') &&...
         selectedListboxIdx > 0 && ...
         selectedListboxIdx < handles.currentStoredBinCount+1)
-    handles.storedBinsIDs(selectedListboxIdx)            = [];
+    handles.storedBinsMetabIDs(selectedListboxIdx)       = [];
     handles.storedBinsMetabolites(selectedListboxIdx)    = [];
     handles.storedBinsLeftBounds(selectedListboxIdx)     = [];
     handles.storedBinsRightBounds(selectedListboxIdx)    = [];
     handles.storedBinsMultiplicities(selectedListboxIdx) = [];
     handles.storedBinsDeconv(selectedListboxIdx)         = [];
     handles.storedBinsProtonIDs(selectedListboxIdx)      = [];
-    handles.storedBinsIDSources(selectedListboxIdx)      = [];
+    handles.storedBinsSources(selectedListboxIdx)        = [];
     handles.storedBinsCollectionID(selectedListboxIdx)   = [];
     handles.storedBinsSpectrumID(selectedListboxIdx)     = [];
+    handles.storedBinsPeakNums(selectedListboxIdx)       = [];
+    handles.storedBinsHmdbIDs(selectedListboxIdx)        = [];
+    handles.storedBinsChenomx(selectedListboxIdx)        = [];
     handles.currentStoredBinCount = handles.currentStoredBinCount-1;
 end;
 if (handles.currentStoredBinCount == 0)
@@ -572,34 +649,38 @@ if ( isfield(handles, 'collections') && ...
 end;
 
 
-% --- Executes on button press in save_binmap_button.
-function save_binmap_button_Callback(hObject, eventdata, handles)
-% hObject    handle to save_binmap_button (see GCBO)
+% --- Executes on button press in save_metabmap_button.
+function save_metabmap_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_metabmap_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % -- DCW: TODO: Correctly escape or otherwise handle string fields which
 %               contain commas or other delimiting characters.
-targetfile = '';
+%targetfile = '';
 [filename, pathname] = uiputfile( ...
     {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
     '*.*', 'All Files (*.*)'} );
 if ( ischar(filename) && ischar(pathname) && ...
         ~isempty(filename) && ~isempty(pathname) )
     targetfile = fullfile(pathname,filename);
-    [fid message] = fopen(targetfile, 'w');
+    [fid ~] = fopen(targetfile, 'w');
     if ( fid > 0 )
-        fprintf(fid, ['ID,Metabolite,Bin (Lt),Bin (Rt),multiplicity,'...
-            'Deconvolution,Proton ID,ID Source\n']);
+        fprintf(fid, ['"Metabolite #","Peak #",Metabolite,"Bin (Lt)",' ...
+            '"Bin (Rt)",Multiplicity,Deconvolution,"1H Assignment",' ...
+            '"HMDB No.",Chenomx,Literature,\n']);
         for i = 1:handles.currentStoredBinCount
-            fprintf(fid, '%d,%s,%.8e,%.8e,%s,%s,%s,%s\n', ...
-                handles.storedBinsIDs(i), ...
+            fprintf(fid, '%d,%d,%s,%.8e,%.8e,%s,%s,%s,%d,%s,%s,\n', ...
+                handles.storedBinsMetabIDs(i), ...
+                handles.storedBinsPeakNums(i), ...
                 handles.storedBinsMetabolites{i}, ...
                 handles.storedBinsLeftBounds(i), ...
                 handles.storedBinsRightBounds(i), ...
                 handles.storedBinsMultiplicities{i}, ...
                 handles.storedBinsDeconv{i}, ...
                 handles.storedBinsProtonIDs{i}, ...
-                handles.storedBinsIDSources{i});
+                handles.storedBinsHmdbIDs(i), ...
+                handles.storedBinsChenomx{i}, ...
+                handles.storedBinsSources{i});
         end;
         fclose(fid);
     end;
@@ -669,13 +750,16 @@ function append_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to append_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if ( isfield(handles, 'storedBinsIDs') )
+if ( isfield(handles, 'storedBinsMetabIDs') )
     % We've got bins loaded already. Append the new bin to the structure.
-    nextBinID = max(handles.storedBinsIDs)+1;
-    handles.currentStoredBinCount = handles.currentStoredBinCount+1;
-    handles.storedBinsIDs(handles.currentStoredBinCount) = nextBinID;
+    handles.currentStoredBinCount = handles.currentStoredBinCount + 1;
+    metabPopupIdx = get(handles.metabolite_name_popup, 'Value');
+    metabID = handles.metabIDs{metabPopupIdx, 1};
+    metabName = handles.metabIDs{metabPopupIdx, 2};
+    handles.storedBinsMetabIDs(handles.currentStoredBinCount) = ...
+        str2num(metabID);
     handles.storedBinsMetabolites{handles.currentStoredBinCount} = ...
-        get(handles.metabolite_name_edit, 'String');
+        metabName;
     handles.storedBinsLeftBounds(handles.currentStoredBinCount) = ...
         str2num(get(handles.left_bound_edit, 'String'));
     handles.storedBinsRightBounds(handles.currentStoredBinCount) = ...
@@ -686,8 +770,17 @@ if ( isfield(handles, 'storedBinsIDs') )
         get(handles.deconvolution_edit, 'String');
     handles.storedBinsProtonIDs{handles.currentStoredBinCount} = ...
         get(handles.proton_id_edit, 'String');
-    handles.storedBinsIDSources{handles.currentStoredBinCount} = ...
+    handles.storedBinsSources{handles.currentStoredBinCount} = ...
         get(handles.id_source_edit, 'String');
+    handles.storedBinsHmdbIDs(handles.currentStoredBinCount) = ...
+        str2num(get(handles.hmdb_id_edit, 'String'));
+    handles.storedBinsPeakNums(handles.currentStoredBinCount) = ...
+        str2num(get(handles.peak_num_edit, 'String'));
+    if (get(handles.chenomx_checkbox, 'Value'))
+        handles.storedBinsChenomx{handles.currentStoredBinCount} = 'X';
+    else
+        handles.storedBinsChenomx{handles.currentStoredBinCount} = ' ';
+    end;
     handles.storedBinsCollectionID(handles.currentStoredBinCount) = ...
         0; % -- DCW: For later tracking.
     handles.storedBinsSpectrumID(handles.currentStoredBinCount) = ...
@@ -695,12 +788,13 @@ if ( isfield(handles, 'storedBinsIDs') )
 else
     % No bins yet exist. Initialize the listbox and the abstract structues
     % with the user-provided values.
-    nextBinID = 1;
     handles.currentStoredBinCount = 1;
-    handles.storedBinsIDs = nextBinID;
+    metabPopupIdx = get(handles.metabolite_name_popup, 'Value');
+    metabID = handles.metabIDs{metabPopupIdx, 1};
+    metabName = handles.metabIDs{metabPopupIdx, 2};
+    handles.storedBinsMetabIDs = metabID;
     handles.storedBinsMetabolites = {};
-    handles.storedBinsMetabolites{1} = ...
-        get(handles.metabolite_name_edit, 'String');
+    handles.storedBinsMetabolites{1} = metabName;
     handles.storedBinsLeftBounds = ...
         str2num(get(handles.left_bound_edit, 'String'));
     handles.storedBinsRightBounds = ...
@@ -714,14 +808,25 @@ else
     handles.storedBinsProtonIDs = {};
     handles.storedBinsProtonIDs{1} = ...
         get(handles.proton_id_edit, 'String');
-    handles.storedBinsIDSources = {};
-    handles.storedBinsIDSources{1} = ...
+    handles.storedBinsSources = {};
+    handles.storedBinsSources{1} = ...
         get(handles.id_source_edit, 'String');
+    handles.storedBinsHmdbIDs = ...
+        str2num(get(handles.hmdb_id_edit, 'String'));
+    handles.storedBinsPeakNums = ...
+        str2num(get(handles.peak_num_edit, 'String'));
+    handles.storedBinsChenomx = {};
+    if (get(handles.chenomx_checkbox, 'Value'))
+        handles.storedBinsChenomx{1} = 'X';
+    else
+        handles.storedBinsChenomx{1} = ' ';
+    end;
     handles.storedBinsCollectionID = ...
         0; % -- DCW: For later tracking.
     handles.storedBinsSpectrumID = ...
         0; % -- DCW: For later tracking.
 end;
+set(handles.delete_bin_button, 'Enable', 'on');
 guidata(hObject, handles);
 repopulateMappedBinsList(handles);
 
@@ -742,24 +847,24 @@ guidata(hObject, handles);
 repopulateMappedBinsList(handles);
 
 
+% --- Executes on selection change in metabolite_name_popup.
+function metabolite_name_popup_Callback(hObject, eventdata, handles)
+% hObject    handle to metabolite_name_popup (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns metabolite_name_popup contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from metabolite_name_popup
+itemIdxSelected = get(hObject,'Value');
+%if (isnumeric(itemIdxSelected) && itemIdxSelected == 2)
+%    set(handles.new_metab_name_edit, 'Enable', 'on');
+%else
+%    set(handles.new_metab_name_edit, 'Enable', 'off');
+%end;
+guidata(hObject, handles);
+
+
 % -- DCW: Spare callbacks & other hooks
-
-
-% --- Executes during object deletion, before destroying properties.
-function figure1_DeleteFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-function metabolite_name_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to metabolite_name_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of metabolite_name_edit as text
-%        str2double(get(hObject,'String')) returns contents of metabolite_name_edit as a double
-
 
 function id_source_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to id_source_edit (see GCBO)
@@ -795,3 +900,49 @@ function proton_id_edit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of proton_id_edit as text
 %        str2double(get(hObject,'String')) returns contents of proton_id_edit as a double
+
+
+% --- Executes on button press in chenomx_checkbox.
+function chenomx_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to chenomx_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of chenomx_checkbox
+
+
+function hmdb_id_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to hmdb_id_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of hmdb_id_edit as text
+%        str2double(get(hObject,'String')) returns contents of hmdb_id_edit as a double
+
+
+function new_metab_name_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to new_metab_name_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of new_metab_name_edit as text
+%        str2double(get(hObject,'String')) returns contents of new_metab_name_edit as a double
+
+
+% --- Executes when selected object is changed in set_bound_mode_uipanel.
+function set_bound_mode_uipanel_SelectionChangeFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in set_bound_mode_uipanel
+% eventdata  structure with the following fields (see UIBUTTONGROUP)
+%	EventName: string 'SelectionChanged' (read only)
+%	OldValue: handle of the previously selected object or empty if none was selected
+%	NewValue: handle of the currently selected object
+% handles    structure with handles and user data (see GUIDATA)
+
+
+function peak_num_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to peak_num_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of peak_num_edit as text
+%        str2double(get(hObject,'String')) returns contents of peak_num_edit as a double
