@@ -194,7 +194,7 @@ else
     end
 
     bin_map_filename = get(handles.bin_map_filename_box,'String');
-    bin_map = load_binmap(bin_map_filename);
+    bin_map = load_metabmap(bin_map_filename);
     if isempty(bin_map)
         uiwait(msgbox('Could not read the bin map from the given file', ...
             'Error','error'));

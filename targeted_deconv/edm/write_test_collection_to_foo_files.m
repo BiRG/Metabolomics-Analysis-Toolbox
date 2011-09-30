@@ -5,7 +5,7 @@ function write_test_collection_to_foo_files(num_spectra, use_pristine_peaks)
 %
 %   foo.xy.txt              the generated test spectrum
 %
-%   foo.bins.csv            the bin-map to use
+%   foo.bins.csv            the metab-map to use
 %
 %   foo.dec.correct.xy.txt  the correct deconvolution - the peaks used
 %                           to generate the spectrum
@@ -60,17 +60,17 @@ if nargin < 2
 end
 
 % Generate the collection
-[collection, bin_map, deconvolved, ~, peak_obj] = ...
+[collection, metab_map, deconvolved, ~, peak_obj] = ...
     compute_test_collection(num_spectra,0.3); 
 
 % Write it to the files for later auditing
 save_collection('foo.xy.txt', collection);
-save_binmap('foo.bins.csv',bin_map);
+save_metabmap('foo.bins.csv',metab_map);
 save_collection('foo.dec.correct.xy.txt', deconvolved);
 
 %Pass the new data to the figure
 setappdata(0, 'collection', collection);
-setappdata(0, 'bin_map', bin_map);
+setappdata(0, 'metab_map', metab_map);
 
 if use_pristine_peaks
     pristine_peak_xs = cell(1,num_spectra);
