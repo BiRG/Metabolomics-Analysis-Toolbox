@@ -1411,6 +1411,34 @@ else
                 block_idx = block_idx + bin.num_peaks + 1;
             end
             
+            % Write MD
+            specmd = handles.collection; % spectrum metadata fields
+            nonmdfields = ... %fields to exclude from specmd
+                intersect({'filename','input_names','x','Y', ...
+                'num_samples','collection_id','type','description', ...
+                'processing_log'}, fieldnames(specmd));
+            specmd = rmfield(specmd, nonmdfields);
+            clear('nonmdfields');
+            mdfields = fieldnames(specmd);
+            for fieldidx = 1:length(mdfields)
+                fieldname = mdfields{fieldidx};
+                % Print the field name followed by two blank columns so we
+                % align with the spectrum columns
+                fprintf(excel_fid,'"%s",,', fieldname);
+                md_vals = specmd.(fieldname);
+                % Print the values delimited with "" if any is not a number
+                % otherwise all are numbers and "" are not needed
+                is_string_field = any(isnan(str2double(md_vals)));
+                if is_string_field
+                    fprintf(excel_fid,',"%s"', md_vals{:});
+                else
+                    fprintf(excel_fid,',%s', md_vals{:});
+                end
+                % End the line
+                fprintf(excel_fid,'\n');
+            end
+            
+            % Done
             fclose(excel_fid);
         end
         
