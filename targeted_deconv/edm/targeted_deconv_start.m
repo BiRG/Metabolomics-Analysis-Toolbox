@@ -189,14 +189,14 @@ else
 
     % Start by loading the bin map
     if ~bin_map_filename_is_initialized(handles)
-        uiwait(msgbox('No valid bin map file was given.','Error','error'));
+        uiwait(msgbox('No valid metab map file was given.','Error','error'));
         return;
     end
 
     bin_map_filename = get(handles.bin_map_filename_box,'String');
-    bin_map = load_binmap(bin_map_filename);
+    bin_map = load_metabmap(bin_map_filename);
     if isempty(bin_map)
-        uiwait(msgbox('Could not read the bin map from the given file', ...
+        uiwait(msgbox('Could not read the metab map from the given file', ...
             'Error','error'));
         return;
     end
