@@ -3,27 +3,58 @@ classdef CompoundBin
     %compound(s)
     %   Both a a bin object as description of the compound(s) 
     
-    properties (SetAccess=private)
+    properties (SetAccess=private)        
         % Our id of the compound/bin combination - a number
         id
+        
+        % True if this bin was deleted, false otherwise
+        was_deleted
+        
+        % The BIRG id number for this metabolite (will be greater than 0)
+        metabolite_id
+        
         % String description of compound
         compound_descr
+        
+        % True if this bin is for a known metabolite, false if for peaks
+        % from an unknown metabolite
+        is_known_metabolite
+        
         % Bin object
         bin
+        
         % Multiplicity of bin (as described in binmap file)
         multiplicity
-        % True if bin is expected to be clean of other compounds
-        is_clean
-        % Id of protons in bin
+        
+        % The number of peaks to be clicked on in this compound bin
+        num_peaks
+        
+        % For a multiplet, this contains a list of the j values for the
+        % multiplet's components if they are known.  If the bin contains a
+        % singlet, then this will be empty
+        j_values
+        
+        % Id of protons in bin - the hydrogen assignment
         proton_id
-        % Source of id information
+        
+        % The HMDB acession number without the HMDB prefix
+        hmdb_id
+        
+        % True if some information was verified with Chenomx
+        chenomix_was_used
+        
+        % Source of id information - literature
         id_source
+        
+        % The isotope to which the bin applies - 1H, 13C, 31P, 14N, 15N,
+        % etc
+        nmr_isotope
+        
+        % Human-readable notes for the compound bin
+        notes
     end
     
     properties (Dependent)
-        % The number of peaks expected in this compound bin
-        num_peaks
-        
         % A nicely formatted version of the multiplicity
         readable_multiplicity
         
@@ -36,7 +67,11 @@ classdef CompoundBin
         function str=csv_file_header_string()
         % A string that represents the header for a csv file containing
         % CompoundBin objects
-            str='ID,Metabolite,Bin (Lt),Bin (Rt),Multiplicity,Deconvolution,Proton ID,ID Source';
+            str=['"Bin ID","Deleted","Metabolite ID","Metabolite",'...
+                '"Known Metabolite","Bin (Lt)","Bin (Rt)",'...
+                '"Multiplicity","Peaks to Select","J (Hz)",'...
+                '"1H Assignment","HMDB No.","Chenomx","Literature",'...
+                '"NMR Nucleus","Notes"'];
         end
     end
     
