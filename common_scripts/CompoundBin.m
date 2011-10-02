@@ -73,20 +73,102 @@ classdef CompoundBin
                 '"1H Assignment","HMDB No.","Chenomx","Literature",'...
                 '"NMR Nucleus","Notes"'];
         end
+        
+        function trueorfalse=parse_csv_bool(str, value_destination)
+        % Turns str (a field from the input csv) from 'X','' to 1,0
+        %
+        % If str is 'X' or 'x' returns 1
+        % if str is '' or white-space returns 0
+        %
+        % Otherwise throws an exception with the text: 
+        %
+        % ------------
+        % - Usage
+        % ------------
+        %
+        % trueorfalse=parse_csv_bool(str, value_destination)
+        %
+        % ------------
+        % - Input Arguments
+        % ------------
+        %
+        % str               The string to parse
+        % value_destination The destination where the value will be put -- 
+        %                   will be used in the error message
+        % ------------
+        % - Output Parameters
+        % ------------
+        %
+        % trueorfalse   the result of parsing str into a true or a false value
+        %
+        %
+        % ------------
+        % - Examples
+        % ------------
+        %
+        % >> parse_csv_bool('X', 'foobar')
+        %
+        % 1
+        %
+        % >> parse_csv_bool('', 'foobar')
+        %
+        % 0
+        %
+        % >> parse_csv_bool(' ', 'foobar')
+        %
+        % 0
+        %
+        % >> parse_csv_bool('something', 'foobar')
+        %
+        % (exception thrown here)
+
+
+        if     ~isempty(regexp(str, '^[Xx]$', 'once'))
+            trueorfalse = 1==1;
+        elseif isempty(str) || ~isempty(regexp(str, '^\s*$', 'once')) 
+            trueorfalse = 0==1;
+        else
+            error('CompoundBin:bad_bool',['The input for "%s" should have been '...
+                'an "X" for true or a blank "" for false.  Instead '...
+                '"%s" was passed.'], value_destination, str);
+        end
+        end
     end
     
     methods
-        function obj=CompoundBin(bin_map_line)
-        % bin_map_line is an array containing the result of parsing the csv
-        % line in the binmap file
+        function obj=CompoundBin(metab_map_line)
+        % metab_map_line is an array containing the result of parsing the csv
+        % line in the metabmap file
+        %
+        % Throws readable exceptions that can be used for input validation
+        % if you just throw user-input into the appropriate boxes.
+        % However, it is assumed that the caller will translate checkboxes
+        % into 'X' and '' for boolean true and false respectively
+        
             if nargin>0 %Make a default constructor that doesn't initialize
-                obj.id = bin_map_line{1};   
-                obj.compound_descr = bin_map_line{2};
-                obj.bin = SpectrumBin(bin_map_line{3}, bin_map_line{4});
-                obj.multiplicity = bin_map_line{5};
-                obj.is_clean = (isequal(lower(bin_map_line{6}),'clean'));
-                obj.proton_id=bin_map_line{7};
-                obj.id_source=bin_map_line{8};
+                obj.id=metab_map_line{1};
+                obj.was_deleted=CompoundBin.parse_csv_bool(...
+                    metab_map_line{2}, 'was deleted');
+                obj.metabolite_id=metab_map_line{3};
+                obj.compound_descr=metab_map_line{4};
+                obj.is_known_metabolite=CompoundBin.parse_csv_bool(...
+                    metab_map_line{5}, 'is known metabolite');
+                obj.bin=SpectrumBin(metab_map_line{6}, metab_map_line{7});
+                obj.multiplicity=metab_map_line{8};
+                obj.num_peaks=metab_map_line{9};
+                if isnumeric(metab_map_line{10})
+                    obj.j_values=metab_map_line{10};
+                else
+                    obj.j_values=str2double(regexp(metab_map_line{10},...
+                        '\s*,\s*','split'));
+                end
+                obj.proton_id=metab_map_line{11};
+                obj.hmdb_id=metab_map_line{12};
+                obj.chenomix_was_used=CompoundBin.parse_csv_bool(...
+                    metab_map_line{13}, 'chenomix was used');
+                obj.id_source=metab_map_line{14};
+                obj.nmr_isotope=metab_map_line{15};
+                obj.notes=metab_map_line{16};
             end
         end
         
@@ -155,7 +237,7 @@ classdef CompoundBin
             r = i & cd & bn & mu & ic & pi & is;
         end
 
-    end
-    
+    end    
 end
+
 
