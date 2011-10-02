@@ -39,17 +39,66 @@ function testParseCSVBoolGarbage %#ok<DEFNU>
 f=@() CompoundBin.parse_csv_bool('bad','some input var');
 assertExceptionThrown(f,'CompoundBin:bad_bool');
 
+function testValidMultABDoubletNoConcat %#ok<DEFNU>
+% Test that 'half of AB d' concatenated with something is not valid
+
+assertFalse(CompoundBin.is_valid_multiplicity_string('half of AB ds'));
+            
 function testCompoundBinConstructor %#ok<DEFNU>
 % Test that the constructor constructs what we'd expect
 
-in = {1,'',101,'Unobtanium','X',101.1,100.0,...
-	't',2,50,'CH5',[],'X','Some refs',...
-	'1H','Here are some notes to read'};
+in = ['1,"",101,"Unobtanium","X",'...
+    '101.1,100.0,'...
+	'"t",2,"50","CH5",,"X","Some refs",'...
+	'"1H","Here are some notes to read"'];
 
-c = CompoundBin(in);
+c = CompoundBin(CompoundBin.csv_file_header_string,in);
 
-assertEqual(c.id,1);
+assertEqual(uint64(c.id),uint64(1));
+assertFalse(c.was_deleted);
+assertEqual(uint64(c.compound_id), uint64(101));
+assertEqual(c.compound_name, 'Unobtanium');
+assertTrue(c.is_known_compound);
+assertEqual(c.bin.left,101.1);
+assertEqual(c.bin.right,100.0);
+assertEqual(c.multiplicity, 't');
+assertEqual(uint64(c.num_peaks), uint64(2));
+assertEqual(c.j_values, 50);
+assertEqual(c.nucleus_assignment, 'CH5');
+assertTrue(isnan(c.hmdb_id));
+assertTrue(c.chenomix_was_used);
+assertEqual(c.literature, 'Some refs');
+assertEqual(c.nmr_isotope, '1H');
+assertEqual(c.notes, 'Here are some notes to read');
 
-            
+function testCompoundBinConstructorRevTruth %#ok<DEFNU>
+% Test that the constructor constructs what we'd expect when the truth
+% values of the booleans are reversed
+
+in = ['1,"X",101,"Unobtanium"," ",'...
+    '101.1,100.0,'...
+	'"t",2,"50","CH5",," ","Some refs",'...
+	'"1H","Here are some notes to read"'];
+
+c = CompoundBin(CompoundBin.csv_file_header_string,in);
+
+assertEqual(uint64(c.id),uint64(1));
+assertTrue(c.was_deleted);
+assertEqual(uint64(c.compound_id), uint64(101));
+assertEqual(c.compound_name, 'Unobtanium');
+assertFalse(c.is_known_compound);
+assertEqual(c.bin.left,101.1);
+assertEqual(c.bin.right,100.0);
+assertEqual(c.multiplicity, 't');
+assertEqual(uint64(c.num_peaks), uint64(2));
+assertEqual(c.j_values, 50);
+assertEqual(c.nucleus_assignment, 'CH5');
+assertTrue(isnan(c.hmdb_id));
+assertFalse(c.chenomix_was_used);
+assertEqual(c.literature, 'Some refs');
+assertEqual(c.nmr_isotope, '1H');
+assertEqual(c.notes, 'Here are some notes to read');
+
+
 
 
