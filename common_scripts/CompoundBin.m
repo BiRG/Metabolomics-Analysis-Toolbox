@@ -238,7 +238,7 @@ classdef CompoundBin
         %
         %
         % Known headers are:
-        %  1. "Bin ID","Deleted","Compound ID","Compound","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB No.","Chenomx","Literature","NMR Isotope","Notes"
+        %  1. "Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Chenomx","Literature","NMR Isotope","Notes"
         %
         % ---------
         % - Usage
