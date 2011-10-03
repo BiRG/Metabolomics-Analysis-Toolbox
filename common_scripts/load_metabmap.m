@@ -12,27 +12,39 @@ if fid == -1
     return;
 end
 
-%Check header to ensure file format is correct
-expected_header={{'ID'},{'Metabolite'},{'Bin (Lt)'},{'Bin (Rt)'},{'Multiplicity'},{'Deconvolution'},{'Proton ID'},{'ID Source'}};
-header = textscan(fid, '%q %q %q %q %q %q %q %q',1,'Delimiter',',');
-if ~isequal(header,expected_header)
-    msgbox('The metab-map header did not match the expected metab map header.','Error','error');
+header = fgetl(fid);
+metabmap = {};
+if ischar(header)
+    while true
+        line = fgetl(fid);
+        if ischar(line)
+            try
+                metabmap{end+1} = CompoundBin(header, line); %#ok<AGROW>
+            catch err
+                if isequal(err.identifier, 'CompoundBin:unknown_header')
+                    msgbox(['The metab-map had an unrecognized header: "'...
+                        header '"'],'Error','error');
+                    metabmap = {};
+                    return;
+                else
+                    msgbox(['Problem creating bin from metab-map file ' ...
+                        'line.  The line was: ' line ...
+                        'The error message was: ' err.message ], ...
+                        'Error','error');
+                    metabmap = {};
+                    return;
+                end
+            end
+        else
+            break;
+        end
+    end
+else
+    msgbox('The metab-map file was empty','Error','error');
     metabmap = {};
     return;
 end
 
-%Read rows from file
-rows = textscan(fid,'%f %q %f %f %q %q %q %q','Delimiter',',');
-
-%Convert rows to bins
-numbins = length(rows{1});
-metabmap(numbins)=CompoundBin;
-for idx=1:numbins
-    metabmap(idx)=CompoundBin([...
-        rows{1}(idx), rows{2}(idx), rows{3}(idx), rows{4}(idx), ...
-        rows{5}(idx), rows{6}(idx), rows{7}(idx), rows{8}(idx), ...
-        ]);
-end
 
 end
 

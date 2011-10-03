@@ -147,6 +147,29 @@ assertEqual(c.literature, 'Some refs');
 assertEqual(c.nmr_isotope, '1H');
 assertEqual(c.notes, 'Here are some notes to read');
 
+function testCompoundBinConstructorMethylnicotinamide %#ok<DEFNU>
+% Test that the constructor constructs what we'd expect for 1-
+% methlynicotinamide
+
+in = '1,,1,"1-Methylnicotinamide","X",9.297,9.265,"s",1,,"CH2, H2",699,"X","Lindon, year?","1H",';
+c = CompoundBin(CompoundBin.csv_file_header_string,in);
+
+assertEqual(uint64(c.id),uint64(1));
+assertFalse(c.was_deleted);
+assertEqual(uint64(c.compound_id), uint64(1));
+assertEqual(c.compound_name, '1-Methylnicotinamide');
+assertTrue(c.is_known_compound);
+assertEqual(c.bin.left,9.297);
+assertEqual(c.bin.right,9.265);
+assertEqual(c.multiplicity, 's');
+assertEqual(uint64(c.num_peaks), uint64(1));
+assertTrue(isempty(c.j_values));
+assertEqual(c.nucleus_assignment, 'CH2, H2');
+assertEqual(uint64(c.hmdb_id),uint64(699));
+assertTrue(c.chenomix_was_used);
+assertEqual(c.literature, 'Lindon, year?');
+assertEqual(c.nmr_isotope, '1H');
+assertEqual(c.notes, '');
 
 
 

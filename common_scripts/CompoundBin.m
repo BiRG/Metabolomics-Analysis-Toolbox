@@ -477,7 +477,7 @@ classdef CompoundBin
                     
                     
                     hid = d{12}{1}; % HMDB id line
-                    if isempty(hid) || regexp(hid,'^\s*$')
+                    if isempty(hid) || ~isempty(regexp(hid,'^\s*$','once'))
                         obj.hmdb_id = nan;
                     else
                         obj.hmdb_id=str2double(hid);
@@ -492,30 +492,41 @@ classdef CompoundBin
                         d{13}{1}, 'chenomix was used');
                     
                     
-                    obj.literature=d{14}{1};
-                    if ~isempty(strfind(obj.literature,'"'))
-                        error('CompoundBin:literature_has_quote', ...
-                            ['The literature field cannot contain '...
-                            'quotation marks (")']);
+                    if isempty(d{14})
+                        obj.literature = '';
+                    else
+                        obj.literature=d{14}{1};
+                        if ~isempty(strfind(obj.literature,'"'))
+                            error('CompoundBin:literature_has_quote', ...
+                                ['The literature field cannot contain '...
+                                'quotation marks (")']);
+                        end
                     end
                     
-                    obj.nmr_isotope=d{15}{1};
-                    if isempty(regexp(obj.nmr_isotope,'^\d{1,3}[A-Z][a-z]{0,2}$','once'))
-                        error('CompoundBin:isotope_bad_format', ...
-                            ['The nmr isotope be a series of 1 to 3 '...
-                            'digits followed by a capital letter and '...
-                            'up to 2 more lower case letters.  For '...
-                            'example: "1H" and "6Li" would be valid, ' ...
-                            'but "1h", "6LI", and "P" would not.']);
+                    if isempty(d{15})
+                        obj.nmr_isotope='';
+                    else
+                        obj.nmr_isotope=d{15}{1};
+                        if isempty(regexp(obj.nmr_isotope,'^\d{1,3}[A-Z][a-z]{0,2}$','once'))
+                            error('CompoundBin:isotope_bad_format', ...
+                                ['The nmr isotope be a series of 1 to 3 '...
+                                'digits followed by a capital letter and '...
+                                'up to 2 more lower case letters.  For '...
+                                'example: "1H" and "6Li" would be valid, ' ...
+                                'but "1h", "6LI", and "P" would not.']);
+                        end
                     end
                     
-                    obj.notes=d{16}{1};
-                    if ~isempty(strfind(obj.notes,'"'))
-                        error('CompoundBin:notes_has_quote', ...
-                            ['The notes field cannot contain '...
-                            'quotation marks (")']);
+                    if isempty(d{16})
+                        obj.notes = '';
+                    else
+                        obj.notes=d{16}{1};
+                        if ~isempty(strfind(obj.notes,'"'))
+                            error('CompoundBin:notes_has_quote', ...
+                                ['The notes field cannot contain '...
+                                'quotation marks (")']);
+                        end
                     end
-                    
                 else
                     error('CompoundBin:unknown_header', ...
                         ['The header line passed to the CompoundBin '...
