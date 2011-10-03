@@ -58,7 +58,7 @@
 58,,56,"U4.042",,4.07,4,"s",1,,,,,,"1H",
 59,,55,"U4.019",,4.05,4,"s",1,,,,,,"1H",
 60,,54,"U2.784",,2.805,2.77,"s",1,,,,,,"1H",
-61,,52,"Tryptophan","X",7.245,7.19,"t",3,,,929,,,"1H","In old bin map, was ""Tryprophan"" Eric assumed Tryptophan was intended and added that HMDB number.  The HMDB entry in that area gives the multiplet as a ""dt"", not sure what that means.  Adapted from old bin map by Eric"
+61,,52,"Tryptophan","X",7.245,7.19,"t",3,,,929,,,"1H","In old bin map, was 'Tryprophan' Eric assumed Tryptophan was intended and added that HMDB number.  The HMDB entry in that area gives the multiplet as a 'dt', not sure what that means.  Adapted from old bin map by Eric"
 62,,1,"1-Methylnicotinamide","X",4.492,4.475,"s",1,,,699,"X","Chemonx","1H",
 63,,1,"1-Methylnicotinamide","X",8.990,8.952,"d",2,6.14,"CH6, H6",699,"X","Lindon, year?","1H",
 64,,29,"a-hydroxyisobutyrate","X",1.389,1.375,"s",1,,"CH3",,"X","Chenomx/Lindon/Measured","1H",
