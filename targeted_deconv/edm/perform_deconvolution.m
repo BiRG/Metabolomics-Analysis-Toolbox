@@ -1,4 +1,4 @@
-function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA)
+function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA, model)
 %Helper function doing the curve fitting for region_deconvolution.
 %
 % Returns the best fit model starting at BETA0 given x_baseline_BETA, the
@@ -13,29 +13,35 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 % Input arguments
 % -------------------------------------------------------------------------
 %
-% x                  The x values for the input spectrum (frequently ppm)
+% x                      The x values for the input spectrum (frequently 
+%                        ppm)
 %
-% y                  The y values for the input spectrum
+% y                      The y values for the input spectrum
 %
-% BETA0              A 1 dimensional array of doubles.
+% BETA0                  A 1 dimensional array of doubles.
 %
-%                    Every 4 items are the starting parameters for one peak
-%                    in the order M, G, P, x0.
+%                        Every 4 items are the starting parameters for one
+%                        peak in the order M, G, P, x0.
 %
-%                    M  is the height parameter
-%                    G  is the width parameter,
-%                    P  is the proportion of Lorenzianness (1=lorenzian,
-%                       0=gaussian)
-%                    x0 is the location parameter, the location of the 
-%                       peak.
+%                        M  is the height parameter
+%                        G  is the width parameter,
+%                        P  is the proportion of Lorenzianness 
+%                           (1=lorenzian, 0=gaussian)
+%                        x0 is the location parameter, the location of 
+%                           the peak.
 %
-% lb                 The lower bound on the corresponding entry in BETA0
+% lb                     The lower bound on the corresponding entry in
+%                        BETA0
 %
-% ub                 The upper bound on the corresponding entry in BETA0
+% ub                     The upper bound on the corresponding entry in BETA0
 %
-% x_baseline_width   Not sure about this, probably the interval between the
-%                    points that can be adjusted on the baseline.  Same as
-%                    the parameter to region_deconvolution
+% x_baseline_width       Not sure about this, probably the interval
+%                        between the points that can be adjusted on the
+%                        baseline.  Same as the parameter to
+%                        region_deconvolution.
+%
+% model                  RegionalSpectrumModel giving the assumptions
+%                        governing this deconvolution
 %
 % -------------------------------------------------------------------------
 % Output parameters
@@ -44,7 +50,7 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 % BETA      The parameters of the peaks (see BETA0).  Will have the same
 %           dimensions as BETA0
 %
-% EXITFLAG  The same as the exit flag from LSQCURVEFIT.  Quoting from 
+% EXITFLAG  The same as the exit flag from LSQNONLIN.  Quoting from 
 %           there:
 %
 %                    
@@ -73,11 +79,12 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 %           -3 Regularization parameter became too large 
 %              (levenberg-marquardt algorithm). 
 %
-%           -4 Optimization could not make further progress.
+%           -4 Line search could not sufficiently decrease the residual 
+%              along the current search direction.
 
-model = @(PARAMS,x_) (global_model(PARAMS,x_,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA));
+model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y, model));
 
-options = optimset('lsqcurvefit');
+options = optimset('lsqnonlin');
 %options = optimset(options,'MaxIter',10);
 options = optimset(options,'Display','off');
 %options = optimset(options,'MaxFunEvals',100);
@@ -89,12 +96,9 @@ ub(to_swap)=lb(to_swap);
 lb(to_swap)=tmp;
 
 % Do the fit
-[BETA,R,RESIDUAL,EXITFLAG] = lsqcurvefit(model,BETA0,x,y,lb,ub,options); %#ok<ASGLU>
+[BETA,R,RESIDUAL,EXITFLAG] = lsqnonlin(model_func,BETA0,lb,ub,options); %#ok<ASGLU>
 
 if EXITFLAG < 0
     BETA = BETA0;
     fprintf('EXITFLAG: %d',EXITFLAG);
 end
-
-% y_fit = global_model(BETA,x,y);
-

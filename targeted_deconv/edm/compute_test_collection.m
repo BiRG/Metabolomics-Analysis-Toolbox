@@ -126,7 +126,7 @@ end
 cur_bin=cur_bin + 1;
 cur_id = cur_bin+999999;
 bin_map(cur_bin) = ...
-    CompoundBin({cur_id,'10w 40+/-1h singlet congested all seen',650, 550,'s','clean','U05', ...
+    CompoundBin({cur_id,'10w 40+/-1h singlet congested all seen',650, 550,'s','clean','U06', ...
     'TestSpectrum'});
 
 peak_num = peak_num + 1;
@@ -137,8 +137,8 @@ for i=1:num_spectra
 end
 
 
-congestion_xs=[597	598	608	606	581 599	590	605	632	577 564	587];
-congestion_hs=[13	10	20	18	13	13	12	14	14	12	10	13];
+congestion_xs=[564	577	581	587	590	597	598	599	605	606	608	632];
+congestion_hs=[10	12	13	13	12	13	10	13	14	18	20	14];
 num_congestion=length(congestion_xs);
 for congestion_idx = 1:num_congestion
     for i=1:num_spectra
@@ -157,7 +157,7 @@ peak_num=peak_num+num_congestion;
 cur_bin=cur_bin + 1;
 cur_id = cur_bin+999999;
 bin_map(cur_bin) = ...
-    CompoundBin({cur_id,'10w 40+/-1h singlet less congested all seen',850, 750,'s','overlap','U05', ...
+    CompoundBin({cur_id,'10w 40+/-1h singlet less congested all seen',850, 750,'s','overlap','U07', ...
     'TestSpectrum'});
 
 peak_num = peak_num + 1;
@@ -168,8 +168,8 @@ for i=1:num_spectra
 end
 
 
-congestion_xs=[828	823	777	821	813];
-congestion_hs=[10	19	16	20	15];
+congestion_xs=[777	813	821	823	828];
+congestion_hs=[16	15	20	19	10];
 num_congestion=length(congestion_xs);
 for congestion_idx = 1:num_congestion
     for i=1:num_spectra
