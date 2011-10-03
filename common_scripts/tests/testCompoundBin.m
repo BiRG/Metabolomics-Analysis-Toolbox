@@ -17,6 +17,18 @@ function testReadAll %#ok<DEFNU>
 map = load_metabmap(fullfile(data_dir, 'testCompoundBin.01.readall.csv'));
 assertEqual(length(map),78);
 assertTrue(isa(map, 'CompoundBin'));
+
+function testSaveAll %#ok<DEFNU>
+% Tests whether save_metabmap works in a round-trip with load_metabmap
+%
+% loads from test file, saves to testCompoundBin.02.saveall.csv, then loads
+% again and compares to see if the values saved are the same as those
+% loaded
+map1 = load_metabmap(fullfile(data_dir, 'testCompoundBin.01.readall.csv'));
+save_metabmap(fullfile(data_dir, 'testCompoundBin.02.saveall.csv'),map1);
+map2 = load_metabmap(fullfile(data_dir, 'testCompoundBin.02.saveall.csv'));
+assertEqual(map1, map2);
+
     
 function testParseCSVBoolX %#ok<DEFNU>
 % Test if CompoundBin.parse_csv_bool parses an x input correctly
