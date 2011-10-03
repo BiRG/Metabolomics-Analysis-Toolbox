@@ -1,4 +1,4 @@
-"Bin ID","Deleted","Metabolite ID","Metabolite","Known Metabolite","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","1H Assignment","HMDB No.","Chenomx","Literature","NMR Nucleus","Notes"
+"Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Chenomx","Literature","NMR Isotope","Notes"
 1,,1,"1-Methylnicotinamide","X",9.297,9.265,"s",1,,"CH2, H2",699,"X","Lindon, year?","1H",
 2,,1,"1-Methylnicotinamide","X",8.922,8.880,"d",2,8.2,"CH4",699,"X","Lindon, year?","1H",
 3,,4,"hippurate","X",7.857,7.815,"d",2,,"CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"
