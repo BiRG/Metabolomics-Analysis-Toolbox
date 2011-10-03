@@ -234,6 +234,46 @@ classdef CompoundBin
         % Takes a multiplicity string and returns a more readable version
         %
         % Throws an exception on error
+        %
+        % ------------
+        % - Usage
+        % ------------
+        %
+        % result = CompoundBin.human_readable_multiplicity(str)
+        %
+        % ------------
+        % - Input Arguments
+        % ------------
+        %
+        % str  A multiplicity string.  i.e. 'dd' or 's' or 'half of AB d'
+        %
+        % ------------
+        % - Output Parameters
+        % ------------
+        %
+        % result A human-readable version of str i.e dd->doublet of
+        %        doublets
+        %
+        % ------------
+        % - Examples
+        % ------------
+        %
+        % >> CompoundBin.human_readable_multiplicity('s')
+        %
+        % singlet
+        %
+        % >> CompoundBin.human_readable_multiplicity('dt')
+        %
+        % doublet of triplets
+        %
+        % >> CompoundBin.human_readable_multiplicity('td')
+        %
+        % triplet of doublets
+        %
+        % >> CompoundBin.human_readable_multiplicity('s,s')
+        %
+        % singlet, singlet
+        %
             %Split on commas
             str = lower(str);
             fields = regexp(str, '\s*,\s*', 'split');
