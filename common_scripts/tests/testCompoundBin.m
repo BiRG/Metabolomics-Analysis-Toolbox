@@ -171,5 +171,24 @@ assertEqual(c.literature, 'Lindon, year?');
 assertEqual(c.nmr_isotope, '1H');
 assertEqual(c.notes, '');
 
+function testGetAsCsvStringHippurate %#ok<DEFNU>
+% Test that when an object for bin 3 (hippurate) is converted to csv, the result is the same as the input 
+%
+% Hippurate 3 has no listed j-value
+
+in ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+c = CompoundBin(CompoundBin.csv_file_header_string,in);
+out = c.as_csv_string;
+
+assertEqual(in, out);
 
 
+function testGetAsCsvStringMalate %#ok<DEFNU>
+% Test that when an object for bin 6 (malate) is converted to csv, the result is the same as the input 
+%
+% Malate has two known j-values
+in = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+c = CompoundBin(CompoundBin.csv_file_header_string,in);
+out = c.as_csv_string;
+
+assertEqual(in, out);

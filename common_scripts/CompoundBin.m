@@ -399,7 +399,7 @@ classdef CompoundBin
             if nargin>0 %Make a default constructor that doesn't initialize
                 if isequal(header_line,CompoundBin.csv_file_header_string)
                     d = textscan(data_line, ...
-                        ['%d %q %d %q '... to Compound
+                        ['%d %q %d %q '... to Compound Name
                          '%q %f %f '   ... to Bin (Rt)
                          '%q %d %q '   ... to J (Hz)
                          '%q %q %q '   ... to Chenomix
@@ -585,16 +585,54 @@ classdef CompoundBin
         
         function str=get.as_csv_string(obj)
         % Getter method returning the value of as_csv_string
-            if obj.is_clean
-                clean_str = 'clean';
-            else
-                clean_str = 'overlap';
+        
+            % Fields:
+            %
+            %['"Bin ID","Deleted","Compound ID","Compound Name",'...
+            % '"Known Compound","Bin (Lt)","Bin (Rt)",'...
+            % '"Multiplicity","Peaks to Select","J (Hz)",'...
+            % '"Nucleus Assignment","HMDB ID","Chenomx",'...
+            % '"Literature","NMR Isotope","Notes"'];
+
+            format=['%d,"%s",%d,"%s",'... to Compound Name
+                    '"%s",%f,%f,'     ... to Bin (Rt)
+                    '"%s",%d,"%s",'   ... to J (Hz)
+                    '"%s",%s,"%s",' ... to Chenomix
+                    '"%s","%s","%s"'];
+
+            str = sprintf(format, ...
+                    obj.id, bool2str(obj.was_deleted), obj.compound_id, obj.compound_name, ...
+                    bool2str(obj.is_known_compound), obj.bin.left, obj.bin.right, ...
+                    obj.multiplicity, obj.num_peaks, farray2str(obj.j_values), ...
+                    obj.nucleus_assignment, hmdbstr(obj.hmdb_id), bool2str(obj.chenomix_was_used),...
+                    obj.literature, obj.nmr_isotope, obj.notes);
+                
+            function hs=hmdbstr(h)
+                %Convert the hmdb number to either an integer or a '' if nan
+                if isnan(h)
+                    hs = '';
+                else
+                    hs = sprintf('%d',h);
+                end
             end
-            
-            str = sprintf('%d,"%s",%f,%f,"%s","%s","%s","%s"', ...
-                obj.id, obj.compound_name, ...
-                obj.bin.left, obj.bin.right, obj.multiplicity, ...
-                clean_str, obj.nucleus_assignment, obj.literature);
+            function ss=farray2str(a)
+                %Convert an array of floats to a comma-separated string
+                if isempty(a)
+                    ss = '';
+                elseif length(a) == 1
+                    ss = sprintf('%f',a(1));
+                else
+                    ss = sprintf('%s%f',sprintf('%f, ',a(1:end-1)),a(end));
+                end
+            end
+            function s=bool2str(bool)
+                %Convert a bool to a string that is either 'X' or ''
+                if bool
+                    s = 'X';
+                else
+                    s = '';
+                end
+            end
         end
         
         function r = eq(a,b)
