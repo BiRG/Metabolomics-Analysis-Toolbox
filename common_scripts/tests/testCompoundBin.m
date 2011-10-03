@@ -43,7 +43,55 @@ function testValidMultABDoubletNoConcat %#ok<DEFNU>
 % Test that 'half of AB d' concatenated with something is not valid
 
 assertFalse(CompoundBin.is_valid_multiplicity_string('half of AB ds'));
-            
+
+function testValidMultLotsOfTests %#ok<DEFNU>
+% Implements the tests from the original "Examples" section of the comments
+% for is_valid_multiplicity_string
+
+% Good strings
+assertTrue(CompoundBin.is_valid_multiplicity_string('d'));
+assertTrue(CompoundBin.is_valid_multiplicity_string('t'));
+assertTrue(CompoundBin.is_valid_multiplicity_string('half of AB d'));
+assertTrue(CompoundBin.is_valid_multiplicity_string('m'));
+assertTrue(CompoundBin.is_valid_multiplicity_string('m,d'));
+assertTrue(CompoundBin.is_valid_multiplicity_string('s,s'));
+assertTrue(CompoundBin.is_valid_multiplicity_string('dt'));
+assertTrue(CompoundBin.is_valid_multiplicity_string('half of AB d,s'));
+
+
+% Bad strings
+assertFalse(CompoundBin.is_valid_multiplicity_string('xl'));
+assertFalse(CompoundBin.is_valid_multiplicity_string('t,'));
+assertFalse(CompoundBin.is_valid_multiplicity_string(',t'));
+assertFalse(CompoundBin.is_valid_multiplicity_string('rv'));
+assertFalse(CompoundBin.is_valid_multiplicity_string('ds'));
+assertFalse(CompoundBin.is_valid_multiplicity_string('half of AB ds'));
+assertFalse(CompoundBin.is_valid_multiplicity_string(''));
+
+
+function testHumReadMult %#ok<DEFNU>
+% Tests CompoundBin.human_readable_multiplicity
+assertEqual(CompoundBin.human_readable_multiplicity('s'),'singlet');
+assertEqual(CompoundBin.human_readable_multiplicity('d'),'doublet');
+assertEqual(CompoundBin.human_readable_multiplicity('t'),'triplet');
+assertEqual(CompoundBin.human_readable_multiplicity('q'),'quartet');
+assertEqual(CompoundBin.human_readable_multiplicity('m'), ...
+    'multiplet');
+assertEqual(CompoundBin.human_readable_multiplicity('half of AB d'), ...
+    'half of AB doublet');
+assertEqual(CompoundBin.human_readable_multiplicity('m,d'), ...
+    'multiplet, doublet');
+assertEqual(CompoundBin.human_readable_multiplicity('s,s'), ...
+    'singlet, singlet');
+assertEqual(CompoundBin.human_readable_multiplicity('dt'), ... 
+    'doublet of triplets');
+assertEqual(CompoundBin.human_readable_multiplicity('dtq'), ... 
+    'doublet of triplet of quartets');
+assertEqual(CompoundBin.human_readable_multiplicity('half of AB d,s'), ... 
+    'half of AB doublet, singlet');
+
+
+
 function testCompoundBinConstructor %#ok<DEFNU>
 % Test that the constructor constructs what we'd expect
 

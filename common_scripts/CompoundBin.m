@@ -219,9 +219,96 @@ classdef CompoundBin
         %
         % 0
         %
-        
-            %TODO: finish
             is_valid = 1==1;
+            try
+                CompoundBin.human_readable_multiplicity(str);
+            catch  %#ok<CTCH>
+                is_valid = 1==0;
+            end
+                
+        end
+        
+        
+        
+        function result = human_readable_multiplicity(str)
+        % Takes a multiplicity string and returns a more readable version
+        %
+        % Throws an exception on error
+            %Split on commas
+            str = lower(str);
+            fields = regexp(str, '\s*,\s*', 'split');
+            
+            %Make each segment readable
+            hr_fields = fields;
+            for i=1:length(fields)
+                hr_fields{i} = do_field(fields{i});
+            end
+            
+            %Join with commas
+            result = sprintf('%s%s',sprintf('%s, ',hr_fields{1:end-1}),hr_fields{end});
+            
+            function fresult = do_field(field)
+            % Makes a lower-case sub-part of a multiplicity string human-readable
+            %
+            % Throws an exception on error
+                if     isempty(field)
+                    error('CompoundBin_multiplet:no_empty_field', ...
+                        ['Empty fields are not allowed in multiplet ' ...
+                        'descriptions. So, for example, "d,,t" is not '...
+                        'legal.']);
+                elseif isequal(field,'half of ab d')
+                    fresult = 'half of AB doublet';
+                    return;
+                elseif ~isempty(strfind(field, 'half of ab d'))
+                    error('CompoundBin_multiplet:no_ab_combo', ...
+                        ['It is not legal to combine half of an ab ' ...
+                        'doublet with other types of multiplets to ' ...
+                        'make more complicated couplings.  For '...
+                        'example half of AB doublet of triplets is ' ...
+                        'not a legal multiplet description.  Thus "' ...
+                        field '" is not a legal description.']);
+                elseif isequal(field,'s')
+                    fresult = 'singlet';
+                    return;
+                elseif ~isempty(strfind(field, 's'))
+                    error('CompoundBin_multiplet:no_singlet_combo', ...
+                        ['It is not legal to concatenate singlets' ...
+                        'with other types of multiplets to ' ...
+                        'make more complicated couplings.  For '...
+                        'example singlet of triplets ("st") is ' ...
+                        'not a legal multiplet description.  Thus "' ...
+                        field '" is not a legal description.']);
+                end
+                
+                %Here we have a non-empty field that does not have a 'half
+                %of ab doublet string in it'
+                for j = 1:length(field)
+                    switch field(j)
+                        case 'd'
+                            toadd = 'doublet'; 
+                        case 't'
+                            toadd = 'triplet'; 
+                        case 'q'
+                            toadd = 'quartet';
+                        case 'm'
+                            toadd = 'multiplet';
+                        otherwise
+                            error('CompoundBin_multiplet:bad_char',[ ...
+                                '"' field(j) '" is not a legal '...
+                                'multiplet specifier character.  Legal '...
+                                'values are s,d,t,q, and m']);
+                    end
+                    if j == 1
+                        fresult = toadd;
+                    elseif j > 1 && j < length(field)
+                        fresult = [fresult ' of ' toadd]; %#ok<AGROW>
+                    else
+                        assert(j > 1 && j == length(field));
+                        fresult = [fresult ' of ' toadd 's']; %#ok<AGROW>
+                    end
+                end    
+                
+            end
         end
     end
     
@@ -439,42 +526,10 @@ classdef CompoundBin
             end
         end
         
-        function num_peaks=getnum_peaks(obj)
-        % Getter method calculating the number of peaks from the
-        % multiplicity variable
-            switch lower(obj.multiplicity)
-                case 's'
-                    num_peaks=1; return;
-                case 'd'
-                    num_peaks=2; return;
-                case 't'
-                    num_peaks=3; return;
-                case 'q'
-                    num_peaks=4; return;
-                case 'dd'
-                    num_peaks=4; return;
-                case 'half of ab d'
-                    num_peaks=2; return;
-            end
-        end
-        
         function str=get.readable_multiplicity(obj)
         % Getter method calculating a readable version of the multiplicity
         % from the multiplicity variable
-            switch lower(obj.multiplicity)
-                case 's'
-                    str='singlet'; return;
-                case 'd'
-                    str='doublet'; return;
-                case 't'
-                    str='triplet'; return;
-                case 'q'
-                    str='quartet'; return;
-                case 'dd'
-                    str='doublet of doublets'; return;
-                case 'half of ab d'
-                    str='half of AB doublet'; return;
-            end
+            str = CompoundBin.human_readable_multiplicity(obj.multiplicity);
         end
         
         function str=get.as_csv_string(obj)
@@ -488,7 +543,7 @@ classdef CompoundBin
             str = sprintf('%d,"%s",%f,%f,"%s","%s","%s","%s"', ...
                 obj.id, obj.compound_name, ...
                 obj.bin.left, obj.bin.right, obj.multiplicity, ...
-                clean_str, obj.nucleus_id, obj.literature);
+                clean_str, obj.nucleus_assignment, obj.literature);
         end
         
         function r = eq(a,b)
