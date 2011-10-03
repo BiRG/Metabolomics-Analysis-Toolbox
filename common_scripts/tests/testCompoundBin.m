@@ -192,3 +192,63 @@ c = CompoundBin(CompoundBin.csv_file_header_string,in);
 out = c.as_csv_string;
 
 assertEqual(in, out);
+
+
+function testEqualObjObj %#ok<DEFNU>
+% Test that object == object works
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
+cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
+cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+
+assertTrue(cH == cH);
+assertFalse(cM == cH);
+assertFalse(cH == cHDel);
+
+function testEqualObjAry %#ok<DEFNU>
+% Test that object == array(object) works
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
+cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
+cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+
+ary = [cH cHDel cM];
+assertEqual(cHDel == ary, [false true false]);
+
+
+
+function testEqualAryObj %#ok<DEFNU>
+% Test that array(object) == object works
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
+cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
+cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+
+ary = [cH cHDel cM];
+assertEqual(ary == cH, [true false false]);
+
+
+
+function testEqualAryAry %#ok<DEFNU>
+% Test that array(object) == array(object) works
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
+cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
+cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+
+ary1 = [cH cHDel cM];
+ary2 = [cH cHDel cH];
+assertEqual(ary1 == ary2, [true true false]);
+
