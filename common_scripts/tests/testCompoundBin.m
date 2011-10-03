@@ -16,6 +16,7 @@ function testReadAll %#ok<DEFNU>
 
 map = load_metabmap(fullfile(data_dir, 'testCompoundBin.01.readall.csv'));
 assertEqual(length(map),78);
+assertTrue(isa(map, 'CompoundBin'));
     
 function testParseCSVBoolX %#ok<DEFNU>
 % Test if CompoundBin.parse_csv_bool parses an x input correctly
