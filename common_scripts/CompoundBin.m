@@ -636,18 +636,56 @@ classdef CompoundBin
         end
         
         function r = eq(a,b)
-        % Equality testing (called by operator ==)
+        % Equality testing (called by operator ==).  Not defined for
+        % matrices of CompoundBin
             i = [a.id] == [b.id];
-            cd = strcmp({a.compound_name},{b.compound_name});
+            wd = [a.was_deleted] == [b.was_deleted];
+            cd = [a.compound_id] == [b.compound_id];
+            cn = strcmp({a.compound_name},{b.compound_name});
+            kc = [a.is_known_compound] == [b.is_known_compound];
             bn = [a.bin] == [b.bin];
             mu = strcmpi({a.multiplicity},{b.multiplicity});
-            ic = [a.is_clean] == [b.is_clean];
-            pi = strcmp({a.nucleus_id}, {b.nucleus_id});
-            is = strcmp({a.literature}, {b.literature});
+            np = [a.num_peaks] == [b.num_peaks];
             
-            r = i & cd & bn & mu & ic & pi & is;
+            if(length(a) == length(b)) 
+                %Element wise compare
+                equal_contents = @(a,b) ...
+                    (isempty(a) && isempty(b)) || ...
+                    (~isempty(a) && ~isempty(b) && all(a==b));
+                jv = cellfun(equal_contents, {a.j_values}, {b.j_values});
+            else
+                %Compare single with each element of rest
+                if length(a) == 1
+                    sing = a.j_values;
+                    rest = b;
+                elseif length(b) == 1
+                    sing = b.j_values;
+                    rest = a;
+                else
+                    error('CompoundBin_eq:size_mismatch',['When '...
+                        'comparing arrays of CompoundBin objects, they '...
+                        'must both have the same size, or one must have '...
+                        'length==1.  Comparison of matrices is not '...
+                        'supported.']);
+                end
+                
+                equal_to_sing = @(k) ...
+                    (isempty(sing) && isempty(k)) || ...
+                    (~isempty(sing) && ~isempty(k) && all(sing==k));
+                jv = cellfun(equal_to_sing, {rest.j_values});
+            end
+            
+            na = strcmp({a.nucleus_assignment}, {b.nucleus_assignment});
+            hm = (isnan([a.hmdb_id]) & isnan([b.hmdb_id])) | ...
+                ([a.hmdb_id] == [b.hmdb_id]);
+            cx = [a.chenomix_was_used] == [b.chenomix_was_used];
+            li = strcmp({a.literature}, {b.literature});
+            ni = strcmp({a.nmr_isotope}, {b.nmr_isotope});
+            no = strcmp({a.notes}, {b.notes});
+            
+            r = i  & wd & cd & cn & kc & bn & mu & np & jv & na & hm & ...
+                cx & li & ni & no;
         end
-
     end    
 end
 
