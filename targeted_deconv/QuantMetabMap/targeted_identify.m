@@ -138,7 +138,7 @@ metabolite_names{num_bins}='';
 for bin_idx = 1:num_bins
     cur_bin = handles.metab_map(bin_idx);
     metabolite_names{bin_idx}=sprintf('%s (%d)', ...
-        cur_bin.compound_descr, cur_bin.id);
+        cur_bin.compound_name, cur_bin.id);
 end
 set(handles.metabolite_menu, 'String', metabolite_names);
 
@@ -641,44 +641,41 @@ else
 end
 
 function new_handles = potentially_autoidentify(handles)
-% Autoidentifies peaks if the current bin is clean, no identifications are
+% Autoidentifies peaks if no identifications are
 % extant for the current bin and spectrum, and the current spectrum has the 
-% same number of peaks as would
-% be expected.  Returns the new value of the handles structure.  Also sets 
-% the guidata.
+% same number of peaks as would be expected.  Returns the new value of the 
+% handles structure.  Also sets the guidata.
 
 %If no autoidentification has been done on this bin
 if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
     %If no current identifications
     ids = cur_peak_identifications(handles);
     if isempty(ids)
-        %If clean bin
+        %If correct number of peaks
         bin = handles.metab_map(handles.bin_idx);
-        if bin.is_clean
-            %If correct number of peaks
-            pks = get_spectrum_and_bin_peaks(handles);
-            if length(pks) == bin.num_peaks
-                % Do autoidentification:
-                
-                %First mark as identified
-                handles.already_autoidentified(handles.bin_idx, ...
-                    handles.spectrum_idx) = 1;
-                
-                %Then make identification objects for all peaks in the bin
-                new_ids(bin.num_peaks)=PeakIdentification;
-                for i = 1:bin.num_peaks
-                    ppm = pks(i);
-                    xidx = index_of_nearest_x_to(ppm, handles);
-                    new_ids(i) = PeakIdentification(ppm, xidx, ...
-                        handles.spectrum_idx, bin, ...
-                        1, get_username, get_account_id, datestr(clock)); 
-                end
-                
-                %Finally add them to the identifications for the gui
-                set_identifications([handles.identifications new_ids], handles);
-                handles = guidata(handles.figure1);
+        pks = get_spectrum_and_bin_peaks(handles);
+        if length(pks) == bin.num_peaks
+            % Do autoidentification:
+
+            %First mark as identified
+            handles.already_autoidentified(handles.bin_idx, ...
+                handles.spectrum_idx) = 1;
+
+            %Then make identification objects for all peaks in the bin
+            new_ids(bin.num_peaks)=PeakIdentification;
+            for i = 1:bin.num_peaks
+                ppm = pks(i);
+                xidx = index_of_nearest_x_to(ppm, handles);
+                new_ids(i) = PeakIdentification(ppm, xidx, ...
+                    handles.spectrum_idx, bin, ...
+                    1, get_username, get_account_id, datestr(clock)); 
             end
+
+            %Finally add them to the identifications for the gui
+            set_identifications([handles.identifications new_ids], handles);
+            handles = guidata(handles.figure1);
         end
+        
     end
 end
 new_handles = handles;
@@ -771,10 +768,10 @@ set(handles.metabolite_menu, 'Value', handles.bin_idx);
 cur_bin=handles.metab_map(handles.bin_idx);
 set(handles.multiplicity_text,'String', strcat('Multiplicity: ', ...
     cur_bin.readable_multiplicity));
-set(handles.proton_id_text,'String',strcat('Proton ID: ', ...
-    cur_bin.proton_id));
-set(handles.source_text,'String',strcat('Source: ', ...
-    cur_bin.id_source));
+set(handles.nucleus_assignment_text,'String',strcat('Nucleus: ', ...
+    cur_bin.nucleus_assignment));
+set(handles.literature_text,'String',strcat('Literature: ', ...
+    cur_bin.literature));
 set(handles.num_expected_peaks_text,'String', ...
     sprintf('Expected peaks: %d', cur_bin.num_peaks));
 set(handles.spectrum_number_edit_box,'String', ...
@@ -782,11 +779,6 @@ set(handles.spectrum_number_edit_box,'String', ...
 set(handles.num_identified_peaks_text,'String', ...
     sprintf('Identified peaks: %d', ...
     cur_num_identified(handles)));
-if cur_bin.is_clean
-    set(handles.clean_text,'String','Clean bin');
-else
-    set(handles.clean_text,'String','Not a clean bin');
-end
 
 % Set the baseline_menu to the correct entry
 model = handles.models(handles.bin_idx, handles.spectrum_idx);
@@ -1251,7 +1243,7 @@ else
                 separator = ',';
             end
             bin_names=sprintf('%s %s (%d)%s', ...
-                bin_names, cur_bin.compound_descr, cur_bin.id, separator);
+                bin_names, cur_bin.compound_name, cur_bin.id, separator);
         end
         dec.processing_log = [dec.processing_log, '  Extracted peak ', ...
             'areas for: ', bin_names, '.'];
@@ -1404,7 +1396,7 @@ else
                 while block_offset < bin.num_peaks + 1
                     %Row-descriptive text
                     fprintf(excel_fid, '"%s",%d', ...
-                        bin.compound_descr, bin.id);
+                        bin.compound_name, bin.id);
                     if block_offset == 0
                         fprintf(excel_fid,',"Sum"');
                     else
