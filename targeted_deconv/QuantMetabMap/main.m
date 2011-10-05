@@ -1,35 +1,35 @@
-function varargout = targeted_deconv_start(varargin)
-% TARGETED_DECONV_START MATLAB code for targeted_deconv_start.fig
-%      TARGETED_DECONV_START, by itself, creates a new TARGETED_DECONV_START or raises the existing
+function varargout = main(varargin)
+% MAIN MATLAB code for main.fig
+%      MAIN, by itself, creates a new MAIN or raises the existing
 %      singleton*.
 %
-%      H = TARGETED_DECONV_START returns the handle to a new TARGETED_DECONV_START or the handle to
+%      H = MAIN returns the handle to a new MAIN or the handle to
 %      the existing singleton*.
 %
-%      TARGETED_DECONV_START('CALLBACK',hObject,~,handles,...) calls the local
-%      function named CALLBACK in TARGETED_DECONV_START.M with the given input arguments.
+%      MAIN('CALLBACK',hObject,~,handles,...) calls the local
+%      function named CALLBACK in MAIN.M with the given input arguments.
 %
-%      TARGETED_DECONV_START('Property','Value',...) creates a new TARGETED_DECONV_START or raises the
+%      MAIN('Property','Value',...) creates a new MAIN or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before targeted_deconv_start_OpeningFcn gets called.  An
+%      applied to the GUI before main_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to targeted_deconv_start_OpeningFcn via varargin.
+%      stop.  All inputs are passed to main_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help targeted_deconv_start
+% Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 01-Aug-2011 17:01:12
+% Last Modified by GUIDE v2.5 04-Oct-2011 11:22:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @targeted_deconv_start_OpeningFcn, ...
-                   'gui_OutputFcn',  @targeted_deconv_start_OutputFcn, ...
+                   'gui_OpeningFcn', @main_OpeningFcn, ...
+                   'gui_OutputFcn',  @main_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,27 +44,27 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before targeted_deconv_start is made visible.
-function targeted_deconv_start_OpeningFcn(hObject, unused, handles, varargin) %#ok<INUSL>
+% --- Executes just before main is made visible.
+function main_OpeningFcn(hObject, unused, handles, varargin) %#ok<INUSL>
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to targeted_deconv_start (see VARARGIN)
+% varargin   command line arguments to main (see VARARGIN)
 
-% Choose default command line output for targeted_deconv_start
+% Choose default command line output for main
 handles.output = hObject;
 
 % Set the uninitialized text box values (I do it here rather than in GUIDE
 % so I am sure to have the same values when I check for uninitialized
 % values - no possibility of changing it in GUIDE and 
 % forgetting to change it in the done button or elsewhere I might need it.)
-handles.uninitialized_bin_map_filename = 'Put filename here';
+handles.uninitialized_metab_map_filename = 'Put filename here';
 handles.uninitialized_collection_filename = 'Put filename here';
 handles.uninitialized_collection_id = 'Or enter collection id here';
 handles.uninitialized_continue_filename = 'Put saved session filename here';
-set(handles.bin_map_filename_box, 'String', ...
-    handles.uninitialized_bin_map_filename);
+set(handles.metab_map_filename_box, 'String', ...
+    handles.uninitialized_metab_map_filename);
 set(handles.collection_filename_box, 'String', ...
     handles.uninitialized_collection_filename);
 set(handles.collection_id_box, 'String', ...
@@ -72,11 +72,11 @@ set(handles.collection_id_box, 'String', ...
 set(handles.continue_filename_box, 'String', ...
     handles.uninitialized_continue_filename);
 
-% Set default bin-map filename to the last one loaded (if such a preference
+% Set default metab-map filename to the last one loaded (if such a preference
 % exists)
-if ispref('Targeted_Deconvolution','last_bin_map_filename')
-    set(handles.bin_map_filename_box,'String', ...
-        getpref('Targeted_Deconvolution','last_bin_map_filename'));
+if ispref('Targeted_Deconvolution','last_metab_map_filename')
+    set(handles.metab_map_filename_box,'String', ...
+        getpref('Targeted_Deconvolution','last_metab_map_filename'));
 end
 
 %Set default collection filename if there is a preference for it and if the
@@ -107,12 +107,12 @@ end
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes targeted_deconv_start wait for user response (see UIRESUME)
+% UIWAIT makes main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);hObject
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = targeted_deconv_start_OutputFcn(unused, unused1, handles)  %#ok<INUSL>
+function varargout = main_OutputFcn(unused, unused1, handles)  %#ok<INUSL>
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -131,10 +131,10 @@ function result = collection_filename_is_initialized(handles)
 result = contains_initialized_filename(handles.collection_filename_box, ...
     handles.uninitialized_collection_filename);
 
-function result = bin_map_filename_is_initialized(handles)
-% Returns true if the bin_map filename box is initialized
-result = contains_initialized_filename(handles.bin_map_filename_box, ...
-    handles.uninitialized_bin_map_filename);
+function result = metab_map_filename_is_initialized(handles)
+% Returns true if the metab_map filename box is initialized
+result = contains_initialized_filename(handles.metab_map_filename_box, ...
+    handles.uninitialized_metab_map_filename);
 
 function result = continue_filename_is_initialized(handles)
 % Returns true if the continue filename box is initialized
@@ -185,23 +185,23 @@ if continue_filename_is_initialized(handles)
     end
 else
 
-    % Failing that load the bin map and collection separately
+    % Failing that load the metab map and collection separately
 
-    % Start by loading the bin map
-    if ~bin_map_filename_is_initialized(handles)
+    % Start by loading the metab map
+    if ~metab_map_filename_is_initialized(handles)
         uiwait(msgbox('No valid metab map file was given.','Error','error'));
         return;
     end
 
-    bin_map_filename = get(handles.bin_map_filename_box,'String');
-    bin_map = load_metabmap(bin_map_filename);
-    if isempty(bin_map)
+    metab_map_filename = get(handles.metab_map_filename_box,'String');
+    metab_map = load_metabmap(metab_map_filename);
+    if isempty(metab_map)
         uiwait(msgbox('Could not read the metab map from the given file', ...
             'Error','error'));
         return;
     end
-    setpref('Targeted_Deconvolution','last_bin_map_filename', ...
-        bin_map_filename);
+    setpref('Targeted_Deconvolution','last_metab_map_filename', ...
+        metab_map_filename);
 
 
     % Now load the collection.  If there is a filename, load it from the
@@ -243,7 +243,7 @@ else
 
     %Pass the new data to the figure
     setappdata(0, 'collection', collection);
-    setappdata(0, 'bin_map', bin_map);
+    setappdata(0, 'metab_map', metab_map);
 end
 
 %Start the new figure
@@ -357,8 +357,8 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function bin_map_filename_box_CreateFcn(hObject, unused1, unused) %#ok<INUSD,DEFNU>
-% hObject    handle to bin_map_filename_box (see GCBO)
+function metab_map_filename_box_CreateFcn(hObject, unused1, unused) %#ok<INUSD,DEFNU>
+% hObject    handle to metab_map_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -369,26 +369,26 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in bin_map_browse_button.
-function bin_map_browse_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
-% hObject    handle to bin_map_browse_button (see GCBO)
+% --- Executes on button press in metab_map_browse_button.
+function metab_map_browse_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to metab_map_browse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[filename,pathname] = uigetfile('*.csv','Select a bin map file');
+[filename,pathname] = uigetfile('*.csv','Select a metab map file');
 
 if ~ischar(filename)
     return;
 else
     fullpath=fullfile(pathname, filename);
-    set(handles.bin_map_filename_box, 'String', fullpath);
+    set(handles.metab_map_filename_box, 'String', fullpath);
     set(handles.continue_filename_box,'String', ...
         handles.uninitialized_continue_filename);
 end
 
 
 
-function bin_map_filename_box_Callback(hObject, unused1, handles) %#ok<INUSL,DEFNU>
-% hObject    handle to bin_map_filename_box (see GCBO)
+function metab_map_filename_box_Callback(hObject, unused1, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to metab_map_filename_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 

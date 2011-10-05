@@ -1,37 +1,37 @@
-function varargout = EditMetabMap(varargin)
-% EDITMETABMAP MATLAB code for EditMetabMap.fig
-%      EDITMETABMAP, by itself, creates a new EDITMETABMAP or raises the
+function varargout = main(varargin)
+% MAIN MATLAB code for main.fig
+%      MAIN, by itself, creates a new MAIN or raises the
 %      existing singleton*.
 %
-%      H = EDITMETABMAP returns the handle to a new EDITMETABMAP or the
+%      H = MAIN returns the handle to a new MAIN or the
 %      handle to the existing singleton*.
 %
-%      EDITMETABMAP('CALLBACK',hObject,eventData,handles,...) calls the
-%      local function named CALLBACK in EDITMETABMAP.M with the given input
+%      MAIN('CALLBACK',hObject,eventData,handles,...) calls the
+%      local function named CALLBACK in MAIN.M with the given input
 %      arguments.
 %
-%      EDITMETABMAP('Property','Value',...) creates a new EDITMETABMAP or
+%      MAIN('Property','Value',...) creates a new MAIN or
 %      raises the existing singleton*.  Starting from the left, property
-%      value pairs are applied to the GUI before EditMetabMap_OpeningFcn
+%      value pairs are applied to the GUI before main_OpeningFcn
 %      gets called.  An unrecognized property name or invalid value makes
 %      property application stop.  All inputs are passed to
-%      EditMetabMap_OpeningFcn via varargin.
+%      main_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help EditMetabMap
+% Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 30-Sep-2011 01:02:10
+% Last Modified by GUIDE v2.5 04-Oct-2011 15:57:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @EditMetabMap_OpeningFcn, ...
-    'gui_OutputFcn',  @EditMetabMap_OutputFcn, ...
+    'gui_OpeningFcn', @main_OpeningFcn, ...
+    'gui_OutputFcn',  @main_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -46,15 +46,15 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before EditMetabMap is made visible.
-function EditMetabMap_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before main is made visible.
+function main_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to EditMetabMap (see VARARGIN)
+% varargin   command line arguments to main (see VARARGIN)
 
-% Choose default command line output for EditMetabMap
+% Choose default command line output for main
 handles.output = hObject;
 
 % Update handles structure
@@ -63,12 +63,12 @@ guidata(hObject, handles);
 % Add shared MATLAB scripts to the path
 addpath('../../common_scripts');
 
-% UIWAIT makes EditMetabMap wait for user response (see UIRESUME)
+% UIWAIT makes main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = EditMetabMap_OutputFcn(hObject, eventdata, handles)
+function varargout = main_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -109,12 +109,24 @@ if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
         plot(handles.collections{popupCollectionNum}.x, ...
             handles.collections{popupCollectionNum}.Y(:,popupSpectrumNum));
         
-    else
-        
-        % Not in individual mode. Populate the graph with all spectra
-        % overlaid and disable the spectra popup.
-        plot(handles.collections{popupCollectionNum}.x, ...
-            handles.collections{popupCollectionNum}.Y);
+    else if ( spectralDispMode == ...
+                get(handles.overlaid_mode_radiobutton, 'Max') )
+            
+            % We are in overlay mode. Populate the graph with all spectra
+            % overlaid.
+            plot(handles.collections{popupCollectionNum}.x, ...
+                handles.collections{popupCollectionNum}.Y);
+            
+        else
+            
+            % We are in selective display mode. Populate the graph with only
+            % the selected spectra overlaid.
+            msgbox('Selected spectral overlay feature not yet implemented', ...
+                'Oops!');
+            %        plot(handles.collections{popupCollectionNum}.x, ...
+            %            handles.collections{popupCollectionNum}.Y);
+            
+        end;
     end;
 end;
 
@@ -125,24 +137,26 @@ axesObjLimit = get(handles.axes1, 'YLim');
 % Draw the working bin bounds, if appropriate.
 if ( isfield(handles, 'workingLeftBound') )
     xseries = [handles.workingLeftBound handles.workingLeftBound];
-    plot(xseries, axesObjLimit, '-.g');
+    plot(xseries, axesObjLimit, '-.g', 'LineWidth', 2);
 end;
 if ( isfield(handles, 'workingRightBound') )
     xseries = [handles.workingRightBound handles.workingRightBound];
-    plot(xseries, axesObjLimit, '-.r');
+    plot(xseries, axesObjLimit, '-.r', 'LineWidth', 2);
 end;
 
 % Draw all stored bin bounds.
-if ( isfield(handles, 'storedBinsLeftBounds') )
-    for i = 1:length(handles.storedBinsLeftBounds)
-        xseries = ...
-            [ handles.storedBinsLeftBounds(i) ...
-            handles.storedBinsLeftBounds(i) ];
-        plot(xseries, axesObjLimit, 'Color', [.67 1 1], 'LineStyle', '-.');
-        xseries = ...
-            [ handles.storedBinsRightBounds(i) ...
-            handles.storedBinsRightBounds(i) ];
-        plot(xseries, axesObjLimit, 'Color', [1 .67 0], 'LineStyle', '-.');
+if ( isfield(handles, 'storedBins') )
+    for i = 1:length(handles.storedBins)
+        xseries = [ handles.storedBins(i).bin.left ...
+            handles.storedBins(i).bin.left ];
+        plot(xseries, axesObjLimit, ...
+            'Color', [.67 1 1], ...
+            'LineStyle', '-.');
+        xseries = [ handles.storedBins(i).bin.right ...
+            handles.storedBins(i).bin.right ];
+        plot(xseries, axesObjLimit, ...
+            'Color', [1 .67 0], ...
+            'LineStyle', '-.');
     end;
 end;
 
@@ -153,23 +167,41 @@ hold off;
 function repopulateMappedBinsList(handles)
 % handles    structure with handles and user data (see GUIDATA)
 stringPropCell = '';
-if ( isfield(handles, 'currentStoredBinCount') )
-    if (handles.currentStoredBinCount == 1)
-        stringPropCell = [ handles.storedBinsMetabolites{1} ',' ...
-            num2str(handles.storedBinsPeakNums, '%d') ',' ...
-            num2str(handles.storedBinsLeftBounds, '%.3f') ',' ...
-            num2str(handles.storedBinsRightBounds, '%.3f') ];
-    else
-        stringPropCell = {};
-        for i = 1:handles.currentStoredBinCount
-            stringPropCell{i} = [ handles.storedBinsMetabolites{i} ',' ...
-                num2str(handles.storedBinsPeakNums(i), '%d') ',' ...
-                num2str(handles.storedBinsLeftBounds(i), '%.3f') ',' ...
-                num2str(handles.storedBinsRightBounds(i), '%.3f') ];
+if ( isfield(handles, 'storedBins') )
+    storedBinsArrayLen = length(handles.storedBins);
+    %if ( storedBinsArrayLen == 1 )
+    %    stringPropCell = [ num2str(handles.storedBins.id, '%d') ',' ...
+    %        handles.storedBins.compound_name ',' ...
+    %        num2str(handles.storedBins.bin.left, '%.3f') ',' ...
+    %        num2str(handles.storedBins.bin.right, '%.3f') ];
+    %else
+    stringPropCell = {};
+    for i = 1:storedBinsArrayLen
+        if ( ~handles.storedBins(i).was_deleted )
+            stringPropCell{i} = [ ...
+                num2str(handles.storedBins(i).id, '%d') ',' ...
+                handles.storedBins(i).compound_name ',' ...
+                num2str(handles.storedBins(i).bin.left, '%.3f') ',' ...
+                num2str(handles.storedBins(i).bin.right, '%.3f') ];
         end;
     end;
+    %end;
 end;
 set(handles.mapped_bins_listbox, 'String', stringPropCell);
+
+
+% --- Fill the Metabolite selection dropdown menu on the GUI
+function repopulateMetabolitePopup(handles)
+% handles    structure with handles and user data (see GUIDATA)
+if ( isfield(handles, 'storedBins') )
+    menuOptionCellAr = { ...
+        ''; ...
+        '* Add a new metabolite... *'; ...
+        '** Metabolite Unknown... **' };
+    menuOptionCellAr = [ menuOptionCellAr; ...
+        handles.metaboliteIDNameTable(:,2) ];
+    set(handles.metabolite_name_popup, 'String', menuOptionCellAr);
+end;
 
 
 % --- Executes during object creation, after setting all properties.
@@ -232,16 +264,6 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function deconvolution_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to deconvolution_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes during object creation, after setting all properties.
 function multiplicity_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to multiplicity_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -285,15 +307,6 @@ function metabolite_name_popup_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-fid = fopen('Me.tab');
-if (fid > 0)
-    metabIDHeaders = textscan(fid, '%q %q', 1, 'Delimiter', ',\t');
-    metabIDs = textscan(fid, '%q %q', 'Delimiter', ',\t');
-    fclose(fid);
-    handles.metabIDs = sortrows([['0';metabIDs{1}] [' ';metabIDs{2}]], 2);
-    guidata(hObject, handles);
-    set(hObject, 'String', handles.metabIDs(:,2));
-end
 
 
 % --- Executes during object creation, after setting all properties.
@@ -310,8 +323,21 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function peak_num_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to peak_num_edit (see GCBO)
+function peak_count_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to peak_count_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function selected_display_spectra_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to selected_display_spectra_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -455,16 +481,35 @@ popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup 
 switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
     
     case 'overlaid_mode_radiobutton'
-        % Disable the spectra popup menu & do not allow bin appending.
+        % Disable the spectrum select popup menu & do not allow bin
+        % appending as we're displaying all the spectra at once.
         set(handles.select_spectrum_popup, 'Enable', 'off');
         set(handles.append_bin_button, 'Enable', 'off');
         redrawGraph(handles);
         
     case 'individual_mode_radiobutton'
-        % Display only one spectrum in the collection at a time.
+        % We intend to display only one spectrum in the
+        % collection at a time. Allow bin appending and
+        % enable the spectrum select popup.
         if ( popupCollectionNum > 0 )
             % A collection is selected.
             set(handles.select_spectrum_popup, 'Enable', 'on');
+            set(handles.append_bin_button, 'Enable', 'on');
+            set(handles.retrieve_bin_button, 'Enable', 'on');
+            redrawGraph(handles);
+        else
+            % No collection is actually selected to display.
+            set(handles.select_spectrum_popup, 'Enable', 'off');
+            set(handles.append_bin_button, 'Enable', 'off');
+            set(handles.retrieve_bin_button, 'Enable', 'off');
+        end;
+        
+    case 'some_mode_radiobutton'
+        % We intend to display a reduced set of overlaid spectra.
+        % Allow bin appending but disable the spectrum select popup.
+        if ( popupCollectionNum > 0 )
+            % A collection is selected.
+            set(handles.select_spectrum_popup, 'Enable', 'off');
             set(handles.append_bin_button, 'Enable', 'on');
             set(handles.retrieve_bin_button, 'Enable', 'on');
             redrawGraph(handles);
@@ -490,34 +535,61 @@ function load_metabmap_button_Callback(hObject, eventdata, handles)
     {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
     '*.*', 'All Files (*.*)'} );
 if ( ischar(filename) && ~isempty(filename) )
-    fid = fopen([pathname filename]);
-    handles.binmapHeaders = textscan(fid, ...
-        '%q %q %q %q %q %q %q %q %q %q %q', 1, ...
-        'Delimiter', ',\t');
-    binmapData = textscan(fid, '%d %d %q %f %f %q %q %q %d %q %q', ...
-        'Delimiter', ',\t');
-    fclose(fid);
-    handles.storedBinsMetabIDs = binmapData{1};
-    handles.currentStoredBinCount = length(handles.storedBinsMetabIDs);
-    handles.storedBinsPeakNums = binmapData{2};
-    handles.storedBinsMetabolites = binmapData{3};
-    handles.storedBinsLeftBounds = binmapData{4};
-    handles.storedBinsRightBounds = binmapData{5};
-    handles.storedBinsMultiplicities = binmapData{6};
-    handles.storedBinsDeconv = binmapData{7};
-    handles.storedBinsProtonIDs = binmapData{8};
-    handles.storedBinsHmdbIDs = binmapData{9};
-    handles.storedBinsChenomx = binmapData{10};
-    handles.storedBinsSources = binmapData{11};
+    %    fid = fopen([pathname filename]);
+    %    handles.binmapHeaders = textscan(fid, ...
+    %        '%q %q %q %q %q %q %q %q %q %q %q', 1, ...
+    %        'Delimiter', ',\t');
+    %    binmapData = textscan(fid, '%d %d %q %f %f %q %q %q %d %q %q', ...
+    %        'Delimiter', ',\t');
+    %    fclose(fid);
+    %    handles.storedBinsMetabIDs = binmapData{1};
+    %    handles.currentStoredBinCount = length(handles.storedBinsMetabIDs);
+    %    handles.storedBinsPeakNums = binmapData{2};
+    %    handles.storedBinsMetabolites = binmapData{3};
+    %    handles.storedBinsLeftBounds = binmapData{4};
+    %    handles.storedBinsRightBounds = binmapData{5};
+    %    handles.storedBinsMultiplicities = binmapData{6};
+    %    handles.storedBinsDeconv = binmapData{7};
+    %    handles.storedBinsProtonIDs = binmapData{8};
+    %    handles.storedBinsHmdbIDs = binmapData{9};
+    %    handles.storedBinsChenomx = binmapData{10};
+    %    handles.storedBinsSources = binmapData{11};
+    
+    handles.storedBins = load_metabmap(fullfile(pathname, filename));
     
     % -- DCW: TODO: Add collection and spectrum ID to format
-    handles.storedBinsCollectionID = ...
-        zeros(handles.currentStoredBinCount, 1);
-    handles.storedBinsSpectrumID = ...
-        zeros(handles.currentStoredBinCount, 1);
+    %    handles.storedBinsCollectionID = ...
+    %        zeros(handles.currentStoredBinCount, 1);
+    %    handles.storedBinsSpectrumID = ...
+    %        zeros(handles.currentStoredBinCount, 1);
     
     guidata(hObject, handles);
     repopulateMappedBinsList(handles);
+    
+    % Prep the metabolite lookup table for population.
+    storedBinsArrayLen = length(handles.storedBins);
+    tempIDNameTable = cell(storedBinsArrayLen, 1);
+    for i=1:storedBinsArrayLen
+        tempIDNameTable{i} = ...
+            [ lower(handles.storedBins(i).compound_name) '<%$#>' ...
+            num2str(handles.storedBins(i).compound_id) ];
+    end;
+    tempIDNameTable = unique(tempIDNameTable);
+    tempIDNameTable = ...
+        regexp(unique(tempIDNameTable), ...
+        '^(.+)<%\$#>(\d+)$', 'tokens', 'once');
+    handles.metaboliteIDNameTable = { ...
+        ['-3'] ''; ...
+        ['-2'] '* Add a new metabolite... *'; ...
+        ['-1'] '** Metabolite Unknown... **' };
+    for i=1:length(tempIDNameTable)
+        handles.metaboliteIDNameTable = ...
+            [ handles.metaboliteIDNameTable ; ...
+            {tempIDNameTable{i}{2} tempIDNameTable{i}{1}} ];
+    end;
+    guidata(hObject, handles);
+    set(handles.metabolite_name_popup, 'String', ...
+        handles.metaboliteIDNameTable(:,2));
     
     % A collection has already been loaded and selected. Redraw graph.
     if ( isfield(handles, 'collections') && ...
@@ -528,10 +600,11 @@ if ( ischar(filename) && ~isempty(filename) )
     
     set(handles.delete_bin_button, 'Enable', 'on');
     
-    msgbox('Finished loading Binmap', 'Action Complete', ...
+    msgbox('Finished loading metabolite map.', 'Action Complete', ...
         'help', 'modal');
 else
-    msgbox('No binmap opened.', 'Warning', 'warn', 'modal');
+    msgbox('WARNING: no metabolite map opened!', ...
+        'Warning', 'warn', 'modal');
 end;
 
 
@@ -540,62 +613,61 @@ function retrieve_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to retrieve_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-marginWidthProportion = 0.2;
 
+marginWidthProportion = 0.2;
 selectedListboxIdx = get(handles.mapped_bins_listbox, 'Value');
-if ( isfield(handles, 'currentStoredBinCount') && ...
-        handles.currentStoredBinCount > 0 )
+
+if ( isfield(handles, 'storedBins') && ~isempty(handles.storedBins) )
     % Error check, just in case...
     if ( isnumeric(selectedListboxIdx) && ...
             selectedListboxIdx > 0 && ...
-            selectedListboxIdx < handles.currentStoredBinCount + 1 )
+            selectedListboxIdx < length(handles.storedBins) + 1 )
         
-        metabName = handles.storedBinsMetabolites{selectedListboxIdx};
-        [metabIDTableRow, ~] = ...
-            find(ismember(upper(handles.metabIDs), upper(metabName)));
-        if (length(metabIDTableRow) == 1)
-            set(handles.metabolite_name_popup, 'Value', metabIDTableRow);
-            set(handles.id_source_edit, 'String', ...
-                handles.storedBinsSources{selectedListboxIdx});
-            set(handles.proton_id_edit, 'String', ...
-                handles.storedBinsProtonIDs{selectedListboxIdx});
-            set(handles.deconvolution_edit, 'String', ...
-                handles.storedBinsDeconv{selectedListboxIdx});
-            set(handles.multiplicity_edit, 'String', ...
-                handles.storedBinsMultiplicities{selectedListboxIdx});
-            set(handles.hmdb_id_edit, 'String', ...
-                handles.storedBinsHmdbIDs(selectedListboxIdx));
-            set(handles.peak_num_edit, 'String', ...
-                handles.storedBinsPeakNums(selectedListboxIdx));
-            chenomxColVal = ...
-                handles.storedBinsChenomx{selectedListboxIdx};
-            if (chenomxColVal == 'X')
-                set(handles.chenomx_checkbox, 'Value', 1.0);
-            else
-                set(handles.chenomx_checkbox, 'Value', 0.0);
-            end;
-            
-            leftBound = handles.storedBinsLeftBounds(selectedListboxIdx);
-            rightBound = handles.storedBinsRightBounds(selectedListboxIdx);
-            set(handles.left_bound_edit, 'String', num2str(leftBound, '%.5e'));
-            set(handles.right_bound_edit, 'String', ...
-                num2str(rightBound, '%.5e'));
-            handles.workingLeftBound = leftBound;
-            handles.workingRightBound = rightBound;
-            
-            % Remap the axes and redraw, leaving some wiggle room past the
-            % bounds. No check is needed as this button should only be enabled
-            % when there is at least one collection loaded.
-            boundDiff = abs(leftBound - rightBound)*marginWidthProportion;
-            newXLim = [ rightBound - boundDiff   leftBound + boundDiff ];
-            set(handles.axes1, 'XLim', newXLim);
-            
-            guidata(hObject, handles);
-            redrawGraph(handles);
+        % Retrieve the selected metab bin's ID.
+        metabBinListboxIdx = get(handles.mapped_bins_listbox, 'Value');
+        metabBinListboxAllStrs = ...
+            get(handles.mapped_bins_listbox, 'String');
+        metabBinListboxStr = metabBinListboxAllStrs{metabBinListboxIdx};
+        metabmapBinID = str2num( ...
+            regexp(metabBinListboxStr, '^\d+', 'match', 'once') );
+        
+        set(handles.metabolite_name_popup, 'Value', ...
+            handles.storedBins(metabmapBinID).compound_name);
+        set(handles.id_source_edit, 'String', ...
+            handles.storedBins(metabmapBinID).literature);
+        set(handles.proton_id_edit, 'String', ...
+            handles.storedBins(metabmapBinID).nmr_isotope);
+        set(handles.multiplicity_edit, 'String', ...
+            handles.storedBinsMultiplicities{selectedListboxIdx});
+        set(handles.hmdb_id_edit, 'String', ...
+            handles.storedBinsHmdbIDs(selectedListboxIdx));
+        set(handles.peak_count_edit, 'String', ...
+            handles.storedBinsPeakNums(selectedListboxIdx));
+        chenomxColVal = ...
+            handles.storedBinsChenomx{selectedListboxIdx};
+        if (chenomxColVal == 'X')
+            set(handles.chenomx_checkbox, 'Value', 1.0);
         else
-            msgbox('No match/Multiple matches found.', ...
-                'Cannot Complete Request', 'error', 'modal');
+            set(handles.chenomx_checkbox, 'Value', 0.0);
         end;
+        
+        leftBound = handles.storedBinsLeftBounds(selectedListboxIdx);
+        rightBound = handles.storedBinsRightBounds(selectedListboxIdx);
+        set(handles.left_bound_edit, 'String', num2str(leftBound, '%.5e'));
+        set(handles.right_bound_edit, 'String', ...
+            num2str(rightBound, '%.5e'));
+        handles.workingLeftBound = leftBound;
+        handles.workingRightBound = rightBound;
+        
+        % Remap the axes and redraw, leaving some wiggle room past the
+        % bounds. No check is needed as this button should only be enabled
+        % when there is at least one collection loaded.
+        boundDiff = abs(leftBound - rightBound)*marginWidthProportion;
+        newXLim = [ rightBound - boundDiff   leftBound + boundDiff ];
+        set(handles.axes1, 'XLim', newXLim);
+        
+        guidata(hObject, handles);
+        redrawGraph(handles);
     end;
 else
     msgbox('Cannot retrieve bin metadata: No binmap loaded.', ...
@@ -663,27 +735,28 @@ function save_metabmap_button_Callback(hObject, eventdata, handles)
 if ( ischar(filename) && ischar(pathname) && ...
         ~isempty(filename) && ~isempty(pathname) )
     targetfile = fullfile(pathname,filename);
-    [fid ~] = fopen(targetfile, 'w');
-    if ( fid > 0 )
-        fprintf(fid, ['"Metabolite #","Peak #",Metabolite,"Bin (Lt)",' ...
-            '"Bin (Rt)",Multiplicity,Deconvolution,"1H Assignment",' ...
-            '"HMDB No.",Chenomx,Literature,\n']);
-        for i = 1:handles.currentStoredBinCount
-            fprintf(fid, '%d,%d,%s,%.8e,%.8e,%s,%s,%s,%d,%s,%s,\n', ...
-                handles.storedBinsMetabIDs(i), ...
-                handles.storedBinsPeakNums(i), ...
-                handles.storedBinsMetabolites{i}, ...
-                handles.storedBinsLeftBounds(i), ...
-                handles.storedBinsRightBounds(i), ...
-                handles.storedBinsMultiplicities{i}, ...
-                handles.storedBinsDeconv{i}, ...
-                handles.storedBinsProtonIDs{i}, ...
-                handles.storedBinsHmdbIDs(i), ...
-                handles.storedBinsChenomx{i}, ...
-                handles.storedBinsSources{i});
-        end;
-        fclose(fid);
-    end;
+    %    [fid ~] = fopen(targetfile, 'w');
+    %    if ( fid > 0 )
+    %        fprintf(fid, ['"Metabolite #","Peak #",Metabolite,"Bin (Lt)",' ...
+    %            '"Bin (Rt)",Multiplicity,Deconvolution,"1H Assignment",' ...
+    %            '"HMDB No.",Chenomx,Literature,\n']);
+    %        for i = 1:handles.currentStoredBinCount
+    %            fprintf(fid, '%d,%d,%s,%.8e,%.8e,%s,%s,%s,%d,%s,%s,\n', ...
+    %                handles.storedBinsMetabIDs(i), ...
+    %                handles.storedBinsPeakNums(i), ...
+    %                handles.storedBinsMetabolites{i}, ...
+    %                handles.storedBinsLeftBounds(i), ...
+    %                handles.storedBinsRightBounds(i), ...
+    %                handles.storedBinsMultiplicities{i}, ...
+    %                handles.storedBinsDeconv{i}, ...
+    %                handles.storedBinsProtonIDs{i}, ...
+    %                handles.storedBinsHmdbIDs(i), ...
+    %                handles.storedBinsChenomx{i}, ...
+    %                handles.storedBinsSources{i});
+    %        end;
+    %        fclose(fid);
+    %    end;
+    save_metabmap(targetfile, handles.storedBins);
 end;
 
 
@@ -750,9 +823,11 @@ function append_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to append_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if ( isfield(handles, 'storedBinsMetabIDs') )
+if ( isfield(handles, 'storedBins') )
     % We've got bins loaded already. Append the new bin to the structure.
-    handles.currentStoredBinCount = handles.currentStoredBinCount + 1;
+    %currentStoredBinCount = length(storedBins);
+    currentHighBinID = storedBins(length(storedBins)).id;
+    nextBinID = currentHighBinID + 1;
     metabPopupIdx = get(handles.metabolite_name_popup, 'Value');
     metabID = handles.metabIDs{metabPopupIdx, 1};
     metabName = handles.metabIDs{metabPopupIdx, 2};
@@ -766,8 +841,6 @@ if ( isfield(handles, 'storedBinsMetabIDs') )
         str2num(get(handles.right_bound_edit, 'String'));
     handles.storedBinsMultiplicities{handles.currentStoredBinCount} = ...
         get(handles.multiplicity_edit, 'String');
-    handles.storedBinsDeconv{handles.currentStoredBinCount} = ...
-        get(handles.deconvolution_edit, 'String');
     handles.storedBinsProtonIDs{handles.currentStoredBinCount} = ...
         get(handles.proton_id_edit, 'String');
     handles.storedBinsSources{handles.currentStoredBinCount} = ...
@@ -775,7 +848,7 @@ if ( isfield(handles, 'storedBinsMetabIDs') )
     handles.storedBinsHmdbIDs(handles.currentStoredBinCount) = ...
         str2num(get(handles.hmdb_id_edit, 'String'));
     handles.storedBinsPeakNums(handles.currentStoredBinCount) = ...
-        str2num(get(handles.peak_num_edit, 'String'));
+        str2num(get(handles.peak_count_edit, 'String'));
     if (get(handles.chenomx_checkbox, 'Value'))
         handles.storedBinsChenomx{handles.currentStoredBinCount} = 'X';
     else
@@ -803,8 +876,6 @@ else
     handles.storedBinsMultiplicities{1} = ...
         get(handles.multiplicity_edit, 'String');
     handles.storedBinsDeconv = {};
-    handles.storedBinsDeconv{1} = ...
-        get(handles.deconvolution_edit, 'String');
     handles.storedBinsProtonIDs = {};
     handles.storedBinsProtonIDs{1} = ...
         get(handles.proton_id_edit, 'String');
@@ -814,7 +885,7 @@ else
     handles.storedBinsHmdbIDs = ...
         str2num(get(handles.hmdb_id_edit, 'String'));
     handles.storedBinsPeakNums = ...
-        str2num(get(handles.peak_num_edit, 'String'));
+        str2num(get(handles.peak_count_edit, 'String'));
     handles.storedBinsChenomx = {};
     if (get(handles.chenomx_checkbox, 'Value'))
         handles.storedBinsChenomx{1} = 'X';
@@ -839,9 +910,9 @@ function mapped_bins_listbox_Callback(hObject, eventdata, handles)
 selectedListboxIdx = get(hObject, 'Value');
 % Error check, just in case...
 if (isnumeric(selectedListboxIdx) && ...
-        isfield(handles, 'currentStoredBinCount') &&...
+        isfield(handles, 'storedBins') &&...
         selectedListboxIdx > 0 && ...
-        selectedListboxIdx < handles.currentStoredBinCount+1)
+        selectedListboxIdx < length(handles.storedBins) + 1)
 end;
 guidata(hObject, handles);
 repopulateMappedBinsList(handles);
@@ -856,11 +927,11 @@ function metabolite_name_popup_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns metabolite_name_popup contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from metabolite_name_popup
 itemIdxSelected = get(hObject,'Value');
-%if (isnumeric(itemIdxSelected) && itemIdxSelected == 2)
-%    set(handles.new_metab_name_edit, 'Enable', 'on');
-%else
-%    set(handles.new_metab_name_edit, 'Enable', 'off');
-%end;
+if (isnumeric(itemIdxSelected) && itemIdxSelected == 2)
+    set(handles.new_metab_name_edit, 'Enable', 'on');
+else
+    set(handles.new_metab_name_edit, 'Enable', 'off');
+end;
 guidata(hObject, handles);
 
 
@@ -873,15 +944,6 @@ function id_source_edit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of id_source_edit as text
 %        str2double(get(hObject,'String')) returns contents of id_source_edit as a double
-
-
-function deconvolution_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to deconvolution_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of deconvolution_edit as text
-%        str2double(get(hObject,'String')) returns contents of deconvolution_edit as a double
 
 
 function multiplicity_edit_Callback(hObject, eventdata, handles)
@@ -939,10 +1001,19 @@ function set_bound_mode_uipanel_SelectionChangeFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-function peak_num_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to peak_num_edit (see GCBO)
+function peak_count_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to peak_count_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of peak_num_edit as text
-%        str2double(get(hObject,'String')) returns contents of peak_num_edit as a double
+% Hints: get(hObject,'String') returns contents of peak_count_edit as text
+%        str2double(get(hObject,'String')) returns contents of peak_count_edit as a double
+
+
+function selected_display_spectra_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to selected_display_spectra_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of selected_display_spectra_edit as text
+%        str2double(get(hObject,'String')) returns contents of selected_display_spectra_edit as a double

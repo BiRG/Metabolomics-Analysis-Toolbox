@@ -32,7 +32,7 @@ switch model.baseline_type
     case 'v'
         y_for_v = [remainder(1); remainder(1)*remainder(2); ...
             remainder(1)*remainder(2)*remainder(3)];
-        y_baseline = baseline_piecewise_interp(y_for_v, x_baseline_BETA, x);
+        y_baseline = interp1(x_baseline_BETA, y_for_v, x, 'linear', 0);
     case {'line_up','line_down'}
         y_baseline = (x-min(x))*remainder(2)+remainder(1);
     case 'constant'
