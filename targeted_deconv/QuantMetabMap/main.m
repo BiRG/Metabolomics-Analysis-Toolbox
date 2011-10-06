@@ -202,6 +202,7 @@ else
     end
     setpref('Targeted_Deconvolution','last_metab_map_filename', ...
         metab_map_filename);
+    metab_map = sort_metabmap(metab_map);
 
 
     % Now load the collection.  If there is a filename, load it from the
