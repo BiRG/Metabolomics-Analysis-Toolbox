@@ -91,7 +91,6 @@ function redrawGraph(handles)
 % handles    structure with handles and user data (see GUIDATA)
 popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
 popupSpectrumNum = get(handles.select_spectrum_popup, 'Value');
-spectralDispMode = get(handles.individual_mode_radiobutton, 'Value');
 
 clearGraph(handles);
 
@@ -101,7 +100,7 @@ if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
         && popupCollectionNum > 0 )
     % At least one collection has been loaded & selected. Proceed.
     
-    if ( spectralDispMode == ...
+    if ( get(handles.individual_mode_radiobutton, 'Value') == ...
             get(handles.individual_mode_radiobutton, 'Max') )
         
         % We are in individual spectrum display mode.
@@ -109,22 +108,71 @@ if ( isfield(handles, 'collections') && ~isempty(handles.collections)...
         plot(handles.collections{popupCollectionNum}.x, ...
             handles.collections{popupCollectionNum}.Y(:,popupSpectrumNum));
         
-    else if ( spectralDispMode == ...
-                get(handles.overlaid_mode_radiobutton, 'Max') )
+    end;
+    
+    if ( get(handles.overlaid_mode_radiobutton, 'Value') == ...
+            get(handles.overlaid_mode_radiobutton, 'Max') )
+        
+        % We are in overlay mode. Populate the graph with all spectra
+        % overlaid.
+        plot(handles.collections{popupCollectionNum}.x, ...
+            handles.collections{popupCollectionNum}.Y);
+    end;
+    
+    if ( get(handles.selected_mode_radiobutton, 'Value') == ...
+            get(handles.selected_mode_radiobutton, 'Max') )
+        
+        % We are in selective display mode. Populate the graph with only
+        % the selected spectra overlaid.
+        userSelectedSpectraStr = ...
+            get(handles.selected_display_spectra_edit, 'String');
+        userSelectedSpectraIDs = ...
+            regexp(userSelectedSpectraStr, '(\d+)', 'tokens');
+        userSelectedSpectraIDs = ...
+            [ userSelectedSpectraIDs{:} ]; % Flatten
+        userSelectedSpectraRanges = ...
+            regexp(userSelectedSpectraStr, '(\d+)-(\d+)', 'tokens');
+        userSelectedSpectraRanges = ...
+            [ userSelectedSpectraRanges{:} ]; % Flatten
+        
+        % Lose the IDs which are part of range bounds.
+        if (~isempty(userSelectedSpectraRanges))
+            userSelectedSpectraIDIdxs = ...
+                find(~ismember(userSelectedSpectraIDs, ...
+                userSelectedSpectraRanges(:)));
+            userSelectedSpectraIDs = ...
+                userSelectedSpectraIDs(userSelectedSpectraIDIdxs(:));
+        end;
+        
+        % Append the individual spectra IDs to the list.
+        for i=1:length(userSelectedSpectraRanges)/2
+            startID = ...
+                str2double(userSelectedSpectraRanges(1+2*(i-1)));
+            endID = str2double(userSelectedSpectraRanges(2+2*(i-1)));
+            for j=startID:endID
+                userSelectedSpectraIDs = ...
+                    [ userSelectedSpectraIDs num2str(j) ];
+            end;
+        end;
+        
+        % Convert to scalar numbers.
+        userSingleSpectraIDCount = length(userSelectedSpectraIDs);
+        userSelectedSpectraIDsNumVal = ...
+            zeros(userSingleSpectraIDCount, 1);
+        for i=1:userSingleSpectraIDCount
+            userSelectedSpectraIDsNumVal(i) = ...
+                str2double(userSelectedSpectraIDs(i));
+        end;
+        userSelectedSpectraIDsNumVal = ...
+            sort(userSelectedSpectraIDsNumVal);
+        
+        % Make sure all the possible spectrum IDs are in-bounds.
+        if ( isempty(find(userSelectedSpectraIDsNumVal > ...
+                size(handles.collections{popupCollectionNum}.Y, 2), 1)) )
             
-            % We are in overlay mode. Populate the graph with all spectra
-            % overlaid.
+            % Plot JUST the matching spectra.
             plot(handles.collections{popupCollectionNum}.x, ...
-                handles.collections{popupCollectionNum}.Y);
-            
-        else
-            
-            % We are in selective display mode. Populate the graph with only
-            % the selected spectra overlaid.
-            msgbox('Selected spectral overlay feature not yet implemented', ...
-                'Oops!');
-            %        plot(handles.collections{popupCollectionNum}.x, ...
-            %            handles.collections{popupCollectionNum}.Y);
+                handles.collections{popupCollectionNum}.Y(:,userSelectedSpectraIDsNumVal(:)));
             
         end;
     end;
@@ -144,22 +192,23 @@ if ( isfield(handles, 'workingRightBound') )
     plot(xseries, axesObjLimit, '-.r', 'LineWidth', 2);
 end;
 
-% Draw all stored bin bounds.
+% Draw all stored bin bounds not marked as deleted.
 if ( isfield(handles, 'storedBins') )
     for i = 1:length(handles.storedBins)
-        xseries = [ handles.storedBins(i).bin.left ...
-            handles.storedBins(i).bin.left ];
-        plot(xseries, axesObjLimit, ...
-            'Color', [.67 1 1], ...
-            'LineStyle', '-.');
-        xseries = [ handles.storedBins(i).bin.right ...
-            handles.storedBins(i).bin.right ];
-        plot(xseries, axesObjLimit, ...
-            'Color', [1 .67 0], ...
-            'LineStyle', '-.');
+        if ( ~handles.storedBins(i).was_deleted )
+            xseries = [ handles.storedBins(i).bin.left ...
+                handles.storedBins(i).bin.left ];
+            plot(xseries, axesObjLimit, ...
+                'Color', [.67 1 1], ...
+                'LineStyle', '-.');
+            xseries = [ handles.storedBins(i).bin.right ...
+                handles.storedBins(i).bin.right ];
+            plot(xseries, axesObjLimit, ...
+                'Color', [1 .67 0], ...
+                'LineStyle', '-.');
+        end;
     end;
 end;
-
 hold off;
 
 
@@ -366,6 +415,8 @@ end;
 % management buttons to their defaults.
 set(handles.individual_mode_radiobutton,'Value', ...
     get(handles.individual_mode_radiobutton,'Max'));
+set(handles.no_bound_mode_radiobutton,'Value', ...
+    get(handles.no_bound_mode_radiobutton,'Max'));
 set(handles.append_bin_button, 'Enable', 'off');
 set(handles.retrieve_bin_button, 'Enable', 'off');
 clearGraph(handles);
@@ -393,6 +444,7 @@ if ( ~isempty(handles.collections) )
     set(handles.select_spectrum_popup, 'Enable', 'off');
     set(handles.left_bound_mode_radiobutton, 'Enable', 'on');
     set(handles.right_bound_mode_radiobutton, 'Enable', 'on');
+    set(handles.no_bound_mode_radiobutton, 'Enable', 'on');
 else
     set(handles.select_collection_popup, 'Value', 1);
     set(handles.select_collection_popup,'String','[ NO COLLECTION LOADED ]');
@@ -402,6 +454,7 @@ else
     set(handles.select_spectrum_popup,'Enable','off');
     set(handles.left_bound_mode_radiobutton,'Enable','off');
     set(handles.right_bound_mode_radiobutton,'Enable','off');
+    set(handles.no_bound_mode_radiobutton, 'Enable', 'off');
 end;
 
 
@@ -478,51 +531,47 @@ function spectra_display_mode_uipanel_SelectionChangeFcn(hObject, eventdata, han
 % handles    structure with handles and user data (see GUIDATA)
 popupCollectionNum = get(handles.select_collection_popup, 'Value') - 1; % Popup entries are 1-indexed.
 
-switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
-    
-    case 'overlaid_mode_radiobutton'
-        % Disable the spectrum select popup menu & do not allow bin
-        % appending as we're displaying all the spectra at once.
-        set(handles.select_spectrum_popup, 'Enable', 'off');
-        set(handles.append_bin_button, 'Enable', 'off');
-        redrawGraph(handles);
+if ( popupCollectionNum > 0 )
+    % A collection is selected.
+    switch get(eventdata.NewValue,'Tag') % Get Tag of selected object.
         
-    case 'individual_mode_radiobutton'
-        % We intend to display only one spectrum in the
-        % collection at a time. Allow bin appending and
-        % enable the spectrum select popup.
-        if ( popupCollectionNum > 0 )
-            % A collection is selected.
+        case 'overlaid_mode_radiobutton'
+            % Disable the spectrum select popup menu & do not allow bin
+            % appending as we're displaying all the spectra at once.
+            set(handles.select_spectrum_popup, 'Enable', 'off');
+            set(handles.append_bin_button, 'Enable', 'off');
+            redrawGraph(handles);
+            
+        case 'individual_mode_radiobutton'
+            % We intend to display only one spectrum in the
+            % collection at a time. Allow bin appending and
+            % enable the spectrum select popup.
             set(handles.select_spectrum_popup, 'Enable', 'on');
             set(handles.append_bin_button, 'Enable', 'on');
             set(handles.retrieve_bin_button, 'Enable', 'on');
             redrawGraph(handles);
-        else
-            % No collection is actually selected to display.
-            set(handles.select_spectrum_popup, 'Enable', 'off');
-            set(handles.append_bin_button, 'Enable', 'off');
-            set(handles.retrieve_bin_button, 'Enable', 'off');
-        end;
-        
-    case 'some_mode_radiobutton'
-        % We intend to display a reduced set of overlaid spectra.
-        % Allow bin appending but disable the spectrum select popup.
-        if ( popupCollectionNum > 0 )
-            % A collection is selected.
+            
+        case 'selected_mode_radiobutton'
+            % We intend to display a reduced set of overlaid spectra.
+            % Allow bin appending but disable the spectrum select popup.
             set(handles.select_spectrum_popup, 'Enable', 'off');
             set(handles.append_bin_button, 'Enable', 'on');
             set(handles.retrieve_bin_button, 'Enable', 'on');
-            redrawGraph(handles);
-        else
-            % No collection is actually selected to display.
-            set(handles.select_spectrum_popup, 'Enable', 'off');
-            set(handles.append_bin_button, 'Enable', 'off');
-            set(handles.retrieve_bin_button, 'Enable', 'off');
-        end;
-        
-    otherwise
-        % Make sure the individual mode is selected.
-        set(eventdata.NewValue,'Tag','individual_mode_radiobutton');
+            if ( ~isempty( ...
+                    get(handles.selected_display_spectra_edit, ...
+                    'String') ) )
+                redrawGraph(handles);
+            end;
+            
+        otherwise
+            % Make sure the individual mode is selected.
+            set(eventdata.NewValue,'Tag','individual_mode_radiobutton');
+    end;
+else
+    % No collection is actually selected to display.
+    set(handles.select_spectrum_popup, 'Enable', 'off');
+    set(handles.append_bin_button, 'Enable', 'off');
+    set(handles.retrieve_bin_button, 'Enable', 'off');
 end;
 
 
@@ -535,25 +584,6 @@ function load_metabmap_button_Callback(hObject, eventdata, handles)
     {'*.txt;*.csv', 'Tab/comma delimited files (*.txt, *.csv)'; ...
     '*.*', 'All Files (*.*)'} );
 if ( ischar(filename) && ~isempty(filename) )
-    %    fid = fopen([pathname filename]);
-    %    handles.binmapHeaders = textscan(fid, ...
-    %        '%q %q %q %q %q %q %q %q %q %q %q', 1, ...
-    %        'Delimiter', ',\t');
-    %    binmapData = textscan(fid, '%d %d %q %f %f %q %q %q %d %q %q', ...
-    %        'Delimiter', ',\t');
-    %    fclose(fid);
-    %    handles.storedBinsMetabIDs = binmapData{1};
-    %    handles.currentStoredBinCount = length(handles.storedBinsMetabIDs);
-    %    handles.storedBinsPeakNums = binmapData{2};
-    %    handles.storedBinsMetabolites = binmapData{3};
-    %    handles.storedBinsLeftBounds = binmapData{4};
-    %    handles.storedBinsRightBounds = binmapData{5};
-    %    handles.storedBinsMultiplicities = binmapData{6};
-    %    handles.storedBinsDeconv = binmapData{7};
-    %    handles.storedBinsProtonIDs = binmapData{8};
-    %    handles.storedBinsHmdbIDs = binmapData{9};
-    %    handles.storedBinsChenomx = binmapData{10};
-    %    handles.storedBinsSources = binmapData{11};
     
     handles.storedBins = load_metabmap(fullfile(pathname, filename));
     
@@ -735,27 +765,6 @@ function save_metabmap_button_Callback(hObject, eventdata, handles)
 if ( ischar(filename) && ischar(pathname) && ...
         ~isempty(filename) && ~isempty(pathname) )
     targetfile = fullfile(pathname,filename);
-    %    [fid ~] = fopen(targetfile, 'w');
-    %    if ( fid > 0 )
-    %        fprintf(fid, ['"Metabolite #","Peak #",Metabolite,"Bin (Lt)",' ...
-    %            '"Bin (Rt)",Multiplicity,Deconvolution,"1H Assignment",' ...
-    %            '"HMDB No.",Chenomx,Literature,\n']);
-    %        for i = 1:handles.currentStoredBinCount
-    %            fprintf(fid, '%d,%d,%s,%.8e,%.8e,%s,%s,%s,%d,%s,%s,\n', ...
-    %                handles.storedBinsMetabIDs(i), ...
-    %                handles.storedBinsPeakNums(i), ...
-    %                handles.storedBinsMetabolites{i}, ...
-    %                handles.storedBinsLeftBounds(i), ...
-    %                handles.storedBinsRightBounds(i), ...
-    %                handles.storedBinsMultiplicities{i}, ...
-    %                handles.storedBinsDeconv{i}, ...
-    %                handles.storedBinsProtonIDs{i}, ...
-    %                handles.storedBinsHmdbIDs(i), ...
-    %                handles.storedBinsChenomx{i}, ...
-    %                handles.storedBinsSources{i});
-    %        end;
-    %        fclose(fid);
-    %    end;
     save_metabmap(targetfile, handles.storedBins);
 end;
 
