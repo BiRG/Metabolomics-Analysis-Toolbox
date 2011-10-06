@@ -5,6 +5,13 @@ function [ metabmap ] = load_metabmap(full_filename)
 %   loaded from a file passed as an argument.  If the the given file is
 %   invalid, an empty array is returned.
 
+if ( ~ischar(full_filename) )
+    error('birg:invalid_param_type',...
+        ['Argument 1 invalid type ''' ...
+        class(full_filename) ...
+        '''. ''char'' expected']);
+end;
+
 %Open the file
 fid = fopen(full_filename,'r','n','ISO-8859-1');
 if fid == -1
