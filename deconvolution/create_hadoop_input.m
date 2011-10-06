@@ -1,4 +1,4 @@
-function output = create_hadoop_input(x,y,all_maxs,all_mins,outfile,options)
+function [output,regions] = create_hadoop_input(x,y,all_maxs,all_mins,outfile,options)
 % x (d x 1) and y (d x 1)
 % e.g., outfile = 'hadoop_output.txt'
 if ~exist('options')
