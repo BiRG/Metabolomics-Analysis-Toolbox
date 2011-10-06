@@ -1779,7 +1779,7 @@ end
 
 
 
-function baseline_area_penalty_edit_box_Callback(hObject, eventdata, handles)
+function baseline_area_penalty_edit_box_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to baseline_area_penalty_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
