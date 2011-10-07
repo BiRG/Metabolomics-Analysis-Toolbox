@@ -21,26 +21,38 @@ for inx = 1:length(data)
         num_maxima = length(BETA0_r)/4 + length(BETA0_a)/4;
         x = [x_r';x_a'];
         y = [y_r';y_a'];
-        BETA0 = [BETA0_r';BETA0_a';y_r(1);y_a(1);y_a(end)];
-        x_baseline_BETA = [x_r(1);x_a(1);x_a(end)];
-        lb = [lb_r';lb_a';0;0;0];
-        ub = [ub_r';ub_a';max(y);max(y);max(y)];
+%         BETA0 = [BETA0_r';BETA0_a';y_r(1);y_a(1);y_a(end)];
+        BETA0 = [BETA0_r';BETA0_a';y_r(1);y_a(end)];
+%         x_baseline_BETA = [x_r(1);x_a(1);x_a(end)];
+%         lb = [lb_r';lb_a';min(y);min(y);min(y)];
+%         ub = [ub_r';ub_a';max(y);max(y);max(y)];
+        x_baseline_BETA = [x_r(1);x_a(end)];
+        lb = [lb_r';lb_a';min(y);min(y)];
+        ub = [ub_r';ub_a';max(y);max(y)];
     elseif r == data{inx}.num_regions
         num_maxima = length(BETA0_b)/4 + length(BETA0_r)/4;
         x = [x_b';x_r'];
         y = [y_b';y_r'];
-        BETA0 = [BETA0_b';BETA0_r';y_b(1);y_r(1);y_r(end)];
-        x_baseline_BETA = [x_b(1);x_r(1);x_r(end)];
-        lb = [lb_b';lb_r';0;0;0];
-        ub = [ub_b';ub_r';max(y);max(y);max(y)];
+        BETA0 = [BETA0_b';BETA0_r';y_b(1);y_r(end)];
+%         BETA0 = [BETA0_b';BETA0_r';y_b(1);y_r(1);y_r(end)];
+%         x_baseline_BETA = [x_b(1);x_r(1);x_r(end)];
+%         lb = [lb_b';lb_r';min(y);min(y);min(y)];
+%         ub = [ub_b';ub_r';max(y);max(y);max(y)];
+        x_baseline_BETA = [x_b(1);x_r(end)];
+        lb = [lb_b';lb_r';min(y);min(y)];
+        ub = [ub_b';ub_r';max(y);max(y)];
     else
         num_maxima = length(BETA0_b)/4 + length(BETA0_r)/4 + length(BETA0_a)/4;
         x = [x_b';x_r';x_a'];
         y = [y_b';y_r';y_a'];
-        BETA0 = [BETA0_b';BETA0_r';BETA0_a';y_b(1);y_r(1);y_a(1);y_a(end)];
-        x_baseline_BETA = [x_b(1);x_r(1);x_a(1);x_a(end)];
-        lb = [lb_b';lb_r';lb_a';0;0;0;0];
-        ub = [ub_b';ub_r';ub_a';max(y);max(y);max(y);max(y)];
+%         BETA0 = [BETA0_b';BETA0_r';BETA0_a';y_b(1);y_r(1);y_a(1);y_a(end)];
+        BETA0 = [BETA0_b';BETA0_r';BETA0_a';y_b(1);y_a(end)];
+%         x_baseline_BETA = [x_b(1);x_r(1);x_a(1);x_a(end)];
+%         lb = [lb_b';lb_r';lb_a';min(y);min(y);min(y);min(y)];
+%         ub = [ub_b';ub_r';ub_a';max(y);max(y);max(y);max(y)];
+        x_baseline_BETA = [x_b(1);x_a(end)];
+        lb = [lb_b';lb_r';lb_a';min(y);min(y)];
+        ub = [ub_b';ub_r';ub_a';max(y);max(y)];
     end
     data{inx}.lb{j} = lb;
     data{inx}.ub{j} = ub;
@@ -51,7 +63,7 @@ for inx = 1:length(data)
     data{inx}.x_baseline_BETA{j} = x_baseline_BETA;
   end
 end
-parfor inx = 1:length(data)
+for inx = 1:length(data)
   for j = 1:length(data{inx}.eval_strs) % Could be more than 1 but for now there is only 1
     [data{inx}.new_eval_strs{j},y_fit] = perform_deconvolution(data{inx}.x{j},data{inx}.y{j},data{inx}.BETA0{j},...
         data{inx}.lb{j},data{inx}.ub{j},data{inx}.num_maxima{j},data{inx}.x_baseline_BETA{j});
