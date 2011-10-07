@@ -1076,29 +1076,32 @@ collection = handles.collection;
 % Remove adjacent deconvolution
 Y = adjust_y_deconvolution(collection,bins,deconvolve);
 collection.Y = Y;
-new_collection = bin_collection(collection,bins,deconvolve,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
+new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
 save_collections({new_collection},'_binned');
 
 function Y = adjust_y_deconvolution(collection,bins,deconvolve)
+% If the collection does not have a y_baseline field, does nothing.
 Y = collection.Y;
-[num_dp,num_spectra] = size(Y);
-for s = 1:num_spectra
-    y = collection.Y(:,s);
-    y_baseline = collection.y_baseline{s};
-    y_fit = collection.y_fit{s};
-    y_peaks = y_fit - y_baseline;
-    for b = 1:length(deconvolve)
-        if deconvolve(b)
-            left = bins(b,1);
-            right = bins(b,2);
-            yinxs = find(left >= collection.x & collection.x > right);
-            BETA = collection.BETA{s};
-            X = BETA(4:4:end);
-            xinxs = find(left >= X & X > right);
-            enabled_xinxs = xinxs(find(collection.include_mask{s}(xinxs) == 1)); % find only those enabled
-            xinxs = enabled_xinxs;
-            y_bin = global_model(BETA((4*(xinxs(1) - 1)+1):(4*(xinxs(end) - 1)+4)),collection.x(yinxs),length(xinxs),{});
-            Y(yinxs,s) = y(yinxs) - y_peaks(yinxs) - y_baseline(yinxs) + y_bin';
+if isfield(collection, 'y_baseline')
+    [num_dp,num_spectra] = size(Y);
+    for s = 1:num_spectra
+        y = collection.Y(:,s);
+        y_baseline = collection.y_baseline{s};
+        y_fit = collection.y_fit{s};
+        y_peaks = y_fit - y_baseline;
+        for b = 1:length(deconvolve)
+            if deconvolve(b)
+                left = bins(b,1);
+                right = bins(b,2);
+                yinxs = find(left >= collection.x & collection.x > right);
+                BETA = collection.BETA{s};
+                X = BETA(4:4:end);
+                xinxs = find(left >= X & X > right);
+                enabled_xinxs = xinxs(find(collection.include_mask{s}(xinxs) == 1)); % find only those enabled
+                xinxs = enabled_xinxs;
+                y_bin = global_model(BETA((4*(xinxs(1) - 1)+1):(4*(xinxs(end) - 1)+4)),collection.x(yinxs),length(xinxs),{});
+                Y(yinxs,s) = y(yinxs) - y_peaks(yinxs) - y_baseline(yinxs) + y_bin';
+            end
         end
     end
 end
@@ -1124,7 +1127,7 @@ answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};        
 Y = adjust_y_deconvolution(collection,bins,deconvolve);
 collection.Y = Y;
-new_collection = bin_collection(collection,bins,deconvolve,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
+new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
 post_collections(gcf,{new_collection},'_binned',analysis_id);
 
 % --- Executes on button press in add_bin_pushbutton.
