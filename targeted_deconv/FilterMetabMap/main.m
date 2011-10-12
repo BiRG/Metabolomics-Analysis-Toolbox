@@ -330,7 +330,7 @@ if isequal(filename,0) || isequal(pathname,0)
    return;
 end
 
-handles.metabolites = load_metabmap(fullfile(pathname, filename));
+handles.metabolites = load_metabmap(fullfile(pathname, filename),'no_deleted_bins');
 handles.yes_mask = zeros(1,length(handles.metabolites));
 refresh_both_lists(handles);
 
