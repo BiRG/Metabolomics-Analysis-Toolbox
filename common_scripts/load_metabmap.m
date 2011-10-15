@@ -1,9 +1,62 @@
-function [ metabmap ] = load_metabmap(full_filename)
+function [ metabmap ] = load_metabmap(full_filename, load_deleted)
 % Loads the file as a metabmap
 %
-%   Returns a metabmap (which is just an array of CompoundBin objects)
-%   loaded from a file passed as an argument.  If the the given file is
-%   invalid, an empty array is returned.
+% Returns a metabmap (which is just an array of CompoundBin objects)
+% loaded from a file passed as an argument.  If the the given file is
+% invalid, an empty array is returned.
+%
+% If load_deleted = 'no_deleted_bins' then only returns the bins that are
+% not marked deleted.
+%
+% -------------------------------------------------------------------------
+% Input arguments
+% -------------------------------------------------------------------------
+%
+% full_filename  The filename of the file to load
+%
+% load_deleted   If present then only returns those bins that are not
+%                marked deleted.  If present must be set to 
+%                'no_deleted_bins' 
+%
+% -------------------------------------------------------------------------
+% Output parameters
+% -------------------------------------------------------------------------
+% 
+% metabmap  An array of CompoundBin objects loaded from the file passed 
+%           as an argument.  If the the given file is invalid, an 
+%           empty array is returned.
+%
+% -------------------------------------------------------------------------
+% Examples
+% -------------------------------------------------------------------------
+%
+% >> mm=load_metabmap(filename);
+%
+% Puts all the compound bin objects from filename into mm
+%
+% >> mm=load_metabmap(filename,'no_deleted_bins');
+%
+% Ignores the deleted bins in filename and puts the rest into mm
+
+
+if ( ~ischar(full_filename) )
+    error('birg:invalid_param_type',...
+        ['Argument 1 invalid type ''' ...
+        class(full_filename) ...
+        '''. ''char'' expected']);
+end;
+
+should_remove_deleted = false;
+if nargin > 1
+    if strcmp(load_deleted,'no_deleted_bins');
+        should_remove_deleted = true;
+    else
+        error('load_metabmap:invalid_load_deleted', ...
+            ['The load_deleted argument to load_metabmap must have ' ...
+            'the value "no_deleted_bins" if it is present.  Instead ' ...
+            'it was: "' load_deleted '"']);
+    end
+end
 
 %Open the file
 fid = fopen(full_filename,'r','n','ISO-8859-1');
@@ -39,6 +92,9 @@ if ischar(header)
         else
             break;
         end
+    end
+    if should_remove_deleted
+        metabmap = remove_deleted_bins_from_metabmap(metabmap);
     end
 else
     msgbox('The metab-map file was empty','Error','error');

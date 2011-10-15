@@ -84,7 +84,7 @@ function out_handles = init_handles_and_gui_from_session_data(handles, session_d
 % user data has been restored to it
 %
 % Note that display components are not initialized 
-if(session_data.version ~= 0.2)
+if(session_data.version ~= 0.3)
     uiwait(msgbox(['This session data was generated from a ', ...
         'different version of the targeted deconvolution program (#', ...
         sprintf('%0.2f',session_data.version), ...
@@ -93,18 +93,27 @@ end
 
 set(handles.metabolite_menu,'String', session_data.metabolite_menu_string);
 handles.collection = session_data.collection;
-handles.bin_map = session_data.bin_map;
+if session_data.version >= 0.3
+    handles.metab_map = session_data.metab_map;
+else
+    % In earlier versions, metab_map was called bin_map.  The name was
+    % changed due to confusion with a bin map that was just a listing of
+    % bin boundaries.
+    handles.metab_map = session_data.bin_map;
+end
 handles.identifications = session_data.identifications;
 handles.peaks = session_data.peaks;
 handles.spectrum_idx = session_data.spectrum_idx;
 handles.bin_idx = session_data.bin_idx;
 handles.already_autoidentified = session_data.already_autoidentified;
 handles.deconvolutions = session_data.deconvolutions;
+
+
 if session_data.version < 0.2
     % In earlier versions, there were no model objects, so set the models to
     % the default
     num_spec = collection.num_samples;
-    num_bins = length(bin_map);
+    num_bins = length(metab_map);
     handles.models(num_bins, num_spec)=RegionalSpectrumModel;
 else
     % Otherwise set to the saved models
@@ -116,20 +125,20 @@ out_handles = handles;
 
 function out_handles = init_handles_and_gui_from_scratch(handles)
 % Takes a handles structure that has handles for the gui components, a
-% bin_map and a collection as well as possibly a peaks cell array, and 
+% metab_map and a collection as well as possibly a peaks cell array, and 
 % initializes the rest of the gui state from that.  Returns the new value 
 % for the handles structure
 %
 % Note that display components are not initialized 
 
-% Initialize the menu of metabolites from the bin map
-num_bins = length(handles.bin_map);
+% Initialize the menu of metabolites from the metab map
+num_bins = length(handles.metab_map);
 num_samples = handles.collection.num_samples;
 metabolite_names{num_bins}='';
 for bin_idx = 1:num_bins
-    cur_bin = handles.bin_map(bin_idx);
+    cur_bin = handles.metab_map(bin_idx);
     metabolite_names{bin_idx}=sprintf('%s (%d)', ...
-        cur_bin.compound_descr, cur_bin.id);
+        cur_bin.compound_name, cur_bin.id);
 end
 set(handles.metabolite_menu, 'String', metabolite_names);
 
@@ -216,14 +225,14 @@ handles.output = hObject;
 
 % Initialize the gui and handles structure using data passed in from
 % targeted_deconv_start
-if isappdata(0,'collection') && isappdata(0,'bin_map')
+if isappdata(0,'collection') && isappdata(0,'metab_map')
     % Move the app data from the matlab root into handle variables
     handles.collection = getappdata(0,'collection');
-    handles.bin_map = getappdata(0,'bin_map');
+    handles.metab_map = getappdata(0,'metab_map');
 
     % Remove app data from matlab root so it is not sitting around
     rmappdata(0, 'collection');
-    rmappdata(0, 'bin_map');
+    rmappdata(0, 'metab_map');
 
     % If there is peak app data, set it up too, then remove it
     if isappdata(0, 'peaks')
@@ -241,9 +250,10 @@ elseif isappdata(0,'saved_session_data')
     %Remove app data from matlab root so it is not sitting around
     rmappdata(0,'saved_session_data');
 else
-    uiwait(msgbox('Either the bin_map or collections were not loaded.','Error','error','modal'));
+    uiwait(msgbox('Either the metab_map or collections were not loaded.','Error','error','modal'));
     handles.collection = bogus_collection;
-    handles.bin_map =CompoundBin({1,'N methylnicotinamide',9.297,9.265,'s','Clean','CH2','Publication'});
+    handles.metab_map =CompoundBin(CompoundBin.csv_file_header_string, ...
+        '3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"');
     
     handles = init_handles_and_gui_from_scratch(handles);
 end
@@ -276,7 +286,7 @@ function y = y_values_in_cur_bin(handles)
 % boundaries)
 bin_idx = handles.bin_idx;
 spectrum_idx = handles.spectrum_idx;
-bin = handles.bin_map(bin_idx).bin;
+bin = handles.metab_map(bin_idx).bin;
 low_idx = index_of_nearest_x_to(bin.left, handles);
 high_idx = index_of_nearest_x_to(bin.right, handles);
 if low_idx > high_idx
@@ -427,7 +437,7 @@ function pks = get_spectrum_and_bin_peaks(handles, bin_idx, spectrum_idx)
 %               Optional argument.  If absent, uses current spectrum from
 %               handles.
 %
-% bin_idx       The index of the bin in handles.bin_map into which returned
+% bin_idx       The index of the bin in handles.metab_map into which returned
 %               peaks must fall.  Optional argument.  If absent, uses the
 %               current bin from handles.
 if nargin >= 3
@@ -438,30 +448,30 @@ end
 if nargin <= 1
     bin_idx = handles.bin_idx;
 end
-bin = handles.bin_map(bin_idx).bin;
+bin = handles.metab_map(bin_idx).bin;
 pks = pks(pks <= bin.left & pks >= bin.right);
 
-function indices = bins_invalidated_by_peak_change(bin_map, old_x, new_x)
+function indices = bins_invalidated_by_peak_change(metab_map, old_x, new_x)
 % Indices of bins whose extant deconvolution is invalidated by changing the list of peaks in old_x to that in new_x
 %
 % If any peaks change (are added or removed) in the range covered by a bin 
 % then the bin is invalidated by the change.
 %
-% bin_map The list of bins
+% metab_map The list of bins
 % old_x   The list of peak locations prior to the change
 % new_x   The list of peak locations subsequent to the change
 changed_x = setxor(old_x, new_x);
-changed_bin = zeros(1,length(bin_map));
-for i=1:length(bin_map)
-    changed_bin(i)=any((bin_map(i).bin.left >= changed_x) & ...
-        (bin_map(i).bin.right <= changed_x));
+changed_bin = zeros(1,length(metab_map));
+for i=1:length(metab_map)
+    changed_bin(i)=any((metab_map(i).bin.left >= changed_x) & ...
+        (metab_map(i).bin.right <= changed_x));
 end
 indices = find(changed_bin);
 
 function handles=set_spectrum_peaks_no_gui(spectrum_idx, new_val, handles)
 % Just like set_spectrum_peaks but does not update the gui (note that you
 % will need to update both the plot and display after calling this routine)
-changed_indices = bins_invalidated_by_peak_change(handles.bin_map, ...
+changed_indices = bins_invalidated_by_peak_change(handles.metab_map, ...
     handles.peaks{spectrum_idx}, new_val);
 if ~isempty(changed_indices)
     for bin_idx = changed_indices
@@ -530,7 +540,7 @@ function ids = peak_identifications_for(bin_idx, spec_idx, handles)
 % Return the list of the peak identification objests for the given
 % metabolite bin and spectrum
 %
-% bin_idx  The index of the metabolite bin in the bin_map
+% bin_idx  The index of the metabolite bin in the metab_map
 %
 % spec_idx The index of the spectrum in the collection
 idents = handles.identifications;
@@ -538,7 +548,7 @@ if(isempty(idents))
     ids = [];
 else
     bins = [idents.compound_bin];
-    correct_bin = [bins.id]==handles.bin_map(bin_idx).id;
+    correct_bin = [bins.id]==handles.metab_map(bin_idx).id;
     specs = [idents.spectrum_index];
     correct_spec = specs == spec_idx;
     ids = idents(correct_bin & correct_spec);
@@ -562,7 +572,7 @@ if(isempty(idents))
     id_indices = [];
 else
     bins = [idents.compound_bin];
-    correct_bin = [bins.id]==handles.bin_map(bin_idx).id;
+    correct_bin = [bins.id]==handles.metab_map(bin_idx).id;
     specs = [idents.spectrum_index];
     correct_spec = specs == spec_idx;
     id_indices = find(correct_bin & correct_spec);
@@ -631,44 +641,41 @@ else
 end
 
 function new_handles = potentially_autoidentify(handles)
-% Autoidentifies peaks if the current bin is clean, no identifications are
+% Autoidentifies peaks if no identifications are
 % extant for the current bin and spectrum, and the current spectrum has the 
-% same number of peaks as would
-% be expected.  Returns the new value of the handles structure.  Also sets 
-% the guidata.
+% same number of peaks as would be expected.  Returns the new value of the 
+% handles structure.  Also sets the guidata.
 
 %If no autoidentification has been done on this bin
 if ~handles.already_autoidentified(handles.bin_idx, handles.spectrum_idx)
     %If no current identifications
     ids = cur_peak_identifications(handles);
     if isempty(ids)
-        %If clean bin
-        bin = handles.bin_map(handles.bin_idx);
-        if bin.is_clean
-            %If correct number of peaks
-            pks = get_spectrum_and_bin_peaks(handles);
-            if length(pks) == bin.num_peaks
-                % Do autoidentification:
-                
-                %First mark as identified
-                handles.already_autoidentified(handles.bin_idx, ...
-                    handles.spectrum_idx) = 1;
-                
-                %Then make identification objects for all peaks in the bin
-                new_ids(bin.num_peaks)=PeakIdentification;
-                for i = 1:bin.num_peaks
-                    ppm = pks(i);
-                    xidx = index_of_nearest_x_to(ppm, handles);
-                    new_ids(i) = PeakIdentification(ppm, xidx, ...
-                        handles.spectrum_idx, bin, ...
-                        1, get_username, get_account_id, datestr(clock)); 
-                end
-                
-                %Finally add them to the identifications for the gui
-                set_identifications([handles.identifications new_ids], handles);
-                handles = guidata(handles.figure1);
+        %If correct number of peaks
+        bin = handles.metab_map(handles.bin_idx);
+        pks = get_spectrum_and_bin_peaks(handles);
+        if length(pks) == bin.num_peaks
+            % Do autoidentification:
+
+            %First mark as identified
+            handles.already_autoidentified(handles.bin_idx, ...
+                handles.spectrum_idx) = 1;
+
+            %Then make identification objects for all peaks in the bin
+            new_ids(bin.num_peaks)=PeakIdentification;
+            for i = 1:bin.num_peaks
+                ppm = pks(i);
+                xidx = index_of_nearest_x_to(ppm, handles);
+                new_ids(i) = PeakIdentification(ppm, xidx, ...
+                    handles.spectrum_idx, bin, ...
+                    1, get_username, get_account_id, datestr(clock)); 
             end
+
+            %Finally add them to the identifications for the gui
+            set_identifications([handles.identifications new_ids], handles);
+            handles = guidata(handles.figure1);
         end
+        
     end
 end
 new_handles = handles;
@@ -758,13 +765,13 @@ function update_display(handles)
 %
 % handles The handles structure containing the GUI application state
 set(handles.metabolite_menu, 'Value', handles.bin_idx);
-cur_bin=handles.bin_map(handles.bin_idx);
+cur_bin=handles.metab_map(handles.bin_idx);
 set(handles.multiplicity_text,'String', strcat('Multiplicity: ', ...
     cur_bin.readable_multiplicity));
-set(handles.proton_id_text,'String',strcat('Proton ID: ', ...
-    cur_bin.proton_id));
-set(handles.source_text,'String',strcat('Source: ', ...
-    cur_bin.id_source));
+set(handles.nucleus_assignment_text,'String',strcat('Nucleus: ', ...
+    cur_bin.nucleus_assignment));
+set(handles.literature_text,'String',strcat('Literature: ', ...
+    cur_bin.literature));
 set(handles.num_expected_peaks_text,'String', ...
     sprintf('Expected peaks: %d', cur_bin.num_peaks));
 set(handles.spectrum_number_edit_box,'String', ...
@@ -772,11 +779,6 @@ set(handles.spectrum_number_edit_box,'String', ...
 set(handles.num_identified_peaks_text,'String', ...
     sprintf('Identified peaks: %d', ...
     cur_num_identified(handles)));
-if cur_bin.is_clean
-    set(handles.clean_text,'String','Clean bin');
-else
-    set(handles.clean_text,'String','Not a clean bin');
-end
 
 % Set the baseline_menu to the correct entry
 model = handles.models(handles.bin_idx, handles.spectrum_idx);
@@ -820,7 +822,7 @@ else
 end
 
 bin_idx = handles.bin_idx;
-num_bins = length(handles.bin_map);
+num_bins = length(handles.metab_map);
 num_spec = handles.collection.num_samples;
 spec_idx = handles.spectrum_idx;
 if spec_idx == 1
@@ -865,7 +867,7 @@ zoom_to_interval(new_interval(1), new_interval(2));
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
 % index changes (and at other times)
-cb=handles.bin_map(handles.bin_idx);
+cb=handles.metab_map(handles.bin_idx);
 zoom_to_interval(cb.bin.right, cb.bin.left);
 
 % ------------------------------------------------------------------------
@@ -943,7 +945,7 @@ change_is_ok = 1;
 
 %Warn if the number of identified peaks is not what is expected
 num_ident = cur_num_identified(handles);
-bin = handles.bin_map(bin_idx);
+bin = handles.metab_map(bin_idx);
 if bin.num_peaks ~= num_ident
     response = questdlg([bin.readable_multiplicity, ' should have ', ...
         sprintf('%d',bin.num_peaks), ...
@@ -1128,7 +1130,7 @@ if spec_idx < num_spec
     set_spectrum_idx(spec_idx+1, handles);
 else 
     %Next compound
-    num_bins = length(handles.bin_map);
+    num_bins = length(handles.metab_map);
     if bin_idx < num_bins
         set_spectrum_and_bin_idx(1, bin_idx+1, handles);
         uiwait(msgbox('Changing to next compound', ...
@@ -1181,13 +1183,13 @@ else
             'mat');
         zip_name = [pkid_name '.zip'];
         collection = handles.collection; %#ok<NASGU>
-        bin_map = handles.bin_map; %#ok<NASGU>
+        metab_map = handles.metab_map; %#ok<NASGU>
         peaks = handles.peaks; %#ok<NASGU>
         identifications = handles.identifications; %#ok<NASGU>
-        save(pkid_name, 'collection','bin_map','peaks','identifications');
+        save(pkid_name, 'collection','metab_map','peaks','identifications');
         zip(zip_name, pkid_name);
         delete(pkid_name);
-        clear('collection','bin_map','peaks','identifications');
+        clear('collection','metab_map','peaks','identifications');
         
         
         if ~exist('./dont_send_emails.foobarbaz','file')
@@ -1230,18 +1232,18 @@ else
         num_spec = dec.num_samples;
         
         % Create new processing messages
-        num_bins = length(handles.bin_map);
+        num_bins = length(handles.metab_map);
         
         bin_names = '';
         for bin_idx = 1:num_bins
-            cur_bin = handles.bin_map(bin_idx);
+            cur_bin = handles.metab_map(bin_idx);
             if bin_idx == num_bins
                 separator = '';
             else
                 separator = ',';
             end
             bin_names=sprintf('%s %s (%d)%s', ...
-                bin_names, cur_bin.compound_descr, cur_bin.id, separator);
+                bin_names, cur_bin.compound_name, cur_bin.id, separator);
         end
         dec.processing_log = [dec.processing_log, '  Extracted peak ', ...
             'areas for: ', bin_names, '.'];
@@ -1250,7 +1252,7 @@ else
         
         % Create x-values for deconvolved collection
         num_x = 0;
-        for b = handles.bin_map;
+        for b = handles.metab_map;
             num_x = num_x + b.num_peaks + 1;
         end
         dec.x = zeros(1,num_x);
@@ -1258,7 +1260,7 @@ else
         clear('b','num_x');
         
         x_idx = 1;
-        for bin = handles.bin_map;
+        for bin = handles.metab_map;
             dec.x(x_idx) = bin.id * 1000;
             for i = 1:bin.num_peaks
                 dec.x(x_idx + i) = bin.id * 1000 + i;
@@ -1298,7 +1300,7 @@ else
                 
                 % Fill in the areas array, leaving 0's where a peak was not
                 % identified
-                bin = handles.bin_map(bin_idx);
+                bin = handles.metab_map(bin_idx);
                 num_peaks = bin.num_peaks;
                 areas = zeros(1, num_peaks);
                                 
@@ -1389,12 +1391,12 @@ else
             % Write rows
             block_idx = 1; % Index of start of next block of y values to fill/copy
             for bin_idx = 1:num_bins
-                bin = handles.bin_map(bin_idx);
+                bin = handles.metab_map(bin_idx);
                 block_offset = 0; % Number of rows to descend into block
                 while block_offset < bin.num_peaks + 1
                     %Row-descriptive text
                     fprintf(excel_fid, '"%s",%d', ...
-                        bin.compound_descr, bin.id);
+                        bin.compound_name, bin.id);
                     if block_offset == 0
                         fprintf(excel_fid,',"Sum"');
                     else
@@ -1570,7 +1572,7 @@ if isequal(get(handles.toggle_peak_tool, 'state'),'on')
             %Select peak
             xidx = index_of_nearest_x_to(peak_ppm, handles);
             newid = PeakIdentification(peak_ppm, xidx, handles.spectrum_idx, ...
-                handles.bin_map(handles.bin_idx), ...
+                handles.metab_map(handles.bin_idx), ...
                 0, get_username, get_account_id, datestr(clock));
             set_identifications([handles.identifications newid],handles);
         end
@@ -1620,7 +1622,7 @@ function save_and_quit_button_Callback(unused1, unused, handles) %#ok<INUSL,DEFN
 % Session data has fields:  (unless otherwise specified, they come from
 % handles.field_name)
 % collection
-% bin_map
+% metab_map
 % identifcations
 % peaks
 % spectrum_idx
@@ -1644,10 +1646,10 @@ end
 
 %Save
 fullname = fullfile(pathname, filename);
-session_data.version = 0.2;
+session_data.version = 0.3;
 session_data.metabolite_menu_string = get(handles.metabolite_menu,'String');
 session_data.collection = handles.collection;
-session_data.bin_map = handles.bin_map;
+session_data.metab_map = handles.metab_map;
 session_data.identifications = handles.identifications;
 session_data.peaks = handles.peaks;
 session_data.spectrum_idx = handles.spectrum_idx;
@@ -1685,7 +1687,7 @@ pks = get_spectrum_peaks(handles, spec_idx);
 handles = guidata(handles.figure1);
 
 % Calculate the deconvolution
-bin = handles.bin_map(bin_idx).bin;
+bin = handles.metab_map(bin_idx).bin;
 bin_width = 2*(bin.left - bin.right);
 
 d=RegionDeconvolution(handles.collection.x, ...
@@ -1777,7 +1779,7 @@ end
 
 
 
-function baseline_area_penalty_edit_box_Callback(hObject, eventdata, handles)
+function baseline_area_penalty_edit_box_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to baseline_area_penalty_edit_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

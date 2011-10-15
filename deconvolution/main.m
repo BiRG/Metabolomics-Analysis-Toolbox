@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 20-Jul-2011 13:01:19
+% Last Modified by GUIDE v2.5 21-Sep-2011 16:53:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -348,7 +348,7 @@ function axes2_ButtonDownFcn(hObject, eventdata, handles)
 mouse = get(gca,'CurrentPoint');
 x_click = mouse(1,1);
 
-list = {'Add peak','Set as reference','Visualize deconvolution','View index','Reset y limits','Reset x limits'};
+list = {'Add peak','Set as reference','Visualize deconvolution','View index','Reset y limits','Reset x limits','Set dirty'};
 [sel,ok] = listdlg('PromptString','Action:',...
                 'SelectionMode','single',...
                 'ListString',list);
@@ -438,6 +438,8 @@ if ok
          xlim auto;
      case 'Reset y limits'
          ylim auto;         
+     case 'Set dirty'
+         setappdata(gcf,'dirty',true);
     end % switch
 end
 
@@ -482,40 +484,16 @@ for s = 1:num_spectra
     options = {};
     options.min_width = round(str2num(get(handles.min_width_edit,'String'))/xwidth);
     options.max_width = round(str2num(get(handles.max_width_edit,'String'))/xwidth);
-    options.num_iterations = round(str2num(get(handles.num_iterations_edit,'String')));
-    % Only optimize those peaks within the current zoom
-    xl = xlim;
-    X = collection.x(collection.maxs{s});
-    m_inxs = find(xl(1) <= X & X <= xl(2));
-    if ~isempty(m_inxs)
-        stdin = create_hadoop_input(collection.x',collection.Y(:,s),collection.maxs{s}(m_inxs),collection.mins{s}(m_inxs,:),[],options);
-%         scpfrommatlab('w100pea','localhost','localhost','birglab!','hadoop_input.txt','deconvolution/hadoop_input.txt')
+%     % Only optimize those peaks within the current zoom
+%     xl = xlim;
+    %X = collection.x(collection.maxs{s});
+    %m_inxs = find(xl(1) <= X & X <= xl(2));
+    if ~isempty(collection.maxs{s})
+        results = deconvolve(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},options);
 
-%             fid = fopen('hadoop_input.txt','r');
-%             stdin = char(fread(fid,[1,Inf],'char'));
-%             fclose(fid);
-
-        stdin = mapper(stdin,[]);
-
-%             fid = fopen('mapper_output.txt','r');
-%             stdin = char(fread(fid,[1,Inf],'char'));
-%             fclose(fid);
-
-        options = {};
-        options.baseline_width = str2num(get(handles.baseline_width_edit,'String'));
-        options.min_width = round(str2num(get(handles.min_width_edit,'String'))/xwidth);
-        options.max_width = round(str2num(get(handles.max_width_edit,'String'))/xwidth);
-        options.num_generations = 100;
-        o_inxs = find(collection.x(prev_maxs) < xl(1) | collection.x(prev_maxs) > xl(2)); % Find only those outside of the region
-        o_prev_BETA = [];
-        for q = 1:length(o_inxs)
-            o_prev_BETA = [o_prev_BETA;prev_BETA(4*(o_inxs(q)-1)+(1:4))];
-        end
-        results = reducer(collection.x',collection.Y(:,s),stdin,o_prev_BETA,collection.x(prev_maxs(o_inxs)),options);
         collection.BETA{s} = results.BETA;
-        collection.y_fit{s} = results.solution.y_fit;
+        collection.y_fit{s} = results.y_fit;
         collection.x_baseline_BETA{s} = results.x_baseline_BETA;
-%             collection.baseline_BETA{s} = results.baseline_BETA;
         collection.y_baseline{s} = results.y_baseline;
         collection.dirty(s) = false;
 
@@ -1041,58 +1019,51 @@ end
 append_to_log(handles,sprintf('Finished checking remote deconvolution.'));
 
 
-% --- Executes when entered data in editable cell(s) in ignore_regions_uitable.
-function ignore_regions_uitable_CellEditCallback(hObject, eventdata, handles)
-% hObject    handle to ignore_regions_uitable (see GCBO)
-% eventdata  structure with the following fields (see UITABLE)
-%	Indices: row and column indices of the cell(s) edited
-%	PreviousData: previous data for the cell(s) edited
-%	EditData: string(s) entered by the user
-%	NewData: EditData or its converted form set on the Data property. Empty if Data was not changed
-%	Error: error string when failed to convert EditData to appropriate value for Data
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in apply_ignore_regions_pushbutton.
-function apply_ignore_regions_pushbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to apply_ignore_regions_pushbutton (see GCBO)
+% --- Executes on button press in apply_regions_pushbutton.
+function apply_regions_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to apply_regions_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-valid_ignore_regions = get_valid_ignore_regions(handles);
-set(handles.ignore_regions_edit,'String',sprintf('%f,%f\n',valid_ignore_regions'));
+valid_regions = get_valid_regions(handles);
 
 collection = getappdata(gcf,'collection');
-[num_ignore_regions, tmp] = size(valid_ignore_regions);
+[num_regions, tmp] = size(valid_regions);
 [num_variables,num_spectra] = size(collection.Y);
 for s = 1:num_spectra
     maxs = collection.maxs{s};
 %     mins = collection.mins{s};
-    % Check to see if maxs are in ignore_regions
+    % Check to see if maxs are in regions
     X = collection.x(maxs);
-    for j = 1:num_ignore_regions
-        inxs = find(valid_ignore_regions(j,1) >= X & X >= valid_ignore_regions(j,2));
+    for j = 1:num_regions
+        inxs = find(valid_regions(j,1) >= X & X >= valid_regions(j,2));
         X(inxs) = NaN;
     end
 %     ixs = find(~isnan(X));
 %     collection.maxs{s} = maxs(ixs);
 %     collection.mins{s} = mins(ixs,:);
 %     collection.include_mask{s} = 0*maxs(ixs)+1; % Include all by default
-     ixs = find(isnan(X));
+     ixs = find(~isnan(X));
      collection.include_mask{s}(ixs) = 0;
+     if num_regions == 0
+         collection.include_mask{s}(:) = 1;
+     end
 end
 
 reference = getappdata(gcf,'reference');
 maxs = reference.maxs;
 % mins = reference.mins;
-% Check to see if maxs are in ignore_regions
+% Check to see if maxs are in regions
 X = reference.x(maxs);
-for j = 1:num_ignore_regions
-    inxs = find(valid_ignore_regions(j,1) >= X & X >= valid_ignore_regions(j,2));
+for j = 1:num_regions
+    inxs = find(valid_regions(j,1) >= X & X >= valid_regions(j,2));
     X(inxs) = NaN;
 end
-ixs = find(isnan(X));
+ixs = find(~isnan(X));
 reference.include_mask(ixs) = 0;
+if num_regions == 0
+    reference.include_mask(:) = 1;
+end
 % ixs = find(~isnan(X));
 % reference.maxs = maxs(ixs);
 % reference.mins = mins(ixs,:);
@@ -1101,35 +1072,16 @@ reference.include_mask(ixs) = 0;
 setappdata(gcf,'collection',collection);
 setappdata(gcf,'reference',reference);
 
-refresh_axes1(handles);
-refresh_axes2(handles);
-
-
-
-function ignore_regions_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to ignore_regions_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of ignore_regions_edit as text
-%        str2double(get(hObject,'String')) returns contents of ignore_regions_edit as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function ignore_regions_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to ignore_regions_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+values = {};
+for j = 1:num_regions
+    values{j} = sprintf('%0.4f,%0.4f',valid_regions(j,1),valid_regions(j,2));
 end
+set(handles.regions_listbox,'String',values);
 
 setappdata(gcf,'dirty',true);
 
-
+refresh_axes1(handles);
+refresh_axes2(handles);
 
 
 function min_split_distance_edit_Callback(hObject, eventdata, handles)
@@ -1193,38 +1145,27 @@ try
 catch ME
 end
 
-% --- Executes on button press in add_region_pushbutton.
-function add_region_pushbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to add_region_pushbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-valid_ignore_regions = get_valid_ignore_regions(handles);
-xl = xlim;
-valid_ignore_regions(end+1,:) = [xl(2),xl(1)];
-set(handles.ignore_regions_edit,'String',sprintf('%f,%f\n',valid_ignore_regions'));
-
-function valid_ignore_regions = get_valid_ignore_regions(handles)
-% Get the regions to ignore
-ignore_regions_str = get(handles.ignore_regions_edit,'String');
-[num_regions,tmp] = size(ignore_regions_str);
-valid_ignore_regions = [];
+function valid_regions = get_valid_regions(handles)
+% Get the regions to include
+regions_str = get(handles.regions_edit,'String');
+[num_regions,tmp] = size(regions_str);
+valid_regions = [];
 for i = 1:num_regions
     try
-        if sum(ignore_regions_str(i,:) == ' ') == length(ignore_regions_str(i,:))
+        if sum(regions_str(i,:) == ' ') == length(regions_str(i,:))
             continue;
         end
-        ignore_region_str = split(ignore_regions_str(i,:),',');
-        ignore_region = [str2num(ignore_region_str{1}),str2num(ignore_region_str{2})];            
-        if ignore_region(1) < ignore_region(2)
-            tmp = ignore_region(1);
-            ignore_region(1) = ignore_region(2);
-            ignore_region(2) = tmp;
+        region_str = split(regions_str(i,:),',');
+        region = [str2num(region_str{1}),str2num(region_str{2})];            
+        if region(1) < region(2)
+            tmp = region(1);
+            region(1) = region(2);
+            region(2) = tmp;
         end
-        valid_ignore_regions(end+1,1) = ignore_region(1);
-        valid_ignore_regions(end,2) = ignore_region(2);
+        valid_regions(end+1,1) = region(1);
+        valid_regions(end,2) = region(2);
     catch ME
-         fprintf('Warning: Failed when processing [%s]\n',ignore_regions_str(i,:));
+         fprintf('Warning: Failed when processing [%s]\n',regions_str(i,:));
     end
 end
 
@@ -1439,3 +1380,137 @@ else
     set(axis2_legend,'Visible','on');
 end
 
+
+
+% --- Executes on selection change in regions_listbox.
+function regions_listbox_Callback(hObject, eventdata, handles)
+% hObject    handle to regions_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns regions_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from regions_listbox
+contents = cellstr(get(hObject,'String'));
+item = contents{get(hObject,'Value')};
+fields = split(item,',');
+region = [str2num(fields{1}),str2num(fields{2})];
+axes(handles.axes2);
+if region(1) < region(2)
+    xlim([region(1),region(2)]);
+else
+    xlim([region(2),region(1)]);
+end
+ylim auto;
+
+% --- Executes during object creation, after setting all properties.
+function regions_listbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to regions_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes when selected cell(s) is changed in regions_uitable.
+function regions_uitable_CellSelectionCallback(hObject, eventdata, handles)
+% hObject    handle to regions_uitable (see GCBO)
+% eventdata  structure with the following fields (see UITABLE)
+%	Indices: row and column indices of the cell(s) currently selecteds
+% handles    structure with handles and user data (see GUIDATA)
+
+data = get(handles.regions_uitable,'data');
+row = eventdata.Indices(1);
+col = eventdata.Indices(1);
+left = data{row,1};
+right = data{row,2};
+if isnumeric(left) && isnumeric(right)
+    if left > right
+        xlim([right,left]);
+    else
+        xlim([left,right]);
+    end
+end
+    
+
+% --- Executes when entered data in editable cell(s) in regions_uitable.
+function regions_uitable_CellEditCallback(hObject, eventdata, handles)
+% hObject    handle to regions_uitable (see GCBO)
+% eventdata  structure with the following fields (see UITABLE)
+%	Indices: row and column indices of the cell(s) edited
+%	PreviousData: previous data for the cell(s) edited
+%	EditData: string(s) entered by the user
+%	NewData: EditData or its converted form set on the Data property. Empty if Data was not changed
+%	Error: error string when failed to convert EditData to appropriate value for Data
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function regions_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to regions_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of regions_edit as text
+%        str2double(get(hObject,'String')) returns contents of regions_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function regions_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to regions_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in regions_listbox.
+function listbox9_Callback(hObject, eventdata, handles)
+% hObject    handle to regions_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns regions_listbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from regions_listbox
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox9_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to regions_listbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in hide_peak_numbers_checkbox.
+function hide_peak_numbers_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to hide_peak_numbers_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of hide_peak_numbers_checkbox
+hlabels = [findobj('Tag','axes1_hlabels');findobj('Tag','axes2_hlabels')];
+if get(handles.hide_peak_numbers_checkbox,'Value')
+    set(hlabels,'Visible','off');
+else
+    set(hlabels,'Visible','on');
+end
+
+hmaxs = [findobj('Tag','axes1_hmaxs');findobj('Tag','axes2_hmaxs')];
+if get(handles.hide_peak_numbers_checkbox,'Value')
+    set(hmaxs,'Visible','off');
+else
+    set(hmaxs,'Visible','on');
+end

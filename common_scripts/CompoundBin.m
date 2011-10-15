@@ -1,9 +1,9 @@
 classdef CompoundBin
     %COMPOUNDBIN A bin that should contain certain peaks from the given
     %compound(s)
-    %   Both a a bin object as description of the compound(s) 
+    %   Both a a bin object as description of the compound(s)
     
-    properties (SetAccess=private)        
+    properties (SetAccess=private)
         % Our id of the compound/bin combination - a number
         id
         
@@ -23,7 +23,7 @@ classdef CompoundBin
         % Bin object
         bin
         
-        % Multiplicity of bin (as described in binmap file) - cannot 
+        % Multiplicity of bin (as described in binmap file) - cannot
         % contain ""
         multiplicity
         
@@ -63,12 +63,17 @@ classdef CompoundBin
         % A string that represents this bin as a line in a csv file (the
         % csv header is given by csv_file_header_string)
         as_csv_string
+        
+        % A single string that represents this bin as newline-delimited
+        % pairs of property labels (from the header file) and values
+        as_long_string
+        
     end
     
     methods (Static)
         function str=csv_file_header_string()
-        % A string that represents the header for a csv file containing
-        % CompoundBin objects
+            % A string that represents the header for a csv file containing
+            % CompoundBin objects
             str=['"Bin ID","Deleted","Compound ID","Compound Name",'...
                 '"Known Compound","Bin (Lt)","Bin (Rt)",'...
                 '"Multiplicity","Peaks to Select","J (Hz)",'...
@@ -77,57 +82,57 @@ classdef CompoundBin
         end
         
         function trueorfalse=parse_csv_bool(str, value_destination)
-        % Turns str (a field from the input csv) from 'X','' to 1,0
-        %
-        % If str is 'X' or 'x' returns 1
-        % if str is '' or white-space returns 0
-        %
-        % Otherwise throws an exception with the text: 
-        %
-        % ------------
-        % - Usage
-        % ------------
-        %
-        % trueorfalse=parse_csv_bool(str, value_destination)
-        %
-        % ------------
-        % - Input Arguments
-        % ------------
-        %
-        % str               The string to parse
-        % value_destination The destination where the value will be put -- 
-        %                   will be used in the error message
-        % ------------
-        % - Output Parameters
-        % ------------
-        %
-        % trueorfalse   the result of parsing str into a true or a false value
-        %
-        %
-        % ------------
-        % - Examples
-        % ------------
-        %
-        % >> parse_csv_bool('X', 'foobar')
-        %
-        % 1
-        %
-        % >> parse_csv_bool('', 'foobar')
-        %
-        % 0
-        %
-        % >> parse_csv_bool(' ', 'foobar')
-        %
-        % 0
-        %
-        % >> parse_csv_bool('something', 'foobar')
-        %
-        % (exception thrown here)
-
-
+            % Turns str (a field from the input csv) from 'X','' to 1,0
+            %
+            % If str is 'X' or 'x' returns 1
+            % if str is '' or white-space returns 0
+            %
+            % Otherwise throws an exception with the text:
+            %
+            % ------------
+            % - Usage
+            % ------------
+            %
+            % trueorfalse=parse_csv_bool(str, value_destination)
+            %
+            % ------------
+            % - Input Arguments
+            % ------------
+            %
+            % str               The string to parse
+            % value_destination The destination where the value will be put --
+            %                   will be used in the error message
+            % ------------
+            % - Output Parameters
+            % ------------
+            %
+            % trueorfalse   the result of parsing str into a true or a false value
+            %
+            %
+            % ------------
+            % - Examples
+            % ------------
+            %
+            % >> parse_csv_bool('X', 'foobar')
+            %
+            % 1
+            %
+            % >> parse_csv_bool('', 'foobar')
+            %
+            % 0
+            %
+            % >> parse_csv_bool(' ', 'foobar')
+            %
+            % 0
+            %
+            % >> parse_csv_bool('something', 'foobar')
+            %
+            % (exception thrown here)
+            
+            
             if     ~isempty(regexp(str, '^[Xx]$', 'once'))
                 trueorfalse = 1==1;
-            elseif isempty(str) || ~isempty(regexp(str, '^\s*$', 'once')) 
+            elseif isempty(str) || ~isempty(regexp(str, '^\s*$', 'once'))
                 trueorfalse = 0==1;
             else
                 error('CompoundBin:bad_bool',['The input for "%s" should have been '...
@@ -138,142 +143,142 @@ classdef CompoundBin
         
         
         function is_valid = is_valid_multiplicity_string(str)
-        % Return true if str could represent a multiplicity, false otherwise
-        %
-        % ------------
-        % - Usage
-        % ------------
-        %
-        % is_valid = CompoundBin.is_valid_multiplicity_string(str)
-        %
-        % ------------
-        % - Input Arguments
-        % ------------
-        %
-        % str               The string to check
-        %
-        % ------------
-        % - Output Parameters
-        % ------------
-        %
-        % is_valid   True if str is valid, false otheriwse
-        %
-        %
-        % ------------
-        % - Examples
-        % ------------
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('')
-        %
-        % 0
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('d')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('t')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('half of AB d')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('m')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('m,d')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('s,s')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('dt')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('xl')
-        %
-        % 0
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('t,')
-        %
-        % 0
-        %
-        % >> CompoundBin.is_valid_multiplicity_string(',t')
-        %
-        % 0
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('rv')
-        %
-        % 0
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('half of AB d,s')
-        %
-        % 1
-        %
-        % >> CompoundBin.is_valid_multiplicity_string('half of AB ds')
-        %
-        % 0
-        %
+            % Return true if str could represent a multiplicity, false otherwise
+            %
+            % ------------
+            % - Usage
+            % ------------
+            %
+            % is_valid = CompoundBin.is_valid_multiplicity_string(str)
+            %
+            % ------------
+            % - Input Arguments
+            % ------------
+            %
+            % str               The string to check
+            %
+            % ------------
+            % - Output Parameters
+            % ------------
+            %
+            % is_valid   True if str is valid, false otheriwse
+            %
+            %
+            % ------------
+            % - Examples
+            % ------------
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('')
+            %
+            % 0
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('d')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('t')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('half of AB d')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('m')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('m,d')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('s,s')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('dt')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('xl')
+            %
+            % 0
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('t,')
+            %
+            % 0
+            %
+            % >> CompoundBin.is_valid_multiplicity_string(',t')
+            %
+            % 0
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('rv')
+            %
+            % 0
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('half of AB d,s')
+            %
+            % 1
+            %
+            % >> CompoundBin.is_valid_multiplicity_string('half of AB ds')
+            %
+            % 0
+            %
             is_valid = 1==1;
             try
                 CompoundBin.human_readable_multiplicity(str);
             catch  %#ok<CTCH>
                 is_valid = 1==0;
             end
-                
+            
         end
         
         
         
         function result = human_readable_multiplicity(str)
-        % Takes a multiplicity string and returns a more readable version
-        %
-        % Throws an exception on error
-        %
-        % ------------
-        % - Usage
-        % ------------
-        %
-        % result = CompoundBin.human_readable_multiplicity(str)
-        %
-        % ------------
-        % - Input Arguments
-        % ------------
-        %
-        % str  A multiplicity string.  i.e. 'dd' or 's' or 'half of AB d'
-        %
-        % ------------
-        % - Output Parameters
-        % ------------
-        %
-        % result A human-readable version of str i.e dd->doublet of
-        %        doublets
-        %
-        % ------------
-        % - Examples
-        % ------------
-        %
-        % >> CompoundBin.human_readable_multiplicity('s')
-        %
-        % singlet
-        %
-        % >> CompoundBin.human_readable_multiplicity('dt')
-        %
-        % doublet of triplets
-        %
-        % >> CompoundBin.human_readable_multiplicity('td')
-        %
-        % triplet of doublets
-        %
-        % >> CompoundBin.human_readable_multiplicity('s,s')
-        %
-        % singlet, singlet
-        %
+            % Takes a multiplicity string and returns a more readable version
+            %
+            % Throws an exception on error
+            %
+            % ------------
+            % - Usage
+            % ------------
+            %
+            % result = CompoundBin.human_readable_multiplicity(str)
+            %
+            % ------------
+            % - Input Arguments
+            % ------------
+            %
+            % str  A multiplicity string.  i.e. 'dd' or 's' or 'half of AB d'
+            %
+            % ------------
+            % - Output Parameters
+            % ------------
+            %
+            % result A human-readable version of str i.e dd->doublet of
+            %        doublets
+            %
+            % ------------
+            % - Examples
+            % ------------
+            %
+            % >> CompoundBin.human_readable_multiplicity('s')
+            %
+            % singlet
+            %
+            % >> CompoundBin.human_readable_multiplicity('dt')
+            %
+            % doublet of triplets
+            %
+            % >> CompoundBin.human_readable_multiplicity('td')
+            %
+            % triplet of doublets
+            %
+            % >> CompoundBin.human_readable_multiplicity('s,s')
+            %
+            % singlet, singlet
+            %
             %Split on commas
             str = lower(str);
             fields = regexp(str, '\s*,\s*', 'split');
@@ -288,9 +293,9 @@ classdef CompoundBin
             result = sprintf('%s%s',sprintf('%s, ',hr_fields{1:end-1}),hr_fields{end});
             
             function fresult = do_field(field)
-            % Makes a lower-case sub-part of a multiplicity string human-readable
-            %
-            % Throws an exception on error
+                % Makes a lower-case sub-part of a multiplicity string human-readable
+                %
+                % Throws an exception on error
                 if     isempty(field)
                     error('CompoundBin_multiplet:no_empty_field', ...
                         ['Empty fields are not allowed in multiplet ' ...
@@ -325,9 +330,9 @@ classdef CompoundBin
                 for j = 1:length(field)
                     switch field(j)
                         case 'd'
-                            toadd = 'doublet'; 
+                            toadd = 'doublet';
                         case 't'
-                            toadd = 'triplet'; 
+                            toadd = 'triplet';
                         case 'q'
                             toadd = 'quartet';
                         case 'm'
@@ -346,7 +351,7 @@ classdef CompoundBin
                         assert(j > 1 && j == length(field));
                         fresult = [fresult ' of ' toadd 's']; %#ok<AGROW>
                     end
-                end    
+                end
                 
             end
         end
@@ -354,56 +359,56 @@ classdef CompoundBin
     
     methods
         function obj=CompoundBin(header_line, data_line)
-        % Create a CompoundBin object by parsing lines from a csv file
-        %
-        % Throws readable exceptions that can be used for input validation
-        % if you just format user-input as the appropriate line in the csv 
-        % (with sprintf, for example).
-        %
-        % Note that the caller will need to translate checkboxes
-        % into 'X' and '' for boolean true and false respectively
-        %
-        %
-        % Known headers are:
-        %  1. "Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Chenomx","Literature","NMR Isotope","Notes"
-        %
-        % ---------
-        % - Usage
-        % ---------
-        %
-        % obj=CompoundBin(header_line, data_line)
-        %
-        %     Creates a CompoundBin from the data
-        %
-        % or 
-        %
-        % obj=CompoundBin()
-        %
-        %     Creates an uninitialized CompoundBin
-        %
-        % ---------
-        % - Input Arguments
-        % ---------
-        %
-        % header_line is a header line from a csv file
-        %
-        % data_line   is a line of data from the csv file with the header
-        %             contained in header line
-        % 
-        % ---------
-        % - Output Parameters
-        % ---------
-        %
-        % obj The compound bin created from the input arguments
-        
+            % Create a CompoundBin object by parsing lines from a csv file
+            %
+            % Throws readable exceptions that can be used for input validation
+            % if you just format user-input as the appropriate line in the csv
+            % (with sprintf, for example).
+            %
+            % Note that the caller will need to translate checkboxes
+            % into 'X' and '' for boolean true and false respectively
+            %
+            %
+            % Known headers are:
+            %  1. "Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Chenomx","Literature","NMR Isotope","Notes"
+            %
+            % ---------
+            % - Usage
+            % ---------
+            %
+            % obj=CompoundBin(header_line, data_line)
+            %
+            %     Creates a CompoundBin from the data
+            %
+            % or
+            %
+            % obj=CompoundBin()
+            %
+            %     Creates an uninitialized CompoundBin
+            %
+            % ---------
+            % - Input Arguments
+            % ---------
+            %
+            % header_line is a header line from a csv file
+            %
+            % data_line   is a line of data from the csv file with the header
+            %             contained in header line
+            %
+            % ---------
+            % - Output Parameters
+            % ---------
+            %
+            % obj The compound bin created from the input arguments
+            
             if nargin>0 %Make a default constructor that doesn't initialize
                 if isequal(header_line,CompoundBin.csv_file_header_string)
                     d = textscan(data_line, ...
                         ['%d %q %d %q '... to Compound Name
-                         '%q %f %f '   ... to Bin (Rt)
-                         '%q %d %q '   ... to J (Hz)
-                         '%q %q %q '   ... to Chenomix
-                         '%q %q %q'],...
+                        '%q %f %f '   ... to Bin (Rt)
+                        '%q %d %q '   ... to J (Hz)
+                        '%q %q %q '   ... to Chenomix
+                        '%q %q %q'],...
                         'Delimiter', ',');
                     
                     % Make sure the header scanned correctly.  Handle
@@ -440,7 +445,7 @@ classdef CompoundBin
                                 'Header:"' header_line '"\n']);
                         end
                     end
-                            
+                    
                     obj.id=d{1};
                     if obj.id <= 0
                         error('CompoundBin:bin_id_not_pos', ...
@@ -578,35 +583,29 @@ classdef CompoundBin
         end
         
         function str=get.readable_multiplicity(obj)
-        % Getter method calculating a readable version of the multiplicity
-        % from the multiplicity variable
+            % Getter method calculating a readable version of the multiplicity
+            % from the multiplicity variable
             str = CompoundBin.human_readable_multiplicity(obj.multiplicity);
         end
         
-        function str=get.as_csv_string(obj)
-        % Getter method returning the value of as_csv_string
-        
-            % Fields:
-            %
-            %['"Bin ID","Deleted","Compound ID","Compound Name",'...
-            % '"Known Compound","Bin (Lt)","Bin (Rt)",'...
-            % '"Multiplicity","Peaks to Select","J (Hz)",'...
-            % '"Nucleus Assignment","HMDB ID","Chenomx",'...
-            % '"Literature","NMR Isotope","Notes"'];
-
-            format=['%d,"%s",%d,"%s",'... to Compound Name
-                    '"%s",%f,%f,'     ... to Bin (Rt)
-                    '"%s",%d,"%s",'   ... to J (Hz)
-                    '"%s",%s,"%s",' ... to Chenomix
-                    '"%s","%s","%s"'];
-
-            str = sprintf(format, ...
-                    obj.id, bool2str(obj.was_deleted), obj.compound_id, obj.compound_name, ...
-                    bool2str(obj.is_known_compound), obj.bin.left, obj.bin.right, ...
-                    obj.multiplicity, obj.num_peaks, farray2str(obj.j_values), ...
-                    obj.nucleus_assignment, hmdbstr(obj.hmdb_id), bool2str(obj.chenomix_was_used),...
-                    obj.literature, obj.nmr_isotope, obj.notes);
-                
+        function str=string_from_format(obj, sprintf_format, ...
+                affirm, reject)
+            % Common string formatting function. Will adapt booleans (AKA
+            % logicals) to the string passed as the affirm parameter when
+            % they are true and to the string passed as the reject
+            % parameter when they are false.
+            
+            str = sprintf(sprintf_format, ...
+                obj.id, bool2str(obj.was_deleted, affirm, reject), ...
+                obj.compound_id, obj.compound_name, ...
+                bool2str(obj.is_known_compound, affirm, reject), ...
+                obj.bin.left, obj.bin.right, ...
+                obj.multiplicity, obj.num_peaks, ...
+                farray2str(obj.j_values), ...
+                obj.nucleus_assignment, hmdbstr(obj.hmdb_id), ...
+                bool2str(obj.chenomix_was_used, affirm, reject),...
+                obj.literature, obj.nmr_isotope, obj.notes);
+            
             function hs=hmdbstr(h)
                 %Convert the hmdb number to either an integer or a '' if nan
                 if isnan(h)
@@ -615,6 +614,7 @@ classdef CompoundBin
                     hs = sprintf('%d',h);
                 end
             end
+            
             function ss=farray2str(a)
                 %Convert an array of floats to a comma-separated string
                 if isempty(a)
@@ -625,19 +625,78 @@ classdef CompoundBin
                     ss = sprintf('%s%f',sprintf('%f, ',a(1:end-1)),a(end));
                 end
             end
-            function s=bool2str(bool)
-                %Convert a bool to a string that is either 'X' or ''
+            
+            function s=bool2str(bool, affirm, reject)
+                %Convert a bool to a string that is either affirm's or
+                %reject's value.
                 if bool
-                    s = 'X';
+                    s = affirm;
                 else
-                    s = '';
+                    s = reject;
                 end
             end
         end
         
+        
+        
+        function str=get.as_csv_string(obj)
+            % Getter method returning the value of as_csv_string
+            
+            % Fields:
+            %
+            %['"Bin ID","Deleted","Compound ID","Compound Name",'...
+            % '"Known Compound","Bin (Lt)","Bin (Rt)",'...
+            % '"Multiplicity","Peaks to Select","J (Hz)",'...
+            % '"Nucleus Assignment","HMDB ID","Chenomx",'...
+            % '"Literature","NMR Isotope","Notes"'];
+            
+            format=['%d,"%s",%d,"%s",'... to Compound Name
+                '"%s",%f,%f,'     ... to Bin (Rt)
+                '"%s",%d,"%s",'   ... to J (Hz)
+                '"%s",%s,"%s",' ... to Chenomix
+                '"%s","%s","%s"'];
+            
+            str = string_from_format(obj, format, 'X', '');
+            
+        end
+        
+        function str=get.as_long_string(obj)
+            % Getter method returning the value of as_long_string
+            
+            % Fields:
+            %
+            %['"Bin ID","Deleted","Compound ID","Compound Name",'...
+            % '"Known Compound","Bin (Lt)","Bin (Rt)",'...
+            % '"Multiplicity","Peaks to Select","J (Hz)",'...
+            % '"Nucleus Assignment","HMDB ID","Chenomx",'...
+            % '"Literature","NMR Isotope","Notes"'];
+            
+            format=['Bin ID: %d\n' ...
+                'Deleted: %s\n' ...
+                'Compound ID: %d\n' ...
+                'Compound Name: %s\n' ...
+                'Known Compound: %s\n'...
+                'Bin (Lt): %f\n'...
+                'Bin (Rt): %f\n'     ...
+                'Multiplicity: %s\n'...
+                'Peaks to Select: %d\n'...
+                'J (Hz): %s\n'   ...
+                'Nucleus Assignment: %s\n'...
+                'HMDB ID: %s\n'...
+                'Chenomx: %s\n' ...
+                'Literature: %s\n'...
+                'NMR Isotope: %s\n'...
+                'Notes:\n%s\n'];
+            
+            str = string_from_format(obj, format, 'Yes', 'No');
+            
+        end
+        
+        
+        
         function r = eq(a,b)
-        % Equality testing (called by operator ==).  Not defined for
-        % matrices of CompoundBin
+            % Equality testing (called by operator ==).  Not defined for
+            % matrices of CompoundBin
             i = [a.id] == [b.id];
             wd = [a.was_deleted] == [b.was_deleted];
             cd = [a.compound_id] == [b.compound_id];
@@ -647,7 +706,7 @@ classdef CompoundBin
             mu = strcmpi({a.multiplicity},{b.multiplicity});
             np = [a.num_peaks] == [b.num_peaks];
             
-            if(length(a) == length(b)) 
+            if(length(a) == length(b))
                 %Element wise compare
                 equal_contents = @(a,b) ...
                     (isempty(a) && isempty(b)) || ...
@@ -686,7 +745,7 @@ classdef CompoundBin
             r = i  & wd & cd & cn & kc & bn & mu & np & jv & na & hm & ...
                 cx & li & ni & no;
         end
-    end    
+    end
 end
 
 

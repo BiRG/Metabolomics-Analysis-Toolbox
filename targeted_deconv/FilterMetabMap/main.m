@@ -94,14 +94,10 @@ inx = no_inxs(no_inx);
 update_metabolite_information(handles,inx);
 
 function update_metabolite_information(handles,inx)
-str = {};
-str{1} = sprintf('Name: %s',handles.metabolites{inx}.metabolite);
-str{2} = sprintf('ID: %d',handles.metabolites{inx}.id);
-str{3} = sprintf('Multiplicity: %s',handles.metabolites{inx}.multiplicity);
-str{4} = sprintf('Region: %.4f,%.4f',handles.metabolites{inx}.left,handles.metabolites{inx}.right);
-set(handles.metabolite_info_edit,'String',str);
-
-xlim([handles.metabolites{inx}.right,handles.metabolites{inx}.left]);
+set(handles.metabolite_info_edit,'String', ...
+    handles.metabolites(inx).as_long_string);
+xlim([handles.metabolites(inx).bin.right, ...
+    handles.metabolites(inx).bin.left]);
 
 % --- Executes during object creation, after setting all properties.
 function no_listbox_CreateFcn(hObject, eventdata, handles)
@@ -334,7 +330,7 @@ if isequal(filename,0) || isequal(pathname,0)
    return;
 end
 
-handles.metabolites = load_metabolites(pathname,filename);
+handles.metabolites = load_metabmap(fullfile(pathname, filename),'no_deleted_bins');
 handles.yes_mask = zeros(1,length(handles.metabolites));
 refresh_both_lists(handles);
 
@@ -347,7 +343,7 @@ refresh_list(handles.yes_listbox,handles.metabolites,find(handles.yes_mask == 1)
 function refresh_list(h,metabolites,inxs)
 names = {};
 for i = 1:length(inxs)
-    names{end+1} = metabolites{inxs(i)}.metabolite;    
+    names{end+1} = metabolites(inxs(i)).compound_name;    
 end
 set(h,'String',{'',names{:}});
 set(h,'Value',1);
@@ -370,7 +366,7 @@ if isequal(filename,0) || isequal(pathname,0)
     return
 end
 yes_inxs = find(handles.yes_mask == 1);
-save_metabolites(pathname,filename,{handles.metabolites{yes_inxs}});
+save_metabmap(fullfile(pathname,filename), handles.metabolites(yes_inxs));
 
 function metabolite_info_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to metabolite_info_edit (see GCBO)
