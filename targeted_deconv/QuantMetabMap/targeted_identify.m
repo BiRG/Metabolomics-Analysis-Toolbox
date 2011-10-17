@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 12-Sep-2011 21:23:02
+% Last Modified by GUIDE v2.5 17-Oct-2011 16:37:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -813,9 +813,9 @@ if get(handles.should_show_deconv_box,'Value')
     set(handles.update_deconv_button, 'Visible', 'on');
     deconv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
     if deconv.is_updated
-        set(handles.update_deconv_button, 'String', 'Recalculate Peaks');    
+        set(handles.update_deconv_button, 'String', 'Update Deconv');    
     else
-        set(handles.update_deconv_button, 'String', 'Update Peaks');
+        set(handles.update_deconv_button, 'String', 'Update Deconv*');
     end
 else
     set(handles.update_deconv_button, 'Visible', 'off');
@@ -1835,3 +1835,10 @@ function width_variance_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#o
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in sync_peaks_with_deconv_button.
+function sync_peaks_with_deconv_button_Callback(hObject, eventdata, handles)
+% hObject    handle to sync_peaks_with_deconv_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
