@@ -1287,6 +1287,10 @@ else
                 % identified_peaks entry
                 if ~handles.deconvolutions(bin_idx, spec_idx).is_updated
                     handles = recalculate_deconv(bin_idx, spec_idx, handles);
+                    %TODO: don't move the peak locations, instead just do
+                    %the alignment and store some sort of translation table
+                    %for later finding the identified peaks
+                    handles = align_peaks_with_deconv(bin_idx, spec_idx, handles);
                 end
                 d = handles.deconvolutions(bin_idx, spec_idx).value;
                 idents = peak_identifications_for(bin_idx, ...
@@ -1681,6 +1685,7 @@ update_plot(handles);
 update_display(handles);
 
 function handles = recalculate_deconv(bin_idx, spec_idx, handles)
+% Calculates a new deconvolution for bin_idx, spec_idx, & sets guidata for figure1 to the new handles object
 
 % Get the peaks 
 pks = get_spectrum_peaks(handles, spec_idx);
@@ -1697,7 +1702,20 @@ d=RegionDeconvolution(handles.collection.x, ...
 
 handles.deconvolutions(bin_idx, spec_idx).update_to(d);
 
-% Find new location for each peak
+guidata(handles.figure1, handles);
+
+function handles = align_peaks_with_deconv(bin_idx, spec_idx, handles)
+% Aligns the peaks in handles with the deconvolution for bin_idx, spec_idx.  
+%
+% Does nothing if the current deconvolution is has not been initialized
+
+if ~handles.deconvolutions(bin_idx, spec_idx).exists
+    return;
+end
+d=handles.deconvolutions(bin_idx, spec_idx).value;
+
+
+pks = get_spectrum_peaks(handles, spec_idx);
 new_pks = [d.peaks.location];
 old_pks = get_spectrum_and_bin_peaks(handles, bin_idx, spec_idx);
 costs = zeros(length(old_pks), length(new_pks)); % Row:old peak, col: new peak
@@ -1713,9 +1731,6 @@ handles = update_peak_identifications_for(bin_idx, spec_idx, old_pks, ...
 
 translated_pks = substitute(pks, old_pks, new_pks);
 handles = set_spectrum_peaks_no_gui(spec_idx, translated_pks, handles);
-guidata(handles.figure1, handles);
-
-
 
 % --- Executes on button press in update_deconv_button.
 function update_deconv_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
@@ -1726,11 +1741,6 @@ bin_idx = handles.bin_idx;
 spec_idx = handles.spectrum_idx;
 
 handles = recalculate_deconv(bin_idx, spec_idx, handles);
-
-%Mark current bin as up-to-date even if it moved the peaks in the bin -
-%other bins that depend on it will still be marked as not up-to-date
-cur_value=handles.deconvolutions(bin_idx, spec_idx).value;
-handles.deconvolutions(bin_idx, spec_idx).update_to(cur_value);
 
 update_plot(handles);
 update_display(handles);
@@ -1838,7 +1848,25 @@ end
 
 
 % --- Executes on button press in sync_peaks_with_deconv_button.
-function sync_peaks_with_deconv_button_Callback(hObject, eventdata, handles)
-% hObject    handle to sync_peaks_with_deconv_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function sync_peaks_with_deconv_button_Callback(unused, unused2, handles) %#ok<INUSL,DEFNU>
+% (unused)  hObject    handle to sync_peaks_with_deconv_button (see GCBO)
+% (unused2) eventdata  reserved - to be defined in a future version of MATLAB
+%           handles    structure with handles and user data (see GUIDATA)
+
+bin_idx = handles.bin_idx;
+spec_idx = handles.spectrum_idx;
+
+% Find new location for each peak
+handles = align_peaks_with_deconv(bin_idx, spec_idx, handles);
+
+% Mark current bin as up-to-date even if it moved the peaks in the bin -
+% other bins that depend on it will still be marked as not up-to-date
+cur_value=handles.deconvolutions(bin_idx, spec_idx).value;
+handles.deconvolutions(bin_idx, spec_idx).update_to(cur_value);
+
+% Set guidata
+guidata(handles.figure1, handles);
+
+% Update gui
+update_plot(handles);
+update_display(handles);
