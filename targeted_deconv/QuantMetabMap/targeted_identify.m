@@ -1287,11 +1287,12 @@ else
                 % identified_peaks entry
                 if ~handles.deconvolutions(bin_idx, spec_idx).is_updated
                     handles = recalculate_deconv(bin_idx, spec_idx, handles);
-                    %TODO: don't move the peak locations, instead just do
-                    %the alignment and store some sort of translation table
-                    %for later finding the identified peaks
-                    handles = align_peaks_with_deconv(bin_idx, spec_idx, handles);
                 end
+                %TODO: don't move the peak locations, instead just do
+                %the alignment and store some sort of translation table
+                %for later finding the identified peaks
+                handles = align_peaks_with_deconv(bin_idx, spec_idx, handles);
+                
                 d = handles.deconvolutions(bin_idx, spec_idx).value;
                 idents = peak_identifications_for(bin_idx, ...
                     spec_idx, handles);
