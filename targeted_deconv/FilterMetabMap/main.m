@@ -331,6 +331,7 @@ if isequal(filename,0) || isequal(pathname,0)
 end
 
 handles.metabolites = load_metabmap(fullfile(pathname, filename),'no_deleted_bins');
+handles.metabolites = sort_metabmap_by_name_then_ppm(handles.metabolites);
 handles.yes_mask = zeros(1,length(handles.metabolites));
 refresh_both_lists(handles);
 
