@@ -1,5 +1,5 @@
 function test_suite = test_sort_metabmap%#ok<STOUT>
-%matlab_xUnit tests excercising sort_metabap
+%matlab_xUnit tests excercising sort_metabap_by_name_then_ppm
 %
 % Usage:
 %   runtest test_sort_metabmap
@@ -15,7 +15,7 @@ function testSort %#ok<DEFNU>
 
 unsorted = load_metabmap(fullfile(data_dir, 'test_sort_metabmap.01.unsorted.csv'));
 expected = load_metabmap(fullfile(data_dir, 'test_sort_metabmap.02.sorted.csv'));
-sorted = sort_metabmap(unsorted);
+sorted = sort_metabmap_by_name_then_ppm(unsorted);
 assertEqual(length(unsorted),78);
 assertEqual(length(expected), length(sorted));
 assertEqual(expected, sorted);
@@ -29,7 +29,7 @@ unsorted = unsorted(1);
 unsorted(1) = [];
 expected = unsorted;
 
-sorted = sort_metabmap(unsorted);
+sorted = sort_metabmap_by_name_then_ppm(unsorted);
 
 assertEqual(expected, sorted);
 assertTrue(isa(sorted, 'CompoundBin'));
