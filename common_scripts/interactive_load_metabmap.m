@@ -13,4 +13,4 @@ if filename == 0
     return;
 end
 
-metabmap = load_metabmap(fullfile(filename, pathname));
+metabmap = load_metabmap(fullfile(pathname, filename));
