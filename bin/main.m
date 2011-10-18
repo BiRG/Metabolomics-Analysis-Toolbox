@@ -1780,7 +1780,8 @@ for s = 1:num_spectra
 
     if ~isempty(collection.maxs{s})
         [bins,deconvolve_mask] = get_bins(handles);
-        results = deconvolve(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,options);
+        results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,1,2);
+        %results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,options);
 
         collection.BETA{s} = results.BETA;
         collection.y_fit{s} = results.y_fit;
