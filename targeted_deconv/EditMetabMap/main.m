@@ -791,7 +791,8 @@ if ( isfield(handles, 'storedBins') && ~isempty(handles.storedBins) )
         redrawGraph(handles);
     end;
 else
-    msgbox('Cannot retrieve bin metadata: No binmap loaded.', ...
+    msgbox([ 'Cannot retrieve metabolite segment metadata: ' ...
+        'no MetabMap loaded.' ], ...
         'Cannot Complete Request', 'error', 'modal');
 end;
 
@@ -801,47 +802,55 @@ function delete_bin_button_Callback(hObject, eventdata, handles)
 % hObject    handle to delete_bin_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-selectedListboxIdx = get(handles.mapped_bins_listbox, 'Value');
-displayedBinCount = length(get(handles.mapped_bins_listbox, 'String'));
-% Error check, just in case...
-if (isnumeric(selectedListboxIdx) && selectedListboxIdx > 0 && ...
-        selectedListboxIdx <= displayedBinCount)
+deleteAffirm = 'Yes, delete';
+deleteDeny = 'No, keep';
+userChoice = questdlg([ 'Are you sure you want to delete ' ...
+    'the selected metabolite segment?' ], ...
+    'Confirm Delete', deleteAffirm, deleteDeny, deleteDeny);
+if ( strcmp(userChoice, deleteAffirm) )
+    % User has confirmed the choice to delete.
+    selectedListboxIdx = get(handles.mapped_bins_listbox, 'Value');
+    displayedBinCount = length(get(handles.mapped_bins_listbox, 'String'));
+    % Error check, just in case...
+    if (isnumeric(selectedListboxIdx) && selectedListboxIdx > 0 && ...
+            selectedListboxIdx <= displayedBinCount)
+        
+        % Retrieve the selected metab bin's index position in the list.
+        metabBinListboxIdx = get(handles.mapped_bins_listbox, 'Value');
+        
+        % Parse the bin's primary ID and map it back to its index
+        % in the actual cell array of CompoundBin objects.
+        metabBinListboxAllStrs = ...
+            get(handles.mapped_bins_listbox, 'String');
+        metabBinListboxStr = metabBinListboxAllStrs{metabBinListboxIdx};
+        metabmapBinID = str2double( ...
+            regexp(metabBinListboxStr, '^\d+', 'match', 'once') );
+        metabmapCellArrIdx = ...
+            find(ismember([handles.storedBins(:).id], metabmapBinID), 1);
+        
+        % Mark the bin as deleted.
+        %handles.storedBins(metabmapCellArrIdx).was_deleted = true;
+        tempCB = handles.storedBins(metabmapCellArrIdx);
+        handles.storedBins(metabmapCellArrIdx) = [];
+        handles.storedBins = [ handles.storedBins ...
+            CompoundBin(CompoundBin.csv_file_header_string(), ...
+            regexprep(tempCB.as_csv_string, '^(\d+),"",', '$1,"X",', 'once')) ];
+        
+    end;
+    if (displayedBinCount == 1)
+        % We've just marked our only metab bin as "deleted." Disable
+        % the delete button.
+        set(hObject, 'Enable', 'off');
+    end;
+    guidata(hObject, handles);
+    repopulateMappedBinsList(handles);
     
-    % Retrieve the selected metab bin's index position in the list.
-    metabBinListboxIdx = get(handles.mapped_bins_listbox, 'Value');
-    
-    % Parse the bin's primary ID and map it back to its index
-    % in the actual cell array of CompoundBin objects.
-    metabBinListboxAllStrs = ...
-        get(handles.mapped_bins_listbox, 'String');
-    metabBinListboxStr = metabBinListboxAllStrs{metabBinListboxIdx};
-    metabmapBinID = str2double( ...
-        regexp(metabBinListboxStr, '^\d+', 'match', 'once') );
-    metabmapCellArrIdx = ...
-        find(ismember([handles.storedBins(:).id], metabmapBinID), 1);
-    
-    % Mark the bin as deleted.
-    %handles.storedBins(metabmapCellArrIdx).was_deleted = true;
-    tempCB = handles.storedBins(metabmapCellArrIdx);
-    handles.storedBins(metabmapCellArrIdx) = [];
-    handles.storedBins = [ handles.storedBins ...
-        CompoundBin(CompoundBin.csv_file_header_string(), ...
-        regexprep(tempCB.as_csv_string, '^(\d+),"",', '$1,"X",', 'once')) ];
-    
-end;
-if (displayedBinCount == 1)
-    % We've just marked our only metab bin as "deleted." Disable
-    % the delete button.
-    set(hObject, 'Enable', 'off');
-end;
-guidata(hObject, handles);
-repopulateMappedBinsList(handles);
-
-% A collection has already been loaded and selected. Redraw graph.
-if ( isfield(handles, 'collections') && ...
-        ~isempty(handles.collections) && ...
-        get(handles.select_collection_popup, 'Value') > 1 )
-    redrawGraph(handles);
+    % A collection has already been loaded and selected. Redraw graph.
+    if ( isfield(handles, 'collections') && ...
+            ~isempty(handles.collections) && ...
+            get(handles.select_collection_popup, 'Value') > 1 )
+        redrawGraph(handles);
+    end;
 end;
 
 
