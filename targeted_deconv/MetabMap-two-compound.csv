@@ -1,0 +1,3 @@
+"Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Chenomx","Literature","NMR Isotope","Notes"
+33,"",15,"dimethylglycine","X",2.940000,2.922000,"s",1,"","CH3, (CH3)2",92,"X","Chenomx/Lindon/Measured","1H",""
+53,"",30,"lactate","X",1.355000,1.319000,"d",2,"","CH3",,"X","Chemonx/Lindon/Measured","1H","The description here does not match either D or L lactic acid in HMDB. Check"
