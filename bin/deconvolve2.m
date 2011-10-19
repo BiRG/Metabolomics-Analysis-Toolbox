@@ -8,12 +8,12 @@ done_mask = zeros(1,length(regions));
 regions = determine_initial_baseline(regions);
 
 % Run twice to begin with
-[y_peaks, y_baseline, BETA, baseline_BETA, baseline_options] = regions_to_global(regions,x,y);
+[y_peaks, y_baseline] = regions_to_global(regions,x,y);
 prev_regions = fit_regions(regions,deconvolve_mask,done_mask,y_peaks);
 
 generation = 1;
 while (generation <= max_generations)
-    [y_peaks, y_baseline, BETA, baseline_BETA, baseline_options] = regions_to_global(prev_regions,x,y);
+    [y_peaks, y_baseline] = regions_to_global(prev_regions,x,y);
     regions = fit_regions(prev_regions,deconvolve_mask,done_mask,y_peaks);
     
     % Check to see how each region has changed
@@ -59,14 +59,15 @@ while (generation <= max_generations)
     generation = generation + 1;
 end
 
-[y_peaks, y_baseline, BETA, baseline_BETA, baseline_options] = regions_to_global(prev_regions,x,y);
+[y_peaks, y_baseline] = regions_to_global(regions,x,y);
 r2 = 1 - sum((y_peaks+y_baseline - y).^2)/sum((mean(y) - y).^2);
 fprintf('r2: %f\n',r2);
 
 results = {};
-results.BETA = BETA;
-results.baseline_BETA = NaN;%baseline_BETA;
-results.x_baseline_BETA = NaN;%x_baseline_BETA;
+% results.BETA = BETA;
+% results.baseline_BETA = NaN;%baseline_BETA;
+% results.x_baseline_BETA = NaN;%x_baseline_BETA;
+results.regions = regions;
 results.y_baseline = y_baseline;
 results.y_fit = y_peaks + y_baseline;
 results.y_peaks = y_peaks;
@@ -86,8 +87,7 @@ for r = 1:length(regions)
     regions{r}.baseline_options = {};
     regions{r}.baseline_options.x_baseline_BETA = x_baseline_BETA;
     regions{r}.baseline_options.x_all = regions{r}.x;
-end    
-
+end
 
 function regions = determine_regions(x,y,maxs,all_mins,bins)
 % Divide the problem up into regions
@@ -97,11 +97,14 @@ for b = 1:num_bins
     xwidth = x(1) - x(2);
     i = round((x(1)-bins(b,1))/xwidth) + 1;
     last = round((x(1)-bins(b,2))/xwidth) + 1;
+    ixs = find(i <= maxs & maxs < last);
+    sub_mins = all_mins(ixs,:);
+    i = min([i,min(sub_mins)]); % Adjust the start to make sure we include the max
+    last = max([last,max(sub_mins)]);
     sub_inxs = i:(last-1);
     xsub = x(i:last-1);
     ysub = y(i:last-1);
-
-    ixs = find(i <= maxs & maxs < last);
+    % Now adjust sub_mins
     sub_maxs = maxs(ixs) - i  + 1;
     sub_mins = all_mins(ixs,:) - i  + 1;            
     if ~isempty(sub_maxs)
@@ -118,5 +121,7 @@ for b = 1:num_bins
     regions{b}.lb = lb;
     regions{b}.ub = ub;
     regions{b}.inxs = sub_inxs;
+    regions{b}.maxs = maxs(ixs);
+    regions{b}.sub_maxs = sub_maxs;
     regions{b}.num_maxima = length(BETA0)/4;
 end
