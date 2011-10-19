@@ -289,12 +289,6 @@ plot_spectra(handles,true);
 % Update handles structure
 guidata(handles.figure1, handles);
 
-function add_line_to_summary_text(h,line)
-current = get(h,'String');
-current = {line,current{:}};
-set(h,'String',current);
-
-
 function scores_columns_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to scores_columns_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -487,113 +481,6 @@ if ~isempty(to_make_invisible)
     set(to_make_invisible,'visible','off');
 end
 
-function plot_maxs(handles,disable_subplot_feature)
-rows = str2num(get(handles.scores_rows_edit,'String'));
-columns = str2num(get(handles.scores_columns_edit,'String'));
-if disable_subplot_feature
-    rows = 1;
-    columns = 1;
-end
-
-[bins,deconvolve] = get_bins(handles);
-has_deconvolve = ~isempty(find(deconvolve == 1));
-if has_deconvolve % Make sure we have found the peaks
-    handles = get_peaks(handles);
-else
-    return;
-end
-[num_dp,num_spectra] = size(handles.collection.Y);
-
-delete(findobj(gcf,'Tag','hmaxs'));
-d = 0;
-data = get(handles.scores_uitable,'data');
-group_inxs = {};
-for g = 1:length(handles.group_by_inxs)
-    inxs = find(handles.available_Y == g);
-    if isempty(inxs)
-        continue;
-    end
-    d = d + 1;
-    group_inxs{end+1} = handles.group_by_inxs{g};
-    if ~data{d,7} % Don't include
-        continue;
-    end
-    
-    subplot_inxs = split(data{d,2},',');
-    for z = 1:length(subplot_inxs)
-        if disable_subplot_feature
-            subplot_inx = 1;
-        else
-            subplot_inx = str2num(subplot_inxs{z});
-            subplot(rows,columns,subplot_inx);
-        end
-        hold on
-        
-        for j = 1:length(inxs)
-            s = inxs(j);
-            if isfield(handles.collection,'y_fit') && ~isempty(handles.collection.y_fit{s})
-                y = handles.collection.Y(:,s);
-                y_baseline = handles.collection.y_baseline{s};
-                y_fit = handles.collection.y_fit{s};
-                y_peaks = y_fit - y_baseline;
-                y_residual = handles.collection.Y(:,s) - y_fit;
-                if ~data{d,10}
-                    plot(handles.collection.x,y_fit','g-','Tag','hmaxs');
-                end
-                if ~data{d,11}
-                    plot(handles.collection.x,y_peaks','color',[0.2,0.8,0.8],'Tag','hmaxs');
-                    plot(handles.collection.x,y_baseline','color',[0.2,0.2,0.8],'Tag','hmaxs');
-                end
-                if ~data{d,12}
-                    plot(handles.collection.x,y_residual','color',[0.8,0.2,0.2],'Tag','hmaxs');
-                end
-                if ~data{d,13}
-                    for b = 1:length(deconvolve)
-                        if deconvolve(b)
-                            left = bins(b,1);
-                            right = bins(b,2);
-                            yinxs = find(left >= handles.collection.x & handles.collection.x > right);
-                            BETA = handles.collection.BETA{s};
-                            X = BETA(4:4:end);
-                            xinxs = find(left >= X & X > right);
-                            enabled_xinxs = xinxs(find(handles.collection.include_mask{s}(xinxs) == 1)); % find only those enabled
-                            xinxs = enabled_xinxs;
-                            y_bin = global_model(BETA((4*(xinxs(1) - 1)+1):(4*(xinxs(end) - 1)+4)),handles.collection.x(yinxs),length(xinxs),{});
-                            plot(handles.collection.x(yinxs),y(yinxs)' - y_peaks(yinxs)' - y_baseline(yinxs)' + y_bin,'color',[0.7,0.3,0.9],'tag','hmaxs');
-                        end
-                    end
-                end
-            end
-        end
-        
-        for b = 1:length(deconvolve)
-            for j = 1:length(inxs)
-                s = inxs(j);
-                maxs = handles.collection.maxs{s};
-                x_maxs = handles.collection.x(maxs);
-                binxs = find(bins(b,1) >= x_maxs & x_maxs >= bins(b,2));
-                x_maxs = x_maxs(binxs);
-
-                for i = 1:length(x_maxs)                    
-                    color = 'b';
-                    if ~handles.collection.include_mask{s}(binxs(i))
-                        color = [0.8,0.8,0.8];
-                    end
-                    hmax = plot(x_maxs(i),handles.collection.Y(maxs(binxs(i)),s),'Color',color,'Tag','hmaxs','Visible','on','marker','o','MarkerFaceColor',color);
-                    set(hmax,'linestyle','none');
-                    setappdata(hmax,'s',s);
-                    setappdata(hmax,'max_inx',binxs(i));
-            %                 myfunc = @(hObject, eventdata) (max_click_spectrum(inxs(i),s,hmax,handles));
-                    set(hmax,'ButtonDownFcn',@max_click_spectrum);
-                                        
-                end
-            end
-        end
-        
-        hold off
-    end
-end
-
 function line_click_info_myfunc(hObject,eventdata)
 mouse = get(gca,'CurrentPoint');
 x_click = mouse(1,1);
@@ -616,20 +503,15 @@ switch (ButtonName),
                 collection.maxs{s} = [];
                 collection.mins{s} = [];
                 collection.include_mask{s} = [];
-                collection.BETA{s} = [];
+                collection.regions{s} = {};
                 collection.dirty(s) = true;
             end
         end
         collection.maxs{s} = [collection.maxs{s},round((collection.x(1)-x_click)/xwidth)+1];
         collection.include_mask{s} = [collection.include_mask{s},1];
-        collection.BETA{s} = [collection.BETA{s};0;0;0;collection.x(collection.maxs{s}(end))];
         [collection.maxs{s},inxs] = sort(collection.maxs{s},'ascend');
         collection.mins{s} = find_mins(collection.Y(:,s),collection.maxs{s});
         collection.include_mask{s} = collection.include_mask{s}(inxs);
-        collection.BETA{s}(1:4:end) = collection.BETA{s}(4*(inxs-1)+1);
-        collection.BETA{s}(2:4:end) = collection.BETA{s}(4*(inxs-1)+2);
-        collection.BETA{s}(3:4:end) = collection.BETA{s}(4*(inxs-1)+3);
-        collection.BETA{s}(4:4:end) = collection.BETA{s}(4*(inxs-1)+4);
         
         % Update
         handles.collection = collection;
@@ -970,20 +852,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function [bins,deconvolve] = get_bins(handles)
-bins = [];
-deconvolve = [];
-data = get(handles.bins_listbox,'String');
-for b = 2:size(data,1) % Skip the first blank
-    fields = split(data{b},',');    
-    bins(end+1,:) = [str2num(fields{1}),str2num(fields{2})];
-    if length(fields) == 2
-        deconvolve(end+1) = false;
-    elseif strcmp(fields{3},'Deconvolve')
-        deconvolve(end+1) = true;
-    end
-end
-
 % --- Executes on button press in save_bins_pushbutton.
 function save_bins_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to save_bins_pushbutton (see GCBO)
@@ -1078,33 +946,6 @@ Y = adjust_y_deconvolution(collection,bins,deconvolve);
 collection.Y = Y;
 new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
 save_collections({new_collection},'_binned');
-
-function Y = adjust_y_deconvolution(collection,bins,deconvolve)
-% If the collection does not have a y_baseline field, does nothing.
-Y = collection.Y;
-if isfield(collection, 'y_baseline')
-    [num_dp,num_spectra] = size(Y);
-    for s = 1:num_spectra
-        y = collection.Y(:,s);
-        y_baseline = collection.y_baseline{s};
-        y_fit = collection.y_fit{s};
-        y_peaks = y_fit - y_baseline;
-        for b = 1:length(deconvolve)
-            if deconvolve(b)
-                left = bins(b,1);
-                right = bins(b,2);
-                yinxs = find(left >= collection.x & collection.x > right);
-                BETA = collection.BETA{s};
-                X = BETA(4:4:end);
-                xinxs = find(left >= X & X > right);
-                enabled_xinxs = xinxs(find(collection.include_mask{s}(xinxs) == 1)); % find only those enabled
-                xinxs = enabled_xinxs;
-                y_bin = global_model(BETA((4*(xinxs(1) - 1)+1):(4*(xinxs(end) - 1)+4)),collection.x(yinxs),length(xinxs),{});
-                Y(yinxs,s) = y(yinxs) - y_peaks(yinxs) - y_baseline(yinxs) + y_bin';
-            end
-        end
-    end
-end
 
 % --- Executes on button press in post_collection_pushbutton.
 function post_collection_pushbutton_Callback(hObject, eventdata, handles)
@@ -1398,18 +1239,18 @@ for b = 1:size(bins,1)
     if mod(b-1,2) == 0
         color = 'b';
     end
-    right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],color);
+    right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],color,b,handles);
     set(right_cursor,'LineWidth',3);
     set(right_cursor,'LineStyle','--');
-    myfunc = @(hObject, eventdata) (click_bin_boundary(b,right_cursor,handles));
-    set(right_cursor,'ButtonDownFcn',myfunc);
+    %myfunc = @(hObject, eventdata) (click_bin_boundary(b,right_cursor,handles));
+    %set(right_cursor,'ButtonDownFcn',myfunc);
     
     set(right_cursor,'tag','right_cursor');
-    left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],color);
+    left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],color,b,handles);
     set(left_cursor,'LineWidth',3);
     set(left_cursor,'tag','left_cursor');           
-    myfunc = @(hObject, eventdata) (click_bin_boundary(b,left_cursor,handles));
-    set(left_cursor,'ButtonDownFcn',myfunc);    
+%     myfunc = @(hObject, eventdata) (click_bin_boundary(b,left_cursor,handles));
+%     set(left_cursor,'ButtonDownFcn',myfunc);    
 end
 
 if inverted_bin
@@ -1418,40 +1259,6 @@ end
 
 ylim(yl);
 guidata(hObject, handles);
-
-function handles = get_peaks(handles)
-if ~isfield(handles.collection,'maxs')
-    handles = find_peaks(handles,30);
-    guidata(handles.figure1,handles);
-end
-
-function click_bin_boundary(bix,h,handles)
-[bins,deconvolve] = get_bins(handles);
-
-ButtonName = questdlg('Include in deconvolution?', ...
-                         'Deconvolution', ...
-                         'Yes', 'No','No');
-
-if strcmp(ButtonName,'Yes')
-    deconvolve(bix) = true;
-else
-    deconvolve(bix) = false;
-end
-
-data = cell(size(bins,1)+1,1);
-data{1} = '';
-for b = 1:size(bins,1)
-    if deconvolve(b)
-        data{b+1} = sprintf('%f,%f,Deconvolve',bins(b,1),bins(b,2));
-    else
-        data{b+1} = sprintf('%f,%f',bins(b,1),bins(b,2));
-    end
-end
-
-set(handles.bins_listbox,'String',data);
-
-plot_maxs(handles,true);
-
 
 % --- Executes during object creation, after setting all properties.
 function bins_listbox_CreateFcn(hObject, eventdata, handles)
@@ -1754,45 +1561,23 @@ add_line_to_summary_text(handles.summary_text,sprintf('Starting deconvolution'))
 handles = get_peaks(handles);
 collection = handles.collection;
 
-% First time
-if isempty(find(collection.BETA{1}(1:4:end) ~= 0))
-    collection.x_baseline_BETA = {};
-    collection.baseline_BETA = {};
-    collection.y_baseline = {};
-    collection.y_fit = {};
-%     collection.dirty = [];
-%     collection.dirty(1:length(collection.BETA)) = true;
-end
+collection.y_baseline = {};
+collection.y_fit = {};
 
 % Perform deconvolution
 for s = 1:num_spectra
-    x = collection.x;
-    xwidth = collection.x(1) - collection.x(2);
-    maxs = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
-%     if ~getappdata(gcf,'dirty') && ~collection.dirty(s) % Check if anything changed
-%         add_line_to_summary_text(handles.summary_text,sprintf('No deconvolution required for spectrum %d/%d',s,num_spectra));
-%         continue;
-%     end
-    % A peak has been added
-%     prev_BETA = collection.BETA{s};
-%     prev_maxs = maxs;
-    if length(maxs) ~= length(collection.maxs{s}) && ~isempty(maxs)
-        collection.BETA{s} = []; % Reinitialize
-    end
-    options = {};
-
     if ~isempty(collection.maxs{s})
         [bins,deconvolve_mask] = get_bins(handles);
-        results = deconvolve(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,options);
+        results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,1,2);
+        %results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,options);
 
-        collection.BETA{s} = results.BETA;
+        collection.regions{s} = results.regions;
         collection.y_fit{s} = results.y_fit;
-        collection.x_baseline_BETA{s} = results.x_baseline_BETA;
         collection.y_baseline{s} = results.y_baseline;
-%         collection.dirty(s) = false;
 
         % Update the max indices
-        collection.maxs{s} = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
+        %collection.maxs{s} = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
+        % I've disconnected maxs and BETA
 
         add_line_to_summary_text(handles.summary_text,sprintf('Finished spectrum %d/%d',s,num_spectra));
     else
@@ -1808,33 +1593,6 @@ add_line_to_summary_text(handles.summary_text,sprintf('Finished deconvolution'))
 msgbox('Finished Deconvolution');
 
 guidata(hObject, handles);
-
-function handles = find_peaks(handles,min_width)
-add_line_to_summary_text(handles.summary_text,'Finding peaks');
-
-%min_width = 30;
-collection = handles.collection;
-[num_variables,num_spectra] = size(collection.Y);
-collection.maxs = {};
-collection.mins = {};
-collection.include_mask = {};
-collection.BETA = {};
-collection.Y_smooth = [];
-for s = 1:num_spectra
-    noise_std = std(collection.Y(1:min_width,s));
-    % Find the minimums so we can divide the spectra appropriately
-    [maxs,mins,y_smooth] = find_maxs_mins(collection.x,collection.Y(:,s),noise_std); % Find the peak locations
-    collection.maxs{s} = maxs;
-    collection.mins{s} = mins;
-    collection.include_mask{s} = 0*maxs+1; % Include all by default
-    collection.BETA{s} = zeros(4*length(maxs),1);
-    collection.BETA{s}(4:4:end) = collection.x(maxs);
-    collection.Y_smooth(:,s) = y_smooth;
-    add_line_to_summary_text(handles.summary_text,sprintf('Finished spectrum %d/%d',s,num_spectra));
-end
-handles.collection = collection;
-
-add_line_to_summary_text(handles.summary_text,'Finished finding peaks');
 
 % --- Executes on button press in deconvolution_pushbutton.
 function deconvolution_pushbutton_Callback(hObject, eventdata, handles)
