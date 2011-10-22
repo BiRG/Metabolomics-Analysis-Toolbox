@@ -18,6 +18,22 @@ map = load_metabmap(fullfile(data_dir, 'testCompoundBin.01.readall.csv'));
 assertEqual(length(map),78);
 assertTrue(isa(map, 'CompoundBin'));
 
+function testReadExcelHeader %#ok<DEFNU>
+% Tests whether load_metabmap (which uses CompoundBin) reads the correct
+% entries from a file that is identical to the first 5 entries of
+% testCompoundBin.01.readall.csv, but it puts the quotation marks in in an
+% excel-like way
+
+normal_map = load_metabmap(fullfile(data_dir, 'testCompoundBin.01.readall.csv'));
+assertEqual(length(normal_map),78);
+assertTrue(isa(normal_map, 'CompoundBin'));
+
+excel_map = load_metabmap(fullfile(data_dir, 'testCompoundBin.03.excel_header.csv'));
+assertEqual(length(excel_map),5);
+assertTrue(isa(excel_map, 'CompoundBin'));
+
+assertEqual(normal_map(1:5), excel_map);
+
 function testLMMBadLoadDeleted %#ok<DEFNU>
 % Tests whether load_metabmap throws an exception if it gets a bad value for load_deleted 
 
