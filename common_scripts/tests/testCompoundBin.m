@@ -250,7 +250,12 @@ in = ['1,"",101,"Unobtanium","X",'...
 	'"t",2,"50","CH5",,"X","Some refs",'...
 	'"1H","Here are some notes to read"'];
 
-c = CompoundBin(CompoundBin.csv_file_header_string,in);
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
+c = CompoundBin(header,in);
 
 assertEqual(uint64(c.id),uint64(1));
 assertFalse(c.was_deleted);
@@ -278,7 +283,12 @@ in = ['1,"X",101,"Unobtanium"," ",'...
 	'"t",2,"50","CH5",," ","Some refs",'...
 	'"1H","Here are some notes to read"'];
 
-c = CompoundBin(CompoundBin.csv_file_header_string,in);
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
+c = CompoundBin(header,in);
 
 assertEqual(uint64(c.id),uint64(1));
 assertTrue(c.was_deleted);
@@ -301,8 +311,13 @@ function testCompoundBinConstructorMethylnicotinamide %#ok<DEFNU>
 % Test that the constructor constructs what we'd expect for 1-
 % methlynicotinamide
 
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
 in = '1,,1,"1-Methylnicotinamide","X",9.297,9.265,"s",1,,"CH2, H2",699,"X","Lindon, year?","1H",';
-c = CompoundBin(CompoundBin.csv_file_header_string,in);
+c = CompoundBin(header,in);
 
 assertEqual(uint64(c.id),uint64(1));
 assertFalse(c.was_deleted);
@@ -326,8 +341,13 @@ function testGetAsCsvStringHippurate %#ok<DEFNU>
 %
 % Hippurate 3 has no listed j-value
 
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
 in ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
-c = CompoundBin(CompoundBin.csv_file_header_string,in);
+c = CompoundBin(header,in);
 out = c.as_csv_string;
 
 assertEqual(in, out);
@@ -337,8 +357,13 @@ function testGetAsCsvStringMalate %#ok<DEFNU>
 % Test that when an object for bin 6 (malate) is converted to csv, the result is the same as the input 
 %
 % Malate has two known j-values
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
 in = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
-c = CompoundBin(CompoundBin.csv_file_header_string,in);
+c = CompoundBin(header,in);
 out = c.as_csv_string;
 
 assertEqual(in, out);
@@ -347,12 +372,16 @@ assertEqual(in, out);
 function testEqualObjObj %#ok<DEFNU>
 % Test that object == object works
 
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
 inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
-cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
-cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
-cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+cH = CompoundBin(header,inH);
+cHDel = CompoundBin(header,inHDel);
+cM = CompoundBin(header,inM);
 
 assertTrue(cH == cH);
 assertFalse(cM == cH);
@@ -361,12 +390,17 @@ assertFalse(cH == cHDel);
 function testEqualObjAry %#ok<DEFNU>
 % Test that object == array(object) works
 
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
 inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
-cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
-cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
-cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+cH = CompoundBin(header,inH);
+cHDel = CompoundBin(header,inHDel);
+cM = CompoundBin(header,inM);
 
 ary = [cH cHDel cM];
 assertEqual(cHDel == ary, [false true false]);
@@ -376,12 +410,18 @@ assertEqual(cHDel == ary, [false true false]);
 function testEqualAryObj %#ok<DEFNU>
 % Test that array(object) == object works
 
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
 inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
-cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
-cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
-cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+
+cH = CompoundBin(header,inH);
+cHDel = CompoundBin(header,inHDel);
+cM = CompoundBin(header,inM);
 
 ary = [cH cHDel cM];
 assertEqual(ary == cH, [true false false]);
@@ -391,12 +431,18 @@ assertEqual(ary == cH, [true false false]);
 function testEqualAryAry %#ok<DEFNU>
 % Test that array(object) == array(object) works
 
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
 inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
-cH = CompoundBin(CompoundBin.csv_file_header_string,inH);
-cHDel = CompoundBin(CompoundBin.csv_file_header_string,inHDel);
-cM = CompoundBin(CompoundBin.csv_file_header_string,inM);
+
+cH = CompoundBin(header,inH);
+cHDel = CompoundBin(header,inHDel);
+cM = CompoundBin(header,inM);
 
 ary1 = [cH cHDel cM];
 ary2 = [cH cHDel cH];
