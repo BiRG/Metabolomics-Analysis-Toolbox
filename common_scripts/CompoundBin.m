@@ -371,6 +371,7 @@ classdef CompoundBin
             %
             % Known headers are:
             %  1. "Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Chenomx","Literature","NMR Isotope","Notes"
+            %  2. Bin ID,Deleted,Compound ID,Compound Name,Known Compound,Bin (Lt),Bin (Rt),Multiplicity,Peaks to Select,J (Hz),Nucleus Assignment,HMDB ID,Chenomx,Literature,NMR Isotope,Notes
             %
             % ---------
             % - Usage
@@ -402,7 +403,17 @@ classdef CompoundBin
             % obj The compound bin created from the input arguments
             
             if nargin>0 %Make a default constructor that doesn't initialize
-                if isequal(header_line,CompoundBin.csv_file_header_string)
+                header_no_sample_type_field=[ ...
+                    '"Bin ID","Deleted","Compound ID","Compound Name",'...
+                    '"Known Compound","Bin (Lt)","Bin (Rt)",'...
+                    '"Multiplicity","Peaks to Select","J (Hz)",'...
+                    '"Nucleus Assignment","HMDB ID","Chenomx",'...
+                    '"Literature","NMR Isotope","Notes"'];
+                header_no_sample_type_field_excel=regexprep(...
+                    header_no_sample_type_field, '"','');
+                
+                if isequal(header_line,header_no_sample_type_field) || ...
+                        isequal(header_line, header_no_sample_type_field_excel)
                     d = textscan(data_line, ...
                         ['%d %q %d %q '... to Compound Name
                         '%q %f %f '   ... to Bin (Rt)
