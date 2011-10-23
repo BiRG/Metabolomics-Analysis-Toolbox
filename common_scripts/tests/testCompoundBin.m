@@ -464,3 +464,102 @@ ary1 = [cH cHDel cM];
 ary2 = [cH cHDel cH];
 assertEqual(ary1 == ary2, [true true false]);
 
+
+function testCompoundBinConstructorSampleTypes %#ok<DEFNU>
+% Test: The constructor of CompoundBin accepts sample_types field
+% ("Sample-types that may contain compound") and produces an object with
+% that field having the expected value
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"urine","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+
+cH = CompoundBin(header, inH);
+
+assertEqual(cH.sample_types,{'urine'});
+
+function testCompoundBinConstructorSampleTypesNoTypes %#ok<DEFNU>
+% Test: The constructor of CompoundBin gives empty cell array for sample_types field if no sample types listed
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+
+cH = CompoundBin(header, inH);
+
+assertTrue(isempty(cH.sample_types));
+assertTrue(iscell(cH.sample_types));
+
+function testCompoundBinConstructorSampleTypesTwoTypes %#ok<DEFNU>
+% Test: The constructor of CompoundBin gives expected values if two types
+% are listed for sample types field
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum,brain","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+
+cH = CompoundBin(header, inH);
+
+assertEqual(cH.sample_types,{'serum','brain'});
+
+function testCompoundBinConstructorSampleTypesFiveTypes %#ok<DEFNU>
+% Test: CompoundBin constructor gives expected sample_types field when the 5 needed types are listed: urine, serum, brain, liver, fecal
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"fecal, liver, brain, serum, urine","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+
+cH = CompoundBin(header, inH);
+
+assertEqual(cH.sample_types,{'fecal', 'liver', 'brain', 'serum', 'urine'});
+
+
+function testCompoundBinConstructorSampleTypesExcel %#ok<DEFNU>
+% Test: The constructor of CompoundBin accepts sample_types field
+% ("Sample-types that may contain compound") and produces an object with
+% that field having the expected value when the data is given as Excel
+% would give it, that is, without extra quotes
+
+header=['Bin ID,Deleted,Compound ID,'...
+    'Compound Name,Known Compound,Bin (Lt),Bin (Rt),'...
+    'Multiplicity,Peaks to Select,J (Hz),Nucleus Assignment,'...
+    'HMDB ID,Sample-types that may contain compound,'...
+    'Chenomx,Literature,NMR Isotope,Notes'];
+
+inH ='3,,4,hippurate,X,7.857000,7.815000,d,2,,"CH2, CH6",714,urine,X,Chemonx/Lindon/Measured,1H,Multiplicity is different in HMDB';
+
+cH = CompoundBin(header, inH);
+
+assertEqual(cH.sample_types,{'urine'});
+
+
+function testCompoundBinSampleTypesBackwardCompat %#ok<DEFNU>
+% CompoundBin sample_types field is empty for objects created with the old header
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+
+cM = CompoundBin(header,inM);
+
+assertTrue(isempty(cM.sample_types));
+assertTrue(iscell(cM.sample_types));
