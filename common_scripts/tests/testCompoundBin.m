@@ -360,9 +360,10 @@ function testGetAsCsvStringHippurate %#ok<DEFNU>
 header=['"Bin ID","Deleted","Compound ID",'...
     '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
     '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
-    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
 
-in ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+in ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 c = CompoundBin(header,in);
 out = c.as_csv_string;
 
@@ -376,9 +377,10 @@ function testGetAsCsvStringMalate %#ok<DEFNU>
 header=['"Bin ID","Deleted","Compound ID",'...
     '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
     '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
-    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
 
-in = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+in = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"serum, urine","","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
 c = CompoundBin(header,in);
 out = c.as_csv_string;
 
@@ -583,4 +585,17 @@ assertTrue(isempty(s.metab.sample_types));
 assertTrue(iscell(s.metab.sample_types));
 assertEqual(s.metab, expected_metab);
 
+function testCompoundBinLengthMismatch %#ok<DEFNU>
+% CompoundBin correctly identifies when the input line is too short for the
+% given header
 
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"X","","1H","Multiplicity is different in HMDB"';
+
+f=@() CompoundBin(header, inH);
+assertExceptionThrown(f, 'CompoundBin:bad_data_line');
