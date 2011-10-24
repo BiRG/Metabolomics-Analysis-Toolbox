@@ -363,7 +363,7 @@ header=['"Bin ID","Deleted","Compound ID",'...
     '"HMDB ID","Sample-types that may contain compound",'...
     '"Chenomx","Literature","NMR Isotope","Notes"'];
 
-in ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+in ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"liver, serum, urine","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 c = CompoundBin(header,in);
 out = c.as_csv_string;
 
@@ -401,9 +401,86 @@ cH = CompoundBin(header,inH);
 cHDel = CompoundBin(header,inHDel);
 cM = CompoundBin(header,inM);
 
-assertTrue(cH == cH);
-assertFalse(cM == cH);
-assertFalse(cH == cHDel);
+assertTrue(cH == cH,'A == A for obj-obj comparison');
+assertFalse(cM == cH,'malate ~= hippurate for obj-obj comparison');
+assertFalse(cH == cHDel,'== detects changes in deleted field for obj-obj comparison');
+
+function testEqualObjObjSampleTypes %#ok<DEFNU>
+% Test that object == object works with objects that have a sample_type field
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHRev = '3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"liver, urine, serum","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHNoUri='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"serum, urine","","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+
+cH = CompoundBin(header,inH);
+cHRev = CompoundBin(header,inHRev);
+cHDel = CompoundBin(header,inHDel);
+cHNoUri = CompoundBin(header,inHNoUri);
+cM = CompoundBin(header,inM);
+
+assertTrue(cH == cHRev,'Equality is independent of input order of sample_types field');
+assertTrue(cH == cH,'A == A with sample_types field for hippurate');
+assertTrue(cM == cM,'A == A with sample_types field for malate');
+assertFalse(cM == cH,'malate ~= hippurate with sample_types field');
+assertFalse(cH == cHDel,'Equality detects changes in deletion for when_sample_types field is present');
+assertFalse(cH == cHNoUri,'Equality detects changes in contents of sample_types field');
+
+function testEqualObjArySampleTypes %#ok<DEFNU>
+% Test that obj == array(obj) and array(obj)==obj works with objects that have a sample_type field
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHRev = '3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"liver, urine, serum","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHNoUri='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"serum, urine","","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+
+cH = CompoundBin(header,inH);
+cHRev = CompoundBin(header,inHRev);
+cHDel = CompoundBin(header,inHDel);
+cHNoUri = CompoundBin(header,inHNoUri);
+cM = CompoundBin(header,inM);
+
+ary = [cH cHRev cHDel cHNoUri cM];
+assertEqual(cHRev == ary, [true true false false false]);
+assertEqual(ary == cHNoUri, [false false false true false]);
+assertEqual(ary == cH, [true true false false false]);
+
+
+function testEqualAryArySampleTypes %#ok<DEFNU>
+% Test that array(obj) == array(obj) works with objects that have a sample_type field
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Sample-types that may contain compound",'...
+    '"Chenomx","Literature","NMR Isotope","Notes"'];
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHRev = '3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"liver, urine, serum","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHDel ='3,"X",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, urine, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inHNoUri='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum, liver","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"serum, urine","","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+
+cH = CompoundBin(header,inH);
+cHRev = CompoundBin(header,inHRev);
+cHDel = CompoundBin(header,inHDel);
+cHNoUri = CompoundBin(header,inHNoUri);
+cM = CompoundBin(header,inM);
+
+ary1 = [cHRev cHRev   cH    cH      cH cH];
+ary2 = [cH    cHNoUri cHDel cHNoUri cM cH];
+assertEqual(ary1 == ary2, [true false false false false true]);
 
 function testEqualObjAry %#ok<DEFNU>
 % Test that object == array(object) works
@@ -422,8 +499,6 @@ cM = CompoundBin(header,inM);
 
 ary = [cH cHDel cM];
 assertEqual(cHDel == ary, [false true false]);
-
-
 
 function testEqualAryObj %#ok<DEFNU>
 % Test that array(object) == object works
@@ -514,7 +589,7 @@ inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"serum,br
 
 cH = CompoundBin(header, inH);
 
-assertEqual(cH.sample_types,{'serum','brain'});
+assertEqual(cH.sample_types,{'brain','serum'});
 
 function testCompoundBinConstructorSampleTypesFiveTypes %#ok<DEFNU>
 % Test: CompoundBin constructor gives expected sample_types field when the 5 needed types are listed: urine, serum, brain, liver, fecal
@@ -525,11 +600,11 @@ header=['"Bin ID","Deleted","Compound ID",'...
     '"HMDB ID","Sample-types that may contain compound",'...
     '"Chenomx","Literature","NMR Isotope","Notes"'];
 
-inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714,"fecal, liver, brain, serum, urine","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
+inH ='3,"",4,"hippurate","X",7.857000,7.815000,"d",2,"","CH2, CH6",714," fecal,   liver, brain, serum, urine","X","Chemonx/Lindon/Measured","1H","Multiplicity is different in HMDB"';
 
 cH = CompoundBin(header, inH);
 
-assertEqual(cH.sample_types,{'fecal', 'liver', 'brain', 'serum', 'urine'});
+assertEqual(cH.sample_types,{'brain', 'fecal', 'liver', 'serum', 'urine'});
 
 
 function testCompoundBinConstructorSampleTypesExcel %#ok<DEFNU>
