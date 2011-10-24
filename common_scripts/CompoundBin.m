@@ -80,11 +80,12 @@ classdef CompoundBin
         function str=csv_file_header_string()
             % A string that represents the header for a csv file containing
             % CompoundBin objects
-            str=['"Bin ID","Deleted","Compound ID","Compound Name",'...
-                '"Known Compound","Bin (Lt)","Bin (Rt)",'...
+            str=['"Bin ID","Deleted","Compound ID",'...
+                '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
                 '"Multiplicity","Peaks to Select","J (Hz)",'...
-                '"Nucleus Assignment","HMDB ID","Chenomx",'...
-                '"Literature","NMR Isotope","Notes"'];
+                '"Nucleus Assignment","HMDB ID",'...
+                '"Sample-types that may contain compound",'...
+                '"Chenomx","Literature","NMR Isotope","Notes"'];
         end
         
         function trueorfalse=parse_csv_bool(str, value_destination)
@@ -378,7 +379,8 @@ classdef CompoundBin
             % Known headers are:
             %  1. "Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Chenomx","Literature","NMR Isotope","Notes"
             %  2. Bin ID,Deleted,Compound ID,Compound Name,Known Compound,Bin (Lt),Bin (Rt),Multiplicity,Peaks to Select,J (Hz),Nucleus Assignment,HMDB ID,Chenomx,Literature,NMR Isotope,Notes
-            %
+            %  3. "Bin ID","Deleted","Compound ID",'"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Sample-types that may contain compound","Chenomx","Literature","NMR Isotope","Notes"
+            %  4. Bin ID,Deleted,Compound ID,'Compound Name,Known Compound,Bin (Lt),Bin (Rt),Multiplicity,Peaks to Select,J (Hz),Nucleus Assignment,HMDB ID,Sample-types that may contain compound,Chenomx,Literature,NMR Isotope,Notes
             % ---------
             % - Usage
             % ---------
@@ -418,24 +420,59 @@ classdef CompoundBin
                 header_no_sample_type_field_excel=regexprep(...
                     header_no_sample_type_field, '"','');
                 
-                if isequal(header_line,header_no_sample_type_field) || ...
-                        isequal(header_line, header_no_sample_type_field_excel)
-                    d = textscan(data_line, ...
-                        ['%d %q %d %q '... to Compound Name
-                        '%q %f %f '   ... to Bin (Rt)
-                        '%q %d %q '   ... to J (Hz)
-                        '%q %q %q '   ... to Chenomix
-                        '%q %q %q'],...
-                        'Delimiter', ',');
+                header=[ ...
+                    '"Bin ID","Deleted","Compound ID","Compound Name",'...
+                    '"Known Compound","Bin (Lt)","Bin (Rt)",'...
+                    '"Multiplicity","Peaks to Select","J (Hz)",'...
+                    '"Nucleus Assignment","HMDB ID",' ...
+                    '"Sample-types that may contain compound",'...
+                    '"Chenomx","Literature","NMR Isotope","Notes"'];
                     
-                    % Make sure the header scanned correctly.  Handle
-                    % errors for fields not being integers or floating
-                    % point numbers (does not take care of J)
-                    if length(d) ~= 16
-                        bad_field = length(d) + 1;
+                header_excel=regexprep(header, '"','');
+                
+                
+                if isequal(header_line,header_no_sample_type_field) || ...
+                        isequal(header_line, header_no_sample_type_field_excel) || ...
+                        isequal(header_line, header) || ...
+                        isequal(header_line, header_excel)
+                        
+                    if isequal(header_line,header_no_sample_type_field) || ...
+                        isequal(header_line, header_no_sample_type_field_excel) 
+                        d = textscan(data_line, ...
+                            ['%d %q %d %q '... to Compound Name
+                            '%q %f %f '   ... to Bin (Rt)
+                            '%q %d %q '   ... to J (Hz)
+                            '%q %q %q '   ... to Chenomix
+                            '%q %q %q'],...
+                            'Delimiter', ',');
+                        
                         headers = textscan(header_line, ['%q %q %q %q '...
                             '%q %q %q %q %q %q %q %q %q %q %q %q'],...
                             'Delimiter', ',');
+                        
+                        expected_d_length = 16;
+                    else %Standard header
+                        d = textscan(data_line, ...
+                            ['%d %q %d %q '... to Compound Name
+                            '%q %f %f '   ... to Bin (Rt)
+                            '%q %d %q '   ... to J (Hz)
+                            '%q %q %q %q '   ... to Chenomix
+                            '%q %q %q'],...
+                            'Delimiter', ',');
+
+                        headers = textscan(header_line, ['%q %q %q %q '...
+                            '%q %q %q %q %q %q %q %q %q %q %q %q %q'],...
+                            'Delimiter', ',');
+                        
+                        expected_d_length = 17;
+                    end
+                    
+                    
+                    % Make sure the data scanned correctly.  Handle
+                    % errors for fields not being integers or floating
+                    % point numbers (does not take care of J or sample_types)
+                    if length(d) ~= expected_d_length
+                        bad_field = length(d) + 1;
                         bad_field_name = headers{bad_field};
                         if     bad_field == 1
                             error('CompoundBin:bin_id_int', ...
@@ -463,131 +500,11 @@ classdef CompoundBin
                         end
                     end
                     
-                    obj.id=d{1};
-                    if obj.id <= 0
-                        error('CompoundBin:bin_id_not_pos', ...
-                            ['The bin id must be an integer that is '...
-                            'at least 1']);
-                    end
-                    
-                    obj.was_deleted=CompoundBin.parse_csv_bool(...
-                        d{2}{1}, 'was deleted');
-                    
-                    obj.compound_id=d{3};
-                    if obj.compound_id <= 0
-                        error('CompoundBin:compound_id_not_pos', ...
-                            ['The compound id must be an integer that is '...
-                            'at least 1']);
-                    end
-                    
-                    
-                    obj.compound_name=d{4}{1};
-                    if ~isempty(strfind(obj.compound_name,'"'))
-                        error('CompoundBin:compound_name_has_quote', ...
-                            ['The compound name cannot contain '...
-                            'quotation marks (")']);
-                    end
-                    
-                    obj.is_known_compound=CompoundBin.parse_csv_bool(...
-                        d{5}{1}, 'is known compound');
-                    
-                    obj.bin=SpectrumBin(d{6}, d{7});
-                    if obj.bin.left < obj.bin.right
-                        error('CompoundBin:bin_bounds_reversed', ...
-                            ['The left bin boundary must be at least as '...
-                            'large as the right bin boundary']);
-                    end
-                    
-                    obj.multiplicity=d{8}{1};
-                    if ~CompoundBin.is_valid_multiplicity_string(obj.multiplicity)
-                        error('CompoundBin:bad_multiplicity', ...
-                            ['The string "' obj.multiplicity ...
-                            '" is not a valid multiplicity string.']);
-                    end
-                    
-                    obj.num_peaks=d{9};
-                    if obj.compound_id <= 0
-                        error('CompoundBin:compound_id_neg', ...
-                            ['The number of peaks to select must not '...
-                            'be a negative number.']);
-                    end
-                    
-                    jv = d{10}{1}; % j-values line
-                    if      isempty(jv) || ...                  %Empty
-                            ~isempty(regexp(jv,'^\s*$','once')) %Spaces only
-                        obj.j_values = [];
-                    else
-                        obj.j_values=str2double(regexp(jv,'\s*,\s*','split'));
-                        if any(isnan(obj.j_values))
-                            error('CompoundBin:j_values_nan', ...
-                                ['J values must be empty or a comma-' ...
-                                'separated list of positive numbers']);
-                        end
-                        if any(obj.j_values <= 0)
-                            error('CompoundBin:j_values_not_pos', ...
-                                'J values must all be positive');
-                        end
-                    end
-                    
-                    obj.nucleus_assignment=d{11}{1};
-                    if ~isempty(strfind(obj.nucleus_assignment,'"'))
-                        error('CompoundBin:nucleus_assignment_has_quote', ...
-                            ['The nucleus assignment cannot contain'...
-                            ' quotation marks (")']);
-                    end
-                    
-                    
-                    
-                    hid = d{12}{1}; % HMDB id line
-                    if isempty(hid) || ~isempty(regexp(hid,'^\s*$','once'))
-                        obj.hmdb_id = nan;
-                    else
-                        obj.hmdb_id=str2double(hid);
-                        if isnan(obj.hmdb_id)
-                            error('CompoundBin:hmdb_id_not_num', ...
-                                'The HMDB ID must be a number');
-                        end
-                    end
-                    
-                    
-                    obj.chenomix_was_used=CompoundBin.parse_csv_bool(...
-                        d{13}{1}, 'chenomix was used');
-                    
-                    
-                    if isempty(d{14})
-                        obj.literature = '';
-                    else
-                        obj.literature=d{14}{1};
-                        if ~isempty(strfind(obj.literature,'"'))
-                            error('CompoundBin:literature_has_quote', ...
-                                ['The literature field cannot contain '...
-                                'quotation marks (")']);
-                        end
-                    end
-                    
-                    if isempty(d{15})
-                        obj.nmr_isotope='';
-                    else
-                        obj.nmr_isotope=d{15}{1};
-                        if isempty(regexp(obj.nmr_isotope,'^\d{1,3}[A-Z][a-z]{0,2}$','once'))
-                            error('CompoundBin:isotope_bad_format', ...
-                                ['The nmr isotope be a series of 1 to 3 '...
-                                'digits followed by a capital letter and '...
-                                'up to 2 more lower case letters.  For '...
-                                'example: "1H" and "6Li" would be valid, ' ...
-                                'but "1h", "6LI", and "P" would not.']);
-                        end
-                    end
-                    
-                    if isempty(d{16})
-                        obj.notes = '';
-                    else
-                        obj.notes=d{16}{1};
-                        if ~isempty(strfind(obj.notes,'"'))
-                            error('CompoundBin:notes_has_quote', ...
-                                ['The notes field cannot contain '...
-                                'quotation marks (")']);
-                        end
+                    % Add on empty sample_type field if it was missing due to
+                    % old-style file
+                    if isequal(header_line,header_no_sample_type_field) || ...
+                        isequal(header_line, header_no_sample_type_field_excel) 
+                        d={d{1:12},{''},d{13:16}};
                     end
                 else
                     error('CompoundBin:unknown_header', ...
@@ -595,6 +512,146 @@ classdef CompoundBin
                         'constructor was not among those that the '...
                         'constructor knows how to parse.  The header '...
                         'passed was "' header_line '"']);
+                end
+
+                
+                
+                
+                obj.id=d{1};
+                if obj.id <= 0
+                    error('CompoundBin:bin_id_not_pos', ...
+                        ['The bin id must be an integer that is '...
+                        'at least 1']);
+                end
+
+                obj.was_deleted=CompoundBin.parse_csv_bool(...
+                    d{2}{1}, 'was deleted');
+
+                obj.compound_id=d{3};
+                if obj.compound_id <= 0
+                    error('CompoundBin:compound_id_not_pos', ...
+                        ['The compound id must be an integer that is '...
+                        'at least 1']);
+                end
+
+
+                obj.compound_name=d{4}{1};
+                if ~isempty(strfind(obj.compound_name,'"'))
+                    error('CompoundBin:compound_name_has_quote', ...
+                        ['The compound name cannot contain '...
+                        'quotation marks (")']);
+                end
+
+                obj.is_known_compound=CompoundBin.parse_csv_bool(...
+                    d{5}{1}, 'is known compound');
+
+                obj.bin=SpectrumBin(d{6}, d{7});
+                if obj.bin.left < obj.bin.right
+                    error('CompoundBin:bin_bounds_reversed', ...
+                        ['The left bin boundary must be at least as '...
+                        'large as the right bin boundary']);
+                end
+
+                obj.multiplicity=d{8}{1};
+                if ~CompoundBin.is_valid_multiplicity_string(obj.multiplicity)
+                    error('CompoundBin:bad_multiplicity', ...
+                        ['The string "' obj.multiplicity ...
+                        '" is not a valid multiplicity string.']);
+                end
+
+                obj.num_peaks=d{9};
+                if obj.compound_id <= 0
+                    error('CompoundBin:compound_id_neg', ...
+                        ['The number of peaks to select must not '...
+                        'be a negative number.']);
+                end
+
+                jv = d{10}{1}; % j-values line
+                if      isempty(jv) || ...                  %Empty
+                        ~isempty(regexp(jv,'^\s*$','once')) %Spaces only
+                    obj.j_values = [];
+                else
+                    obj.j_values=str2double(regexp(jv,'\s*,\s*','split'));
+                    if any(isnan(obj.j_values))
+                        error('CompoundBin:j_values_nan', ...
+                            ['J values must be empty or a comma-' ...
+                            'separated list of positive numbers']);
+                    end
+                    if any(obj.j_values <= 0)
+                        error('CompoundBin:j_values_not_pos', ...
+                            'J values must all be positive');
+                    end
+                end
+
+                obj.nucleus_assignment=d{11}{1};
+                if ~isempty(strfind(obj.nucleus_assignment,'"'))
+                    error('CompoundBin:nucleus_assignment_has_quote', ...
+                        ['The nucleus assignment cannot contain'...
+                        ' quotation marks (")']);
+                end
+
+
+
+                hid = d{12}{1}; % HMDB id line
+                if isempty(hid) || ~isempty(regexp(hid,'^\s*$','once'))
+                    obj.hmdb_id = nan;
+                else
+                    obj.hmdb_id=str2double(hid);
+                    if isnan(obj.hmdb_id)
+                        error('CompoundBin:hmdb_id_not_num', ...
+                            'The HMDB ID must be a number');
+                    end
+                end
+                
+                stypes = d{13}{1};
+                % Remove leading and trailing spaces
+                stypes = regexprep(stypes,'^\s+|\s+$','');
+                if  isempty(stypes)
+                    obj.sample_types = {};
+                else
+                    % Split on commas (eating white-space adjacent to them)
+                    obj.sample_types = regexp(stypes,'\s*,\s*','split');
+                end
+
+
+                obj.chenomix_was_used=CompoundBin.parse_csv_bool(...
+                    d{14}{1}, 'chenomix was used');
+
+
+                if isempty(d{15})
+                    obj.literature = '';
+                else
+                    obj.literature=d{15}{1};
+                    if ~isempty(strfind(obj.literature,'"'))
+                        error('CompoundBin:literature_has_quote', ...
+                            ['The literature field cannot contain '...
+                            'quotation marks (")']);
+                    end
+                end
+
+                if isempty(d{16})
+                    obj.nmr_isotope='';
+                else
+                    obj.nmr_isotope=d{16}{1};
+                    if isempty(regexp(obj.nmr_isotope,'^\d{1,3}[A-Z][a-z]{0,2}$','once'))
+                        error('CompoundBin:isotope_bad_format', ...
+                            ['The nmr isotope be a series of 1 to 3 '...
+                            'digits followed by a capital letter and '...
+                            'up to 2 more lower case letters.  For '...
+                            'example: "1H" and "6Li" would be valid, ' ...
+                            'but "1h", "6LI", and "P" would not.']);
+                    end
+                end
+
+                if isempty(d{17})
+                    obj.notes = '';
+                else
+                    obj.notes=d{17}{1};
+                    if ~isempty(strfind(obj.notes,'"'))
+                        error('CompoundBin:notes_has_quote', ...
+                            ['The notes field cannot contain '...
+                            'quotation marks (")']);
+                    end
                 end
             end
         end
@@ -620,8 +677,21 @@ classdef CompoundBin
                 obj.multiplicity, obj.num_peaks, ...
                 farray2str(obj.j_values), ...
                 obj.nucleus_assignment, hmdbstr(obj.hmdb_id), ...
+                stypesstr(obj.sample_types), ...
                 bool2str(obj.chenomix_was_used, affirm, reject),...
                 obj.literature, obj.nmr_isotope, obj.notes);
+            
+            function sts=stypesstr(cells)
+                %Convert the cell array of strings to a comma-separated string
+                if isempty(cells)
+                    sts='';
+                elseif length(cells) == 1
+                    sts = sprintf('%s',cells{1});
+                else
+                    sts = sprintf('%s%s',sprintf('%s, ',cells{1:end-1}),...
+                        cells{end});
+                end
+            end
             
             function hs=hmdbstr(h)
                 %Convert the hmdb number to either an integer or a '' if nan
@@ -664,13 +734,14 @@ classdef CompoundBin
             %['"Bin ID","Deleted","Compound ID","Compound Name",'...
             % '"Known Compound","Bin (Lt)","Bin (Rt)",'...
             % '"Multiplicity","Peaks to Select","J (Hz)",'...
-            % '"Nucleus Assignment","HMDB ID","Chenomx",'...
-            % '"Literature","NMR Isotope","Notes"'];
+            % '"Nucleus Assignment","HMDB ID",'...
+            % '"Sample-types that may contain compound",'...
+            % '"Chenomx","Literature","NMR Isotope","Notes"'];
             
             format=['%d,"%s",%d,"%s",'... to Compound Name
                 '"%s",%f,%f,'     ... to Bin (Rt)
                 '"%s",%d,"%s",'   ... to J (Hz)
-                '"%s",%s,"%s",' ... to Chenomix
+                '"%s",%s,"%s","%s",' ... to Chenomix
                 '"%s","%s","%s"'];
             
             str = string_from_format(obj, format, 'X', '');
@@ -700,6 +771,7 @@ classdef CompoundBin
                 'J (Hz): %s\n'   ...
                 'Nucleus Assignment: %s\n'...
                 'HMDB ID: %s\n'...
+                'Sample-types that may contain compound: %s\n'...
                 'Chenomx: %s\n' ...
                 'Literature: %s\n'...
                 'NMR Isotope: %s\n'...
