@@ -467,6 +467,34 @@ classdef CompoundBin
                         expected_d_length = 17;
                     end
                     
+                    % Text scan treats %q fields not present in the 
+                    % original the same as blank ones.  Blank fields are 
+                    % acceptable, but missing fields indicate a problem
+                    % with the file.  The number of commas that separate 
+                    % data elements should be one more than the number of 
+                    % data elements.  Checking this distinguishes absent
+                    % fields from empty ones.
+                    commas_in_data = 0;
+                    for i = 1:length(d)
+                        contents = d{i};
+                        if iscell(contents) && length(contents)==1
+                            contents = contents{1};
+                        end
+                        if ~isempty(contents) && ischar(contents)
+                            commas_in_data = commas_in_data + ...
+                                length(strfind(contents, ','));
+                        end
+                    end
+                    commas_in_data_line = length(strfind(data_line, ','));
+                    
+                    number_of_fields_present = commas_in_data_line - ...
+                        commas_in_data + 1;
+                    if number_of_fields_present ~= expected_d_length
+                        error('CompoundBin:wrong_number_of_fields', ...
+                            ['The header specifies %d fields but the ' ...
+                            'data contained %d fields'], ...
+                            expected_d_length, number_of_fields_present);
+                    end
                     
                     % Make sure the data scanned correctly.  Handle
                     % errors for fields not being integers or floating
