@@ -43,8 +43,8 @@ classdef CompoundBin
         hmdb_id
         
         % List of sample types in which the compound was found.  A cell
-        % array of strings.  No string can contain a comma or leading or
-        % trailing white-space
+        % array of strings sorted in the order given by sort.  No string 
+        % can contain a comma or leading or trailing white-space.
         sample_types={}
         
         
@@ -638,7 +638,7 @@ classdef CompoundBin
                     obj.sample_types = {};
                 else
                     % Split on commas (eating white-space adjacent to them)
-                    obj.sample_types = regexp(stypes,'\s*,\s*','split');
+                    obj.sample_types = sort(regexp(stypes,'\s*,\s*','split'));
                 end
 
 
@@ -823,6 +823,8 @@ classdef CompoundBin
             mu = strcmpi({a.multiplicity},{b.multiplicity});
             np = [a.num_peaks] == [b.num_peaks];
             
+            % This if statement is to generate the jv, comparing the
+            % j_values fields
             if(length(a) == length(b))
                 %Element wise compare
                 equal_contents = @(a,b) ...
@@ -850,6 +852,36 @@ classdef CompoundBin
                     (~isempty(sing) && ~isempty(k) && all(sing==k));
                 jv = cellfun(equal_to_sing, {rest.j_values});
             end
+
+            % This if statement is to generate the sts, comparing the
+            % sample_types fields
+            if(length(a) == length(b))
+                %Element wise compare
+                equal_contents = @(a,b) ...
+                    (isempty(a) && isempty(b)) || ...
+                    (length(a) == length(b) && all(strcmp(a,b)));
+                sts = cellfun(equal_contents, {a.sample_types}, {b.sample_types});
+            else
+                %Compare single with each element of rest
+                if length(a) == 1
+                    sing = a.sample_types;
+                    rest = b;
+                elseif length(b) == 1
+                    sing = b.sample_types;
+                    rest = a;
+                else
+                    error('CompoundBin_eq:size_mismatch',['When '...
+                        'comparing arrays of CompoundBin objects, they '...
+                        'must both have the same size, or one must have '...
+                        'length==1.  Comparison of matrices is not '...
+                        'supported.']);
+                end
+                
+                equal_to_sing = @(k) ...
+                    (isempty(sing) && isempty(k)) || ...
+                    (length(sing)==length(k) && all(strcmp(sing,k)));
+                sts = cellfun(equal_to_sing, {rest.sample_types});
+            end
             
             na = strcmp({a.nucleus_assignment}, {b.nucleus_assignment});
             hm = (isnan([a.hmdb_id]) & isnan([b.hmdb_id])) | ...
@@ -859,8 +891,8 @@ classdef CompoundBin
             ni = strcmp({a.nmr_isotope}, {b.nmr_isotope});
             no = strcmp({a.notes}, {b.notes});
             
-            r = i  & wd & cd & cn & kc & bn & mu & np & jv & na & hm & ...
-                cx & li & ni & no;
+            r = i   & wd & cd & cn & kc & bn & mu & np & jv & na & hm & ...
+                sts & cx & li & ni & no;
         end
     end
 end
