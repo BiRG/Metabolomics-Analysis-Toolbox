@@ -45,7 +45,7 @@ classdef CompoundBin
         % List of sample types in which the compound was found.  A cell
         % array of strings.  No string can contain a comma or leading or
         % trailing white-space
-        sample_types
+        sample_types={}
         
         
         % True if some information was verified with Chenomx
