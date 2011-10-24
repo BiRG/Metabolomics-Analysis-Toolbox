@@ -563,3 +563,24 @@ cM = CompoundBin(header,inM);
 
 assertTrue(isempty(cM.sample_types));
 assertTrue(iscell(cM.sample_types));
+
+
+function testCompoundBinSampleTypesLoadMatBackwardCompat %#ok<DEFNU>
+% CompoundBin coorectly loads old .mat file from before SampleTypes
+
+header=['"Bin ID","Deleted","Compound ID",'...
+    '"Compound Name","Known Compound","Bin (Lt)","Bin (Rt)",'...
+    '"Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment",'...
+    '"HMDB ID","Chenomx","Literature","NMR Isotope","Notes"'];
+
+inM = '6,"",42,"Malate","X",4.335000,4.300000,"dd",4,"10.230000, 2.980000","CH",156,"","","1H","HMDB puts this dd at 4.29 and the range as 4.27-4.32. Needs checking - Eric adapted from old bin-map"';
+
+expected_metab = CompoundBin(header,inM);
+
+s=load('testCompoundBin.04.mat_before_sample_types.mat');
+
+assertTrue(isempty(s.metab.sample_types));
+assertTrue(iscell(s.metab.sample_types));
+assertEqual(s.metab, expected_metab);
+
+
