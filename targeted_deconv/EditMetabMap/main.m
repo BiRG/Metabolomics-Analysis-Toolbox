@@ -277,33 +277,21 @@ hold off;
 function repopulateMappedBinsList(handles)
 % handles    structure with handles and user data (see GUIDATA)
 targetListboxIdx = get(handles.mapped_bins_listbox, 'Value');
-stringPropCell = {};
-cellsCopied = 0;
 if ( isfield(handles, 'storedBins') )
     storedBinsArrayLen = length(handles.storedBins);
-    %if ( storedBinsArrayLen == 1 )
-    %    stringPropCell = [ num2str(handles.storedBins.id, '%d') ',' ...
-    %        handles.storedBins.compound_name ',' ...
-    %        num2str(handles.storedBins.bin.left, '%.3f') ',' ...
-    %        num2str(handles.storedBins.bin.right, '%.3f') ];
-    %else
+    stringPropCell = cell(storedBinsArrayLen, 1);
     for i=1:storedBinsArrayLen
-        if ( ~handles.storedBins(i).was_deleted )
-            cellsCopied = cellsCopied + 1;
-            stringPropCell{cellsCopied} = [ ...
-                num2str(handles.storedBins(i).id, '%d') ',' ...
-                handles.storedBins(i).compound_name ',' ...
-                num2str(handles.storedBins(i).bin.left, '%.3f') ',' ...
-                num2str(handles.storedBins(i).bin.right, '%.3f') ];
-        end;
+        stringPropCell{i} = [ ...
+            num2str(handles.storedBins(i).id, '%d') ',' ...
+            handles.storedBins(i).compound_name ',' ...
+            num2str(handles.storedBins(i).bin.left, '%.3f') ',' ...
+            num2str(handles.storedBins(i).bin.right, '%.3f') ];
     end;
-    %end;
 end;
-if ( cellsCopied == 0 )
+if ( storedBinsArrayLen == 0 )
     set(handles.mapped_bins_listbox, 'Value', 1);
-end;
-if ( targetListboxIdx > cellsCopied )
-    set(handles.mapped_bins_listbox, 'Value', cellsCopied);
+else
+    set(handles.mapped_bins_listbox, 'Value', storedBinsArrayLen);
 end;
 set(handles.mapped_bins_listbox, 'String', stringPropCell);
 
@@ -655,7 +643,8 @@ function load_metabmap_button_Callback(hObject, eventdata, handles)
     '*.*', 'All Files (*.*)'} );
 if ( ischar(filename) && ~isempty(filename) )
     
-    handles.storedBins = load_metabmap(fullfile(pathname, filename));
+    handles.storedBins = load_metabmap(fullfile(pathname, filename), ...
+        'no_deleted_bins');
     
     % -- DCW: TODO: Add collection and spectrum ID to format
     %    handles.storedBinsCollectionID = ...
