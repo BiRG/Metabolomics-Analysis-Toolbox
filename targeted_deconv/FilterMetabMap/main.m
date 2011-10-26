@@ -84,7 +84,7 @@ function no_listbox_Callback(hObject, eventdata, handles)
 
 set(handles.yes_listbox,'Value',1);
 
-no_inxs = find(handles.yes_mask == 0);
+no_inxs = find(handles.yes_mask == 0 & bins_with_right_sample_type(handles));
 no_inx = get(hObject,'Value')-1;
 if no_inx == 0
     set(handles.metabolite_info_edit,'String',{''});
@@ -160,7 +160,7 @@ else
     if no_inx == 0
         return;
     end
-    no_inxs = find(handles.yes_mask == 0);
+    no_inxs = find(handles.yes_mask == 0 & bins_with_right_sample_type(handles));
     handles.yes_mask(no_inxs(no_inx)) = 1;
     refresh_both_lists(handles);
     yes_inxs = find(handles.yes_mask == 1);
@@ -191,9 +191,12 @@ else
     yes_inxs = find(handles.yes_mask == 1);
     handles.yes_mask(yes_inxs(yes_inx)) = 0;
     refresh_both_lists(handles);
-    no_inxs = find(handles.yes_mask == 0);
+    %TODO not sure about the code here - seems to work need more testing
+    no_inxs = find(handles.yes_mask == 0 & bins_with_right_sample_type(handles));
     no_inx = find(no_inxs == yes_inxs(yes_inx));
-    set(handles.no_listbox,'Value',no_inx+1);
+    if ~isempty(no_inx)
+        set(handles.no_listbox,'Value',no_inx+1);
+    end
 
     update_metabolite_information(handles,yes_inxs(yes_inx));
 end
@@ -320,7 +323,7 @@ xlim auto;
 
 
 % --- Executes on button press in load_no_pushbutton.
-function load_no_pushbutton_Callback(hObject, eventdata, handles)
+function load_no_pushbutton_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to load_no_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -333,12 +336,37 @@ end
 handles.metabolites = load_metabmap(fullfile(pathname, filename),'no_deleted_bins');
 handles.metabolites = sort_metabmap_by_name_then_ppm(handles.metabolites);
 handles.yes_mask = zeros(1,length(handles.metabolites));
+handles.sample_types = sample_types(handles.metabolites);
+set(handles.filter_sample_type_popup,'String',[{'All Sample Types'} handles.sample_types]);
 refresh_both_lists(handles);
 
 guidata(hObject, handles);
 
+
+function s_types = sample_types(metabmap)
+% Return a cell array of the sample_types for the given list of metabolites
+s_types_fields={metabmap.sample_types};
+s_types = {};
+for i = 1:length(s_types_fields)
+    s_types = union(s_types, s_types_fields{i});
+end
+
+function is_right = bins_with_right_sample_type(handles)
+% Return an array of logicals which are true if one of the CompoundBin's sample types matches the type selected in the filter_sample_type_popup
+menu_idx = get(handles.filter_sample_type_popup, 'Value');
+if menu_idx == 1
+    is_right = true(1,length(handles.metabolites));
+elseif menu_idx > 1
+    menu_idx = menu_idx - 1;
+    cur_type = handles.sample_types{menu_idx};
+    is_right = false(1, length(handles.metabolites));
+    for i = 1:length(handles.metabolites)
+        is_right(i) = any(strcmp(cur_type, handles.metabolites(i).sample_types));
+    end
+end
+
 function refresh_both_lists(handles)
-refresh_list(handles.no_listbox,handles.metabolites,find(handles.yes_mask == 0));
+refresh_list(handles.no_listbox,handles.metabolites,find(handles.yes_mask == 0 & bins_with_right_sample_type(handles)));
 refresh_list(handles.yes_listbox,handles.metabolites,find(handles.yes_mask == 1));
 
 function refresh_list(h,metabolites,inxs)
@@ -392,7 +420,7 @@ function filter_sample_type_popup_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns filter_sample_type_popup contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from filter_sample_type_popup
-
+refresh_both_lists(handles);
 
 % --- Executes during object creation, after setting all properties.
 function filter_sample_type_popup_CreateFcn(hObject, eventdata, handles)
