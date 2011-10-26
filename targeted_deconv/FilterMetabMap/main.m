@@ -349,13 +349,6 @@ end
 set(h,'String',{'',names{:}});
 set(h,'Value',1);
 
-% --- Executes on button press in load_yes_pushbutton.
-function load_yes_pushbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to load_yes_pushbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on button press in save_pushbutton.
 function save_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to save_pushbutton (see GCBO)
