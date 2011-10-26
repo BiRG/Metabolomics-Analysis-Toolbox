@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 06-Jul-2011 13:53:24
+% Last Modified by GUIDE v2.5 26-Oct-2011 17:07:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -385,6 +385,29 @@ function metabolite_info_edit_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in filter_sample_type_popup.
+function filter_sample_type_popup_Callback(hObject, eventdata, handles)
+% hObject    handle to filter_sample_type_popup (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns filter_sample_type_popup contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from filter_sample_type_popup
+
+
+% --- Executes during object creation, after setting all properties.
+function filter_sample_type_popup_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to filter_sample_type_popup (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
