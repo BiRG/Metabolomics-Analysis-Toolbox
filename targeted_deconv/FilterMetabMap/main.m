@@ -45,7 +45,7 @@ end
 
 
 % --- Executes just before main is made visible.
-function main_OpeningFcn(hObject, eventdata, handles, varargin)
+function main_OpeningFcn(hObject, unused, handles, varargin) %#ok<INUSL>
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -63,7 +63,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = main_OutputFcn(hObject, eventdata, handles) 
+function varargout = main_OutputFcn(unused1, unused2, handles)  %#ok<INUSL>
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -74,7 +74,7 @@ varargout{1} = handles.output;
 
 
 % --- Executes on selection change in no_listbox.
-function no_listbox_Callback(hObject, eventdata, handles)
+function no_listbox_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to no_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -100,7 +100,7 @@ xlim([handles.metabolites(inx).bin.right, ...
     handles.metabolites(inx).bin.left]);
 
 % --- Executes during object creation, after setting all properties.
-function no_listbox_CreateFcn(hObject, eventdata, handles)
+function no_listbox_CreateFcn(hObject, unused1, unused2) %#ok<INUSD,DEFNU>
 % hObject    handle to no_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -113,7 +113,7 @@ end
 
 
 % --- Executes on selection change in yes_listbox.
-function yes_listbox_Callback(hObject, eventdata, handles)
+function yes_listbox_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to yes_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -133,7 +133,7 @@ inx = yes_inxs(yes_inx);
 update_metabolite_information(handles,inx);
 
 % --- Executes during object creation, after setting all properties.
-function yes_listbox_CreateFcn(hObject, eventdata, handles)
+function yes_listbox_CreateFcn(hObject, unused1, unused2)  %#ok<DEFNU,INUSD>
 % hObject    handle to yes_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -146,13 +146,13 @@ end
 
 
 % --- Executes on button press in add_pushbutton.
-function add_pushbutton_Callback(hObject, eventdata, handles)
+function add_pushbutton_Callback(unused1, unused2, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to add_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 if get(handles.all_checkbox,'Value')
-    handles.yes_mask(:) = 1;
+    handles.yes_mask = handles.yes_mask | bins_with_right_sample_type(handles);
     refresh_both_lists(handles);
     set(handles.metabolite_info_edit,'String',{''});
 else
@@ -173,7 +173,7 @@ end
 guidata(handles.figure1,handles);
 
 % --- Executes on button press in remove_pushbutton.
-function remove_pushbutton_Callback(hObject, eventdata, handles)
+function remove_pushbutton_Callback(unused1, unused2, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to remove_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -204,7 +204,7 @@ end
 guidata(handles.figure1,handles);
 
 % --- Executes on button press in all_checkbox.
-function all_checkbox_Callback(hObject, eventdata, handles)
+function all_checkbox_Callback(unused1, unused2, unused3) %#ok<INUSD,DEFNU>
 % hObject    handle to all_checkbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -213,7 +213,7 @@ function all_checkbox_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on button press in load_collection_pushbutton.
-function load_collection_pushbutton_Callback(hObject, eventdata, handles)
+function load_collection_pushbutton_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to load_collection_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -250,7 +250,7 @@ catch ME
     msgbox(strcat('Invalid collection.  Exception message: ',ME.message));
 end
 
-function collection_id_edit_Callback(hObject, eventdata, handles)
+function collection_id_edit_Callback(unused1, unused2, unused3) %#ok<INUSD,DEFNU>
 % hObject    handle to collection_id_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -260,7 +260,7 @@ function collection_id_edit_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function collection_id_edit_CreateFcn(hObject, eventdata, handles)
+function collection_id_edit_CreateFcn(hObject, unused1, unused2) %#ok<INUSD,DEFNU>
 % hObject    handle to collection_id_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -280,7 +280,7 @@ function get_pushbutton_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on selection change in spectrum_listbox.
-function spectrum_listbox_Callback(hObject, eventdata, handles)
+function spectrum_listbox_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to spectrum_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -289,7 +289,7 @@ function spectrum_listbox_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from spectrum_listbox
 
 contents = cellstr(get(hObject,'String'));
-s_inx = str2num(contents{get(hObject,'Value')});
+s_inx = str2double(contents{get(hObject,'Value')});
 
 xl = xlim;
 plot(handles.collection.x,handles.collection.Y(:,s_inx));
@@ -299,7 +299,7 @@ if xl(1) ~= 0 || xl(2) ~= 1
 end
 
 % --- Executes during object creation, after setting all properties.
-function spectrum_listbox_CreateFcn(hObject, eventdata, handles)
+function spectrum_listbox_CreateFcn(hObject, unused1, unused2) %#ok<INUSD,DEFNU>
 % hObject    handle to spectrum_listbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -312,7 +312,7 @@ end
 
 
 % --------------------------------------------------------------------
-function reset_ClickedCallback(hObject, eventdata, handles)
+function reset_ClickedCallback(unused1, unused2, unused3) %#ok<INUSD,DEFNU>
 % hObject    handle to reset (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -370,15 +370,12 @@ refresh_list(handles.no_listbox,handles.metabolites,find(handles.yes_mask == 0 &
 refresh_list(handles.yes_listbox,handles.metabolites,find(handles.yes_mask == 1));
 
 function refresh_list(h,metabolites,inxs)
-names = {};
-for i = 1:length(inxs)
-    names{end+1} = metabolites(inxs(i)).compound_name;    
-end
-set(h,'String',{'',names{:}});
+names = {metabolites(inxs).compound_name};
+set(h,'String',[{''},names]);
 set(h,'Value',1);
 
 % --- Executes on button press in save_pushbutton.
-function save_pushbutton_Callback(hObject, eventdata, handles)
+function save_pushbutton_Callback(unused1, unused2, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to save_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -387,10 +384,10 @@ function save_pushbutton_Callback(hObject, eventdata, handles)
 if isequal(filename,0) || isequal(pathname,0)
     return
 end
-yes_inxs = find(handles.yes_mask == 1);
-save_metabmap(fullfile(pathname,filename), handles.metabolites(yes_inxs));
+yes_logicals = handles.yes_mask == 1;
+save_metabmap(fullfile(pathname,filename), handles.metabolites(yes_logicals));
 
-function metabolite_info_edit_Callback(hObject, eventdata, handles)
+function metabolite_info_edit_Callback(unused1, unused2, unused3) %#ok<INUSD,DEFNU>
 % hObject    handle to metabolite_info_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -400,7 +397,7 @@ function metabolite_info_edit_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function metabolite_info_edit_CreateFcn(hObject, eventdata, handles)
+function metabolite_info_edit_CreateFcn(hObject, unused1, unused2) %#ok<INUSD,DEFNU>
 % hObject    handle to metabolite_info_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -413,7 +410,7 @@ end
 
 
 % --- Executes on selection change in filter_sample_type_popup.
-function filter_sample_type_popup_Callback(hObject, eventdata, handles)
+function filter_sample_type_popup_Callback(unused1, unused2, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to filter_sample_type_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -423,7 +420,7 @@ function filter_sample_type_popup_Callback(hObject, eventdata, handles)
 refresh_both_lists(handles);
 
 % --- Executes during object creation, after setting all properties.
-function filter_sample_type_popup_CreateFcn(hObject, eventdata, handles)
+function filter_sample_type_popup_CreateFcn(hObject, unused1, unused2) %#ok<INUSD,DEFNU>
 % hObject    handle to filter_sample_type_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
