@@ -55,8 +55,15 @@ function main_OpeningFcn(hObject, unused, handles, varargin) %#ok<INUSL>
 % Choose default command line output for main
 handles.output = hObject;
 
+% Make an empty yes_mask
+handles.yes_mask = [];
+
+% Make an empty metabolites list
+handles.metabolites = CompoundBin;
+handles.metabolites(1) = [];
+
 % Update handles structure
-guidata(hObject, handles);
+guidata(handles.figure1, handles);
 
 % UIWAIT makes main wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -212,41 +219,51 @@ function all_checkbox_Callback(unused1, unused2, unused3) %#ok<INUSD,DEFNU>
 % Hint: get(hObject,'Value') returns toggle state of all_checkbox
 
 
+function handles = set_collection(handles, collection)
+% Sets handles.collection to collection and updates other gui elements as necessary
+%
+% Does nothing if collection is empty or contains more than one element
+if isempty(collection)
+    return
+end
+if length(collection) > 1
+    msgbox('Only load a single collection');
+    return;
+end
+
+handles.collection = collection;
+
+clear_all(handles);
+
+set(handles.spectrum_listbox,'String',1:handles.collection.num_samples);
+xl = xlim;
+plot(handles.collection.x,handles.collection.Y(:,1));
+set(gca,'xdir','reverse');
+if xl(1) ~= 0 || xl(2) ~= 1
+    xlim(xl);
+end    
+
+set(handles.description_text,'String',handles.collection.description);
+
+% Update handles structure
+guidata(handles.figure1, handles);
+
+
 % --- Executes on button press in load_collection_pushbutton.
 function load_collection_pushbutton_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to load_collection_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
+% handles    structure with handles and user data (see GUIDATA
 try
+    watchon;
     collections = load_collections;
-    if isempty(collections)
-        return
+    watchoff;
+    if iscell(collections) && ~isempty(collections)
+        collections = collections{1};
     end
-    if length(collections) > 1
-        msgbox('Only load a single collection');
-        return;
-    end
-    handles.collection = collections{1};
-    
-    clear_all(hObject,handles);
-    
-    set(handles.spectrum_listbox,'String',1:handles.collection.num_samples);
-    xl = xlim;
-    plot(handles.collection.x,handles.collection.Y(:,1));
-    set(gca,'xdir','reverse');
-    if xl(1) ~= 0 || xl(2) ~= 1
-        xlim(xl);
-    end    
-    
-    set(handles.description_text,'String',handles.collection.description);
-    
-    msgbox('Finished loading collection');
-    
-    % Update handles structure
-    guidata(hObject, handles);
+    set_collection(handles, collections);
 catch ME
+    watchoff;
     msgbox(strcat('Invalid collection.  Exception message: ',ME.message));
 end
 
@@ -273,11 +290,31 @@ end
 
 
 % --- Executes on button press in get_pushbutton.
-function get_pushbutton_Callback(hObject, eventdata, handles)
+function get_pushbutton_Callback(unused1, unused2, handles) %#ok<DEFNU,INUSL>
 % hObject    handle to get_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+id = round(str2double(get(handles.collection_id_edit,'String')));
+if isnan(id)
+    %Do nothing if not a valid id
+	return 
+end
+col = [];
+try
+    watchon;
+    col = get_collection(id);
+catch  %#ok<CTCH>
+    watchoff;
+end
 
+if isempty(col)
+    msgbox('Could not get collection from server');
+    watchoff;
+    return;
+else
+    set_collection(handles, col);
+    watchoff;
+end
 
 % --- Executes on selection change in spectrum_listbox.
 function spectrum_listbox_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
@@ -287,15 +324,16 @@ function spectrum_listbox_Callback(hObject, unused, handles) %#ok<INUSL,DEFNU>
 
 % Hints: contents = cellstr(get(hObject,'String')) returns spectrum_listbox contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from spectrum_listbox
+if isfield(handles, 'collection')
+    contents = cellstr(get(hObject,'String'));
+    s_inx = str2double(contents{get(hObject,'Value')});
 
-contents = cellstr(get(hObject,'String'));
-s_inx = str2double(contents{get(hObject,'Value')});
-
-xl = xlim;
-plot(handles.collection.x,handles.collection.Y(:,s_inx));
-set(gca,'xdir','reverse');
-if xl(1) ~= 0 || xl(2) ~= 1
-    xlim(xl);
+    xl = xlim;
+    plot(handles.collection.x,handles.collection.Y(:,s_inx));
+    set(gca,'xdir','reverse');
+    if xl(1) ~= 0 || xl(2) ~= 1
+        xlim(xl);
+    end
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -332,16 +370,17 @@ function load_no_pushbutton_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
 if isequal(filename,0) || isequal(pathname,0)
    return;
 end
+raw_metab = load_metabmap(fullfile(pathname, filename),'no_deleted_bins');
+if ~isempty(raw_metab)
+    handles.metabolites = raw_metab;
+    handles.metabolites = sort_metabmap_by_name_then_ppm(handles.metabolites);
+    handles.yes_mask = zeros(1,length(handles.metabolites));
+    handles.sample_types = sample_types(handles.metabolites);
+    set(handles.filter_sample_type_popup,'String',[{'All Sample Types'} handles.sample_types]);
+    refresh_both_lists(handles);
 
-handles.metabolites = load_metabmap(fullfile(pathname, filename),'no_deleted_bins');
-handles.metabolites = sort_metabmap_by_name_then_ppm(handles.metabolites);
-handles.yes_mask = zeros(1,length(handles.metabolites));
-handles.sample_types = sample_types(handles.metabolites);
-set(handles.filter_sample_type_popup,'String',[{'All Sample Types'} handles.sample_types]);
-refresh_both_lists(handles);
-
-guidata(hObject, handles);
-
+    guidata(handles.figure1, handles);
+end
 
 function s_types = sample_types(metabmap)
 % Return a cell array of the sample_types for the given list of metabolites
@@ -354,6 +393,12 @@ end
 function is_right = bins_with_right_sample_type(handles)
 % Return an array of logicals which are true if one of the CompoundBin's sample types matches the type selected in the filter_sample_type_popup
 menu_idx = get(handles.filter_sample_type_popup, 'Value');
+
+if isempty(handles.metabolites)
+    is_right = [];
+    return;
+end
+
 if menu_idx == 1
     is_right = true(1,length(handles.metabolites));
 elseif menu_idx > 1
