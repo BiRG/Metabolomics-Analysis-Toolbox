@@ -107,7 +107,7 @@ handles.spectrum_idx = session_data.spectrum_idx;
 handles.bin_idx = session_data.bin_idx;
 handles.already_autoidentified = session_data.already_autoidentified;
 handles.deconvolutions = session_data.deconvolutions;
-
+handles.auto_y_zoom = true; %True if should automatically reset the y axis' zoom to fit the window contents whenever the x axis' changes
 
 if session_data.version < 0.2
     % In earlier versions, there were no model objects, so set the models to
@@ -851,10 +851,28 @@ elseif spec_idx < num_spec
     set(handles.next_button, 'Enable', 'on');    
 end
 
-function zoom_to_interval(right, left)
-% Set the plot boundaries to the interval [right, left]
+function zoom_to_box(right, left, bottom, top)
+% Set the plot boundaries to the interval [right, left] [bottom, top]
+%
+%
+% Usage:
+%
+% zoom_to_box(right, left, bottom, top)
+%
+% zoom_to_box(right, left, 'auto')
+%
+% If called with only 3 arguments, sets the vertical plot interval
+% automatically.
+%
+% right, left --- [min, max] for x
+%
+% bottom, top --- [min, max] for y
 xlim([right, left]);
-ylim('auto');
+if nargin > 3
+    ylim([bottom, top]);
+else
+    ylim('auto');
+end
 
 function zoom_plot(zoom_factor, handles)
 % Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
@@ -862,13 +880,13 @@ function zoom_plot(zoom_factor, handles)
 cur_interval = xlim(handles.spectrum_plot);
 center = mean(cur_interval);
 new_interval=((cur_interval - center)*zoom_factor)+center;
-zoom_to_interval(new_interval(1), new_interval(2));
+zoom_to_box(new_interval(1), new_interval(2), 'auto');
 
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
 % index changes (and at other times)
 cb=handles.metab_map(handles.bin_idx);
-zoom_to_interval(cb.bin.right, cb.bin.left);
+zoom_to_box(cb.bin.right, cb.bin.left, 'auto');
 
 % ------------------------------------------------------------------------
 %
