@@ -1935,7 +1935,7 @@ update_display(handles);
 
 
 % --------------------------------------------------------------------
-function vertical_zoom_in_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function vertical_zoom_in_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to vertical_zoom_in_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -1945,7 +1945,7 @@ guidata(handles.figure1, handles);
 
 
 % --------------------------------------------------------------------
-function vertical_zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function vertical_zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to vertical_zoom_out_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
