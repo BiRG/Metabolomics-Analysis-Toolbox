@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 12-Sep-2011 21:23:02
+% Last Modified by GUIDE v2.5 10-Nov-2011 23:54:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -88,7 +88,7 @@ if(session_data.version ~= 0.3)
     uiwait(msgbox(['This session data was generated from a ', ...
         'different version of the targeted deconvolution program (#', ...
         sprintf('%0.2f',session_data.version), ...
-        ')  Things may not work as expected.'],'Warning','Warning'));
+        ')  Things may not work as expected.'],'Warn','Warn'));
 end
 
 set(handles.metabolite_menu,'String', session_data.metabolite_menu_string);
@@ -107,7 +107,6 @@ handles.spectrum_idx = session_data.spectrum_idx;
 handles.bin_idx = session_data.bin_idx;
 handles.already_autoidentified = session_data.already_autoidentified;
 handles.deconvolutions = session_data.deconvolutions;
-
 
 if session_data.version < 0.2
     % In earlier versions, there were no model objects, so set the models to
@@ -260,6 +259,10 @@ end
 
 % Confirmation check is always zero in all cases
 handles.did_expected_peaks_confirmation_check = 0;
+
+
+% Set the automatic zoom
+handles.auto_y_zoom = true; %True if should automatically reset the y axis' zoom to fit the window contents whenever the x axis' changes
 
 
 % Initialize the display components
@@ -813,9 +816,9 @@ if get(handles.should_show_deconv_box,'Value')
     set(handles.update_deconv_button, 'Visible', 'on');
     deconv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
     if deconv.is_updated
-        set(handles.update_deconv_button, 'String', 'Recalculate Peaks');    
+        set(handles.update_deconv_button, 'String', 'Update Deconv');    
     else
-        set(handles.update_deconv_button, 'String', 'Update Peaks');
+        set(handles.update_deconv_button, 'String', 'Update Deconv*');
     end
 else
     set(handles.update_deconv_button, 'Visible', 'off');
@@ -851,24 +854,82 @@ elseif spec_idx < num_spec
     set(handles.next_button, 'Enable', 'on');    
 end
 
-function zoom_to_interval(right, left)
-% Set the plot boundaries to the interval [right, left]
+function zoom_to_box(right, left, bottom, top)
+% Set the plot boundaries to the interval [right, left] [bottom, top]
+%
+%
+% Usage:
+%
+% zoom_to_box(right, left, bottom, top)
+%
+% zoom_to_box(right, left, 'auto')
+%
+% If called with only 3 arguments, sets the vertical plot interval
+% automatically.
+%
+% right, left --- [min, max] for x
+%
+% bottom, top --- [min, max] for y
 xlim([right, left]);
-ylim('auto');
+if nargin > 3
+    ylim([bottom, top]);
+else
+    ylim('auto');
+end
 
-function zoom_plot(zoom_factor, handles)
+
+function [minim,maxim]=zoom_interval(zoom_factor, old_minim, old_maxim)
+% Zoom the given interval around the center by the given factor
+%
+% Input arguments:
+%
+% zoom_factor: the width of the interval will be multiplied by 
+%              the given factor
+%
+% old_minim:   the minimum of the old interval
+%
+% old_maxim:   the maximum of the old interval
+%
+% Return values:
+%
+% [minim,maxim] = minimum and maximum of the new zoomed interval
+%
+half_width = (old_maxim - old_minim) / 2;
+center = (old_maxim + old_minim) / 2;
+new_half_width = zoom_factor * half_width;
+minim = center - new_half_width;
+maxim = center + new_half_width;
+
+
+function zoom_plot(zoom_factor, should_zoom_x, handles)
 % Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
 % factor, expanding or contracting it around its current center
-cur_interval = xlim(handles.spectrum_plot);
-center = mean(cur_interval);
-new_interval=((cur_interval - center)*zoom_factor)+center;
-zoom_to_interval(new_interval(1), new_interval(2));
+% 
+% If should_zoom_x is false, then the zoom is not done on the x axis
+
+cur_x_interval = xlim(handles.spectrum_plot);
+[xmin,xmax] = zoom_interval(zoom_factor, cur_x_interval(1), cur_x_interval(2));
+
+cur_y_interval = ylim(handles.spectrum_plot);
+[ymin,ymax] = zoom_interval(zoom_factor, cur_y_interval(1), cur_y_interval(2));
+
+if    ~handles.auto_y_zoom && should_zoom_x
+    zoom_to_box(xmin, xmax, ymin, ymax);
+elseif handles.auto_y_zoom && should_zoom_x
+    zoom_to_box(xmin, xmax, 'auto');
+elseif handles.auto_y_zoom && ~should_zoom_x
+    zoom_to_box(cur_x_interval(1), cur_x_interval(2), 'auto');
+else %~handles.auto_y_zoom && ~should_zoom_x
+    zoom_to_box(cur_x_interval(1), cur_x_interval(2), ymin, ymax);
+end
 
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
 % index changes (and at other times)
 cb=handles.metab_map(handles.bin_idx);
-zoom_to_interval(cb.bin.right, cb.bin.left);
+zoom_to_box(cb.bin.right, cb.bin.left, 'auto');
+handles.auto_y_zoom = true;
+guidata(handles.figure1, handles);
 
 % ------------------------------------------------------------------------
 %
@@ -1288,6 +1349,11 @@ else
                 if ~handles.deconvolutions(bin_idx, spec_idx).is_updated
                     handles = recalculate_deconv(bin_idx, spec_idx, handles);
                 end
+                %TODO: don't move the peak locations, instead just do
+                %the alignment and store some sort of translation table
+                %for later finding the identified peaks
+                handles = align_peaks_with_deconv(bin_idx, spec_idx, handles);
+                
                 d = handles.deconvolutions(bin_idx, spec_idx).value;
                 idents = peak_identifications_for(bin_idx, ...
                     spec_idx, handles);
@@ -1600,14 +1666,14 @@ function zoom_in_tool_ClickedCallback(unused1, unused, handles) %#ok<INUSL,DEFNU
 % hObject    handle to zoom_in_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-zoom_plot(3/5, handles);
+zoom_plot(3/5, true, handles);
 
 % --------------------------------------------------------------------
 function zoom_out_tool_ClickedCallback(unused1, unused, handles)  %#ok<INUSL,DEFNU>
 % hObject    handle to zoom_out_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-zoom_plot(5/3, handles);
+zoom_plot(5/3, true, handles);
 
 
 % --- Executes on button press in save_and_quit_button.
@@ -1681,6 +1747,7 @@ update_plot(handles);
 update_display(handles);
 
 function handles = recalculate_deconv(bin_idx, spec_idx, handles)
+% Calculates a new deconvolution for bin_idx, spec_idx, & sets guidata for figure1 to the new handles object
 
 % Get the peaks 
 pks = get_spectrum_peaks(handles, spec_idx);
@@ -1697,7 +1764,20 @@ d=RegionDeconvolution(handles.collection.x, ...
 
 handles.deconvolutions(bin_idx, spec_idx).update_to(d);
 
-% Find new location for each peak
+guidata(handles.figure1, handles);
+
+function handles = align_peaks_with_deconv(bin_idx, spec_idx, handles)
+% Aligns the peaks in handles with the deconvolution for bin_idx, spec_idx.  
+%
+% Does nothing if the current deconvolution is has not been initialized
+
+if ~handles.deconvolutions(bin_idx, spec_idx).exists
+    return;
+end
+d=handles.deconvolutions(bin_idx, spec_idx).value;
+
+
+pks = get_spectrum_peaks(handles, spec_idx);
 new_pks = [d.peaks.location];
 old_pks = get_spectrum_and_bin_peaks(handles, bin_idx, spec_idx);
 costs = zeros(length(old_pks), length(new_pks)); % Row:old peak, col: new peak
@@ -1713,9 +1793,6 @@ handles = update_peak_identifications_for(bin_idx, spec_idx, old_pks, ...
 
 translated_pks = substitute(pks, old_pks, new_pks);
 handles = set_spectrum_peaks_no_gui(spec_idx, translated_pks, handles);
-guidata(handles.figure1, handles);
-
-
 
 % --- Executes on button press in update_deconv_button.
 function update_deconv_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
@@ -1726,11 +1803,6 @@ bin_idx = handles.bin_idx;
 spec_idx = handles.spectrum_idx;
 
 handles = recalculate_deconv(bin_idx, spec_idx, handles);
-
-%Mark current bin as up-to-date even if it moved the peaks in the bin -
-%other bins that depend on it will still be marked as not up-to-date
-cur_value=handles.deconvolutions(bin_idx, spec_idx).value;
-handles.deconvolutions(bin_idx, spec_idx).update_to(cur_value);
 
 update_plot(handles);
 update_display(handles);
@@ -1835,3 +1907,48 @@ function width_variance_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#o
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in sync_peaks_with_deconv_button.
+function sync_peaks_with_deconv_button_Callback(unused, unused2, handles) %#ok<INUSL,DEFNU>
+% (unused)  hObject    handle to sync_peaks_with_deconv_button (see GCBO)
+% (unused2) eventdata  reserved - to be defined in a future version of MATLAB
+%           handles    structure with handles and user data (see GUIDATA)
+
+bin_idx = handles.bin_idx;
+spec_idx = handles.spectrum_idx;
+
+% Find new location for each peak
+handles = align_peaks_with_deconv(bin_idx, spec_idx, handles);
+
+% Mark current bin as up-to-date even if it moved the peaks in the bin -
+% other bins that depend on it will still be marked as not up-to-date
+cur_value=handles.deconvolutions(bin_idx, spec_idx).value;
+handles.deconvolutions(bin_idx, spec_idx).update_to(cur_value);
+
+% Set guidata
+guidata(handles.figure1, handles);
+
+% Update gui
+update_plot(handles);
+update_display(handles);
+
+
+% --------------------------------------------------------------------
+function vertical_zoom_in_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to vertical_zoom_in_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.auto_y_zoom = false;
+zoom_plot(3/5, false, handles);
+guidata(handles.figure1, handles);
+
+
+% --------------------------------------------------------------------
+function vertical_zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to vertical_zoom_out_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.auto_y_zoom = false;
+zoom_plot(5/3, false, handles);
+guidata(handles.figure1, handles);
