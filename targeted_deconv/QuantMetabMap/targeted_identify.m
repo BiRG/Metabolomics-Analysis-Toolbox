@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 17-Oct-2011 16:37:49
+% Last Modified by GUIDE v2.5 10-Nov-2011 23:54:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1889,3 +1889,18 @@ guidata(handles.figure1, handles);
 % Update gui
 update_plot(handles);
 update_display(handles);
+
+
+% --------------------------------------------------------------------
+function vertical_zoom_in_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+% hObject    handle to vertical_zoom_in_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function vertical_zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+% hObject    handle to vertical_zoom_out_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
