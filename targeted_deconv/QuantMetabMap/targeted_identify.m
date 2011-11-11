@@ -877,10 +877,10 @@ end
 function zoom_plot(zoom_factor, handles)
 % Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
 % factor, expanding or contracting it around its current center
-cur_interval = xlim(handles.spectrum_plot);
-center = mean(cur_interval);
-new_interval=((cur_interval - center)*zoom_factor)+center;
-zoom_to_box(new_interval(1), new_interval(2), 'auto');
+cur_x_interval = xlim(handles.spectrum_plot);
+x_center = mean(cur_x_interval);
+new_x_interval=((cur_x_interval - x_center)*zoom_factor)+x_center;
+zoom_to_box(new_x_interval(1), new_x_interval(2), 'auto');
 
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
