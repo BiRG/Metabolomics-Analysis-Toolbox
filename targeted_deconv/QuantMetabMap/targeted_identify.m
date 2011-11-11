@@ -107,7 +107,6 @@ handles.spectrum_idx = session_data.spectrum_idx;
 handles.bin_idx = session_data.bin_idx;
 handles.already_autoidentified = session_data.already_autoidentified;
 handles.deconvolutions = session_data.deconvolutions;
-handles.auto_y_zoom = true; %True if should automatically reset the y axis' zoom to fit the window contents whenever the x axis' changes
 
 if session_data.version < 0.2
     % In earlier versions, there were no model objects, so set the models to
@@ -260,6 +259,10 @@ end
 
 % Confirmation check is always zero in all cases
 handles.did_expected_peaks_confirmation_check = 0;
+
+
+% Set the automatic zoom
+handles.auto_y_zoom = true; %True if should automatically reset the y axis' zoom to fit the window contents whenever the x axis' changes
 
 
 % Initialize the display components
@@ -874,19 +877,59 @@ else
     ylim('auto');
 end
 
-function zoom_plot(zoom_factor, handles)
+
+function [minim,maxim]=zoom_interval(zoom_factor, old_minim, old_maxim)
+% Zoom the given interval around the center by the given factor
+%
+% Input arguments:
+%
+% zoom_factor: the width of the interval will be multiplied by 
+%              the given factor
+%
+% old_minim:   the minimum of the old interval
+%
+% old_maxim:   the maximum of the old interval
+%
+% Return values:
+%
+% [minim,maxim] = minimum and maximum of the new zoomed interval
+%
+half_width = (old_maxim - old_minim) / 2;
+center = (old_maxim + old_minim) / 2;
+new_half_width = zoom_factor * half_width;
+minim = center - new_half_width;
+maxim = center + new_half_width;
+
+
+function zoom_plot(zoom_factor, should_zoom_x, handles)
 % Zoom the spectrum_plot by multiplying the viewing interval width by zoom 
 % factor, expanding or contracting it around its current center
+% 
+% If should_zoom_x is false, then the zoom is not done on the x axis
+
 cur_x_interval = xlim(handles.spectrum_plot);
-x_center = mean(cur_x_interval);
-new_x_interval=((cur_x_interval - x_center)*zoom_factor)+x_center;
-zoom_to_box(new_x_interval(1), new_x_interval(2), 'auto');
+[xmin,xmax] = zoom_interval(zoom_factor, cur_x_interval(1), cur_x_interval(2));
+
+cur_y_interval = ylim(handles.spectrum_plot);
+[ymin,ymax] = zoom_interval(zoom_factor, cur_y_interval(1), cur_y_interval(2));
+
+if    ~handles.auto_y_zoom && should_zoom_x
+    zoom_to_box(xmin, xmax, ymin, ymax);
+elseif handles.auto_y_zoom && should_zoom_x
+    zoom_to_box(xmin, xmax, 'auto');
+elseif handles.auto_y_zoom && ~should_zoom_x
+    zoom_to_box(cur_x_interval(1), cur_x_interval(2), 'auto');
+else %~handles.auto_y_zoom && ~should_zoom_x
+    zoom_to_box(cur_x_interval(1), cur_x_interval(2), ymin, ymax);
+end
 
 function zoom_to_bin(handles)
 % Set the plot boundaries to the current bin boundaries.  Needed when bin
 % index changes (and at other times)
 cb=handles.metab_map(handles.bin_idx);
 zoom_to_box(cb.bin.right, cb.bin.left, 'auto');
+handles.auto_y_zoom = true;
+guidata(handles.figure1, handles);
 
 % ------------------------------------------------------------------------
 %
@@ -1623,14 +1666,14 @@ function zoom_in_tool_ClickedCallback(unused1, unused, handles) %#ok<INUSL,DEFNU
 % hObject    handle to zoom_in_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-zoom_plot(3/5, handles);
+zoom_plot(3/5, true, handles);
 
 % --------------------------------------------------------------------
 function zoom_out_tool_ClickedCallback(unused1, unused, handles)  %#ok<INUSL,DEFNU>
 % hObject    handle to zoom_out_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-zoom_plot(5/3, handles);
+zoom_plot(5/3, true, handles);
 
 
 % --- Executes on button press in save_and_quit_button.
@@ -1896,6 +1939,9 @@ function vertical_zoom_in_tool_ClickedCallback(hObject, eventdata, handles) %#ok
 % hObject    handle to vertical_zoom_in_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.auto_y_zoom = false;
+zoom_plot(3/5, false, handles);
+guidata(handles.figure1, handles);
 
 
 % --------------------------------------------------------------------
@@ -1903,4 +1949,6 @@ function vertical_zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#o
 % hObject    handle to vertical_zoom_out_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+handles.auto_y_zoom = false;
+zoom_plot(5/3, false, handles);
+guidata(handles.figure1, handles);
