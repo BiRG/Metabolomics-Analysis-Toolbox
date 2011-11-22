@@ -1,0 +1,1236 @@
+Script started on Thu 03 Nov 2011 02:20:51 PM EDT
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ sudo apt-get install doxygen[1P./regenerate_api_docs.bash [4@command[C[C[C[C[C[C[C[C[C[C[C[18Ppushd ../web/[Kwaffles_learn chmod og-rw ../lib/ ../bin/[10Psudo make installchmod o+rw ../binsudo make installchmod o+rw ../binsudo make installchmod og-rw ../lib/ ../bin/[13Pwaffles_learn [9Ppushd ../web/./regenerate_command_docs.bash [4Papi[C[C[C[C[C[C[C[C[C[C[Csudo apt-get install doxygen[Kmv foo65.arff tru[K[K[Ktwo_spectra_65_window.ar rf[Kff[K[K[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kls -l *.arff
+-rw-r--r-- 1 eric bioinf 2304095 2011-11-03 14:06 foo33.arff
+-rw-r--r-- 1 eric bioinf 4373673 2011-11-03 13:47 foo65.arff
+-rw-r--r-- 1 eric bioinf 1139290 2011-11-03 13:41 foo.arff
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ ls -l *.arffh *.arff
+-rw-r--r-- 1 eric bioinf 2.2M 2011-11-03 14:06 foo33.arff
+-rw-r--r-- 1 eric bioinf 4.2M 2011-11-03 13:47 foo65.arff
+-rw-r--r-- 1 eric bioinf 1.1M 2011-11-03 13:41 foo.arff
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ rm foo.arff
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ mkdir ~/Data[K[K[K[KANN_Data
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ rmdir ~/ANN_)[KData/
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ mkdir ~/PkFindData
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ mv foo33.arff  ~[K[K~/PkFindData/two_spectra _window_33.arff
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ mv foo3[K65.arff ~/PkFindData/two_spectra _window_65.arff
+]0;eric@protein: ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6[01;32mprotein[00m:[01;34m...ta-Sets/Synthetic Data Sets/6[00m$ pushd ~/PkFindData/
+~/PkFindData ~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 fo o33.arff -ignore 0,34,35 -labels 36 neuralnet[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P[1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -i[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ct -[1@i[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cw [1@-[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cneu[7@ralnet [1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -i[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ct -[1@i[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cw [1@-[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cneu[7@ralnet [1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -i[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[CErr[42@or:_Unexpected_token,_0,34,35,_in_arg_8 -i^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ pushd ~/PkFindData/[Kwaffles_learn splittest -reps 10 -stddev -trainratio .7 fo o33.arff -ignore 0,34,35 -labels 36 neuralnet
+_________________________________
+File not found: foo33.arff
+
+Brief Usage Information:
+
+waffles_learn splittest <options> [dataset] <data_opts> [algorithm]
+   This shuffles the data, then splits it into two parts, trains with one part,
+   and tests with the other. (This also works with model-free algorithms.)
+   Results are printed to stdout for each dimension in the label vector.
+   Predictive accuracy is reported for nominal labels, and mean-squared-error
+   is reported for continuous labels.
+   <options>
+      -seed [value]
+         Specify a seed for the random number generator. (Use this option to
+         ensure that your results are reproduceable.)
+      -trainratio [value]
+         Specify the amount of the data (between 0 and 1) to use for training.
+         The rest will be used for testing.
+      -reps [value]
+         Specify the number of repetitions to perform. If not specified, the
+         default is 1.
+      -writelastmodel [filename]
+         Write the model generated on the last repetion to the given filename. 
+         Note that this only works when the learner being used has an internal
+         model.
+      -confusion
+         Print a confusion matrix for each nominal label attribute after each
+         repetition.
+      -stddev
+         Print the standard deviation of the results at the end as well as
+         their mean.
+   [dataset]
+      The filename of a dataset.
+   <data_opts>
+      -labels [attr_list]
+         Specify which attributes to use as labels. (If not specified, the
+         default is to use the last attribute for the label.) [attr_list] is a
+         comma-separated list of zero-indexed columns. A hypen may be used to
+         specify a range of columns.  A '*' preceding a value means to index
+         from the right instead of the left. For example, "0,2-5" refers to
+         columns 0, 2, 3, 4, and 5. "*0" refers to the last column. "0-*1"
+         refers to all but the last column.
+      -ignore [attr_list]
+         Specify attributes to ignore. [attr_list] is a comma-separated list of
+         zero-indexed columns. A hypen may be used to specify a range of
+         columns.  A '*' preceding a value means to index from the right
+         instead of the left. For example, "0,2-5" refers to columns 0, 2, 3,
+         4, and 5. "*0" refers to the last column. "0-*1" refers to all but the
+         last column.
+   [algorithm]
+      agglomerativetransducer
+      bag <contents> end
+      baseline
+      bucket <contents> end
+      bma <contents> end
+      bmc <options> <contents> end
+      boost <options> [algorithm]
+      cvdt [n]
+      decisiontree <options>
+      graphcuttransducer <options>
+      knn <options>
+      linear
+      meanmarginstree
+      naivebayes <options>
+      naiveinstance <options>
+      neighbortransducer <options>
+      neuralnet <options>
+      randomforest [trees] <options>
+      usage
+
+To see full usage information, run:
+	waffles_learn usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 fooo33.arff -ignore 0,34,35 -labels 36 neuralnet[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P[1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -i[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ct -[1@i[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cw [1@-[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cneu[7@ralnet [1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -i[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ct -[1@i[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cw [1@-[1@o[1@_[1@s[1@p[1@e[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cneu[2@ralnet[1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -i[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C-ig[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C^C
+
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 tw o_spectra_window_35.[K[K3.arff -ignore 0,34,35 -labels 6[K36 neuralnet
+rep 0) 0.80801172447484
+rep 1) 0.80263800683928
+rep 2) 0.79872984855887
+rep 3) 0.7923790913532
+rep 4) 0.74450415241817
+rep 5) 0.79628724963361
+rep 6) 0.78456277479238
+rep 7) 0.7923790913532
+rep 8) 0.81631656082071
+rep 9) 0.77479237909135
+-----Mean-----
+0.79106008793356
+-----Standard Deviation-----
+0.020064429993251
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_33.arff -ignore 0,34,35 -labels 36 neuralnet[1P[1P[1@6[1@5[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P[1@6[1P[1@6[C[C[1P[1@7[C[1@6[1P[1P[C[1@6[C[C[C[C[1P[1P[1@6[1@7[C[C[C[C[C[C[C[C[C[C[C[1P neuralnet[1P neuralnet6 neuralnet8 neuralnet[C[C[C[C[C[C[C[C[C[C
+rep 0) 0.81289692232536
+rep 1) 0.74987787005374
+rep 2) 0.78407425500733
+rep 3) 0.74401563263312
+rep 4) 0.80019540791402
+rep 5) 0.78602833414753
+rep 6) 0.76355642403517
+rep 7) 0.81533952125061
+rep 8) 0.73668783585735
+rep 9) 0.77821201758671
+-----Mean-----
+0.7770884220811
+-----Standard Deviation-----
+0.028005674642892
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 neuralnet[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 neuralnet[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 neuralnet[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C33.arff -ignore 0,34,35 -labels 36[C[C[C[C[C[C[C[C[C[C[Cbneuralnetoneuralnetoneuralnetsneuralnettneuralnet neuralnet5neuralnet[1Pneuralnet-neuralnetsneuralnetineuralnetzneuralneteneuralnet neuralnet5neuralnet neuralnet
+rep 0) 0.76160234489497
+rep 1) 0.79628724963361
+rep 2) 0.75720566682951
+rep 3) 0.80703468490474
+rep 4) 0.81436248168051
+rep 5) 0.79970688812897
+rep 6) 0.80410356619443
+rep 7) 0.82462139716659
+rep 8) 0.78651685393258
+rep 9) 0.7914020517831
+-----Mean-----
+0.7942843185149
+-----Standard Deviation-----
+0.021415091297773
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_33.arff -ignore 0,34,35 -labels 36 boost -size 5 neuralnet[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[14P65.arff -ignore 0,66,67 -labels 68[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C33.arff -ignore 0,34,35 -labels 36[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C65.arff -ignore 0,66,67 -labels 68[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[14@33.arff -ignore 0,34,35 -labels 36 boost -size 5[C[C[C[C[C[C[C[C[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_33.arff -ignore 0,34,35 -labels 36 boost -size 5 neuralnet[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[14P65.arff -ignore 0,66,67 -labels 68[C[C[C[C[C[C[C[C[C[C[Cbneuralnetoneuralnetoneuralnetsneuralnettneuralnet neuralnet-neuralnetsneuralnetineuralnetzneuralneteneuralnet neuralnet5neuralnet neuralnet
+rep 0) 0.75867122618466
+rep 1) 0.8133854421104
+rep 2) 0.80117244748412
+rep 3) 0.78114313629702
+rep 4) 0.80703468490474
+rep 5) 0.80801172447484
+rep 6) 0.78553981436248
+rep 7) 0.80850024425989
+rep 8) 0.78700537371764
+rep 9) 0.81289692232535
+-----Mean-----
+0.79633610161212
+-----Standard Deviation-----
+0.017764410716757
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -size 5 neuralnet[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C33.arff -ignore 0,34,35 -labels 36[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P neuralnet2 neuralnet5 neuralnet
+rep 0) 0.75671714704446
+rep 1) 0.76648754274548
+rep 2) 0.8124084025403
+rep 3) 0.77186126038105
+rep 4) 0.79775280898876
+rep 5) 0.80410356619443
+rep 6) 0.81582804103566
+rep 7) 0.7933561309233
+rep 8) 0.81778212017587
+rep 9) 0.75232046897899
+-----Mean-----
+0.78886174890083
+-----Standard Deviation-----
+0.024961613585867
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_33.arff -ignore 0,34,35 -labels 36 boost -size 25 neuralnet[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P65.arff -ignore 0,66,67 -labels 68 boost -size [C[C[C[C[C[C[C[C[C[C[C[C[1@2
+rep 0) 0.80508060576453
+rep 1) 0.79579872984856
+rep 2) 0.80312652662433
+rep 3) 0.77381533952125
+rep 4) 0.78065461651197
+rep 5) 0.7542745481192
+rep 6) 0.78553981436248
+rep 7) 0.75476306790425
+rep 8) 0.80556912554959
+rep 9) 0.7752808988764
+-----Mean-----
+0.78339032730826
+-----Standard Deviation-----
+0.019271883652174
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -size 25 neuralnet[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kbaseline
+rep 0) 0.49340498290181
+rep 1) 0.48851978505129
+rep 2) 0.48705422569614
+rep 3) 0.49682462139717
+rep 4) 0.48900830483635
+rep 5) 0.49731314118222
+rep 6) 0.47923790913532
+rep 7) 0.49584758182706
+rep 8) 0.49780166096727
+rep 9) 0.49633610161211
+-----Mean-----
+0.49213483146067
+-----Standard Deviation-----
+0.0060457270347179
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 baseline[A
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[Kbucket bag 64 decisiontree e nd bag 64 decisiontree -random 1 end bag 64 meanmarginstree end end
+^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bucket bag 64 decisiontree ennd bag 64 decisiontree -random 1 end bag 64 meanmarginstree end end[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cucket bag 64 decisiontree end[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccket bag 64 decisiontree end [1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cket bag 64 decisiontree end b[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cet bag 64 decisiontree end ba[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ct bag 64 decisiontree end bag[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C bag 64 decisiontree end bag [1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cbag 64 decisiontree end bag 6[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K
+^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 64 decisiontree end-endrendaendnenddend [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Coendd[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cmend[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C end1end[C end
+rep 0) 0.78944797264289
+rep 1) 0.78944797264289
+rep 2) 0.79189057156815
+rep 3) 0.79531021006351
+rep 4) 0.78944797264289
+rep 5) 0.7914020517831
+rep 6) 0.78163165608207
+rep 7) 0.78602833414753
+rep 8) 0.77723497801661
+rep 9) 0.78358573522228
+-----Mean-----
+0.78754274548119
+-----Standard Deviation-----
+0.0054177017916568
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 64 decisiontree -random 11 end[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[1Pend[C[1Pend[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cen[1Pd[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cend[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cend [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1Pend
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1Pend[1Pend[1Pend[1Pend
+rep 0) 0.82999511480215
+rep 1) 0.83194919394235
+rep 2) 0.82266731802638
+rep 3) 0.82462139716658
+rep 4) 0.82608695652174
+rep 5) 0.82169027845628
+rep 6) 0.8114313629702
+rep 7) 0.83341475329751
+rep 8) 0.81924767953102
+rep 9) 0.82413287738154
+-----Mean-----
+0.82452369320957
+-----Standard Deviation-----
+0.0064760356489596
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 64 decisiontree end[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kdecisiontree
+rep 0) 0.76404494382023
+rep 1) 0.76355642403517
+rep 2) 0.75915974596971
+rep 3) 0.74841231069858
+rep 4) 0.75671714704446
+rep 5) 0.76453346360528
+rep 6) 0.76990718124084
+rep 7) 0.75574010747435
+rep 8) 0.75915974596971
+rep 9) 0.75280898876404
+-----Mean-----
+0.75940400586224
+-----Standard Deviation-----
+0.0063287984832469
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 decisiontree[K[K[K[K[K[K[K[K[K[K[K[Kmeanmarginstree[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kknn 1
+_________________________________
+Superfluous argument: 1
+
+Brief Usage Information:
+
+waffles_learn splittest <options> [dataset] <data_opts> [algorithm]
+   This shuffles the data, then splits it into two parts, trains with one part,
+   and tests with the other. (This also works with model-free algorithms.)
+   Results are printed to stdout for each dimension in the label vector.
+   Predictive accuracy is reported for nominal labels, and mean-squared-error
+   is reported for continuous labels.
+   <options>
+      -seed [value]
+         Specify a seed for the random number generator. (Use this option to
+         ensure that your results are reproduceable.)
+      -trainratio [value]
+         Specify the amount of the data (between 0 and 1) to use for training.
+         The rest will be used for testing.
+      -reps [value]
+         Specify the number of repetitions to perform. If not specified, the
+         default is 1.
+      -writelastmodel [filename]
+         Write the model generated on the last repetion to the given filename. 
+         Note that this only works when the learner being used has an internal
+         model.
+      -confusion
+         Print a confusion matrix for each nominal label attribute after each
+         repetition.
+      -stddev
+         Print the standard deviation of the results at the end as well as
+         their mean.
+   [dataset]
+      The filename of a dataset.
+   <data_opts>
+      -labels [attr_list]
+         Specify which attributes to use as labels. (If not specified, the
+         default is to use the last attribute for the label.) [attr_list] is a
+         comma-separated list of zero-indexed columns. A hypen may be used to
+         specify a range of columns.  A '*' preceding a value means to index
+         from the right instead of the left. For example, "0,2-5" refers to
+         columns 0, 2, 3, 4, and 5. "*0" refers to the last column. "0-*1"
+         refers to all but the last column.
+      -ignore [attr_list]
+         Specify attributes to ignore. [attr_list] is a comma-separated list of
+         zero-indexed columns. A hypen may be used to specify a range of
+         columns.  A '*' preceding a value means to index from the right
+         instead of the left. For example, "0,2-5" refers to columns 0, 2, 3,
+         4, and 5. "*0" refers to the last column. "0-*1" refers to all but the
+         last column.
+   [algorithm]
+      agglomerativetransducer
+      bag <contents> end
+      baseline
+      bucket <contents> end
+      bma <contents> end
+      bmc <options> <contents> end
+      boost <options> [algorithm]
+      cvdt [n]
+      decisiontree <options>
+      graphcuttransducer <options>
+      knn <options>
+      linear
+      meanmarginstree
+      naivebayes <options>
+      naiveinstance <options>
+      neighbortransducer <options>
+      neuralnet <options>
+      randomforest [trees] <options>
+      usage
+
+To see full usage information, run:
+	waffles_learn usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn 1[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn 1[K-neighbors 1
+rep 0) 0.73082559843674
+rep 1) 0.72447484123107
+rep 2) 0.72105520273571
+rep 3) 0.72203224230581
+rep 4) 0.7352222765022
+rep 5) 0.72691744015633
+rep 6) 0.73766487542745
+rep 7) 0.73033707865169
+rep 8) 0.73131411822179
+rep 9) 0.73815339521251
+-----Mean-----
+0.72979970688813
+-----Standard Deviation-----
+0.006129576967909
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn -neighbors 1[K5[K[K[K[K[K[K[K[K[K[K[Kscalefeatures -neighbor s 1
+^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn -scalefeatures -neighborss 1[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors [1P1[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors 1[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors 1 [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[C[C[C[C[C[C[C[C[C[C[C[C[C[K3
+rep 0) 0.76209086468002
+rep 1) 0.74206155349292
+rep 2) 0.74352711284807
+rep 3) 0.74499267220322
+rep 4) 0.75183194919394
+rep 5) 0.73473375671715
+rep 6) 0.74743527112848
+rep 7) 0.75574010747435
+rep 8) 0.7562286272594
+rep 9) 0.75134342940889
+-----Mean-----
+0.74899853444065
+-----Standard Deviation-----
+0.0080463359409514
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn -neighbors 3[K5
+rep 0) 0.75818270639961
+rep 1) 0.75671714704445
+rep 2) 0.75036638983879
+rep 3) 0.75818270639961
+rep 4) 0.75134342940889
+rep 5) 0.74206155349292
+rep 6) 0.75818270639961
+rep 7) 0.74987787005374
+rep 8) 0.76013678553981
+rep 9) 0.75280898876404
+-----Mean-----
+0.75378602833415
+-----Standard Deviation-----
+0.0055604530463972
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ ^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn -neighbors 5[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn -neighbors 5[K7
+rep 0) 0.76893014167074
+rep 1) 0.7532975085491
+rep 2) 0.76355642403517
+rep 3) 0.75818270639961
+rep 4) 0.76209086468002
+rep 5) 0.76502198339033
+rep 6) 0.76893014167074
+rep 7) 0.7562286272594
+rep 8) 0.76404494382022
+rep 9) 0.78456277479238
+-----Mean-----
+0.76448461162677
+-----Standard Deviation-----
+0.0087098814019727
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ 0.76448461162677=[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn -neighbors 7[K1[K11
+rep 0) 0.77967757694187
+rep 1) 0.77137274059599
+rep 2) 0.77381533952125
+rep 3) 0.77381533952125
+rep 4) 0.77039570102589
+rep 5) 0.77772349780166
+rep 6) 0.76453346360527
+rep 7) 0.77625793844651
+rep 8) 0.78358573522228
+rep 9) 0.77674645823156
+-----Mean-----
+0.77479237909135
+-----Standard Deviation-----
+0.0053116777170823
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 knn -neighbors 11[C[C[1P[1P[1P[1P[C[1@ [1@n[1@a[1@iError:_Unexpected_token,_nai,,_in_arg_12 -neighbors 11[C[C[C[C[C[C[C[C[C[C[C[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -n[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -ne[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -nei[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neig[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neigh[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighb[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbo[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbor[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors[1P 11[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors [1P11[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors 1[C[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors 11[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -neighbors 11 [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1@n[1@m[1P[1@a[1@i[1@v[1@e[1@i[1@n[1@s[1@t[1@a[1@n[1@c[1@e
+rep 0) 0.73180263800684
+rep 1) 0.72887151929653
+rep 2) 0.72252076209086
+rep 3) 0.7352222765022
+rep 4) 0.72740595994138
+rep 5) 0.73375671714705
+rep 6) 0.72984855886663
+rep 7) 0.73082559843674
+rep 8) 0.72300928187591
+rep 9) 0.72642892037128
+-----Mean-----
+0.72896922325354
+-----Standard Deviation-----
+0.004220036879613
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 11[K[K10[K[K5
+rep 0) 0.77479237909135
+rep 1) 0.77088422081094
+rep 2) 0.7723497801661
+rep 3) 0.77186126038105
+rep 4) 0.75280898876404
+rep 5) 0.76795310210063
+rep 6) 0.77186126038105
+rep 7) 0.76746458231558
+rep 8) 0.76013678553981
+rep 9) 0.76502198339033
+-----Mean-----
+0.76751343429409
+-----Standard Deviation-----
+0.0066881433310843
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 5[K4
+rep 0) 0.77186126038105
+rep 1) 0.78260869565217
+rep 2) 0.76697606253053
+rep 3) 0.76306790425012
+rep 4) 0.76551050317538
+rep 5) 0.76257938446507
+rep 6) 0.77870053737177
+rep 7) 0.77674645823156
+rep 8) 0.76697606253053
+rep 9) 0.76844162188569
+-----Mean-----
+0.77034684904739
+-----Standard Deviation-----
+0.0068835271077874
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 4[C[K3
+rep 0) 0.77723497801661
+rep 1) 0.77381533952125
+rep 2) 0.76990718124084
+rep 3) 0.77479237909135
+rep 4) 0.76844162188569
+rep 5) 0.75280898876405
+rep 6) 0.77772349780166
+rep 7) 0.74499267220323
+rep 8) 0.7723497801661
+rep 9) 0.7743038593063
+-----Mean-----
+0.76863702979971
+-----Standard Deviation-----
+0.010945944458609
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 345[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C0 -stddev -trainratio .7 two_[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C20 -stddev -trainratio .7 two[1@_[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.76111382510992
+rep 1) 0.77772349780166
+rep 2) 0.76599902296043
+rep 3) 0.77088422081094
+rep 4) 0.76355642403517
+rep 5) 0.77967757694187
+rep 6) 0.77674645823156
+rep 7) 0.78700537371764
+rep 8) 0.75964826575476
+rep 9) 0.77870053737176
+rep 10) 0.76941866145579
+rep 11) 0.76453346360528
+rep 12) 0.76697606253053
+rep 13) 0.77186126038104
+rep 14) 0.75818270639961
+rep 15) 0.77088422081094
+rep 16) 0.76795310210064
+rep 17) 0.76453346360528
+rep 18) 0.78456277479238
+rep 19) 0.77381533952125
+-----Mean-----
+0.77068881289692
+-----Standard Deviation-----
+0.0080870626010631
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 20 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 5[K3
+rep 0) 0.76355642403517
+rep 1) 0.77283829995115
+rep 2) 0.77870053737176
+rep 3) 0.7743038593063
+rep 4) 0.76746458231558
+rep 5) 0.78407425500733
+rep 6) 0.77039570102589
+rep 7) 0.76111382510992
+rep 8) 0.76502198339033
+rep 9) 0.77576941866146
+rep 10) 0.77918905715682
+rep 11) 0.76257938446507
+rep 12) 0.77039570102589
+rep 13) 0.76697606253053
+rep 14) 0.77283829995115
+rep 15) 0.78114313629702
+rep 16) 0.76746458231558
+rep 17) 0.78016609672692
+rep 18) 0.76941866145579
+rep 19) 0.77381533952125
+-----Mean-----
+0.77186126038105
+-----Standard Deviation-----
+0.0065771376066979
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 20 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 3[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 20 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 3[C[K1
+rep 0) 0.76697606253053
+rep 1) 0.76160234489497
+rep 2) 0.77137274059599
+rep 3) 0.77088422081094
+rep 4) 0.76893014167074
+rep 5) 0.77479237909135
+rep 6) 0.75867122618466
+rep 7) 0.76746458231558
+rep 8) 0.77625793844651
+rep 9) 0.77381533952125
+rep 10) 0.76257938446507
+rep 11) 0.7723497801661
+rep 12) 0.76941866145579
+rep 13) 0.77283829995115
+rep 14) 0.78407425500733
+rep 15) 0.78163165608207
+rep 16) 0.77088422081094
+rep 17) 0.78163165608207
+rep 18) 0.77039570102589
+rep 19) 0.7752808988764
+-----Mean-----
+0.77159257449927
+-----Standard Deviation-----
+0.0065320565230829
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 20 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naiveinstance -neighbors 1[1@banaiveinstance -neighbors 1 [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgnaiveinstance -neighbors 11[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C naiveinstance -neighbors 1[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C6naiveinstance -neighbors 1[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C4naiveinstance -neighbors 1[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C naiveinstance -neighbo[1@r[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C end
+^C^^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ ^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 20 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 64 naiveinstance -neighboors 1 end[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C naiveinstance -neighbor[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C naiveinstance -neighbors[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C5 naiveinstance -neighbor[1@s[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.75964826575476
+rep 1) 0.76893014167074
+rep 2) 0.77137274059599
+rep 3) 0.76990718124084
+rep 4) 0.76160234489497
+rep 5) 0.7733268197362
+rep 6) 0.75280898876405
+rep 7) 0.77967757694187
+rep 8) 0.77283829995115
+rep 9) 0.76404494382022
+rep 10) 0.76844162188569
+^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 20 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 5 naiveinstance -neighborrs 1 end[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C0 -stddev -trainratio .7 two_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 5 naiveinstance -neighbors[1P[A[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C10 -stddev -trainratio .7 two_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 5 naiveinstance -neighbor[1@s[A[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+[C[C[C[C[C[C[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C naiveinstance -neighbors[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C1 naiveinstance -neighbor[1@s[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C6 naiveinstance -neighbo[1@r[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.7933561309233
+rep 1) 0.78456277479238
+rep 2) 0.77039570102589
+rep 3) 0.78407425500733
+rep 4) 0.76844162188569
+rep 5) 0.76697606253053
+rep 6) 0.7723497801661
+rep 7) 0.7743038593063
+rep 8) 0.76355642403517
+rep 9) 0.75134342940889
+-----Mean-----
+0.77293600390816
+-----Standard Deviation-----
+0.011994572914195
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 16 naiveinstance -neighboors 1 end[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C naiveinstance -neighbor[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C end[1Pend[C endn enda endi end[1P end[1P end[1P endd ende endc endi ends endi endo endn end[1P end[1P end[1P end[1P end[1P end[1P end[1P end[1P end1 end[C endd ende endc endi ends endi endo endn end[C endt endr end[1P end[1P end[1Pendt endr ende ende end
+rep 0) 0.74938935026869
+rep 1) 0.76648754274548
+rep 2) 0.75964826575476
+rep 3) 0.76404494382023
+rep 4) 0.77137274059599
+rep 5) 0.76062530532487
+rep 6) 0.75232046897899
+rep 7) 0.75232046897899
+rep 8) 0.75183194919394
+rep 9) 0.74938935026869
+-----Mean-----
+0.75774303859306
+-----Standard Deviation-----
+0.0077974654619185
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 1 naiveinstance -neighborrs 1 1 decisiontree end[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 1 naiveinstance -neighbors[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 1 naiveinstance -neighbors [1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cm 1 naiveinstance -neighbors[1@ [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ca 1 naiveinstance -neighbor[1@s[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[1P[1@2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C
+rep 0) 0.49829018075232
+rep 1) 0.50903761602345
+rep 2) 0.51148021494871
+rep 3) 0.49535906204201
+rep 4) 0.50659501709819
+rep 5) 0.50464093795799
+rep 6) 0.49242794333171
+rep 7) 0.49682462139717
+^C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bma 1 naiveinstance -neighborrs 1 2 decisiontree end[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kboos[K[K[K[Koost decisiontree -maxlevel s 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C-decisiontree -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csdecisiontree -maxleve[1@l[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Czdecisiontree -maxlev[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxleve[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cidecisiontree -maxlev[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Czdecisiontree -maxle[1@v[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cedecisiontree -maxl[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -max[1@l[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C5decisiontree -ma[1@x[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -max[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxl[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxle[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxlev[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxleve[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxlevel[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxlevels[1P 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxlevels [1P2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxlevels 2[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxlevels 2 [K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P[1P
+rep 0) 0.70493404982902
+rep 1) 0.70591108939912
+rep 2) 0.69956033219345
+rep 3) 0.75818270639961
+rep 4) 0.70884220810943
+rep 5) 0.71910112359551
+rep 6) 0.77039570102589
+rep 7) 0.75134342940889
+rep 8) 0.68148510014656
+rep 9) 0.64680019540791
+-----Mean-----
+0.71465559355154
+-----Standard Deviation-----
+0.037274660729295
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 decisiontree -maxlevels 2[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C=[K3[K[K3
+rep 0) 0.77528089887641
+rep 1) 0.73571079628725
+rep 2) 0.77283829995115
+rep 3) 0.79628724963361
+rep 4) 0.79286761113825
+rep 5) 0.76990718124084
+rep 6) 0.79091353199805
+rep 7) 0.78700537371764
+rep 8) 0.78505129457743
+rep 9) 0.74645823155838
+-----Mean-----
+0.7752320468979
+-----Standard Deviation-----
+0.020163831252212
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 decisiontree -maxlevels 3[K[K[K[K[K[K[K[K[K[K[K[K[K
+rep 0) 0.77576941866146
+rep 1) 0.75232046897899
+rep 2) 0.75378602833415
+rep 3) 0.75769418661456
+rep 4) 0.7552515876893
+rep 5) 0.74499267220323
+rep 6) 0.76746458231558
+rep 7) 0.76648754274548
+rep 8) 0.7562286272594
+rep 9) 0.75720566682951
+-----Mean-----
+0.75872007816317
+-----Standard Deviation-----
+0.0088368234556716
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 decisiontree -maxlevels 32[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K1
+rep 0) 0.49438202247191
+rep 1) 0.49242794333171
+rep 2) 0.49438202247191
+rep 3) 0.49780166096727
+rep 4) 0.49780166096727
+rep 5) 0.49535906204201
+rep 6) 0.49633610161212
+rep 7) 0.49096238397655
+rep 8) 0.4924279433317
+rep 9) 0.48607718612604
+-----Mean-----
+0.49379579872985
+-----Standard Deviation-----
+0.0035437799729649
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 decisiontree -maxlevels 1[K2[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K1[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K2[1@b[1@oodecisiontree -maxlevels 2 [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csdecisiontree -maxlevels 22[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctdecisiontree -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.67708842208109
+rep 1) 0.79384465070835
+rep 2) 0.74499267220323
+rep 3) 0.77186126038105
+rep 4) 0.75769418661456
+rep 5) 0.74010747435271
+rep 6) 0.78212017586712
+rep 7) 0.71910112359551
+rep 8) 0.77674645823156
+rep 9) 0.73473375671715
+-----Mean-----
+0.74982901807523
+-----Standard Deviation-----
+0.034694039390921
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost decisiontree -maxlevelss 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C-decisiontree -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctdecisiontree -maxleve[1@l[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Crdecisiontree -maxlev[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxleve[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cdecisiontree -maxlevel[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csdecisiontree -maxleve[1@l[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cidecisiontree -maxlev[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Czdecisiontree -maxle[1@v[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cedecisiontree -maxl[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -max[1@l[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C6decisiontree -ma[1@x[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C0decisiontree -m[1@a[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -[1@m[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.77821201758671
+rep 1) 0.74841231069858
+rep 2) 0.79286761113825
+rep 3) 0.78651685393258
+rep 4) 0.72691744015633
+rep 5) 0.78944797264289
+rep 6) 0.78114313629702
+rep 7) 0.71128480703469
+rep 8) 0.77772349780166
+rep 9) 0.78114313629702
+-----Mean-----
+0.76736687835857
+-----Standard Deviation-----
+0.028381649486852
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -size 60 decisiontree --maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -m[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -ma[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C1 decisiontree -m[1@a[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C2 decisiontree -[1@m[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C0 decisiontree [1@-[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.72789447972643
+rep 1) 0.77088422081094
+rep 2) 0.77186126038105
+rep 3) 0.71226184660479
+rep 4) 0.72300928187592
+rep 5) 0.77870053737176
+rep 6) 0.78212017586712
+rep 7) 0.73766487542745
+rep 8) 0.76404494382022
+rep 9) 0.68881289692233
+-----Mean-----
+0.7457254518808
+-----Standard Deviation-----
+0.032182418858971
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -size 120 decisiontree  -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -m[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -ma[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C9 decisiontree -m[1@a[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C0 decisiontree -[1@m[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.78114313629702
+rep 1) 0.74938935026869
+rep 2) 0.78456277479238
+rep 3) 0.78553981436248
+rep 4) 0.79775280898876
+rep 5) 0.74890083048363
+rep 6) 0.73082559843674
+rep 7) 0.76062530532487
+rep 8) 0.77772349780166
+rep 9) 0.70542256961407
+-----Mean-----
+0.76218856863703
+-----Standard Deviation-----
+0.028790725632961
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -size 90 decisiontree --maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -m[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C decisiontree -ma[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C7 decisiontree -m[1@a[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C5 decisiontree -[1@m[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.77088422081094
+rep 1) 0.7151929653151
+rep 2) 0.78407425500733
+rep 3) 0.71372740595994
+rep 4) 0.70933072789448
+rep 5) 0.74206155349292
+rep 6) 0.70151441133366
+rep 7) 0.73033707865168
+rep 8) 0.76013678553982
+rep 9) 0.79042501221299
+-----Mean-----
+0.74176844162189
+-----Standard Deviation-----
+0.032724910977087
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -size 75 decisiontree --maxlevels 2
+rep 0) 0.7743038593063
+rep 1) 0.7361993160723
+rep 2) 0.74792379091353
+rep 3) 0.76746458231558
+rep 4) 0.78505129457743
+rep 5) 0.74645823155838
+rep 6) 0.71372740595994
+rep 7) 0.76795310210063
+rep 8) 0.74743527112848
+rep 9) 0.78114313629702
+-----Mean-----
+0.75676599902296
+-----Standard Deviation-----
+0.022331583033831
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -size 75 decisiontree --maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C-size 75 decisiontree [1@-[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ct-size 75 decisiontree[1@ [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cr-size 75 decisiontre[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ca-size 75 decisiontr[C[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ci-size 75 decisiont[1@r[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cn-size 75 decision[1@t[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cr-size 75 decisio[1@n[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ca-size 75 decisi[1@o[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ct-size 75 decis[1@i[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ci-size 75 deci[1@s[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Co-size 75 dec[1@i[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -size 75 de[1@c[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C2-size 75 d[1@e[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -size 75 [1@d[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.76404494382022
+rep 1) 0.75915974596971
+rep 2) 0.76257938446507
+rep 3) 0.77283829995115
+rep 4) 0.74841231069858
+rep 5) 0.80459208597948
+rep 6) 0.76111382510992
+rep 7) 0.77186126038105
+rep 8) 0.73277967757694
+rep 9) 0.74108451392281
+-----Mean-----
+0.76184660478749
+-----Standard Deviation-----
+0.019770470743252
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -trainratio 2 -size 75  decisiontree -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -size 75 d[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C3 -size 75 [1@d[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.75915974596971
+rep 1) 0.79384465070835
+rep 2) 0.70395701025892
+rep 3) 0.76502198339033
+rep 4) 0.79579872984856
+rep 5) 0.66487542745481
+rep 6) 0.78602833414753
+rep 7) 0.79482169027846
+rep 8) 0.76941866145579
+rep 9) 0.72594040058622
+-----Mean-----
+0.75588666340987
+-----Standard Deviation-----
+0.044236778557774
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -trainratio 3 -size 75  decisiontree -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C5 d[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C65 [1@d[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.70688812896922
+rep 1) 0.72252076209086
+rep 2) 0.7562286272594
+rep 3) 0.75769418661456
+rep 4) 0.78358573522227
+rep 5) 0.70835368832438
+rep 6) 0.78065461651197
+rep 7) 0.78163165608207
+rep 8) 0.79189057156815
+rep 9) 0.7542745481192
+-----Mean-----
+0.75437225207621
+-----Standard Deviation-----
+0.031791592489877
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -trainratio 3 -size 65  decisiontree -maxlevels 2[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -size 65 d[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C2 -size 65 [1@d[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+rep 0) 0.71226184660479
+rep 1) 0.68637029799707
+rep 2) 0.74010747435271
+rep 3) 0.76551050317538
+rep 4) 0.74303859306302
+rep 5) 0.77039570102589
+rep 6) 0.72447484123107
+rep 7) 0.7532975085491
+rep 8) 0.74401563263312
+rep 9) 0.7743038593063
+-----Mean-----
+0.74137762579385
+-----Standard Deviation-----
+0.027530255944326
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 boost -trainratio 2 -size 65  decisiontree -maxlevels 2[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kgraphcuttransducer
+rep 0) 0.77723497801661
+rep 1) 0.78651685393258
+rep 2) 0.79872984855887
+rep 3) 0.77625793844651
+rep 4) 0.78358573522228
+rep 5) 0.77576941866146
+rep 6) 0.76648754274548
+rep 7) 0.78651685393258
+rep 8) 0.76746458231558
+rep 9) 0.80801172447484
+-----Mean-----
+0.78265754763068
+-----Standard Deviation-----
+0.013089028466279
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 graphcuttransducer[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kmeanmarginstree
+rep 0) 0.72838299951148
+rep 1) 0.52906692721055
+rep 2) 0.49096238397655
+rep 3) 0.49438202247191
+rep 4) 0.50806057645335
+rep 5) 0.49535906204201
+rep 6) 0.49682462139717
+rep 7) 0.49682462139717
+rep 8) 0.5095261358085
+rep 9) 0.49633610161211
+-----Mean-----
+0.52457254518808
+-----Standard Deviation-----
+0.072487293751915
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 meanmarginstreebmeanmarginstreeameanmarginstreegmeanmarginstree meanmarginstree3meanmarginstree[1Pmeanmarginstree3meanmarginstree2meanmarginstree meanmarginstree[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C end
+rep 0) 0.77381533952125
+rep 1) 0.78847093307279
+rep 2) 0.77967757694187
+rep 3) 0.77821201758671
+rep 4) 0.78553981436248
+rep 5) 0.77723497801661
+rep 6) 0.78016609672692
+rep 7) 0.78456277479238
+rep 8) 0.78993649242794
+rep 9) 0.78358573522228
+-----Mean-----
+0.78212017586712
+-----Standard Deviation-----
+0.0051545975545822
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 32 meanmarginstree end[1P[1P[1@6[1@4
+rep 0) 0.78895945285784
+rep 1) 0.78847093307279
+rep 2) 0.78602833414753
+rep 3) 0.78895945285784
+rep 4) 0.77918905715681
+rep 5) 0.78602833414753
+rep 6) 0.7933561309233
+rep 7) 0.78553981436248
+rep 8) 0.7914020517831
+rep 9) 0.78651685393259
+-----Mean-----
+0.78744504152418
+-----Standard Deviation-----
+0.0038428153035861
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 64 meanmarginstree end[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 64 meanmarginstree end[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 64 meanmarginstree end[1P[1P[1@1[1@2[1@8
+rep 0) 0.79091353199805
+rep 1) 0.7914020517831
+rep 2) 0.80117244748412
+rep 3) 0.79384465070835
+rep 4) 0.78749389350269
+rep 5) 0.78163165608207
+rep 6) 0.78114313629702
+rep 7) 0.77918905715681
+rep 8) 0.79042501221299
+rep 9) 0.77576941866146
+-----Mean-----
+0.78729848558867
+-----Standard Deviation-----
+0.0077727712829448
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 bag 128 meanmarginstree end[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K randomforest 64
+rep 0) 0.79189057156815
+rep 1) 0.79091353199805
+rep 2) 0.79433317049341
+rep 3) 0.78553981436248
+rep 4) 0.7914020517831
+rep 5) 0.77772349780166
+rep 6) 0.79921836834392
+rep 7) 0.78260869565217
+rep 8) 0.790425012213
+rep 9) 0.78358573522228
+-----Mean-----
+0.78876404494382
+-----Standard Deviation-----
+0.0063369634626038
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 randomforest 64[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Knaivebayes
+rep 0) 0.70297997068881
+rep 1) 0.69516365412799
+rep 2) 0.69125549584758
+rep 3) 0.69956033219345
+rep 4) 0.70053737176355
+rep 5) 0.70249145090376
+rep 6) 0.6971177332682
+rep 7) 0.70688812896922
+rep 8) 0.69467513434294
+rep 9) 0.70151441133366
+-----Mean-----
+0.69921836834392
+-----Standard Deviation-----
+0.0046633102343368
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 naivebayes[K[K[K[K[K[K[K[K[K[Klinear
+rep 0) 0.67953102100635
+rep 1) 0.67562286272594
+rep 2) 0.70346849047386
+rep 3) 0.65950170981925
+rep 4) 0.72154372252076
+rep 5) 0.65705911089399
+rep 6) 0.69516365412799
+rep 7) 0.66585246702492
+rep 8) 0.67122618466048
+rep 9) 0.67855398143625
+-----Mean-----
+0.68075232046898
+-----Standard Deviation-----
+0.020401510106247
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 linear[K[K[K[K[K[Kagglomerativetransducerr[K
+rep 0) 0.72887151929653
+rep 1) 0.72984855886663
+rep 2) 0.70395701025892
+rep 3) 0.7342452369321
+rep 4) 0.71910112359551
+rep 5) 0.73180263800684
+rep 6) 0.70737664875427
+rep 7) 0.72252076209086
+rep 8) 0.74401563263312
+rep 9) 0.72105520273571
+-----Mean-----
+0.72427943331705
+-----Standard Deviation-----
+0.012186259615726
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_learn splittest -reps 10 -stddev -trainratio .7 twoo_spectra_window_65.arff -ignore 0,66,67 -labels 68 agglomerativetransducer[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kneighbortransducer -neighbor s 5[K[K[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K
+rep 0) 0.77821201758671
+rep 1) 0.76404494382022
+rep 2) 0.76893014167074
+rep 3) 0.75769418661456
+rep 4) 0.77918905715681
+rep 5) 0.77870053737176
+rep 6) 0.77918905715681
+rep 7) 0.7743038593063
+rep 8) 0.78163165608207
+rep 9) 0.7752808988764
+-----Mean-----
+0.77371763556424
+-----Standard Deviation-----
+0.0077714065614378
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_dimred pca two_spectra_window_64[K5.arff 69 -eigenval ues eig_win_65.txt > two_sp[K[K[K[K[K[Ktwo[K[K[K[K[K> two_spectra_window_[K6[K_65_pca.arff
+_________________________________
+GPCA doesn't support nominal values. (You could filter with nominaltocat to make them real.)
+
+Brief Usage Information:
+
+waffles_dimred pca [dataset] [target_dims] <options>
+   Projects the data into the specified number of dimensions with principle
+   component analysis. (Prints results to stdout. The input file is not
+   modified.)
+   <options>
+      -seed [value]
+         Specify a seed for the random number generator.
+      -roundtrip [filename]
+         Do a lossy round-trip of the data and save the results to the
+         specified file.
+      -eigenvalues [filename]
+         Save the eigenvalues to the specified file.
+      -components [filename]
+         Save the centroid and principal component vectors (in order of
+         decreasing corresponding eigenvalue) to the specified file.
+      -aboutorigin
+         Compute the principal components about the origin. (The default is to
+         compute them relative to the centroid.)
+   [dataset]
+      The filename of the high-dimensional data to reduce.
+   [target_dims]
+      The number of dimensions to reduce the data into.
+
+To see full usage information, run:
+	waffles_dimred usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform dropcolumns data[K[K[K[Ktwo_spectra_window_64[K5
+two_spectra_window_65.arff      two_spectra_window_65_pca.arff
+[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform dropcolumns two_spectra_window_65.arff 6 6-69 > two_spectra_window_64[K5_no_class.arff
+_________________________________
+Invalid column index: 69. Valid values are from 0 to 68. (Columns are zero-indexed.)
+
+Brief Usage Information:
+
+waffles_transform dropcolumns [dataset] [column-list]
+   Remove one or more columns from a dataset and prints the results to stdout.
+   (The input file is not modified.)
+   [dataset]
+      The filename of a dataset
+   [column-list]
+      A comma-separated list of zero-indexed columns to drop. A hypen may be
+      used to specify a range of columns.  A '*' preceding a value means to
+      index from the right instead of the left. For example, "0,2-5" refers to
+      columns 0, 2, 3, 4, and 5. "*0" refers to the last column. "0-*1" refers
+      to all but the last column.
+
+To see full usage information, run:
+	waffles_transform usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform dropcolumns two_spectra_window_65.arff 666-69 > two_spectra_window_65_no_class.arff[1P[1@8
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform dropcolumns two_spectra_window_65.arff 666-68 > two_spectra_window_65_no_class.arff[1P_class.arff[1P_class.arff[1Pclass.arff[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C >[1P two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C0 > two_spectra_window_65_class.arff[1@-[1@6[1@5[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform dropcolumns two_spectra_window_65.arff 0--65 > two_spectra_window_65_class.arff[A[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_transform dropcolumns two_spectra_window_65.arff 0--65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-6[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 [1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 >[1P two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 > [1Ptwo_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 > t[1Pwo_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 > tw[1Po_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 > two[1P_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 > two_[1Pspectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 > two_s[1Ppectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65.arff 0-65 > two_sp[1Pectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Cn two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Co two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Cr two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Cm two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Ca two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Cl two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Ci two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Cz two_spectra_window_65.arff 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[Ce two_spectra_window_65.arff 0-65[1@ [A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 0-65 [1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 0-65 >[1P two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 0-65 > [1Ptwo_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 0-65 > t[1Pwo_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 0-65 > tw[1Po_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C_ 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C) 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 0-65 > t[1Pwo_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cn 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Co 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cc 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C 0-65 >[1P two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C_ 0-65 > two_spectra_window_65_class.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cc 0-65[1@ [A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cl 0-6[1@5[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ca 0-[1@6[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cs 0[1@-[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cs [1@0[1@.[1@a[1@r[1@f[1@f[C[C[C[C[C[C[1P[1P[1P[1P[1P[C[1@ [1@=[1P[1@-[1@r[1@a[1@n[1@g[1@e[C[1@ [1@-[1@1[C[1@ [1@1[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[Knorm[K[K[K[Kno_class_norm.arff
+_________________________________
+Unsupported attribute type: std, at line 3
+
+Brief Usage Information:
+
+waffles_transform normalize [dataset] <options>
+   Normalize all continuous attributes to fall within the specified range.
+   (Nominal columns are left unchanged.)
+   [dataset]
+      The filename of a dataset
+   <options>
+      -range [min] [max]
+         Specify the output min and max values. (The default is 0 1.)
+
+To see full usage information, run:
+	waffles_transform usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform normalize two_spectra_window_65_no_class..arff -range -1 1 > two_spectra_window_65_no_class_norm.arff[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C-two_spectra_window_65_no_class[1@.[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Crtwo_spectra_window_65_no_clas[1@s[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Catwo_spectra_window_65_no_cla[C[1@s[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cntwo_spectra_window_65_no_cl[1@a[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgtwo_spectra_window_65_no_c[1@l[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cetwo_spectra_window_65_no_[1@c[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65_no[1@_[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C-two_spectra_window_65_n[1@o[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C1two_spectra_window_65_[1@n[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_65[1@_[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C1two_spectra_window_6[1@5[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C two_spectra_window_[1@6[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+_________________________________
+Unsupported file format: 
+
+Brief Usage Information:
+
+waffles_transform normalize [dataset] <options>
+   Normalize all continuous attributes to fall within the specified range.
+   (Nominal columns are left unchanged.)
+   [dataset]
+      The filename of a dataset
+   <options>
+      -range [min] [max]
+         Specify the output min and max values. (The default is 0 1.)
+
+To see full usage information, run:
+	waffles_transform usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform normalize -range -1 1 two_spectra_window__65_no_class.arff > two_spectra_window_65_no_class_norm.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cless two_spectra_window_no[K[K
+two_spectra_window_33.arff
+two_spectra_window_65.arff
+two_spectra_window_65_class.arff
+two_spectra_window_65_no_class.arff
+two_spectra_window_65_no_class_norm.arff
+two_spectra_window_65_pca.arff
+[01;32mprotein[00m:[01;34m~/PkFindData[00m$ less two_spectra_window_65[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_transform normalize -range -1 1 two_spectra_window__65_no_class.arff > two_spectra_window_65_no_class_norm.arff[A[32Pless two_spectra_window_65
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C_no_class.arff 
+[?1049h[?1h=@RELATION Untitled
+
+@ATTRIBUTE noise std dev        real
+@ATTRIBUTE intensity 1  real
+@ATTRIBUTE delta intensity 2    real
+@ATTRIBUTE delta intensity 3    real
+@ATTRIBUTE delta intensity 4    real
+@ATTRIBUTE delta intensity 5    real
+@ATTRIBUTE delta intensity 6    real
+@ATTRIBUTE delta intensity 7    real
+@ATTRIBUTE delta intensity 8    real
+@ATTRIBUTE delta intensity 9    real
+@ATTRIBUTE delta intensity 10   real
+@ATTRIBUTE delta intensity 11   real
+@ATTRIBUTE delta intensity 12   real
+@ATTRIBUTE delta intensity 13   real
+@ATTRIBUTE delta intensity 14   real
+@ATTRIBUTE delta intensity 15   real
+@ATTRIBUTE delta intensity 16   real
+@ATTRIBUTE delta intensity 17   real
+@ATTRIBUTE delta intensity 18   real
+@ATTRIBUTE delta intensity 19   real
+@ATTRIBUTE delta intensity 20   real
+[7mtwo_spectra_window_65_no_class.arff[27m[K[K@ATTRIBUTE delta intensity 21   real
+@ATTRIBUTE delta intensity 22   real
+@ATTRIBUTE delta intensity 23   real
+@ATTRIBUTE delta intensity 24   real
+@ATTRIBUTE delta intensity 25   real
+@ATTRIBUTE delta intensity 26   real
+@ATTRIBUTE delta intensity 27   real
+@ATTRIBUTE delta intensity 28   real
+@ATTRIBUTE delta intensity 29   real
+@ATTRIBUTE delta intensity 30   real
+@ATTRIBUTE delta intensity 31   real
+@ATTRIBUTE delta intensity 32   real
+@ATTRIBUTE delta intensity 33   real
+@ATTRIBUTE delta intensity 34   real
+@ATTRIBUTE delta intensity 35   real
+@ATTRIBUTE delta intensity 36   real
+@ATTRIBUTE delta intensity 37   real
+@ATTRIBUTE delta intensity 38   real
+@ATTRIBUTE delta intensity 39   real
+@ATTRIBUTE delta intensity 40   real
+@ATTRIBUTE delta intensity 41   real
+@ATTRIBUTE delta intensity 42   real
+@ATTRIBUTE delta intensity 43   real
+:[K[K@ATTRIBUTE delta intensity 44   real
+@ATTRIBUTE delta intensity 45   real
+@ATTRIBUTE delta intensity 46   real
+@ATTRIBUTE delta intensity 47   real
+@ATTRIBUTE delta intensity 48   real
+@ATTRIBUTE delta intensity 49   real
+@ATTRIBUTE delta intensity 50   real
+@ATTRIBUTE delta intensity 51   real
+@ATTRIBUTE delta intensity 52   real
+@ATTRIBUTE delta intensity 53   real
+@ATTRIBUTE delta intensity 54   real
+@ATTRIBUTE delta intensity 55   real
+@ATTRIBUTE delta intensity 56   real
+@ATTRIBUTE delta intensity 57   real
+@ATTRIBUTE delta intensity 58   real
+@ATTRIBUTE delta intensity 59   real
+@ATTRIBUTE delta intensity 60   real
+@ATTRIBUTE delta intensity 61   real
+@ATTRIBUTE delta intensity 62   real
+@ATTRIBUTE delta intensity 63   real
+@ATTRIBUTE delta intensity 64   real
+@ATTRIBUTE delta intensity 65   real
+
+:[K[K@DATA
+0.000355,-0.000523,0.000873,0.000502,0.000199,0.001163,0.001025,0.000617,0.00046 3,0.000777,0.000747,-0.000131,0.000268,0.000127,0.000371,0.000801,0.000109,0.000 389,0.000684,-0.000292,0.000898,-5.3e-05,0.000471,0.000438,0.000537,0.000681,8.7 e-05,0.000823,0.000488,0.000543,0.000181,0.000482,0.000586,0.000522,0.000619,0.0 00167,-0.000106,0.000466,0.000194,0.00046,0.000585,0.000105,1.3e-05,0.000231,0.0 00255,0.000426,0.00041,0.000754,0.000445,0.000679,0.000413,0.000136,0.000669,0.0 00287,6.1e-05,0.000607,0.000638,0.000601,0.000281,0.000484,0.00027,0.000508,0.00 0357,0.000659,0.000425,0.000349
+0.000355,0.00064,-0.000138,-0.000546,-0.0007,-0.000386,-0.000416,-0.001294,-0.00 0895,-0.001036,-0.000792,-0.000362,-0.001054,-0.000774,-0.000479,-0.001456,-0.00 0265,-0.001216,-0.000692,-0.000725,-0.000626,-0.000482,-0.001076,-0.00034,-0.000 675,-0.00062,-0.000982,-0.000681,-0.000577,-0.000641,-0.000544,-0.000996,-0.0012 69,-0.000697,-0.000969,-0.000703,-0.000578,-0.001058,-0.00115,-0.000932,-0.00090 8,-0.000737,-0.000753,-0.000409,-0.000718,-0.000484,-0.000751,-0.001027,-0.00049 4,-0.000876,-0.001102,-0.000556,-0.000525,-0.000562,-0.000882,-0.000679,-0.00089 3,-0.000655,-0.000806,-0.000504,-0.000739,-0.000814,-0.000634,-0.001029,-0.00074 6,-0.001
+0.000355,-0.000576,0.000525,0.000492,0.00059,0.000734,0.00014,0.000877,0.000541, 0.000597,0.000234,0.000535,0.00064,0.000575,0.000672,0.000221,-5.3e-05,0.000519, 0.000248,0.000514,0.000638,0.000158,6.7e-05,0.000285,0.000308,0.00048,0.000463,0 .000808,0.000498,0.000732,0.000466,0.000189,0.000723,0.00034,0.000114,0.00066,0. 000691,0.000654,0.000334,0.000538,0.000323,0.000562,0.00041,0.000713,0.000478,0. :[K[K[?1l>[?1049l]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ less two_spectra_window_65_no_class.arff [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwaffles_transform normalize -range -1 1 two_spectra_window__65_no_class.arff > two_spectra_window_65_no_class_norm.arff[C[C[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1P[1@n[1@o[1@_[1@c[1@l[1@a[1@s[1@s[1@.[1@a[1@r[1@r[1P[1@f[1@f
+_________________________________
+Unsupported file format: 
+
+Brief Usage Information:
+
+waffles_transform normalize [dataset] <options>
+   Normalize all continuous attributes to fall within the specified range.
+   (Nominal columns are left unchanged.)
+   [dataset]
+      The filename of a dataset
+   <options>
+      -range [min] [max]
+         Specify the output min and max values. (The default is 0 1.)
+
+To see full usage information, run:
+	waffles_transform usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ waffles_transform normalize -range -1 1 two_spectra_window__65_no_class.arff > two_spectra_window_65_no_class_norm.arff[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_6[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_n[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no_[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no_c[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no_cl[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no_cla[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no_clas[C[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no_class[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ctwo_spectra_window_65_no_class.[1P[A[01;32mprotein[00m:[01;34m~/PkFindData[00m$ [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[1@-[1@r[1@a[1@n[1@g[1@e[1@ [1@-[1@1[1@ [1@1[1@ 
+_________________________________
+Unsupported attribute type: std, at line 3
+
+Brief Usage Information:
+
+waffles_transform normalize [dataset] <options>
+   Normalize all continuous attributes to fall within the specified range.
+   (Nominal columns are left unchanged.)
+   [dataset]
+      The filename of a dataset
+   <options>
+      -range [min] [max]
+         Specify the output min and max values. (The default is 0 1.)
+
+To see full usage information, run:
+	waffles_transform usage
+
+For a graphical tool that will help you to build a command, run:
+	waffles_wizard
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ emacs two_spectra_window_65_no_class.c[Karff &
+[1] 11212
+]0;eric@protein: ~/PkFindData[01;32mprotein[00m:[01;34m~/PkFindData[00m$ exit
+exit
+
+Script done on Thu 03 Nov 2011 05:09:24 PM EDT
