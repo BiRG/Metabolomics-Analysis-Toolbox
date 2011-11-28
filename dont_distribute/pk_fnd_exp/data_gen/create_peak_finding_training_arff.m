@@ -14,6 +14,9 @@ function create_peak_finding_training_arff( out_filename, relation_name, window_
 % "delta intensity 2" %Intensity 2 after subtracting intensity 1
 % ...
 % "delta intensity n" where n is the window width
+% "spectrum identifier" An integer identifier for the spectrum from which the data came (unique among the spectra in 6_1.mat)
+% "window center index" The 1-based index of the center of the window in the source spectrum
+% "window center x" The x coordinate at the center of the window in the source spectrum
 % "number of peaks" (an integer variable giving the number of peaks nearer to that point than to any other)
 % "number of peaks class" (a NOMINAL variable "0 peaks" "1 peak" "2 peaks" ...)
 % "has peaks" (a NOMINAL variable "false" "true", whether num peaks > 0)
@@ -61,10 +64,14 @@ end
 counts = peak_counts(s.spectra);
 s.spectra = add_peak_counts(counts, s.spectra);
 
-% Set the contents of the windows
+% Set the contents of the windows and data fields that will allow
+% reconstruction of the original spectrum
 instances.window_contents=zeros(num_windows, window_width);
 instances.window_noise=zeros(num_windows,1); %Noise estimate for the window
 instances.num_peaks=zeros(num_windows,1); %Number of peaks at center of window
+instances.window_center_xs=zeros(num_windows,1); %x coordinate of center sample in window
+instances.window_center_indices=zeros(num_windows,1); %Index of the sample at the center of the window
+instances.spectrum_ids=zeros(num_windows,1); %Numeric identifier uniquely identifying the spectrum from all others in the data-set
 cur_window = 1; %Index of the current window
 for spec_idx=1:length(s.spectra)
     spec = s.spectra{spec_idx};
@@ -76,6 +83,10 @@ for spec_idx=1:length(s.spectra)
         instances.window_noise(cur_window)=noise_ests(spec_idx);
         win_center = window_first+(window_width-1)/2;
         instances.num_peaks(cur_window)=spec.num_peaks_at_x(win_center);
+        %Data for reconstructing the spectrum
+        instances.window_center_xs(cur_window)=spec.x(win_center);
+        instances.window_center_indices(cur_window)=win_center;
+        instances.spectrum_ids(cur_window)=spec_idx;
         cur_window = cur_window + 1;
     end
 end
@@ -88,6 +99,9 @@ if equalize_has_peaks_prob
     instances.window_contents = instances.window_contents(sort_order, :);
     instances.window_noise = instances.window_noise(sort_order);
     instances.num_peaks = instances.num_peaks(sort_order);
+    instances.window_center_xs = instances.window_center_xs(sort_order);
+    instances.window_center_indices = instances.window_center_indices(sort_order);
+    instances.spectrum_ids = instances.spectrum_ids(sort_order);
     
     % Count the number of windows with and without peaks
     num_with_peaks = length(find(has_peaks));
@@ -113,6 +127,9 @@ if equalize_has_peaks_prob
     instances.window_contents(delete_this, :)=[];
     instances.window_noise(delete_this)=[];
     instances.num_peaks(delete_this)=[];
+    instances.window_center_xs(delete_this)=[];
+    instances.window_center_indices(delete_this)=[];
+    instances.spectrum_ids(delete_this)=[];
 end
 
 % Write the file
@@ -152,6 +169,9 @@ fprintf(fid,'@attribute "intensity 1" real\n');
 for i=2:window_width
     fprintf(fid,'@attribute "delta intensity %d" real\n',i);
 end
+fprintf(fid,'@attribute "spectrum identifier" integer\n');
+fprintf(fid,'@attribute "window center index" integer\n');
+fprintf(fid,'@attribute "window center x" real\n');
 fprintf(fid,'@attribute "number of peaks" integer\n');
 fprintf(fid,'@attribute "number of peaks class" {"0 peaks","1 peak"');
 max_num_peaks = max(instances.num_peaks);
@@ -167,6 +187,9 @@ fprintf(fid,'@data\n');
 for i=1:length(instances.num_peaks)
     fprintf(fid, '%f', instances.window_noise(i));
     fprintf(fid, ',%f', instances.window_contents(i,:));
+    fprintf(fid, ',%d', instances.spectrum_ids(i));
+    fprintf(fid, ',%d', instances.window_center_indices(i));
+    fprintf(fid, ',%f', instances.window_center_xs(i));
     np = instances.num_peaks(i);
     if np > 0
         has_peaks_text='true';
