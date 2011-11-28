@@ -36,10 +36,13 @@ of the window than to any other sample.
 
 ==== Class Equalization
 
-There are an overabundance of windows not ontaining peaks.  Let the
-number of peaks in the spectrum be S.  To even the class prior
+There are an overabundance of windows not containing peaks.  94.7% of
+the windows do not have a peak.  Let the number of peaks-containing
+windows in the spectrum be S (3412).  To even the class prior
 probabilities, only a random subset of S non-peak-containing windows
-was chosen to accompany those windows that did have a peak.
+was chosen to accompany those windows that did have a peak.  (There is
+a minor bug in the program that resulted in there being only 3411
+windows that do not contain a peak).
 
 === two_spectra_window_65.arff
 
