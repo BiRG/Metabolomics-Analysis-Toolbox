@@ -49,6 +49,19 @@ windows that do not contain a peak).
 Exactly like two_spectra_window_33.arff except that the window was 65
 samples wide.
 
+=== sp_1_2_all_65_wide.arff
+
+Exactly like two_spectra_window_65.arff (including using the same two
+source spectra) except that classes are not equalized and there are
+now three additional fields that allow reconstruction of the original
+spectra (and by extension labeling of the original spectra) from the
+training/test sets even after they have been shuffled.  The new fields
+are "spectrum identifier","window center index", and "window center
+x."  These give (respectively) an integer identifier of the original
+spectrum, an index of the center of the window within the original
+spectrum, and the x coordinate of the center window sample within the
+original spectrum.
+
 == Directories:
 
 None
