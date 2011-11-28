@@ -41,8 +41,8 @@ window_width = round(window_width);
 if window_width < 1 || mod(window_width,2) ~= 1
     error('Window width must be a positive odd integer.');
 end
-input_filename = '6_1.mat';
-s=load('6_1.mat');
+input_filename = '~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6/6_1.mat';
+s=load(input_filename);
 s.spectra = s.spectra(1:2); %TODO remove
 
 % Calculate the noise estimates per spectrum
