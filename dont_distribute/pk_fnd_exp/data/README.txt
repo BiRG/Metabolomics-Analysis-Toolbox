@@ -46,12 +46,12 @@ windows that do not contain a peak).
 
 === two_spectra_window_65.arff
 
-Exactly like two_spectra_window_33.arff except that the window was 65
+Exactly like `two_spectra_window_33.arff` except that the window was 65
 samples wide.
 
 === sp_1_2_all_65_wide.arff
 
-Exactly like two_spectra_window_65.arff (including using the same two
+Exactly like `two_spectra_window_65.arff` (including using the same two
 source spectra) except that classes are not equalized and there are
 now three additional fields that allow reconstruction of the original
 spectra (and by extension labeling of the original spectra) from the
@@ -61,6 +61,22 @@ x."  These give (respectively) an integer identifier of the original
 spectrum, an index of the center of the window within the original
 spectrum, and the x coordinate of the center window sample within the
 original spectrum.
+
+It contains 61715 windows without a peak (negative patterns) and 3411 windows with a peak (positive patterns) for a total of 65126 patterns.
+
+=== sp_1_2_all_65_wide_70_pct.arff
+
+70% of the examples (randomly selected) from
+`sp_1_2_all_65_wide.arff`.  Used for cross validation in determining
+optimal parameters for certain algorithms that will be used in
+waffles_learn splittest invocations where the training set is 70% of
+the test set.  It contains 43176 negative patterns and 2412 positive
+patterns for a total of 45588 patterns.
+
+=== sp_1_2_all_65_wide_30_pct.arff
+
+The 30% of the patterns from `sp_1_2_all_65_wide.arff` that are not
+present in `sp_1_2_all_65_wide_70_pct.arff`.
 
 == Directories:
 
