@@ -1,11 +1,11 @@
 function create_peak_finding_training_arff( out_filename, relation_name, window_width, noise_est_first, noise_est_last, equalize_has_peaks_prob)
-% Writes training data based on '6_1.mat' to out_filename in arff format
+% Writes training data based on synthetic_spectrum_filename to out_filename in arff format
 %
 % Creates (or overwrites) out_filename with training data for peak finding.
-% The data is loaded from 6_1.mat.  Then for each spectrum, the sample 
-% standard deviation of the y values from indexes noise_est_first to 
-% nose_est_last is chosen as an estimate of the standard deviation of the
-% noise for that spectrum.  
+% The data is loaded from the file given by synthetic_spectrum_filename.m.  
+% Then for each spectrum, the sample standard deviation of the y values 
+% from indexes noise_est_first to nose_est_last is chosen as an estimate 
+% of the standard deviation of the noise for that spectrum.  
 %
 % The attributes output to the arff file are:
 % 
@@ -44,8 +44,7 @@ window_width = round(window_width);
 if window_width < 1 || mod(window_width,2) ~= 1
     error('Window width must be a positive odd integer.');
 end
-input_filename = '~/Dropbox/NMR-Training-and-Testing-Data-Sets/Synthetic Data Sets/6/6_1.mat';
-s=load(input_filename);
+s=load(synthetic_spectrum_filename);
 s.spectra = s.spectra(1:2); %TODO remove
 
 % Calculate the noise estimates per spectrum
@@ -155,7 +154,7 @@ else
     eq_has_peaks_text = 'false';
 end
 fprintf(fid,'%% Parameters: \n');
-fprintf(fid,'%%    Input file:                     %s\n', input_filename);
+fprintf(fid,'%%    Input file:                     %s\n', synthetic_spectrum_filename);
 fprintf(fid,'%%    Output file:                    %s\n', out_filename);
 fprintf(fid,'%%    Window size:                    %d\n', window_width);
 fprintf(fid,'%%    Noise indices:                  [%d, %d]\n', noise_est_first, noise_est_last);
