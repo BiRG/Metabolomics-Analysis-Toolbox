@@ -2,6 +2,7 @@
 #include <iostream>
 #include <GClasses/GApp.h>
 #include <GClasses/GError.h>
+#include <GClasses/GMatrix.h>
 
 using namespace GClasses;
 using std::cerr;
@@ -19,7 +20,9 @@ public:
   expected_exception(int exit_status):exit_status(exit_status){}
 };
 
-void printUsageAndExit(std::ostream& out, GArgReader& args){
+///\brief Print usage and an optional message before throwing an
+///"expected_exception"
+void printUsageAndExit(std::ostream& out, GArgReader& args, std::string msg=""){
   out 
     << "Usage: " << args.peek() << " [expected.arff] [predicted.arff] [misclassification|distance]\n"
     << "\n"
@@ -55,12 +58,48 @@ void printUsageAndExit(std::ostream& out, GArgReader& args){
     << "                     value of twice the distance from the lowest\n"
     << "                     point location to the highest.\n"
     << "                     \n"
+    << "\n"
+    << msg << "\n";
     ;
   throw expected_exception(-1);
 }
 
+///\brief Return the distance loss for the \a expected and \a
+///predicted matrix pair
+double distanceLoss(const GMatrix& expected, const GMatrix& predicted){
+  //TODO: stub
+  return -1;
+}
+
+///\brief Return the misclassificaiton loss for the \a expected and \a
+///predicted matrix pair
+double misclassificationLoss(const GMatrix& expected, const GMatrix& predicted){
+  //TODO: stub
+  return -1;
+}
+
+///\brief Calculate the loss function given by the arguments in \a args
 void calcLoss(GArgReader& args){
-  if(args.size() != 3){ printUsageAndExit(cout, args); }
+  if(args.size() != 3){ printUsageAndExit(cerr, args); }
+  const char* expectedFName = args.pop_string();
+  const char* predictedFName = args.pop_string();
+  std::string lossName = args.pop_string();
+  GClasses::Holder<GMatrix> expectedMatrix(GMatrix::loadArff(expectedFName));
+  GClasses::Holder<GMatrix> predictedMatrix(GMatrix::loadArff(predictedFName));
+  
+
+  if(lossName == "distance"){
+    cerr << "Warning: distance loss function is not yet implemented.\n";
+    cout << distanceLoss(*expectedMatrix.get(), *predictedMatrix.get());
+  }else if(lossName == "misclassification"){
+    cerr << "Warning: misclassification loss function is yet unimplemented.\n";
+    cout << misclassificationLoss(*expectedMatrix.get(), *predictedMatrix.get());
+  }else{
+    printUsageAndExit(cerr, args,
+		      to_str('"')+lossName+
+		      "\" is not a known loss function name.");
+  }
+  
 }
 
 int main(int argc, char *argv[]){
