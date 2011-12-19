@@ -64,6 +64,8 @@ void printUsageAndExit(std::ostream& out, const char*executableName, std::string
     << "                     peaks.\n"
     << "                     \n"
     << "\n"
+    << "  confusion:         gives the confusion matrix for the patterns\n"
+    << "\n"
     << msg << "\n";
     ;
   throw expected_exception(-1);
@@ -294,16 +296,7 @@ double distanceLoss(GMatrix& expected, GMatrix& predicted){
   if(!haveSameSpectraInSameOrder(expected, predicted)){
     ThrowError("The expected and predicted sets have different subsections of spectra.");
   }
-    // "  distance:          aligns the predicted with the expected peaks\n"
-    // "                     and then sums the distances from each to its\n"
-    // "                     corresponding peak.  Each distance is capped\n"
-    // "                     so its maximum is the window width for the\n"
-    // "                     expected peaks file.  Any expected or predicted\n"
-    // "                     peak with no corresponding peak is given a\n"
-    // "                     value of twice the window width.\n"
-    // "                     \n"
 
-  
   std::vector<std::vector<double> > expectedLocs = peakLocs(expected);
   std::vector<std::vector<double> > predictedLocs = peakLocs(predicted);
 
@@ -409,6 +402,101 @@ double misclassificationLoss(GMatrix& expected, GMatrix& predicted){
   return static_cast<double>(incorrect)/static_cast<double>(expected.rows());
 }
 
+///\brief Return label-value pairs that are the entries to the
+///confusion matrix for the given expected and predicted values
+///
+///ret[i].first is the label for the entry in the confusion matrix
+///
+///ret[i].second is the value of the entry in the confusion matrix
+///
+///All entries are given as strings since they are for printing
+///
+///\param expected the expected values for correct classification in
+///                the "has peaks" field, along with the window data in
+///                "delta intensity xx" fields, "spectrum identifier"
+///                and "window center index" fields.  This is not
+///                const because it may be reordered.  When projected
+///                onto the "spectrum identifier" and "window center
+///                index" fields, must have be the same set as the
+///                same projection of \a predicted.  "spectrum
+///                identifier" and "window center index" must form a
+///                key for the data.
+///
+///\param predicted the values predicted for the peak location in the
+///                "has peaks" field, along with "window center index"
+///                and "spectrum identifier" fields.  This is not
+///                const because it may be reordered.  When projected
+///                onto the "spectrum identifier" and "window center
+///                index" fields, must have be the same set as the
+///                same projection of \a expected. "spectrum
+///                identifier" and "window center index" must form a
+///                key for the data.
+///
+///\throw GException if the matrices do not meet the requirements
+std::vector<std::pair<std::string, std::string> >
+confusionMatrix(GMatrix& expected, GMatrix& predicted){  
+  sortIntoOriginalOrder(expected);
+  sortIntoOriginalOrder(predicted);
+  if(!haveSameSpectraInSameOrder(expected, predicted)){
+    ThrowError("The expected and predicted sets have different subsections of spectra.");
+  }
+  
+  int eHp = fieldIdx("has peaks", expected);
+  int pHp = fieldIdx("has peaks", predicted);
+  if(eHp < 0 || pHp < 0){
+    ThrowError("Matrix passed to misclassification loss is missing the 'has peaks' field");
+  }
+  
+  //Counts for expected_predicted values - peak_no_peak means expected
+  //peak got no_peak
+  unsigned 
+    peak_peak = 0, peak_no_peak = 0, 
+    no_peak_peak = 0, no_peak_no_peak = 0;
+  for(std::size_t i = 0; i < expected.rows(); ++i){
+    if(expected[i][eHp]){
+      if(predicted[i][pHp]){ ++peak_peak;
+      }else{                 ++peak_no_peak; }
+    }else{
+      if(predicted[i][pHp]){ ++no_peak_peak;
+      }else{                 ++no_peak_no_peak; }
+    }
+  }
+
+  typedef std::pair<std::string, std::string> spair;
+  std::vector<spair> results; results.reserve(4);
+  results.push_back(spair("Expected peak, got peak", to_str(peak_peak)));
+  results.push_back(spair("Expected peak, got no peak", to_str(peak_no_peak)));
+  results.push_back(spair("Expected no peak, got peak", to_str(no_peak_peak)));
+  results.push_back(spair("Expected no peak, got no peak", 
+			  to_str(no_peak_no_peak)));
+  
+  return results;
+
+}
+
+///\brief print each pair on its own line, separated by white-space
+///and a comma
+///
+///\param out the stream to which to print
+///
+///\param vp the vector of string pairs to print
+///
+///\return out after printing
+std::ostream& operator<<(std::ostream& out, 
+	   const std::vector<std::pair<std::string, std::string> >& vp){
+  unsigned maxWidth = 0;
+  for(unsigned i = 0; i < vp.size(); ++i){
+    unsigned width = vp[i].first.size();
+    maxWidth = std::max(maxWidth, width);
+  }
+  for(unsigned i = 0; i < vp.size(); ++i){
+    out.width(maxWidth+2);
+    out << (vp[i].first + ",") << vp[i].second << endl;
+  }
+  return out;
+}
+
+
 ///\brief Calculate the loss function given by the arguments in \a args
 void calcLoss(GArgReader& args){
   const char* exe = args.pop_string();
@@ -455,6 +543,8 @@ void calcLoss(GArgReader& args){
   }else if(lossName == "misclassification"){
     cout << misclassificationLoss(*expectedMatrix.get(), *predictedMatrix.get())
 	 << endl;
+  }else if(lossName == "confusion"){
+    cout << confusionMatrix(*expectedMatrix.get(), *predictedMatrix.get());
   }else{
     printUsageAndExit(cerr, exe,
 		      to_str('"')+lossName+
