@@ -1,7 +1,7 @@
-function windowed_output_from_traditional_pk_find( spectrum_indices, output_filename )
+function windowed_output_from_traditional_pk_find( spectrum_indices, output_filename, window_width )
 %Write output of traditional peak finding to arff file for processing by waffles tools
 %
-%Usage: windowed_output_from_traditional_pk_find( spectrum_indices, output_filename )
+%Usage: windowed_output_from_traditional_pk_find( spectrum_indices, output_filename, window_width )
 %
 %******************************************
 % Detailed description
@@ -15,16 +15,24 @@ function windowed_output_from_traditional_pk_find( spectrum_indices, output_file
 % "window center index": the sample index within the spectrum closest to the location where the peak was detected
 % "has peaks": whether a peak was detected.
 %
-% It writes one pattern for each sample in each input spectrum.
+% It writes one pattern for each sample in each input spectrum, ignoring
+% those too close to make a window of width window_width centered on the
+% sample
 %
 %******************************************
 % Example
 %******************************************
 %
-%>> windowed_output_from_traditional_pk_find( [3,4], "sp_3_4_trad_find.arff")
+%>> windowed_output_from_traditional_pk_find( [3,4], "sp_3_4_trad_find.arff", 65)
 %
 % Would output peak locations from spectra 3 and 4 of the collection
-% specified by synthetic_spectrum_filename
+% specified by synthetic_spectrum_filename, ignoring those that can't be
+% the center of a window of width 65
+
+window_width = round(window_width);
+if window_width < 1 || mod(window_width,2) ~= 1
+    error('Window width must be a positive odd integer.');
+end
 
 all_spectra = load(synthetic_spectrum_filename);
 s = all_spectra.spectra(spectrum_indices);
@@ -82,13 +90,14 @@ for s_idx=1:num_s
     has_peak(peaks{s_idx}) = true(length(peaks{s_idx}),1); %set peak locations to true
     
     %print the values for all y
-    for i=1:num_y
+    for window_first = 1 : 1+num_y-window_width
+    	window_center = window_first+(window_width-1)/2;
         fprintf(fid,'%d',spectrum_indices(s_idx));
-        fprintf(fid,',%d',i);
-        if has_peak(i)
+        fprintf(fid,',%d',window_center);
+        if has_peak(window_center)
             fprintf(fid,',true\n');
         else
             fprintf(fid,',false\n');
         end
     end 
-end        
+end
