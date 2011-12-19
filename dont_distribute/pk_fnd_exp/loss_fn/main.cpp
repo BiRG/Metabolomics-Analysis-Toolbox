@@ -1,8 +1,10 @@
 #include <exception>
 #include <iostream>
+#include <utility>
 #include <GClasses/GApp.h>
 #include <GClasses/GError.h>
 #include <GClasses/GMatrix.h>
+#include <GClasses/GAssignment.h>
 
 using namespace GClasses;
 using std::cerr;
@@ -57,7 +59,9 @@ void printUsageAndExit(std::ostream& out, const char*executableName, std::string
     << "                     so its maximum is the window width for the\n"
     << "                     expected peaks file.  Any expected or predicted\n"
     << "                     peak with no corresponding peak is given a\n"
-    << "                     value of twice the window width.\n"
+    << "                     value of twice the window width.  Finally the\n"
+    << "                     total is divided by the number of expected\n"
+    << "                     peaks.\n"
     << "                     \n"
     << "\n"
     << msg << "\n";
@@ -179,6 +183,86 @@ bool haveSameSpectraInSameOrder(const GMatrix& a, const GMatrix& b){
   return true;
 }
 
+///\brief Return the "window center index" coordinates of all the
+///samples that have "has peaks" set to true in the matrix m, the
+///peaks in each spectrum are in their own vector.
+///
+///The returned vectors will be sorted in increasing order by
+///"spectrum identifier", that is the spectrum identifier for
+///result[0] will be strictly less than the spectrum identifier for
+///result[1]
+///
+///\throw GException if m is missing the "window center index" field,
+///                  the "spectrum identifier" field, or the "has
+///                  peaks" field
+///
+///\param m the matrix containing the samples whose peaks are to be
+///         extracted.  Must have a "window center index" field and a
+///         "has peaks" field.  
+///
+///\return the "window center index" coordinates of all the samples
+///that have "has peaks" set to true in the matrix m
+std::vector<std::vector<double> > peakLocs(const GMatrix& m){
+  int hp  = fieldIdx("has peaks",m);
+  int sid = fieldIdx("spectrum identifier",m);
+  int wc  = fieldIdx("window center index", m);
+  if(hp < 0 || wc < 0 || sid < 0){
+    ThrowError("A matrix passed to peakLocs is "
+	       "missing either the 'spectrum identifier' "
+	       "field, the 'window center index' field, or the "
+	       "'has peaks' field.");
+  }
+
+  //Make a list of the full coordinates of the peaks in the spectra
+
+  //pks has the full coordinates.  The first entry in the double is
+  //the spectrum id and the second the window center index
+  std::set<std::pair<double, double> > pks; 
+
+  //sid_set has spectrum ids only
+  std::set<double> sid_set; 
+  for(size_t i = 0; i < m.rows(); ++i){
+    sid_set.insert(m[i][sid]);
+    if(m[i][hp]){ //If the sample has peaks
+      pks.insert(std::make_pair(m[i][sid], m[i][wc]));
+    }
+  }
+
+  //Assign one vector to receive the peaks for each spectrum
+  std::map<double, int> vec_for_sid;
+
+  int idx = 0;
+  std::set<double>::const_iterator sid_iter = sid_set.begin();
+  for(;sid_iter != sid_set.end(); ++sid_iter, ++idx){
+    vec_for_sid[*sid_iter] = idx;
+  }
+  
+
+  //Set up the vectors to return
+  std::vector<std::vector<double> > result(sid_set.size());
+  
+  //Fill the appropriate vectors with the appropriate peaks
+  std::set<std::pair<double, double> >::const_iterator pk_iter = pks.begin();
+  for(; pk_iter != pks.end(); ++pk_iter){
+    result[vec_for_sid[pk_iter->first]].push_back(pk_iter->second);
+  }
+  return result;
+}
+
+///\brief Return the width of the window used in creating the dataset
+///\a m.  This is the number of fields that have the substring
+///"intensity"
+unsigned windowWidth(const GMatrix& m){
+  unsigned numFields = 0;
+  for(unsigned i = 0; i < m.cols(); ++i){
+    std::string name = m.relation()->attrNameStr(i);
+    if(name.find("intensity") != std::string::npos){
+      ++numFields;
+    }
+  }
+  return numFields;
+}
+
 ///\brief Return the distance loss for the \a expected and \a
 ///predicted matrix pair
 ///
@@ -210,9 +294,73 @@ double distanceLoss(GMatrix& expected, GMatrix& predicted){
   if(!haveSameSpectraInSameOrder(expected, predicted)){
     ThrowError("The expected and predicted sets have different subsections of spectra.");
   }
+    // "  distance:          aligns the predicted with the expected peaks\n"
+    // "                     and then sums the distances from each to its\n"
+    // "                     corresponding peak.  Each distance is capped\n"
+    // "                     so its maximum is the window width for the\n"
+    // "                     expected peaks file.  Any expected or predicted\n"
+    // "                     peak with no corresponding peak is given a\n"
+    // "                     value of twice the window width.\n"
+    // "                     \n"
 
   
-  return -1;
+  std::vector<std::vector<double> > expectedLocs = peakLocs(expected);
+  std::vector<std::vector<double> > predictedLocs = peakLocs(predicted);
+
+  //Calculate a where a[i] is the assignements for spectrum i
+  std::vector<GSimpleAssignment> a; a.reserve(expectedLocs.size());
+  for(unsigned i = 0; i < expectedLocs.size(); ++i){
+    //Calculate the costs of the individual assignments for spectrum i
+    GMatrix cost(expectedLocs[i].size(), predictedLocs[i].size());
+    for(unsigned r = 0; r < cost.rows(); ++r){
+      for(unsigned c = 0; c < cost.cols(); ++c){
+	cost[r][c]=abs(expectedLocs[i].at(r) - predictedLocs[i].at(c));
+      }
+    }
+    //Calculate the optimal assignment
+    a.push_back(linearAssignment(cost));
+  }
+  
+
+  
+  //Calculate the distance loss for all assigned peaks
+  double maxDist = windowWidth(expected);
+  double loss = 0;
+
+  for(std::size_t s = 0; s < a.size(); ++s){
+    for(std::size_t expIdx = 0; expIdx < a[s].sizeA(); ++expIdx){
+      int predIdx = a[s](expIdx);
+      if(predIdx >= 0){
+	double d = abs(expectedLocs[s].at(expIdx) - 
+		       predictedLocs[s].at(predIdx));
+	loss += std::min(maxDist, d);
+      }
+    }
+  }
+  
+  //Count the number of unassigned 
+  unsigned numUnassigned = 0;
+  for(std::size_t s = 0; s < a.size(); ++s){
+    for(std::size_t i = 0; i < a[s].sizeA(); ++i){
+      if(a[s](i) < 0){ ++numUnassigned; }
+    }
+    for(std::size_t i = 0; i < a[s].sizeB(); ++i){
+      if(a[s].inverse(i) < 0){ ++numUnassigned; }
+    }
+  }
+
+  //Add the penalty for unassigned
+  double unassignedPenalty = 2*maxDist; 
+  loss += unassignedPenalty * numUnassigned;
+
+  //Transform total penalty into average penalty per expected peak
+  unsigned numExpected = 0;
+  for(std::size_t s = 0; s < a.size(); ++s){
+    numExpected += expectedLocs[s].size();
+  }
+  loss /= numExpected;
+  
+  return loss;
 }
 
 ///\brief Return the misclassificaiton loss for the \a expected and \a
@@ -302,7 +450,6 @@ void calcLoss(GArgReader& args){
 
   //Do the loss calculations
   if(lossName == "distance"){
-    cerr << "Warning: distance loss function is not yet implemented.\n";
     cout << distanceLoss(*expectedMatrix.get(), *predictedMatrix.get())
 	 << endl;
   }else if(lossName == "misclassification"){
