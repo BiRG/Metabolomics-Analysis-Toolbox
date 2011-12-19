@@ -303,9 +303,11 @@ void calcLoss(GArgReader& args){
   //Do the loss calculations
   if(lossName == "distance"){
     cerr << "Warning: distance loss function is not yet implemented.\n";
-    cout << distanceLoss(*expectedMatrix.get(), *predictedMatrix.get());
+    cout << distanceLoss(*expectedMatrix.get(), *predictedMatrix.get())
+	 << endl;
   }else if(lossName == "misclassification"){
-    cout << misclassificationLoss(*expectedMatrix.get(), *predictedMatrix.get());
+    cout << misclassificationLoss(*expectedMatrix.get(), *predictedMatrix.get())
+	 << endl;
   }else{
     printUsageAndExit(cerr, exe,
 		      to_str('"')+lossName+
