@@ -1,5 +1,5 @@
 function click_bin_boundary(bix,h,handles)
-[bins,deconvolve] = get_bins(handles);
+[bins,deconvolve,names] = get_bins(handles);
 
 ButtonName = questdlg('Include in deconvolution?', ...
                          'Deconvolution', ...
@@ -13,16 +13,6 @@ else
     return;
 end
 
-data = cell(size(bins,1)+1,1);
-data{1} = '';
-for b = 1:size(bins,1)
-    if deconvolve(b)
-        data{b+1} = sprintf('%f,%f,Deconvolve',bins(b,1),bins(b,2));
-    else
-        data{b+1} = sprintf('%f,%f',bins(b,1),bins(b,2));
-    end
-end
-
-set(handles.bins_listbox,'String',data);
+update_bin_list(handles,bins,deconvolve,names);
 
 plot_maxs(handles,true);

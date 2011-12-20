@@ -1,9 +1,9 @@
-function results = deconvolve2(x,y,maxs,mins,bins,deconvolve_mask,min_percent_change,max_generations)
+function results = deconvolve2(x,y,maxs,mins,bins,deconvolve_mask,min_percent_change,max_generations,regions)
 % x (d x 1) and y (d x 1)
 
 y = interpolate_zeros(x,y);
 
-regions = determine_regions(x,y,maxs,mins,bins);
+regions = determine_regions(x,y,maxs,mins,bins,regions);
 done_mask = zeros(1,length(regions));
 regions = determine_initial_baseline(regions);
 
@@ -89,9 +89,8 @@ for r = 1:length(regions)
     regions{r}.baseline_options.x_all = regions{r}.x;
 end
 
-function regions = determine_regions(x,y,maxs,all_mins,bins)
+function regions = determine_regions(x,y,maxs,all_mins,bins,regions)
 % Divide the problem up into regions
-regions = {};
 [num_bins,junk] = size(bins);
 for b = 1:num_bins
     xwidth = x(1) - x(2);
@@ -114,7 +113,6 @@ for b = 1:num_bins
         lb = [];
         ub = [];
     end
-    regions{b} = {};
     regions{b}.x = xsub;
     regions{b}.y = ysub;
     regions{b}.BETA0 = BETA0;

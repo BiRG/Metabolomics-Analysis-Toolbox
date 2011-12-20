@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 05-Oct-2011 14:03:16
+% Last Modified by GUIDE v2.5 19-Dec-2011 17:27:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -122,7 +122,7 @@ function get_collection_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles = get_collection_pushbutton(handles);
-
+handles.collection = init_collection(handles.collection);
 set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
 
 ymax = max(handles.collection.Y(:,1));
@@ -206,13 +206,18 @@ end
 
 bins = dynamic_adaptive_bin(handles.collection.x',X,left,right,...
     max_dist_btw_maxs_ppm,min_dist_from_boundary_ppm,peak_finding_options);
-data = cell(size(bins,1)+1,1);
-data{1} = '';
+% Initialize the regions
+handles.collection.regions = {};
+for s = 1:size(handles.collection.Y,2)
+    handles.collection.regions{s} = {};
+end
 for b = 1:size(bins,1)
-    data{b+1} = sprintf('%f,%f',bins(b,1),bins(b,2));
+    for s = 1:size(handles.collection.Y,2) % Initialize to a blank region
+        handles.collection.regions{s}{b} = {};
+    end
 end
 
-set(handles.bins_listbox,'String',data);
+update_bin_list(handles,bins);
 
 handles.X = X';
 handles.Y = Y';
@@ -502,16 +507,21 @@ switch (ButtonName),
             for s = 1:length(nm(2))
                 collection.maxs{s} = [];
                 collection.mins{s} = [];
-                collection.include_mask{s} = [];
-                collection.regions{s} = {};
-                collection.dirty(s) = true;
+                for b = 1:length(collection.regions{s})
+                    collection.regions{s}{b}.include_mask = [];
+                end
+                collection.dirty(s) = true; % Not sure if this is even used
             end
         end
         collection.maxs{s} = [collection.maxs{s},round((collection.x(1)-x_click)/xwidth)+1];
-        collection.include_mask{s} = [collection.include_mask{s},1];
+        for b = 1:length(collection.regions{s})
+            collection.regions{s}{b}.include_mask = [collection.regions{s}{b}.include_mask,1];
+        end
         [collection.maxs{s},inxs] = sort(collection.maxs{s},'ascend');
-        collection.mins{s} = find_mins(collection.Y(:,s),collection.maxs{s});
-        collection.include_mask{s} = collection.include_mask{s}(inxs);
+        collection.mins{s} = find_mins(collection.Y(:,s),collection.maxs{s});      
+        for b = 1:length(collection.regions{s})
+            collection.regions{s}{b}.include_mask = collection.regions{s}{b}.include_mask(inxs);
+        end
         
         % Update
         handles.collection = collection;
@@ -600,6 +610,16 @@ str = urlreadpost('http://birg.cs.wright.edu/omics_analysis/saved_files', ...
         {'data',d,'name',username,'password',password,'analysis_id',analysis_id,'description',description,'pretty_file_name',pretty_file_name});
 fprintf(str);
 
+function collection = init_collection(collection)
+collection.y_baseline = {};
+collection.y_fit = {};
+collection.regions = {};
+for s = 1:size(collection.Y,2)
+    collection.y_baseline{s} = [];
+    collection.y_fit{s} = [];
+    collection.regions{s} = {};
+end
+
 % --- Executes on button press in load_collection_pushbutton.
 function load_collection_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to load_collection_pushbutton (see GCBO)
@@ -607,7 +627,7 @@ function load_collection_pushbutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles = load_collection_pushbutton(handles);
-
+handles.collection = init_collection(handles.colleciton);
 set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
 
 ymax = max(handles.collection.Y(:,1));
@@ -863,7 +883,7 @@ if ~result
     return;
 end
 
-[regions,deconvolve] = get_bins(handles);
+[regions,deconvolve,names] = get_bins(handles);
 lefts = regions(:,1);
 rights = regions(:,2);
 [filename,pathname] = uiputfile('*.txt', 'Save regions');
@@ -885,6 +905,17 @@ if file > 0
         else
             fprintf(file,'sum');
         end
+    end
+    fprintf(file,'\n');
+    for b = 1:length(lefts)
+        if b > 1
+            fprintf(file,';');
+        end
+        if isempty(names{b}) || strcmp(deblank(names{b}),'')
+            fprintf(file,'');
+        else
+            fprintf(file,deblank(names{b}));
+        end        
     end
     fclose(file);
 end
@@ -916,17 +947,55 @@ regions = zeros(length(lefts),2);
 regions(:,1) = lefts';
 regions(:,2) = rights';
 
-data = cell(size(regions,1)+1,1);
-data{1} = '';
-for b = 1:size(regions,1)
-    data{b+1} = sprintf('%f,%f',regions(b,1),regions(b,2));
+% Try to read deconvolution line
+try
+    myline = fgetl(file);
+    entries = split(myline,';');    
+    deconvolve = [];
+    for i = 1:length(entries)
+        if strcmp(entries{i},'deconvolve')
+            deconvolve(i) = true;
+        else
+            deconvolve(i) = false;
+        end
+    end
+catch ME
+    deconvolve = zeros(1,size(regions,1));
 end
 
-set(handles.bins_listbox,'String',data);
+% Try to read name line
+try
+    myline = fgetl(file);
+    entries = split(myline,';');    
+    names = [];
+    for i = 1:length(entries)
+        names{i} = entries{i};
+    end
+catch ME
+    names = cell(1,size(regions,1));
+end
+
+update_bin_list(handles,regions,deconvolve,names);
+
+if sum(deconvolve) > 0
+    handles = get_peaks(handles);
+end
+
+for s = 1:size(handles.collection.Y,2)
+    for b = 1:size(regions,1)
+        handles.collection.regions{s}{b} = {};
+        if isfield(handles.collection,'maxs')
+            handles.collection.regions{s}{b}.include_mask = 0*handles.collection.maxs{s} + 1;
+        end
+    end
+end
+
 set(handles.bins_listbox,'Value',1);
 
 xlim auto;
 ylim auto;
+
+guidata(handles.figure1, handles);
 
 % --- Executes on button press in save_collection_pushbutton.
 function save_collection_pushbutton_Callback(hObject, eventdata, handles)
@@ -940,11 +1009,10 @@ if ~result
 end
 
 collection = handles.collection;
-[bins,deconvolve] = get_bins(handles);
+[bins,deconvolve,names] = get_bins(handles);
 % Remove adjacent deconvolution
-Y = adjust_y_deconvolution(collection,bins,deconvolve);
-collection.Y = Y;
-new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
+collection = adjust_y_deconvolution(collection,bins,deconvolve);
+new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
 save_collections({new_collection},'_binned');
 
 % --- Executes on button press in post_collection_pushbutton.
@@ -959,16 +1027,15 @@ if ~result
 end
 
 collection = handles.collection;
-[bins,deconvolve] = get_bins(handles);
+[bins,deconvolve,names] = get_bins(handles);
 prompt={'Analysis ID:'};
 name='Enter the analysis ID from the website';
 numlines=1;
 defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};        
-Y = adjust_y_deconvolution(collection,bins,deconvolve);
-collection.Y = Y;
-new_collection = bin_collection(collection,bins,get(handles.autoscale_checkbox,'Value'),handles.collection.Y);
+collection = adjust_y_deconvolution(collection,bins,deconvolve);
+new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
 post_collections(gcf,{new_collection},'_binned',analysis_id);
 
 % --- Executes on button press in add_bin_pushbutton.
@@ -986,7 +1053,15 @@ xl = xlim;
 data = get(handles.bins_listbox,'String');
 data{end+1} = sprintf('%f,%f',xl(2),xl(1));
 set(handles.bins_listbox,'String',data);
+% Add empty region
+for s = 1:size(handles.collection.Y,2)
+    handles.collection.regions{s}{end+1} = {};
+    if isfield(handles.collection,'maxs')
+        handles.collection.regions{s}{end}.include_mask = 0*handles.collection.maxs{s} + 1;
+    end
+end
 delete_cursors();
+guidata(handles.figure1, handles);
 
 % --- Executes on button press in sort_pushbutton.
 function sort_pushbutton_Callback(hObject, eventdata, handles)
@@ -1008,21 +1083,23 @@ if ~result
     return;
 end
 
-[bins,deconvolve] = get_bins(handles);
+[bins,deconvolve,names] = get_bins(handles);
 [bins,inxs] = sortrows(bins,1);
 deconvolve = deconvolve(inxs);
-
-data = cell(size(bins,1)+1,1);
-for b = 1:size(bins,1)
-    if deconvolve(b)
-        data{b} = sprintf('%f,%f,Deconvolve',bins(b,1),bins(b,2));
-    else
-        data{b} = sprintf('%f,%f',bins(b,1),bins(b,2));
+new_names = {};
+% Sort the regions
+new_regions = {};
+for s = 1:size(handles.collection.Y,2)
+    new_regions{s} = {};
+end
+for i = 1:length(inxs)
+    new_names{end+1} = names{inxs(i)};
+    for s = 1:size(handles.collection.Y,2)
+        new_regions{s}{end+1} = handles.collection.regions{s}{inxs(i)};
     end
 end
-data{end} = '';
 
-set(handles.bins_listbox,'String',data(end:-1:1));
+update_bin_list(handles,bins,deconvolve,names);
 set(handles.bins_listbox,'Value',1);
 
 % xlim auto;
@@ -1046,6 +1123,7 @@ if get(handles.delete_all_checkbox,'Value')
     data{1} = '';
     set(handles.bins_listbox,'String',data);
     set(handles.bins_listbox,'Value',1);
+    handles.collection = init_collection(handles.collection);
     guidata(hObject, handles);
     return;
 end
@@ -1055,15 +1133,26 @@ if bin_inx == 1
     return;
 end
 
-[bins,deconvolve] = get_bins(handles);
-data = {};
-data{1} = '';
+[bins,deconvolve,names] = get_bins(handles);
+new_regions = {};
+new_names = {};
+new_bins = [];
+new_deconvolve = [];
+for s = 1:size(handles.collection.Y,2)
+    new_regions{s} = {};
+end
 for b = 1:size(bins,1)
     if bin_inx-1 ~= b
-        data = add_bin_to_data(data,bins,deconvolve,b);
+        new_names{end+1} = names{b};
+        new_bins(end+1,:) = bins(b,:);
+        new_deconvolve(end+1) = deconvolve(b);
+        for s = 1:size(handles.collection.Y,2)
+            new_regions{s}{end+1} = handles.collection.regions{s}{b};
+        end
     end
 end
-set(handles.bins_listbox,'String',data);
+update_bin_list(handles,new_bins,new_deconvolve,new_names);
+handles.collection.regions = new_regions;
 set(handles.bins_listbox,'Value',1);
 
 delete_cursors();
@@ -1072,14 +1161,6 @@ guidata(hObject, handles);
 
 % inxs = find(handles.xlim(1) <= handles.collection.x & handles.collection.x <= handles.xlim(2));
 % ylim([min(min(handles.X(:,inxs)')),max(max(handles.X(:,inxs)'))]);
-
-function data = add_bin_to_data(data,bins,deconvolve,b)
-if deconvolve(b)
-    data{end+1} = sprintf('%f,%f,Deconvolve',bins(b,1),bins(b,2));
-else
-    data{end+1} = sprintf('%f,%f',bins(b,1),bins(b,2));
-end
-
 
 % --- Executes on button press in zoom_out_pushbutton.
 function zoom_out_pushbutton_Callback(hObject, eventdata, handles)
@@ -1206,6 +1287,8 @@ contents = cellstr(get(hObject,'String'));
 bin_inx = get(hObject,'Value')-1;
 bin_str = contents{bin_inx+1};
 if strcmp(bin_str,'');
+    plot_maxs(handles,true);
+    set(handles.bin_name_edit,'String','');
     xlim auto;
     ylim auto;
     return;
@@ -1233,7 +1316,8 @@ xlim(handles.xlim);
 ylim auto;
     
 yl = ylim;
-bins = get_bins(handles);
+[bins,deconvolve,names] = get_bins(handles);
+set(handles.bin_name_edit,'String',names{bin_inx});
 for b = 1:size(bins,1)
     color = 'm';
     if mod(b-1,2) == 0
@@ -1252,6 +1336,8 @@ for b = 1:size(bins,1)
 %     myfunc = @(hObject, eventdata) (click_bin_boundary(b,left_cursor,handles));
 %     set(left_cursor,'ButtonDownFcn',myfunc);    
 end
+
+plot_maxs(handles,true);
 
 if inverted_bin
     msgbox(sprintf('Inverted bin: %f,%f',bin(1),bin(2)));    
@@ -1304,7 +1390,7 @@ if ~result
     return;
 end
 
-bins = get_bins(handles);
+[bins,deconvolve,names] = get_bins(handles);
 % bin_inx = get(handles.bins_listbox,'Value')-1;
 % if bin_inx == 0
 %     return;
@@ -1320,13 +1406,7 @@ for b = 1:size(bins,1)
     bins(b,:) = [left,right];
 end
 
-data = cell(size(bins,1)+1,1);
-data{1} = '';
-for b = 1:size(bins,1)
-    data{b+1} = sprintf('%f,%f',bins(b,1),bins(b,2));
-end
-
-set(handles.bins_listbox,'String',data);
+update_bin_list(handles,bins,deconvolve,names);
 
 sort_bins(handles);
 
@@ -1568,7 +1648,7 @@ collection.y_fit = {};
 for s = 1:num_spectra
     if ~isempty(collection.maxs{s})
         [bins,deconvolve_mask] = get_bins(handles);
-        results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,1,2);
+        results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,1,2,collection.regions{s});
         %results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,options);
 
         collection.regions{s} = results.regions;
@@ -1710,3 +1790,61 @@ set(handles.model_by_fields_listbox,'Max',length({'',sorted_valid_flds{:}}));
 
 set(handles.group_by_fields_listbox,'String',{'',sorted_valid_flds{:}});
 set(handles.group_by_fields_listbox,'Max',length({'',sorted_valid_flds{:}}));
+
+
+
+function bin_name_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to bin_name_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of bin_name_edit as text
+%        str2double(get(hObject,'String')) returns contents of bin_name_edit as a double
+
+bin_inx = get(handles.bins_listbox,'Value')-1;
+[bins,deconvolve,names] = get_bins(handles);
+names{bin_inx} = get(hObject,'String');
+update_bin_list(handles,bins,deconvolve,names);
+
+% --- Executes during object creation, after setting all properties.
+function bin_name_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to bin_name_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in save_bin_pictures_pushbutton.
+function save_bin_pictures_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to save_bin_pictures_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[result,message] = validate_state(handles,get_version_string());
+if ~result
+    msgbox(message);
+    return;
+end
+
+old_selection = get(handles.bins_listbox,'Value');
+[bins,deconvolve,names] = get_bins(handles);
+
+directoryname = uigetdir;
+
+figure;
+for b = 1:size(bins,1)
+    set(handles.bins_listbox,'Value',b+1);
+    plot_spectra(handles,false);
+    if isempty(names{b}) || strcmp(deblank(names{b}),'')
+        saveas(gcf,[directoryname,'/bin_',num2str(mean(bins(b,:))),'.jpg']);
+    else
+        saveas(gcf,[directoryname,'/',names{b},'.jpg']);
+    end
+end
+
+set(handles.bins_listbox,'Value',old_selection);

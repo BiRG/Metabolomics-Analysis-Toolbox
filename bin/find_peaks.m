@@ -6,7 +6,11 @@ collection = handles.collection;
 [num_variables,num_spectra] = size(collection.Y);
 collection.maxs = {};
 collection.mins = {};
-collection.include_mask = {};
+for s = 1:num_spectra
+    for b = 1:length(collection.regions{s})
+        collection.regions{s}{b}.include_mask = {};
+    end
+end
 % collection.BETA = {};
 collection.Y_smooth = [];
 for s = 1:num_spectra
@@ -15,7 +19,9 @@ for s = 1:num_spectra
     [maxs,mins,y_smooth] = find_maxs_mins(collection.x,collection.Y(:,s),noise_std); % Find the peak locations
     collection.maxs{s} = maxs;
     collection.mins{s} = mins;
-    collection.include_mask{s} = 0*maxs+1; % Include all by default
+    for b = 1:length(collection.regions{s})
+        collection.regions{s}{b}.include_mask = 0*maxs+1; % Include all by default
+    end    
 %     collection.BETA{s} = zeros(4*length(maxs),1);
 %     collection.BETA{s}(4:4:end) = collection.x(maxs);
     collection.Y_smooth(:,s) = y_smooth;
