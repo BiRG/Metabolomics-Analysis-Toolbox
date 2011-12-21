@@ -15,7 +15,7 @@ else
 end
 [num_dp,num_spectra] = size(handles.collection.Y);
 
-Y = adjust_y_deconvolution(handles.collection,bins,deconvolve);
+handles.collection = adjust_y_deconvolution(handles.collection,bins,deconvolve);
 
 delete(findobj(gcf,'Tag','hmaxs'));
 d = 0;
@@ -41,7 +41,10 @@ for g = 1:length(handles.group_by_inxs)
             subplot(rows,columns,subplot_inx);
         end
         hold on
-        
+
+        % Check to see if a bin is selected
+        b = get(handles.bins_listbox,'Value')-1;
+
         for j = 1:length(inxs)
             s = inxs(j);
             if isfield(handles.collection,'y_fit') && ~isempty(handles.collection.y_fit{s})
@@ -61,47 +64,35 @@ for g = 1:length(handles.group_by_inxs)
                     plot(handles.collection.x,y_residual','color',[0.8,0.2,0.2],'Tag','hmaxs');
                 end
                 if ~data{d,13}
-                    for b = 1:length(deconvolve)
-                        if deconvolve(b)
-%                             left = bins(b,1);
-%                             right = bins(b,2);
-%                             yinxs = find(left >= handles.collection.x & handles.collection.x > right);
-%                             BETA = handles.collection.BETA{s};
-%                             X = BETA(4:4:end);
-%                             xinxs = find(left >= X & X > right);
-%                             enabled_xinxs = xinxs(find(handles.collection.include_mask{s}(xinxs) == 1)); % find only those enabled
-%                             xinxs = enabled_xinxs;
-%                             y_bin = global_model(BETA((4*(xinxs(1) - 1)+1):(4*(xinxs(end) - 1)+4)),handles.collection.x(yinxs),length(xinxs),{});
-%                             plot(handles.collection.x(yinxs),y(yinxs)' - y_peaks(yinxs)' - y_baseline(yinxs)' + y_bin,'color',[0.7,0.3,0.9],'tag','hmaxs');
-                            yinxs = handles.collection.regions{s}{b}.inxs;
-                            plot(handles.collection.x(yinxs),Y(yinxs,s),'color',[0.7,0.3,0.9],'tag','hmaxs');
-                        end
+                    if b > 0
+                        yinxs = handles.collection.regions{s}{b}.inxs;
+                        plot(handles.collection.x(yinxs),handles.collection.regions{s}{b}.y_adjusted,'color',[0.7,0.3,0.9],'tag','hmaxs');
                     end
                 end
             end
         end
         
-        for b = 1:length(deconvolve)
-            for j = 1:length(inxs)
-                s = inxs(j);
-                maxs = handles.collection.maxs{s};
-                x_maxs = handles.collection.x(maxs);
-                binxs = find(bins(b,1) >= x_maxs & x_maxs >= bins(b,2));
-                x_maxs = x_maxs(binxs);
+        % Check to see if a bin is selected
+        if b == 0 || deconvolve(b) == 0 % No bin selected
+            continue;
+        end
+        for j = 1:length(inxs)
+            s = inxs(j);
+            maxs = handles.collection.maxs{s};
+            x_maxs = handles.collection.x(maxs);
+            binxs = find(bins(b,1) >= x_maxs & x_maxs >= bins(b,2));
+            x_maxs = x_maxs(binxs);
 
-                for i = 1:length(x_maxs)                    
-                    color = 'b';
-                    if ~handles.collection.include_mask{s}(binxs(i))
-                        color = [0.8,0.8,0.8];
-                    end
-                    hmax = plot(x_maxs(i),handles.collection.Y(maxs(binxs(i)),s),'Color',color,'Tag','hmaxs','Visible','on','marker','o','MarkerFaceColor',color);
-                    set(hmax,'linestyle','none');
-                    setappdata(hmax,'s',s);
-                    setappdata(hmax,'max_inx',binxs(i));
-            %                 myfunc = @(hObject, eventdata) (max_click_spectrum(inxs(i),s,hmax,handles));
-                    set(hmax,'ButtonDownFcn',@max_click_spectrum);
-                                        
+            for i = 1:length(x_maxs)                    
+                color = 'b';                    
+                if ~handles.collection.regions{s}{b}.include_mask(binxs(i))
+                    color = [0.8,0.8,0.8];
                 end
+                hmax = plot(x_maxs(i),handles.collection.Y(maxs(binxs(i)),s),'Color',color,'Tag','hmaxs','Visible','on','marker','o','MarkerFaceColor',color);
+                set(hmax,'linestyle','none');
+                setappdata(hmax,'s',s);
+                setappdata(hmax,'max_inx',binxs(i));
+                set(hmax,'ButtonDownFcn',@max_click_spectrum);                                        
             end
         end
         

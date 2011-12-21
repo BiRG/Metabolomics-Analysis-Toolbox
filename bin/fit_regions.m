@@ -28,7 +28,7 @@ for r = 1:length(regions)
 end
 
 % Fit each region
-parfor r = 1:length(regions)
+for r = 1:length(regions)
     if ~done_mask(r)
         if deconvolve_mask(r)% || (r > 1 && deconvolve_mask(r-1)) || (r < length(regions) && deconvolve_mask(r+1))
             % Check for equal upper and lower bounds in the X direction

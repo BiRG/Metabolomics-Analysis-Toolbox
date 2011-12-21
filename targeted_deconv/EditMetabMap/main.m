@@ -24,7 +24,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 07-Oct-2011 12:23:38
+% Last Modified by GUIDE v2.5 08-Dec-2011 17:31:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -277,33 +277,21 @@ hold off;
 function repopulateMappedBinsList(handles)
 % handles    structure with handles and user data (see GUIDATA)
 targetListboxIdx = get(handles.mapped_bins_listbox, 'Value');
-stringPropCell = {};
-cellsCopied = 0;
 if ( isfield(handles, 'storedBins') )
     storedBinsArrayLen = length(handles.storedBins);
-    %if ( storedBinsArrayLen == 1 )
-    %    stringPropCell = [ num2str(handles.storedBins.id, '%d') ',' ...
-    %        handles.storedBins.compound_name ',' ...
-    %        num2str(handles.storedBins.bin.left, '%.3f') ',' ...
-    %        num2str(handles.storedBins.bin.right, '%.3f') ];
-    %else
+    stringPropCell = cell(storedBinsArrayLen, 1);
     for i=1:storedBinsArrayLen
-        if ( ~handles.storedBins(i).was_deleted )
-            cellsCopied = cellsCopied + 1;
-            stringPropCell{cellsCopied} = [ ...
-                num2str(handles.storedBins(i).id, '%d') ',' ...
-                handles.storedBins(i).compound_name ',' ...
-                num2str(handles.storedBins(i).bin.left, '%.3f') ',' ...
-                num2str(handles.storedBins(i).bin.right, '%.3f') ];
-        end;
+        stringPropCell{i} = [ ...
+            num2str(handles.storedBins(i).id, '%d') ',' ...
+            handles.storedBins(i).compound_name ',' ...
+            num2str(handles.storedBins(i).bin.left, '%.3f') ',' ...
+            num2str(handles.storedBins(i).bin.right, '%.3f') ];
     end;
-    %end;
 end;
-if ( cellsCopied == 0 )
+if ( storedBinsArrayLen == 0 )
     set(handles.mapped_bins_listbox, 'Value', 1);
-end;
-if ( targetListboxIdx > cellsCopied )
-    set(handles.mapped_bins_listbox, 'Value', cellsCopied);
+else
+    set(handles.mapped_bins_listbox, 'Value', storedBinsArrayLen);
 end;
 set(handles.mapped_bins_listbox, 'String', stringPropCell);
 
@@ -655,7 +643,8 @@ function load_metabmap_button_Callback(hObject, eventdata, handles)
     '*.*', 'All Files (*.*)'} );
 if ( ischar(filename) && ~isempty(filename) )
     
-    handles.storedBins = load_metabmap(fullfile(pathname, filename));
+    handles.storedBins = load_metabmap(fullfile(pathname, filename), ...
+        'no_deleted_bins');
     
     % -- DCW: TODO: Add collection and spectrum ID to format
     %    handles.storedBinsCollectionID = ...
@@ -1079,11 +1068,6 @@ if ( metabPopupIdx > 1 )
             chenomix_was_used = '';
         end;
         literature = get(handles.id_source_edit, 'String');
-        %"Bin ID","Deleted","Compound ID","Compound Name",'...
-        %'"Known Compound","Bin (Lt)","Bin (Rt)",'...
-        %'"Multiplicity","Peaks to Select","J (Hz)",'...
-        %'"Nucleus Assignment","HMDB ID","Chenomx",'...
-        %'"Literature","NMR Isotope","Notes"
         
         storedBinsExist = isfield(handles, 'storedBins');
         if ( storedBinsExist )
@@ -1093,24 +1077,36 @@ if ( metabPopupIdx > 1 )
         end;
         errmsg = 0;
         try
-            header_string = [ ...
-                    '"Bin ID","Deleted","Compound ID","Compound Name",'...
-                    '"Known Compound","Bin (Lt)","Bin (Rt)",'...
-                    '"Multiplicity","Peaks to Select","J (Hz)",'...
-                    '"Nucleus Assignment","HMDB ID","Chenomx",'...
-                    '"Literature","NMR Isotope","Notes"'];
+            header_string = CompoundBin.csv_file_header_string();
+            % "Bin ID",
+            % "Deleted"
+            % "Compound ID"
+            % "Compound Name"
+            % "Known Compound"
+            % "Bin (Lt)"
+            % "Bin (Rt)"
+            % "Multiplicity"
+            % "Peaks to Select"
+            % "J (Hz)"
+            % "Nucleus Assignment"
+            % "HMDB ID"
+            % "Sample-types that may contain compound"
+            % "Chenomx"
+            % "Literature"
+            % "NMR Isotope"
+            % "Notes"
             newBin = CompoundBin(header_string, ...
                 sprintf([ ...
                 '%d,,%d,"%s",' ...
                 '"%s",%g,%g,'  ...
                 '"%s",%d,"%s",' ...
-                '"%s",%s,"%s",' ...
-                '"%s","%s",""' ], ...
+                '"%s",%s,""' ...
+                '"%s","%s","%s",""' ], ...
                 bin_id, compound_id, compound_name,...
                 is_known_compound, leftBound, rightBound, ...
                 userMultStr, num_peaks, j_values, ...
-                nucleus_assignment, hmdb_id, chenomix_was_used, ...
-                literature, nmrIso));
+                nucleus_assignment, hmdb_id, ...
+                chenomix_was_used, literature, nmrIso));
         catch E
             errmsg = E.message;
         end
@@ -1218,6 +1214,76 @@ if ( get(handles.selected_mode_radiobutton, 'Value') == ...
 end;
 
 
+% --- Executes on key press with focus on figure1 and none of its controls.
+function figure1_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  structure with the following fields (see FIGURE)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+if ( strcmp(eventdata.Key, 'backspace') || ...
+        strcmp(eventdata.Key, 'delete') )
+    if ( strcmp(get(handles.delete_bin_button, 'Enable'), 'on') )
+        delete_bin_button_Callback(hObject, eventdata, handles);
+    end;
+end;
+
+%if ( isfield(eventdata, 'Modifier') && ...
+%        ~isempty(eventdata.Modifier) && ...
+%        strcmp(eventdata.Modifier{1}, 'alt') )
+if ( isfield(eventdata, 'Modifier') && ...
+        ~isempty(eventdata.Modifier) && ...
+        strcmp(eventdata.Modifier{1}, 'control') )
+    switch eventdata.Key
+        case 'a'
+            if ( strcmp(get(handles.append_bin_button, 'Enable'), 'on') )
+                append_bin_button_Callback( ...
+                    hObject, eventdata, handles);
+            end;
+        case 'f'
+            if ( strcmp(get(handles.retrieve_bin_button, 'Enable'), 'on') )
+                retrieve_bin_button_Callback( ...
+                    hObject, eventdata, handles);
+            end;
+        case 'l'
+            load_metabmap_button_Callback(hObject, eventdata, handles);
+        case 'o'
+            load_collection_button_Callback(hObject, eventdata, handles);
+        case 's'
+            save_metabmap_button_Callback(hObject, eventdata, handles);
+    end;
+end;
+
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+if ( isfield(handles, 'storedBins') && ...
+        ~isempty(handles.storedBins) )
+    switch questdlg('Save metabolite map before closing?')
+        case 'Yes'
+            save_metabmap_button_Callback(hObject, eventdata, handles);
+            delete(hObject);
+        case 'No'
+            secondResponse = ...
+                questdlg('All changes will be lost! Are you sure?');
+            if ( strcmp(secondResponse, 'Yes') )
+                delete(hObject);
+            end;
+        otherwise
+            % Do nothing and return to the figure.
+    end;
+else
+    delete(hObject);
+end;
+
+
 
 % -- DCW: Spare callbacks & other hooks
 
@@ -1301,7 +1367,6 @@ function j_values_edit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of j_values_edit as text
 %        str2double(get(hObject,'String')) returns contents of j_values_edit as a double
-
 
 
 function nmr_isotope_edit_Callback(hObject, eventdata, handles)
