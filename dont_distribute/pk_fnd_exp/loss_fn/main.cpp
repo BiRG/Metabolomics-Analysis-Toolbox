@@ -185,8 +185,34 @@ bool haveSameSpectraInSameOrder(const GMatrix& a, const GMatrix& b){
   return true;
 }
 
+///\brief Return the set of values contained in the "spectrum
+///identifier" field of \a m as a sorted vector
+///
+///Constructs the set of values from the spectrum identifier field and
+///then constructs a vector out of that.
+///
+///\param m the matrix whose identifiers will be returned
+///
+///\return the set of values contained in the "spectrum identifier"
+///field of \a m as a sorted vector
+///
+///\throw GException if \a m does not have a "spectrum identifier" field
+std::vector<double> spectrumIds(const GMatrix& m){
+  int sid = fieldIdx("spectrum identifier",m);
+  if(sid < 0){
+    ThrowError("The matrix passed to spectrumIds does not have a "
+	       "'spectrum identifier' field");
+  }
+  std::set<double> sid_set; 
+  for(size_t i = 0; i < m.rows(); ++i){
+    sid_set.insert(m[i][sid]);
+  }
+  std::vector<double> result(sid_set.begin(), sid_set.end());
+  return result;
+}
+
 ///\brief Return the "window center index" coordinates of all the
-///samples that have "has peaks" set to true in the matrix m, the
+///samples that have "has peaks" set to true in the matrix \a m, the
 ///peaks in each spectrum are in their own vector.
 ///
 ///The returned vectors will be sorted in increasing order by
@@ -264,6 +290,98 @@ unsigned windowWidth(const GMatrix& m){
   }
   return numFields;
 }
+
+///\brief Return an annotated version of the expected matrix having
+///the predicted "has peaks" field appended along with a distance to
+///the corresponding peak.
+///
+///If there is no corresponding peak, the "distance to corresp" is
+///infinity if the peak was expected but not predicted and -infinity
+///if the peak was predicted but not expected
+///
+///\param expected the expected values for correct classification
+///                along with the window data in "delta intensity xx"
+///                fields, "spectrum identifier" and "window center
+///                index" fields.  This is not const because it may be
+///                reordered.  When projected onto the "spectrum
+///                identifier" and "window center index" fields, must
+///                have be the same set as the same projection of \a
+///                predicted.  "spectrum identifier" and "window
+///                center index" must form a key for the data.
+///
+///\param predicted the values predicted for the peak location along
+///                with "window center index" and "spectrum
+///                identifier" fields.  This is not const because it
+///                may be reordered.  When projected onto the
+///                "spectrum identifier" and "window center index"
+///                fields, must have be the same set as the same
+///                projection of \a expected. "spectrum identifier"
+///                and "window center index" must form a key for the
+///                data.
+///
+///\throw GException if the matrices do not meet the requirements
+GMatrix distanceAnnotatedMatrix(GMatrix& expected, GMatrix& predicted){
+  sortIntoOriginalOrder(expected);
+  sortIntoOriginalOrder(predicted);
+  if(!haveSameSpectraInSameOrder(expected, predicted)){
+    ThrowError("The expected and predicted sets have different "
+	       "subsections of spectra.");
+  }
+
+  std::vector<double> specIds = spectrumIds(expected);
+
+  std::vector<std::vector<double> > expectedLocs = peakLocs(expected);
+  std::vector<std::vector<double> > predictedLocs = peakLocs(predicted);
+
+  //Calculate a where a[i] is the assignements for spectrum i
+  std::vector<GSimpleAssignment> a; a.reserve(expectedLocs.size());
+  for(unsigned i = 0; i < expectedLocs.size(); ++i){
+    //Calculate the costs of the individual assignments for spectrum i
+    GMatrix cost(expectedLocs[i].size(), predictedLocs[i].size());
+    for(unsigned r = 0; r < cost.rows(); ++r){
+      for(unsigned c = 0; c < cost.cols(); ++c){
+	cost[r][c]=abs(expectedLocs[i].at(r) - predictedLocs[i].at(c));
+      }
+    }
+    //Calculate the optimal assignment
+    a.push_back(linearAssignment(cost));
+  }
+
+
+  //Calculate a table of distances from its correspondence for each peak
+  std::map<std::pair<double,double>,double> distance;
+  const double inf = std::numeric_limits<double>::infinity();
+  for(unsigned specIdx = 0; specIdx < a.size(); ++specIdx){
+    GSimpleAssignment& curAssign = a.at(specIdx);
+    double specId = specIds.at(i);
+    //Take care of all expected peaks (which includes all predicted
+    //peaks with a match)
+    for(std::size_t expIdx = 0; expIdx < curAssign.sizeA(); ++expIdx){
+      int predIdx = curAssign(expIdx);
+      if(predIdx >= 0){
+	double d = abs(expectedLocs[s].at(expIdx) - 
+		       predictedLocs[s].at(predIdx));
+	distance[std::make_pair(specId,  expectedLocs[s].at( expIdx))]=d;
+	distance[std::make_pair(specId, predictedLocs[s].at(predIdx))]=d;
+      }else{
+	distance[std::make_pair(specId,  expectedLocs[s].at( expIdx))]=inf;
+      }
+    }
+
+    //Take care of all predicted peaks with no corresponding expected peak
+    for(std::size_t predIdx = 0; predIdx < curAssign.sizeB(); ++predIdx){
+      int expIdx = curAssign.inverse(predIdx);
+      if(expIdx < 0){
+	distance[std::make_pair(specId, predictedLocs[s].at(predIdx))]=-inf;
+      }
+    }
+
+  }
+
+  //Annotate the result matrix using the expected peaks
+  
+}
+
 
 ///\brief Return the distance loss for the \a expected and \a
 ///predicted matrix pair
