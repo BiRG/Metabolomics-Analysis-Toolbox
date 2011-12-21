@@ -288,12 +288,12 @@ if ( isfield(handles, 'storedBins') )
             num2str(handles.storedBins(i).bin.right, '%.3f') ];
     end;
 end;
-if ( storedBinsArrayLen == 0 )
+set(handles.mapped_bins_listbox, 'String', stringPropCell);
+if ( targetListboxIdx < 1 ||  targetListboxIdx > storedBinsArrayLen )
     set(handles.mapped_bins_listbox, 'Value', 1);
 else
-    set(handles.mapped_bins_listbox, 'Value', storedBinsArrayLen);
+    set(handles.mapped_bins_listbox, 'Value', targetListboxIdx);
 end;
-set(handles.mapped_bins_listbox, 'String', stringPropCell);
 
 
 % --- Executes during object creation, after setting all properties.
