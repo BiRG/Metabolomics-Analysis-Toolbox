@@ -108,7 +108,15 @@ for i = 1:collection.num_samples
     fprintf(fid,'\tY%d',i);
 end
 for j = 1:length(collection.x)
-    fprintf(fid,'\n%f',collection.x(j));
+    if iscell(collection.x)
+        if isfloat(collection.x{j})
+            fprintf(fid,'\n%f',collection.x{j});
+        else
+            fprintf(fid,'\n%s',collection.x{j});
+        end
+    else
+        fprintf(fid,'\n%f',collection.x(j));
+    end
     for i = 1:collection.num_samples
         fprintf(fid,'\t%f',collection.Y(j,i));
     end

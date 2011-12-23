@@ -194,7 +194,7 @@ else
     end
 
     metab_map_filename = get(handles.metab_map_filename_box,'String');
-    metab_map = load_metabmap(metab_map_filename);
+    metab_map = load_metabmap(metab_map_filename,'no_deleted_bins');
     if isempty(metab_map)
         uiwait(msgbox('Could not read the metab map from the given file', ...
             'Error','error'));
@@ -202,6 +202,7 @@ else
     end
     setpref('Targeted_Deconvolution','last_metab_map_filename', ...
         metab_map_filename);
+    metab_map = sort_metabmap_by_name_then_ppm(metab_map);
 
 
     % Now load the collection.  If there is a filename, load it from the
