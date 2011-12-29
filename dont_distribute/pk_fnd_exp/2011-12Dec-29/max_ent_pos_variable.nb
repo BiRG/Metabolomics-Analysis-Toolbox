@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     33149,        998]
-NotebookOptionsPosition[     30492,        904]
-NotebookOutlinePosition[     30828,        919]
-CellTagsIndexPosition[     30785,        916]
+NotebookDataLength[     74745,       2391]
+NotebookOptionsPosition[     68235,       2175]
+NotebookOutlinePosition[     68571,       2190]
+CellTagsIndexPosition[     68528,       2187]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -54,6 +54,12 @@ Cell[BoxData[
       RowBox[{"(", 
        RowBox[{"x", "-", "\[Mu]"}], ")"}], "2"]}]}], "]"}]}]], "Input",
  CellChangeTimes->{{3.534169544149577*^9, 3.5341695614336967`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["First constraint (normalized distribution)", "Subsection",
+ CellChangeTimes->{{3.534188277422099*^9, 3.5341882798550043`*^9}, {
+  3.5341884090289097`*^9, 3.53418841577361*^9}}],
 
 Cell["Here, I apply the first constraint", "Text",
  CellChangeTimes->{{3.53417194007183*^9, 3.5341719448077507`*^9}}],
@@ -99,7 +105,8 @@ Cell[BoxData[
   RowBox[{"2", " ", 
    SqrtBox[
     RowBox[{"-", "\[Lambda]2"}]]}]]], "Output",
- CellChangeTimes->{3.534169622617669*^9, 3.534169708279646*^9}]
+ CellChangeTimes->{3.534169622617669*^9, 3.534169708279646*^9, 
+  3.534177431204895*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -113,7 +120,7 @@ Cell["\<\
   (1 + Erf[(\[Lambda]1 - 2*\[Lambda]2*\[Mu])/(2*Sqrt[-\[Lambda]2])]))/
  (2*Sqrt[-\[Lambda]2])\
 \>", "Output",
- CellChangeTimes->{3.534170156609028*^9}]
+ CellChangeTimes->{3.534170156609028*^9, 3.534177431404771*^9}]
 }, Open  ]],
 
 Cell[TextData[{
@@ -144,7 +151,8 @@ with the methods available to Reduce.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/Reduce\\\", ButtonNote -> \
 \\\"Reduce::nsmet\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.534169736609325*^9, 3.534169935289113*^9}],
+ CellChangeTimes->{3.534169736609325*^9, 3.534169935289113*^9, 
+  3.534177432379301*^9}],
 
 Cell[BoxData[
  RowBox[{"Reduce", "[", 
@@ -175,7 +183,7 @@ Cell[BoxData[
    ",", "Reals"}], "]"}]], "Output",
  CellChangeTimes->{
   3.534169667171569*^9, {3.53416971989714*^9, 3.534169736638039*^9}, 
-   3.534169935326351*^9}]
+   3.534169935326351*^9, 3.5341774324923487`*^9}]
 }, Open  ]],
 
 Cell[TextData[{
@@ -230,7 +238,8 @@ Cell[BoxData[
            RowBox[{"-", "\[Lambda]2"}]]}]}], 
         RowBox[{"2", " ", "\[Lambda]2"}]], "]"}]}]}], 
     RowBox[{"4", " ", "\[Lambda]2"}]]}]}]], "Output",
- CellChangeTimes->{{3.534172041605938*^9, 3.534172062236471*^9}}]
+ CellChangeTimes->{{3.534172041605938*^9, 3.534172062236471*^9}, 
+   3.5341774357756433`*^9}]
 }, Open  ]],
 
 Cell["\<\
@@ -303,7 +312,7 @@ Cell[BoxData[
             RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]}], 
       RowBox[{"2", " ", "\[Lambda]2"}]], "]"}]}]}], 
   RowBox[{"4", " ", "\[Lambda]2"}]]], "Output",
- CellChangeTimes->{3.534172432453809*^9}]
+ CellChangeTimes->{3.534172432453809*^9, 3.534177439036502*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -335,7 +344,8 @@ Cell[BoxData[
            RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}], 
     SqrtBox[
      RowBox[{"-", "\[Lambda]2"}]]], "]"}]}]], "Output",
- CellChangeTimes->{3.5341724529776297`*^9, 3.5341724838581553`*^9}]
+ CellChangeTimes->{3.5341724529776297`*^9, 3.5341724838581553`*^9, 
+  3.53417744193976*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -376,8 +386,14 @@ Cell[BoxData[
        RowBox[{"2", " ", 
         SqrtBox[
          RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]]], "Output",
- CellChangeTimes->{3.534172538278154*^9}]
+ CellChangeTimes->{3.534172538278154*^9, 3.5341774440222588`*^9}]
+}, Open  ]]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["New expression after 1st constraint", "Subsection",
+ CellChangeTimes->{{3.534188374185851*^9, 3.534188379630316*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -408,7 +424,13 @@ Cell[BoxData[
         RowBox[{"2", " ", 
          SqrtBox[
           RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]]}]], "Input",
- CellChangeTimes->{{3.534172608144945*^9, 3.5341726413939953`*^9}}],
+ CellChangeTimes->{{3.534172608144945*^9, 3.5341726413939953`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Second constraint (known mean)", "Subsection",
+ CellChangeTimes->{{3.534188389305316*^9, 3.534188424101572*^9}}],
 
 Cell[CellGroupData[{
 
@@ -433,388 +455,11 @@ Cell[BoxData[
    3.534174527419436*^9, 3.534174529023439*^9}}],
 
 Cell[BoxData[
- RowBox[{"-", 
-  RowBox[{
-   RowBox[{"(", 
-    RowBox[{
-     RowBox[{"2", " ", 
-      SuperscriptBox["\[ExponentialE]", 
-       FractionBox[
-        SuperscriptBox[
-         RowBox[{"(", 
-          RowBox[{"\[Lambda]1", "-", 
-           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
-        RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
-      SqrtBox[
-       RowBox[{"-", "\[Lambda]2"}]]}], "+", 
-     RowBox[{
-      SqrtBox["\[Pi]"], " ", 
-      RowBox[{"(", 
-       RowBox[{"\[Lambda]1", "-", 
-        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
-      RowBox[{"(", 
-       RowBox[{"1", "+", 
-        RowBox[{"\[ImaginaryI]", " ", 
-         RowBox[{"Erfi", "[", 
-          FractionBox[
-           RowBox[{"\[Lambda]1", "-", 
-            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
-           RowBox[{"2", " ", 
-            SqrtBox["\[Lambda]2"]}]], "]"}], " ", 
-         SuperscriptBox[
-          RowBox[{"Sign", "[", 
-           RowBox[{"\[Lambda]1", "-", 
-            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], "2"]}]}],
-        ")"}]}]}], ")"}], "/", 
-   RowBox[{"(", 
-    RowBox[{"2", " ", 
-     SqrtBox["\[Pi]"], " ", "\[Lambda]2", " ", 
-     RowBox[{"(", 
-      RowBox[{"1", "+", 
-       RowBox[{"Erf", "[", 
-        FractionBox[
-         RowBox[{"\[Lambda]1", "-", 
-          RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
-         RowBox[{"2", " ", 
-          SqrtBox[
-           RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}], 
-    ")"}]}]}]], "Output",
- CellChangeTimes->{3.534171197288938*^9, 3.5341727104723387`*^9, 
-  3.534174471122889*^9, 3.534174531356223*^9}]
-}, Open  ]],
-
-Cell[TextData[{
- "In order for the mean to have a real value, the expression ",
- Cell[BoxData[
-  RowBox[{
-   SqrtBox["\[Pi]"], " ", 
-   RowBox[{"(", 
-    RowBox[{"\[Lambda]1", "-", 
-     RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
-   RowBox[{"(", 
-    RowBox[{"1", "+", 
-     RowBox[{"\[ImaginaryI]", " ", 
-      RowBox[{"Erfi", "[", 
-       FractionBox[
-        RowBox[{"\[Lambda]1", "-", 
-         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
-        RowBox[{"2", " ", 
-         SqrtBox["\[Lambda]2"]}]], "]"}], " ", 
-      SuperscriptBox[
-       RowBox[{"Sign", "[", 
-        RowBox[{"\[Lambda]1", "-", 
-         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], "2"]}]}], 
-    ")"}]}]], "Output",
-  CellChangeTimes->{3.534171197288938*^9, 3.5341727104723387`*^9, 
-   3.534174471122889*^9, 3.534174531356223*^9}],
- " must be real.  It can only be real if ",
- Cell[BoxData[
-  RowBox[{"\[ImaginaryI]", " ", 
-   RowBox[{"Erfi", "[", 
-    FractionBox[
-     RowBox[{"\[Lambda]1", "-", 
-      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
-     RowBox[{"2", " ", 
-      SqrtBox["\[Lambda]2"]}]], "]"}], " ", 
-   SuperscriptBox[
-    RowBox[{"Sign", "[", 
-     RowBox[{"\[Lambda]1", "-", 
-      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], "2"]}]], 
-  "Output",
-  CellChangeTimes->{3.534171197288938*^9, 3.5341727104723387`*^9, 
-   3.534174471122889*^9, 3.534174531356223*^9}],
- " is also real.  This can only be real if ",
- Cell[BoxData[
-  RowBox[{
-   RowBox[{"Erfi", "[", 
-    FractionBox[
-     RowBox[{"\[Lambda]1", "-", 
-      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
-     RowBox[{"2", " ", 
-      SqrtBox["\[Lambda]2"]}]], "]"}], " ", 
-   SuperscriptBox[
-    RowBox[{"Sign", "[", 
-     RowBox[{"\[Lambda]1", "-", 
-      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], "2"]}]], 
-  "Output",
-  CellChangeTimes->{3.534171197288938*^9, 3.5341727104723387`*^9, 
-   3.534174471122889*^9, 3.534174531356223*^9}],
- "==0.  This can, in turn, only be true if either \[Lambda]1 - 2 \[Lambda]2 \
-\[Mu]==0 (which makes the squared Sign function 0) or if ",
- Cell[BoxData[
-  FractionBox[
-   RowBox[{"\[Lambda]1", "-", 
-    RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
-   RowBox[{"2", " ", 
-    SqrtBox["\[Lambda]2"]}]]], "Output",
-  CellChangeTimes->{3.534171197288938*^9, 3.5341727104723387`*^9, 
-   3.534174471122889*^9, 3.534174531356223*^9}],
- "==0, which makes Erfi 0.  Both of these are true iff \[Lambda]1 - 2 \
-\[Lambda]2 \[Mu]==0.  So, this is a necessary and condition for a known real \
-mean."
-}], "Text",
- CellChangeTimes->{{3.534174826119569*^9, 3.53417507959473*^9}}],
-
-Cell["When this is substituted back into the expression, we get", "Text",
- CellChangeTimes->{{3.534175082882531*^9, 3.534175113105083*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"knownRealMean", "=", 
-  RowBox[{"FullSimplify", "[", 
-   RowBox[{"knownMean", ",", 
-    RowBox[{"Assumptions", "->", 
-     RowBox[{
-      RowBox[{"\[Lambda]1", "-", 
-       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "\[Equal]", 
-      "0"}]}]}], "]"}]}]], "Input",
- CellChangeTimes->{{3.5341751154811907`*^9, 3.534175145457135*^9}}],
-
-Cell[BoxData[
- FractionBox["1", 
-  RowBox[{
-   SqrtBox["\[Pi]"], " ", 
-   SqrtBox[
-    RowBox[{"-", "\[Lambda]2"}]]}]]], "Output",
- CellChangeTimes->{3.534175148908978*^9}]
-}, Open  ]],
-
-Cell["Which is much better.", "Text",
- CellChangeTimes->{{3.534175157210108*^9, 3.534175159899737*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"Reduce", "[", 
-  RowBox[{
-   RowBox[{"knownRealMean", "\[Equal]", "\[Mu]"}], ",", "\[Lambda]2", ",", 
-   "Reals"}], "]"}]], "Input",
- CellChangeTimes->{{3.5341727575349693`*^9, 3.534172762370153*^9}, {
-  3.534172801190158*^9, 3.534172804594399*^9}, {3.534175254598935*^9, 
-  3.5341752744615803`*^9}}],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"\[Mu]", ">", "0"}], "&&", 
-  RowBox[{"\[Lambda]2", "\[Equal]", 
-   RowBox[{"-", 
-    FractionBox["1", 
-     RowBox[{"\[Pi]", " ", 
-      SuperscriptBox["\[Mu]", "2"]}]]}]}]}]], "Output",
- CellChangeTimes->{
-  3.5341727641099663`*^9, 3.534172809098325*^9, {3.534175256126562*^9, 
-   3.5341752751191607`*^9}}]
-}, Open  ]],
-
-Cell[TextData[{
- "Now, we can get a new expression for the density ppp: substituting ",
- Cell[BoxData[
-  RowBox[{"\[Lambda]2", "\[Equal]", 
-   RowBox[{"-", 
-    FractionBox["1", 
-     RowBox[{"\[Pi]", " ", 
-      SuperscriptBox["\[Mu]", "2"]}]]}]}]], "Output",
-  CellChangeTimes->{
-   3.5341727641099663`*^9, 3.534172809098325*^9, {3.534175256126562*^9, 
-    3.5341752751191607`*^9}}],
- ", and \[Lambda]1 - 2 \[Lambda]2 \[Mu]==0 and ",
- "\[Mu] > 0"
-}], "Text",
- CellChangeTimes->{{3.534175337961738*^9, 3.53417534973952*^9}, {
-  3.534175421227866*^9, 3.534175437688366*^9}, {3.534175600003664*^9, 
-  3.534175629746736*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"newPPPaExpr", "=", 
-  RowBox[{"FullSimplify", "[", 
-   RowBox[{"newPPExpr", ",", 
-    RowBox[{
-     RowBox[{"\[Lambda]1", "-", 
-      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "\[Equal]", "0"}]}], 
-   "]"}]}]], "Input",
- CellChangeTimes->{{3.534175934740287*^9, 3.534175995741555*^9}}],
-
-Cell[BoxData[
- FractionBox[
-  RowBox[{"2", " ", 
-   SuperscriptBox["\[ExponentialE]", 
-    RowBox[{
-     SuperscriptBox["x", "2"], " ", "\[Lambda]2"}]], " ", 
-   SqrtBox[
-    RowBox[{"-", "\[Lambda]2"}]]}], 
-  SqrtBox["\[Pi]"]]], "Output",
- CellChangeTimes->{3.534175938284161*^9, 3.534175996923703*^9}]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"newPPPExpr", "=", 
-  RowBox[{"FullSimplify", "[", 
-   RowBox[{
-    RowBox[{"newPPPaExpr", "/.", 
-     RowBox[{"\[Lambda]2", "->", 
-      RowBox[{"-", 
-       FractionBox["1", 
-        RowBox[{"\[Pi]", " ", 
-         SuperscriptBox["\[Mu]", "2"]}]]}]}]}], ",", 
-    RowBox[{"Assumptions", "\[Rule]", 
-     RowBox[{
-      RowBox[{"x", ">", "0"}], "&&", 
-      RowBox[{"\[Mu]", ">", "0"}]}]}]}], "]"}]}]], "Input",
- CellChangeTimes->{{3.5341759256025333`*^9, 3.534175933172001*^9}, {
-  3.5341760123974657`*^9, 3.534176079031707*^9}}],
-
-Cell[BoxData[
- FractionBox[
-  RowBox[{"2", " ", 
-   SuperscriptBox["\[ExponentialE]", 
-    RowBox[{"-", 
-     FractionBox[
-      SuperscriptBox["x", "2"], 
-      RowBox[{"\[Pi]", " ", 
-       SuperscriptBox["\[Mu]", "2"]}]]}]]}], 
-  RowBox[{"\[Pi]", " ", "\[Mu]"}]]], "Output",
- CellChangeTimes->{{3.5341760368217087`*^9, 3.534176079739628*^9}}]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"Integrate", "[", 
-  RowBox[{
-   FractionBox[
-    RowBox[{"2", " ", 
-     SuperscriptBox["\[ExponentialE]", 
-      RowBox[{"-", 
-       FractionBox[
-        SuperscriptBox["x", "2"], 
-        RowBox[{"\[Pi]", " ", 
-         SuperscriptBox["\[Mu]", "2"]}]]}]]}], 
-    RowBox[{"\[Pi]", " ", "\[Mu]"}]], ",", 
-   RowBox[{"{", 
-    RowBox[{"x", ",", "0", ",", "Infinity"}], "}"}], ",", 
-   RowBox[{"Assumptions", "\[Rule]", 
-    RowBox[{"\[Mu]", ">", "0"}]}]}], "]"}]], "Input",
- CellChangeTimes->{{3.534176116817791*^9, 3.534176157379428*^9}}],
-
-Cell[BoxData["1"], "Output",
- CellChangeTimes->{{3.534176144192134*^9, 3.534176159224751*^9}}]
-}, Open  ]],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"ppp", "[", 
-   RowBox[{"x_", ",", "\[Mu]_"}], "]"}], ":=", 
-  RowBox[{"If", "[", 
-   RowBox[{
-    RowBox[{"x", "\[GreaterEqual]", "0"}], ",", 
-    FractionBox[
-     RowBox[{"2", " ", 
-      SuperscriptBox["\[ExponentialE]", 
-       RowBox[{"-", 
-        FractionBox[
-         SuperscriptBox["x", "2"], 
-         RowBox[{"\[Pi]", " ", 
-          SuperscriptBox["\[Mu]", "2"]}]]}]]}], 
-     RowBox[{"\[Pi]", " ", "\[Mu]"}]], ",", "0"}], "]"}]}]], "Input",
- CellChangeTimes->{{3.5341763150627413`*^9, 3.534176328202569*^9}, {
-  3.534176414685936*^9, 3.534176454901877*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"Plot", "[", 
-  RowBox[{
-   RowBox[{"ppp", "[", 
-    RowBox[{"x", ",", "2"}], "]"}], ",", 
-   RowBox[{"{", 
-    RowBox[{"x", ",", 
-     RowBox[{"-", "1"}], ",", "2"}], "}"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.53417629696264*^9, 3.5341763112665977`*^9}, {
-  3.534176460317936*^9, 3.53417648512364*^9}}],
-
-Cell[BoxData[
- GraphicsBox[{{}, {}, 
-   {Hue[0.67, 0.6, 0.6], LineBox[CompressedData["
-1:eJxF0gk41VkfB3DbMEUkYa5lChFZQiiSn2TJXkKKso94s0aWDKGiEI0boXLJ
-IPs+RpiLm67yF/deEzF2XqKsybi47+l53ufvPM95zvN5zjnPOed3vlJu/jae
-HGxsbE2ofx9fX5UaYbEW/mL7f5Nb07S4ub7jhGSzP+cXd2zRdCNtYGzHNEKH
-SU37jkcZPpW/xO9406w2BuPfscZxk0PZkl9w6/8lOJK3bx73UVLhc5sjn3AT
-cwsS0s1ncKfbmM0YG07jjnD60yLHeRI3UxiT87AZx728YKrYbDWKO8PokHfk
-4BDuuN3bv1yk9uPWjPHzi91g4KafqHrbB7247XIiDnFde4s7VZXcsfmxDfct
-NrVoq4t1uH/8r6EDt+iOiZiDWsvftbhLs25PKNvveEijx2SPXQ1uPW//vV02
-Vbg58h3PpD0txi0WGPeVQ2LHx/RKCoOyX+L26N/gtckqwv2aL4ux90nBzv+G
-9Hs+TMvDLf6weK+Q8GPcLQznUGNZIm4XceHhcM003PlF0SWjdo9wO9x7meSk
-nIj7qdD+y+2W93fyQYo6fMQvHrf3qwtt38rjcH8dZS7IuobhjmL2PFjJDcbN
-LVIg2zoegFvSde22pIkPbpV0Un0D1W1nf/rj/kKiPe47HEUC4c56O/mw5T5T
-lnYKjpPgmqozA8QUfadqXe1B4vyPJ7870oXvFFS4QZudxehRZB9FN558ZR94
-UMnr8N1KzMFrXH8HwA+exnkqyPmj3N1aj4NhNXSzRRlZokPtmLdtGFgtKJcr
-IaeVOD3JFooEDdpHf0Xk3Y/itzBaNGzLc3IdQT598pIaW2cMqG8V+Mgjb5Z9
-cc8sioOESx0v5JAbDt5JV0+4C7OmrhWHkIPTCJ3vvOIhYDA0WRpZlbuC6WFy
-H7wkdusdRJ4PM1TZlksEC4mfWiWRC+cGXDK4k+HdXK6IOHLKNY6JSbdUMDRQ
-0Bb+vl7KMrLK5hGkLspx70M2G8wQjjL4DUSaSb/zI3NbKZ8VlSbCI75dTjzI
-HjxhYxOCj8GZ/C2IE7mN3BZRyZ4OYqtuTqyrDIg65lBmOpYB8mYVBWvIQ/N5
-xiK9T2CwIJVnGVmn4PPIODkT9Ne/6HxGXvspbl8kKRv+3ZAmTCD7bpeFljvn
-wJb19Zou5CnHyITmwyQoJ2gXdSATG6T6XuSQgLoR509GXg687heQkgsaJcSQ
-GuTySfbcXf4vgJRT4JyBfFNYr2f/0gvQNs4xTEHWM45gHbiRD8H8gqv3kLHC
-5Staob9DBa9rdQjyvM+EmHt0ITRaNJaeQ67NPmDmx14E5xLipoyRI7scw8Pj
-ikDuIHVGF5lXhfEhJf4lKOdSrOSRjyxRiE0pJWD7Oe3J5hV0Pyl2yhvBUmBy
-npZdQm60ObVCSyuFdbHrkVPIprV152czysDk1akHGPK10AJ+EVIFjOoMyGQj
-07fPUI73V0GZmZm1ErKW6LjjKUI1DIhy35FEzjp6e8XgcjVQvI3j+JHdXJqk
-rYaqgXjTfmzBCZ3fqhHjMVoDLomt4pXIgndl9R7N1IFG27EHcsjBz9r70hXq
-IXAqyGs/cn+dq+9Tn3rQ/kNPgAOZNP3saeF8PYQUR7UMOaK8nRVhNi/+AT08
-ldkpyNa8PA2f1v+EdxTn83OXGZDewGudrdkIpku5Jh+Qhz33TpsHNQLbR0eB
-dmQ/MmF/2Vwj5PNpC2UhJ4UoBfgPvwLX4KJ5I2TqyHn51fZmMDs/OE28xICD
-l626ot6QwZ9M2xRwYAClskf0wxQZOFPVZNYuonrxXHA/ytUKyyPi4kPIFbUX
-N0b0W6Gr63F0IbKegKv86cZWOFajLq6L7ES5cYezrA0mkmqeOdkzIFMlUzfh
-Nwr0BCv0RdgywECnlexdQ4FJbtl4B+R5o1lDcwYFsl2qObSQ9a9oW/KLvIZ2
-yj37xQsMmEkcuELMfA1KhzQD3ZBPzBKiSaQOeBiRf0PXBtXzRVZrQzkVLk/+
-WPfGmgGxFW1GWe+pcEsmPPs5stKrT523Fqnw5kSueQjybZoOTU+9E1oJP++S
-RpZnHxyn1HVCYfTCepgVA8KuinP1Nr0F1VaJMglLBogSnhrPvu2Cjy6XAk+a
-oXz9JpmgNtcFglq8gXzITnw5neG8GBjEPtb9x5QBeaxci90WGKhrax+PQlaa
-LrRRxDCITZpqbD6L3ldTc9X3fTfImoptqZswoK7A89W6dw8k+jwIXTuD/lP/
-V3qkHw3e3r70fEwXvT9PtDbxVxrwLUYVvURe5qomZiWh+aKsu4HIPJ3Tdg3F
-NEgabWxgQ1Y9f65/ZZoGMQJUDsmTqB6uMv/4ONMhO/SXw5baDJCN7Zx2OMcA
-Nbvw5kRNBlxvF97QUP8bmLXMm7HKDCBPe2juN/kI0gpCllUElD8HSa8XIsOQ
-+OnnmDNcDAinsEvfnR2FgM9lR5Pm6aCs3CNmsTgO11ci5hnv6bCtS+f/D2MS
-yrmt6oyr6aD+TC1ZcmwaXOLbjcxT6LA4JDd2cnIG+H8o8+TxoUNX+znVason
-sJhkjTcY0oGX2berCZuHOfFM3ocEOngNpAxL1n4B+kktD+oXGhSYB1BCzi4C
-ndKZl9lGg3c2HVflzJegK+tWuVYqDaLL6tdidZdheULRffMqDTwqGRcUDFag
-qGnJxPwwDfq5k8tvaa1CbouPktpSLwhie1c55b7C/ddjpw0beyHyZNt2n8Ia
-SMQ+WiuN7IWQrT08thLfwGf7K+ZxuhdIXvEMcZl1cHZU2TRn9UDq6a4kguy/
-EKpOL85r6gF+/xIDVFJI2FoRXI/sgRbDhuZ6MSa4jtYe9tXqgS1fZy17/k0Q
-rWZ7eHv6PbDz0DIVtzYhPDdHNc7lPWidDWozY9uGkVz1e11d3bAxVDojvLwN
-hXGjdWv63WB4nZpqubYN2L+rOrF63ZDMnDhxd2MbyolBz/bodsNBMfH7qxws
-oO+Z35A53g0mF+8r0IVYsNZXQrBW7gZir6dPqiYLCIabq88J3aDS8fP87nAW
-kGXIGbLLGITZ6RANfmWBlIDtp9IFDFon7XQjYlgQeMFLQuMzBracyUmz91mg
-l211wGAGg1v6TCVqFgsifljJdRrGgNr4wfduEwvOKim8THyLwT6zFeFmMgv2
-yMUx91IxcBrgb1mlsGBM1ksl/TUGC9+M+D0wFtz4IKBFImMgollbbjCM5i3q
-u6vrMXChvLePGGeBHEX98PFaDF5emNuummZBT2iLy6sqDHSDpK2lFlhQKG8c
-2l6KwT12vW8OKywQ8ne3NSnGoCf1Uk7qNxa436Hte1eIgdjBEBMqkwVGfPnV
-Vr9j4F6RusBisYC3eOYYLQ+D/wG6BCyR
-     "]]}},
-  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
-  Axes->True,
-  AxesOrigin->{0, 0},
-  PlotRange->{{-1, 2}, {0., 0.3183098810245641}},
-  PlotRangeClipping->True,
-  PlotRangePadding->{
-    Scaled[0.02], 
-    Scaled[0.02]}]], "Output",
- CellChangeTimes->{{3.5341764695350437`*^9, 3.53417648552964*^9}}]
-}, Open  ]],
-
-Cell[BoxData[""], "Input"],
-
-Cell[BoxData[
  RowBox[{
   RowBox[{"(", 
    RowBox[{
-    RowBox[{"2", " ", 
+    RowBox[{
+     RowBox[{"-", "2"}], " ", 
      SuperscriptBox["\[ExponentialE]", 
       FractionBox[
        SuperscriptBox[
@@ -823,7 +468,7 @@ Cell[BoxData[
           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
        RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
      SqrtBox[
-      RowBox[{"-", "\[Lambda]2"}]]}], "+", 
+      RowBox[{"-", "\[Lambda]2"}]]}], "-", 
     RowBox[{
      SqrtBox["\[Pi]"], " ", 
      RowBox[{"(", 
@@ -845,29 +490,366 @@ Cell[BoxData[
       ")"}]}]}], ")"}], "/", 
   RowBox[{"(", 
    RowBox[{"2", " ", 
-    SqrtBox["\[Pi]"], " ", "\[Lambda]2", " ", 
+    SqrtBox["\[Pi]"], " ", 
     RowBox[{"(", 
-     RowBox[{"1", "+", 
-      RowBox[{"Erf", "[", 
-       FractionBox[
-        RowBox[{"\[Lambda]1", "-", 
-         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
-        RowBox[{"2", " ", 
-         SqrtBox[
-          RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}], ")"}]}]], "Input"],
+     RowBox[{"\[Lambda]2", "+", 
+      RowBox[{"\[ImaginaryI]", " ", "\[Lambda]2", " ", 
+       RowBox[{"Erfi", "[", 
+        FractionBox[
+         RowBox[{"\[Lambda]1", "-", 
+          RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+         RowBox[{"2", " ", 
+          SqrtBox["\[Lambda]2"]}]], "]"}]}]}], ")"}]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.534171197288938*^9, 3.5341727104723387`*^9, 
+  3.534174471122889*^9, 3.534174531356223*^9, 3.5341774591297092`*^9}]
+}, Open  ]],
+
+Cell["\<\
+Here I simplify by hand.  First, I rewrite everything in terms of the plain \
+Erf using the relation that Erf[\[ImaginaryI] x]==\[ImaginaryI] Erfi[x]\
+\>", "Text",
+ CellChangeTimes->{{3.5341776920145273`*^9, 3.5341777255577583`*^9}, {
+  3.534177828804158*^9, 3.534177904552228*^9}, {3.534177977407802*^9, 
+  3.5341779884855213`*^9}, {3.5341794992413883`*^9, 3.534179507711403*^9}, {
+  3.5341795745435143`*^9, 3.534179602347434*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"FullSimplify", "[", 
+ RowBox[{"Simplify", "[", 
   RowBox[{"Erf", "[", 
-   RowBox[{"-", "x"}], "]"}], "]"}]], "Input",
- CellChangeTimes->{{3.534177025676577*^9, 3.534177037198174*^9}}],
+   RowBox[{"I", " ", "x"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.534178041882333*^9, 3.534178110254023*^9}, {
+  3.5341791004095917`*^9, 3.534179102020208*^9}, {3.534179517780047*^9, 
+  3.5341795709088917`*^9}}],
 
 Cell[BoxData[
- RowBox[{"-", 
-  RowBox[{"Erf", "[", "x", "]"}]}]], "Output",
- CellChangeTimes->{3.5341770378152733`*^9}]
+ RowBox[{"\[ImaginaryI]", " ", 
+  RowBox[{"Erfi", "[", "x", "]"}]}]], "Output",
+ CellChangeTimes->{{3.5341780580377693`*^9, 3.534178110937213*^9}, 
+   3.5341791026871243`*^9, {3.534179537201337*^9, 3.534179571484096*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{"I", " ", 
+    RowBox[{"Erfi", "[", "x", "]"}]}], "\[Equal]", 
+   RowBox[{"Erf", "[", 
+    RowBox[{"I", " ", "x"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.534178139200729*^9, 3.534178152257904*^9}, {
+  3.5341796232119207`*^9, 3.534179659005608*^9}}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{3.5341796600223093`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"knownMeanHand1", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+         RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{
+          RowBox[{"Erf", "[", 
+           RowBox[{"I", 
+            FractionBox[
+             RowBox[{"\[Lambda]1", "-", 
+              RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+             RowBox[{"2", " ", 
+              SqrtBox["\[Lambda]2"]}]]}], "]"}], " ", 
+          SuperscriptBox[
+           RowBox[{"Sign", "[", 
+            RowBox[{"\[Lambda]1", "-", 
+             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], 
+           "2"]}]}], ")"}]}]}], ")"}], "/", 
+    RowBox[{"(", 
+     RowBox[{"2", " ", 
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]2", "+", 
+        RowBox[{"\[Lambda]2", " ", 
+         RowBox[{"Erf", "[", 
+          RowBox[{"I", 
+           FractionBox[
+            RowBox[{"\[Lambda]1", "-", 
+             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+            RowBox[{"2", " ", 
+             SqrtBox["\[Lambda]2"]}]]}], "]"}]}]}], ")"}]}], ")"}]}]}], ";"}]],\
+ "Input",
+ CellChangeTimes->{{3.5341776858610983`*^9, 3.534177689887207*^9}, {
+  3.534177795873551*^9, 3.534177796234891*^9}, {3.534177926244368*^9, 
+  3.5341779668611794`*^9}, {3.5341780022463417`*^9, 3.534178026679174*^9}, {
+  3.534179448300028*^9, 3.534179489256687*^9}, {3.5341797034860563`*^9, 
+  3.534179720924389*^9}}],
+
+Cell["Next, I negate the internal \[ImaginaryI]", "Text",
+ CellChangeTimes->{{3.534179773902754*^9, 3.534179826844576*^9}, {
+  3.5341798842827673`*^9, 3.534179891731039*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"knownMeanHand2", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+         RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{
+          RowBox[{"Erf", "[", 
+           RowBox[{
+            RowBox[{"-", "I"}], 
+            FractionBox[
+             RowBox[{"-", 
+              RowBox[{"(", 
+               RowBox[{"\[Lambda]1", "-", 
+                RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}]}], 
+             RowBox[{"2", " ", 
+              SqrtBox["\[Lambda]2"]}]]}], "]"}], " ", 
+          SuperscriptBox[
+           RowBox[{"Sign", "[", 
+            RowBox[{"\[Lambda]1", "-", 
+             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], 
+           "2"]}]}], ")"}]}]}], ")"}], "/", 
+    RowBox[{"(", 
+     RowBox[{"2", " ", 
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]2", "+", 
+        RowBox[{"\[Lambda]2", " ", 
+         RowBox[{"Erf", "[", 
+          RowBox[{
+           RowBox[{"-", "I"}], 
+           FractionBox[
+            RowBox[{"-", 
+             RowBox[{"(", 
+              RowBox[{"\[Lambda]1", "-", 
+               RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}]}], 
+            RowBox[{"2", " ", 
+             SqrtBox["\[Lambda]2"]}]]}], "]"}]}]}], ")"}]}], ")"}]}]}], ";"}]],\
+ "Input",
+ CellChangeTimes->{{3.5341776858610983`*^9, 3.534177689887207*^9}, {
+  3.534177795873551*^9, 3.534177796234891*^9}, {3.534177926244368*^9, 
+  3.5341779668611794`*^9}, {3.5341780022463417`*^9, 3.534178026679174*^9}, {
+  3.534179448300028*^9, 3.534179489256687*^9}, {3.5341797034860563`*^9, 
+  3.534179738016341*^9}, {3.5341798430305853`*^9, 3.534179871381569*^9}, {
+  3.534179913302773*^9, 3.534179919009091*^9}}],
+
+Cell["\<\
+Next, I use the fact that -\[ImaginaryI]==1/\[ImaginaryI]\
+\>", "Text",
+ CellChangeTimes->{{3.534179926895488*^9, 3.534179939976522*^9}, 
+   3.534179970885453*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{"-", "I"}], "\[Equal]", 
+   RowBox[{"1", "/", "I"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.534179978308387*^9, 3.534179986436198*^9}}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{3.5341799876082706`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"knownMeanHand3", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+         RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", 
+         RowBox[{
+          RowBox[{"Erf", "[", 
+           FractionBox[
+            RowBox[{"-", 
+             RowBox[{"(", 
+              RowBox[{"\[Lambda]1", "-", 
+               RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}]}], 
+            RowBox[{"I", " ", "2", " ", 
+             SqrtBox["\[Lambda]2"]}]], "]"}], " ", 
+          SuperscriptBox[
+           RowBox[{"Sign", "[", 
+            RowBox[{"\[Lambda]1", "-", 
+             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], 
+           "2"]}]}], ")"}]}]}], ")"}], "/", 
+    RowBox[{"(", 
+     RowBox[{"2", " ", 
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]2", "+", 
+        RowBox[{"\[Lambda]2", " ", 
+         RowBox[{"Erf", "[", 
+          FractionBox[
+           RowBox[{"-", 
+            RowBox[{"(", 
+             RowBox[{"\[Lambda]1", "-", 
+              RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}]}], 
+           RowBox[{"I", " ", "2", " ", 
+            SqrtBox["\[Lambda]2"]}]], "]"}]}]}], ")"}]}], ")"}]}]}], ";"}]], \
+"Input",
+ CellChangeTimes->{{3.5341776858610983`*^9, 3.534177689887207*^9}, {
+  3.534177795873551*^9, 3.534177796234891*^9}, {3.534177926244368*^9, 
+  3.5341779668611794`*^9}, {3.5341780022463417`*^9, 3.534178026679174*^9}, {
+  3.534179448300028*^9, 3.534179489256687*^9}, {3.5341797034860563`*^9, 
+  3.534179738016341*^9}, {3.5341798430305853`*^9, 3.534179871381569*^9}, {
+  3.534179913302773*^9, 3.534179919009091*^9}, {3.534180008753955*^9, 
+  3.534180039884549*^9}}],
+
+Cell["\<\
+Next, I move the I inside the square root to become a -1 and I move the \
+negative sign out of the Errf (since Erf is odd)\
+\>", "Text",
+ CellChangeTimes->{{3.534180043312749*^9, 3.534180072558773*^9}, {
+  3.534180129681107*^9, 3.534180163028841*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"knownMeanHand4", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+         RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         RowBox[{
+          RowBox[{"Erf", "[", 
+           FractionBox[
+            RowBox[{"\[Lambda]1", "-", 
+             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+            RowBox[{"2", " ", 
+             SqrtBox[
+              RowBox[{"-", "\[Lambda]2"}]]}]], "]"}], " ", 
+          SuperscriptBox[
+           RowBox[{"Sign", "[", 
+            RowBox[{"\[Lambda]1", "-", 
+             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "]"}], 
+           "2"]}]}], ")"}]}]}], ")"}], "/", 
+    RowBox[{"(", 
+     RowBox[{"2", " ", 
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]2", "-", 
+        RowBox[{"\[Lambda]2", " ", 
+         RowBox[{"Erf", "[", 
+          FractionBox[
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+           RowBox[{"2", " ", 
+            SqrtBox[
+             RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]}], ")"}]}], ")"}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.5341776858610983`*^9, 3.534177689887207*^9}, {
+  3.534177795873551*^9, 3.534177796234891*^9}, {3.534177926244368*^9, 
+  3.5341779668611794`*^9}, {3.5341780022463417`*^9, 3.534178026679174*^9}, {
+  3.534179448300028*^9, 3.534179489256687*^9}, {3.5341797034860563`*^9, 
+  3.534179738016341*^9}, {3.5341798430305853`*^9, 3.534179871381569*^9}, {
+  3.534179913302773*^9, 3.534179919009091*^9}, {3.534180008753955*^9, 
+  3.534180039884549*^9}, {3.534180083836956*^9, 3.534180103131012*^9}, {
+  3.534180169500139*^9, 3.534180194602769*^9}}],
+
+Cell["Now, I will break it into two expressions.", "Text",
+ CellChangeTimes->{{3.534180339606284*^9, 3.534180348972385*^9}}],
+
+Cell["\<\
+The first is when \[Lambda]1 - 2 \[Lambda]2 \[Mu] \[Equal] 0\
+\>", "Text",
+ CellChangeTimes->{{3.53418035957377*^9, 3.534180372855262*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHandSimplest", "=", 
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"knownMean", "\[Equal]", "\[Mu]"}], ",", " ", 
+    RowBox[{"Assumptions", " ", "->", " ", 
+     RowBox[{
+      RowBox[{"\[Lambda]1", " ", "-", " ", 
+       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], " ", "\[Equal]", " ",
+       "0"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.534180377078801*^9, 3.534180404253768*^9}, {
+  3.534188618131275*^9, 3.5341886200258923`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["1", 
+   RowBox[{
+    SqrtBox["\[Pi]"], " ", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}]], "\[Equal]", "\[Mu]"}]], "Output",
+ CellChangeTimes->{3.534180417367193*^9, 3.534180480855529*^9, 
+  3.534188621230708*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -877,8 +859,53 @@ Cell[BoxData[
   RowBox[{
    RowBox[{
     RowBox[{
-     RowBox[{"Im", "[", 
-      RowBox[{"2", " ", 
+     FractionBox["1", 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}]], "\[Equal]", "\[Mu]"}], "&&", 
+    RowBox[{"\[Lambda]2", "<", "0"}], "&&", 
+    RowBox[{"\[Mu]", ">", "0"}]}], ",", "\[Lambda]2"}], "]"}]], "Input",
+ CellChangeTimes->{{3.534188624846133*^9, 3.534188656227127*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[Mu]", ">", "0"}], "&&", 
+  RowBox[{"\[Lambda]2", "\[Equal]", 
+   RowBox[{"-", 
+    FractionBox["1", 
+     RowBox[{"\[Pi]", " ", 
+      SuperscriptBox["\[Mu]", "2"]}]]}]}]}]], "Output",
+ CellChangeTimes->{3.534188656783451*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "The second is when \[Lambda]1 - 2 \[Lambda]2 \[Mu] \[NotEqual] 0 (it needs \
+to be done by hand because ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " can't see that ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SuperscriptBox[
+     RowBox[{"Sign", "[", "x", "]"}], "2"], "\[Equal]", "1"}], 
+   TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " when x\[NotEqual]0"
+}], "Text",
+ CellChangeTimes->{{3.5341804204760227`*^9, 3.534180441635182*^9}, {
+  3.534180494840616*^9, 3.534180529694085*^9}, {3.534180603817019*^9, 
+  3.534180614922244*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"knownMeanHand5", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
        SuperscriptBox["\[ExponentialE]", 
         FractionBox[
          SuperscriptBox[
@@ -887,22 +914,1266 @@ Cell[BoxData[
             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
          RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
        SqrtBox[
-        RowBox[{"-", "\[Lambda]2"}]]}], "]"}], "\[Equal]", "0"}], "&&", 
-    RowBox[{"\[Lambda]2", "\[LessEqual]", "0"}]}], ",", 
-   RowBox[{"{", 
-    RowBox[{"\[Lambda]1", ",", "\[Lambda]2", ",", "\[Mu]"}], "}"}], ",", 
-   "Reals"}], "]"}]], "Input",
- CellChangeTimes->{{3.534176612308227*^9, 3.534176668624133*^9}, {
-  3.53417670369706*^9, 3.5341767728381557`*^9}}],
+        RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         RowBox[{"Erf", "[", 
+          FractionBox[
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+           RowBox[{"2", " ", 
+            SqrtBox[
+             RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]}], ")"}], "/", 
+    
+    RowBox[{"(", 
+     RowBox[{"2", " ", 
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]2", "-", 
+        RowBox[{"\[Lambda]2", " ", 
+         RowBox[{"Erf", "[", 
+          FractionBox[
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+           RowBox[{"2", " ", 
+            SqrtBox[
+             RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]}], ")"}]}], ")"}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.534180377078801*^9, 3.534180404253768*^9}, {
+  3.534180451389081*^9, 3.534180451974339*^9}, {3.534180489928445*^9, 
+  3.5341804914195137`*^9}, {3.534180587655388*^9, 3.5341805986985273`*^9}}],
+
+Cell["\<\
+I factor out \[Lambda]2 from the denominator\
+\>", "Text",
+ CellChangeTimes->{{3.534181449898183*^9, 3.534181469149786*^9}}],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"\[Lambda]2", "\[LessEqual]", "0"}]], "Output",
- CellChangeTimes->{{3.534176629121188*^9, 3.534176670082644*^9}, {
-  3.534176705239436*^9, 3.5341767732994204`*^9}}]
+ RowBox[{"knownMeanHand6", "=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "2"}], " ", 
+      SuperscriptBox["\[ExponentialE]", 
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"\[Lambda]1", "-", 
+           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+        RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+     RowBox[{
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "-", 
+        RowBox[{"Erf", "[", 
+         FractionBox[
+          RowBox[{"\[Lambda]1", "-", 
+           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+          RowBox[{"2", " ", 
+           SqrtBox[
+            RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]}], ")"}], "/", 
+   RowBox[{"(", 
+    RowBox[{"2", "\[Lambda]2", " ", 
+     SqrtBox["\[Pi]"], " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", 
+       RowBox[{"Erf", "[", 
+        FractionBox[
+         RowBox[{"\[Lambda]1", "-", 
+          RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+         RowBox[{"2", " ", 
+          SqrtBox[
+           RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}], 
+    ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.534181483077978*^9, 3.534181512016433*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   RowBox[{
+    RowBox[{"-", "2"}], " ", 
+    SuperscriptBox["\[ExponentialE]", 
+     FractionBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+      RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+   RowBox[{
+    SqrtBox["\[Pi]"], " ", 
+    RowBox[{"(", 
+     RowBox[{"\[Lambda]1", "-", 
+      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "-", 
+      RowBox[{"Erf", "[", 
+       FractionBox[
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+        RowBox[{"2", " ", 
+         SqrtBox[
+          RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]}], 
+  RowBox[{"2", " ", 
+   SqrtBox["\[Pi]"], " ", "\[Lambda]2", " ", 
+   RowBox[{"(", 
+    RowBox[{"1", "-", 
+     RowBox[{"Erf", "[", 
+      FractionBox[
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+       RowBox[{"2", " ", 
+        SqrtBox[
+         RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]]], "Output",
+ CellChangeTimes->{3.534181512821992*^9}]
+}, Open  ]],
+
+Cell["\<\
+Now, I substitute q for the expression  \[Lambda]1 - 2 \[Lambda]2 \[Mu]\
+\>", "Text",
+ CellChangeTimes->{{3.534181538552026*^9, 3.534181580685348*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand7", "=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "2"}], " ", 
+      SuperscriptBox["\[ExponentialE]", 
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"(", "q", ")"}], "2"], 
+        RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+     RowBox[{
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", "q", ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "-", 
+        RowBox[{"Erf", "[", 
+         FractionBox["q", 
+          RowBox[{"2", " ", 
+           SqrtBox[
+            RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]}], ")"}], "/", 
+   RowBox[{"(", 
+    RowBox[{"2", "\[Lambda]2", " ", 
+     SqrtBox["\[Pi]"], " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", 
+       RowBox[{"Erf", "[", 
+        FractionBox["q", 
+         RowBox[{"2", " ", 
+          SqrtBox[
+           RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}], 
+    ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.5341816010231333`*^9, 3.534181622994713*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   RowBox[{
+    RowBox[{"-", "2"}], " ", 
+    SuperscriptBox["\[ExponentialE]", 
+     FractionBox[
+      SuperscriptBox["q", "2"], 
+      RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+   RowBox[{
+    SqrtBox["\[Pi]"], " ", "q", " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "-", 
+      RowBox[{"Erf", "[", 
+       FractionBox["q", 
+        RowBox[{"2", " ", 
+         SqrtBox[
+          RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]}], 
+  RowBox[{"2", " ", 
+   SqrtBox["\[Pi]"], " ", "\[Lambda]2", " ", 
+   RowBox[{"(", 
+    RowBox[{"1", "-", 
+     RowBox[{"Erf", "[", 
+      FractionBox["q", 
+       RowBox[{"2", " ", 
+        SqrtBox[
+         RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]]], "Output",
+ CellChangeTimes->{3.534181626529725*^9}]
+}, Open  ]],
+
+Cell["This is not hand-simplification, but it is in the process", "Text",
+ CellChangeTimes->{{3.534182264730093*^9, 3.5341822723478928`*^9}, {
+  3.534182511128339*^9, 3.534182514444248*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand8", "=", 
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", "q", ")"}], "2"], 
+         RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}], "-", 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       RowBox[{"(", "q", ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         RowBox[{"Erf", "[", 
+          FractionBox["q", 
+           RowBox[{"2", " ", 
+            SqrtBox[
+             RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}]}], ")"}], "/", 
+    
+    RowBox[{"(", 
+     RowBox[{"2", "\[Lambda]2", " ", 
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "-", 
+        RowBox[{"Erf", "[", 
+         FractionBox["q", 
+          RowBox[{"2", " ", 
+           SqrtBox[
+            RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}], ")"}]}], ")"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.5341816860334663`*^9, 3.534181688882546*^9}, {
+   3.53418192700025*^9, 3.5341819333472548`*^9}, {3.5341821584825487`*^9, 
+   3.53418216689648*^9}, {3.5341822557294693`*^9, 3.53418225929313*^9}, 
+   3.534182310138061*^9}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"q", "+", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[ExponentialE]", 
+       FractionBox[
+        SuperscriptBox["q", "2"], 
+        RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]]}], 
+     RowBox[{
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"Erf", "[", 
+         FractionBox[
+          RowBox[{"q", " ", 
+           SqrtBox[
+            RowBox[{"-", "\[Lambda]2"}]]}], 
+          RowBox[{"2", " ", "\[Lambda]2"}]], "]"}]}], ")"}]}]]}], 
+   RowBox[{"2", " ", "\[Lambda]2"}]]}]], "Output",
+ CellChangeTimes->{3.534181934893547*^9, 3.534182168933003*^9, 
+  3.534182261850048*^9, 3.534182310833025*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"knownMeanHand8", "\[Equal]", "\[Mu]"}], "&&", 
+    RowBox[{"\[Lambda]2", "<", "0"}]}], ",", "\[Lambda]2", ",", "Reals"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.534182539447172*^9, 3.534182547055767*^9}, {
+  3.53418261968359*^9, 3.534182623958839*^9}, {3.534182666933714*^9, 
+  3.534182740970669*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Reduce", "::", "\<\"nsmet\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"This system cannot be solved \
+with the methods available to Reduce.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/Reduce\\\", ButtonNote -> \
+\\\"Reduce::nsmet\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.534182745963347*^9}],
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{"q", "+", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SuperscriptBox["\[ExponentialE]", 
+           FractionBox[
+            SuperscriptBox["q", "2"], 
+            RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+          SqrtBox[
+           RowBox[{"-", "\[Lambda]2"}]]}], 
+         RowBox[{
+          SqrtBox["\[Pi]"], " ", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"Erf", "[", 
+             FractionBox[
+              RowBox[{"q", " ", 
+               SqrtBox[
+                RowBox[{"-", "\[Lambda]2"}]]}], 
+              RowBox[{"2", " ", "\[Lambda]2"}]], "]"}]}], ")"}]}]]}], 
+       RowBox[{"2", " ", "\[Lambda]2"}]]}], "\[Equal]", "\[Mu]"}], "&&", 
+    RowBox[{"\[Lambda]2", "<", "0"}]}], ",", "\[Lambda]2", ",", "Reals"}], 
+  "]"}]], "Output",
+ CellChangeTimes->{3.534182547515334*^9, 3.534182746009945*^9}]
+}, Open  ]],
+
+Cell["Now I remove q again", "Text",
+ CellChangeTimes->{{3.5341831413003073`*^9, 3.534183146921026*^9}, {
+  3.534183448487905*^9, 3.534183452312149*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand9", "=", 
+  RowBox[{"knownMeanHand8", "/.", 
+   RowBox[{"q", "\[Rule]", 
+    RowBox[{"(", 
+     RowBox[{"\[Lambda]1", "-", 
+      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}]}]}]}]], "Input",\
+
+ CellChangeTimes->{{3.534183045731708*^9, 3.5341830806770763`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"\[Lambda]1", "-", 
+    RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}], "+", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[ExponentialE]", 
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"\[Lambda]1", "-", 
+           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+        RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]]}], 
+     RowBox[{
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"Erf", "[", 
+         FractionBox[
+          RowBox[{
+           SqrtBox[
+            RowBox[{"-", "\[Lambda]2"}]], " ", 
+           RowBox[{"(", 
+            RowBox[{"\[Lambda]1", "-", 
+             RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}]}], 
+          RowBox[{"2", " ", "\[Lambda]2"}]], "]"}]}], ")"}]}]]}], 
+   RowBox[{"2", " ", "\[Lambda]2"}]]}]], "Output",
+ CellChangeTimes->{3.534183085773952*^9}]
+}, Open  ]],
+
+Cell["Now I simplify", "Text",
+ CellChangeTimes->{{3.534183454944044*^9, 3.534183457004695*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand10", "=", 
+  RowBox[{"FullSimplify", "[", "knownMeanHand9", "]"}]}]], "Input",
+ CellChangeTimes->{{3.5341830937588863`*^9, 3.534183101990417*^9}, {
+  3.534183464395297*^9, 3.534183469074127*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox["\[Lambda]1", 
+    RowBox[{"2", " ", "\[Lambda]2"}]]}], "+", "\[Mu]", "+", 
+  FractionBox[
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+     RowBox[{"4", " ", "\[Lambda]2"}]]], 
+   RowBox[{
+    SqrtBox["\[Pi]"], " ", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]], " ", 
+    RowBox[{"Erfc", "[", 
+     FractionBox[
+      RowBox[{"\[Lambda]1", "-", 
+       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+      RowBox[{"2", " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]]}]], "Output",
+ CellChangeTimes->{3.534183103349518*^9, 3.534183469775247*^9}]
+}, Open  ]],
+
+Cell["\<\
+Now, I get set it equal to \[Mu] and subtract \[Mu] from both sides (I don't \
+display the other side, but now I am looking for equal to 0)\
+\>", "Text",
+ CellChangeTimes->{{3.534183436520516*^9, 3.5341834425185347`*^9}, {
+  3.534183474545495*^9, 3.53418349730402*^9}, {3.534183582063758*^9, 
+  3.534183587434083*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand11", "=", 
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{"knownMeanHand9", "-", "\[Mu]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.534183302629733*^9, 3.534183312885664*^9}, {
+  3.5341835034941*^9, 3.534183529554422*^9}, {3.5341835678551683`*^9, 
+  3.53418356879422*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"\[Lambda]1", "+", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[ExponentialE]", 
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"\[Lambda]1", "-", 
+           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+        RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]]}], 
+     RowBox[{
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"Erfc", "[", 
+       FractionBox[
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+        RowBox[{"2", " ", 
+         SqrtBox[
+          RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]]}], 
+   RowBox[{"2", " ", "\[Lambda]2"}]]}]], "Output",
+ CellChangeTimes->{
+  3.534183317011969*^9, {3.5341835057014523`*^9, 3.5341835303018227`*^9}, 
+   3.5341835694608107`*^9}]
+}, Open  ]],
+
+Cell["\<\
+Now, I multiply both sides by -2 \[Lambda]2 getting rid of the negative sign \
+and the denominator.  The right hand side remains 0\
+\>", "Text",
+ CellChangeTimes->{{3.534183710789239*^9, 3.534183742967433*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand12", "=", 
+  RowBox[{"knownMeanHand11", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "2"}], " ", "\[Lambda]2"}], ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.534183534993702*^9, 3.534183563661233*^9}, {
+  3.534183620213242*^9, 3.534183628945867*^9}, {3.5341836664014063`*^9, 
+  3.534183671616095*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[Lambda]1", "+", 
+  FractionBox[
+   RowBox[{"2", " ", 
+    SuperscriptBox["\[ExponentialE]", 
+     FractionBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+      RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}], 
+   RowBox[{
+    SqrtBox["\[Pi]"], " ", 
+    RowBox[{"Erfc", "[", 
+     FractionBox[
+      RowBox[{"\[Lambda]1", "-", 
+       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+      RowBox[{"2", " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]]}]], "Output",
+ CellChangeTimes->{3.534183553642497*^9, 3.534183672349104*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "Now, I divide everything by ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"2", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ "to put things closer to the form that is in common between the exponential \
+function argument and the error function argument"
+}], "Text",
+ CellChangeTimes->{{3.534183826810342*^9, 3.5341838888054028`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand13", "=", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{"knownMeanHand12", "/", 
+    RowBox[{"(", 
+     RowBox[{"2", 
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]]}], ")"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5341838912297564`*^9, 3.534183938896163*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["\[Lambda]1", 
+   RowBox[{"2", " ", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}]], "+", 
+  FractionBox[
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+     RowBox[{"4", " ", "\[Lambda]2"}]]], 
+   RowBox[{
+    SqrtBox["\[Pi]"], " ", 
+    RowBox[{"Erfc", "[", 
+     FractionBox[
+      RowBox[{"\[Lambda]1", "-", 
+       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+      RowBox[{"2", " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]]}]], "Output",
+ CellChangeTimes->{{3.534183922210145*^9, 3.534183939415573*^9}}]
+}, Open  ]],
+
+Cell[TextData[{
+ "Now, I replace ",
+ Cell[BoxData[
+  FractionBox[
+   RowBox[{"\[Lambda]1", "-", 
+    RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+   RowBox[{"2", " ", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}]]], "Output",
+  CellChangeTimes->{{3.534183922210145*^9, 3.534183939415573*^9}}],
+ " with q"
+}], "Text",
+ CellChangeTimes->{{3.534184291686769*^9, 3.53418429567723*^9}, {
+  3.5341845692934093`*^9, 3.534184580897334*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"-", 
+  SuperscriptBox[
+   RowBox[{"(", 
+    FractionBox[
+     RowBox[{"\[Lambda]1", "-", 
+      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+     RowBox[{"2", " ", 
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]]}]], ")"}], "2"]}]], "Input",
+ CellChangeTimes->{{3.53418462926267*^9, 3.534184658530506*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{"\[Lambda]1", "-", 
+     RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+  RowBox[{"4", " ", "\[Lambda]2"}]]], "Output",
+ CellChangeTimes->{{3.534184636333493*^9, 3.53418465928576*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"Reduce", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      FractionBox[
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+       RowBox[{"2", " ", 
+        SqrtBox[
+         RowBox[{"-", "\[Lambda]2"}]]}]], "+", "k"}], "==", 
+     FractionBox["\[Lambda]1", 
+      RowBox[{"2", " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}]]}], ",", "k", ",", "Reals"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.534184722874548*^9, 3.534184783748637*^9}, {
+  3.534184814186071*^9, 3.534184819249106*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[Lambda]2", "<", "0"}], "&&", 
+  RowBox[{
+   RowBox[{"k", "+", 
+    RowBox[{
+     SqrtBox[
+      RowBox[{"-", "\[Lambda]2"}]], " ", "\[Mu]"}]}], "\[Equal]", 
+   "0"}]}]], "Output",
+ CellChangeTimes->{{3.5341847636543922`*^9, 3.5341847843798923`*^9}, 
+   3.5341848212502527`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand14", "=", 
+  RowBox[{"q", "+", 
+   RowBox[{
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]], " ", "\[Mu]"}], "+", 
+   FractionBox[
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      SuperscriptBox["q", "2"]}]], 
+    RowBox[{
+     SqrtBox["\[Pi]"], " ", 
+     RowBox[{"Erfc", "[", "q", "]"}]}]]}]}]], "Input",
+ CellChangeTimes->{{3.5341845999237947`*^9, 3.5341846059670877`*^9}, {
+  3.534184673437406*^9, 3.534184703361328*^9}, {3.534184805730462*^9, 
+  3.534184844028817*^9}}],
+
+Cell[BoxData[
+ RowBox[{"q", "+", 
+  RowBox[{
+   SqrtBox[
+    RowBox[{"-", "\[Lambda]2"}]], " ", "\[Mu]"}], "+", 
+  FractionBox[
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     SuperscriptBox["q", "2"]}]], 
+   RowBox[{
+    SqrtBox["\[Pi]"], " ", 
+    RowBox[{"Erfc", "[", "q", "]"}]}]]}]], "Output",
+ CellChangeTimes->{3.534184706659267*^9, 3.534184850116287*^9}]
+}, Open  ]],
+
+Cell["Now, solve for q? No.  Looks too hard.", "Text",
+ CellChangeTimes->{{3.534184881718927*^9, 3.5341848831016283`*^9}, {
+  3.5341850004539423`*^9, 3.534185021800006*^9}, {3.534186053064665*^9, 
+  3.534186071986457*^9}}],
+
+Cell["\<\
+What about solving for \[Lambda]2 and getting a recurrence relation?\
+\>", "Text",
+ CellChangeTimes->{{3.534186075427457*^9, 3.534186088802465*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand15", "=", 
+  RowBox[{
+   RowBox[{"q", "+", 
+    FractionBox[
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"-", 
+       SuperscriptBox["q", "2"]}]], 
+     RowBox[{
+      SqrtBox["\[Pi]"], " ", 
+      RowBox[{"Erfc", "[", "q", "]"}]}]]}], "\[Equal]", 
+   RowBox[{
+    RowBox[{"-", 
+     SqrtBox[
+      RowBox[{"-", "\[Lambda]2"}]]}], " ", "\[Mu]"}]}]}]], "Input",
+ CellChangeTimes->{{3.534186136963228*^9, 3.5341861839451647`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"q", "+", 
+   FractionBox[
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      SuperscriptBox["q", "2"]}]], 
+    RowBox[{
+     SqrtBox["\[Pi]"], " ", 
+     RowBox[{"Erfc", "[", "q", "]"}]}]]}], "\[Equal]", 
+  RowBox[{
+   RowBox[{"-", 
+    SqrtBox[
+     RowBox[{"-", "\[Lambda]2"}]]}], " ", "\[Mu]"}]}]], "Output",
+ CellChangeTimes->{3.534186170705782*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand16", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"q", "+", 
+      FractionBox[
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         SuperscriptBox["q", "2"]}]], 
+       RowBox[{
+        SqrtBox["\[Pi]"], " ", 
+        RowBox[{"Erfc", "[", "q", "]"}]}]]}], ")"}], 
+    FractionBox["1", 
+     RowBox[{"-", "\[Mu]"}]]}], "\[Equal]", 
+   SqrtBox[
+    RowBox[{"-", "\[Lambda]2"}]]}]}]], "Input",
+ CellChangeTimes->{{3.5341861721596737`*^9, 3.5341862143277884`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{"q", "+", 
+     FractionBox[
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"-", 
+        SuperscriptBox["q", "2"]}]], 
+      RowBox[{
+       SqrtBox["\[Pi]"], " ", 
+       RowBox[{"Erfc", "[", "q", "]"}]}]]}], "\[Mu]"]}], "\[Equal]", 
+  SqrtBox[
+   RowBox[{"-", "\[Lambda]2"}]]}]], "Output",
+ CellChangeTimes->{3.5341862161036863`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand17", "=", 
+  RowBox[{
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{"q", "+", 
+        FractionBox[
+         SuperscriptBox["\[ExponentialE]", 
+          RowBox[{"-", 
+           SuperscriptBox["q", "2"]}]], 
+         RowBox[{
+          SqrtBox["\[Pi]"], " ", 
+          RowBox[{"Erfc", "[", "q", "]"}]}]]}], "\[Mu]"]}], ")"}], "2"], 
+   "\[Equal]", 
+   RowBox[{"-", "\[Lambda]2"}]}]}]], "Input",
+ CellChangeTimes->{{3.5341862191423883`*^9, 3.5341862526016703`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox[
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"q", "+", 
+      FractionBox[
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         SuperscriptBox["q", "2"]}]], 
+       RowBox[{
+        SqrtBox["\[Pi]"], " ", 
+        RowBox[{"Erfc", "[", "q", "]"}]}]]}], ")"}], "2"], 
+   SuperscriptBox["\[Mu]", "2"]], "\[Equal]", 
+  RowBox[{"-", "\[Lambda]2"}]}]], "Output",
+ CellChangeTimes->{3.534186253773563*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand18", "=", 
+  RowBox[{
+   RowBox[{"-", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"q", "+", 
+         FractionBox[
+          SuperscriptBox["\[ExponentialE]", 
+           RowBox[{"-", 
+            SuperscriptBox["q", "2"]}]], 
+          RowBox[{
+           SqrtBox["\[Pi]"], " ", 
+           RowBox[{"Erfc", "[", "q", "]"}]}]]}], "\[Mu]"]}], ")"}], "2"]}], 
+   "\[Equal]", "\[Lambda]2"}]}]], "Input",
+ CellChangeTimes->{{3.534186259265764*^9, 3.5341862859000177`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox[
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"q", "+", 
+       FractionBox[
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          SuperscriptBox["q", "2"]}]], 
+        RowBox[{
+         SqrtBox["\[Pi]"], " ", 
+         RowBox[{"Erfc", "[", "q", "]"}]}]]}], ")"}], "2"], 
+    SuperscriptBox["\[Mu]", "2"]]}], "\[Equal]", "\[Lambda]2"}]], "Output",
+ CellChangeTimes->{3.53418628859536*^9}]
+}, Open  ]],
+
+Cell["Now, just write \[Lambda]2", "Text",
+ CellChangeTimes->{{3.534186330047271*^9, 3.53418634625145*^9}, 
+   3.5341864083282967`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand19", "=", 
+  RowBox[{"-", 
+   FractionBox[
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"q", "+", 
+       FractionBox[
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          SuperscriptBox["q", "2"]}]], 
+        RowBox[{
+         SqrtBox["\[Pi]"], " ", 
+         RowBox[{"Erfc", "[", "q", "]"}]}]]}], ")"}], "2"], 
+    SuperscriptBox["\[Mu]", "2"]]}]}]], "Input",
+ CellChangeTimes->{{3.534186356555595*^9, 3.534186362800107*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"q", "+", 
+      FractionBox[
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         SuperscriptBox["q", "2"]}]], 
+       RowBox[{
+        SqrtBox["\[Pi]"], " ", 
+        RowBox[{"Erfc", "[", "q", "]"}]}]]}], ")"}], "2"], 
+   SuperscriptBox["\[Mu]", "2"]]}]], "Output",
+ CellChangeTimes->{3.5341863670345716`*^9}]
+}, Open  ]],
+
+Cell["Get rid of q and simplify", "Text",
+ CellChangeTimes->{{3.534186462100575*^9, 3.5341864664893293`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand20", "=", 
+  RowBox[{"knownMeanHand19", "/.", 
+   RowBox[{"q", "\[Rule]", 
+    RowBox[{"(", 
+     FractionBox[
+      RowBox[{"\[Lambda]1", "-", 
+       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+      RowBox[{"2", " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}]], ")"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.5341863686891537`*^9, 3.534186379412134*^9}, {
+  3.534186415661764*^9, 3.534186455425836*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      FractionBox[
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+       RowBox[{"2", " ", 
+        SqrtBox[
+         RowBox[{"-", "\[Lambda]2"}]]}]], "+", 
+      FractionBox[
+       SuperscriptBox["\[ExponentialE]", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+         RowBox[{"4", " ", "\[Lambda]2"}]]], 
+       RowBox[{
+        SqrtBox["\[Pi]"], " ", 
+        RowBox[{"Erfc", "[", 
+         FractionBox[
+          RowBox[{"\[Lambda]1", "-", 
+           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+          RowBox[{"2", " ", 
+           SqrtBox[
+            RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]]}], ")"}], "2"], 
+   SuperscriptBox["\[Mu]", "2"]]}]], "Output",
+ CellChangeTimes->{3.534186380776033*^9, 3.534186456574435*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand21", "=", 
+  RowBox[{"FullSimplify", "[", "knownMeanHand20", "]"}]}]], "Input",
+ CellChangeTimes->{{3.534186519986518*^9, 3.5341865358107243`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      FractionBox[
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+       RowBox[{"2", " ", 
+        SqrtBox[
+         RowBox[{"-", "\[Lambda]2"}]]}]], "+", 
+      FractionBox[
+       SuperscriptBox["\[ExponentialE]", 
+        FractionBox[
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{"\[Lambda]1", "-", 
+            RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+         RowBox[{"4", " ", "\[Lambda]2"}]]], 
+       RowBox[{
+        SqrtBox["\[Pi]"], " ", 
+        RowBox[{"Erfc", "[", 
+         FractionBox[
+          RowBox[{"\[Lambda]1", "-", 
+           RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+          RowBox[{"2", " ", 
+           SqrtBox[
+            RowBox[{"-", "\[Lambda]2"}]]}]], "]"}]}]]}], ")"}], "2"], 
+   SuperscriptBox["\[Mu]", "2"]]}]], "Output",
+ CellChangeTimes->{3.53418654573151*^9}]
+}, Open  ]],
+
+Cell["This looks too hard to make any progress on", "Text",
+ CellChangeTimes->{{3.53418694874815*^9, 3.534186954950325*^9}}],
+
+Cell[TextData[{
+ "Let's try going back to step 14 and multiplying both sides by ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SqrtBox["\[Pi]"], 
+    RowBox[{"Erfc", "[", "q", "]"}]}], TraditionalForm]],
+  FormatType->"TraditionalForm"]
+}], "Text",
+ CellChangeTimes->{{3.534186785897608*^9, 3.534186791303274*^9}, {
+  3.534186868764654*^9, 3.534186888313987*^9}, {3.534186925004332*^9, 
+  3.534186939205872*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand22", "=", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{"knownMeanHand14", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      SqrtBox["\[Pi]"], 
+      RowBox[{"Erfc", "[", "q", "]"}]}], ")"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.534186944464643*^9, 3.53418700224506*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{"-", 
+    SuperscriptBox["q", "2"]}]], "+", 
+  RowBox[{
+   SqrtBox["\[Pi]"], " ", 
+   RowBox[{"(", 
+    RowBox[{"q", "+", 
+     RowBox[{
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]], " ", "\[Mu]"}]}], ")"}], " ", 
+   RowBox[{"Erfc", "[", "q", "]"}]}]}]], "Output",
+ CellChangeTimes->{{3.5341869932437572`*^9, 3.534187002814004*^9}}]
+}, Open  ]],
+
+Cell["\<\
+Now, take the second derivative of both sides with respect to q to get rid of \
+Erf q\
+\>", "Text",
+ CellChangeTimes->{{3.5341871612249928`*^9, 3.5341871799133253`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand23", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"knownMeanHand22", ",", 
+    RowBox[{"{", 
+     RowBox[{"q", ",", "2"}], "}"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.534187017624262*^9, 3.534187033824028*^9}, {
+  3.534187144999153*^9, 3.534187147481073*^9}, {3.5341871904105673`*^9, 
+  3.534187193974283*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"-", "6"}], " ", 
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     SuperscriptBox["q", "2"]}]]}], "+", 
+  RowBox[{"4", " ", 
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     SuperscriptBox["q", "2"]}]], " ", 
+   SuperscriptBox["q", "2"]}], "+", 
+  RowBox[{"4", " ", 
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     SuperscriptBox["q", "2"]}]], " ", "q", " ", 
+   RowBox[{"(", 
+    RowBox[{"q", "+", 
+     RowBox[{
+      SqrtBox[
+       RowBox[{"-", "\[Lambda]2"}]], " ", "\[Mu]"}]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{3.5341870348802347`*^9, 3.534187148765705*^9, 
+  3.534187203588355*^9}]
+}, Open  ]],
+
+Cell["Now, substitute q back in", "Text",
+ CellChangeTimes->{{3.534187208598756*^9, 3.5341872199151287`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"knownMeanHand24", "=", 
+  RowBox[{"knownMeanHand23", "/.", 
+   RowBox[{"q", "\[Rule]", 
+    RowBox[{"(", 
+     FractionBox[
+      RowBox[{"\[Lambda]1", "-", 
+       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+      RowBox[{"2", " ", 
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]]}]], ")"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.534187236867877*^9, 3.534187239799403*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"-", "6"}], " ", 
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+     RowBox[{"4", " ", "\[Lambda]2"}]]]}], "-", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     FractionBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+      RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"\[Lambda]1", "-", 
+       RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"]}], 
+   "\[Lambda]2"], "+", 
+  FractionBox[
+   RowBox[{"2", " ", 
+    SuperscriptBox["\[ExponentialE]", 
+     FractionBox[
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"\[Lambda]1", "-", 
+         RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], "2"], 
+      RowBox[{"4", " ", "\[Lambda]2"}]]], " ", 
+    RowBox[{"(", 
+     RowBox[{"\[Lambda]1", "-", 
+      RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       SqrtBox[
+        RowBox[{"-", "\[Lambda]2"}]], " ", "\[Mu]"}], "+", 
+      FractionBox[
+       RowBox[{"\[Lambda]1", "-", 
+        RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], 
+       RowBox[{"2", " ", 
+        SqrtBox[
+         RowBox[{"-", "\[Lambda]2"}]]}]]}], ")"}]}], 
+   SqrtBox[
+    RowBox[{"-", "\[Lambda]2"}]]]}]], "Output",
+ CellChangeTimes->{3.534187240675294*^9}]
+}, Open  ]],
+
+Cell["And solve for \[Lambda]1", "Text",
+ CellChangeTimes->{{3.5341872453188953`*^9, 3.5341872784898977`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"knownMeanHand24", "\[Equal]", "0"}], "&&", 
+    RowBox[{"\[Mu]", ">", "0"}], "&&", 
+    RowBox[{"\[Lambda]2", "<", "0"}]}], ",", "\[Lambda]1", ",", "Reals"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.534187251574769*^9, 3.534187317547463*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[Lambda]2", "<", "0"}], "&&", 
+  RowBox[{"\[Mu]", ">", "0"}], "&&", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"\[Lambda]1", "\[Equal]", 
+     RowBox[{
+      FractionBox[
+       RowBox[{"5", " ", "\[Lambda]2", " ", "\[Mu]"}], "2"], "-", 
+      RowBox[{
+       FractionBox["1", "2"], " ", 
+       SqrtBox[
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "12"}], " ", "\[Lambda]2"}], "+", 
+         RowBox[{
+          SuperscriptBox["\[Lambda]2", "2"], " ", 
+          SuperscriptBox["\[Mu]", "2"]}]}]]}]}]}], "||", 
+    RowBox[{"\[Lambda]1", "\[Equal]", 
+     RowBox[{
+      FractionBox[
+       RowBox[{"5", " ", "\[Lambda]2", " ", "\[Mu]"}], "2"], "+", 
+      RowBox[{
+       FractionBox["1", "2"], " ", 
+       SqrtBox[
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "12"}], " ", "\[Lambda]2"}], "+", 
+         RowBox[{
+          SuperscriptBox["\[Lambda]2", "2"], " ", 
+          SuperscriptBox["\[Mu]", "2"]}]}]]}]}]}]}], ")"}]}]], "Output",
+ CellChangeTimes->{
+  3.534187267632041*^9, {3.534187298896096*^9, 3.5341873188971643`*^9}}]
+}, Open  ]],
+
+Cell["\<\
+So, there are 3 solutions to applying the second constraint\
+\>", "Text",
+ CellChangeTimes->{{3.534188477314764*^9, 3.5341884984276733`*^9}}],
+
+Cell["\<\
+The first is spurious.  It comes from assuming \[Lambda]1 - 2 \[Lambda]2 \
+\[Mu] \[Equal] 0 and gives a solution for both \[Lambda]1 and \[Lambda]2.  I \
+think it is spurious because there is no way to satisfy the second constraint \
+for all \[Sigma] with a fixed \[Mu].  I'll demonstrate this below.\
+\>", "Text",
+ CellChangeTimes->{{3.534188710556595*^9, 3.534188718735092*^9}, {
+  3.534188755282935*^9, 3.534188755570286*^9}, {3.534189145734009*^9, 
+  3.534189214782218*^9}, {3.53418926401962*^9, 3.5341892698958178`*^9}, {
+  3.534189447391296*^9, 3.5341894524969873`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[Lambda]2", "\[Equal]", 
+  RowBox[{"-", 
+   FractionBox["1", 
+    RowBox[{"\[Pi]", " ", 
+     SuperscriptBox["\[Mu]", "2"]}]]}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[Lambda]1", "\[Equal]", 
+   RowBox[{"2", " ", "\[Lambda]2", " ", "\[Mu]"}]}], "/.", 
+  RowBox[{"\[Lambda]2", "->", 
+   RowBox[{"-", 
+    FractionBox["1", 
+     RowBox[{"\[Pi]", " ", 
+      SuperscriptBox["\[Mu]", "2"]}]]}]}]}]], "Input",
+ CellChangeTimes->{{3.534188886377636*^9, 3.534188937659416*^9}, {
+  3.534188983542116*^9, 3.53418899515707*^9}, {3.5341890325414762`*^9, 
+  3.534189063654841*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[Lambda]1", "\[Equal]", 
+  RowBox[{"-", 
+   FractionBox["2", 
+    RowBox[{"\[Pi]", " ", "\[Mu]"}]]}]}]], "Output",
+ CellChangeTimes->{{3.534188906632574*^9, 3.534188938728004*^9}, 
+   3.534189068050825*^9}]
+}, Open  ]],
+
+Cell["\<\
+The other two solutions come from assuming that \[Lambda]1 - 2 \[Lambda]2 \
+\[Mu] \[NotEqual] 0\
+\>", "Text",
+ CellChangeTimes->{{3.534188759519134*^9, 3.534188789988619*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[Lambda]1", "\[Equal]", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"5", " ", "\[Lambda]2", " ", "\[Mu]"}], "2"], "-", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     SqrtBox[
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "12"}], " ", "\[Lambda]2"}], "+", 
+       RowBox[{
+        SuperscriptBox["\[Lambda]2", "2"], " ", 
+        SuperscriptBox["\[Mu]", "2"]}]}]]}]}]}], "||", 
+  RowBox[{"\[Lambda]1", "\[Equal]", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"5", " ", "\[Lambda]2", " ", "\[Mu]"}], "2"], "+", 
+    RowBox[{
+     FractionBox["1", "2"], " ", 
+     SqrtBox[
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "12"}], " ", "\[Lambda]2"}], "+", 
+       RowBox[{
+        SuperscriptBox["\[Lambda]2", "2"], " ", 
+        SuperscriptBox["\[Mu]", "2"]}]}]]}]}]}]}]], "Input"]
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{640, 719},
+WindowSize->{948, 719},
 WindowMargins->{{82, Automatic}, {Automatic, 2}},
 FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
 StyleDefinitions->"Default.nb"
@@ -919,85 +2190,207 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[567, 22, 183, 4, 253, "Title"],
-Cell[753, 28, 788, 14, 91, "Text"],
-Cell[1544, 44, 409, 11, 32, "Input"],
-Cell[1956, 57, 117, 1, 31, "Text"],
+Cell[567, 22, 183, 4, 197, "Title"],
+Cell[753, 28, 788, 14, 77, "Text"],
+Cell[1544, 44, 409, 11, 34, "Input"],
 Cell[CellGroupData[{
-Cell[2098, 62, 662, 14, 55, "Input"],
-Cell[2763, 78, 753, 23, 73, "Output"]
+Cell[1978, 59, 182, 2, 39, "Subsection"],
+Cell[2163, 63, 117, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[2305, 68, 662, 14, 34, "Input"],
+Cell[2970, 84, 778, 24, 74, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[3553, 106, 136, 2, 32, "Input"],
-Cell[3692, 110, 241, 5, 65, "Output"]
+Cell[3785, 113, 136, 2, 34, "Input"],
+Cell[3924, 117, 263, 5, 89, "Output"]
 }, Open  ]],
-Cell[3948, 118, 200, 6, 31, "Text"],
+Cell[4202, 125, 200, 6, 33, "Text"],
 Cell[CellGroupData[{
-Cell[4173, 128, 315, 7, 32, "Input"],
-Cell[4491, 137, 493, 9, 45, "Message"],
-Cell[4987, 148, 984, 29, 73, "Output"]
+Cell[4427, 135, 315, 7, 34, "Input"],
+Cell[4745, 144, 518, 10, 24, "Message"],
+Cell[5266, 156, 1008, 29, 74, "Output"]
 }, Open  ]],
-Cell[5986, 180, 299, 8, 51, "Text"],
+Cell[6289, 188, 299, 8, 33, "Text"],
 Cell[CellGroupData[{
-Cell[6310, 192, 514, 12, 32, "Input"],
-Cell[6827, 206, 910, 26, 81, "Output"]
+Cell[6613, 200, 514, 12, 34, "Input"],
+Cell[7130, 214, 938, 27, 58, "Output"]
 }, Open  ]],
-Cell[7752, 235, 238, 4, 51, "Text"],
+Cell[8083, 244, 238, 4, 55, "Text"],
 Cell[CellGroupData[{
-Cell[8015, 243, 1104, 32, 148, "Input"],
-Cell[9122, 277, 947, 28, 69, "Output"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[10106, 310, 186, 3, 32, "Input"],
-Cell[10295, 315, 736, 22, 66, "Output"]
+Cell[8346, 252, 1104, 32, 78, "Input"],
+Cell[9453, 286, 969, 28, 68, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[11068, 342, 259, 7, 32, "Input"],
-Cell[11330, 351, 860, 27, 76, "Output"]
-}, Open  ]],
-Cell[12205, 381, 964, 29, 87, "Input"],
-Cell[CellGroupData[{
-Cell[13194, 414, 887, 18, 55, "Input"],
-Cell[14084, 434, 1651, 48, 151, "Output"]
-}, Open  ]],
-Cell[15750, 485, 2640, 70, 192, "Text"],
-Cell[18393, 557, 139, 1, 31, "Text"],
-Cell[CellGroupData[{
-Cell[18557, 562, 363, 9, 55, "Input"],
-Cell[18923, 573, 172, 6, 53, "Output"]
-}, Open  ]],
-Cell[19110, 582, 103, 1, 31, "Text"],
-Cell[CellGroupData[{
-Cell[19238, 587, 324, 7, 32, "Input"],
-Cell[19565, 596, 342, 10, 48, "Output"]
-}, Open  ]],
-Cell[19922, 609, 623, 16, 57, "Text"],
-Cell[CellGroupData[{
-Cell[20570, 629, 317, 8, 32, "Input"],
-Cell[20890, 639, 303, 9, 58, "Output"]
+Cell[10459, 319, 186, 3, 34, "Input"],
+Cell[10648, 324, 760, 23, 69, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[21230, 653, 554, 15, 87, "Input"],
-Cell[21787, 670, 345, 10, 67, "Output"]
+Cell[11445, 352, 259, 7, 34, "Input"],
+Cell[11707, 361, 884, 27, 77, "Output"]
+}, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[22169, 685, 563, 16, 76, "Input"],
-Cell[22735, 703, 94, 1, 31, "Output"]
-}, Open  ]],
-Cell[22844, 707, 605, 17, 76, "Input"],
-Cell[CellGroupData[{
-Cell[23474, 728, 331, 9, 32, "Input"],
-Cell[23808, 739, 3801, 68, 246, "Output"]
-}, Open  ]],
-Cell[27624, 810, 26, 0, 32, "Input"],
-Cell[27653, 812, 1471, 44, 183, "Input"],
-Cell[CellGroupData[{
-Cell[29149, 860, 180, 4, 32, "Input"],
-Cell[29332, 866, 119, 3, 31, "Output"]
+Cell[12640, 394, 123, 1, 39, "Subsection"],
+Cell[12766, 397, 964, 29, 87, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[29488, 874, 786, 21, 79, "Input"],
-Cell[30277, 897, 187, 3, 31, "Output"]
+Cell[13767, 431, 118, 1, 39, "Subsection"],
+Cell[CellGroupData[{
+Cell[13910, 436, 887, 18, 34, "Input"],
+Cell[14800, 456, 1659, 47, 111, "Output"]
+}, Open  ]],
+Cell[16474, 506, 442, 7, 33, "Text"],
+Cell[CellGroupData[{
+Cell[16941, 517, 283, 6, 34, "Input"],
+Cell[17227, 525, 235, 4, 34, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17499, 534, 319, 8, 34, "Input"],
+Cell[17821, 544, 75, 1, 34, "Output"]
+}, Open  ]],
+Cell[17911, 548, 2002, 55, 157, InheritFromParent],
+Cell[19916, 605, 174, 2, 33, "Text"],
+Cell[20093, 609, 2288, 62, 157, InheritFromParent],
+Cell[22384, 673, 173, 4, 33, "Text"],
+Cell[CellGroupData[{
+Cell[22582, 681, 198, 5, 34, "Input"],
+Cell[22783, 688, 75, 1, 34, "Output"]
+}, Open  ]],
+Cell[22873, 692, 2235, 59, 157, InheritFromParent],
+Cell[25111, 753, 261, 5, 33, "Text"],
+Cell[25375, 760, 2240, 58, 157, InheritFromParent],
+Cell[27618, 820, 124, 1, 33, "Text"],
+Cell[27745, 823, 149, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[27919, 830, 491, 11, 34, "Input"],
+Cell[28413, 843, 257, 8, 55, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28707, 856, 414, 12, 64, "Input"],
+Cell[29124, 870, 263, 8, 50, "Output"]
+}, Open  ]],
+Cell[29402, 881, 573, 17, 33, "Text"],
+Cell[29978, 900, 1682, 48, 130, "Input"],
+Cell[31663, 950, 134, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[31822, 957, 1433, 43, 130, "Input"],
+Cell[33258, 1002, 1250, 39, 84, "Output"]
+}, Open  ]],
+Cell[34523, 1044, 161, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[34709, 1051, 1063, 35, 130, "Input"],
+Cell[35775, 1088, 841, 29, 84, "Output"]
+}, Open  ]],
+Cell[36631, 1120, 190, 2, 33, "Text"],
+Cell[CellGroupData[{
+Cell[36846, 1126, 1313, 40, 157, "Input"],
+Cell[38162, 1168, 771, 24, 87, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[38970, 1197, 379, 9, 34, "Input"],
+Cell[39352, 1208, 471, 9, 24, "Message"],
+Cell[39826, 1219, 988, 29, 87, "Output"]
+}, Open  ]],
+Cell[40829, 1251, 153, 2, 33, "Text"],
+Cell[CellGroupData[{
+Cell[41007, 1257, 309, 8, 34, "Input"],
+Cell[41319, 1267, 1025, 30, 87, "Output"]
+}, Open  ]],
+Cell[42359, 1300, 96, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[42480, 1305, 232, 4, 34, "Input"],
+Cell[42715, 1311, 789, 24, 75, "Output"]
+}, Open  ]],
+Cell[43519, 1338, 328, 6, 55, "Text"],
+Cell[CellGroupData[{
+Cell[43872, 1348, 306, 6, 34, "Input"],
+Cell[44181, 1356, 904, 27, 84, "Output"]
+}, Open  ]],
+Cell[45100, 1386, 220, 4, 33, "Text"],
+Cell[CellGroupData[{
+Cell[45345, 1394, 345, 8, 34, "Input"],
+Cell[45693, 1404, 732, 22, 75, "Output"]
+}, Open  ]],
+Cell[46440, 1429, 404, 11, 59, "Text"],
+Cell[CellGroupData[{
+Cell[46869, 1444, 298, 8, 54, "Input"],
+Cell[47170, 1454, 738, 23, 75, "Output"]
+}, Open  ]],
+Cell[47923, 1480, 442, 13, 39, "Text"],
+Cell[CellGroupData[{
+Cell[48390, 1497, 339, 10, 69, "Input"],
+Cell[48732, 1509, 276, 7, 48, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[49045, 1521, 610, 18, 66, "Input"],
+Cell[49658, 1541, 314, 10, 39, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[50009, 1556, 525, 15, 71, "Input"],
+Cell[50537, 1573, 375, 12, 60, "Output"]
+}, Open  ]],
+Cell[50927, 1588, 222, 3, 33, "Text"],
+Cell[51152, 1593, 158, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[51335, 1600, 475, 15, 71, "Input"],
+Cell[51813, 1617, 401, 14, 60, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[52251, 1636, 533, 17, 71, "Input"],
+Cell[52787, 1655, 413, 14, 66, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[53237, 1674, 547, 17, 99, "Input"],
+Cell[53787, 1693, 462, 15, 69, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[54286, 1713, 557, 17, 99, "Input"],
+Cell[54846, 1732, 473, 15, 69, "Output"]
+}, Open  ]],
+Cell[55334, 1750, 135, 2, 33, "Text"],
+Cell[CellGroupData[{
+Cell[55494, 1756, 495, 15, 81, "Input"],
+Cell[55992, 1773, 425, 14, 69, "Output"]
+}, Open  ]],
+Cell[56432, 1790, 109, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[56566, 1795, 461, 12, 67, "Input"],
+Cell[57030, 1809, 1021, 30, 87, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[58088, 1844, 184, 3, 34, "Input"],
+Cell[58275, 1849, 998, 30, 87, "Output"]
+}, Open  ]],
+Cell[59288, 1882, 124, 1, 33, "Text"],
+Cell[59415, 1885, 410, 11, 37, "Text"],
+Cell[CellGroupData[{
+Cell[59850, 1900, 302, 8, 45, "Input"],
+Cell[60155, 1910, 410, 13, 39, "Output"]
+}, Open  ]],
+Cell[60580, 1926, 179, 4, 33, "Text"],
+Cell[CellGroupData[{
+Cell[60784, 1934, 346, 8, 34, "Input"],
+Cell[61133, 1944, 679, 22, 39, "Output"]
+}, Open  ]],
+Cell[61827, 1969, 109, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[61961, 1974, 410, 11, 67, "Input"],
+Cell[62374, 1987, 1618, 50, 74, "Output"]
+}, Open  ]],
+Cell[64007, 2040, 110, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[64142, 2045, 319, 8, 34, "Input"],
+Cell[64464, 2055, 1092, 33, 50, "Output"]
+}, Open  ]],
+Cell[65571, 2091, 151, 3, 33, "Text"],
+Cell[65725, 2096, 586, 9, 55, "Text"],
+Cell[66314, 2107, 165, 5, 59, "Input"],
+Cell[CellGroupData[{
+Cell[66504, 2116, 438, 11, 59, "Input"],
+Cell[66945, 2129, 231, 6, 49, "Output"]
+}, Open  ]],
+Cell[67191, 2138, 185, 4, 33, "Text"],
+Cell[67379, 2144, 828, 27, 58, "Input"]
 }, Open  ]]
 }, Open  ]]
 }
