@@ -1,0 +1,1151 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     39437,       1142]
+NotebookOptionsPosition[     37617,       1081]
+NotebookOutlinePosition[     37982,       1097]
+CellTagsIndexPosition[     37939,       1094]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Full bayesian deconvolution", "Title",
+ CellChangeTimes->{{3.534251751866271*^9, 3.5342517574307547`*^9}}],
+
+Cell[TextData[{
+ "I keep wondering what a full deconvolution would look like and if it would \
+be tractable. If I exclude the sample location nodes, the network is a \
+polytree.  In that case, exact inference is tractable (linear in the number \
+of variables, which, in this case, is linear in the sum of the number of \
+sample points and number of peaks.  Summing over various numbers of peaks \
+will make the algorithm be ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"O", "(", 
+    RowBox[{
+     SuperscriptBox["P", "2"], "+", "Pn"}], ")"}], TraditionalForm]]],
+ " where P is the maximum number of peaks and n is the number of samples.  \
+Having different peaks dependent on the same metabolite allows multiple paths \
+to the same observed variable (one through each peak).  This destroys the \
+polytree structure and causes potentially intractable inference.  (If I \
+remember correctly from the Graphical Models class, the inference will be ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"O", "(", 
+    SuperscriptBox["n", "m"], ")"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " where n is some function of the number of inputs and m is the number of \
+peaks per metabolite.)"
+}], "Text",
+ CellChangeTimes->{{3.534251759962515*^9, 3.534251774256008*^9}, {
+   3.534251825698655*^9, 3.534251850326933*^9}, {3.534251918015234*^9, 
+   3.5342519276199713`*^9}, {3.5342519801820183`*^9, 3.53425217649996*^9}, {
+   3.5342522276916637`*^9, 3.534252372708232*^9}, 3.5342524120677233`*^9, {
+   3.534257474147822*^9, 3.534257630592678*^9}, {3.534257669760541*^9, 
+   3.534257675960129*^9}}],
+
+Cell[TextData[{
+ "The polytree structure is preserved if we consider the sum of the \
+contributions from each metabolite.  Then we have the variables ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["\[Gamma]", "metab"], ",", 
+    SubscriptBox["amp", "metab"], ",", 
+    SubscriptBox["shift1", "metab"], ",", 
+    SubscriptBox["shift2", "metab"]}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ "where metab is a unique subscript for each metabolite.  There will be a \
+more complicated equation to invert to get the probability distributions of \
+the amplitudes, but it should work."
+}], "Text",
+ CellChangeTimes->{{3.534262740553952*^9, 3.534262935850853*^9}}],
+
+Cell["\<\
+I can also do a probabilistic model of the max finder from the 28th with this \
+same methodology.  I will just predict the a0<a1 directly, collapsing the \
+dependency structure.\
+\>", "Text",
+ CellChangeTimes->{{3.534258444860519*^9, 3.534258545754095*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Bayesian Model of 1 noiseless evidence point", "Section",
+ CellChangeTimes->{{3.534258325599258*^9, 3.5342583612027273`*^9}}],
+
+Cell["\<\
+Here I will do a model of one measured point x at 0.  That point is the sum \
+of amplitudes from two peaks a0 and a1.  Those peaks have parameters amp0, \
+\[Gamma]0, loc0, amp1, \[Gamma]1,  and loc1.\
+\>", "Text",
+ CellChangeTimes->{{3.5342583366796103`*^9, 3.5342583697469273`*^9}, {
+  3.5342586257471123`*^9, 3.534258629502289*^9}, {3.534258680837646*^9, 
+  3.53425876835931*^9}}],
+
+Cell["Below is the lorentzian function", "Text",
+ CellChangeTimes->{
+  3.534258552605266*^9, {3.534258591493887*^9, 3.5342586100842733`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"lor", "[", 
+   RowBox[{"x_", ",", "amp_", ",", "\[Gamma]_", ",", "loc_"}], "]"}], ":=", 
+  RowBox[{"amp", " ", 
+   RowBox[{
+    RowBox[{"\[Gamma]", "^", "2"}], "/", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"4", " ", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"x", "-", "loc"}], ")"}], "^", "2"}]}], "+", 
+      RowBox[{"\[Gamma]", "^", "2"}]}], ")"}]}]}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5342585864076138`*^9, 3.534258589487982*^9}, {
+  3.534258736336746*^9, 3.534258740691904*^9}}],
+
+Cell[TextData[{
+ "Here is the prior probability of a given set of peak parameters (for either \
+peak).  I'll make them all vary uniformly on the interval ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"[", 
+    RowBox[{
+     FractionBox["1", "2"], ",", "1"}], "]"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " except location which will vary on -6 to 6."
+}], "Text",
+ CellChangeTimes->{{3.534258809707094*^9, 3.534258820155264*^9}, {
+  3.5342588733935013`*^9, 3.534258874070509*^9}, {3.534258921660633*^9, 
+  3.534258963739923*^9}, {3.534259028125421*^9, 3.534259041534339*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"prPk", "[", 
+   RowBox[{"amp_", ",", "\[Gamma]_", ",", "loc_"}], "]"}], ":=", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "<=", "amp", "<=", "1"}], "&&", 
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "\[LessEqual]", "\[Gamma]", "\[LessEqual]", 
+      "1"}], "&&", 
+     RowBox[{
+      RowBox[{"-", "6"}], "\[LessEqual]", "loc", "\[LessEqual]", "6"}]}], ",", 
+    RowBox[{"1", "/", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"1", "/", "2"}], " ", 
+       RowBox[{"1", "/", "2"}], " ", "12"}], ")"}]}], ",", "0"}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.53425879687288*^9, 3.5342588625465813`*^9}, {
+  3.5342589712260303`*^9, 3.534259012347722*^9}, {3.5342590473741913`*^9, 
+  3.534259094813135*^9}}],
+
+Cell["\<\
+Here is the probability of an amplitude at 0 a given peak parameters.  It is \
+1 if the amplitude is correct according to the lorentzian and 0 otherwise.\
+\>", "Text",
+ CellChangeTimes->{{3.534259109193959*^9, 3.534259112782495*^9}, {
+  3.53425918850114*^9, 3.5342592951268473`*^9}, {3.534260659646482*^9, 
+  3.534260683526456*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"prA", "[", 
+   RowBox[{"a_", ",", "amp_", ",", "\[Gamma]_", ",", "loc_"}], "]"}], ":=", 
+  RowBox[{"DiracDelta", "[", 
+   RowBox[{"a", "-", 
+    RowBox[{"lor", "[", 
+     RowBox[{"0", ",", "amp", ",", "\[Gamma]", ",", "loc"}], "]"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.534259248773093*^9, 3.5342593206947927`*^9}, {
+  3.534260845381222*^9, 3.534260849596407*^9}, {3.534260894301059*^9, 
+  3.534260903550968*^9}}],
+
+Cell["\<\
+Here is the probability of a measurement given two amplitudes.  It is 1 if it \
+is the sum of the two parameters and 0 otherwise.\
+\>", "Text",
+ CellChangeTimes->{{3.5342593268088427`*^9, 3.534259414813655*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"prX", "[", 
+   RowBox[{"x_", ",", "a0_", ",", "a1_"}], "]"}], ":=", 
+  RowBox[{"DiracDelta", "[", 
+   RowBox[{"x", "-", 
+    RowBox[{"(", 
+     RowBox[{"a0", "+", "a1"}], ")"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5342593235107737`*^9, 3.5342593245372057`*^9}, {
+  3.534259365451013*^9, 3.534259393860908*^9}, {3.5342609116691513`*^9, 
+  3.534260923382101*^9}}],
+
+Cell["Here is the joint distribution of all the variables", "Text",
+ CellChangeTimes->{{3.534259450855543*^9, 3.534259460239973*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"prJ", "[", 
+   RowBox[{
+   "x_", ",", "a0_", ",", "a1_", ",", "amp0_", ",", "\[Gamma]0_", ",", 
+    "loc0_", ",", "amp1_", ",", "\[Gamma]1_", ",", "loc1_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"prPk", "[", 
+    RowBox[{"amp0", ",", "\[Gamma]0", ",", "loc0"}], "]"}], 
+   RowBox[{"prPk", "[", 
+    RowBox[{"amp1", ",", "\[Gamma]1", ",", "loc1"}], "]"}], 
+   RowBox[{"prA", "[", 
+    RowBox[{"a0", ",", "amp0", ",", "\[Gamma]0", ",", "loc0"}], "]"}], 
+   RowBox[{"prA", "[", 
+    RowBox[{"a1", ",", "amp1", ",", "\[Gamma]1", ",", "loc1"}], "]"}], 
+   RowBox[{"prX", "[", 
+    RowBox[{"x", ",", "a0", ",", "a1"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.534259466644425*^9, 3.534259585000935*^9}}],
+
+Cell["\<\
+Now, we want to calculate P(loc0,loc1|x).  This is equal to \
+P(loc0,loc1,x)/P(x).  Each of these can be obtained by an integration of the \
+joint distribution\
+\>", "Text",
+ CellChangeTimes->{{3.53425966482001*^9, 3.5342597156667013`*^9}}],
+
+Cell["\<\
+b[x] is short hand for the bounds of integration for each variable (which \
+will be -\[Infinity],\[Infinity]\
+\>", "Text",
+ CellChangeTimes->{{3.534259819072434*^9, 3.534259849683264*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"b", "[", "x_", "]"}], ":=", 
+  RowBox[{"{", 
+   RowBox[{"x", ",", 
+    RowBox[{"-", "Infinity"}], ",", "Infinity"}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.534259799619808*^9, 3.5342598104824457`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"prLocsGivenX", "[", 
+   RowBox[{"loc0_", ",", "loc1_", ",", "x_"}], "]"}], ":=", 
+  "\[IndentingNewLine]", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"denom", "=", 
+      RowBox[{"Integrate", "[", 
+       RowBox[{
+        RowBox[{"prJ", "[", 
+         RowBox[{
+         "xv", ",", "a0", ",", "a1", ",", "amp0", ",", "\[Gamma]0", ",", 
+          "loc0v", ",", "amp1", ",", "\[Gamma]1", ",", "loc1v"}], "]"}], ",", 
+        
+        RowBox[{"b", "[", "a0", "]"}], ",", 
+        RowBox[{"b", "[", "a1", "]"}], ",", 
+        RowBox[{"b", "[", "amp0", "]"}], ",", 
+        RowBox[{"b", "[", "\[Gamma]0", "]"}], ",", 
+        RowBox[{"b", "[", "loc0v", "]"}], ",", 
+        RowBox[{"b", "[", "amp1", "]"}], ",", 
+        RowBox[{"b", "[", "\[Gamma]1", "]"}], ",", 
+        RowBox[{"b", "[", "loc1v", "]"}]}], "]"}]}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"denom", "==", "0"}], ",", "0", ",", 
+      RowBox[{
+       RowBox[{"Integrate", "[", 
+        RowBox[{
+         RowBox[{"prJ", "[", 
+          RowBox[{
+          "x", ",", "a0", ",", "a1", ",", "amp0", ",", "\[Gamma]0", ",", 
+           "loc0", ",", "amp1", ",", "\[Gamma]1", ",", "loc1"}], "]"}], ",", 
+         RowBox[{"b", "[", "a0", "]"}], ",", 
+         RowBox[{"b", "[", "a1", "]"}], ",", 
+         RowBox[{"b", "[", "amp0", "]"}], ",", 
+         RowBox[{"b", "[", "\[Gamma]0", "]"}], ",", 
+         RowBox[{"b", "[", "amp1", "]"}], ",", 
+         RowBox[{"b", "[", "\[Gamma]1", "]"}]}], "]"}], "/", "denom"}]}], 
+     "]"}]}], "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.534259748136269*^9, 3.534259771875209*^9}, {
+  3.534259855867339*^9, 3.534260011889193*^9}, {3.534260130823474*^9, 
+  3.534260137085664*^9}, {3.53426022062722*^9, 3.534260221920334*^9}, {
+  3.534260311163168*^9, 3.5342603951928062`*^9}, {3.534260717038769*^9, 
+  3.534260748935717*^9}, {3.534260802351881*^9, 3.534260804225903*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"prLocsAndX", "[", 
+   RowBox[{"loc0_", ",", "loc1_", ",", "x_"}], "]"}], ":=", 
+  RowBox[{"Integrate", "[", 
+   RowBox[{
+    RowBox[{"prJ", "[", 
+     RowBox[{
+     "x", ",", "a0", ",", "a1", ",", "amp0", ",", "\[Gamma]0", ",", "loc0", 
+      ",", "amp1", ",", "\[Gamma]1", ",", "loc1"}], "]"}], ",", 
+    RowBox[{"b", "[", "a0", "]"}], ",", 
+    RowBox[{"b", "[", "a1", "]"}], ",", 
+    RowBox[{"b", "[", "amp0", "]"}], ",", 
+    RowBox[{"b", "[", "\[Gamma]0", "]"}], ",", 
+    RowBox[{"b", "[", "amp1", "]"}], ",", 
+    RowBox[{"b", "[", "\[Gamma]1", "]"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.534259748136269*^9, 3.534259771875209*^9}, {
+  3.534259855867339*^9, 3.534260011889193*^9}, {3.534260130823474*^9, 
+  3.534260137085664*^9}, {3.53426022062722*^9, 3.534260252103797*^9}}],
+
+Cell["Here I test my code a bit", "Text",
+ CellChangeTimes->{{3.534261836718433*^9, 3.534261838473813*^9}, {
+  3.534261885314322*^9, 3.534261890041523*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"lor", "[", 
+   RowBox[{"0", ",", 
+    RowBox[{"3", "/", "4"}], ",", 
+    RowBox[{"3", "/", "4"}], ",", 
+    RowBox[{"1", "/", "2"}]}], "]"}], "+", 
+  RowBox[{"lor", "[", 
+   RowBox[{"0", ",", 
+    RowBox[{"3", "/", "4"}], ",", 
+    RowBox[{"3", "/", "4"}], ",", 
+    RowBox[{
+     RowBox[{"-", "1"}], "/", "2"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.534260401864332*^9, 3.534260418007926*^9}, {
+  3.534260498923203*^9, 3.534260518269367*^9}}],
+
+Cell[BoxData[
+ FractionBox["27", "50"]], "Output",
+ CellChangeTimes->{3.5342605240024223`*^9}]
+}, Open  ]],
+
+Cell["\<\
+The following took FOREVER to evaluate ( at least 15 minutes ), and it didn't \
+even give me a real-valued answer\
+\>", "Text",
+ CellChangeTimes->{{3.534261896579598*^9, 3.5342619070057364`*^9}, {
+  3.534261961395792*^9, 3.534261970478321*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"prLocsAndX", "[", 
+  RowBox[{
+   RowBox[{"1", "/", "2"}], ",", 
+   RowBox[{
+    RowBox[{"-", "1"}], "/", "2"}], ",", 
+   RowBox[{"27", "/", "50"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.53426007208095*^9, 3.534260095431438*^9}, {
+  3.534260267734524*^9, 3.534260268452903*^9}, {3.5342604344921217`*^9, 
+  3.534260439439239*^9}, {3.53426052770789*^9, 3.534260546555464*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["1", "35865823950"], 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", "26567277"}], " ", "\[ImaginaryI]", " ", 
+     SqrtBox["6"]}], "+", 
+    RowBox[{"1550562894", " ", 
+     SqrtBox["154"]}], "-", 
+    RowBox[{"426213000", " ", 
+     SqrtBox["374"]}], "-", 
+    RowBox[{"552229977", " ", 
+     SqrtBox["561"]}], "+", 
+    RowBox[{"649085976", " ", "\[ImaginaryI]", " ", 
+     SqrtBox["1334"]}], "-", 
+    RowBox[{"561785796", " ", "\[ImaginaryI]", " ", 
+     SqrtBox["1955"]}], "-", 
+    RowBox[{"92282256", " ", 
+     SqrtBox["2059"]}], "+", 
+    RowBox[{"42141198", " ", 
+     SqrtBox["6177"]}], "+", 
+    RowBox[{"5977637325", " ", 
+     RowBox[{"ArcCsc", "[", 
+      RowBox[{"5", " ", 
+       SqrtBox[
+        FractionBox["2", "17"]]}], "]"}]}], "-", 
+    RowBox[{"5977637325", " ", 
+     RowBox[{"ArcCsc", "[", 
+      FractionBox["5", 
+       SqrtBox["11"]], "]"}]}], "-", 
+    RowBox[{"5977637325", " ", 
+     RowBox[{"ArcSin", "[", 
+      FractionBox[
+       SqrtBox[
+        FractionBox["17", "2"]], "5"], "]"}]}], "+", 
+    RowBox[{"5977637325", " ", 
+     RowBox[{"ArcSin", "[", 
+      FractionBox[
+       SqrtBox["11"], "5"], "]"}]}], "-", 
+    RowBox[{"15940366200", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcCsc", "[", 
+        FractionBox[
+         RowBox[{"9", " ", 
+          SqrtBox[
+           FractionBox["11", "5"]]}], "10"], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "+", 
+    RowBox[{"15940366200", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcCsc", "[", 
+        FractionBox["9", 
+         SqrtBox["58"]], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "-", 
+    RowBox[{"7970183100", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"25", " ", 
+         SqrtBox[
+          FractionBox["6", "2117"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "+", 
+    RowBox[{"7970183100", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"20", " ", 
+         SqrtBox[
+          FractionBox["5", "1241"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "+", 
+    RowBox[{"11477063664", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"9", " ", 
+         SqrtBox[
+          FractionBox["11", "391"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "+", 
+    RowBox[{"11477063664", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"4", " ", 
+         SqrtBox[
+          FractionBox["2", "55"]]}], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "-", 
+    RowBox[{"11477063664", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"4", " ", 
+         SqrtBox[
+          FractionBox["3", "71"]]}], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "-", 
+    RowBox[{"17215595496", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"3", " ", 
+         SqrtBox[
+          FractionBox["42", "253"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "+", 
+    RowBox[{"5738531832", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"3", " ", 
+         SqrtBox[
+          FractionBox["213", "667"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "-", 
+    RowBox[{"7970183100", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        SqrtBox[
+         FractionBox["142", "69"]], "]"}], ",", 
+       FractionBox["529", "2500"]}], "]"}]}], "-", 
+    RowBox[{"5738531832", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SqrtBox[
+           FractionBox["33", "5"]]}], "5"], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "+", 
+    RowBox[{"7970183100", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         SqrtBox[
+          FractionBox["165", "23"]], "2"], "]"}], ",", 
+       FractionBox["529", "2500"]}], "]"}]}], "+", 
+    RowBox[{"5738531832", " ", 
+     RowBox[{"EllipticE", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SqrtBox["174"]}], "25"], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "+", 
+    RowBox[{"3666284226", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcCsc", "[", 
+        RowBox[{"6", " ", 
+         SqrtBox[
+          FractionBox["3", "85"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "+", 
+    RowBox[{"7970183100", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcCsc", "[", 
+        FractionBox[
+         RowBox[{"9", " ", 
+          SqrtBox[
+           FractionBox["11", "5"]]}], "10"], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "-", 
+    RowBox[{"11636467326", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcCsc", "[", 
+        FractionBox["9", 
+         SqrtBox["58"]], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "+", 
+    RowBox[{"4303898874", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"25", " ", 
+         SqrtBox[
+          FractionBox["6", "2117"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "-", 
+    RowBox[{"4303898874", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"20", " ", 
+         SqrtBox[
+          FractionBox["5", "1241"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "-", 
+    RowBox[{"5534849375", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"9", " ", 
+         SqrtBox[
+          FractionBox["11", "391"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "-", 
+    RowBox[{"5942214289", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"4", " ", 
+         SqrtBox[
+          FractionBox["2", "55"]]}], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "+", 
+    RowBox[{"5942214289", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"4", " ", 
+         SqrtBox[
+          FractionBox["3", "71"]]}], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "+", 
+    RowBox[{"5092061425", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"3", " ", 
+         SqrtBox[
+          FractionBox["42", "253"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "+", 
+    RowBox[{"442787950", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"3", " ", 
+         SqrtBox[
+          FractionBox["213", "667"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "+", 
+    RowBox[{"4303898874", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        SqrtBox[
+         FractionBox["142", "69"]], "]"}], ",", 
+       FractionBox["529", "2500"]}], "]"}]}], "+", 
+    RowBox[{"203682457", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SqrtBox[
+           FractionBox["33", "5"]]}], "5"], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "-", 
+    RowBox[{"4303898874", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         SqrtBox[
+          FractionBox["165", "23"]], "2"], "]"}], ",", 
+       FractionBox["529", "2500"]}], "]"}]}], "-", 
+    RowBox[{"203682457", " ", 
+     RowBox[{"EllipticF", "[", 
+      RowBox[{
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SqrtBox["174"]}], "25"], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "+", 
+    RowBox[{"11069698750", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       RowBox[{"-", 
+        FractionBox["23", "27"]}], ",", 
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"3", " ", 
+         SqrtBox[
+          FractionBox["42", "253"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "-", 
+    RowBox[{"11069698750", " ", "\[ImaginaryI]", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       RowBox[{"-", 
+        FractionBox["23", "27"]}], ",", 
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"3", " ", 
+         SqrtBox[
+          FractionBox["213", "667"]]}], "]"}], ",", 
+       FractionBox["23", "648"]}], "]"}]}], "-", 
+    RowBox[{"3666284226", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       FractionBox["27", "50"], ",", 
+       RowBox[{"ArcCsc", "[", 
+        RowBox[{"6", " ", 
+         SqrtBox[
+          FractionBox["3", "85"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "+", 
+    RowBox[{"3666284226", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       FractionBox["27", "50"], ",", 
+       RowBox[{"ArcCsc", "[", 
+        FractionBox["9", 
+         SqrtBox["58"]], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "-", 
+    RowBox[{"442787950", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       FractionBox["25", "24"], ",", 
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SqrtBox[
+           FractionBox["33", "5"]]}], "5"], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "+", 
+    RowBox[{"442787950", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       FractionBox["25", "24"], ",", 
+       RowBox[{"ArcSin", "[", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SqrtBox["174"]}], "25"], "]"}], ",", 
+       FractionBox["625", "648"]}], "]"}]}], "+", 
+    RowBox[{"3666284226", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       FractionBox["73", "50"], ",", 
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"25", " ", 
+         SqrtBox[
+          FractionBox["6", "2117"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}], "-", 
+    RowBox[{"3666284226", " ", 
+     RowBox[{"EllipticPi", "[", 
+      RowBox[{
+       FractionBox["73", "50"], ",", 
+       RowBox[{"ArcSin", "[", 
+        RowBox[{"20", " ", 
+         SqrtBox[
+          FractionBox["5", "1241"]]}], "]"}], ",", 
+       FractionBox["1971", "2500"]}], "]"}]}]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.534260110659542*^9, 3.5342601749792347`*^9, 
+  3.534260280948811*^9, 3.534260451770877*^9, 3.534260599629135*^9, 
+  3.534261785277318*^9}]
+}, Closed]],
+
+Cell["Here I calculate the answer and find that it is not real", "Text",
+ CellChangeTimes->{{3.534262002619431*^9, 3.534262018907387*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"N", "[", 
+  RowBox[{
+   FractionBox["1", "35865823950"], 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "26567277"}], " ", "\[ImaginaryI]", " ", 
+      SqrtBox["6"]}], "+", 
+     RowBox[{"1550562894", " ", 
+      SqrtBox["154"]}], "-", 
+     RowBox[{"426213000", " ", 
+      SqrtBox["374"]}], "-", 
+     RowBox[{"552229977", " ", 
+      SqrtBox["561"]}], "+", 
+     RowBox[{"649085976", " ", "\[ImaginaryI]", " ", 
+      SqrtBox["1334"]}], "-", 
+     RowBox[{"561785796", " ", "\[ImaginaryI]", " ", 
+      SqrtBox["1955"]}], "-", 
+     RowBox[{"92282256", " ", 
+      SqrtBox["2059"]}], "+", 
+     RowBox[{"42141198", " ", 
+      SqrtBox["6177"]}], "+", 
+     RowBox[{"5977637325", " ", 
+      RowBox[{"ArcCsc", "[", 
+       RowBox[{"5", " ", 
+        SqrtBox[
+         FractionBox["2", "17"]]}], "]"}]}], "-", 
+     RowBox[{"5977637325", " ", 
+      RowBox[{"ArcCsc", "[", 
+       FractionBox["5", 
+        SqrtBox["11"]], "]"}]}], "-", 
+     RowBox[{"5977637325", " ", 
+      RowBox[{"ArcSin", "[", 
+       FractionBox[
+        SqrtBox[
+         FractionBox["17", "2"]], "5"], "]"}]}], "+", 
+     RowBox[{"5977637325", " ", 
+      RowBox[{"ArcSin", "[", 
+       FractionBox[
+        SqrtBox["11"], "5"], "]"}]}], "-", 
+     RowBox[{"15940366200", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcCsc", "[", 
+         FractionBox[
+          RowBox[{"9", " ", 
+           SqrtBox[
+            FractionBox["11", "5"]]}], "10"], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "+", 
+     RowBox[{"15940366200", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcCsc", "[", 
+         FractionBox["9", 
+          SqrtBox["58"]], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "-", 
+     RowBox[{"7970183100", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"25", " ", 
+          SqrtBox[
+           FractionBox["6", "2117"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "+", 
+     RowBox[{"7970183100", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"20", " ", 
+          SqrtBox[
+           FractionBox["5", "1241"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "+", 
+     RowBox[{"11477063664", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"9", " ", 
+          SqrtBox[
+           FractionBox["11", "391"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "+", 
+     RowBox[{"11477063664", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"4", " ", 
+          SqrtBox[
+           FractionBox["2", "55"]]}], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "-", 
+     RowBox[{"11477063664", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"4", " ", 
+          SqrtBox[
+           FractionBox["3", "71"]]}], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "-", 
+     RowBox[{"17215595496", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"3", " ", 
+          SqrtBox[
+           FractionBox["42", "253"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "+", 
+     RowBox[{"5738531832", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"3", " ", 
+          SqrtBox[
+           FractionBox["213", "667"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "-", 
+     RowBox[{"7970183100", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         SqrtBox[
+          FractionBox["142", "69"]], "]"}], ",", 
+        FractionBox["529", "2500"]}], "]"}]}], "-", 
+     RowBox[{"5738531832", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          RowBox[{"2", " ", 
+           SqrtBox[
+            FractionBox["33", "5"]]}], "5"], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "+", 
+     RowBox[{"7970183100", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          SqrtBox[
+           FractionBox["165", "23"]], "2"], "]"}], ",", 
+        FractionBox["529", "2500"]}], "]"}]}], "+", 
+     RowBox[{"5738531832", " ", 
+      RowBox[{"EllipticE", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          RowBox[{"2", " ", 
+           SqrtBox["174"]}], "25"], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "+", 
+     RowBox[{"3666284226", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcCsc", "[", 
+         RowBox[{"6", " ", 
+          SqrtBox[
+           FractionBox["3", "85"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "+", 
+     RowBox[{"7970183100", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcCsc", "[", 
+         FractionBox[
+          RowBox[{"9", " ", 
+           SqrtBox[
+            FractionBox["11", "5"]]}], "10"], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "-", 
+     RowBox[{"11636467326", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcCsc", "[", 
+         FractionBox["9", 
+          SqrtBox["58"]], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "+", 
+     RowBox[{"4303898874", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"25", " ", 
+          SqrtBox[
+           FractionBox["6", "2117"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "-", 
+     RowBox[{"4303898874", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"20", " ", 
+          SqrtBox[
+           FractionBox["5", "1241"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "-", 
+     RowBox[{"5534849375", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"9", " ", 
+          SqrtBox[
+           FractionBox["11", "391"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "-", 
+     RowBox[{"5942214289", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"4", " ", 
+          SqrtBox[
+           FractionBox["2", "55"]]}], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "+", 
+     RowBox[{"5942214289", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"4", " ", 
+          SqrtBox[
+           FractionBox["3", "71"]]}], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "+", 
+     RowBox[{"5092061425", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"3", " ", 
+          SqrtBox[
+           FractionBox["42", "253"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "+", 
+     RowBox[{"442787950", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"3", " ", 
+          SqrtBox[
+           FractionBox["213", "667"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "+", 
+     RowBox[{"4303898874", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         SqrtBox[
+          FractionBox["142", "69"]], "]"}], ",", 
+        FractionBox["529", "2500"]}], "]"}]}], "+", 
+     RowBox[{"203682457", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          RowBox[{"2", " ", 
+           SqrtBox[
+            FractionBox["33", "5"]]}], "5"], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "-", 
+     RowBox[{"4303898874", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          SqrtBox[
+           FractionBox["165", "23"]], "2"], "]"}], ",", 
+        FractionBox["529", "2500"]}], "]"}]}], "-", 
+     RowBox[{"203682457", " ", 
+      RowBox[{"EllipticF", "[", 
+       RowBox[{
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          RowBox[{"2", " ", 
+           SqrtBox["174"]}], "25"], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "+", 
+     RowBox[{"11069698750", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        RowBox[{"-", 
+         FractionBox["23", "27"]}], ",", 
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"3", " ", 
+          SqrtBox[
+           FractionBox["42", "253"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "-", 
+     RowBox[{"11069698750", " ", "\[ImaginaryI]", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        RowBox[{"-", 
+         FractionBox["23", "27"]}], ",", 
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"3", " ", 
+          SqrtBox[
+           FractionBox["213", "667"]]}], "]"}], ",", 
+        FractionBox["23", "648"]}], "]"}]}], "-", 
+     RowBox[{"3666284226", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        FractionBox["27", "50"], ",", 
+        RowBox[{"ArcCsc", "[", 
+         RowBox[{"6", " ", 
+          SqrtBox[
+           FractionBox["3", "85"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "+", 
+     RowBox[{"3666284226", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        FractionBox["27", "50"], ",", 
+        RowBox[{"ArcCsc", "[", 
+         FractionBox["9", 
+          SqrtBox["58"]], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "-", 
+     RowBox[{"442787950", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        FractionBox["25", "24"], ",", 
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          RowBox[{"2", " ", 
+           SqrtBox[
+            FractionBox["33", "5"]]}], "5"], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "+", 
+     RowBox[{"442787950", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        FractionBox["25", "24"], ",", 
+        RowBox[{"ArcSin", "[", 
+         FractionBox[
+          RowBox[{"2", " ", 
+           SqrtBox["174"]}], "25"], "]"}], ",", 
+        FractionBox["625", "648"]}], "]"}]}], "+", 
+     RowBox[{"3666284226", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        FractionBox["73", "50"], ",", 
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"25", " ", 
+          SqrtBox[
+           FractionBox["6", "2117"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}], "-", 
+     RowBox[{"3666284226", " ", 
+      RowBox[{"EllipticPi", "[", 
+       RowBox[{
+        FractionBox["73", "50"], ",", 
+        RowBox[{"ArcSin", "[", 
+         RowBox[{"20", " ", 
+          SqrtBox[
+           FractionBox["5", "1241"]]}], "]"}], ",", 
+        FractionBox["1971", "2500"]}], "]"}]}]}], ")"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.53426192050184*^9, 3.534261924442541*^9}}],
+
+Cell[BoxData[
+ RowBox[{"0.021608131520642712`", "\[InvisibleSpace]", "-", 
+  RowBox[{"0.03338711845612336`", " ", "\[ImaginaryI]"}]}]], "Output",
+ CellChangeTimes->{3.534261925227813*^9}]
+}, {2}]],
+
+Cell["Is it faster (and real) if I use machine numbers?", "Text",
+ CellChangeTimes->{{3.53426203367096*^9, 3.53426204401934*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"lor", "[", 
+   RowBox[{"0.", ",", "0.75", ",", "0.75", ",", "0.5"}], "]"}], "+", 
+  RowBox[{"lor", "[", 
+   RowBox[{"0.", ",", "0.75", ",", "0.75", ",", 
+    RowBox[{"-", "0.5"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.534262066937717*^9, 3.534262108303733*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Timing", "[", 
+  RowBox[{"prLocsAndX", "[", 
+   RowBox[{"0.5", ",", 
+    RowBox[{"-", "0.5"}], ",", 
+    RowBox[{
+     RowBox[{"lor", "[", 
+      RowBox[{"0.", ",", "0.75", ",", "0.75", ",", "0.5"}], "]"}], "+", 
+     RowBox[{"lor", "[", 
+      RowBox[{"0.", ",", "0.75", ",", "0.75", ",", 
+       RowBox[{"-", "0.5"}]}], "]"}]}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.53426007208095*^9, 3.534260095431438*^9}, {
+  3.534260267734524*^9, 3.534260268452903*^9}, {3.5342604344921217`*^9, 
+  3.534260439439239*^9}, {3.53426052770789*^9, 3.534260546555464*^9}, {
+  3.534262114825182*^9, 3.5342621354407253`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"478.65823299999965`", ",", 
+   RowBox[{"0.021608131520642712`", "\[InvisibleSpace]", "-", 
+    RowBox[{"0.03338711845612336`", " ", "\[ImaginaryI]"}]}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.534262538564425*^9}]
+}, Open  ]],
+
+Cell["\<\
+It does seem slightly faster (8 minutes) but still not real.  I think that \
+the problem is my use of the dirac delta function.  It makes the \
+probabilities not be normalized if there are multiple solutions to the x and \
+a inversion problems (which there are).\
+\>", "Text",
+ CellChangeTimes->{{3.5342625624354877`*^9, 3.534262663978285*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+AutoGeneratedPackage->None,
+WindowSize->{640, 655},
+WindowMargins->{{Automatic, 23}, {Automatic, 27}},
+FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 112, 1, 141, "Title"],
+Cell[682, 25, 1584, 30, 275, "Text"],
+Cell[2269, 57, 679, 15, 121, "Text"],
+Cell[2951, 74, 267, 5, 77, "Text"],
+Cell[CellGroupData[{
+Cell[3243, 83, 131, 1, 73, "Section"],
+Cell[3377, 86, 392, 7, 77, "Text"],
+Cell[3772, 95, 141, 2, 33, "Text"],
+Cell[3916, 99, 565, 16, 34, "Input",
+ InitializationCell->True],
+Cell[4484, 117, 584, 13, 80, "Text"],
+Cell[5071, 132, 795, 22, 83, "Input"],
+Cell[5869, 156, 342, 6, 55, "Text"],
+Cell[6214, 164, 459, 11, 59, "Input"],
+Cell[6676, 177, 221, 4, 55, "Text"],
+Cell[6900, 183, 403, 10, 34, "Input"],
+Cell[7306, 195, 133, 1, 33, "Text"],
+Cell[7442, 198, 733, 17, 107, "Input"],
+Cell[8178, 217, 250, 5, 55, "Text"],
+Cell[8431, 224, 198, 4, 55, "Text"],
+Cell[8632, 230, 238, 6, 34, "Input"],
+Cell[8873, 238, 1996, 46, 251, "Input"],
+Cell[10872, 286, 824, 18, 83, "Input"],
+Cell[11699, 306, 156, 2, 33, "Text"],
+Cell[CellGroupData[{
+Cell[11880, 312, 483, 14, 34, "Input"],
+Cell[12366, 328, 94, 2, 46, "Output"]
+}, Open  ]],
+Cell[12475, 333, 254, 5, 55, "Text"],
+Cell[CellGroupData[{
+Cell[12754, 342, 400, 9, 34, "Input"],
+Cell[13157, 353, 11032, 332, 2326, "Output"]
+}, Closed]],
+Cell[24204, 688, 138, 1, 30, "Text"],
+Cell[CellGroupData[{
+Cell[24367, 693, 11292, 331, 2986, "Input"],
+Cell[35662, 1026, 187, 3, 34, "Output"]
+}, {2}]],
+Cell[35861, 1032, 129, 1, 33, "Text"],
+Cell[35993, 1035, 301, 7, 34, "Input"],
+Cell[CellGroupData[{
+Cell[36319, 1046, 641, 14, 59, "Input"],
+Cell[36963, 1062, 257, 6, 34, "Output"]
+}, Open  ]],
+Cell[37235, 1071, 354, 6, 99, "Text"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
