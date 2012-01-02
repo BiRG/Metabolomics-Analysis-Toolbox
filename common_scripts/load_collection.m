@@ -73,7 +73,7 @@ while line ~= -1
                     if ~isempty(fields{i})
                         all_empty = false;
                     end
-                    [v, num_read] = sscanf('%f',fields{i});
+                    [v, num_read] = sscanf(fields{i},'%f');
                     if ~isempty(v) && num_read == 1
                         values(i-1) = v;
                     elseif ~isempty(fields{i}) % contains string
