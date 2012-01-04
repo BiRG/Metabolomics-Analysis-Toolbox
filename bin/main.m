@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 19-Dec-2011 17:27:29
+% Last Modified by GUIDE v2.5 20-Dec-2011 15:09:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1214,6 +1214,18 @@ delete(h);
 h = findobj(gcf,'tag','left_cursor');
 delete(h);
 
+function hide_cursors()
+h = findobj(gcf,'tag','right_cursor');
+set(h,'visible','off');
+h = findobj(gcf,'tag','left_cursor');
+set(h,'visible','off');
+
+function show_cursors()
+h = findobj(gcf,'tag','right_cursor');
+set(h,'visible','on');
+h = findobj(gcf,'tag','left_cursor');
+set(h,'visible','on');
+
 % --- Executes on button press in x_zoom_out_pushbutton.
 function x_zoom_out_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to x_zoom_out_pushbutton (see GCBO)
@@ -1281,7 +1293,14 @@ if ~result
     return;
 end
 
-delete_cursors;
+[bins,deconvolve,names] = get_bins(handles);
+
+num_current_bins_displayed = length(findobj(gcf,'tag','right_cursor'));
+if num_current_bins_displayed ~= size(bins,1)
+    delete_cursors;
+else
+    hide_cursors;
+end
 
 contents = cellstr(get(hObject,'String'));
 bin_inx = get(hObject,'Value')-1;
@@ -1316,25 +1335,29 @@ xlim(handles.xlim);
 ylim auto;
     
 yl = ylim;
-[bins,deconvolve,names] = get_bins(handles);
 set(handles.bin_name_edit,'String',names{bin_inx});
-for b = 1:size(bins,1)
-    color = 'm';
-    if mod(b-1,2) == 0
-        color = 'b';
+% Something has changed, so redo bin boundaries
+if num_current_bins_displayed ~= size(bins,1)
+    for b = 1:size(bins,1)
+        color = 'm';
+        if mod(b-1,2) == 0
+            color = 'b';
+        end
+        right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],color,b,handles);
+        set(right_cursor,'LineWidth',3);
+        set(right_cursor,'LineStyle','--');
+        %myfunc = @(hObject, eventdata) (click_bin_boundary(b,right_cursor,handles));
+        %set(right_cursor,'ButtonDownFcn',myfunc);
+
+        set(right_cursor,'tag','right_cursor');
+        left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],color,b,handles);
+        set(left_cursor,'LineWidth',3);
+        set(left_cursor,'tag','left_cursor');           
+    %     myfunc = @(hObject, eventdata) (click_bin_boundary(b,left_cursor,handles));
+    %     set(left_cursor,'ButtonDownFcn',myfunc);    
     end
-    right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],color,b,handles);
-    set(right_cursor,'LineWidth',3);
-    set(right_cursor,'LineStyle','--');
-    %myfunc = @(hObject, eventdata) (click_bin_boundary(b,right_cursor,handles));
-    %set(right_cursor,'ButtonDownFcn',myfunc);
-    
-    set(right_cursor,'tag','right_cursor');
-    left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],color,b,handles);
-    set(left_cursor,'LineWidth',3);
-    set(left_cursor,'tag','left_cursor');           
-%     myfunc = @(hObject, eventdata) (click_bin_boundary(b,left_cursor,handles));
-%     set(left_cursor,'ButtonDownFcn',myfunc);    
+else
+    show_cursors;
 end
 
 plot_maxs(handles,true);
@@ -1848,3 +1871,20 @@ for b = 1:size(bins,1)
 end
 
 set(handles.bins_listbox,'Value',old_selection);
+
+
+% --- Executes on button press in all_deconvolution_checkbox.
+function all_deconvolution_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to all_deconvolution_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of all_deconvolution_checkbox
+[bins,deconvolve,names] = get_bins(handles);
+if get(hObject,'Value')
+    deconvolve(:) = 1;
+    update_bin_list(handles,bins,deconvolve,names);
+else
+    deconvolve(:) = 0;
+    update_bin_list(handles,bins,deconvolve,names);
+end
