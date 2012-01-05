@@ -22,9 +22,10 @@ function [smoothed_y,maxs,mins] = wavelet_smooth(y,height_threshold,options)
 %                   sqtwolog, s, mln, 3, db3
 %
 % smoothed_y The y_values after wavelet smoothing
-% maxs       The maxima of the smoothed function
-% mins       The two bracketing minima of the smoothed function for the
-%            local maximum at the same index
+% maxs       The indices of the maxima of the smoothed function
+% mins       The indices of the two bracketing minima of the smoothed function for the
+%            local maximum at the same index.  mins(i,1) and mins(i,2)
+%            bracket maxes(i)
 
 
 level = 3;

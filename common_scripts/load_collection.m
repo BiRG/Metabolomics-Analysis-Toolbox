@@ -14,6 +14,7 @@ end
 collection = {};
 collection.filename = filename;
 collection.input_names = {};
+collection.formatted_input_names = {};
 
 line = fgetl(ifid);
 data_start = false;
@@ -61,7 +62,8 @@ while line ~= -1
         collection.input_names{end+1} = input_name;
         name = regexprep(input_name,' ','_');
         field_name = lower(name);
-        if length(fields) == 2
+        collection.formatted_input_names{end+1} = field_name;
+        if length(fields) == 2 || strcmp(field_name,'description') || strcmp(field_name,'processing_log') || strcmp(field_name,'collection_id')
             collection.(field_name) = fields{2};
         else
             % Try to convert to num
@@ -73,7 +75,7 @@ while line ~= -1
                     if ~isempty(fields{i})
                         all_empty = false;
                     end
-                    [v, num_read] = sscanf('%f',fields{i});
+                    [v, num_read] = sscanf(fields{i},'%f');
                     if ~isempty(v) && num_read == 1
                         values(i-1) = v;
                     elseif ~isempty(fields{i}) % contains string

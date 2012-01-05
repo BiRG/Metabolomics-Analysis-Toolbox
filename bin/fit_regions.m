@@ -1,4 +1,4 @@
-function regions = fit_regions(regions,deconvolve_mask,done_mask,prev_y_peaks)
+function regions = fit_regions(regions,deconvolve_mask,done_mask)
 % Transform the data into structures that can be used in a parfor loop
 lb = {};
 ub = {};
@@ -28,7 +28,7 @@ for r = 1:length(regions)
 end
 
 % Fit each region
-for r = 1:length(regions)
+parfor r = 1:length(regions)
     if ~done_mask(r)
         if deconvolve_mask(r)% || (r > 1 && deconvolve_mask(r-1)) || (r < length(regions) && deconvolve_mask(r+1))
             % Check for equal upper and lower bounds in the X direction
@@ -60,8 +60,7 @@ for r = 1:length(regions)
             x_to_fit = x{r};
             y_to_fit = y{r};
             inxs_to_fit = rinxs{r};
-            prev_y_bin = global_model(BETA0{r},x_to_fit,length(BETA0{r})/4,{});
-            y_to_fit = y_to_fit - prev_y_peaks(inxs_to_fit) + prev_y_bin;
+            prev_y_bin = global_model(BETA0{r},x_to_fit,length(BETA0{r})/4,{});          
             try
                 [BETA,EXITFLAG] = curve_fit(x_to_fit,y_to_fit,1:length(x_to_fit),[BETA0{r};baseline_BETA{r}],...
                     [lb{r};baseline_lb{r}],[ub{r};baseline_ub{r}],num_maxima{r},baseline_options{r});

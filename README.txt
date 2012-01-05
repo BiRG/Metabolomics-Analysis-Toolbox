@@ -44,3 +44,5 @@ Common and Library directories
 common_scripts - Holds all matlab scripts used by more than one program
 
 lib            - Holds all libraries from other projects.  Each library should be in its own subdirectory under lib and periodically updated.
+
+dont_distribute - Holds files that should be in the repository but should not be distributed to end-users.
