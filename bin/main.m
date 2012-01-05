@@ -611,12 +611,8 @@ str = urlreadpost('http://birg.cs.wright.edu/omics_analysis/saved_files', ...
 fprintf(str);
 
 function collection = init_collection(collection)
-collection.y_baseline = {};
-collection.y_fit = {};
 collection.regions = {};
 for s = 1:size(collection.Y,2)
-    collection.y_baseline{s} = [];
-    collection.y_fit{s} = [];
     collection.regions{s} = {};
 end
 
@@ -627,7 +623,7 @@ function load_collection_pushbutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles = load_collection_pushbutton(handles);
-handles.collection = init_collection(handles.colleciton);
+handles.collection = init_collection(handles.collection);
 set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
 
 ymax = max(handles.collection.Y(:,1));
@@ -1664,19 +1660,16 @@ add_line_to_summary_text(handles.summary_text,sprintf('Starting deconvolution'))
 handles = get_peaks(handles);
 collection = handles.collection;
 
-collection.y_baseline = {};
-collection.y_fit = {};
+[bins,deconvolve_mask] = get_bins(handles);
 
 % Perform deconvolution
 for s = 1:num_spectra
     if ~isempty(collection.maxs{s})
-        [bins,deconvolve_mask] = get_bins(handles);
-        results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,1,2,collection.regions{s});
+        collection.regions{s} = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,collection.regions{s});
         %results = deconvolve2(collection.x',collection.Y(:,s),collection.maxs{s},collection.mins{s},bins,deconvolve_mask,options);
 
-        collection.regions{s} = results.regions;
-        collection.y_fit{s} = results.y_fit;
-        collection.y_baseline{s} = results.y_baseline;
+%         collection.y_fit{s} = results.y_fit;
+%         collection.y_baseline{s} = results.y_baseline;
 
         % Update the max indices
         %collection.maxs{s} = round((x(1) - collection.BETA{s}(4:4:end)')/xwidth)+1;
@@ -1692,6 +1685,8 @@ handles.collection = collection;
 % setappdata(gcf,'dirty',false);
 
 add_line_to_summary_text(handles.summary_text,sprintf('Finished deconvolution'));
+
+handles.collection = adjust_y_deconvolution(handles.collection,bins,deconvolve_mask);
 
 msgbox('Finished Deconvolution');
 
@@ -1798,7 +1793,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 function populate_listboxes(handles)
-flds = fields(handles.collection);
+flds = handles.collection.formatted_input_names;%fields(handles.collection);
 valid_flds = {};
 for i = 1:length(flds)
     [rows,cols] = size(handles.collection.(flds{i}));

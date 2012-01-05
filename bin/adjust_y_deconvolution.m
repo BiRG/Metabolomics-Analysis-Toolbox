@@ -6,14 +6,15 @@ for s = 1:num_spectra
         continue;
     end
     try
-        y_baseline = collection.y_baseline{s};
-        y_fit = collection.y_fit{s};
-        y_peaks = y_fit - y_baseline;
         for b = 1:length(deconvolve)
             y = collection.Y(:,s);
             if deconvolve(b) && isfield(collection.regions{s}{b},'BETA0')
                 yinxs = collection.regions{s}{b}.inxs;
                 BETA = collection.regions{s}{b}.BETA0;
+                collection.regions{s}{b}.y_individual_peaks = {};
+                for i = 1:length(BETA)/4
+                    collection.regions{s}{b}.y_individual_peaks{i} = global_model(BETA(4*(i-1) + (1:4)),collection.x(yinxs),1,{});
+                end
                 enabled_xinxs = [];
                 for m = 1:length(collection.regions{s}{b}.maxs)
                     minx = find(collection.regions{s}{b}.maxs(m) == collection.maxs{s});
@@ -27,9 +28,9 @@ for s = 1:num_spectra
                     for i = 2:length(xinxs)
                         y_bin = y_bin + global_model(BETA((4*(xinxs(i) - 1)+1):(4*(xinxs(i) - 1)+4)),collection.x(yinxs),1,{});
                     end
-                    y(yinxs) = y(yinxs) - y_peaks(yinxs) - y_baseline(yinxs) + y_bin';
+                    y(yinxs) = y(yinxs) - collection.regions{s}{b}.y_peaks - collection.regions{s}{b}.y_baseline + y_bin';
                 else
-                    y(yinxs) = y(yinxs) - y_peaks(yinxs) - y_baseline(yinxs);
+                    y(yinxs) = y(yinxs) - collection.regions{s}{b}.y_peaks - collection.regions{s}{b}.y_baseline;
                 end                
                 collection.regions{s}{b}.y_adjusted = y(yinxs);
             else
