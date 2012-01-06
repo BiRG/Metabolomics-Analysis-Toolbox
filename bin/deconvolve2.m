@@ -12,7 +12,7 @@ regions = fit_regions(regions,deconvolve_mask,done_mask);
 
 function regions = determine_initial_baseline(regions)
 for r = 1:length(regions)
-    regions{r}.baseline_lb = [min(regions{r}.y);min(regions{r}.y)];
+    regions{r}.baseline_lb = [min([0;regions{r}.y]);min([0;regions{r}.y])];
     regions{r}.baseline_ub = [max(regions{r}.y);max(regions{r}.y)];
     if r == 1
         x_baseline_BETA = [regions{r}.x(1);regions{r}.x(end)];
