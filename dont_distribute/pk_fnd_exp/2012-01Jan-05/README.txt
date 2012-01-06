@@ -21,14 +21,16 @@ the points would be determined to make the bins have maximum entropy.
 If I did that, I wouldn't need to decorrelate the data.  But other
 things would be more complicated.
 
-Next, I need to generate the main table I will work from: counts of
+Next, I need to generate the main tables I will work from: counts of
 a_x + a_x+1, a_x - a_x+1,l_x == t,u,v.  A box with a_x + a_x+1 == t
 gets indexed if the discretized value of a_x + a_x+1 is t.  l_x is
 true if one of the peak modes underlying the sample was closer to l_x
 than to any other discrete x value.  I keep one extra count which is
 the number of samples it took to do this so I can turn counts into
 probabilities yet still merge tables produced by different machines or
-processors losslessly.
+processors losslessly.  Note that I could get away with two smaller
+tables: a_x + a_x+1, a_x - a_x+1 and a_x,l_x but this would
+necessitate some sort of translation due to the discretization.
 
 The table generating program writes out its data every so many minutes
 so I can stop it at any time and have its data, and it reads in the
