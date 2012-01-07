@@ -1,6 +1,8 @@
 This is code for approximating the probability distributions needed
 for my Bayesian filtering and peak-finding programs.
 
+Requires: boost-serialization and waffles machine learning libraries
+
 The first thing that must be chosen is the discretizations.  The peak
 sample locations are discretized by the input data.  The normal input
 data has 32K samples.  For my trial I will only have 128 samples
