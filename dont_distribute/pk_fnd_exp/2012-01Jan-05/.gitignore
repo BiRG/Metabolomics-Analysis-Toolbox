@@ -1,0 +1,3 @@
+*.o
+create_table
+discretize_amp
