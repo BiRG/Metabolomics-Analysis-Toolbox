@@ -10,6 +10,35 @@
 #ifndef BAYES_COMMON_HPP
 #define BAYES_COMMON_HPP
 
+namespace Prior{
+  ///\brief The minimum of the frequency interval
+  const double freq_int_min=0;
+
+  ///\brief The maximum of the frequency interval
+  const double freq_int_max=0.05504;
+
+  ///\brief The number of samples to make of the frequency
+  const double freq_int_num_samp = 128;
+
+  ///\brief The mean amplitude of the peaks generated
+  const double mean_height=0.0668214984275779;
+
+  ///\brief The shape parameter for the gamma parameter's gamma distribution
+  const double gamma_shape = 5.639291438052089;
+
+  ///\brief The scale parameter for the gamma parameter's gamma distribution
+  const double gamma_scale = 0.0005038283197638329;
+
+  ///\brief The minimum of the allowable lorentziannesses
+  const double min_lorentzianness=0;
+
+  ///\brief The maximum of the allowable lorentziannesses
+  const double max_lorentzianness=1;
+
+}
+
+
+
 ///Thrown when there is an expected speedy exit
 class expected_exception: public std::exception{
 public:
