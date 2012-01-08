@@ -3,7 +3,7 @@
 
 PeakList peaksFromPrior(GClasses::GRandMersenneTwister& rng){
   using namespace Prior;
-  uint64_t numPeaks = rng.geometric(1/7);
+  uint64_t numPeaks = rng.geometric(1.0/7.0);
   //Technically, this makes it not a geometric distribution anymore,
   //but it also ensures that we will always have enough memory for our
   //list of peaks

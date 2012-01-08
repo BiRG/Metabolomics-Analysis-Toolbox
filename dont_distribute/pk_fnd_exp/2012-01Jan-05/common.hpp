@@ -181,7 +181,7 @@ struct AmpAndIsPeak{
 ///The number of samples specified in Prior::freq_int_num_samp is used
 ///and the interval is that specified in Prior::freq_int_min and
 ///Prior::freq_int_max
-std::vector<AmpAndIsPeak> ampsAndLocsFrom(PeakList& l);
+std::vector<AmpAndIsPeak> ampsAndLocsFrom(const PeakList& l);
 
 ///\brief Discretizes an interval into n equal sized bins
 ///
