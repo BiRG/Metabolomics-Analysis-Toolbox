@@ -14,9 +14,11 @@ using std::endl;
 ///"expected_exception"
 void printUsageAndExit(std::ostream& out, const char*executableName, std::string msg=""){
   out 
-    << "Usage: " << executableName << " this is a stub\n"
+    << "Usage: " << executableName << " num_divisions num_initial_samples\n"
     << "\n"
-    << "\n"
+    << "Create a discretization discretizing each amplitude into \n"
+    << "num_divisions bins using num_initial_samples samples from the prior\n"
+    << "distribution to decide on discretization characteristics.\n"
     << msg << "\n";
     ;
   throw expected_exception(-1);
