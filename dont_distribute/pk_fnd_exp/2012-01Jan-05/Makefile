@@ -12,13 +12,14 @@ all: $(TARGETS)
 #####
 
 discretize_amp: discretize_amp.o common.o
-	g++ -O3 -o discretize_amp discretize_amp.o $(LFLAGS)
+	g++ -O3 -o discretize_amp discretize_amp.o common.o $(LFLAGS)
 
 create_table: create_table.o common.o
-	g++ -O3 -o create_table create_table.o $(LFLAGS)
+	g++ -O3 -o create_table create_table.o common.o $(LFLAGS)
 
 create_prior_collection: create_prior_collection.o common.o
-	g++ -O3 -o create_prior_collection create_prior_collection.o $(LFLAGS)
+	g++ -O3 -o create_prior_collection create_prior_collection.o common.o \
+		$(LFLAGS)
 
 
 
