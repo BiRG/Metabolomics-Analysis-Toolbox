@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 INSTALL_LOCATION_INCLUDE ?= /usr/local/include
-CPPFLAGS := -Wall -Wextra -pedantic -g -I$(INSTALL_LOCATION_INCLUDE)
-LFLAGS := -lGClasses -lpng -lz
+CPPFLAGS := -Wall -Wextra -pedantic -g -O3 -I$(INSTALL_LOCATION_INCLUDE)
+LFLAGS := -lGClasses -lpng -lz -lboost_serialization-mt
 
 TARGETS=discretize_amp create_table create_prior_collection
 
