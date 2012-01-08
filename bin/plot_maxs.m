@@ -15,7 +15,8 @@ else
 end
 [num_dp,num_spectra] = size(handles.collection.Y);
 
-handles.collection = adjust_y_deconvolution(handles.collection,bins,deconvolve);
+% handles.collection = adjust_y_deconvolution(handles.collection,bins,deconvolve);
+% guidata(handles.figure1, handles);
 
 delete(findobj(gcf,'Tag','hmaxs'));
 d = 0;
@@ -45,37 +46,38 @@ for g = 1:length(handles.group_by_inxs)
         % Check to see if a bin is selected
         b = get(handles.bins_listbox,'Value')-1;
 
+        % Check to see if a bin is selected
+        if b == 0 || deconvolve(b) == 0 % No bin selected
+            continue;
+        end
+        
         for j = 1:length(inxs)
             s = inxs(j);
-            if isfield(handles.collection,'y_fit') && ~isempty(handles.collection.y_fit{s})
-                y = handles.collection.Y(:,s);
-                y_baseline = handles.collection.y_baseline{s};
-                y_fit = handles.collection.y_fit{s};
-                y_peaks = y_fit - y_baseline;
-                y_residual = handles.collection.Y(:,s) - y_fit;
+            if isfield(handles.collection,'regions') && ~isempty(handles.collection.regions{s}) && isfield(handles.collection.regions{s}{b},'y_fit')
+                regions = handles.collection.regions;
                 if ~data{d,10}
-                    plot(handles.collection.x,y_fit','g-','Tag','hmaxs');
+                    plot(regions{s}{b}.x,regions{s}{b}.y_fit,'g-','Tag','hmaxs');
                 end
                 if ~data{d,11}
-                    plot(handles.collection.x,y_peaks','color',[0.2,0.8,0.8],'Tag','hmaxs');
-                    plot(handles.collection.x,y_baseline','color',[0.2,0.2,0.8],'Tag','hmaxs');
+                    %plot(handles.collection.x,y_peaks','color',[0.2,0.8,0.8],'Tag','hmaxs');
+                    for p = 1:length(regions{s}{b}.y_individual_peaks)
+                        plot(regions{s}{b}.x,regions{s}{b}.y_individual_peaks{p},'color',[0.2,0.2,0.8],'Tag','hmaxs');
+                    end
+                    plot(regions{s}{b}.x,regions{s}{b}.y_baseline,'color',[0.2,0.2,0.8],'Tag','hmaxs');
                 end
                 if ~data{d,12}
-                    plot(handles.collection.x,y_residual','color',[0.8,0.2,0.2],'Tag','hmaxs');
+                    y_residual = regions{s}{b}.y - regions{s}{b}.y_fit;
+                    plot(regions{s}{b}.x,y_residual,'color',[0.8,0.2,0.2],'Tag','hmaxs');
                 end
                 if ~data{d,13}
                     if b > 0
                         yinxs = handles.collection.regions{s}{b}.inxs;
-                        plot(handles.collection.x(yinxs),handles.collection.regions{s}{b}.y_adjusted,'color',[0.7,0.3,0.9],'tag','hmaxs');
+                        plot(regions{s}{b}.x,regions{s}{b}.y_adjusted,'color',[0.7,0.3,0.9],'tag','hmaxs');
                     end
                 end
             end
         end
         
-        % Check to see if a bin is selected
-        if b == 0 || deconvolve(b) == 0 % No bin selected
-            continue;
-        end
         for j = 1:length(inxs)
             s = inxs(j);
             maxs = handles.collection.maxs{s};
