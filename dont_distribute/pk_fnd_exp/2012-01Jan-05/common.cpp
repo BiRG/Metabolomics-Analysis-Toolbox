@@ -42,7 +42,7 @@ std::vector<AmpAndIsPeak> ampsAndLocsFrom(const PeakList& l){
     }else if(x >= max){ 
       ret.at(ret.size()-1).is_peak = true;
     }else{
-      double bin = n*(x-min)/width;
+      double bin = (n-1)*(x-min)/width;
       unsigned low = bin;
       unsigned high = low+1;
       if((bin - low) < (high - bin)){

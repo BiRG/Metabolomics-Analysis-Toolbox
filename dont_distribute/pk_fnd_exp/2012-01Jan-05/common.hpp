@@ -80,7 +80,7 @@ class Peak{
   ///
   ///\param version the version number
   template<class Archive>
-  void serialize(Archive& ar, const unsigned int version){
+  void serialize(Archive& ar, const unsigned int /*version*/){
     ar & amp;
     ar & gamma;
     ar & loc;
@@ -140,8 +140,8 @@ class PeakList:public std::vector<Peak>{
   ///
   ///\param version the version number
   template<class Archive>
-  void serialize(Archive& ar, const unsigned int version){
-    ar && boost::serialization::base_object<std::vector<Peak> >(*this);
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & boost::serialization::base_object<std::vector<Peak> >(*this);
   }
 
 public:
@@ -206,10 +206,10 @@ class UniformDiscretization{
   ///
   ///\param version the version number
   template<class Archive>
-  void serialize(Archive& ar, const unsigned int version){
-    ar && min;
-    ar && max;
-    ar && m_num_bins;
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & min;
+    ar & max;
+    ar & m_num_bins;
   }
 
 public:
