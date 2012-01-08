@@ -2,6 +2,11 @@
 ///
 ///Holds the declarations that are common among the Bayesian
 ///peak-finding and noise reducing suite of programs
+///
+///Why am I putting everything common in two files?  Because I don't
+///want the complexity of having to change the dependencies in the
+///makefile every time.  Nor do I feel like puting in the auto-deps
+///generation.
 
 #include <exception>
 #include <vector>
