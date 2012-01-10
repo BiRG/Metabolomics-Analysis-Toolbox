@@ -1341,12 +1341,14 @@ if num_current_bins_displayed ~= size(bins,1)
         end
         right_cursor = create_cursor(bins(b,2),[handles.ymin,handles.ymax],color,b,handles);
         set(right_cursor,'LineWidth',3);
+        setappdata(right_cursor,'bin_inx',b);
         set(right_cursor,'LineStyle','--');
         %myfunc = @(hObject, eventdata) (click_bin_boundary(b,right_cursor,handles));
         %set(right_cursor,'ButtonDownFcn',myfunc);
 
         set(right_cursor,'tag','right_cursor');
         left_cursor = create_cursor(bins(b,1),[handles.ymin,handles.ymax],color,b,handles);
+        setappdata(left_cursor,'bin_inx',b);
         set(left_cursor,'LineWidth',3);
         set(left_cursor,'tag','left_cursor');           
     %     myfunc = @(hObject, eventdata) (click_bin_boundary(b,left_cursor,handles));
@@ -1419,15 +1421,27 @@ right_cursors = findobj(gcf,'tag','right_cursor');
 if isempty(left_cursors) || isempty(right_cursors)
     return;
 end
-for b = 1:size(bins,1)
-    left = get_cursor_location(left_cursors(b));
-    right = get_cursor_location(right_cursors(b));
-    bins(b,:) = [left,right];
+% Need to sort the bins
+left_bin_inxs = [];
+for i = 1:length(left_cursors)
+    left_bin_inxs(i) = getappdata(left_cursors(i),'bin_inx');
+end
+[vs,sorted_left_bin_inxs] = sort(left_bin_inxs);
+right_bin_inxs = [];
+for i = 1:length(right_cursors)
+    right_bin_inxs(i) = getappdata(right_cursors(i),'bin_inx');
+end
+[vs,sorted_right_bin_inxs] = sort(right_bin_inxs);
+
+for i = 1:length(sorted_left_bin_inxs)
+    left = get_cursor_location(left_cursors(sorted_left_bin_inxs(i)));
+    right = get_cursor_location(right_cursors(sorted_right_bin_inxs(i)));
+    bins(i,:) = [left,right];
 end
 
 update_bin_list(handles,bins,deconvolve,names);
 
-sort_bins(handles);
+%sort_bins(handles);
 
 
 % --- Executes on button press in delete_all_checkbox.
