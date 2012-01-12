@@ -2,9 +2,11 @@
 #include <fstream>
 #include <memory>
 #include <utility>
+#include <ctime>
 #include <GClasses/GApp.h>
 #include <GClasses/GError.h>
 #include <GClasses/GMatrix.h>
+#include <GClasses/GRand.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -21,7 +23,7 @@ using std::endl;
 ///"expected_exception"
 void printUsageAndExit(std::ostream& out, const char*executableName, std::string msg=""){
   out 
-    << "Usage: " << executableName << "discretization_file table_file\n"
+    << "Usage: " << executableName << " seed discretization_file table_file\n"
     << "\n"
     << "Reads in discretization_file (which defines the discretizations of\n"
     << "the amplitudes and writes tables of counts of event occurrences to\n"
@@ -42,6 +44,12 @@ void printUsageAndExit(std::ostream& out, const char*executableName, std::string
     << "\n"
     << "table_file will be written out every 15 minutes so that little\n"
     << "work will be lost by killing the create_table process.\n"
+    << "\n"
+    << "seed gives the seed used to initialize the random number generator.\n"
+    << "\n"
+    << "To stop the run, make the file stop_running readable in the current\n"
+    << "directory.\n"
+
 
     << "\n"
     << msg << "\n";
@@ -53,10 +61,13 @@ void printUsageAndExit(std::ostream& out, const char*executableName, std::string
 void create_table(GArgReader& args){
   std::string s("");//Empty string to make easy to do string formatting
   const char* exe = args.pop_string();
-  if(args.size() !=  2){
+  if(args.size() !=  3){
     printUsageAndExit(cerr, exe, "Error: Wrong number of arguments.  Expected "
-		      "2 arguments.");
+		      "3 arguments.");
   }
+
+  const unsigned seed = args.pop_uint();
+  GClasses::GRandMersenneTwister rng(seed);;
 
   const char* disc_file = args.pop_string();
   const char* table_file= args.pop_string();
@@ -95,7 +106,7 @@ void create_table(GArgReader& args){
   //be read) or empty
   {
     std::ifstream table_stream(table_file);
-    if(!table_stream){
+    if(table_stream){
       boost::archive::text_iarchive in(table_stream);
       in >> amp_pairs >> l_pairs >> l_amp;
     }else{
@@ -104,10 +115,11 @@ void create_table(GArgReader& args){
       l_amp.reserve(ns);
       for(std::size_t samp = 0; samp < ns; ++samp){
 	CountTableVariable a0("a",samp,discretizations.at(samp).num_bins());
-	CountTableVariable a1("a",samp+1,discretizations.at(samp+1).num_bins());
 	CountTableVariable l0("l",samp,2);
-	CountTableVariable l1("l",samp+1,2);
 	if(samp+1 < ns){
+	  CountTableVariable a1
+	    ("a",samp+1,discretizations.at(samp+1).num_bins());
+	  CountTableVariable l1("l",samp+1,2);
 	  amp_pairs.push_back(CountTable2DSparse(a0,a1));
 	  l_pairs.push_back(CountTable2DDense(l0,l1));
 	}
@@ -116,16 +128,77 @@ void create_table(GArgReader& args){
     }
   }
 
-  //TODO: stub
   //Check whether the table and the discretization are compatible
-
-  while(true){
-    //TODO: stub
-    //If the time limit has expired, write the current counts to the table
-    //Generate another sample
-    //Add the sample to the table
+  //(really only necessary when loading from the file, but it doesn't
+  //take much time and it gives a check that my other table-initialization
+  //code is correct
+  bool compatible = true;
+  for(std::size_t samp = 0; samp < ns; ++samp){
+    if(samp+1 < ns){
+      compatible &= amp_pairs.at(samp).variables().at(0).num_vals() == 
+	discretizations.at(samp).num_bins();
+      compatible &= amp_pairs.at(samp).variables().at(1).num_vals() == 
+	discretizations.at(samp+1).num_bins();
+    }
+    compatible &= l_amp.at(samp).variables().at(1).num_vals() == 
+      discretizations.at(samp).num_bins();
   }
-  
+
+  if(!compatible){
+    ThrowError("Error: The loaded discretization and the structure of the "
+	       "tables differs.");
+  }
+
+  //last_time is the last time the data was written to a file
+  //Assuming time_t is an integral number of seconds (probably safe
+  //and this is research code anyway)
+  time_t last_time = std::time(0);
+  time_t last_stop_check = std::time(0);
+  const unsigned fifteen_minutes = 1;//60*15;  //For testing, write much more often
+  while(true){
+    //If the time limit has expired, write the current counts to the
+    //file
+    time_t cur_time = std::time(0);
+    if(last_time + fifteen_minutes >= cur_time){
+      last_time = cur_time;
+      std::ofstream table_stream(table_file);
+      if(table_stream){
+	boost::archive::text_oarchive out(table_stream);
+        out << amp_pairs << l_pairs << l_amp;
+      }else{
+	std::cerr << "Error: could not write to " << table_file 
+		  << " continuing.";
+      }
+    }
+    
+    
+    if(cur_time != last_stop_check){
+      last_stop_check = cur_time;
+      std::ifstream stop_file("stop_running");
+      if(stop_file){ return; }
+    }
+
+    //Generate another sample
+    std::vector<AmpAndIsPeak> samp = ampsAndLocsFrom(peaksFromPrior(rng));
+
+    //Discretize the amplitudes and location variables
+    std::vector<unsigned> amps(samp.size());
+    std::vector<unsigned> locs(samp.size());
+    for(unsigned i = 0; i < samp.size(); ++i){
+      amps[i]=discretizations[i].bin_for(samp[i].amp);
+      locs[i]=samp[i].is_peak ? 1:0;
+    }
+    
+
+    //Add the sample to the tables
+    for(unsigned i = 0; i < ns; ++i){
+      if(i+1 < ns){
+	amp_pairs[i].inc(amps[i],amps[i+1]);
+	l_pairs[i].inc(locs[i],locs[i+1]);
+      }
+      l_amp[i].inc(locs[i], amps[i]);
+    }
+  }
 
 }
 
