@@ -54,3 +54,19 @@ std::vector<AmpAndIsPeak> ampsAndLocsFrom(const PeakList& l){
   }
   return ret;
 }
+
+
+//virtual 
+std::string CountTable::name() const{
+  std::vector<CountTableVariable> vars = variables();
+  std::stringstream out;
+  out << "[";
+  std::vector<CountTableVariable>::const_iterator it;
+  for(it = vars.begin(); it != vars.end(); ++it){
+    if(it != vars.begin()){ out << ", "; }
+    out << it->name();
+  }
+  out << "]";
+  return out.str();
+}
+
