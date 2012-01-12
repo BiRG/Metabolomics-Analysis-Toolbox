@@ -212,6 +212,9 @@ class UniformDiscretization{
     ar & m_num_bins;
   }
 
+  ///\brief Creates an uninitialized UniformDiscretization for serialization
+  UniformDiscretization(){}
+
 public:
   ///\brief Create a uniform discretization for the closed interval
   ///[\a min,\a max]
