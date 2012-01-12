@@ -70,22 +70,54 @@ void create_table(GArgReader& args){
 			"file \""+disc_file+"\" for reading");
     }
     boost::archive::text_iarchive in(disc_stream);
-    in & discretizations;
+    in >> discretizations;
   }
 
-  //TODO: declare table variable here
+  //Abbreviation for number of samples
+  const std::size_t ns = Prior::freq_int_num_samp;
 
+  //Check that discretization loaded is compatible with the expected
+  //number of samples
+  if(discretizations.size() != ns){
+    printUsageAndExit(cerr, exe, s+"Error: discretization in file "
+		      "file \""+disc_file+"\" had a different number of "
+		      "samples than expected.");
+  }
+
+  //amp_pairs[i] has counts the occurrences of a(i) and a(i+1)
+  std::vector<CountTable2DSparse> amp_pairs;
+  //l_pairs[i] has counts of the occurrences of l(i) and l(i+1)
+  std::vector<CountTable2DDense> l_pairs;
+  //l_amp[i] has counts of the occurrences of l(i) and amp(i)
+  std::vector<CountTable2DDense> l_amp;
+
+  //Initialize the count tables -- either from table_file (if it can
+  //be read) or empty
   {
     std::ifstream table_stream(table_file);
     if(!table_stream){
-      //TODO: stub      
+      boost::archive::text_iarchive in(table_stream);
+      in >> amp_pairs >> l_pairs >> l_amp;
+    }else{
+      amp_pairs.reserve(ns-1);
+      l_pairs.reserve(ns-1);
+      l_amp.reserve(ns);
+      for(std::size_t samp = 0; samp < ns; ++samp){
+	CountTableVariable a0("a",samp,discretizations.at(samp).num_bins());
+	CountTableVariable a1("a",samp+1,discretizations.at(samp+1).num_bins());
+	CountTableVariable l0("l",samp,2);
+	CountTableVariable l1("l",samp+1,2);
+	if(samp+1 < ns){
+	  amp_pairs.push_back(CountTable2DSparse(a0,a1));
+	  l_pairs.push_back(CountTable2DDense(l0,l1));
+	}
+	l_amp.push_back(CountTable2DDense(l0,a0));
+      }
     }
   }
 
   //TODO: stub
   //Check whether the table and the discretization are compatible
-  //Check that the table is what we are expecting to write (right
-  //field names, number of variables etc)
 
   while(true){
     //TODO: stub
