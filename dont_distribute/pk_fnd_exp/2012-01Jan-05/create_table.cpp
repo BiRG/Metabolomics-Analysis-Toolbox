@@ -119,7 +119,7 @@ void create_table(GArgReader& args){
     //If the time limit has expired, write the current counts to the
     //file
     time_t cur_time = std::time(0);
-    if(last_time + fifteen_minutes >= cur_time){
+    if(last_time + fifteen_minutes <= cur_time){
       last_time = cur_time;
       std::ofstream table_stream(table_file);
       if(table_stream){
