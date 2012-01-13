@@ -135,6 +135,7 @@ void create_table(GArgReader& args){
     if(cur_time != last_stop_check){
       last_stop_check = cur_time;
       std::ifstream stop_file("stop_running");
+
       if(stop_file){ 
 	std::ofstream table_stream(table_file);
 	if(table_stream){
