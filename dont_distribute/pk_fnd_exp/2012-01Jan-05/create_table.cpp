@@ -135,7 +135,17 @@ void create_table(GArgReader& args){
     if(cur_time != last_stop_check){
       last_stop_check = cur_time;
       std::ifstream stop_file("stop_running");
-      if(stop_file){ return; }
+      if(stop_file){ 
+	std::ofstream table_stream(table_file);
+	if(table_stream){
+	  boost::archive::text_oarchive out(table_stream);
+	  out << tabs;
+	}else{
+	  std::cerr << "Error: could not write to \"" << table_file 
+		    << "\".  Exiting anyway.";
+	}
+	return; 
+      }
     }
 
     tabs.addSampleFromPrior(rng, discretizations);
