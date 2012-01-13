@@ -114,7 +114,7 @@ void create_table(GArgReader& args){
   //and this is research code anyway)
   time_t last_time = std::time(0);
   time_t last_stop_check = std::time(0);
-  const unsigned fifteen_minutes = 1;//60*15;  //For testing, write much more often
+  const unsigned fifteen_minutes = 60*15;  //For testing, write much more often
   while(true){
     //If the time limit has expired, write the current counts to the
     //file
