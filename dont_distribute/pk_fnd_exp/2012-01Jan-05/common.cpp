@@ -1,5 +1,8 @@
 #include "common.hpp"
 #include <GClasses/GRand.h>
+#include <fstream>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
 
 PeakList peaksFromPrior(GClasses::GRandMersenneTwister& rng){
   using namespace Prior;
@@ -69,4 +72,84 @@ std::string CountTable::name() const{
   out << "]";
   return out.str();
 }
+
+CountTablesForFirstExperiment::CountTablesForFirstExperiment
+(std::string table_file, std::vector<UniformDiscretization> discretizations){
+  //Abbreviation for number of samples
+  const std::size_t ns = Prior::freq_int_num_samp;
+
+  std::ifstream table_stream(table_file.c_str());
+  if(table_stream){
+    //We could read the file.  Read from the file.
+    boost::archive::text_iarchive in(table_stream);
+    in >> *this;
+  }else{
+    //The file could not be read, initialize to empty
+    amp_pairs.reserve(ns-1);
+    l_pairs.reserve(ns-1);
+    l_amp.reserve(ns);
+    for(std::size_t samp = 0; samp < ns; ++samp){
+      CountTableVariable a0("a",samp,discretizations.at(samp).num_bins());
+      CountTableVariable l0("l",samp,2);
+      if(samp+1 < ns){
+	CountTableVariable a1
+	  ("a",samp+1,discretizations.at(samp+1).num_bins());
+	CountTableVariable l1("l",samp+1,2);
+	amp_pairs.push_back(CountTable2DSparse(a0,a1));
+	l_pairs.push_back(CountTable2DDense(l0,l1));
+      }
+      l_amp.push_back(CountTable2DDense(l0,a0));
+    }
+  }
+}
+
+bool CountTablesForFirstExperiment::isCompatibleWith
+(std::vector<UniformDiscretization> discretizations){
+  //Abbreviation for number of samples
+  const std::size_t ns = Prior::freq_int_num_samp;
+
+  bool compatible = true;
+  for(std::size_t samp = 0; samp < ns; ++samp){
+    if(samp+1 < ns){
+      compatible &= amp_pairs.at(samp).variables().at(0).num_vals() == 
+	discretizations.at(samp).num_bins();
+      compatible &= amp_pairs.at(samp).variables().at(1).num_vals() == 
+	discretizations.at(samp+1).num_bins();
+    }
+    compatible &= l_amp.at(samp).variables().at(1).num_vals() == 
+      discretizations.at(samp).num_bins();
+  }
+
+  return compatible;
+}
+
+void CountTablesForFirstExperiment::addSampleFromPrior
+(GClasses::GRandMersenneTwister& rng,
+ const std::vector<UniformDiscretization>& discretizations){
+  //Abbreviation for number of samples
+  const std::size_t ns = Prior::freq_int_num_samp;
+  
+  //Generate another sample
+  std::vector<AmpAndIsPeak> samp = ampsAndLocsFrom(peaksFromPrior(rng));
+  
+  //Discretize the amplitudes and location variables
+  std::vector<unsigned> amps(samp.size());
+  std::vector<unsigned> locs(samp.size());
+  for(unsigned i = 0; i < samp.size(); ++i){
+    amps[i]=discretizations[i].bin_for(samp[i].amp);
+    locs[i]=samp[i].is_peak ? 1:0;
+  }
+  
+  
+  //Add the sample to the tables
+  for(unsigned i = 0; i < ns; ++i){
+    if(i+1 < ns){
+      amp_pairs[i].inc(amps[i],amps[i+1]);
+      l_pairs[i].inc(locs[i],locs[i+1]);
+    }
+    l_amp[i].inc(locs[i], amps[i]);
+  }
+}
+
+
 

@@ -95,58 +95,18 @@ void create_table(GArgReader& args){
 		      "samples than expected.");
   }
 
-  //amp_pairs[i] has counts the occurrences of a(i) and a(i+1)
-  std::vector<CountTable2DSparse> amp_pairs;
-  //l_pairs[i] has counts of the occurrences of l(i) and l(i+1)
-  std::vector<CountTable2DDense> l_pairs;
-  //l_amp[i] has counts of the occurrences of l(i) and amp(i)
-  std::vector<CountTable2DDense> l_amp;
-
   //Initialize the count tables -- either from table_file (if it can
   //be read) or empty
-  {
-    std::ifstream table_stream(table_file);
-    if(table_stream){
-      boost::archive::text_iarchive in(table_stream);
-      in >> amp_pairs >> l_pairs >> l_amp;
-    }else{
-      amp_pairs.reserve(ns-1);
-      l_pairs.reserve(ns-1);
-      l_amp.reserve(ns);
-      for(std::size_t samp = 0; samp < ns; ++samp){
-	CountTableVariable a0("a",samp,discretizations.at(samp).num_bins());
-	CountTableVariable l0("l",samp,2);
-	if(samp+1 < ns){
-	  CountTableVariable a1
-	    ("a",samp+1,discretizations.at(samp+1).num_bins());
-	  CountTableVariable l1("l",samp+1,2);
-	  amp_pairs.push_back(CountTable2DSparse(a0,a1));
-	  l_pairs.push_back(CountTable2DDense(l0,l1));
-	}
-	l_amp.push_back(CountTable2DDense(l0,a0));
-      }
-    }
-  }
+  CountTablesForFirstExperiment tabs(table_file, discretizations);
+
 
   //Check whether the table and the discretization are compatible
   //(really only necessary when loading from the file, but it doesn't
   //take much time and it gives a check that my other table-initialization
   //code is correct
-  bool compatible = true;
-  for(std::size_t samp = 0; samp < ns; ++samp){
-    if(samp+1 < ns){
-      compatible &= amp_pairs.at(samp).variables().at(0).num_vals() == 
-	discretizations.at(samp).num_bins();
-      compatible &= amp_pairs.at(samp).variables().at(1).num_vals() == 
-	discretizations.at(samp+1).num_bins();
-    }
-    compatible &= l_amp.at(samp).variables().at(1).num_vals() == 
-      discretizations.at(samp).num_bins();
-  }
-
-  if(!compatible){
-    ThrowError("Error: The loaded discretization and the structure of the "
-	       "tables differs.");
+  if(!tabs.isCompatibleWith(discretizations)){
+    ThrowError("Error: The loaded discretizations and the structure of the "
+	       "tables differ.");
   }
 
   //last_time is the last time the data was written to a file
@@ -164,7 +124,7 @@ void create_table(GArgReader& args){
       std::ofstream table_stream(table_file);
       if(table_stream){
 	boost::archive::text_oarchive out(table_stream);
-        out << amp_pairs << l_pairs << l_amp;
+        out << tabs;
       }else{
 	std::cerr << "Error: could not write to " << table_file 
 		  << " continuing.";
@@ -178,26 +138,7 @@ void create_table(GArgReader& args){
       if(stop_file){ return; }
     }
 
-    //Generate another sample
-    std::vector<AmpAndIsPeak> samp = ampsAndLocsFrom(peaksFromPrior(rng));
-
-    //Discretize the amplitudes and location variables
-    std::vector<unsigned> amps(samp.size());
-    std::vector<unsigned> locs(samp.size());
-    for(unsigned i = 0; i < samp.size(); ++i){
-      amps[i]=discretizations[i].bin_for(samp[i].amp);
-      locs[i]=samp[i].is_peak ? 1:0;
-    }
-    
-
-    //Add the sample to the tables
-    for(unsigned i = 0; i < ns; ++i){
-      if(i+1 < ns){
-	amp_pairs[i].inc(amps[i],amps[i+1]);
-	l_pairs[i].inc(locs[i],locs[i+1]);
-      }
-      l_amp[i].inc(locs[i], amps[i]);
-    }
+    tabs.addSampleFromPrior(rng, discretizations);
   }
 
 }

@@ -14,8 +14,6 @@
 #include <stdint.h>
 
 //Allow boost serialization
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/utility.hpp>
@@ -250,14 +248,14 @@ public:
 
   ///\brief Return the number of bins in this discretization
   ///\return the number of bins in this discretization
-  unsigned num_bins(){ return m_num_bins; }
+  unsigned num_bins() const{ return m_num_bins; }
 
   ///\brief Return the index of the bin containing the given number
   ///
   ///Bin indices are zero-based
   ///
   ///\return the index of the bin containing the given number
-  unsigned bin_for(double num){
+  unsigned bin_for(double num) const{
     if      (num <= min){  return 0;
     }else if(num >= max){  return num_bins()-1; 
     }else{                 return num_bins()*(num-min)/(max-min);    }
@@ -621,8 +619,58 @@ public:
 
 };
 
-
 namespace GClasses{  class GRandMersenneTwister; }
+
+///\brief Holds the count tables used in the first experiment (the hmm
+///with different distributions for each node
+///
+///In this class a(i) is the discretized true amplitude at sample i
+///and l(i) is a boolean that is true if l(i) is the nearest sample to
+///one of the peaks in the spectrum
+struct CountTablesForFirstExperiment{
+  ///amp_pairs[i] has counts the occurrences of a(i) and a(i+1)
+  std::vector<CountTable2DSparse> amp_pairs;
+  ///l_pairs[i] has counts of the occurrences of l(i) and l(i+1)
+  std::vector<CountTable2DDense> l_pairs;
+  ///l_amp[i] has counts of the occurrences of l(i) and amp(i)
+  std::vector<CountTable2DDense> l_amp;
+
+  ///\brief Initialize from \a table_file.  If it can be read, read
+  ///from it.  If not, create tables with no events
+  CountTablesForFirstExperiment
+  (std::string table_file, 
+    std::vector<UniformDiscretization> discretizations);
+
+
+  ///\brief Return true if the tables in this experiment are
+  ///compatible with the discretizations in discretizations
+  bool isCompatibleWith(std::vector<UniformDiscretization> discretizations);
+
+  ///\brief Draws a sample from the prior (using \a rng) and
+  ///increments the cells in the tables that correspond to the results
+  ///from that sample
+  void addSampleFromPrior
+  (GClasses::GRandMersenneTwister& rng,
+   const std::vector<UniformDiscretization>& discretizations);
+
+
+private:
+  friend class boost::serialization::access;
+
+  ///\brief Serialization method - uses boost-serialize
+  ///
+  ///\param ar The archive to serialize to
+  ///
+  ///\param version the version number
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/){
+        ar & amp_pairs & l_pairs & l_amp;
+  }
+
+  ///\brief Create an uninitialized table for serialization purposes
+  CountTablesForFirstExperiment(){}
+
+};
 
 ///\brief Returns a peak-list sampled from the prior distribution for
 ///the noise-filtering/peak-locating test
