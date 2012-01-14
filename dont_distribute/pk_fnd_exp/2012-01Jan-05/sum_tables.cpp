@@ -3,6 +3,8 @@
 #include <GClasses/GError.h>
 #include <GClasses/GMatrix.h>
 
+#include <boost/archive/text_oarchive.hpp>
+
 #include "common.hpp"
 
 using namespace GClasses;
@@ -43,6 +45,10 @@ void sum_tables(GArgReader& args){
   CountTablesForFirstExperiment tab1(table1_file);
   CountTablesForFirstExperiment tab2(table2_file);
 
+  //TODO: Add the counts and write to stdout
+
+  boost::archive::text_oarchive out(std::cout);
+  out << tab1;
 }
 
 

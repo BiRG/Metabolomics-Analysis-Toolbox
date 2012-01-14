@@ -2,4 +2,4 @@
 create_table
 discretize_amp
 create_prior_collection
-merge_tables
+sum_tables
