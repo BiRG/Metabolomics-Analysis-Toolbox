@@ -45,7 +45,8 @@ void sum_tables(GArgReader& args){
   CountTablesForFirstExperiment tab1(table1_file);
   CountTablesForFirstExperiment tab2(table2_file);
 
-  //TODO: Add the counts and write to stdout
+  //Add the counts and write to stdout
+  tab1.add(tab2);
 
   boost::archive::text_oarchive out(std::cout);
   out << tab1;
