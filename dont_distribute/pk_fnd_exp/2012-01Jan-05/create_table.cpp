@@ -104,7 +104,7 @@ void create_table(GArgReader& args){
   //(really only necessary when loading from the file, but it doesn't
   //take much time and it gives a check that my other table-initialization
   //code is correct
-  if(!tabs.isCompatibleWith(discretizations)){
+  if(!tabs.is_compatible_with(discretizations)){
     ThrowError("Error: The loaded discretizations and the structure of the "
 	       "tables differ.");
   }
@@ -149,7 +149,7 @@ void create_table(GArgReader& args){
       }
     }
 
-    tabs.addSampleFromPrior(rng, discretizations);
+    tabs.add_sample_from_prior(rng, discretizations);
   }
 
 }

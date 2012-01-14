@@ -118,7 +118,7 @@ CountTablesForFirstExperiment::CountTablesForFirstExperiment
 
 
 
-bool CountTablesForFirstExperiment::isCompatibleWith
+bool CountTablesForFirstExperiment::is_compatible_with
 (std::vector<UniformDiscretization> discretizations){
   //Abbreviation for number of samples
   const std::size_t ns = Prior::freq_int_num_samp;
@@ -138,7 +138,7 @@ bool CountTablesForFirstExperiment::isCompatibleWith
   return compatible;
 }
 
-void CountTablesForFirstExperiment::addSampleFromPrior
+void CountTablesForFirstExperiment::add_sample_from_prior
 (GClasses::GRandMersenneTwister& rng,
  const std::vector<UniformDiscretization>& discretizations){
   //Abbreviation for number of samples

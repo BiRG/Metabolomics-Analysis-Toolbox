@@ -648,12 +648,12 @@ struct CountTablesForFirstExperiment{
 
   ///\brief Return true if the tables in this experiment are
   ///compatible with the discretizations in discretizations
-  bool isCompatibleWith(std::vector<UniformDiscretization> discretizations);
+  bool is_compatible_with(std::vector<UniformDiscretization> discretizations);
 
   ///\brief Draws a sample from the prior (using \a rng) and
   ///increments the cells in the tables that correspond to the results
   ///from that sample
-  void addSampleFromPrior
+  void add_sample_from_prior
   (GClasses::GRandMersenneTwister& rng,
    const std::vector<UniformDiscretization>& discretizations);
 
