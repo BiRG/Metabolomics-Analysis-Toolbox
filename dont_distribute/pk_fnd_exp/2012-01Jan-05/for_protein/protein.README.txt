@@ -1,0 +1,5 @@
+This directory holds links to the main source so I can compile it on
+other computers which have different OS versions and libraries
+installed.  The computer name is embodied in the name of the
+directory.  The right way to do this is to make different target
+directories.  The easy hack is what I am doing.
