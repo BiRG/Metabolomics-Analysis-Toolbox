@@ -166,5 +166,37 @@ void CountTablesForFirstExperiment::add_sample_from_prior
   }
 }
 
+//virtual 
+void CountTable2DDense::add(const CountTable2DDense& o){
+  if(m_v1.num_vals() != o.m_v1.num_vals() || 
+     m_v2.num_vals() != o.m_v2.num_vals()){
+    GClasses::ThrowError("Attempt to add two dense count 2D tables that "
+			 "had different dimensions: ",name(), " and ", 
+			 o.name());
+  }
+  std::vector<unsigned>::iterator me = m_count.begin();
+  std::vector<unsigned>::const_iterator them = o.m_count.begin();
+  while(me != m_count.end()){
+    *me += *them;
+    ++me; ++them;
+  }
+}
 
-
+//virtual 
+void CountTable2DSparse::add(const CountTable2DSparse& o){
+  if(m_v1.num_vals() != o.m_v1.num_vals() || 
+     m_v2.num_vals() != o.m_v2.num_vals()){
+    GClasses::ThrowError("Attempt to add two sparse count 2D tables that "
+			 "had different dimensions: ",name(), " and ", 
+			 o.name());
+  }
+  for(MapIterConst them = o.m_count.begin(); them != o.m_count.end(); ++them){
+    MapIter me = m_count.find(them->first);
+    if(me == m_count.end()){
+      m_count.insert(*them);
+    }else{
+      me->second += them->second;
+    }
+  }
+  
+}

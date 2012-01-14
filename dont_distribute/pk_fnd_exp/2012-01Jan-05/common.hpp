@@ -533,6 +533,14 @@ public:
     }else{ ++loc->second; }
   }
 
+  ///\brief Add all the counts in \a o to the counts in this
+  ///CountTable2DSparse
+  ///
+  ///\param o the table whose counts will be added
+  ///
+  ///\throw GException if the other table has different dimensions
+  virtual void add(const CountTable2DSparse& o);
+
 };
 
 
@@ -617,6 +625,14 @@ public:
     ++m_count[cell_idx(v1,v2)];
   }
 
+  ///\brief Add all the counts in \a o to the counts in this
+  ///CountTable2DDense
+  ///
+  ///\param o the table whose counts will be added
+  ///
+  ///\throw GException if the other table has different dimensions
+  virtual void add(const CountTable2DDense& o);
+
 };
 
 namespace GClasses{  class GRandMersenneTwister; }
@@ -657,7 +673,16 @@ struct CountTablesForFirstExperiment{
   (GClasses::GRandMersenneTwister& rng,
    const std::vector<UniformDiscretization>& discretizations);
 
-
+  ///\brief Add the counts in \a o to the counts in these tables
+  void add(const CountTablesForFirstExperiment& o){
+    for(unsigned i = 0; i < l_amp.size(); ++i){
+      if(i < amp_pairs.size()){
+	amp_pairs[i].add(o.amp_pairs[i]);
+	l_pairs[i].add(o.l_pairs[i]);
+      }
+      l_amp[i].add(o.l_amp[i]);
+    }
+  }
 private:
   friend class boost::serialization::access;
 
