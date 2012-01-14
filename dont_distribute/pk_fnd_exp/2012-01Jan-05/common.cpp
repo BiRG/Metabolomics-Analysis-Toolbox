@@ -103,6 +103,21 @@ CountTablesForFirstExperiment::CountTablesForFirstExperiment
   }
 }
 
+CountTablesForFirstExperiment::CountTablesForFirstExperiment
+(std::string table_file){
+  std::ifstream table_stream(table_file.c_str());
+  if(table_stream){
+    //We could read the file.  Read from the file.
+    boost::archive::text_iarchive in(table_stream);
+    in >> *this;
+  }else{
+    GClasses::ThrowError("Could not read table of experiment counts from the "
+			 "file \"", table_file, "\"");
+  }
+}
+
+
+
 bool CountTablesForFirstExperiment::isCompatibleWith
 (std::vector<UniformDiscretization> discretizations){
   //Abbreviation for number of samples

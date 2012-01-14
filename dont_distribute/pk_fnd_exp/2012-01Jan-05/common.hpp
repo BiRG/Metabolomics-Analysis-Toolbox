@@ -641,6 +641,10 @@ struct CountTablesForFirstExperiment{
   (std::string table_file, 
     std::vector<UniformDiscretization> discretizations);
 
+  ///\brief Initialize from \a table_file.  If it can be read, read
+  ///from it.  If not, throw a GException using GClasses::ThrowError
+  CountTablesForFirstExperiment(std::string table_file);
+
 
   ///\brief Return true if the tables in this experiment are
   ///compatible with the discretizations in discretizations
