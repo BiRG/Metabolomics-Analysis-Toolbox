@@ -7,22 +7,13 @@ root = /home/repo_publicizer/private/toolbox
 # to public
 force = /home/repo_publicizer/private/toolbox
 
-# Operate non-interactively
-#
-# From the manual: The user interface will ask no questions at
-# all. Non-conflicting changes will be propagated; conflicts will be
-# skipped.  
-#
-# Since we are forcing resolution in favor of private, there are no
-# conflicts and all changes will be propagated.
-batch = true
-
 # Don't make backups of changed files
 backups = false
 
-# Allow batch deletion of entire paths that are listed under files and
-# paths to synchronize.  This allows renaming.
-confirmbigdel = false
+# Operate mostly non-interactively.  Only asks about conflicts (of
+# which there should be none) and about "big deletions" which should
+# only happen on file renames.
+auto = true
 
 # Files and paths to synchronize
 path = directory_to_make_public
