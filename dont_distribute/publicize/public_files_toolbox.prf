@@ -1,0 +1,25 @@
+# Which directory trees are synchronized
+root = ~/public/toolbox
+root = ~/private/toolbox
+
+# When there is a difference between the two trees, assume that
+# private is in the final form.  In other words, mirror from private
+# to public
+force = ~/private/toolbox
+
+# Operate non-interactively
+#
+# From the manual: The user interface will ask no questions at
+# all. Non-conflicting changes will be propagated; conflicts will be
+# skipped.  
+#
+# Since we are forcing resolution in favor of private, there are no
+# conflicts and all changes will be propagated.
+batch = true
+
+# Don't make backups of changed files
+backups = false
+
+# Files and paths to synchronize
+path = directory_to_make_public
+path = file_to_make_public
