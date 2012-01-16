@@ -5,11 +5,12 @@ scm).
 Everything is designed to be run from the repo_publicizer account on
 birg.
 
-publicize_toolbox.sh is the script to run to do the actual publication.  It
-will synchronize things and run git commit.  The user must type in a
-commit message.  With no commit message, the script aborts at that
-point allowing manual intervention if necessary.  publicize_toolbox.sh is a
-symlink to ~/private/toolbox/dont_distribute/publicize/publicize_toolbox.sh so
+publicize_toolbox.sh is the script to run to do the actual
+publication.  It will synchronize things and run git commit.  The user
+must type in a commit message in vi.  With no commit message, the
+script aborts at that point allowing manual intervention if necessary.
+publicize_toolbox.sh is a symlink to
+~/private/toolbox/dont_distribute/publicize/publicize_toolbox.sh so
 that this script can be versioned.
 
 ~/.unison/public_files_toolbox.prf is a unison profile containing the
