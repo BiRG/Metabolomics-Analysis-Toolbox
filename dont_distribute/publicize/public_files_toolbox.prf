@@ -2,6 +2,7 @@
 path = directory_to_make_public
 path = file_to_make_public
 path = new_public_directory
+path = renamed_public_directory
 
 ###############################
 #
