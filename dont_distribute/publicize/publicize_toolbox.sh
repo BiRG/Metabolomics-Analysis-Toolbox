@@ -21,6 +21,17 @@ echo ""
 cd ~
 unison public_files_toolbox
 
+#Mirror the public-specific files using unison
+echo ""
+echo ""
+echo "******************"
+echo "* Mirroring the public-specific files using unison"
+echo "******************"
+echo ""
+
+cd ~
+unison public_toolbox_specific_files
+
 #Checkin the changes to the public repo as a new commit with some
 #reasonable commit message - right now the commit message is typed by the user
 echo ""
