@@ -1,3 +1,17 @@
+# Files and paths to synchronize
+path = directory_to_make_public
+path = file_to_make_public
+
+###############################
+#
+# Unison set-up code
+#
+# You shouldn't need to change
+# this.
+#
+###############################
+
+
 # Which directory trees are synchronized
 root = /home/repo_publicizer/public/toolbox
 root = /home/repo_publicizer/private/toolbox
@@ -18,8 +32,3 @@ auto = true
 # Attempt to reduce the cruft printed by unison so it is obvious when a quesiton has been asked
 terse = true
 
-# Files and paths to synchronize
-path = directory_to_make_public
-path = file_to_make_public
-path = renamed_public_file
-path = new_public_file
