@@ -18,7 +18,7 @@ root = /home/repo_publicizer/private/toolbox/dont_distribute/publicize/public_to
 # When there is a difference between the two trees, assume that
 # private is in the final form.  In other words, mirror from private
 # to public
-force = /home/repo_publicizer/private/toolbox
+force = /home/repo_publicizer/private/toolbox/dont_distribute/publicize/public_toolbox_specific_files
 
 # Don't make backups of changed files
 backups = false
