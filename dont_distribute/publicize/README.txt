@@ -30,6 +30,51 @@ of the complicated syncing with a tested and flexible tool.
 ~/public contains one directory for every public repository
 
 
+**************************************************
+* Gotcha for partially public parent directories *
+**************************************************
+
+If a parent directory (call it project_1) is not completely public (so
+that the path has to be to an item in a directory that is not in its
+own sync path) then unison will not sync paths pointing to items in
+project_1 unless project_1 is manually created in the public clone.
+Similarly, it will not remove pd if everything is deleted or if pd is
+removed.
+
+This is a limitation in unison.  You will get the error message:
+
+Error: path project_1/old_code is not valid because project_1 is not a directory in one of the replicas
+
+So, for example, say I have a directory containing old code that I
+want to make public but there is also some new code in an adjacent
+subdirectory, so my tree looks like:
+
+project_1
+|
++---old_code
+|
+L---new_code
+
+If I want to share project_1/old_code, I need to do two steps
+
+1. Add path = project_1/old_code to the public_files_toolbox.prf file
+
+2. On birgnas2, mkdir -p public/toolbox/project_1
+
+Then things will sync.
+
+If I later rename project_1 to buzzword, I'll need to go on the server
+and manually mv public/toolbox/project_1 public/toolbox/buzzword
+before things will sync.
+
+The only way around it is to write our own sync software (or add the
+feature to unison after learning OCaml).  Writing sync software that
+meets our specs would take at least one day and possibly three or
+four.  Because the fix is a simple one-line manual intervention, I
+don't think it is necessary to worry about writing our own software
+unless this problem becomes common.
+
+
 ************************************
 * Gotcha for renaming public files *
 ************************************
