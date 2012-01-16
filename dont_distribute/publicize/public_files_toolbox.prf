@@ -24,3 +24,4 @@ backups = false
 path = directory_to_make_public
 path = file_to_make_public
 path = renamed_public_file
+path = new_public_file

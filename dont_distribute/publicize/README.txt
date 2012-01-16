@@ -29,6 +29,28 @@ of the complicated syncing with a tested and flexible tool.
 
 ~/public contains one directory for every public repository
 
+
+************************************
+* Gotcha for renaming public files *
+************************************
+
+If you rename a public file that is synchronized as a file (rather
+than just a member of a directory), you must leave the old name in the
+*.prf file until the change has propagated to the public repository.
+
+A rename is copy followed by a deletion.  If the old name is not in
+the list of files to synchronize, unison will not perform the deletion
+portion of this operation, since that file shouldn't be touched (not
+being in the list of things to synchronize.)
+
+This shouldn't be much of a problem since there should be few items
+where just one file is synchronized rather than an entire directory,
+and renames are rare operations.
+
+The best idea I can come up with for a rename is to first commit the
+rename with both names being synchronized.  Then publicize.  Then
+remove the name from the *.prf file.  Then publicize again.
+
 *********************
 * Notes on branches *
 *********************
