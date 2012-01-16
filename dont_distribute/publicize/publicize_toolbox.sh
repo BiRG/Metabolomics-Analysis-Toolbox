@@ -1,5 +1,7 @@
 #!/bin/bash
 #Update the private repo
+echo ""
+echo ""
 echo "******************"
 echo "* Updating the private repostiory"
 echo "******************"
@@ -9,6 +11,8 @@ cd ~/private/toolbox
 git pull
 
 #Mirror the private to the public using unison
+echo ""
+echo ""
 echo "******************"
 echo "* Mirroring the private to the public using unison"
 echo "******************"
@@ -19,6 +23,8 @@ unison public_files_toolbox
 
 #Checkin the changes to the public repo as a new commit with some
 #reasonable commit message - right now the commit message is typed by the user
+echo ""
+echo ""
 echo "******************"
 echo "* Committing the changes to the public repository "
 echo "******************"
