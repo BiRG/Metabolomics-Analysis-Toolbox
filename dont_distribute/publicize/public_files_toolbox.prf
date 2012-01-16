@@ -1,6 +1,7 @@
 # Files and paths to synchronize
 path = directory_to_make_public
 path = file_to_make_public
+path = new_public_directory
 
 ###############################
 #
