@@ -20,6 +20,10 @@ batch = true
 # Don't make backups of changed files
 backups = false
 
+# Allow batch deletion of entire paths that are listed under files and
+# paths to synchronize.  This allows renaming.
+confirmbigdel = false
+
 # Files and paths to synchronize
 path = directory_to_make_public
 path = file_to_make_public
