@@ -1,11 +1,11 @@
 # Which directory trees are synchronized
-root = ~/public/toolbox
-root = ~/private/toolbox
+root = /home/repo_publicizer/public/toolbox
+root = /home/repo_publicizer/private/toolbox
 
 # When there is a difference between the two trees, assume that
 # private is in the final form.  In other words, mirror from private
 # to public
-force = ~/private/toolbox
+force = /home/repo_publicizer/private/toolbox
 
 # Operate non-interactively
 #
