@@ -64,8 +64,8 @@ If I want to share project_1/old_code, I need to do two steps
 Then things will sync.
 
 If I later rename project_1 to buzzword, I'll need to go on the server
-and manually mv public/toolbox/project_1 public/toolbox/buzzword
-before things will sync.
+and manually mv public/toolbox/project_1 public/toolbox/buzzword as
+well as changing the paths listed before things will sync.
 
 The only way around it is to write our own sync software (or add the
 feature to unison after learning OCaml).  Writing sync software that
