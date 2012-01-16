@@ -10,5 +10,6 @@ unison public_files_toolbox
 #Checkin the changes to the public repo as a new commit with some
 #reasonable commit message - right now the commit message is typed by the user
 cd ~/public/toolbox
-git add -u
+git add -u #Process deletions and renames
+git add -A #Add untracked files (which will be new)
 git commit -a && git push #Commit and if successful, push to server
