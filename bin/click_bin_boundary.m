@@ -1,4 +1,5 @@
-function click_bin_boundary(bix,h,handles)
+function click_bin_boundary(bix,h,handles) % TODO: I need to update all of the code, so handles isn't required, but for now I'm leaving it
+handles = guidata(gcf);
 [bins,deconvolve,names] = get_bins(handles);
 
 ButtonName = questdlg('Include in deconvolution?', ...
