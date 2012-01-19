@@ -3,3 +3,4 @@ create_table
 discretize_amp
 create_prior_collection
 sum_tables
+denoise
