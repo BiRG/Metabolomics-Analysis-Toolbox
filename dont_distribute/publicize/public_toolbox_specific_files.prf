@@ -1,5 +1,5 @@
-# You shouldn't need to add anything here - its all public
-ignore = Name .git*
+# Add files to include here
+path=README.markdown
 
 ###############################
 #
