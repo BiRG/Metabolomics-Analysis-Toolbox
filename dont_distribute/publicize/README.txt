@@ -126,3 +126,12 @@ keep them in sync when bugs are found or systemic changes are made
 (like, for example, changing the hard-coded paths or operating system
 upgrades that break the expected return values of commands.)
 
+***********
+* Testing *
+***********
+
+To run the automated test suite, log in to birg_publicizer and cd to
+private/toolbox/dont_distribute/publicize and run the command prove
+
+The tests are perl code with a .t suffix located in the t directory
+(this is the default location for the prove tool)
