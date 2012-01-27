@@ -1,0 +1,68 @@
+#Test protocol#
+
+1) All tests must pass before testing is done
+2) If any error is encountered, completed tests must be rerun.
+
+#Tests#
+
+a) Add public file
+
+b) Rename public file
+
+c) Delete public file
+
+d) Add public directory (requires creating file in the directory)
+
+e) Rename public directory
+
+f) Delete public directory
+
+g) Add file in public directory
+
+h) Rename file in public directory
+
+i) Delete file in public directory
+
+j) Add file in public directory within a partially private directory
+   (also adds the directory)
+
+k) Rename file in public directory within a partially private directory
+
+l) Rename public directory within a partially private directory
+
+m) Delete file in public directory within a partially private directory
+
+n) Delete public directory within a partially private directory
+
+o) Add public specific file
+
+p) Rename public specific file
+
+q) Delete public specific file
+
+
+-------Log messages from original tests
+    Successfully added public specific README.markdown file
+
+    After some manual intervention successfully propagated changes to a public directory contained within a partially private directory
+
+    Successfully deleted public directory
+
+    Successfully renamed a public directory
+
+    Successfully added a new public directory
+
+    Successfully deleted file in a public directory
+
+    Successfully renamed a file in a public directory
+
+    Successfully added a file to a public directory
+
+    Successfully deleted a public file
+
+    Rename successfully committed
+
+    Tested adding a new public file to the repository
+
+    Initial commit for some test "public" files
+
