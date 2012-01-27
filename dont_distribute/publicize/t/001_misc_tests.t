@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 11;
+use File::Path qw(rmtree);
 
 my $public_dir = "/home/repo_publicizer/public/toolbox";
 my $private_dir = "/home/repo_publicizer/private/toolbox";
@@ -56,6 +57,16 @@ sub create_file($$){
     close($fh);
 }
 
+#1 test
+sub rm($){
+    my ($name)=@_;
+    if( -d $name ) {
+	ok(rmtree($name), "Removing the directory $name");
+    }else{
+	ok(unlink($name), "Deleting the file $name");
+    }
+}
+
 
 #Bail if there are local changes that would be clobbered by running
 #the test suite.
@@ -75,6 +86,9 @@ revert_private();
 #Create a public file
 cd_private();
 create_file("a_public_file","a pub contents");
+#TODO sync
+cd_private();
+rm("a_public_file");
 
 #Put private repo back in its initial state
 revert_private();
