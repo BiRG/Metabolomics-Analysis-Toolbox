@@ -1,0 +1,37 @@
+# Files and paths to synchronize
+path = directory_to_make_public
+path = file_to_make_public
+path = bin
+path = a_public_file
+path = renamed_public_file
+
+###############################
+#
+# Unison set-up code
+#
+# You shouldn't need to change
+# this.
+#
+###############################
+
+
+# Which directory trees are synchronized
+root = /home/repo_publicizer/public/toolbox
+root = /home/repo_publicizer/private/toolbox
+
+# When there is a difference between the two trees, assume that
+# private is in the final form.  In other words, mirror from private
+# to public
+force = /home/repo_publicizer/private/toolbox
+
+# Don't make backups of changed files
+backups = false
+
+# Operate mostly non-interactively.  Only asks about conflicts (of
+# which there should be none) and about "big deletions" which should
+# only happen on file renames.
+auto = true
+
+# Attempt to reduce the cruft printed by unison so it is obvious when a quesiton has been asked
+terse = true
+
