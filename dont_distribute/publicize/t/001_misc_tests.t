@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Test::More tests => 18;
+use Test::More tests => 15;
 use File::Path qw(rmtree);
 use File::Copy;
 
@@ -113,7 +113,7 @@ revert_private();
 #Create a public file
 cd_private();
 create_file("a_public_file","a pub contents");
-copy_pub_files_prf("p001_create_public_file.prf");
+copy_pub_files_prf("t/p001_create_public_file.prf");
 cd_home();
 system("publicize_toolbox.sh");
 cd_private();
