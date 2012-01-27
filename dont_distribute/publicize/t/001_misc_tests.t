@@ -11,6 +11,7 @@ my $public_test_branch = "branch-used-by-test-scripts";
 #1 test
 sub test_cd($$){
     my ($dir,$human_readable)=@_;
+    $! = 0; #Reset to no error so no spurious messages show up
     ok(chdir($dir), "Change to the $human_readable directory. (If not ok, error was: $!)");
 }
 
