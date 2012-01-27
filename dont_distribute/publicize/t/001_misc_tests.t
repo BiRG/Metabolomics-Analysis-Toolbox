@@ -115,7 +115,8 @@ cd_private();
 create_file("a_public_file","a pub contents");
 copy_pub_files_prf("t/p001_create_public_file.prf");
 cd_home();
-ok(system("./publicize_toolbox.sh"));
+ok(system("./publicize_toolbox.sh","Test creating a public file","nopush"),
+    "Run publicize script to create a public file");
 cd_private();
 rm("a_public_file");
 

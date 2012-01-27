@@ -1,4 +1,35 @@
 #!/bin/bash
+
+#You can pass a commit message to this script by adding it as the
+#first command-line argument.
+#
+#If there is a second command line argument that is equal to nopush,
+#no push is attempted to the server
+#
+#Thus:
+#
+# publicize_toolbox.sh - updates repo, asks user for a message and
+#                        pushes to github
+#
+# publicize_toolbox.sh "my message here" - updates repo, uses the
+#                                          message it was given on the
+#                                          command line and pushes to
+#                                          github
+#
+# publicize_toolbox.sh "my message here" nopush - updates repo, uses
+#                                                 the message it was
+#                                                 given on the command
+#                                                 line and does not
+#                                                 push to github
+#
+
+if [ $# -gt 2 ]; then
+    echo "Too many arguments.  Did you forget the quotes around your "
+    echo "commit message?"
+    echo ""
+    echo "Read the comments at the beginning of the script file for usage."
+fi
+
 #Update the private repo
 echo ""
 echo ""
@@ -44,4 +75,18 @@ echo ""
 cd ~/public/toolbox
 git add .  #Add untracked files (which will be new)
 git add -u #Process deletions and renames
-git commit -a && git push #Commit and if successful, push to server
+
+#Commit and if successful, push to server
+if [ $# -gt 0 ]; then
+    #A message was specified on the command line
+    if [ $2 -ne "nopush" ]; then
+	#Message specified but not nopush
+	git commit -a -m $1 && git push 
+    else
+	#We have a message and we are not supposed to push
+	git commit -a -m $1
+    fi
+else
+    #Ask user for the commit message then push
+    git commit -a && git push 
+fi
