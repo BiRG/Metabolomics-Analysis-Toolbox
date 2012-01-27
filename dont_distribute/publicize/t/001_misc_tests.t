@@ -48,7 +48,7 @@ sub revert_private{
 }
 
 #1 test
-create_file($$){
+sub create_file($$){
     my($name,$contents)=@_;
     ok(open(my $fh,">",$name),"open call while creating file $name");
     print $fh $contents;
