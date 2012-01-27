@@ -1,13 +1,15 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More tests => 14;
 use File::Path qw(rmtree);
+use File::Copy;
 
 my $public_dir = "/home/repo_publicizer/public/toolbox";
 my $private_dir = "/home/repo_publicizer/private/toolbox";
 my $publicizer_dir = "/home/repo_publicizer/private/toolbox/dont_distribute/publicize";
 my $public_test_branch = "branch-used-by-test-scripts";
+my $home_dir = "/home/repo_publicizer";
 
 #1 test
 sub test_cd($$){
@@ -24,6 +26,9 @@ sub cd_publicizer{ test_cd($publicizer_dir, "publicizer"); }
 
 #1 test
 sub cd_private{ test_cd($private_dir, "private"); }
+
+#1 test
+sub cd_home{ test_cd($home_dir, "home"); }
 
 #2 tests
 sub put_public_repo_in_test_mode{
@@ -47,6 +52,28 @@ sub revert_private{
     cd_publicizer();
     ok(!system("git", "reset","--hard","HEAD"),
        "Successful reset --hard to put private repository back into shape");
+}
+
+#Copy the given file over top of the public_files_toolbox.prf - give
+#the name relative to $publicizer_dir
+#
+#2 tests
+sub copy_pub_files_prf($){
+    my ($rel_name)=@_;
+    cd_publicizer();
+    my $dest = "public_files_toolbox.prf";
+    ok(copy($rel_name, $dest), "Copy $rel_name over top of $dest");   
+}
+
+#Copy the given file over top of the public_toolbox_specific_files.prf - give
+#the name relative to $publicizer_dir
+#
+#2 tests
+sub copy_specific_files_prf($){
+    my ($rel_name)=@_;
+    cd_publicizer();
+    my $dest = "public_toolbox_specific_files.prf";
+    ok(copy($rel_name, $dest), "Copy $rel_name over top of $dest");   
 }
 
 #1 test
@@ -86,7 +113,9 @@ revert_private();
 #Create a public file
 cd_private();
 create_file("a_public_file","a pub contents");
-#TODO sync
+copy_pub_files("p001_create_public_file.prf");
+cd_home();
+system("publicize_toolbox.sh");
 cd_private();
 rm("a_public_file");
 
