@@ -4,7 +4,7 @@ use warnings;
 use Test::More tests => 8;
 
 my $public_dir = "/home/repo_publicizer/public/toolbox";
-my $private_dir = "/home/repo_publicizer/public/toolbox";
+my $private_dir = "/home/repo_publicizer/private/toolbox";
 my $publicizer_dir = "/home/repo_publicizer/private/toolbox/dont_distribute/publicize";
 my $public_test_branch = "branch-used-by-test-scripts";
 
