@@ -79,7 +79,7 @@ git add -u #Process deletions and renames
 #Commit and if successful, push to server
 if [ $# -gt 0 ]; then
     #A message was specified on the command line
-    if [ $2 -ne "nopush" ]; then
+    if [ $2 != "nopush" ]; then
 	#Message specified but not nopush
 	git commit -a -m $1 && git push 
     else
