@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 12;
 use File::Path qw(rmtree);
 
 my $public_dir = "/home/repo_publicizer/public/toolbox";
