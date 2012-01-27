@@ -130,6 +130,10 @@ upgrades that break the expected return values of commands.)
 * Testing *
 ***********
 
+WARNING: the automated test suite will revert the private repository
+to the last checked in state -- so don't run it when there are
+modifications that you want to keep
+
 To run the automated test suite, log in to birg_publicizer and cd to
 private/toolbox/dont_distribute/publicize and run the command prove
 
