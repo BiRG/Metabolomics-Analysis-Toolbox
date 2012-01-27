@@ -43,10 +43,17 @@ sub put_public_repo_in_normal_mode{
 #4 tests
 sub revert_private{
     cd_publicizer();
-    ok(!system("git", "checkout", "public_files_toolbox.prf",
-	       "public_toolbox_specific_files.prf"),
-       "Checked out head revision of *.prf files");
+    ok(!system("git", "reset","--hard","HEAD"),
+       "Successful reset --hard to put private repository back into shape");
 }
+
+#1 test
+create_file($$){
+    my($name,$contents)=@_;
+    ok(open(my $fh,">",$name),"open call while creating file $name");
+    print $fh $contents;
+}
+
 
 #Bail if there are local changes that would be clobbered by running
 #the test suite.
@@ -59,6 +66,14 @@ if(!system("git", "status", "-a")){
 
 #Set up the public repo for testing
 put_public_repo_in_test_mode();
+
+#Clear the private repo
+revert_private();
+
+#Create a public file
+cd_private();
+create_file("a_public_file","a pub contents");
+
 
 #Put the public repo in the state for normal commits
 put_public_repo_in_normal_mode();
