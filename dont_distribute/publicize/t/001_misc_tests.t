@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 10;
 
 my $public_dir = "/home/repo_publicizer/public/toolbox";
 my $private_dir = "/home/repo_publicizer/private/toolbox";
