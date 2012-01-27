@@ -74,7 +74,8 @@ revert_private();
 cd_private();
 create_file("a_public_file","a pub contents");
 
-
+#Put private repo back in its initial state
+revert_private();
 #Put the public repo in the state for normal commits
 put_public_repo_in_normal_mode();
 
