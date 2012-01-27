@@ -52,6 +52,7 @@ sub create_file($$){
     my($name,$contents)=@_;
     ok(open(my $fh,">",$name),"open call while creating file $name");
     print $fh $contents;
+    close($fh);
 }
 
 
