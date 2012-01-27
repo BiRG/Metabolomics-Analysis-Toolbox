@@ -18,10 +18,10 @@ sub test_cd($$){
 sub cd_pubdir{ test_cd($public_dir,"public"); }
 
 #1 test
-sub cd_publicizer{ test_cd($publicizer_dir), "publicizer"); }
+sub cd_publicizer{ test_cd($publicizer_dir, "publicizer"); }
 
 #1 test
-sub cd_private{ test_cd($private_dir), "private"); }
+sub cd_private{ test_cd($private_dir, "private"); }
 
 #2 tests
 sub put_public_repo_in_test_mode{
@@ -62,4 +62,5 @@ put_public_repo_in_test_mode();
 
 #Put the public repo in the state for normal commits
 put_public_repo_in_normal_mode();
+
 
