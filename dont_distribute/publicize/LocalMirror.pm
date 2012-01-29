@@ -6,6 +6,7 @@ use Exporter;        # load Exporter module
 @EXPORT=qw(dont_delete is_in_dont_delete mirror mirror2 
            delete_dest set_source set_dest); 
 
+#Real package stuff begins here
 use strict;
 use warnings;
 use File::Path;
