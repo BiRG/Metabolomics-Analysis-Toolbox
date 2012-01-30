@@ -88,8 +88,8 @@ is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
 is_deeply(dir_as_hash($dest_name), $dest_expected_structure_before,
    "dest has correct initial structure");
 
-#Do the preservation and  deletion
-dont_delete qr(^destdirFull/destFullFile1$);
+#Do the preservation and deletion
+dont_delete qr(destdirFull/destFullFile1$);
 
 delete_dest;
 
