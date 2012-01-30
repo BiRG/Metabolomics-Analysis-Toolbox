@@ -10,7 +10,7 @@ use File::Spec::Functions;
 use FindBin;
 use lib "$FindBin::Bin/..";
 use lib "$FindBin::Bin";
-use Test::More tests => 3;
+use Test::More tests => 5;
 BEGIN { use_ok('LocalMirror'); }
 
 #####
@@ -107,13 +107,21 @@ set_source $src_name;
 set_dest $dest_name;
 
 #Test to make sure that the source structure is as expected
-my $src_actual_structure_before = dir_as_hash($src_name);
-is(%$src_actual_structure_before, %$src_expected_structure_before,
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
    "src has correct initial structure");
 
 #Test to make sure that the dest structure is as expected
-my $dest_actual_structure_before = dir_as_hash($dest_name);
-is(%$dest_actual_structure_before, %$dest_expected_structure_before,
+is_deeply(dir_as_hash($dest_name), $dest_expected_structure_before,
    "dest has correct initial structure");
 
+#Do the deletion
+delete_dest;
+
+#Test to make sure that the source structure is as expected
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src has correct final structure (nothing changed)");
+
+#Test to make sure that the dest structure is as expected
+is_deeply(dir_as_hash($dest_name), {},
+   "dest has correct final structure (everything removed)");
 
