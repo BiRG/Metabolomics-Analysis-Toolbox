@@ -13,7 +13,7 @@ use lib "$FindBin::Bin/..";
 use lib "$FindBin::Bin";
 use Test::More tests => 6;
 BEGIN { use_ok('LocalMirror'); }
-BEGIN { use_ok('DirAsHash'); }
+BEGIN { use_ok('LocalMirrorTestUtils'); }
 
 #########
 # Setup #

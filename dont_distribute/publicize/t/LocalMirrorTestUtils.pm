@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #Package boilerplate
-package DirAsHash; # start new namespace; scope extends to EOF
+package LocalMirrorTestUtils; # start new namespace; scope extends to EOF
 use Exporter;        # load Exporter module
 @ISA=qw(Exporter);   # Inherit from Exporter
 @EXPORT=qw(dir_as_hash); 
