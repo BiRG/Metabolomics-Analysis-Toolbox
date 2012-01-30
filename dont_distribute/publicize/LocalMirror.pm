@@ -12,6 +12,7 @@ use warnings;
 use File::Path;
 use File::Spec;
 use File::Copy;
+use File::Find;
 
 #Path to source root
 my $source;
@@ -22,10 +23,10 @@ my $dest;
 #List of regexps that won't be deleted
 my @preserve=();
 
-#Add $_[1] to the list of protected regexp in dest
-sub dont_delete($){ push @preserve, qr/$_[1]/; }
+#Add $_[0] to the list of protected regexp in dest
+sub dont_delete($){ push @preserve, qr/$_[0]/; }
 
-#Return true if $_[1] matches an expression in @preserve
+#Return true if $_[0] matches an expression in @preserve
 sub is_in_dont_delete($){ 
     for my $regex (@preserve){
 	return 1 if $_[0] =~ /$regex/;
@@ -41,12 +42,12 @@ sub is_in_dont_delete($){
 #
 #Die if the copy cannot be made.
 #
-#Copy the file or directory from source/$_[1] to dest/$_[2]
+#Copy the file or directory from source/$_[0] to dest/$_[1]
 sub mirror2($$){
-    my $sname=File::Spec->catfile($source, $_[1]);
-    my $dname=File::Spec->catfile($dest, $_[2]);
+    my $sname=File::Spec->catfile($source, $_[0]);
+    my $dname=File::Spec->catfile($dest, $_[1]);
     if(! -e $sname){
-	print STDERR "Warning: Souce file $sname does not exist.  ",
+	print STDERR "Warning: Source file $sname does not exist.  ",
 	"Cannot copy.\n";
 	return;
     }
@@ -75,33 +76,60 @@ sub mirror2($$){
 
 #Copy the file to the same location in the destination
 #
-#An alias for mirror2($_[1],$_[1]);
+#An alias for mirror2($_[0],$_[1]);
 sub mirror($){
-    mirror2 $_[1],$_[2];
+    mirror2 $_[0],$_[1];
 }
 
 #Delete all files in dest that were not previously specified as dont_delete
 sub delete_dest(){
+    #These are the actual paths that matched or had contents that
+    #matched a regex in @preserve
+    my $preserved_paths={};
     
+    #Fill the list of preserved paths
+    my $check_path = sub {
+	for my $pres_regex (@preserve,"^${dest}\$"){
+	    if($File::Find::name =~ m/$pres_regex/){
+		#TODO: fix so all parent directory paths are also added
+		$$preserved_paths{$File::Find::name}='';
+		last;
+	    }
+	}
+    };
+    File::Find::find($check_path, $dest);
+    
+    #Delete unprotected paths
+    my $delete_unprotected = sub {
+	unless(exists($$preserved_paths{$File::Find::name})){
+	    if(-d){
+		File::Path::remove_tree($File::Find::name);
+		$File::Find::prune = 1;
+	    }elsif(-f){
+		unlink($File::Find::name);
+	    }
+	}
+    };
+    File::Find::find($delete_unprotected, $dest);
 }
 
-#Sets the source path to $_[1].  The path must exist.  Dies if it
+#Sets the source path to $_[0].  The path must exist.  Dies if it
 #doesn't.
 sub set_source($){ 
     my ($pth)=@_;
     if(-e $pth){
-	$dest = File::Spec->rel2abs($pth); 
+	$source = File::Spec->rel2abs($pth); 
     }else{
 	die "Source path \"$pth\" does not exist.";
     }
 }
 
-#Sets the destination path to $_[1].  The path must exist.  Dies if it
+#Sets the destination path to $_[0].  The path must exist.  Dies if it
 #doesn't.
 sub set_dest($){ 
     my ($pth)=@_;
     if(-e $pth){
-	$source = File::Spec->rel2abs($pth); 
+	$dest = File::Spec->rel2abs($pth); 
     }else{
 	die "Destination path \"$pth\" does not exist.";
     }
