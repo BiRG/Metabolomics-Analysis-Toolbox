@@ -13,6 +13,7 @@ use File::Path;
 use File::Spec;
 use File::Copy;
 use File::Find;
+use Data::Dumper;
 
 #Path to source root
 my $source;
@@ -85,19 +86,44 @@ sub mirror($){
 sub delete_dest(){
     #These are the actual paths that matched or had contents that
     #matched a regex in @preserve
-    my $preserved_paths={};
+    my $preserved_paths={$dest=>''};
     
     #Fill the list of preserved paths
     my $check_path = sub {
-	for my $pres_regex (@preserve,"^${dest}\$"){
-	    if($File::Find::name =~ m/$pres_regex/){
-		#TODO: fix so all parent directory paths are also added
-		$$preserved_paths{$File::Find::name}='';
+	my $name =$File::Find::name;
+	for my $pres_regex (@preserve){
+	    if($name =~ m/$pres_regex/ || $_ =~ m/$pres_regex/){
+		if(-d){
+		    #Add all contained files and directories
+		    File::Find::find(sub{
+#			print STDERR "Preserving $File::Find::name because of dir $name\n";
+			$$preserved_paths{$File::Find::name}='';},
+				     $File::Find::name);
+		    #No need to look at subdirectories, since they are
+		    #already within
+		    $File::Find::prune = 1;
+		}elsif(-f){
+		    #Preserve the file
+		    $$preserved_paths{$name}='';
+
+		    #Preserve the file's parent directories
+		    my ($v,$dir_string,$fn)=File::Spec->splitpath($name);
+		    my @dirs = File::Spec->splitdir($dir_string);
+		    for my $lastDirIdx (0..$#dirs){
+			my $parent_string = 
+			    File::Spec->catdir(@dirs[0..$lastDirIdx]);
+			my $parent_path = 
+			    File::Spec->catpath($v,$parent_string,'');
+#			print STDERR "Preserving '$parent_path' because of file $name\n";
+			$$preserved_paths{$parent_path}='';
+		    }
+		}
 		last;
 	    }
 	}
     };
     File::Find::find($check_path, $dest);
+    print Dumper($preserved_paths);
     
     #Delete unprotected paths
     my $delete_unprotected = sub {
