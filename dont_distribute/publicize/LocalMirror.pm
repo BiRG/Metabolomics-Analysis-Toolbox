@@ -123,7 +123,6 @@ sub delete_dest(){
 	}
     };
     File::Find::find($check_path, $dest);
-    print Dumper($preserved_paths);
     
     #Delete unprotected paths
     my $delete_unprotected = sub {
