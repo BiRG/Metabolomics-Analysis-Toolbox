@@ -4,7 +4,7 @@ package LocalMirror; # start new namespace; scope extends to EOF
 use Exporter;        # load Exporter module
 @ISA=qw(Exporter);   # Inherit from Exporter
 @EXPORT=qw(dont_delete is_in_dont_delete mirror mirror2 
-           delete_dest set_source set_dest); 
+           delete_dest set_source set_dest get_source get_dest); 
 
 #Real package stuff begins here
 use strict;
@@ -54,7 +54,7 @@ sub mirror2($$){
     }
     if(-e $dname){
 	print STDERR "Warning: destination file $dname already exists.  ",
-	"overwriting.\n";
+	"Overwriting.\n";
     }
     #Directory in which the destination file lives - we will ensure it
     #and its predecessors exist
@@ -68,11 +68,11 @@ sub mirror2($$){
 	    return;
 	}
     }
-
+    
     #Copy the source to the destination (only works on unix, but that
     #is all we care about right now).  File::Find along with
     #File::Copy could be used to implement this portably.
-    if(system("cp","-r",$sname,$dname) == 0){
+    if(system("cp","-r",$sname,$dname) != 0){
 	die "Could not copy \"$sname\" to \"$dname\"";
     }
 }
@@ -160,6 +160,16 @@ sub set_dest($){
     }else{
 	die "Destination path \"$pth\" does not exist.";
     }
+}
+
+#Return the current destination path
+sub get_dest(){
+    return $dest;
+}	     
+
+#Return the current source path
+sub get_source(){
+    return $source;
 }
 
 1;
