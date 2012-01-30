@@ -5,46 +5,19 @@
 
 use strict;
 use warnings;
+
 use File::Temp qw( tempfile tempdir );
 use File::Spec::Functions;
 use FindBin;
 use lib "$FindBin::Bin/..";
 use lib "$FindBin::Bin";
-use Test::More tests => 5;
+use Test::More tests => 6;
 BEGIN { use_ok('LocalMirror'); }
-
-#####
-# Given a directory name
-# Return the structure of a directory as a hash.  Filenames are keys
-# with empty string values.  Directory names are keys with hash values.
-#
-# If the name passed is not a directory, returns undef
-#####
-
-use File::Find ();
-sub dir_as_hash{
-    my ($dname)=@_;
-    return undef unless -d $dname;
-    
-    my $this_dir = {};
-    my $add_entry = sub {
-	if(-f){
-	    $$this_dir{$_}=''; return;
-	}elsif(-d){
-	    return if (/^\.\.?$/); #Skip . and ..
-	    $$this_dir{$_}=dir_as_hash($_);
-	    $File::Find::prune = 1;
-	    return;
-	}
-    };
-    File::Find::find($add_entry, $dname);
-    return $this_dir;
-}
+BEGIN { use_ok('DirAsHash'); }
 
 #########
 # Setup #
 #########
-
 
 #Make two empty temporary directories that will be deleted on exit
 my $src_dir = File::Temp->newdir("LocalMirrorTestSrc_XXXXXXXX");
