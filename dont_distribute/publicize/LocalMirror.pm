@@ -93,34 +93,29 @@ sub delete_dest(){
     #Fill the list of preserved paths
     my $check_path = sub {
 	my $name =$File::Find::name;
-	for my $pres_regex (@preserve){
-	    if($name =~ m/$pres_regex/ || $_ =~ m/$pres_regex/){
-		if(-d){
-		    #Add all contained files and directories
-		    File::Find::find(sub{
-#			print STDERR "Preserving $File::Find::name because of dir $name\n";
-			$$preserved_paths{$File::Find::name}='';},
-				     $File::Find::name);
-		    #No need to look at subdirectories, since they are
-		    #already within
-		    $File::Find::prune = 1;
-		}elsif(-f){
-		    #Preserve the file
-		    $$preserved_paths{$name}='';
-
-		    #Preserve the file's parent directories
-		    my ($v,$dir_string,$fn)=File::Spec->splitpath($name);
-		    my @dirs = File::Spec->splitdir($dir_string);
-		    for my $lastDirIdx (0..$#dirs){
-			my $parent_string = 
-			    File::Spec->catdir(@dirs[0..$lastDirIdx]);
-			my $parent_path = 
-			    File::Spec->catpath($v,$parent_string,'');
-#			print STDERR "Preserving '$parent_path' because of file $name\n";
-			$$preserved_paths{$parent_path}='';
-		    }
+	if(is_in_dont_delete($name) || is_in_dont_delete($_)){
+	    if(-d){
+		#Add all contained files and directories
+		File::Find::find(sub{
+		    $$preserved_paths{$File::Find::name}='';},
+				 $File::Find::name);
+		#No need to look at subdirectories, since they are
+		#already within
+		$File::Find::prune = 1;
+	    }elsif(-f){
+		#Preserve the file
+		$$preserved_paths{$name}='';
+		
+		#Preserve the file's parent directories
+		my ($v,$dir_string,$fn)=File::Spec->splitpath($name);
+		my @dirs = File::Spec->splitdir($dir_string);
+		for my $lastDirIdx (0..$#dirs){
+		    my $parent_string = 
+			File::Spec->catdir(@dirs[0..$lastDirIdx]);
+		    my $parent_path = 
+			File::Spec->catpath($v,$parent_string,'');
+		    $$preserved_paths{$parent_path}='';
 		}
-		last;
 	    }
 	}
     };
