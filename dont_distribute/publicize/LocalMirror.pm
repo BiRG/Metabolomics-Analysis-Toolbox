@@ -64,7 +64,8 @@ sub mirror2($$){
     unless(-e $ddir){
 	eval { mkpath($ddir) };
 	if ( $@ ) {
-	    die "Can't mirror ${dname} because couldn't create ${ddir}: $@";
+	    print STDERR "Error: Can't mirror ${dname} because couldn't create ${ddir}: $@";
+	    return;
 	}
     }
 
