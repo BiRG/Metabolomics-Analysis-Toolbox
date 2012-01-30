@@ -10,7 +10,8 @@ use File::Temp qw( tempfile tempdir );
 use File::Spec::Functions;
 use FindBin;
 use Test::Output;
-use Test::More tests => 12;
+use Test::Exception;
+use Test::More tests => 27;
 
 
 use lib "$FindBin::Bin/..";
@@ -68,6 +69,8 @@ system("touch",catfile($dest_name,"dest2"));
 system("touch",catfile($dest_name,".gitignore"));
 system("mkdir",catfile($dest_name,".git"));
 system("touch",catfile($dest_name,".git","conf"));
+system("mkdir",catfile($dest_name,"read_only_dir"));
+system("chmod","a-w",catfile($dest_name,"read_only_dir"));
 system("mkdir",catfile($dest_name,"destdirEmpty"));
 system("mkdir",catfile($dest_name,"destdirFull"));
 system("touch",catfile($dest_name,"destdirFull","destFullFile1"));
@@ -76,7 +79,7 @@ system("touch",catfile($dest_name,"destdirFull","destFullFile2"));
 my $dest_expected_structure_before = 
 { dest1=>"", dest2=>"", '.gitignore'=>'', '.git'=>{conf=>''},
   destdirFull=>{ destFullFile1=>"", destFullFile2=>"" },
-  destdirEmpty=>{} };
+  destdirEmpty=>{}, read_only_dir=>{} };
 
 
 #############
@@ -97,14 +100,16 @@ is_deeply(dir_as_hash($dest_name), $dest_expected_structure_before,
 
 #Do the preservation and deletion
 dont_delete qr(\.git);
+dont_delete qr(read_only_dir);
 delete_dest;
 
 #Ensure that the deletion went off ok
 is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
    "src is unchanged");
 
-is_deeply(dir_as_hash($dest_name), {'.gitignore'=>'', '.git'=>{ conf=>'' }},
-   "dest has only .gitignore file and .git directory");
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, read_only_dir=>{}},
+	  "dest has only read_only_dir, .gitignore file and .git directory");
 
 #Copy a root directory file
 stderr_is {mirror2 "src1","src1";} '', 'Normal mirror shouldn\'t output anything';
@@ -113,7 +118,8 @@ is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
    "src is unchanged");
 
 is_deeply(dir_as_hash($dest_name), 
-	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>''},
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'', 
+	   read_only_dir=>{}},
 	  "dest has src1 as well as .git* files");
 
 
@@ -127,6 +133,74 @@ is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
    "src is unchanged");
 
 is_deeply(dir_as_hash($dest_name), 
-	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>''},
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'', 
+	   read_only_dir=>{}},
 	  "dest has src1 as well as .git* files");
+
+#Try to copy a non-existent file - should print a warning
+stderr_is {mirror2 'non-existent-file','non-ex'} 'Warning: Source file '.
+    File::Spec->catfile(get_source(), 'non-existent-file').
+    " does not exist.  Cannot copy.\n", 
+    'Mirror should detect copying non-existent file';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'',
+	  read_only_dir=>{}},
+	  "dest has src1 as well as .git* files");
+
+#Try to copy into a directory normally
+stderr_is {mirror2 'src2','dest_dir/src2'} '', 
+    'Mirror2 should allow copying into a subdirectory';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'',
+	  read_only_dir=>{}, dest_dir=>{src2=>''}},
+	  "dest has src1 dest_dir/src2 read_only_dir as well as .git* files");
+
+#Try to copy a directory 
+stderr_is {mirror2 'srcdirFull','srcdirFull';} '', 
+    'Mirror2 should allow copying a directory';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'',
+	   read_only_dir=>{}, dest_dir=>{src2=>''}, 
+	   srcdirFull=>{srcFullFile=>''}},
+	  "dest has srcdirFull and srcdirFull/srcFullFile as well as older contents");
+
+
+#Try to copy a file into a read-only directory
+dies_ok {mirror2 'src1','read_only_dir/src1';}  
+    'Mirror2 should die when the copy cannot succeed';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'',
+	   read_only_dir=>{}, dest_dir=>{src2=>''}, 
+	   srcdirFull=>{srcFullFile=>''}},
+	  "dest unchanged from last command");
+
+#Tries to copy file into subdirectory of read only directory
+stderr_like {mirror2 'src1','read_only_dir/wontbecreated/src1';}  
+qr(Error: Can't mirror .* because couldn't create ),
+    'Mirror2 should die when the copy cannot succeed';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'',
+	   read_only_dir=>{}, dest_dir=>{src2=>''}, 
+	   srcdirFull=>{srcFullFile=>''}},
+	  "dest unchanged from last command");
 
