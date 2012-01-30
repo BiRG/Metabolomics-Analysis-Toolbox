@@ -64,12 +64,13 @@ sub mirror2($$){
     unless(-e $ddir){
 	eval { mkpath($ddir) };
 	if ( $@ ) {
-	    print STDERR "Warning: Couldn't create ${ddir}: $@";
+	    die "Can't mirror ${dname} because couldn't create ${ddir}: $@";
 	}
     }
 
     #Copy the source to the destination (only works on unix, but that
-    #is all we care about right now)
+    #is all we care about right now).  File::Find along with
+    #File::Copy could be used to implement this portably.
     if(system("cp","-r",$sname,$dname) == 0){
 	die "Could not copy \"$sname\" to \"$dname\"";
     }
