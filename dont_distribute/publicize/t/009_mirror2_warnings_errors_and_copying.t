@@ -10,7 +10,7 @@ use File::Temp qw( tempfile tempdir );
 use File::Spec::Functions;
 use FindBin;
 use Test::Output;
-use Test::More tests => 6;
+use Test::More tests => 12;
 
 
 use lib "$FindBin::Bin/..";
@@ -105,4 +105,28 @@ is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
 
 is_deeply(dir_as_hash($dest_name), {'.gitignore'=>'', '.git'=>{ conf=>'' }},
    "dest has only .gitignore file and .git directory");
+
+#Copy a root directory file
+stderr_is {mirror2 "src1","src1";} '', 'Normal mirror shouldn\'t output anything';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>''},
+	  "dest has src1 as well as .git* files");
+
+
+#Try to copy another file over it
+stderr_is {mirror2 'src2','src1'} 'Warning: destination file '.
+    File::Spec->catfile(get_dest(), 'src1').
+    " already exists.  Overwriting.\n", 
+    'Mirror should detect copying over extant file';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>''},
+	  "dest has src1 as well as .git* files");
 
