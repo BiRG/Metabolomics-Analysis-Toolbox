@@ -68,7 +68,7 @@ sub mirror2($$){
 	    return;
 	}
     }
-    
+
     #Copy the source to the destination (only works on unix, but that
     #is all we care about right now).  File::Find along with
     #File::Copy could be used to implement this portably.
@@ -142,25 +142,25 @@ sub delete_dest(){
     File::Find::find($delete_unprotected, $dest);
 }
 
-#Sets the source path to $_[0].  The path must exist.  Dies if it
-#doesn't.
+#Sets the source path to $_[0].  The path must exist and be a
+#directory.  Dies if it doesn't/isn't.
 sub set_source($){ 
     my ($pth)=@_;
-    if(-e $pth){
+    if(-d $pth){
 	$source = File::Spec->rel2abs($pth); 
     }else{
-	die "Source path \"$pth\" does not exist.";
+	die "Source path \"$pth\" is not a directory.";
     }
 }
 
-#Sets the destination path to $_[0].  The path must exist.  Dies if it
-#doesn't.
+#Sets the destination path to $_[0].  The path must exist and be a
+#directory.  Dies if it doesn't/isnt.
 sub set_dest($){ 
     my ($pth)=@_;
-    if(-e $pth){
+    if(-d $pth){
 	$dest = File::Spec->rel2abs($pth); 
     }else{
-	die "Destination path \"$pth\" does not exist.";
+	die "Destination path \"$pth\" is not a directory.";
     }
 }
 
