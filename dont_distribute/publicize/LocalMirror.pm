@@ -82,7 +82,7 @@ sub mirror2($$){
 #
 #An alias for mirror2($_[0],$_[1]);
 sub mirror($){
-    mirror2 $_[0],$_[1];
+    mirror2 $_[0],$_[0];
 }
 
 #Delete all files in dest that were not previously specified as dont_delete
