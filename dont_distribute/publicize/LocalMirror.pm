@@ -14,6 +14,7 @@ use File::Spec;
 use File::Copy;
 use File::Find;
 use Data::Dumper;
+use Carp;
 
 #Path to source root
 my $source;
@@ -149,7 +150,7 @@ sub set_source($){
     if(-d $pth){
 	$source = File::Spec->rel2abs($pth); 
     }else{
-	die "Source path \"$pth\" is not a directory.";
+	croak "Source path \"$pth\" is not a directory.";
     }
 }
 
@@ -160,7 +161,7 @@ sub set_dest($){
     if(-d $pth){
 	$dest = File::Spec->rel2abs($pth); 
     }else{
-	die "Destination path \"$pth\" is not a directory.";
+	croak "Destination path \"$pth\" is not a directory.";
     }
 }
 
