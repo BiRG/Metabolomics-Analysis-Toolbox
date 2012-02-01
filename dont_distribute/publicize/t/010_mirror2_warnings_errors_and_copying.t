@@ -58,9 +58,19 @@ my $src_expected_structure_before =
 # |
 # + dest2
 # |
+# + .gitignore
+# |
+# + /.git
+# | |
+# | + conf
+# |
 # + /destdirFull
 # | |
-# | + destFullFile
+# | + destFullFile1
+# | |
+# | + destFullFile2
+# |
+# + /read_only_dir (read only)
 # |
 # + /destdirEmpty
 # 
