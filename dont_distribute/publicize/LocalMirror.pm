@@ -4,7 +4,7 @@ package LocalMirror; # start new namespace; scope extends to EOF
 use Exporter;        # load Exporter module
 @ISA=qw(Exporter);   # Inherit from Exporter
 @EXPORT=qw(dont_delete is_in_dont_delete mirror mirror2 
-           delete_dest set_source set_dest get_source get_dest); 
+           delete_dest set_source set_dest get_source get_dest parse_args);
 
 #Real package stuff begins here
 use strict;
@@ -36,6 +36,46 @@ sub is_in_dont_delete($){
     return 0;
 }
 
+# print_usage() prints a usage message to stderr
+sub print_usage(){
+    print STDERR 
+	"Usage: $0 source_dir dest_dir\n",
+	"\n",
+	"Mirrors source_dir to dest_dir\n"
+	;
+}
+
+#Treat the input arguments as the contents of ARGV passed to a
+#mirroring script.  Returns true on success and false on failure.  If
+#it cannot parse the command line arguments, it prints a usage message
+#and puts the error in $@.  Should be called as:
+#
+#parse_args @ARGV or die $@;
+#
+#See print_usage for details on argument semantics
+sub parse_args(@){
+    if(@_ != 2){
+	print_usage;
+	$@="There should be two command line arguments but command-line only ".
+	    scalar(@_)." were passed.";
+	return;
+    }
+    my ($s,$d)=@_;
+    unless(-d $s){
+	print_usage;
+	$@="The source directory $s is not a directory.";
+	return;
+    }
+
+    unless(-d $d){
+	print_usage;
+	$@="The destination directory $d is not a directory.";
+	return;
+    }
+
+    set_source($s);
+    set_dest($d);
+}
 
 #Copy to a different location in the destination
 #
