@@ -8,9 +8,8 @@ use warnings;
 use File::Temp qw( tempfile tempdir );
 use File::Spec::Functions;
 use FindBin;
-use Test::Output;
 use Test::Exception;
-use Test::More tests => 6;
+use Test::More tests => 12;
 
 
 use lib "$FindBin::Bin/..";
@@ -96,4 +95,26 @@ is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
 #Test to make sure that the dest structure is as expected
 is_deeply(dir_as_hash($dest_name), $dest_expected_structure_before,
    "dest has correct initial structure");
+
+#Make sure my extant file really exists and my non-existent file
+#really doesn't exist
+my $extant_file = File::Spec->catfile($src_name,'src1');
+my $nonexistant_file = File::Spec->catfile($src_name,'this-is-not-a-file');
+
+ok( -e $extant_file && -f $extant_file, 'extant file exists and is a file');
+ok( ! -e $nonexistant_file, 'non-existant file does not exist');
+
+#Make sure set_source dies when it should
+dies_ok {set_source($extant_file); } 
+"set_source dies when given a file rather than a directory";
+
+dies_ok {set_source($nonexistant_file); } 
+"set_source dies when given a non-existent file";
+
+#Make sure set_dest dies when it should
+dies_ok {set_dest($extant_file); } 
+"set_dest dies when given a file rather than a directory";
+
+dies_ok {set_dest($nonexistant_file); } 
+"set_dest dies when given a non-existent file";
 
