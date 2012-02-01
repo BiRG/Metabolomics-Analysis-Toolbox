@@ -74,7 +74,7 @@ sub mirror2($$){
     #is all we care about right now).  File::Find along with
     #File::Copy could be used to implement this portably.
     if(system("cp","-r",$sname,$dname) != 0){
-	die "Could not copy \"$sname\" to \"$dname\"";
+	croak "Could not copy \"$sname\" to \"$dname\"";
     }
 }
 
