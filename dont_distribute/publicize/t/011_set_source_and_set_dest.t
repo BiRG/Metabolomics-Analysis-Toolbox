@@ -9,7 +9,7 @@ use File::Temp qw( tempfile tempdir );
 use File::Spec::Functions;
 use FindBin;
 use Test::Exception;
-use Test::More tests => 12;
+use Test::More tests => 13;
 
 
 use lib "$FindBin::Bin/..";
@@ -101,7 +101,8 @@ is_deeply(dir_as_hash($dest_name), $dest_expected_structure_before,
 my $extant_file = File::Spec->catfile($src_name,'src1');
 my $nonexistant_file = File::Spec->catfile($src_name,'this-is-not-a-file');
 
-ok( -e $extant_file && -f $extant_file, 'extant file exists and is a file');
+ok( -e $extant_file, 'extant file exists');
+ok( -f $extant_file, 'extant file is a file');
 ok( ! -e $nonexistant_file, 'non-existant file does not exist');
 
 #Make sure set_source dies when it should
