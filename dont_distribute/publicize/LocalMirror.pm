@@ -102,11 +102,11 @@ sub delete_dest(){
 		#No need to look at subdirectories, since they are
 		#already within
 		$File::Find::prune = 1;
-	    }elsif(-f){
-		#Preserve the file
+	    }else{
+		#Preserve the file (or other object)
 		$$preserved_paths{$name}='';
 		
-		#Preserve the file's parent directories
+		#Preserve its parent directories
 		my ($v,$dir_string,$fn)=File::Spec->splitpath($name);
 		my @dirs = File::Spec->splitdir($dir_string);
 		for my $lastDirIdx (0..$#dirs){
@@ -129,6 +129,13 @@ sub delete_dest(){
 		$File::Find::prune = 1;
 	    }elsif(-f){
 		unlink($File::Find::name);
+	    }else{ #Not a file or a directory
+		print STDERR "Warning: $File::Find::name is not a file or a ".
+		    "directory and so cannot be deleted.  However it is not ".
+		    "in the list of things not to delete with delete_dest.  ".
+		    "Add the line dont_delete(\"$File::Find::name\"); to ".
+		    "the mirror script before delete_dest to get rid of ".
+		    "this warning.\n";
 	    }
 	}
     };
