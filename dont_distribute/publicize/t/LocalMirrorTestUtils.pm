@@ -26,13 +26,17 @@ sub dir_as_hash{
     
     my $this_dir = {};
     my $add_entry = sub {
-	if(-f){
-	    $$this_dir{$_}=''; return;
-	}elsif(-d){
+	if(-d){
 	    return if (/^\.\.?$/); #Skip . and ..
 	    $$this_dir{$_}=dir_as_hash($_);
 	    $File::Find::prune = 1;
 	    return;
+	}elsif(-f){
+	    $$this_dir{$_}=''; return;
+	}else{ 
+            #Treat non-file/non-directory objects the same as file
+            #objects - just list them
+	    $$this_dir{$_}=''; return;
 	}
     };
     File::Find::find($add_entry, $dname);
