@@ -178,6 +178,7 @@ is_deeply(dir_as_hash($dest_name),
 
 
 #Try to copy a file into a read-only directory
+diag("\nThe error from cp -r is expected.  Change mirror2 from cp -r to using custom perl to get rid of it if it bothers you.");
 dies_ok {mirror2 'src1','read_only_dir/src1';}  
     'Mirror2 should die when the copy cannot succeed';
 
