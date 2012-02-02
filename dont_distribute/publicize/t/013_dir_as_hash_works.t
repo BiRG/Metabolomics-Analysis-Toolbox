@@ -9,7 +9,7 @@ use File::Temp qw( tempfile tempdir );
 use File::Spec::Functions;
 use FindBin;
 use Test::Exception;
-use Test::More tests => 9;
+use Test::More tests => 11;
 
 
 use lib "$FindBin::Bin/..";
@@ -40,15 +40,23 @@ my $dest_name = $dest_dir->dirname;
 # |
 # + /srcdirEmpty
 # 
-system("touch",catfile($src_name,"src1"));
-system("touch",catfile($src_name,"src2"));
+system("echo \"This is src1\" > ".catfile($src_name,"src1"));
+system("echo \"This is src2\" > ".catfile($src_name,"src2"));
+system('touch',catfile($src_name,"emptyFile"));
 system("mkdir",catfile($src_name,"srcdirEmpty"));
 system("mkdir",catfile($src_name,"srcdirFull"));
-system("touch",catfile($src_name,"srcdirFull","srcFullFile"));
+system("echo \"This is srcFullFile\" > ".catfile($src_name,"srcdirFull","srcFullFile"));
+system("echo \"This is an unreadable file\" > ".catfile($src_name,"unreadable"));
+system('chmod','a-r',catfile($src_name,"unreadable"));
 
-my $src_expected_structure_before = 
-{ src1=>"", src2=>"", srcdirFull=>{ srcFullFile=>"" },
-  srcdirEmpty=>{} };
+my $src_expected_structure_no_contents = 
+{ src1=>"", src2=>"", emptyFile=>'', srcdirFull=>{ srcFullFile=>"" },
+  srcdirEmpty=>{}, unreadable=>'' };
+
+my $src_expected_structure_with_contents = 
+{ src1=>"This is src1\n", src2=>"This is src2\n", emptyFile=>'', 
+  srcdirFull=>{ srcFullFile=>"This is srcFullFile\n" },
+  srcdirEmpty=>{}, unreadable=>undef };
 
 #Make some files and directories in dest
 #
@@ -64,15 +72,20 @@ my $src_expected_structure_before =
 # |
 # + /destdirEmpty
 # 
-system("touch",catfile($dest_name,"dest1"));
+system("echo \"the rain in spain falls mainly on the plain\" > ".catfile($dest_name,"dest1"));
 system("touch",catfile($dest_name,"dest2"));
 system("mkdir",catfile($dest_name,"destdirEmpty"));
 system("mkdir",catfile($dest_name,"destdirFull"));
 system("touch",catfile($dest_name,"destdirFull","destFullFile1"));
 system("touch",catfile($dest_name,"destdirFull","destFullFile2"));
 
-my $dest_expected_structure_before = 
+my $dest_expected_structure_no_contents = 
 { dest1=>"", dest2=>"",
+  destdirFull=>{ destFullFile1=>"", destFullFile2=>"" },
+  destdirEmpty=>{}};
+
+my $dest_expected_structure_with_contents = 
+{ dest1=>"the rain in spain falls mainly on the plain\n", dest2=>"",
   destdirFull=>{ destFullFile1=>"", destFullFile2=>"" },
   destdirEmpty=>{}};
 
@@ -85,13 +98,23 @@ my $dest_expected_structure_before =
 set_source $src_name;
 set_dest $dest_name;
 
-#Test to make sure that the source structure is as expected
-is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
-   "src has correct initial structure");
+#Test to make sure that the source structure is reported correctly
+#with no contents
+is_deeply(dir_as_hash($src_name), $src_expected_structure_no_contents,
+   "src structure reported correctly without file contents");
 
-#Test to make sure that the dest structure is as expected
-is_deeply(dir_as_hash($dest_name), $dest_expected_structure_before,
-   "dest has correct initial structure");
+is_deeply(dir_as_hash($src_name, with_contents=>1), 
+	  $src_expected_structure_with_contents,
+	  "src structure reported correctly with file contents");
+
+#Test to make sure that the dest structure is reported correctly
+is_deeply(dir_as_hash($dest_name), $dest_expected_structure_no_contents,
+   "dest structure reported correctly without file contents");
+
+is_deeply(dir_as_hash($dest_name, with_contents=>1), 
+	  $dest_expected_structure_with_contents,
+	  "dest structure reported correctly with file contents");
+
 
 #Make sure my extant file really exists and my non-existent file
 #really doesn't exist
@@ -107,4 +130,4 @@ ok( ! -e $nonexistant_object, 'non-existant object does not exist');
 is(dir_as_hash($extant_file),undef,
    "dir_as_hash returns undef when passed a file");
 is(dir_as_hash($nonexistant_object),undef,
-   "dir_as_hash returns undef when passed a file");
+   "dir_as_hash returns undef when passed a non-existant object");
