@@ -85,8 +85,8 @@ system("mkdir",catfile($src_name,"privd_empty"));
 
 
 #Changes for this particular test
-system('mv', catfile($src_name,'pubd_full_1','pubd_full_1_file_2'),
-       catfile($src_name,'pubd_full_1','renamed_public_file'));
+system('rm', catfile($src_name,'pubd_full_1','pubd_full_1_file_2'));
+       
 
 
 my $src_expected_structure_before = 
@@ -100,7 +100,6 @@ my $src_expected_structure_before =
     private_file_2=>"Txt: private_file_2\n", 
     pubd_full_1=>{
 	pubd_full_1_file_1=>"Txt: pubd_full_1_file_1\n",
-	renamed_public_file=>"Txt: pubd_full_1_file_2\n"
 #	pubd_full_1_file_2=>"Txt: pubd_full_1_file_2\n"
     },
     pubd_empty=>{},
@@ -198,7 +197,8 @@ is_deeply(dir_as_hash($dest_name, with_contents=>1),
 		      public_file_2=>"Txt: public_file_2\n", 
 		      pubd_full_1=>{
 			  pubd_full_1_file_1=>"Txt: pubd_full_1_file_1\n",
-			  renamed_public_file=>"Txt: pubd_full_1_file_2\n" },
+#			  pubd_full_1_file_2=>"Txt: pubd_full_1_file_2\n" 
+		  },
 	      pubd_empty=>{},
 	  },
 	  "dest directory is correct after mirror");
