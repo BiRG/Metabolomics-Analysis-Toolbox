@@ -4,7 +4,7 @@
 # This is boilerplate setting up the domain specific language under perl
 ##############
 
-use FindBin; use lib "$FindBin::Bin/.."; use LocalMirror;
+use FindBin; use lib "$FindBin::Bin"; use LocalMirror;
 parse_args(@ARGV) or die $@; dont_delete "\.git"; delete_dest;
 
 
