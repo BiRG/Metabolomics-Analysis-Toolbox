@@ -45,23 +45,12 @@ git pull
 echo ""
 echo ""
 echo "******************"
-echo "* Mirroring the private to the public using unison"
+echo "* Mirroring the private to the public"
 echo "******************"
 echo ""
 
 cd ~
-unison public_files_toolbox
-
-#Mirror the public-specific files using unison
-echo ""
-echo ""
-echo "******************"
-echo "* Mirroring the public-specific files using unison"
-echo "******************"
-echo ""
-
-cd ~
-unison public_toolbox_specific_files
+publicize_toolbox.syncscript ~/public/toolbox ~/private/toolbox
 
 #Checkin the changes to the public repo as a new commit with some
 #reasonable commit message - right now the commit message is typed by the user
@@ -81,10 +70,10 @@ if [ $# -gt 0 ]; then
     #A message was specified on the command line
     if [ $2 != "nopush" ]; then
 	#Message specified but not nopush
-	git commit -a -m $1 && git push 
+	git commit -a -m "$1" && git push 
     else
 	#We have a message and we are not supposed to push
-	git commit -a -m $1
+	git commit -a -m "$1"
     fi
 else
     #Ask user for the commit message then push
