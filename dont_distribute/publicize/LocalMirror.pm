@@ -86,16 +86,22 @@ sub parse_args(@){
 #
 #Copy the file or directory from source/$_[0] to dest/$_[1]
 sub mirror2($$){
-    my $sname=File::Spec->catfile($source, $_[0]);
-    my $dname=File::Spec->catfile($dest, $_[1]);
+    my $sname=File::Spec->canonpath(File::Spec->catfile($source, $_[0]));
+    my $dname=File::Spec->canonpath(File::Spec->catfile($dest, $_[1]));
     if(! -e $sname){
 	print STDERR "Warning: Source file $sname does not exist.  ",
 	"Cannot copy.\n";
 	return;
     }
     if(-e $dname){
-	print STDERR "Warning: destination file $dname already exists.  ",
-	"Overwriting.\n";
+	if(-d $dname){
+	    print STDERR "Warning: destination directory $dname already ".
+		"exists.\nCannot mirror $sname into it.\n";
+	    return;
+	}else{
+	    print STDERR "Warning: destination $dname already exists.  ",
+	    "Overwriting.\n";
+	}
     }
     #Directory in which the destination file lives - we will ensure it
     #and its predecessors exist
