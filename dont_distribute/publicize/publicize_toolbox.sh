@@ -50,7 +50,7 @@ echo "******************"
 echo ""
 
 cd ~
-~/private/toolbox/dont_distribute/publicize/publicize_toolbox.syncscript ~/public/toolbox ~/private/toolbox
+~/private/toolbox/dont_distribute/publicize/publicize_toolbox.syncscript ~/private/toolbox ~/public/toolbox
 
 #Checkin the changes to the public repo as a new commit with some
 #reasonable commit message - right now the commit message is typed by the user
