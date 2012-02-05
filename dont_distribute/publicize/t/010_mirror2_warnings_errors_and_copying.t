@@ -134,7 +134,7 @@ is_deeply(dir_as_hash($dest_name),
 
 
 #Try to copy another file over it
-stderr_is {mirror2 'src2','src1'} 'Warning: destination file '.
+stderr_is {mirror2 'src2','src1'} 'Warning: destination '.
     File::Spec->catfile(get_dest(), 'src1').
     " already exists.  Overwriting.\n", 
     'Mirror should detect copying over extant file';
