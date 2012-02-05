@@ -21,6 +21,6 @@ parse_args(@ARGV) or die $@; dont_delete "\.git"; delete_dest;
 #
 ##############
 
-mirror2 'dont_distribute/publicize/public_toolbox_specific_files/README.markdown' 'README.markdown';
+mirror2 'dont_distribute/publicize/public_toolbox_specific_files/README.markdown','README.markdown';
 
 
