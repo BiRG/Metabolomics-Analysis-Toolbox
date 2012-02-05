@@ -13,7 +13,7 @@ use File::Spec::Functions;
 use FindBin;
 use Test::Output;
 use Test::Exception;
-use Test::More tests => 21;
+use Test::More tests => 24;
 
 
 use lib "$FindBin::Bin/..";
@@ -190,4 +190,19 @@ is_deeply(dir_as_hash($dest_name),
 	  },
 	  "dest now has srcdirEmpty as well as older contents");
 
+
+#Try to copy an empty directory over extant copy of itself
+stderr_like {mirror 'srcdirEmpty';} 
+qr/Warning: destination directory .* already exists./, 
+    'Mirror does not copy a directory into an extant directory.';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'',
+	   read_only_dir=>{}, srcdirFull=>{srcFullFile=>''},
+	   srcdirEmpty=>{}
+	  },
+	  "dest unchanged by rejected copy");
 

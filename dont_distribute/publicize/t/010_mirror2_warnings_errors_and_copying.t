@@ -11,7 +11,7 @@ use File::Spec::Functions;
 use FindBin;
 use Test::Output;
 use Test::Exception;
-use Test::More tests => 27;
+use Test::More tests => 30;
 
 
 use lib "$FindBin::Bin/..";
@@ -185,6 +185,22 @@ is_deeply(dir_as_hash($dest_name),
 	   read_only_dir=>{}, dest_dir=>{src2=>''}, 
 	   srcdirFull=>{srcFullFile=>''}},
 	  "dest has srcdirFull and srcdirFull/srcFullFile as well as older contents");
+
+
+#Try to copy a directory over an extant directory
+stderr_like {mirror2 'srcdirFull','srcdirFull';} 
+qr/Warning: destination directory .* already exists./, 
+    'Mirror2 does not copy a directory into an extant directory.';
+
+is_deeply(dir_as_hash($src_name), $src_expected_structure_before,
+   "src is unchanged");
+
+is_deeply(dir_as_hash($dest_name), 
+	  {'.gitignore'=>'', '.git'=>{ conf=>'' }, src1=>'',
+	   read_only_dir=>{}, dest_dir=>{src2=>''}, 
+	   srcdirFull=>{srcFullFile=>''}},
+	  "dest has srcdirFull and srcdirFull/srcFullFile as well as older contents (unchanged by rejected copy)");
+
 
 
 #Try to copy a file into a read-only directory
