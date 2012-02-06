@@ -1,8 +1,8 @@
 Everything is designed to be run from the repo_publicizer account on
 birg.
 
-The syncscript holds the list of files to synchronize.  It is located at:
-~/private/toolbox/dont_distribute/publicize/publicize_toolbox.syncscript
+The sync file holds the list of files to synchronize.  It is located at:
+~/private/toolbox/dont_distribute/publicize/toolbox.sync
 
 ****************
 * To publicize current versions of everything
@@ -20,7 +20,7 @@ Add a line
 
 mirror 'path/to/file/or/directory';
 
-To the end of the syncscript
+To the end of the sync file
 
 ****************
 * To mirror a file or directory to a location specific to the public
@@ -31,7 +31,7 @@ Add a line
 
 mirror2 'private/path/to/file' 'public/path/to/file';
 
-To the end of the syncscript
+To the end of the sync file
 
 
 ****************
@@ -53,7 +53,7 @@ changes are committed to the public repository if necessary.
 
 publicize_toolbox.sh is a symlink to
 ~/private/toolbox/dont_distribute/publicize/publicize_toolbox.sh so
-that this script can be versioned.  It calls the syncscript to do the
+that this script can be versioned.  It calls the sync file to do the
 mirroring, then calls git to do the versioning.
 
 publicize_toolbox.sh can take arguments.  These are useful during
@@ -66,7 +66,7 @@ publicize_toolbox.sh 'commit message here'  ------------- will not ask for a com
 publicize_toolbox.sh 'commit message here' nopush  ------ will not ask for a commit message, but will use the one from the command line and will not push the commits back to the github server.
 
 ##
-## ~/private/toolbox/dont_distribute/publicize/publicize_toolbox.syncscript
+## ~/private/toolbox/dont_distribute/publicize/toolbox.sync
 ##
 
 Holds the list of files to make public.  Note that this is really a
