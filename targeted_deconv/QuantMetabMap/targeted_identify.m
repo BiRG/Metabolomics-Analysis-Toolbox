@@ -1494,13 +1494,17 @@ else
                 % align with the spectrum columns
                 fprintf(excel_fid,'"%s",,', fieldname);
                 md_vals = specmd.(fieldname);
-                % Print the values delimited with "" if any is not a number
-                % otherwise all are numbers and "" are not needed
-                is_string_field = any(isnan(str2double(md_vals)));
-                if is_string_field
-                    fprintf(excel_fid,',"%s"', md_vals{:});
+                if iscell(md_vals) 
+                    % Print the values delimited with "" if any is not a number
+                    % otherwise all are numbers and "" are not needed
+                    is_string_field = any(isnan(str2double(md_vals)));
+                    if is_string_field
+                        fprintf(excel_fid,',"%s"', md_vals{:});
+                    else
+                        fprintf(excel_fid,',%s', md_vals{:});
+                    end
                 else
-                    fprintf(excel_fid,',%s', md_vals{:});
+                    fprintf(excel_fid,',%g',md_vals(:));
                 end
                 % End the line
                 fprintf(excel_fid,'\n');
