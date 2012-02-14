@@ -48,7 +48,7 @@ public class ExactMIC {
 			for(int j1=0; j1 < n; ++j1){
 				for(int i2=0; i2 <n; ++i2){
 					for(int j2=0; j2 < n; ++j2){
-						if(!(j2==j1 && i2 == i1){
+						if(!(j2==j1 && i2 == i1)){
 							m.addConstraint(Choco.neq(cells[i1][j1], cells[i2][j2]));
 						}
 					}
