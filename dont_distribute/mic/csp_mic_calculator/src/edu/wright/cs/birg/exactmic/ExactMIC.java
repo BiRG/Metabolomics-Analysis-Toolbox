@@ -159,7 +159,20 @@ public class ExactMIC {
 	private static double calcMIC(SampleVariable x,
 			SampleVariable y) {
 		assert(x.getValues().length == y.getValues().length);
+		//N is the number of samples
 		final int N = x.getValues().length;
+		
+		//F is the number by which logarithms will be multiplied before rounding 
+		//to give a fixed-point approximation which can be easily used in the CSP solver 
+		final int F = 32768;
+
+		if(N*Math.log(N) >= 65536){
+			System.err.println("Warning: N log N is large enough that multiplying it by "+ 
+					F + " could cause integer overflow.  This may cause problems with the "+
+					"optimization problem.  Proceeding to optimize anyway, double check the results if "+
+					"possible. Or rewrite the solver to use a real log function :)");
+		}
+		
 		Sample[] samples = new Sample[N];
 		for(int i = 0; i < N; ++i){
 			samples[i]=new Sample(i, x.getValues()[i], y.getValues()[i]);
