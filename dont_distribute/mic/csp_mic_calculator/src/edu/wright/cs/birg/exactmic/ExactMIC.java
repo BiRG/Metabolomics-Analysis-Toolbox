@@ -224,6 +224,16 @@ public class ExactMIC {
 				m.addConstraint(or(eq(cur,prev),eq(cur,plus(1, prev))));
 			}
 		}
+
+		// xBinSorted is just the xBin array sorted in order of increasing x value
+		// Here I add another constraint (increasingNValue) that is mostly redundant on what I've already implemented, 
+		// but since it is directly from the framework, may have better heuristics attached
+		IntegerVariable[] xBinSorted = new IntegerVariable[N];
+		for(int i = 0; i < N; ++i){
+			xBinSorted[i]=xBin[samples[i].id];
+		}
+		m.addConstraint(increasingNValue(numXBins, xBinSorted));
+
 		
 		// yBin[i] holds the y bin for sample i
 		IntegerVariable[] yBin = new IntegerVariable[N];
@@ -248,7 +258,63 @@ public class ExactMIC {
 			}
 		}
 		
+		// yBinSorted is just the yBin array sorted in order of increasing y value
+		// Here I add another constraint (increasingNValue) that is mostly redundant on what I've already implemented, 
+		// but since it is directly from the framework, may have better heuristics attached
+		IntegerVariable[] yBinSorted = new IntegerVariable[N];
+		for(int i = 0; i < N; ++i){
+			yBinSorted[i]=yBin[samples[i].id];
+		}
+		m.addConstraint(increasingNValue(numYBins, yBinSorted));
 		
+		
+		// Create the bin size variables
+		
+		// inXBin[i] is the number of samples whose x value is assigned to the i-th x bin. 
+		// inXBin[0] is just a placeholder (and is set to null). It serves to keep the indexing uncomplicated 
+		IntegerVariable[] inXBin = new IntegerVariable[b/2+1];
+		inXBin[0]=null; //Assign to null so we know if I accidentally try to do something with it
+		for(int i = 1; i <= b/2; ++i){
+			inXBin[i]=makeIntVar("inXBin["+i+"]", 0, N);
+			m.addVariable(inXBin[i]);
+			//inXBin[i] is the number of xBin values that have the value i
+			m.addConstraint(occurrence(inXBin[i],xBin,i));
+		}
+
+		// inYBin[i] is the number of samples whose y value is assigned to the i-th y bin.
+		// inYBin[0] is just a placeholder (and is set to null). It serves to keep the indexing uncomplicated 
+		IntegerVariable[] inYBin = new IntegerVariable[b/2+1];
+		inYBin[0]=null; //Assign to null so we know if I accidentally try to do something with it
+		for(int i = 1; i <= b/2; ++i){
+			inYBin[i]=makeIntVar("inYBin["+i+"]", 0, N);
+			m.addVariable(inYBin[i]);
+			//inYBin[i] is the number of yBin values that have the value i
+			m.addConstraint(occurrence(inYBin[i],yBin,i));
+		}
+		
+		// inXYBin[i][j] is the number of samples whose x value is assigned to the i-th x bin and whose y value is also
+		// assigned to the j-th y bin.  Since there is no bin 0, inXYBin[0][j]=inXYBin[i][0]=null
+		IntegerVariable[][] inXYBin = new IntegerVariable[b/2+1][b/2+1];
+		//Assign placeholder nulls
+		for(int i = 0; i <= b/2; ++i){ inXYBin[i][0]=null; inXYBin[0][i]=null; }
+		//Create the variables
+		for(int i = 0; i <= b/2; ++i){
+			for(int j = 0; j <= b/2; ++j){
+				inXYBin[i][j]=makeIntVar("inXYBin["+i+"]["+j+"]", 0, N);
+				m.addVariable(inXYBin[i][j]);
+				
+				
+				
+				
+				/// TODO:
+				/// Add variables XYBin[i] which have (b/2)*xBin[i]+yBin[i] (thus they index into the XY array in some sense)
+				/// 
+				/// Then, make an occurrence constraint for each inXYBin that checks the appropriate value
+				///
+				
+				
+			}
+		}
 		return 0;
 	}
 
