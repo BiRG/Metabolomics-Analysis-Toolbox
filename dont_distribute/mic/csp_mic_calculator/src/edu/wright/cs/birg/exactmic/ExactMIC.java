@@ -7,7 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+
+import static choco.Choco.*;
+import choco.cp.model.CPModel;
+import choco.kernel.model.variables.integer.IntegerVariable;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -128,10 +134,108 @@ public class ExactMIC {
 			}
 		}
 	}
-
+	/**	The two-dimensional projection of a sample point taken from the input data.
+	 *   
+	 * This class mainly exists to allow easy manipulation for the calcMIC class
+	 *   
+	 * @author Eric Moyer
+	 */
+	private static class Sample{
+		/** Sample number of this sample - the index into the typical arrays of samples */
+		public final int id;
+		/** x value of this sample */
+		public final double x;
+		/** y value of this sample */
+		public final double y;
+		/**
+		 * Create a Sample with the given id, x, and y values
+		 * @param id The sample number of this sample
+		 * @param x The x value of this sample
+		 * @param y The y value of this sample
+		 */
+		Sample(int id, double x, double y){ this.id = id; this.x = x; this.y = y; }
+	}
+	
 	private static double calcMIC(SampleVariable x,
 			SampleVariable y) {
-		// TODO Auto-generated method stub
+		assert(x.getValues().length == y.getValues().length);
+		final int N = x.getValues().length;
+		Sample[] samples = new Sample[N];
+		for(int i = 0; i < N; ++i){
+			samples[i]=new Sample(i, x.getValues()[i], y.getValues()[i]);
+		}
+		
+		// Create the model (so I don't forget to add variables at the end, I'll add them as I create them)
+		CPModel m = new CPModel();
+		
+		// b is the B parameter n^0.6 taken to the next greatest integer.  
+		// b is clamped to be at least 4 (since in the paper, they start with a 2x2 grid)
+		int b = Math.max(4, (int)Math.ceil(Math.pow(N, 0.6)));
+		
+		// numBins variable
+		IntegerVariable numBins = makeIntVar("numBins: number of bins in the grid", 4, b);
+		m.addVariable(numBins);
+		
+		// number of bins for x axis since there must be at least 2 bins on the y axis, then 
+		// b/2 is the maximum number of bins that can be on this axis without its multiple 
+		// by numYBins being greater than b
+		IntegerVariable numXBins = makeIntVar("numXBins",2,b/2);
+		m.addVariable(numXBins);
+		
+		// number of bins for y axis
+		IntegerVariable numYBins = makeIntVar("numYBins",2,b/2);
+		m.addVariable(numYBins);
+		
+		// Constrain number of bins on x and y axis, when multiplied == numBins
+		m.addConstraint(eq(numBins, mult(numXBins, numYBins)));
+		
+		// xBin[i] holds the x bin for sample i
+		IntegerVariable[] xBin = new IntegerVariable[N];
+		for(int i = 0; i < xBin.length; ++i){ xBin[i]=makeIntVar("xBin["+i+"]",1,b/2); }
+		m.addVariables(xBin);
+		
+		// Constrain the samples to have x bin numbers consistent with their x ordering
+		Arrays.sort(samples, new Comparator<Sample>(){ //sort by x coordinate
+			public int compare(Sample l, Sample r){return (int)(r.x-l.x);}
+		});
+		m.addConstraint(eq(1,xBin[samples[0].id])); //First sample in bin 1
+		m.addConstraint(eq(numXBins,xBin[samples[N].id]));//Last sample in last bin
+		for(int i = 1; i < N; ++i){
+			IntegerVariable cur = xBin[samples[i].id];
+			IntegerVariable prev = xBin[samples[i-1].id];
+			//If the two adjacent samples are equal, in the x dimension, they must be in the same bin, 
+			//otherwise they must be in the same bin or the greater one can be in the next bin over.   
+			if(samples[i].x == samples[i-1].x){
+				m.addConstraint(eq(cur,prev));
+			}else{
+				m.addConstraint(or(eq(cur,prev),eq(cur,plus(1, prev))));
+			}
+		}
+		
+		// yBin[i] holds the y bin for sample i
+		IntegerVariable[] yBin = new IntegerVariable[N];
+		for(int i = 0; i < yBin.length; ++i){ yBin[i]=makeIntVar("yBin["+i+"]",1,b/2); }
+		m.addVariables(yBin);
+		
+		// Constrain the samples to have y bin numbers consistent with their y ordering
+		Arrays.sort(samples, new Comparator<Sample>(){ //Sort by y coordinate
+			public int compare(Sample l, Sample r){return (int)(r.y-l.y);}
+		});
+		m.addConstraint(eq(1,yBin[samples[0].id])); //First sample in bin 1
+		m.addConstraint(eq(numYBins,yBin[samples[N].id]));//Last sample in last bin
+		for(int i = 1; i < N; ++i){
+			IntegerVariable cur = yBin[samples[i].id];
+			IntegerVariable prev = yBin[samples[i-1].id];
+			//If the two adjacent samples are equal, in the y dimension, they must be in the same bin, 
+			//otherwise they must be in the same bin or the greater one can be in the next bin over.   
+			if(samples[i].y == samples[i-1].y){
+				m.addConstraint(eq(cur,prev));
+			}else{
+				m.addConstraint(or(eq(cur,prev),eq(cur,plus(1, prev))));
+			}
+		}
+		
+		
 		return 0;
 	}
 
