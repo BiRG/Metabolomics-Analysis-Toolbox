@@ -3,15 +3,18 @@
  */
 package edu.wright.cs.birg.exactmic;
 
-import java.text.MessageFormat;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-import choco.Choco;
-import choco.cp.model.CPModel;
-import choco.cp.solver.CPSolver;
-import choco.kernel.model.variables.integer.IntegerVariable;
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
- * @author eric
+ * @author Eric Moyer
  *
  */
 public class ExactMIC {
@@ -20,83 +23,117 @@ public class ExactMIC {
 	 * @param args The command line arguments
 	 */
 	public static void main(String[] args) {
-		// To start with, I 'll do the magic square exercise from the documentation
-		
-		// Constant declarations
-		final int n = 4; // Order of the magic square
-		final int magicSum = n * (n * n + 1) / 2; // Magic sum
-		
-
-		// Define the variables
-		IntegerVariable[][] cells=new IntegerVariable[n][n];
-		for(int i=0; i <n; ++i){
-			for(int j=0; j < n; ++j){
-				cells[i][j]=Choco.makeIntVar("cell["+i+"]["+j+"]", 1, n*n);
-			}
-		}
-
-		// Add the variables to the model
-		CPModel m=new CPModel();
-		for(IntegerVariable[] cellRow:cells){
-			for(IntegerVariable cell:cellRow){
-				m.addVariable(cell);
-			}
+		if(args.length != 0){
+			System.err.println("Usage: java edu.wright.cs.birg.exactmic < filename.csv > mics.csv");
+			System.err.println("Prints the exact mic's for all pairs of variables in filename to stdout.");
+			System.err.println("If the first line of filename is not all numeric, it is assumed to be a header line");
+			return;
 		}
 		
-		// Add the all different constraint (pairwise for all pairs)
-		for(int i1=0; i1 <n; ++i1){
-			for(int j1=0; j1 < n; ++j1){
-				for(int i2=0; i2 <n; ++i2){
-					for(int j2=0; j2 < n; ++j2){
-						if(!(j2==j1 && i2 == i1)){
-							m.addConstraint(Choco.neq(cells[i1][j1], cells[i2][j2]));
-						}
+		// Initialize data and header from the file (if the file has no header, one is created for it)
+		List<double[]> data = null;
+		String[] header = null;
+		try {
+			List<String[]> contents = (new CSVReader(new InputStreamReader(System.in))).readAll();
+			data = new ArrayList<double[]>(contents.size());
+			
+			//Convert the data to double
+			for(String[] line: contents){
+				double[] row = new double[line.length];
+				try{
+					for(int i = 0; i < line.length; ++i){
+						row[i]=Double.parseDouble(line[i]);
+					}
+					data.add(row);
+					if(row.length != data.get(0).length){
+						System.err.println("Error: Row "+data.size()+" in the data file had a different "+
+								"number of elements from the first row.  All rows in the CSV " + 
+								"must be the same length.");
+					}
+				} catch(NumberFormatException e){
+					//Skip lines that contain things that can't be parsed as doubles
+					//
+					//The first unparsable line is treated as the header
+					if(header==null){ header = line; }
+				}
+			}
+			
+			if(data.size()==0){
+				System.err.println("Error: The CSV file must have at least one row which only contains "+
+						"numeric data.  The CSV file on standard input had no such rows.  Cannot process.");
+				return;
+			}
+			
+			if(data.get(0).length==0){
+				System.err.println("The CSV file has only 0-length lines.  Cannot process.");
+				return;
+			}
+			
+			// Create a header if there was none 
+			if(header == null){
+				header = new String[data.get(0).length];
+				for(int i = 0; i < header.length; ++i){
+					header[i]="Variable["+i+"]";
+				}
+			}
+			
+			// Ensure that the header is the right length by padding it with default values if necessary
+			if(header.length < data.get(0).length){
+				String[] oldHeader = header;
+				header = new String[data.get(0).length];
+				for(int i = 0; i < header.length; ++i){
+					if(i < oldHeader.length){
+						header[i]=oldHeader[i];
+					}else{
+						header[i]="Variable["+i+"]";
 					}
 				}
 			}
+		} catch (IOException e) {
+			System.err.println("Error trying to parse CSV from standard input.");
+			return;
 		}
 		
-		
+		assert(header != null && data.size() > 0 && data.get(0).length > 0);
 
-		// Add the row sum constraint
-		for(IntegerVariable[] cellRow:cells){
-			m.addConstraint(Choco.eq(Choco.sum(cellRow), magicSum));
-		}
-		
-		// Add the column sum constraint
-		for(int c=0; c < n; ++c){
-			IntegerVariable[] col = new IntegerVariable[n];
-			for(int r=0; r <n; ++r){
-				col[r]=cells[r][c];
+		// vars holds the individual variables represented in the CSV file
+		SampleVariable[] vars=new SampleVariable[data.get(0).length];
+		for(int i=0; i < vars.length; ++i){
+			double[] col = new double[data.size()];
+			for(int j=0; j < data.size(); ++j){
+				col[j]=data.get(i)[j];
 			}
-			m.addConstraint(Choco.eq(Choco.sum(col),magicSum));
+			vars[i]=new SampleVariable(header[i],col);
 		}
 		
-		// Add the diagonal constraints
-		IntegerVariable[] diag = new IntegerVariable[n];
-		for(int i=0; i < n; ++i){
-			diag[i]=cells[i][i];
-		}
-		m.addConstraint(Choco.eq(Choco.sum(diag),magicSum));
+		// Create the object that writes the CSV to standard output
+		CSVWriter out = new CSVWriter(new OutputStreamWriter(System.out));
+
+		// Write the output header
+		String[] outputHeader = {"X Var Index","Y Var Index","X Var Name","Y Var Name","Maximal Information Coefficient"};
+		out.writeNext(outputHeader);
 		
-		for(int i=0; i < n; ++i){
-			diag[i]=cells[i][n-1-i];
-		}
-		m.addConstraint(Choco.eq(Choco.sum(diag),magicSum));
-		
-		//Read and solve the model
-		CPSolver s = new CPSolver();
-		s.read(m);
-		s.solve();
-		
-		// Print the solution
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				System.out.print(MessageFormat.format("{0} ", s.getVar(cells[i][j]).getVal()));
+		// loop through all non-identical pairs of variables, printing the results to output at each pass
+		java.text.NumberFormat micFormat=java.text.NumberFormat.getInstance();
+		micFormat.setGroupingUsed(false);
+		micFormat.setMinimumFractionDigits(Math.min(18,micFormat.getMaximumFractionDigits()));
+		for(int i = 0; i < vars.length; ++i){
+			SampleVariable x=vars[i];
+			for(int j = i+1; j < vars.length; ++j){
+				SampleVariable y=vars[j];
+				double mic = calcMIC(vars[i],vars[j]);
+				String[] line = {Integer.toString(i),Integer.toString(j),
+						x.getName(), y.getName(), micFormat.format(mic)
+				};
+				out.writeNext(line);
 			}
-			System.out.println();
 		}
-		
+	}
+
+	private static double calcMIC(SampleVariable x,
+			SampleVariable y) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
