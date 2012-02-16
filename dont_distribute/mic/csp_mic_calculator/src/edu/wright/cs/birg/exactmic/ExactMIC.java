@@ -484,12 +484,20 @@ public class ExactMIC {
 		//Solve the optimization problem
 		CPSolver s = new CPSolver();
 		s.read(m);
-		s.maximize(s.getVar(mic), false);
+		Boolean result = s.maximize(s.getVar(mic), false);
+		if(result == null){
+			System.err.println("Error: A search limit was reached without finding a solution for variables "+
+					xIn.getName()+ " and " + yIn.getName());
+		}else if(result == Boolean.FALSE){
+			System.err.println("Error: No feasible solution was found for the constraint problem with variables "+
+					xIn.getName()+ " and " + yIn.getName()); 
+		}
 		
 		//TODO: recalculate the MIC for the chosen grid and binning using the set cardinality 
 		//variables (inXYBin[][] etc.) and floating point to get better resolution than just the 
 		//fixed point approximation
 		double micFixed = (double)s.getVar(mic).getVal();
+		
 		return micFixed/F;
 	}
 	/**
