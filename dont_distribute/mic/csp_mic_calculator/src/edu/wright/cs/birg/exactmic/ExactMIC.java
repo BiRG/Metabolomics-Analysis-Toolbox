@@ -413,6 +413,9 @@ public class ExactMIC {
 				m.addConstraint(relationPairAC(inXYBin[x][y],logInXYBin[x][y], fLog2Rel));
 			}
 		}
+
+		if(include){
+
 		
 		//Add product variables
 		IntegerVariable[][] XYLogN = new IntegerVariable[b/2+1][b/2+1];
@@ -482,12 +485,14 @@ public class ExactMIC {
 		m.addVariable(logMinGridDim);
 		m.addConstraint(relationPairAC(minGridDim,logMinGridDim, fLog2Rel));
 		
+		}//If(include)
 		//MIC is the mutual information divided by the log of the minimum grid dimension
 		IntegerVariable mic = makeIntVar("mic",0,F);
 		m.addVariable(mic);
 		
+		//TODO: add final constraint when everything is consistent
 		
-		m.addConstraint(intDiv(mutualInf,logMinGridDim,mic));
+		//m.addConstraint(intDiv(mutualInf,logMinGridDim,mic));
 		
 		
 		//Solve the optimization problem
@@ -499,21 +504,10 @@ public class ExactMIC {
 					xIn.getName()+ " and " + yIn.getName());
 		}else if(result == Boolean.FALSE){
 			System.err.println("Error: No feasible solution was found for the constraint problem with variables "+
-					xIn.getName()+ " and " + yIn.getName()); 
+					xIn.getName()+ " and " + yIn.getName());
 			System.err.println("The solver is:"+s.pretty());
-			
-			System.err.println("#######################################");
-			System.err.println("########## Empty domain vars ##########");
-			System.err.println("#######################################");
-			final int numVars = s.getNbIntVars();
-			for(int i = 0; i < numVars; ++i){
-				IntDomainVar v = s.getIntVar(i);
-				if(v.getDomainSize()==0){
-					System.err.println(v.pretty());
-				}
-			}
-						
-			
+		}else if(!include){
+			System.err.println("The solver is:"+s.pretty());
 		}
 		
 		//TODO: recalculate the MIC for the chosen grid and binning using the set cardinality 
