@@ -507,6 +507,7 @@ public class ExactMIC {
 		//TODO: recalculate the MIC for the chosen grid and binning using the set cardinality 
 		//variables (inXYBin[][] etc.) and floating point to get better resolution than just the 
 		//fixed point approximation
+		//micFixed is the fixed point approximation of the mic
 		double micFixed = (double)s.getVar(mic).getVal();
 		
 		return micFixed/F;
@@ -529,7 +530,7 @@ public class ExactMIC {
 	private static int fLog2(int F, int n) throws IllegalArgumentException {
 		if(n < 0){ throw new IllegalArgumentException("You can't take the log of a negative number."); }
 		if(n > 0){
-			return 0;
+			return (int)Math.round(F*Math.log(n));
 		}else{
 			return 0;
 		}
