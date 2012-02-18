@@ -18,6 +18,7 @@ import choco.cp.solver.CPSolver;
 import choco.kernel.model.variables.integer.IntegerConstantVariable;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.constraints.integer.extension.BinRelation;
+import choco.kernel.solver.variables.integer.IntDomainVar;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -191,6 +192,10 @@ public class ExactMIC {
 		// Create the model (so I don't forget to add variables at the end, I'll add them as I create them)
 		CPModel m = new CPModel();
 		
+		// Bool used for eliminating potentially problematic code
+		final boolean include = false;
+
+		
 		// b is the B parameter n^0.6 taken to the next greatest integer.  
 		// b is clamped to be at least 4 (since in the paper, they start with a 2x2 grid)
 		int b = Math.max(4, (int)Math.ceil(Math.pow(N, 0.6)));
@@ -212,6 +217,7 @@ public class ExactMIC {
 		// Constrain number of bins on x and y axis, when multiplied == numBins
 		m.addConstraint(times(numXBins, numYBins, numBins));
 		
+
 		// xBin[i] holds the x bin for sample i
 		IntegerVariable[] xBin = new IntegerVariable[N];
 		for(int i = 0; i < xBin.length; ++i){ xBin[i]=makeIntVar("xBin["+i+"]",1,b/2); }
@@ -219,7 +225,7 @@ public class ExactMIC {
 		
 		// Constrain the samples to have x bin numbers consistent with their x ordering
 		Arrays.sort(samples, new Comparator<Sample>(){ //sort by x coordinate
-			public int compare(Sample l, Sample r){return (int)(r.x-l.x);}
+			public int compare(Sample l, Sample r){return (int)(l.x-r.x);}
 		});
 		m.addConstraint(eq(1,xBin[samples[0].id])); //First sample in bin 1
 		m.addConstraint(eq(numXBins,xBin[samples[N-1].id]));//Last sample in last bin
@@ -252,7 +258,7 @@ public class ExactMIC {
 		
 		// Constrain the samples to have y bin numbers consistent with their y ordering
 		Arrays.sort(samples, new Comparator<Sample>(){ //Sort by y coordinate
-			public int compare(Sample l, Sample r){return (int)(r.y-l.y);}
+			public int compare(Sample l, Sample r){return (int)(l.y-r.y);}
 		});
 		m.addConstraint(eq(1,yBin[samples[0].id])); //First sample in bin 1
 		m.addConstraint(eq(numYBins,yBin[samples[N-1].id]));//Last sample in last bin
@@ -479,7 +485,10 @@ public class ExactMIC {
 		//MIC is the mutual information divided by the log of the minimum grid dimension
 		IntegerVariable mic = makeIntVar("mic",0,F);
 		m.addVariable(mic);
+		
+		
 		m.addConstraint(intDiv(mutualInf,logMinGridDim,mic));
+		
 		
 		//Solve the optimization problem
 		CPSolver s = new CPSolver();
@@ -491,6 +500,20 @@ public class ExactMIC {
 		}else if(result == Boolean.FALSE){
 			System.err.println("Error: No feasible solution was found for the constraint problem with variables "+
 					xIn.getName()+ " and " + yIn.getName()); 
+			System.err.println("The solver is:"+s.pretty());
+			
+			System.err.println("#######################################");
+			System.err.println("########## Empty domain vars ##########");
+			System.err.println("#######################################");
+			final int numVars = s.getNbIntVars();
+			for(int i = 0; i < numVars; ++i){
+				IntDomainVar v = s.getIntVar(i);
+				if(v.getDomainSize()==0){
+					System.err.println(v.pretty());
+				}
+			}
+						
+			
 		}
 		
 		//TODO: recalculate the MIC for the chosen grid and binning using the set cardinality 
