@@ -530,7 +530,7 @@ public class ExactMIC {
 	private static int fLog2(int F, int n) throws IllegalArgumentException {
 		if(n < 0){ throw new IllegalArgumentException("You can't take the log of a negative number."); }
 		if(n > 0){
-			return (int)Math.round(F*Math.log(n));
+			return (int)Math.round(F*Math.log(n)/Math.log(2));
 		}else{
 			return 0;
 		}
