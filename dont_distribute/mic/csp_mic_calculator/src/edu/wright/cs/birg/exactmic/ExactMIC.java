@@ -173,9 +173,10 @@ public class ExactMIC {
 		
 		//F is the number by which logarithms will be multiplied before rounding 
 		//to give a fixed-point approximation which can be easily used in the CSP solver 
-		final int F = 32768; 
+		final int F = 1024; 
+		final int intMaxOverF=Integer.MAX_VALUE/F;
 
-		if(N*Math.log(N) >= 65536){
+		if(N*Math.log(N) >= intMaxOverF){
 			System.err.println("Warning: N log N is large enough that multiplying it by "+ 
 					F + " could cause integer overflow.  This may cause problems with the "+
 					"optimization problem.  Proceeding to optimize anyway, double check the results if "+
@@ -470,6 +471,20 @@ public class ExactMIC {
 		m.addVariable(mutualInf);
 		m.addConstraint(intDiv(unscaledMutInf, NVar, mutualInf));
 		
+
+		if(fLog2(F,b)>=intMaxOverF){
+			System.out.println("The number of bins ("+b+") is too large to use fixed point divisor "+
+					F+" without causing integer overflow.  The source code needs to be modified to use a "+
+					"smaller divisor. Aborting!");
+			System.exit(-1);
+		}
+		
+		//fTimesMutInf is the mutual information times F - needed so that after division to form
+		//the MIC, we still have F-denominator fixed-point  
+		IntegerVariable fTimesMutualInf = makeIntVar("f_times_mutualInformation", 0, F*fLog2(F,b));
+		m.addVariable(fTimesMutualInf);
+		m.addConstraint(times(mutualInf, F, fTimesMutualInf));
+		
 		//Minimum Grid Dimension expressed in F-denominator fixed point
 		IntegerVariable minGridDim = makeIntVar("minimumGridDimension",0,b/2);
 		m.addVariable(minGridDim);
@@ -484,7 +499,7 @@ public class ExactMIC {
 		IntegerVariable mic = makeIntVar("mic",0,F);
 		m.addVariable(mic);
 		
-		m.addConstraint(intDiv(mutualInf,logMinGridDim,mic));
+		m.addConstraint(intDiv(fTimesMutualInf,logMinGridDim,mic));
 		
 		
 		//Solve the optimization problem
