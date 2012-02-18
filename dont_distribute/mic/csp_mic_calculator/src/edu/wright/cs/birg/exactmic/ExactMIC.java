@@ -18,8 +18,6 @@ import choco.cp.solver.CPSolver;
 import choco.kernel.model.variables.integer.IntegerConstantVariable;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.constraints.integer.extension.BinRelation;
-import choco.kernel.solver.variables.integer.IntDomainVar;
-
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -414,9 +412,6 @@ public class ExactMIC {
 			}
 		}
 
-		if(include){
-
-		
 		//Add product variables
 		IntegerVariable[][] XYLogN = new IntegerVariable[b/2+1][b/2+1];
 		IntegerVariable[][] XYLogXY = new IntegerVariable[b/2+1][b/2+1];
@@ -485,14 +480,11 @@ public class ExactMIC {
 		m.addVariable(logMinGridDim);
 		m.addConstraint(relationPairAC(minGridDim,logMinGridDim, fLog2Rel));
 		
-		}//If(include)
 		//MIC is the mutual information divided by the log of the minimum grid dimension
 		IntegerVariable mic = makeIntVar("mic",0,F);
 		m.addVariable(mic);
 		
-		//TODO: add final constraint when everything is consistent
-		
-		//m.addConstraint(intDiv(mutualInf,logMinGridDim,mic));
+		m.addConstraint(intDiv(mutualInf,logMinGridDim,mic));
 		
 		
 		//Solve the optimization problem
