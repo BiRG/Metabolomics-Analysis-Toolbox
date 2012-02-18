@@ -462,7 +462,7 @@ public class ExactMIC {
 		//If you divide by N you get the Mutual Information expressed in F-denominator fixed point.
 		IntegerVariable unscaledMutInf = makeIntVar("unscaledMutInf", 0, N*fLog2(F,b));
 		m.addVariable(unscaledMutInf);
-		m.addConstraint(equation(unscaledMutInf, allProductVars, productVarsCoeffs));
+		m.addConstraint(equation("cp:bc",unscaledMutInf, allProductVars, productVarsCoeffs));
 		
 		//Mutual information is the unscaled MutInf divided by N expressed in F-denominator fixed point
 		IntegerConstantVariable NVar = constant(N); //N as a variable in the model
