@@ -32,9 +32,10 @@ public class ExactMIC {
 	 */
 	public static void main(String[] args) {
 		if(args.length != 0){
-			System.err.println("Usage: java edu.wright.cs.birg.exactmic < filename.csv > mics.csv");
+			System.err.println("Usage: java edu.wright.cs.birg.exactmic < filename.csv 2> solver_output > mics.csv");
 			System.err.println("Prints the exact mic's for all pairs of variables in filename to stdout.");
 			System.err.println("If the first line of filename is not all numeric, it is assumed to be a header line");
+			System.err.println("A string-representation of the solver after completing the optimization is printed to stderr. This also contains timing information.");
 			return;
 		}
 		
