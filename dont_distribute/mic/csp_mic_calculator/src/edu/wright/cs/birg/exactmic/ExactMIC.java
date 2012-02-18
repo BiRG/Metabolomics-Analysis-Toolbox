@@ -498,8 +498,10 @@ public class ExactMIC {
 			System.err.println("Error: No feasible solution was found for the constraint problem with variables "+
 					xIn.getName()+ " and " + yIn.getName());
 			System.err.println("The solver is:"+s.pretty());
+			System.err.println("Note: in reading the solver, CSTE_<value> is a constant (an integer constant?) with the given value.");
 		}else if(!include){
 			System.err.println("The solver is:"+s.pretty());
+			System.err.println("Note: in reading the solver, CSTE_<value> is a constant (an integer constant?) with the given value.");
 		}
 		
 		//TODO: recalculate the MIC for the chosen grid and binning using the set cardinality 
