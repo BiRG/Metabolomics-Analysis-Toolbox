@@ -8,6 +8,7 @@ if(@ARGV != 1){
 	"the class variable.\n".
 	"Outputs the new csv to stdout.\n".
 	"Assumes that the header is in the first line.\n";
+    exit(-1);
 }
 
 my $class_idx = $ARGV[0];
