@@ -25,7 +25,36 @@ public final class FeatureSet{
 	private BitSet hasFeature;
 	
 	/**
-	 * Return the cbfs metric for this feature set, given the input correlations
+	 * The value of cbfsScore calculated with cachedClassCor and cachedFaeatureCor - undefined if they are null
+	 */
+	private double cachedCBFS;
+	
+	/**
+	 * The value of classCor used to calculate cachedCBFS - null iff cachedFeatureCor is null
+	 */
+	private double[] cachedClassCor; 
+
+	/**
+	 * The value of featureCor used to calculate cachedCBFS - null iff cachedClassCor is null
+	 */
+	private double[][] cachedFeatureCor;
+
+	/**
+	 * Create an empty feature set in a domain that has maxFeatures features
+	 * @param maxFeatures the number of features in the domain from which this FeatureSet is drawn 
+	 */
+	public FeatureSet(int maxFeatures){
+		this.maxFeatures = maxFeatures;
+		hasFeature = new BitSet(maxFeatures);
+		cachedCBFS = Double.NaN;
+		cachedClassCor = null;
+		cachedFeatureCor = null;
+	}
+	
+
+	
+	/**
+	 * Return the cbfs score for this feature set, given the input correlations
 	 * 
 	 * The cbfs merit metric is:
 	 * 
@@ -39,22 +68,37 @@ public final class FeatureSet{
 	 * @param featureCor featureCor[i][j] = the correlation between features i and j 
 	 * @return The cbfs metric for this feature set, given the input correlations
 	 */
-	public double cbfsMetric(double[] classCor, double[][] featureCor){
-		int[] f = features();
-		int k = f.length;
-		
-		double krcf = 0; //Average cor between class and the included features * k
-		for(int i = 0; i < f.length; ++i){
-			krcf += classCor[i];
-		}
-		
-		double krff = 0; //Average cor between different features * k(k-1)
-		for(int i = 0; i < f.length; ++i){
-			for(int j = 0; j < i; ++j){
-				krff += featureCor[i][j];
+	public double cbfsScore(double[] classCor, double[][] featureCor){
+		if(cachedClassCor != classCor || cachedFeatureCor != featureCor){
+			cachedClassCor = classCor; cachedFeatureCor = featureCor;
+
+			int[] f = features();
+			int k = f.length;
+			
+			if(k == 0){ 
+				cachedCBFS = 0; 
+			}else{
+				
+				double krcf = 0; //Average cor between class and the included features * k
+				for(int i = 0; i < k; ++i){
+					krcf += classCor[f[i]];
+				}
+				
+				double krff = 0; //Average cor between different features * k(k-1)
+				for(int i = 0; i < k; ++i){
+					for(int j = 0; j < i; ++j){
+						krff += featureCor[f[i]][f[j]];
+					}
+				}
+				krff *= 2;
+				
+				cachedCBFS = krcf/Math.sqrt(k+krff);
+				
+				//System.err.println("Calculating "+ this + ". Score:" + cachedCBFS); //TODO:remove
+				//System.err.println("            rcf:"+ (krcf/k)+" rff:"+(krff/(k*(k-1)))); //TODO:remove
 			}
 		}
-		return krcf/Math.sqrt(k+krff);
+		return cachedCBFS;
 	}
 	
 	/**
@@ -69,15 +113,6 @@ public final class FeatureSet{
 			 ret[idx++] = i;
 		}
 		return ret;
-	}
-	
-	/**
-	 * Create an empty feature set in a domain that has maxFeatures features
-	 * @param maxFeatures the number of features in the domain from which this FeatureSet is drawn 
-	 */
-	public FeatureSet(int maxFeatures){
-		this.maxFeatures = maxFeatures;
-		hasFeature = new BitSet(maxFeatures);
 	}
 	
 	/**
@@ -127,5 +162,26 @@ public final class FeatureSet{
 	@Override
 	public int hashCode(){
 		return maxFeatures ^ hasFeature.hashCode();
+	}
+
+	/**
+	 * Return the number of features included in this feature set
+	 * @return the number of features included in this feature set
+	 */
+	public int getNumFeatures() {
+		return hasFeature.cardinality();
+	}
+
+	/**
+	 * Return the number of features in the domain for this FeatureSet
+	 * @return the number of features in the domain for this FeatureSet
+	 */
+	public int getMaxFeatures() {
+		return maxFeatures;
+	}
+	
+	@Override
+	public String toString(){
+		return "FeatureSet("+hasFeature+" of "+getMaxFeatures()+" features)";
 	}
 }

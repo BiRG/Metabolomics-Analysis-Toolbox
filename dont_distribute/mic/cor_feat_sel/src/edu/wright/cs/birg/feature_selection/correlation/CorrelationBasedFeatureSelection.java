@@ -6,8 +6,10 @@ package edu.wright.cs.birg.feature_selection.correlation;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -17,8 +19,20 @@ import au.com.bytecode.opencsv.CSVReader;
  */
 public class CorrelationBasedFeatureSelection {
 
+	/**
+	 * The default correlation that will be given to any entries not appearing in the input file
+	 */
 	private static final double default_correlation = 0.0000001;
 	
+	/**
+	 * The number of nodes that can be expanded without improving the solution before the best-first optimization quits.
+	 * That is if non_improvements_before_quit is 5, then on the if there have been 4 feature-sets in a row 
+	 * for which none of the solutions with one more feature have had a better optimum value, then if the next 
+	 * feature-set's children also do not have a better value, the search is terminated and the smallest of the feature
+	 * sets with this optimum value is returned.
+	 */
+	private static final int non_improvements_before_quit = 5;
+		
 	/**
 	 * @param args name of input file or (if empty) reads from stdin
 	 * 
@@ -107,12 +121,43 @@ public class CorrelationBasedFeatureSelection {
 			}
 			System.err.println("Error reading from "+filename+": "+e.getMessage());
 		}
-		for(int i = 0; i < numFeatures; ++i){
-			System.out.println("c,"+i+","+classCor[i]);
-			for(int j = 0; j < numFeatures; ++j){
-				System.out.println(i+","+j+","+featureCor[i][j]);
+		
+		int[] best = bestFirstSearch(classCor, featureCor, non_improvements_before_quit).features();
+		for(int i = 0; i < best.length; ++i){
+			System.out.println(best[i]);
+		}
+	}
+
+	private static FeatureSet bestFirstSearch(double[] classCor,
+			double[][] featureCor, int nonImprovementsBeforeQuit) {
+		int numFeatures = classCor.length;
+
+		//Set up the priority queue for best-first with an empty feature set to start with
+		PriorityQueue<FeatureSet> unexplored = 
+				new PriorityQueue<FeatureSet>(numFeatures*numFeatures, 
+						new BetterFeatureSetCBFS(classCor, featureCor));
+		unexplored.add(new FeatureSet(numFeatures));
+		
+		//Remove the top of the queue and expand it each iteration
+		int numUnsuccessfulExpansions = 0;
+		FeatureSet best = unexplored.peek();
+		double lastBestScore = best.cbfsScore(classCor, featureCor);
+		while(numUnsuccessfulExpansions < nonImprovementsBeforeQuit &&
+				!unexplored.isEmpty()){
+			FeatureSet good = unexplored.remove();
+			unexplored.addAll(Arrays.asList(good.allSetsWithOneFeatureMore()));
+			
+			FeatureSet top = unexplored.peek();
+			double topScore = top.cbfsScore(classCor, featureCor); 
+			if(topScore > lastBestScore){
+				lastBestScore = topScore; best = top; numUnsuccessfulExpansions = 0;
+				//System.err.println("New Best:"+best+". Score:"+ topScore); //TODO: remove
+			}else{
+				++numUnsuccessfulExpansions;
 			}
 		}
+		
+		return best;
 	}
 
 }
