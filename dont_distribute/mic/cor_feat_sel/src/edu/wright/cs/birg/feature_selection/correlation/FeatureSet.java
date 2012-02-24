@@ -5,6 +5,9 @@ package edu.wright.cs.birg.feature_selection.correlation;
 
 import java.util.BitSet;
 
+import org.sureassert.uc.annotation.Exemplar;
+import org.sureassert.uc.annotation.Exemplars;
+
 /**
  * A set of features.
  * 
@@ -43,6 +46,18 @@ public final class FeatureSet{
 	 * Create an empty feature set in a domain that has maxFeatures features
 	 * @param maxFeatures the number of features in the domain from which this FeatureSet is drawn 
 	 */
+	@Exemplars(set={
+	@Exemplar(name="featureset0",args={"0"}, expect={"=(retval.maxFeatures,0)","isa(retval.hasFeature,java/util/BitSet)",
+			"=(retval.hasFeature.cardinality(),0)","=(retval.cachedCBFS,java/lang/Double.NaN)",
+			"=(retval.cachedClassCor,null)","=(retval.cachedFeatureCor,null)"}),
+			
+	@Exemplar(name="featureset1",args={"1"}, expect={"=(retval.maxFeatures,1)","isa(retval.hasFeature,java/util/BitSet)",
+			"=(retval.hasFeature.cardinality(),0)","=(retval.cachedCBFS,java/lang/Double.NaN)",
+			"=(retval.cachedClassCor,null)","=(retval.cachedFeatureCor,null)"}),
+	@Exemplar(name="featureset2",args={"2"}, expect={"=(retval.maxFeatures,2)","isa(retval.hasFeature,java/util/BitSet)",
+			"=(retval.hasFeature.cardinality(),0)","=(retval.cachedCBFS,java/lang/Double.NaN)",
+			"=(retval.cachedClassCor,null)","=(retval.cachedFeatureCor,null)"}) 
+	})
 	public FeatureSet(int maxFeatures){
 		this.maxFeatures = maxFeatures;
 		hasFeature = new BitSet(maxFeatures);
