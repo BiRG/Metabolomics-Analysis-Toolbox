@@ -19,7 +19,7 @@ public final class MIC {
 	/**
 	 * Private 0-argument constructor to keep unsuspecting people from implementing
 	 */
-	@Exemplar(expect="")
+	@Exemplar(expect="isa(retval,MIC)")
 	private MIC(){}
 	
 	/**
@@ -41,6 +41,58 @@ public final class MIC {
 	@SuppressWarnings("unused")
 	@Exemplar(expect="")
 	private static int[] emptyIntArray(){ return new int[0]; }
+	
+	/**
+	 * A test version of ApproxMINECharacteristicMatrix that works by calling the code in the MINE.jar file
+	 * NOTE: some of the rows of the matrix will be null and some of the columns will
+	 * either not exist or have bad values
+	 * 
+	 * @param x x[i] is the x coordinate of the ith point
+	 * @param y y[i] is the y coordinate of the ith point
+	 * @param maxBins The maximum number of bins to use in the bivariate binning must be 1 or more
+	 * @param maxClumpColumnRatio The maximum numberOfClumps/x_bins to use when calling optimizeXAxis. must be greater than 0
+	 * @return heuristic approximations to the entries of the MINE characteristic matrix 
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"[pa:1.0,2.0,3.0,4.0]","[pa:1.0,2.0,3.0,4.0]","4","45.0"}, expect=""),
+	@Exemplar(args={"[pa:1.0]","[pa:1.0]","4","45.0"}, expect="")
+	})	
+	public static double[][] testApproxMatrix(double[] x, double[] y, int maxBins, double maxClumpColumnRatio){
+		//Convert my parameters to Reshef's input format
+		float[] xf = new float[x.length];
+		float[] yf = new float[y.length];
+		for(int i = 0; i < x.length;++i){
+			xf[i]=(float)x[i];
+			yf[i]=(float)y[i];
+		}
+		data.VarPairData d = new data.VarPairData(xf,yf);
+		float exponent = (float)(Math.log((double)maxBins)/Math.log((double)x.length));
+		
+		//Call Reshef's code to do the calculation
+		mine.core.MineParameters mp = new mine.core.MineParameters(
+				exponent, (float)maxClumpColumnRatio, 0, null);
+		mine.core.Manifold man = new mine.core.Manifold(d, mp);
+		
+		//Convert the output scores to a double array and return it
+		double[][] out;
+		
+		assert(man.scores != null);
+		out = new double[man.scores.length][];
+		
+		for(int i = 0; i < out.length; ++i){
+			if(man.scores[i] == null){
+				out[i] = null;
+			}else{
+				out[i] = new double[man.scores[i].length];
+				for(int j = 0; j < out[i].length; ++j){
+					out[i][j] = man.scores[i][j];
+				}
+			}
+		}
+		
+		return out;
+	}
+	
 	
 	/**
 	 * Returns a such that a[i] = k if in[i] is the k'th largest value in in. The smallest value of in will get the
