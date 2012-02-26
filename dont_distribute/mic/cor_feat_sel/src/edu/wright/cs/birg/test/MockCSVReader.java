@@ -43,7 +43,8 @@ public class MockCSVReader extends CSVReader {
 	private int numLines(){ return data.length; }
 	
 	/**
-	 * Create a CSVReader that returns the items in data
+	 * Create a CSVReader that returns the items in data. If data is null, then it 
+	 * is the same as if a 0x0 array of strings had been passed.
 	 * @param data the items to be returned from the new CSVReader 
 	 */
 	@Exemplars(set={
@@ -67,7 +68,7 @@ public class MockCSVReader extends CSVReader {
 		if(data == null){
 			this.data = new String[0][0];
 		}else{
-			this.data = data;
+			this.data = data.clone();
 		}
 		isOpen = true;
 		row = 0;
