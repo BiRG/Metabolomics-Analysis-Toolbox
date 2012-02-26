@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.ParseException;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -40,7 +42,8 @@ public class CorrelationBasedFeatureSelection {
 	public static void main(String[] args) {
 		if(args.length != 0 && args.length != 1){
 			System.err.println("Usage: java edu.wright.cs.birg.feature_selection.correlation < filename.csv > features");
-			System.err.println(" or: java edu.wright.cs.birg.feature_selection.correlation filename.csv > features");
+			System.err.println(" or:   java edu.wright.cs.birg.feature_selection.correlation filename.csv > features");
+			System.err.println(" or:   java edu.wright.cs.birg.feature_selection.correlation -gentestdata < input_data.csv > test_data.txt");
 			System.err.println("Reads a csv from stdin or a file and writes the selected list of features to stdout: 1/line.");
 			System.err.println("The csv must have all lines as:");
 			System.err.println("var1,var2,correlation");
@@ -51,6 +54,9 @@ public class CorrelationBasedFeatureSelection {
 			System.err.println("Unless n is 0, if variable n is present, variable n-1 is assumed to exist (no gaps in numbering)");
 			System.err.println("Any pairs that do not get assigned a \"correlation\" value will be given a value of "+default_correlation);
 			System.err.println("because that is the cutoff MINE.jar uses for display");
+			System.err.println("");
+			System.err.println("The -gentestdata option reads in a csv but the columns of the csv are features and the rows are");
+			System.err.println("samples. Then appropriate test lines are printed to stdout.");
 			return;
 		}
 
@@ -62,7 +68,12 @@ public class CorrelationBasedFeatureSelection {
 			if(args.length == 0){
 				in = new CSVReader(new InputStreamReader(System.in));
 			}else{
-				in = new CSVReader(new FileReader(args[0])); 
+				if(args[0] != "-gentestdata"){
+					in = new CSVReader(new FileReader(args[0]));
+				}else{
+					generateTestData(new CSVReader(new InputStreamReader(System.in)));
+					return;
+				}
 			}
 			
 			//Read in lines into lists of class-feature correlations and feature-feature correlations, counting the number of features
@@ -126,6 +137,20 @@ public class CorrelationBasedFeatureSelection {
 		for(int i = 0; i < best.length; ++i){
 			System.out.println(best[i]);
 		}
+	}
+	
+	/**
+	 * Prints test data to stdout generated from the input csv file.
+	 * 
+	 * The input csv must be all doubles and the same number of columns on every row.
+	 * There must be at least one row.
+	 * @param in The csv file used as input
+	 * 
+	 * @throws IOException if there is a problem reading from the CSVReader
+	 */
+	private static void generateTestData(CSVReader in) throws IOException {
+	
+		//Read in the 2d array from the test file
 	}
 
 	private static FeatureSet bestFirstSearch(double[] classCor,
