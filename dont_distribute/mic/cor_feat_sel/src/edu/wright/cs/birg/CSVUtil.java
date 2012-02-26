@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.sureassert.uc.annotation.Exemplar;
+import org.sureassert.uc.annotation.Exemplars;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -40,6 +41,19 @@ public final class CSVUtil {
 	 *             The offset field is set to the line number (first line being
 	 *             line 1.
 	 */
+	@Exemplars(set={
+	@Exemplar(args={"MockCSVReader/empty!"}, expect="=(ArrayUtils.len(retval),0)"),
+	@Exemplar(a={"new MockCSVReader([a:[a:'one']])"}, e="=(ArrayUtils.len(retval),0)"),
+	@Exemplar(a={"MockCSVReader/oneByone!"}, e="#=([a:[pa:1.0]],retval)"),
+	@Exemplar(a={"MockCSVReader/oneBytwo!"}, e="=(ArrayUtils.len(retval),0)"),
+	@Exemplar(a={"MockCSVReader/twoBytwo!"}, e="#=([a:[pa:1.0,2.0]],retval)"),
+	@Exemplar(a={"new MockCSVReader([a:[a:'1','2.0'],[a:'2.5','4']])"}, 
+		e="#=([a:[pa:1.0,2.0],[pa:2.5,4.0]],retval)"),
+	@Exemplar(a={"MockCSVReader/twoByone!"}, ee="ParseException",
+		e="retval.getMessage().contains('could not be interpreted')"),
+		@Exemplar(a={"new MockCSVReader([a:[a:'one','two'],[a:'1']])"},  ee="ParseException",
+		e="retval.getMessage().contains('same number of fields on each line')"),
+	})
 	public static double[][] csvToMatrix(CSVReader in) 
 			throws IOException, java.text.ParseException{
 		List<double[]> ld = new java.util.LinkedList<double[]>();
