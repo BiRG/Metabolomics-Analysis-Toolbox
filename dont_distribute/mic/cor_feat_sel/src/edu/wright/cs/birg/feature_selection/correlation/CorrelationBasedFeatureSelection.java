@@ -11,8 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.ParseException;
-
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
