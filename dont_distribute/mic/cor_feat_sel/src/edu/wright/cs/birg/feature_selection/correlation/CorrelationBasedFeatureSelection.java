@@ -11,6 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import edu.wright.cs.birg.CSVUtil;
+import edu.wright.cs.birg.mic.MIC;
+import edu.wright.cs.birg.test.ArrayUtils;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -42,19 +46,27 @@ public class CorrelationBasedFeatureSelection {
 			System.err.println("Usage: java edu.wright.cs.birg.feature_selection.correlation < filename.csv > features");
 			System.err.println(" or:   java edu.wright.cs.birg.feature_selection.correlation filename.csv > features");
 			System.err.println(" or:   java edu.wright.cs.birg.feature_selection.correlation -gentestdata < input_data.csv > test_data.txt");
-			System.err.println("Reads a csv from stdin or a file and writes the selected list of features to stdout: 1/line.");
+			System.err.println("");
+			System.err.println("Reads a csv from stdin or a file and writes the selected list of ");
+			System.err.println("features to stdout: 1 per line.");
+			System.err.println("");
 			System.err.println("The csv must have all lines as:");
 			System.err.println("var1,var2,correlation");
-			System.err.println("var1 must be either an integer from 0..n or the letter c (for the class variable).");
-			System.err.println("var2 must be an integer from 0..n.  If var1 is not c then var1 < var2 must hold.");
+			System.err.println("var1 must be either an integer from 0..n or the letter c (for the ");
+			System.err.println("     class variable).");
+			System.err.println("var2 must be an integer from 0..n.  If var1 is not c then ");
+			System.err.println("     var1 < var2 must hold.");
 			System.err.println("correlation must be the decimal representation of a real number");
 			System.err.println("");
-			System.err.println("Unless n is 0, if variable n is present, variable n-1 is assumed to exist (no gaps in numbering)");
-			System.err.println("Any pairs that do not get assigned a \"correlation\" value will be given a value of "+default_correlation);
-			System.err.println("because that is the cutoff MINE.jar uses for display");
+			System.err.println("Unless n is 0, if variable n is present, variable n-1 is assumed ");
+			System.err.println("to exist (no gaps in numbering)");
+			System.err.println("Any pairs that do not get assigned a \"correlation\" value will be ");
+			System.err.println("given a value of "+default_correlation+"because that is the cutoff MINE.jar ");
+			System.err.println("uses for display");
 			System.err.println("");
-			System.err.println("The -gentestdata option reads in a csv but the columns of the csv are features and the rows are");
-			System.err.println("samples. Then appropriate test lines are printed to stdout.");
+			System.err.println("The -gentestdata option reads in a csv but the columns of the csv ");
+			System.err.println("are features and the rows are samples. Then appropriate test lines ");
+			System.err.println("are printed to stdout.");
 			return;
 		}
 
@@ -66,7 +78,7 @@ public class CorrelationBasedFeatureSelection {
 			if(args.length == 0){
 				in = new CSVReader(new InputStreamReader(System.in));
 			}else{
-				if(args[0] != "-gentestdata"){
+				if(!args[0].equals("-gentestdata")){
 					in = new CSVReader(new FileReader(args[0]));
 				}else{
 					generateTestData(new CSVReader(new InputStreamReader(System.in)));
@@ -149,6 +161,39 @@ public class CorrelationBasedFeatureSelection {
 	private static void generateTestData(CSVReader in) throws IOException {
 	
 		//Read in the 2d array from the test file
+		double[][] data;
+		try{
+			data = CSVUtil.csvToMatrix(in);
+		}catch(java.text.ParseException e){
+			System.err.println("Error parsing input csv file as a matrix:" + e.getMessage());
+			System.exit(-1); return;
+		}
+		if(data.length <= 0){ return; }
+		
+		double[][] vars = new double[data[0].length][data.length];
+		for(int i = 0; i < vars.length; ++i){
+			for(int j=0; j < data.length; ++j){
+				vars[i][j]=data[j][i];
+			}
+		}
+		for(int i = 0; i < vars.length; ++i){
+			double[] x = vars[i];
+			for(int j = i+1; j < vars.length; ++j){
+				double[] y = vars[i];
+				for (int numBins = 4; numBins <= x.length; ++numBins) {
+					double clumpRatio = 15; //Later vary this
+					double[][] result = MIC.testApproxMatrix(x, y, numBins,
+							clumpRatio);
+					System.out.println("@Exemplar(a={"
+							+ ArrayUtils.qExemplar(x) + ","
+							+ ArrayUtils.qExemplar(y) + ",\"" + numBins
+							+ "\",\"" + clumpRatio + "\"},e={\"#=(retval,"
+							+ ArrayUtils.exemplarString(result) + ")\"}),");
+
+				}
+			}
+		}
+		
 	}
 
 	private static FeatureSet bestFirstSearch(double[] classCor,
