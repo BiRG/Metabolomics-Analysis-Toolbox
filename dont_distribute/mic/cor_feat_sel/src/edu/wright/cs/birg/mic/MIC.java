@@ -55,7 +55,8 @@ public final class MIC {
 	 */
 	@Exemplars(set={
 	@Exemplar(args={"[pa:1.0,2.0,3.0,4.0]","[pa:1.0,2.0,3.0,4.0]","4","45.0"}, expect=""),
-	@Exemplar(args={"[pa:1.0]","[pa:1.0]","4","45.0"}, expect="")
+	@Exemplar(args={"[pa:1.0]","[pa:1.0]","4","45.0"}, expect=""),
+	@Exemplar(a={"[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0]","[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0]","8","15.0"},e={"#=(retval,[a:null,null,[pa:0.0,0.0,1.0,1.0,1.0],[pa:0.0,0.0,1.0],[pa:0.0,0.0,1.0]])"}),
 	})	
 	public static double[][] testApproxMatrix(double[] x, double[] y, int maxBins, double maxClumpColumnRatio){
 		//Convert my parameters to Reshef's input format
