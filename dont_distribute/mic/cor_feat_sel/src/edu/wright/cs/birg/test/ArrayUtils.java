@@ -65,11 +65,12 @@ public final class ArrayUtils {
 	}
 	
 	/**
-	 * Return a string representation of an array suitable for Sureassert test code.
+	 * Return a string representation of an array suitable for Sureassert test code.</p><p>
 	 * 
 	 * Returns a representation of a that when interpreted by the SIN interpreter for an @@Exemplar
-	 * annotation, will produce the input array.
+	 * annotation, will produce the input array.</p><p>
 	 * 
+	 * The array cannot be empty.
 	 * 
 	 * @param a the array to be represented as a Sureassert UC string.  May be null, but must not be empty 
 	 * (Sureassert has no way to represent empty arrays.)
@@ -95,5 +96,91 @@ public final class ArrayUtils {
 		b.append(']');
 		return b.toString();
 	}
+
+	/**
+	 * Return a string representation of an 2D array suitable for Sureassert test code.</p><p>
+	 * 
+	 * Returns a representation of a that when interpreted by the SIN interpreter for an @@Exemplar
+	 * annotation, will produce the input array.</p><p>
+	 * 
+	 * Neither the array nor any of its component arrays can be empty. 
+	 * 
+	 * @param a the array to be represented as a Sureassert UC string.  May be null, but must not be empty 
+	 * (Sureassert has no way to represent empty arrays.)
+	 * @return a string representation of an array suitable for Sureassert test code.
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, expect="+('nul','l')"), //Note the Sureassert workaround
+	@Exemplar(a={"empty([pa:1.0])"},ee="IllegalArgumentException",e="retval.getMessage().contains('empty')"),
+	@Exemplar(a={"[a:[pa:1.0]]"}, expect="'[a:[pa:1.0]]'"),
+	@Exemplar(a={"[a:[pa:1.0,2.5555557]]"}, expect="'[a:[pa:1.0,2.5555557]]'"), 
+	@Exemplar(a={"[a:[pa:3.1415],[pa:0.0]]"}, expect="'[a:[pa:3.1415],[pa:0.0]]'"),
+	@Exemplar(a={"[a:[pa:1.0,2.5555557],[pa:-0.1]]"}, expect="'[a:[pa:1.0,2.5555557],[pa:-0.1]]'"), 
+	})
+	public static String exemplarString(double[][] a){
+		if(a == null){ return "null"; }
+		if(a.length == 0){
+			throw new IllegalArgumentException("Sureassert has no way of representing empty arrays");
+		}
+		StringBuilder b = new StringBuilder("[a:");
+		for(int i = 0; i < a.length; ++i){
+			if(i > 0){ 
+				b.append(','); }
+			b.append(exemplarString(a[i]));
+		}
+		b.append(']');
+		return b.toString();
+	}
 	
+	/**
+	 * Return a string representation of an array suitable for Sureassert test code, surrounded by quotes.</p><p>
+	 * 
+	 * Returns the exact same thing as exemplarString(double[]) except surrounded by  
+	 * double quotes. This makes it ideal for including in strings that will later become @Exemplar 
+	 * instances themselves.</p><p>
+	 * 
+	 * For example: </p><p>
+	 * 
+	 * <tt>String s="a={"+qExemplar(foo)+","+qExemplar(bar)+"}"; </tt></p><p>
+	 * 
+	 * @param a the array to be represented as a Sureassert UC string.  May be null, but must not be empty 
+	 * (Sureassert has no way to represent empty arrays.)
+	 * @return a string representation of an array suitable for Sureassert test code.
+	 * @see exemplarString(double[])
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, expect="+('\"nul','l\"')"), //Note the Sureassert workaround
+	@Exemplar(a={"emptyDouble()"},ee="IllegalArgumentException",e="retval.getMessage().contains('empty')"),
+	@Exemplar(a={"[pa:1.0]"}, expect="'\"[pa:1.0]\"'"),
+	@Exemplar(a={"[pa:1.0,2.5555557]"}, expect="'\"[pa:1.0,2.5555557]\"'"), 
+	})	
+	public static String qExemplar(double[] a){
+		return "\""+exemplarString(a)+"\"";
+	}
+
+	/**
+	 * Return a string representation of an 2D array suitable for Sureassert test code.</p><p>
+	 * 
+	 * Returns a representation of a that when interpreted by the SIN interpreter for an @@Exemplar
+	 * annotation, will produce the input array.</p><p>
+	 * 
+	 * Neither the array nor any of its component arrays can be empty. 
+	 * 
+	 * @param a the array to be represented as a Sureassert UC string.  May be null, but must not be empty 
+	 * (Sureassert has no way to represent empty arrays.)
+	 * @return a string representation of an array suitable for Sureassert test code.
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, expect="+('\"nul','l\"')"), //Note the Sureassert workaround
+	@Exemplar(a={"empty([pa:1.0])"},ee="IllegalArgumentException",e="retval.getMessage().contains('empty')"),
+	@Exemplar(a={"[a:[pa:1.0]]"}, expect="'\"[a:[pa:1.0]]\"'"),
+	@Exemplar(a={"[a:[pa:1.0,2.5555557]]"}, expect="'\"[a:[pa:1.0,2.5555557]]\"'"), 
+	@Exemplar(a={"[a:[pa:3.1415],[pa:0.0]]"}, expect="'\"[a:[pa:3.1415],[pa:0.0]]\"'"),
+	@Exemplar(a={"[a:[pa:1.0,2.5555557],[pa:-0.1]]"}, expect="'\"[a:[pa:1.0,2.5555557],[pa:-0.1]]\"'"), 
+	})
+	public static String qExemplar(double[][] a){
+		return "\""+exemplarString(a)+"\"";
+	}
+	
+
 }
