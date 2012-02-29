@@ -179,7 +179,7 @@ public class CorrelationBasedFeatureSelection {
 		for(int i = 0; i < vars.length; ++i){
 			double[] x = vars[i];
 			for(int j = i+1; j < vars.length; ++j){
-				double[] y = vars[i];
+				double[] y = vars[j];
 				for (int numBins = 4; numBins <= x.length; ++numBins) {
 					double clumpRatio = 15; //Later vary this
 					double[][] result = MIC.testApproxMatrix(x, y, numBins,
