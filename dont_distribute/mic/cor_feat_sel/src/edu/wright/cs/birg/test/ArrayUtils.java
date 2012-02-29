@@ -182,5 +182,45 @@ public final class ArrayUtils {
 		return "\""+exemplarString(a)+"\"";
 	}
 	
+	/**
+	 * Return true if and only if a is a matrix. a is a matrix if and only if a is not null and all of the 
+	 * rows have the same number of columns
+	 * @param a 2D array of double (or null)
+	 * @return true if and only if a is a matrix.
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, expect="false"),
+	@Exemplar(args={"empty([pa:1.0])"}, expect="true"),
+	@Exemplar(args={"[a:[pa:1.0]]"}, expect="true"),
+	@Exemplar(args={"[a:[pa:1.0],[pa:2.0]]"}, expect="true"),
+	@Exemplar(args={"[a:[pa:1.0,2.0]]"}, expect="true"),
+	@Exemplar(args={"[a:[pa:1.0,2.0],[pa:2.0]]"}, expect="false"),
+	@Exemplar(args={"[a:[pa:2.0],[pa:1.0,2.0]]"}, expect="false"),
+	@Exemplar(args={"[a:[pa:2.0],null]"}, expect="false"),
+	@Exemplar(args={"[a:null,[pa:2.0]]"}, expect="false"),
+	@Exemplar(args={"[a:[pa:1.0,2.0],[pa:1.0,1.0]]"}, expect="true"),
+	})
+	public static boolean isMatrix(double[][] a){
+		if(a == null){ 
+			return false;
+		}else if (a.length == 0){
+			return true;
+		}else{
+			if(a[0] == null){ 
+				return false; 
+			}
+			int len = a[0].length;
+			for(int i = 0; i < a.length; ++i){
+				if(a[i] == null){ 
+					return false;
+				}else if(a[i].length != len){ 
+					return false;
+				}else{
+					//Do nothing
+				}
+			}
+			return true;
+		}
+	}
 
 }
