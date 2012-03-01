@@ -1,5 +1,5 @@
 This contains Java code that does best-first correlation-based feature
-selection based on an initial input file of correlations.
+selection based on mic and possibly some other measures.
 
 ---------
 - JAR FILES
@@ -19,17 +19,10 @@ org.sureassert.uc.annotation-1.3.1.jar file for declarative test code
 - USE
 --------
 
-
 To use the correlation feature selection with mine values for original.csv
 (which must have the features in the columns and the samples in the rows) do:
 
-preprocess_mine_csv.pl zero_based_class_feature_index < original.csv > preprocessed.csv
+Compile and export to a runnable jar (you can choose the name you wish, I'll call it cbfs.jar)
 
-java -jar MINE.jar preprocessed.csv -allPairs     (NOTE: it is important that preprocessed.csv have a .csv extension)
+java -jar cbfs.jar -genfeatures < original.csv > features.csv
 
-postprocess_mine_csv.pl < preprocessed.csv,allpairs,cv=0,B=n^0.6,Results.txt > postprocessed.csv
-
-java edu.wright.cs.birg.feature_selection.correlation postprocessed.csv > features.csv
-
-
-The perl scripts were written because the text processing in java was a pain.
