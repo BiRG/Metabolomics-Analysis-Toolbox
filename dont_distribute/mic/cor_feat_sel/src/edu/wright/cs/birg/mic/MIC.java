@@ -109,6 +109,7 @@ public final class MIC {
 	 * @param in an array of doubles (none can be NaN), in cannot be null
 	 * @return a such that a[i] = k if in[i] is the k'th largest value in in.
 	 */
+	@SuppressWarnings("unused")
 	@Exemplars(set={
 	@Exemplar(args={"pa:d:0.0"}, expect="java/util/Arrays.equals(retval,pa:0)"),
 	@Exemplar(args={"pa:d:1.0"}, expect="java/util/Arrays.equals(retval,pa:0)"),
