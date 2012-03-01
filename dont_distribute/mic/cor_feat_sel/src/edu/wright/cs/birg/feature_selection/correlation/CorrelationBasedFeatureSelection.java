@@ -157,10 +157,10 @@ public class CorrelationBasedFeatureSelection {
 			return;
 		}
 
-		if(!(args[1].equals("-gentestdata") || args[1].equals("-genfeatures"))){
+		if(!(args[0].equals("-gentestdata") || args[0].equals("-genfeatures"))){
 			printUsage("Unknown output generation option \""+args[1]+"\"");
 		}
-		boolean genFeatures = args[1].equals("-genfeatures");
+		boolean genFeatures = args[0].equals("-genfeatures");
 
 		if(genFeatures){
 			if(args.length != 2){
