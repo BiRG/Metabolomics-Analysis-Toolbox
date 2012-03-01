@@ -23,12 +23,27 @@ public final class CSVUtil {
 	private CSVUtil(){}
 
 	/**
+	 * A 2D matrix with names for the columns.  Mainly here for the csvToMatrix function
+	 * 
+	 * @author Eric Moyer
+	 */
+	public static class Matrix{
+		public String[] header;
+		public double[][] entries;
+		/**
+		 * Return the number of rows in this matrix
+		 * @return the number of rows in this matrix
+		 */
+		public int rows(){ return entries.length; }  
+	}
+	
+	/**
 	 * Return a 2D matrix composed of the entries in the csv file.
 	 * 
 	 * All the lines in the csv file must be the same length (except for blank
 	 * lines). All fields must be doubles with one exception. If the first line
-	 * has an entry that is not a parseable as a number, it will be ignored
-	 * (this enables files with text headers)
+	 * has an entry that is not a parseable as a number, it will be treated as if it were a header
+	 * 
 	 * 
 	 * @param in
 	 *            The csv file to read from
@@ -42,22 +57,23 @@ public final class CSVUtil {
 	 *             line 1.
 	 */
 	@Exemplars(set={
-	@Exemplar(args={"MockCSVReader/empty!"}, expect="=(ArrayUtils.len(retval),0)"),
-	@Exemplar(a={"new MockCSVReader([a:[a:'one']])"}, e="=(ArrayUtils.len(retval),0)"),
-	@Exemplar(a={"MockCSVReader/oneByone!"}, e="#=([a:[pa:1.0]],retval)"),
-	@Exemplar(a={"MockCSVReader/oneBytwo!"}, e="=(ArrayUtils.len(retval),0)"),
-	@Exemplar(a={"MockCSVReader/twoBytwo!"}, e="#=([a:[pa:1.0,2.0]],retval)"),
+	@Exemplar(args={"MockCSVReader/empty!"}, expect="=(retval.rows(),0)"),
+	@Exemplar(a={"new MockCSVReader([a:[a:'one']])"}, e="=(retval.rows(),0)"),
+	@Exemplar(a={"MockCSVReader/oneByone!"}, e="#=([a:[pa:1.0]],retval.entries)"),
+	@Exemplar(a={"MockCSVReader/oneBytwo!"}, e={"=(retval.rows(),0)","#=([a:'one','two'],retval.header)"}),
+	@Exemplar(a={"MockCSVReader/twoBytwo!"}, e="#=([a:[pa:1.0,2.0]],retval.entries)"),
 	@Exemplar(a={"new MockCSVReader([a:[a:'1','2.0'],[a:'2.5','4']])"}, 
-		e="#=([a:[pa:1.0,2.0],[pa:2.5,4.0]],retval)"),
+		e="#=([a:[pa:1.0,2.0],[pa:2.5,4.0]],retval.entries)"),
 	@Exemplar(a={"MockCSVReader/twoByone!"}, ee="ParseException",
 		e="retval.getMessage().contains('could not be interpreted')"),
 		@Exemplar(a={"new MockCSVReader([a:[a:'one','two'],[a:'1']])"},  ee="ParseException",
 		e="retval.getMessage().contains('same number of fields on each line')"),
 	})
-	public static double[][] csvToMatrix(CSVReader in) 
+	public static Matrix csvToMatrix(CSVReader in) 
 			throws IOException, java.text.ParseException{
 		List<double[]> ld = new java.util.LinkedList<double[]>();
 		
+		String[] header = null;
 		String[] line;
 		Integer len = null;
 		int linesRead = 0;
@@ -86,7 +102,8 @@ public final class CSVUtil {
 					data[i] = Double.parseDouble(line[i]);
 				}
 			}catch(java.lang.NumberFormatException e){
-				if(linesRead == 1){ 
+				if(linesRead ==1){
+					header = line;
 					continue;  //Allow for a header on the first line
 				}else{ 
 					throw new java.text.ParseException(
@@ -106,7 +123,21 @@ public final class CSVUtil {
 			out[rowNum++]=row;
 		}
 		
-		return out;
+		if(header == null){
+			if(len != null){
+				header = new String[len];
+				for(int i = 0; i < len; ++i){
+					header[i]="Col"+i;
+				}
+			}else{
+				header = new String[0];
+			}
+		}
+		
+		Matrix m = new Matrix();
+		m.entries = out;
+		m.header = header;
+		return m;
 	}
 
 
