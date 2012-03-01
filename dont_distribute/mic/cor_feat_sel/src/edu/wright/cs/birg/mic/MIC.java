@@ -123,7 +123,7 @@ public final class MIC {
 		), //Note 9221120237041090560l is NaN, I'm working around a bug in SureAssert
 	@Exemplar(args={"null"}, expectexception="java/lang/IllegalArgumentException")
 	})
-	private int[] asRanks(double[] in){
+	private static int[] asRanks(double[] in){
 		if(in == null){ throw new IllegalArgumentException("null passed to asRanks(double[]) instead of an array"); }
 
 		int[] out = new int[in.length];
@@ -212,7 +212,7 @@ public final class MIC {
 			@Exemplar(args={"[pa:1.0]","null","1","1.0"}, ee="IllegalArgumentException"),
 			@Exemplar(args={"null","[pa:1.0]","1","1.0"}, ee="IllegalArgumentException"),
 			})
-	public double[][] ApproxMINECharacteristicMatrix(double[] x, double[] y, int maxBins, double maxClumpColumnRatio){
+	public static double[][] ApproxMINECharacteristicMatrix(double[] x, double[] y, int maxBins, double maxClumpColumnRatio){
 		if(x==null || y==null){
 			throw new IllegalArgumentException("Both x and y passed to ApproxMINECharacteristicMatrix must be non-null");
 		}
@@ -232,8 +232,32 @@ public final class MIC {
 	 * @param maxClumpColumnRatio The maximum numberOfClumps/x_bins to use when calling optimizeXAxis. must be greater than 0
 	 * @return heuristic approximations to the entries of the MINE characteristic matrix 
 	 */
-	public double[][] ApproxMINECharacteristicMatrix(int[] x, int[] y, int maxBins, double maxClumpColumnRatio){
+	public static double[][] ApproxMINECharacteristicMatrix(int[] x, int[] y, int maxBins, double maxClumpColumnRatio){
 		return null; //TODO: remove
 	}
 
+	/**
+	 * Return the default MIC approximation between two variables. Default approximation uses the parameters
+	 * B = 0.6 and maxClumpColumnRatio = 15 
+	 * @param x the first variable
+	 * @param y the second variable
+	 * @return the default MIC approximation between two variables.
+	 */
+	@Exemplars(set={
+	@Exemplar(a={"[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0]","[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0]"},expect={"1.0"}),
+	@Exemplar(args={"[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0,27.0,28.0,29.0,30.0,31.0,32.0]","[pa:30.0,15.0,14.0,23.0,9.0,6.0,31.0,12.0,20.0,24.0,28.0,29.0,10.0,18.0,13.0,25.0,2.0,27.0,26.0,32.0,11.0,4.0,21.0,1.0,19.0,16.0,17.0,3.0,8.0,22.0,7.0,5.0]"},expect="0.3396500051021576"),
+	})
+	public static double mic(double[] x, double[] y){
+		double[][] a=ApproxMINECharacteristicMatrix(x, y, (int)Math.round(Math.pow(x.length,0.6)), 15);
+		assert(a != null && a.length > 0 && a[0] != null && a[0].length > 0);
+		
+		double mic = a[0][0];
+		for(int i = 0; i < a.length; ++i){
+			double[] row = a[i];
+			for(int j = 0; j < row.length; ++j){
+				mic = Math.max(mic, row[j]);
+			}
+		}
+		return mic;
+	}
 }
