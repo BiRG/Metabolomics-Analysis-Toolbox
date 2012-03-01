@@ -240,8 +240,8 @@ public final class MIC {
 	/**
 	 * Return the default MIC approximation between two variables. Default approximation uses the parameters
 	 * B = 0.6 and maxClumpColumnRatio = 15 
-	 * @param x the first variable
-	 * @param y the second variable
+	 * @param x the first variable must not be null and must have the same length as y
+	 * @param y the second variable must not be null and must have the same length as x
 	 * @return the default MIC approximation between two variables.
 	 */
 	@Exemplars(set={
@@ -249,6 +249,17 @@ public final class MIC {
 	@Exemplar(args={"[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0,27.0,28.0,29.0,30.0,31.0,32.0]","[pa:30.0,15.0,14.0,23.0,9.0,6.0,31.0,12.0,20.0,24.0,28.0,29.0,10.0,18.0,13.0,25.0,2.0,27.0,26.0,32.0,11.0,4.0,21.0,1.0,19.0,16.0,17.0,3.0,8.0,22.0,7.0,5.0]"},expect="0.3396500051021576"),
 	})
 	public static double mic(double[] x, double[] y){
+		if(x == null){
+			throw new NullPointerException("x passed to mic was null");
+		}
+		if(y == null){
+			throw new NullPointerException("y passed to mic was null");
+		}
+		if(x.length != y.length){
+			throw new IllegalArgumentException("x and y must have the same length");
+		}
+		
+		
 		double[][] a=ApproxMINECharacteristicMatrix(x, y, (int)Math.round(Math.pow(x.length,0.6)), 15);
 		assert(a != null && a.length > 0 && a[0] != null && a[0].length > 0);
 		
