@@ -159,6 +159,7 @@ public class CorrelationBasedFeatureSelection {
 
 		if(!(args[0].equals("-gentestdata") || args[0].equals("-genfeatures"))){
 			printUsage("Unknown output generation option \""+args[1]+"\"");
+			return;
 		}
 		boolean genFeatures = args[0].equals("-genfeatures");
 
