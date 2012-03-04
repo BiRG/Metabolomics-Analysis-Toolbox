@@ -106,14 +106,14 @@ public class CorrelationBasedFeatureSelection {
 		int numFeatures = varNames.length-1;
 		double[] classV = vars[classIdx];
 		double[][] featureV = new double[numFeatures][];
+		int[] originalIndex = new int[numFeatures]; //originalIndex[f] is original index of feature f
 		for(int feat = 0; feat < numFeatures; ++feat){
 			if(feat < classIdx){
-				featureV[feat]=vars[feat];
-			}else if(feat > classIdx){
-				featureV[feat]=vars[feat+1];
-			}else{
-				//Do nothing, this is the class variable
+				originalIndex[feat]=feat;
+			}else if(feat >= classIdx){ //Note that this skips the class variable
+				originalIndex[feat]=feat+1;
 			}
+			featureV[feat]=vars[originalIndex[feat]];
 		}
 
 		//Calculate class-feature MICs
@@ -142,7 +142,7 @@ public class CorrelationBasedFeatureSelection {
 		//Do the feature selection
 		int[] best = bestFirstSearch(classCor, featureCor, non_improvements_before_quit).features();
 		for(int i = 0; i < best.length; ++i){
-			System.out.println(best[i]);
+			System.out.println(originalIndex[best[i]]);
 		}
 		
 	}
