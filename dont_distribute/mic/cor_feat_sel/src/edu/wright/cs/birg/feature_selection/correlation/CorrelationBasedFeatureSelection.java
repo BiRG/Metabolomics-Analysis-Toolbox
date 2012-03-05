@@ -15,6 +15,7 @@ import edu.wright.cs.birg.CSVUtil;
 import edu.wright.cs.birg.mic.MIC;
 import edu.wright.cs.birg.test.ArrayUtils;
 import edu.wright.cs.birg.variable_dependence.MaximalInformationCoefficientMeasure;
+import edu.wright.cs.birg.variable_dependence.PearsonCorrelationMeasure;
 import edu.wright.cs.birg.variable_dependence.SymmetricDependenceMeasure;
 import edu.wright.cs.birg.variable_dependence.Variable;
 
@@ -46,13 +47,17 @@ public class CorrelationBasedFeatureSelection {
 	@Exemplar(args={"null"}, expect=""), 
 	})
 	public static void printUsage(String msg){
-		System.err.println("Usage: java -jar cbfs.jar -genfeatures labelIndex < input_data.csv > features");
+		System.err.println("Usage: java -jar cbfs.jar -genfeatures method labelIndex < input_data.csv > features");
 		System.err.println(" or:   java -jar cbfs.jar -gentestdata < input_data.csv > test_data.txt");
 		System.err.println(" or:   java -jar cbfs.jar -gentestdata input_data.csv > test_data.txt");
 		System.err.println("");
-		System.err.println("Reads a csv from stdin or a file and if the option is -genfeatures");
-		System.err.println("writes the selected list of features to stdout: 1 per line.");
-		System.err.println("labelIndex is the column index of the class feature. First column is 0.");
+		System.err.println("Reads a csv from stdin or a file ");
+		System.err.println("-genfeatures: writes the selected list of features to stdout: 1 per line.");
+		System.err.println("");
+		System.err.println("method: the method used to calculate the dependence between features.");
+		System.err.println("        it can be one of: mic, pearson");
+		System.err.println("");
+		System.err.println("labelIndex: the column index of the class feature. First column is 0.");
 		System.err.println("");
 		System.err.println("The -gentestdata option reads in a csv but the columns of the csv ");
 		System.err.println("are features and the rows are samples. Then appropriate test lines ");
@@ -157,26 +162,37 @@ public class CorrelationBasedFeatureSelection {
 	 * 
 	 */
 	public static void main(String[] args) {
-		if(args.length != 1 && args.length != 2){
-			printUsage("Wrong number of arguments");
+		if(args.length != 1 && args.length != 3){
+			printUsage("ERROR: Wrong number of arguments");
 			return;
 		}
 
 		if(!(args[0].equals("-gentestdata") || args[0].equals("-genfeatures"))){
-			printUsage("Unknown output generation option \""+args[1]+"\"");
+			printUsage("ERROR: Unknown output generation option \""+args[1]+"\"");
 			return;
 		}
 		boolean genFeatures = args[0].equals("-genfeatures");
 
 		if(genFeatures){
-			if(args.length != 2){
-				printUsage("You must include a class feature index to select features for predicting that class.");
+			if(args.length != 3){
+				printUsage("ERROR: You must include dependence measure method and a class feature index to select features for predicting that class.");
 				return;
 			}
 			try{
 				Integer.parseInt(args[1]);
 			}catch (NumberFormatException e){
-				printUsage("The argument to -genfeatures must be an integer");
+				printUsage("ERROR: The argument to -genfeatures must be an integer");
+				return;
+			}
+		}
+		SymmetricDependenceMeasure measure = null;
+		if(genFeatures){
+			if(args[2].equals("mic")){
+				measure = new MaximalInformationCoefficientMeasure();
+			}else if(args[2].equals("pearson")){
+				measure = new PearsonCorrelationMeasure();
+			}else{
+				printUsage("ERROR: \""+args[2]+"\" is not a known dependence calculation method.");
 				return;
 			}
 		}
@@ -186,7 +202,7 @@ public class CorrelationBasedFeatureSelection {
 
 			if(genFeatures){
 				assert(args.length == 2);
-				generateFeatures(in, Integer.parseInt(args[1]), new MaximalInformationCoefficientMeasure());
+				generateFeatures(in, Integer.parseInt(args[1]), measure);
 				return;
 			}else{
 				generateTestData(in);
