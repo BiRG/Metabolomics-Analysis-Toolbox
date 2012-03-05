@@ -3,6 +3,9 @@
  */
 package edu.wright.cs.birg.variable_dependence;
 
+import org.sureassert.uc.annotation.Exemplars;
+import org.sureassert.uc.annotation.Exemplar;
+
 
 /**
  * A dependence measure can calculate dependencies between two variables.  Note that this does not 
@@ -19,10 +22,14 @@ package edu.wright.cs.birg.variable_dependence;
 public interface DependenceMeasure {
 	/**
 	 * Return a number indicating the degree of dependence of y upon x.
-	 * @param x the first variable
-	 * @param y the second variable
+	 * @param x the first variable (cannot be null)
+	 * @param y the second variable (cannot be null)
 	 * @return a number indicating the degree of dependence of y upon x.
 	 */
+	
+	@Exemplars(set={
+	@Exemplar(args={"null","null"}, ee="NullPointerException"),
+	@Exemplar(args={"Variable/MyVar1_0","null"}, ee="NullPointerException") })
 	public double dependence(Variable x, Variable y);
 	
 	/**
