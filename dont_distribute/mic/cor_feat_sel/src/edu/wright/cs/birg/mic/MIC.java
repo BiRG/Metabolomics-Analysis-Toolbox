@@ -59,6 +59,14 @@ public final class MIC {
 	@Exemplar(a={"[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0]","[pa:1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0]","8","15.0"},e={"#=(retval,[a:[pa:0.0,0.0,0.0,0.0,0.0],[pa:0.0,0.0,0.0,0.0,0.0],[pa:0.0,0.0,1.0,1.0,1.0],[pa:0.0,0.0,1.0],[pa:0.0,0.0,1.0]])"}),
 	})	
 	public static double[][] testApproxMatrix(double[] x, double[] y, int maxBins, double maxClumpColumnRatio){
+		//Check for only input variables with no information content and return a 0 MINE matrix
+		if(hasLessThanTwoValues(x) || hasLessThanTwoValues(y)){
+			double[][] out = new double[maxBins][maxBins];
+			for(int i = 0; i < maxBins; ++i){
+				Arrays.fill(out[i], 0);
+			}
+		}
+		
 		//Convert my parameters to Reshef's input format
 		float[] xf = new float[x.length];
 		float[] yf = new float[y.length];
@@ -102,7 +110,28 @@ public final class MIC {
 		return out;
 	}
 	
-	
+	/**
+	 * Return true if and only if there are fewer than two distinct values for the entries of x
+	 * @param x The array whose contents are examined.  Cannot be null
+	 * @return true if and only if there are fewer than two distinct values for the entries of x
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, ee="NullPointerException"),
+	@Exemplar(args={"ArrayUtils.emptyDouble()"}, expect="true"),
+	@Exemplar(args={"[pa:1.0]"}, expect="true"),
+	@Exemplar(args={"[pa:0.0]"}, expect="true"),
+	@Exemplar(args={"[pa:1.0,0.0]"}, expect="false"),
+	@Exemplar(args={"[pa:1.0,1.0]"}, expect="true"),
+	})
+	private static boolean hasLessThanTwoValues(double[] x) {
+		for(int i = 1; i < x.length; ++i){
+			if(x[i] != x[0]){
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Returns a such that a[i] = k if in[i] is the k'th largest value in in. The smallest value of in will get the
 	 * value 0, the second smallest, the value 1, etc.
