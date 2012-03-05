@@ -1,6 +1,5 @@
-offsets=randn(12,1000)*2*pi();
-firstMeasurement=sin(offsets);
-secondMeasurement=sin(offsets+pi()/2);
+firstMeasurement=randn(12,1000);
+secondMeasurement=randn(12,1000);
 g0t0=firstMeasurement(1:6,:);
 g1t0=firstMeasurement(7:12,:);
 g1t1=secondMeasurement(7:12,:);
