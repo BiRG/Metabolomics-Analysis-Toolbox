@@ -8,3 +8,10 @@ echo "Converting golf"
 
 echo "Converting GISETTE"
 ./make_initial_files.sh NIPS2003/GISETTE/ gisette -whitespace
+
+echo "Making SmallNIPS2003 data"
+./make_small_NIPS.sh
+
+echo "Converting SmallNIPS2003/GISETTE"
+./make_initial_files.sh SmallNIPS2003/GISETTE/ gisette -whitespace
+
