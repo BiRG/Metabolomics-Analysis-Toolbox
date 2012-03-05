@@ -47,7 +47,7 @@ public class CorrelationBasedFeatureSelection {
 	@Exemplar(args={"null"}, expect=""), 
 	})
 	public static void printUsage(String msg){
-		System.err.println("Usage: java -jar cbfs.jar -genfeatures method labelIndex < input_data.csv > features");
+		System.err.println("Usage: java -jar cbfs.jar -genfeatures labelIndex method< input_data.csv > features");
 		System.err.println(" or:   java -jar cbfs.jar -gentestdata < input_data.csv > test_data.txt");
 		System.err.println(" or:   java -jar cbfs.jar -gentestdata input_data.csv > test_data.txt");
 		System.err.println("");
@@ -137,13 +137,11 @@ public class CorrelationBasedFeatureSelection {
 		for(int f1 = 0; f1 < numFeatures; ++f1){
 			featureDep[f1][f1] = 1.0;
 			Variable v1 = dat.features[f1];
-			System.err.print(" "+v1.getIndex()+"(");
+			System.err.print(" "+v1.getIndex());
 			for(int f2 = 0; f2 < numFeatures; ++f2){
 				Variable v2 = dat.features[f2];
-				System.err.print(" "+v2.getIndex());
 				featureDep[f1][f2] = featureDep[f2][f1] = measure.dependence(v1, v2);
 			}
-			System.err.print(" )");
 		}
 		System.err.println();
 	
@@ -181,7 +179,7 @@ public class CorrelationBasedFeatureSelection {
 			try{
 				Integer.parseInt(args[1]);
 			}catch (NumberFormatException e){
-				printUsage("ERROR: The argument to -genfeatures must be an integer");
+				printUsage("ERROR: The first argument to -genfeatures must be an integer");
 				return;
 			}
 		}
