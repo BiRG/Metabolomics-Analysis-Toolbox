@@ -14,6 +14,9 @@ import org.sureassert.uc.annotation.Exemplar;
 import edu.wright.cs.birg.CSVUtil;
 import edu.wright.cs.birg.mic.MIC;
 import edu.wright.cs.birg.test.ArrayUtils;
+import edu.wright.cs.birg.variable_dependence.MaximalInformationCoefficientMeasure;
+import edu.wright.cs.birg.variable_dependence.SymmetricDependenceMeasure;
+import edu.wright.cs.birg.variable_dependence.Variable;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -43,13 +46,13 @@ public class CorrelationBasedFeatureSelection {
 	@Exemplar(args={"null"}, expect=""), 
 	})
 	public static void printUsage(String msg){
-		System.err.println("Usage: java -jar cbfs.jar -genfeatures classIdx < input_data.csv > features");
+		System.err.println("Usage: java -jar cbfs.jar -genfeatures labelIndex < input_data.csv > features");
 		System.err.println(" or:   java -jar cbfs.jar -gentestdata < input_data.csv > test_data.txt");
 		System.err.println(" or:   java -jar cbfs.jar -gentestdata input_data.csv > test_data.txt");
 		System.err.println("");
 		System.err.println("Reads a csv from stdin or a file and if the option is -genfeatures");
 		System.err.println("writes the selected list of features to stdout: 1 per line.");
-		System.err.println("classIdx is the column index of the class feature. First column is 0.");
+		System.err.println("labelIndex is the column index of the class feature. First column is 0.");
 		System.err.println("");
 		System.err.println("The -gentestdata option reads in a csv but the columns of the csv ");
 		System.err.println("are features and the rows are samples. Then appropriate test lines ");
@@ -64,13 +67,7 @@ public class CorrelationBasedFeatureSelection {
 			System.err.println(msg);
 		}
 	}
-	
-	/**
-	 * Reads data matrix from in and writes list of features to stdout
-	 * @param in CSV file holding the data matrix
-	 * @param classIdx 0-based index of the class feature - there must be at least 1 other feature
-	 */
-	private static void generateFeatures(CSVReader in, final int classIdx){
+	private static Variable[] readVariables(CSVReader in){
 		//Read in the 2d array from the test file
 		double[][] data;
 		String[] varNames;
@@ -80,12 +77,12 @@ public class CorrelationBasedFeatureSelection {
 			varNames = m.header;
 		}catch(java.text.ParseException e){
 			System.err.println("Error parsing input csv file as a matrix:" + e.getMessage());
-			System.exit(-1); return;
+			System.exit(-1); return null;
 		}catch(IOException e){
 			System.err.println("IO Error reading input csv file:" + e.getLocalizedMessage());
-			System.exit(-1); return;
+			System.exit(-1); return null;
 		}
-		if(data.length <= 0){ return; }
+		if(data.length <= 0){ return new Variable[0]; }
 		
 
 		//Transpose the array to make an array of variables/features
@@ -95,54 +92,62 @@ public class CorrelationBasedFeatureSelection {
 				vars[i][j]=data[j][i];
 			}
 		}
-
-		//Ensure valid classIdx input
-		if(classIdx < 0 || classIdx >= vars.length){
-			throw new IllegalArgumentException("classIdx out of bounds: classIdx was "+classIdx+" when there "+
-					"were only "+vars.length+" variables.  Legal indices were 0.."+(vars.length-1));
-		}
 		
-		//Separate features and class from one another
-		int numFeatures = varNames.length-1;
-		double[] classV = vars[classIdx];
-		double[][] featureV = new double[numFeatures][];
-		int[] originalIndex = new int[numFeatures]; //originalIndex[f] is original index of feature f
-		for(int feat = 0; feat < numFeatures; ++feat){
-			if(feat < classIdx){
-				originalIndex[feat]=feat;
-			}else if(feat >= classIdx){ //Note that this skips the class variable
-				originalIndex[feat]=feat+1;
-			}
-			featureV[feat]=vars[originalIndex[feat]];
+		//Convert the array into an array of variable objects for output
+		Variable[] out = new Variable[vars.length];
+		for(int i = 0; i < vars.length; ++i){
+			out[i] = new Variable(varNames[i], vars[i], i);
 		}
-
-		//Calculate class-feature MICs
-		double[] classCor = new double[numFeatures];
+		return out;
+	}
 	
-		System.err.println("Calculating class MICs.");
+	
+	/**
+	 * Reads data matrix from in and writes list of features to stdout
+	 * @param in CSV file holding the data matrix
+	 * @param labelIndex 0-based index of the class feature - there must be at least 1 other feature
+	 * @param measure The dependence measure to use
+	 */
+	private static void generateFeatures(CSVReader in, final int labelIndex, SymmetricDependenceMeasure measure){
+		//Read in the variables
+		Variable[] vars = readVariables(in);
 		
+		//Separate out the label from the rest of the data
+		SupervisedData dat = new SupervisedData(vars, labelIndex);
+				
+		//Calculate class-feature dependence
+		int numFeatures = dat.features.length;
+		double[] classDep = new double[numFeatures];
+	
+		System.err.println("Calculating class dependence using "+measure.name());		
+		System.err.println("Calculating class dependence on feature:");
 		for(int feat = 0; feat < numFeatures; ++feat){
-			classCor[feat]=MIC.mic(featureV[feat], classV);
+			System.err.print(" "+dat.features[feat].getIndex());
+			classDep[feat]=measure.dependence(dat.features[feat], dat.label);
 		}
 		
-		//Calculate feature-feature MICs
-		System.err.print("Calculating MICs for feature:");
-		double[][] featureCor = new double[numFeatures][numFeatures];
+		//Calculate feature-feature dependence
+		System.err.print("Calculating dependence on feature:");
+		double[][] featureDep = new double[numFeatures][numFeatures];
 		for(int f1 = 0; f1 < numFeatures; ++f1){
-			System.err.print(" "+f1);
-			featureCor[f1][f1] = 1.0;
-			double[] v1 = featureV[f1];
+			featureDep[f1][f1] = 1.0;
+			Variable v1 = dat.features[f1];
+			System.err.print(" "+v1.getIndex()+"(");
 			for(int f2 = 0; f2 < numFeatures; ++f2){
-				double[] v2 = featureV[f2];
-				featureCor[f1][f2] = featureCor[f2][f1] = MIC.mic(v1,v2);
+				Variable v2 = dat.features[f2];
+				System.err.print(" "+v2.getIndex());
+				featureDep[f1][f2] = featureDep[f2][f1] = measure.dependence(v1, v2);
 			}
+			System.err.print(" )");
 		}
 		System.err.println();
 	
 		//Do the feature selection
-		int[] best = bestFirstSearch(classCor, featureCor, non_improvements_before_quit).features();
+		int[] best = bestFirstSearch(classDep, featureDep, non_improvements_before_quit).features();
 		for(int i = 0; i < best.length; ++i){
-			System.out.println(originalIndex[best[i]]);
+			int featureNumber = best[i];
+			Variable feature = dat.features[featureNumber];
+			System.out.println(feature.getIndex());
 		}
 		
 	}
@@ -181,7 +186,7 @@ public class CorrelationBasedFeatureSelection {
 
 			if(genFeatures){
 				assert(args.length == 2);
-				generateFeatures(in, Integer.parseInt(args[1]));
+				generateFeatures(in, Integer.parseInt(args[1]), new MaximalInformationCoefficientMeasure());
 				return;
 			}else{
 				generateTestData(in);
@@ -246,27 +251,27 @@ public class CorrelationBasedFeatureSelection {
 		
 	}
 
-	private static FeatureSet bestFirstSearch(double[] classCor,
-			double[][] featureCor, int nonImprovementsBeforeQuit) {
-		int numFeatures = classCor.length;
+	private static FeatureSet bestFirstSearch(double[] classDep,
+			double[][] featureDep, int nonImprovementsBeforeQuit) {
+		int numFeatures = classDep.length;
 
 		//Set up the priority queue for best-first with an empty feature set to start with
 		PriorityQueue<FeatureSet> unexplored = 
 				new PriorityQueue<FeatureSet>(numFeatures*numFeatures, 
-						new BetterFeatureSetCBFS(classCor, featureCor));
+						new BetterFeatureSetCBFS(classDep, featureDep));
 		unexplored.add(new FeatureSet(numFeatures));
 		
 		//Remove the top of the queue and expand it each iteration
 		int numUnsuccessfulExpansions = 0;
 		FeatureSet best = unexplored.peek();
-		double lastBestScore = best.cbfsScore(classCor, featureCor);
+		double lastBestScore = best.cbfsScore(classDep, featureDep);
 		while(numUnsuccessfulExpansions < nonImprovementsBeforeQuit &&
 				!unexplored.isEmpty()){
 			FeatureSet good = unexplored.remove();
 			unexplored.addAll(Arrays.asList(good.allSetsWithOneFeatureMore()));
 			
 			FeatureSet top = unexplored.peek();
-			double topScore = top.cbfsScore(classCor, featureCor); 
+			double topScore = top.cbfsScore(classDep, featureDep); 
 			if(topScore > lastBestScore){
 				lastBestScore = topScore; best = top; numUnsuccessfulExpansions = 0;
 				//System.err.println("New Best:"+best+". Score:"+ topScore); //TODO: remove
