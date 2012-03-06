@@ -6,6 +6,7 @@ package edu.wright.cs.birg.feature_selection.correlation;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.PriorityQueue;
 
 import org.sureassert.uc.annotation.Exemplars;
@@ -146,7 +147,13 @@ public class CorrelationBasedFeatureSelection {
 		System.err.println();
 	
 		//Do the feature selection
-		int[] best = bestFirstSearch(classDep, featureDep, non_improvements_before_quit).features();
+		FeatureSet bestSet;
+		try{
+			bestSet=bestFirstSearch(classDep, featureDep, non_improvements_before_quit);
+		}catch (BestFirstSearchRanOutOfMemoryException e){
+			bestSet=beamSearch(classDep, featureDep, e.getMaxQueueSize()/3, non_improvements_before_quit);
+		}
+		int[] best = bestSet.features();
 		for(int i = 0; i < best.length; ++i){
 			int featureNumber = best[i];
 			Variable feature = dat.features[featureNumber];
@@ -266,7 +273,7 @@ public class CorrelationBasedFeatureSelection {
 	}
 
 	private static FeatureSet bestFirstSearch(double[] classDep,
-			double[][] featureDep, int nonImprovementsBeforeQuit) {
+			double[][] featureDep, int nonImprovementsBeforeQuit) throws BestFirstSearchRanOutOfMemoryException {
 		int numFeatures = classDep.length;
 
 		//Set up the priority queue for best-first with an empty feature set to start with
@@ -274,27 +281,73 @@ public class CorrelationBasedFeatureSelection {
 				new PriorityQueue<FeatureSet>(numFeatures*numFeatures, 
 						new BetterFeatureSetCBFS(classDep, featureDep));
 		unexplored.add(new FeatureSet(numFeatures));
+		int oomQueueSize; //queue size variable for use by the out of memory handler 
 		
-		//Remove the top of the queue and expand it each iteration
-		int numUnsuccessfulExpansions = 0;
-		FeatureSet best = unexplored.peek();
-		double lastBestScore = best.cbfsScore(classDep, featureDep);
-		while(numUnsuccessfulExpansions < nonImprovementsBeforeQuit &&
-				!unexplored.isEmpty()){
-			FeatureSet good = unexplored.remove();
-			unexplored.addAll(Arrays.asList(good.allSetsWithOneFeatureMore()));
-			
-			FeatureSet top = unexplored.peek();
-			double topScore = top.cbfsScore(classDep, featureDep); 
-			if(topScore > lastBestScore){
-				lastBestScore = topScore; best = top; numUnsuccessfulExpansions = 0;
-				//System.err.println("New Best:"+best+". Score:"+ topScore); //TODO: remove
-			}else{
-				++numUnsuccessfulExpansions;
+		try{
+			//Remove the top of the queue and expand it each iteration
+			int numUnsuccessfulExpansions = 0;
+			FeatureSet best = unexplored.peek();
+			double lastBestScore = best.cbfsScore(classDep, featureDep);
+			while(numUnsuccessfulExpansions < nonImprovementsBeforeQuit &&
+					!unexplored.isEmpty()){
+				FeatureSet good = unexplored.remove();
+				unexplored.addAll(Arrays.asList(good.allSetsWithOneFeatureMore()));
+				
+				FeatureSet top = unexplored.peek();
+				double topScore = top.cbfsScore(classDep, featureDep); 
+				if(topScore > lastBestScore){
+					lastBestScore = topScore; best = top; numUnsuccessfulExpansions = 0;
+					//System.err.println("New Best:"+best+". Score:"+ topScore); //TODO: remove
+				}else{
+					++numUnsuccessfulExpansions;
+				}
 			}
+			
+			return best;
+		}catch (OutOfMemoryError e){
+			//Save the number of elements in the queue
+			oomQueueSize = unexplored.size();
+			//Clear the queue to free up memory
+			unexplored.clear();
+			//Throw a new exception to alert the caller
+			throw new BestFirstSearchRanOutOfMemoryException(oomQueueSize);
 		}
 		
-		return best;
+	}
+	
+	private static FeatureSet beamSearch(double[] classDep,
+			double[][] featureDep, int maxBeamSize, int nonImprovementsBeforeQuit) {
+		int numFeatures = classDep.length;
+
+		SearchBeam<FeatureSet> oldBeam = new SearchBeam<FeatureSet>
+			(maxBeamSize, new BetterFeatureSetCBFS(classDep, featureDep));
+		oldBeam.add(new FeatureSet(numFeatures));
+		int numUnsuccessfulExpansions = 0;
+		while(numUnsuccessfulExpansions < nonImprovementsBeforeQuit){
+			//Expand old beam into new beam
+			
+			//Start with the elements from the old beam.  The benefit of this method is we'll never lose a
+			//good solution. The drawback is that a good solution with poor descendants will be expanded
+			//many times. The shallow copy is to make it so memory doesn't grow more than it has to.
+			SearchBeam<FeatureSet> newBeam = oldBeam.shallowCopy();
+			
+			//Add all successors (eliminating the worst elements that don't fit in the beam)
+			for(FeatureSet f:oldBeam){
+				Collections.addAll(newBeam, f.allSetsWithOneFeatureMore());
+			}
+			
+			//If score of top candidates in old beam and new beam is the same, this is an unsuccessful
+			//expansion. Note that the score cannot decrease because we start the beam with all of the old elements
+			if(newBeam.best().cbfsScore(classDep, featureDep) == oldBeam.best().cbfsScore(classDep, featureDep)){
+				++numUnsuccessfulExpansions;
+			}else{
+				numUnsuccessfulExpansions = 0;
+			}
+						
+			//Make the new beam into the old beam
+			oldBeam = newBeam;
+		}
+		return oldBeam.best();
 	}
 
 }
