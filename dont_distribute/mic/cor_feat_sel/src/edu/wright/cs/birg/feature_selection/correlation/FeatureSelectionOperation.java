@@ -3,6 +3,8 @@
  */
 package edu.wright.cs.birg.feature_selection.correlation;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 /**
@@ -18,6 +20,11 @@ public class FeatureSelectionOperation extends Operation {
 	FeatureSelectionSearchMethod method;
 	
 	/**
+	 * The index of the class variable in the dependencies object
+	 */
+	private int labelIndex;
+	
+	/**
 	 * Create a FeatureSelectionOperation that was passed the given args on the command line
 	 * @param args the command line arguments given to this operation
 	 */
@@ -28,7 +35,7 @@ public class FeatureSelectionOperation extends Operation {
 		}
 		
 		try{
-			Integer.parseInt(args[0]);
+			labelIndex = Integer.parseInt(args[0]);
 		}catch (NumberFormatException e){
 			printUsage("ERROR: The first argument to -features must be an integer labelIndex");
 			System.exit(-1); return;
@@ -50,7 +57,35 @@ public class FeatureSelectionOperation extends Operation {
 	 */
 	@Override
 	public void run() {
-		//TODO: this is a stub
+		Dependences deps;
+		try{
+			ObjectInputStream depsIn = stdinAsObjectInputStream();
+			deps = (Dependences) depsIn.readObject();
+		}catch(IOException e){
+			System.err.println("Error reading dependencies from standard input stream");
+			System.exit(-1); return;
+		}catch(Exception e){
+			System.err.println("Error deserializing dependencies from standard input stream:"+e.getMessage());
+			e.printStackTrace(System.err);
+			System.exit(-1); return;			
+		}
+	
+		//Do the feature selection
+		FeatureSet bestSet;
+		try{
+			bestSet = method.bestFeatures(deps, labelIndex);
+		}catch (OutOfMemoryError e){
+			System.err.println("Error: ran out of memory searching for best set of features");
+			System.exit(-1); return;
+		}
+		
+		int[] best = bestSet.features();
+		int[] originalIndices = FeatureSelectionSearchMethod.originalIndices(deps, labelIndex);
+		for(int i = 0; i < best.length; ++i){
+			int featureNumber = best[i];
+			System.out.println(originalIndices[featureNumber]);
+		}
+		
 	}
 
 }

@@ -137,7 +137,7 @@ public abstract class FeatureSelectionSearchMethod {
 	 *         deps.getIndex(k) where k is the index in deps of the i-th
 	 *         non-label feature
 	 */
-	public int[] originalIndices(Dependences deps, int labelIndex){
+	public static int[] originalIndices(Dependences deps, int labelIndex){
 		int numFeatures = deps.getNumFeatures()-1;
 		int[] originalIndex = new int[numFeatures];
 		for (int i = 0; i < numFeatures; ++i) {
