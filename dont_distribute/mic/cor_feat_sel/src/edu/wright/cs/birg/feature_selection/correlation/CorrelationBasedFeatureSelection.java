@@ -5,6 +5,7 @@ package edu.wright.cs.birg.feature_selection.correlation;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -38,31 +39,45 @@ public class CorrelationBasedFeatureSelection {
 	private static final int non_improvements_before_quit = 5;
 		
 	/**
-	 * Print the usage message follwed by msg on its own line. If msg is null, it is not printed, 
+	 * Print the usage message followed by msg on its own line. If msg is null, it is not printed, 
 	 * but the usage is still printed.
 	 * @param msg The message to print after the usage message. not printed if null.
-	 */
-	
+	 */	
 	@Exemplars(set={
 	@Exemplar(args={"'foo'"}, expect=""),
 	@Exemplar(args={"null"}, expect=""), 
 	})
 	public static void printUsage(String msg){
-		System.err.println("Usage: java -jar cbfs.jar -genfeatures labelIndex method< input_data.csv > features");
-		System.err.println(" or:   java -jar cbfs.jar -gentestdata < input_data.csv > test_data.txt");
-		System.err.println(" or:   java -jar cbfs.jar -gentestdata input_data.csv > test_data.txt");
+		System.err.println("Usage: java -jar cbfs.jar -dependences method < input_data.csv > dependences.ser");		
+		System.err.println(" or:   java -jar cbfs.jar -features labelIndex -bestFirst numFailures < dependences.ser > features.txt");
+		System.err.println(" or:   java -jar cbfs.jar -features labelIndex -beam numFailures beamSize < dependences.ser > features.txt");
+		System.err.println(" or:   java -jar cbfs.jar -maxBeamSize < dependences.ser > maxBeamSize.txt");		
+		System.err.println(" or:   java -jar cbfs.jar -testData < input_data.csv > test_data.txt");
 		System.err.println("");
-		System.err.println("Reads a csv from stdin or a file ");
-		System.err.println("-genfeatures: writes the selected list of features to stdout: 1 per line.");
+		System.err.println("-dependences reads in a csv and ouputs the dependences between the ");
+		System.err.println("                 different attributes to a binary file.");
+		System.err.println("");
+		System.err.println("-features: reads in a binary file giving the dependences between ");
+		System.err.println("              attributes. writes the selected list of features to ");
+		System.err.println("              stdout: 1 per line.");
+		System.err.println("");
+		System.err.println("-testData: reads in a csv. Then prints test lines to stdout.");
+		System.err.println("");
+		System.err.println("-maxBeamSize: reads in the dependences and outputs a number that is the ");
+		System.err.println("              beam size one lower than one which causes an out of memory exception");
+		System.err.println("              Divide this by 3 to get a guess for the largest beam one can");
+		System.err.println("              use in \"-features ... beam\" without running out of memory.");
+		System.err.println("");
+		System.err.println("-beam: an argument to -features that generates the features using a beam ");
+		System.err.println("       search that terminates when numFailures expansions have failed to ");
+		System.err.println("       improve the best item in the beam");
 		System.err.println("");
 		System.err.println("method: the method used to calculate the dependence between features.");
 		System.err.println("        it can be one of: mic, pearson");
 		System.err.println("");
 		System.err.println("labelIndex: the column index of the class feature. First column is 0.");
 		System.err.println("");
-		System.err.println("The -gentestdata option reads in a csv but the columns of the csv ");
-		System.err.println("are features and the rows are samples. Then appropriate test lines ");
-		System.err.println("are printed to stdout.");
+		System.err.println("input_data.csv the columns of the csv are features and the rows are samples.");
 		System.err.println("");
 		System.err.println("The first line of the csv may be a header (if it is, it must ");
 		System.err.println("contain a letter).  All other lines must be the same length and must ");
@@ -106,8 +121,7 @@ public class CorrelationBasedFeatureSelection {
 		}
 		return out;
 	}
-	
-	
+
 	/**
 	 * Reads data matrix from in and writes list of features to stdout
 	 * @param in CSV file holding the data matrix
@@ -167,111 +181,27 @@ public class CorrelationBasedFeatureSelection {
 	 * 
 	 */
 	public static void main(String[] args) {
-		if(args.length != 1 && args.length != 3){
-			printUsage("ERROR: Wrong number of arguments");
+		if(args.length < 1){
+			printUsage("ERROR: Wrong number of arguments - missing main operation argument");
 			return;
 		}
-
-		if(!(args[0].equals("-gentestdata") || args[0].equals("-genfeatures"))){
-			printUsage("ERROR: Unknown output generation option \""+args[1]+"\"");
+		Operation operation;
+		String[] restOfArgs = Arrays.copyOfRange(args, Math.min(1, args.length), args.length);
+		if("testData".equals(args[0])){
+			operation = new TestDataOperation(restOfArgs);			
+		}else if("features".equals(args[0])){
+			operation = new FeatureSelectionOperation(restOfArgs);
+		}else if("dependences".equals(args[0])){
+			operation = new DependenceCalculationOperation(restOfArgs);
+		}else if("maxBeamSize".equals(args[0])){
+			operation = new MaxBeamSizeOperation(restOfArgs);
+		}else{
+			printUsage("ERROR: Unknown operation \""+args[0]+"\"");
 			return;
 		}
-		boolean genFeatures = args[0].equals("-genfeatures");
-
-		if(genFeatures){
-			if(args.length != 3){
-				printUsage("ERROR: You must include dependence measure method and a class feature index to select features for predicting that class.");
-				return;
-			}
-			try{
-				Integer.parseInt(args[1]);
-			}catch (NumberFormatException e){
-				printUsage("ERROR: The first argument to -genfeatures must be an integer");
-				return;
-			}
-		}
-		SymmetricDependenceMeasure measure = null;
-		if(genFeatures){
-			if(args[2].equals("mic")){
-				measure = new MaximalInformationCoefficientMeasure();
-			}else if(args[2].equals("pearson")){
-				measure = new PearsonCorrelationMeasure();
-			}else{
-				printUsage("ERROR: \""+args[2]+"\" is not a known dependence calculation method.");
-				return;
-			}
-		}
-		
-		try{
-			CSVReader in = new CSVReader(new InputStreamReader(System.in)); 
-
-			if(genFeatures){
-				assert(args.length == 2);
-				generateFeatures(in, Integer.parseInt(args[1]), measure);
-				return;
-			}else{
-				generateTestData(in);
-				return;
-			}
-		} catch (IOException e) {
-			String filename;
-			if (args.length == 0) {
-				filename = "the standard input stream";
-			} else {
-				filename = args[0];
-			}
-			System.err.println("Error reading from " + filename + ": "
-					+ e.getMessage());
-		}
+		operation.run();
 	}
 	
-	/**
-	 * Prints test data to stdout generated from the input csv file.
-	 * 
-	 * The input csv must be all doubles and the same number of columns on every row.
-	 * There must be at least one row.
-	 * @param in The csv file used as input
-	 * 
-	 * @throws IOException if there is a problem reading from the CSVReader
-	 */
-	private static void generateTestData(CSVReader in) throws IOException {
-	
-		//Read in the 2d array from the test file
-		double[][] data;
-		try{
-			data = CSVUtil.csvToMatrix(in).entries;
-		}catch(java.text.ParseException e){
-			System.err.println("Error parsing input csv file as a matrix:" + e.getMessage());
-			System.exit(-1); return;
-		}
-		if(data.length <= 0){ return; }
-		
-		double[][] vars = new double[data[0].length][data.length];
-		for(int i = 0; i < vars.length; ++i){
-			for(int j=0; j < data.length; ++j){
-				vars[i][j]=data[j][i];
-			}
-		}
-		for(int i = 0; i < vars.length; ++i){
-			double[] x = vars[i];
-			for(int j = i+1; j < vars.length; ++j){
-				double[] y = vars[j];
-				for (int numBins = 4; numBins <= x.length; ++numBins) {
-					double clumpRatio = 15; //Later vary this
-					double[][] result = MIC.testApproxMatrix(x, y, numBins,
-							clumpRatio);
-					System.out.println("@Exemplar(a={"
-							+ ArrayUtils.qExemplar(x) + ","
-							+ ArrayUtils.qExemplar(y) + ",\"" + numBins
-							+ "\",\"" + clumpRatio + "\"},e={\"#=(retval,"
-							+ ArrayUtils.exemplarString(result) + ")\"}),");
-
-				}
-			}
-		}
-		
-	}
-
 	private static FeatureSet bestFirstSearch(double[] classDep,
 			double[][] featureDep, int nonImprovementsBeforeQuit) throws BestFirstSearchRanOutOfMemoryException {
 		int numFeatures = classDep.length;
