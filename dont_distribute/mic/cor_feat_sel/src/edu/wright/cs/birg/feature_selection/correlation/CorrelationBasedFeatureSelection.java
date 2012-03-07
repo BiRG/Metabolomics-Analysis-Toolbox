@@ -4,8 +4,6 @@
 package edu.wright.cs.birg.feature_selection.correlation;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -14,10 +12,6 @@ import org.sureassert.uc.annotation.Exemplars;
 import org.sureassert.uc.annotation.Exemplar;
 
 import edu.wright.cs.birg.CSVUtil;
-import edu.wright.cs.birg.mic.MIC;
-import edu.wright.cs.birg.test.ArrayUtils;
-import edu.wright.cs.birg.variable_dependence.MaximalInformationCoefficientMeasure;
-import edu.wright.cs.birg.variable_dependence.PearsonCorrelationMeasure;
 import edu.wright.cs.birg.variable_dependence.SymmetricDependenceMeasure;
 import edu.wright.cs.birg.variable_dependence.Variable;
 

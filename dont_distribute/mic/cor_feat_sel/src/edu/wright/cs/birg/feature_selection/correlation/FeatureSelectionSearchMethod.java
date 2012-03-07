@@ -80,14 +80,9 @@ public abstract class FeatureSelectionSearchMethod {
 	 *            double[numF][numF] that will be filled so featureDeps[i][j]
 	 *            the dependence of the j-th non-label feature on the i-th
 	 *            non-label feature (not null)
-	 * @param originalIndex
-	 *            (Output parameter) must be passed as an array int[numF] that
-	 *            will be filled so originalIndex[i] is set to deps.getIndex(k)
-	 *            where k is the index in deps of the i-th non-label feature
-	 *            (not null)
 	 */
 	protected void depsToArrays(Dependences deps, int labelIndex,
-			double[] labelDeps, double[][] featureDeps, int[] originalIndex) {
+			double[] labelDeps, double[][] featureDeps) {
 		// Check for valid arguments
 		if (labelIndex >= deps.getNumFeatures() || labelIndex < 0) {
 			throw new IllegalArgumentException("Bad label index (" + labelIndex
@@ -117,7 +112,6 @@ public abstract class FeatureSelectionSearchMethod {
 		for (int i = 0; i < numFeatures; ++i) {
 			int dIdx = depsIdx(i, labelIndex);
 			labelDeps[i] = deps.getDep(labelIndex, dIdx);
-			originalIndex[i] = deps.getOriginalIndex(dIdx);
 		}
 
 		// Fill featureDeps
@@ -129,4 +123,37 @@ public abstract class FeatureSelectionSearchMethod {
 			}
 		}
 	}
+
+	/**
+	 * Return an array originalIndex such that originalIndex[i] is set to
+	 * deps.getIndex(k) where k is the index in deps of the i-th non-label
+	 * feature
+	 * 
+	 * @param deps
+	 *            The dependencies object (not null)
+	 * @param labelIndex
+	 *            The index of the class variable in the deps object
+	 * @return an array originalIndex such that originalIndex[i] is set to
+	 *         deps.getIndex(k) where k is the index in deps of the i-th
+	 *         non-label feature
+	 */
+	public int[] originalIndices(Dependences deps, int labelIndex){
+		int numFeatures = deps.getNumFeatures()-1;
+		int[] originalIndex = new int[numFeatures];
+		for (int i = 0; i < numFeatures; ++i) {
+			int dIdx = depsIdx(i, labelIndex);
+			originalIndex[i] = deps.getOriginalIndex(dIdx);
+		}
+		return originalIndex;
+	}
+	
+	/**
+	 * Print the usage message follwed by msg on its own line. If msg is null, it is not printed, 
+	 * but the usage is still printed.
+	 * @param msg The message to print after the usage message. not printed if null.
+	 */
+	public static void printUsage(String msg){
+		CorrelationBasedFeatureSelection.printUsage(msg);
+	}
+
 }
