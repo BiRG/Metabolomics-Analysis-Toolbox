@@ -57,18 +57,7 @@ public class FeatureSelectionOperation extends Operation {
 	 */
 	@Override
 	public void run() {
-		Dependences deps;
-		try{
-			ObjectInputStream depsIn = stdinAsObjectInputStream();
-			deps = (Dependences) depsIn.readObject();
-		}catch(IOException e){
-			System.err.println("Error reading dependencies from standard input stream");
-			System.exit(-1); return;
-		}catch(Exception e){
-			System.err.println("Error deserializing dependencies from standard input stream:"+e.getMessage());
-			e.printStackTrace(System.err);
-			System.exit(-1); return;			
-		}
+		Dependences deps = dependencesFromStdin();
 	
 		//Do the feature selection
 		FeatureSet bestSet;

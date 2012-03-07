@@ -92,4 +92,26 @@ public abstract class Operation implements Runnable {
 	public static void printUsage(String msg){
 		CorrelationBasedFeatureSelection.printUsage(msg);
 	}
+	
+	/**
+	 * Return a Dependences object read from java serialization data on standard input. Prints a message to 
+	 * System.err and exits the JVM if there is an error reading the object.
+	 * 
+	 * @return a Dependences object read from java serialization data on standard input
+	 */
+	public static Dependences dependencesFromStdin(){
+		Dependences deps;
+		try{
+			ObjectInputStream depsIn = stdinAsObjectInputStream();
+			deps = (Dependences) depsIn.readObject();
+		}catch(IOException e){
+			System.err.println("Error reading dependencies from standard input stream");
+			System.exit(-1); return null;
+		}catch(Exception e){
+			System.err.println("Error deserializing dependencies from standard input stream:"+e.getMessage());
+			e.printStackTrace(System.err);
+			System.exit(-1); return null;			
+		}
+		return deps;
+	}
 }
