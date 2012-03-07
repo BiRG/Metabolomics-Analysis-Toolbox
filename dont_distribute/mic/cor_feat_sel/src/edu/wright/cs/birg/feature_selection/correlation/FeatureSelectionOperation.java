@@ -3,8 +3,6 @@
  */
 package edu.wright.cs.birg.feature_selection.correlation;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 /**

@@ -5,6 +5,8 @@ package edu.wright.cs.birg.feature_selection.correlation;
 
 import java.util.Comparator;
 
+import edu.wright.cs.birg.status.Status;
+
 /**
  * @author Eric Moyer
  *
@@ -42,14 +44,27 @@ public class MaxBeamSizeOperation extends Operation {
 	 */
 	@Override
 	public void run() {
+		Status.update("Reading dependencies", 1, 0);
 		Dependences deps = dependencesFromStdin();
+		Status.update("Reading dependencies", 1, 1);
+
 		int numFeatures = deps.getNumFeatures() - 1;
 		int numEntries = 0;
-		try{
-			SearchBeam<FeatureSet> beam = new SearchBeam<FeatureSet>(Integer.MAX_VALUE, new HashComparator());
-			while(true){ beam.add(new FeatureSet(numFeatures)); ++numEntries; }
-		}catch (OutOfMemoryError e){	
+		Runtime r = Runtime.getRuntime();
+		try {
+			SearchBeam<FeatureSet> beam = new SearchBeam<FeatureSet>(
+					Integer.MAX_VALUE, new HashComparator());
+			while (true) {
+				beam.add(new FeatureSet(numFeatures));
+				++numEntries;
+				Status.update("Filling memory", 
+						r.maxMemory(),	r.totalMemory() - r.freeMemory(), 
+						numEntries, " Entries");
+			}
+		} catch (OutOfMemoryError e) {
 		}
+		Status.update("Filling memory", r.maxMemory(), r.maxMemory(),
+				numEntries, " Entries");
 		System.out.println(numEntries);
 	}
 
