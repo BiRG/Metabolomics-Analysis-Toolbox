@@ -44,6 +44,7 @@ public class MaxBeamSizeOperation extends Operation {
 	 */
 	@Override
 	public void run() {
+		System.err.println("WARNING: right now this doesn't work because SearchBeam is a set. since I won't be using it, I won't be fixing it right now."); //TODO: fix MaxBeamSize so the set actually grows in size
 		Status.update("Reading dependencies", 1, 0);
 		Dependences deps = dependencesFromStdin();
 		Status.update("Reading dependencies", 1, 1);
@@ -56,10 +57,9 @@ public class MaxBeamSizeOperation extends Operation {
 					Integer.MAX_VALUE, new HashComparator());
 			while (true) {
 				beam.add(new FeatureSet(numFeatures));
-				++numEntries;
 				Status.update("Filling memory", 
 						r.maxMemory(),	r.totalMemory() - r.freeMemory(), 
-						numEntries, " Entries");
+						beam.size(), " Entries");
 			}
 		} catch (OutOfMemoryError e) {
 		}
