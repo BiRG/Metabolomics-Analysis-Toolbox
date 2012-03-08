@@ -6,6 +6,8 @@ package edu.wright.cs.birg.feature_selection.correlation;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
+import edu.wright.cs.birg.status.Status;
+
 /**
  * @author Eric Moyer
  *
@@ -54,7 +56,9 @@ public class BestFirstFeatureSearch extends FeatureSelectionSearchMethod {
 		unexplored.add(new FeatureSet(numFeatures));
 		
 		//Remove the top of the queue and expand it each iteration
+		int maxUnsuccessfulExpansions = 0;
 		int numUnsuccessfulExpansions = 0;
+		int numLoops = 0;
 		FeatureSet best = unexplored.peek();
 		double lastBestScore = best.cbfsScore(classDep, featureDep);
 		while(numUnsuccessfulExpansions < nonImprovementsBeforeQuit &&
@@ -70,6 +74,10 @@ public class BestFirstFeatureSearch extends FeatureSelectionSearchMethod {
 			}else{
 				++numUnsuccessfulExpansions;
 			}
+			maxUnsuccessfulExpansions = Math.max(numUnsuccessfulExpansions, maxUnsuccessfulExpansions);
+			++numLoops;
+			Status.update("Best first search", nonImprovementsBeforeQuit, maxUnsuccessfulExpansions, 
+					"numLoops:", numLoops, " topScore:", topScore," unexplored:", unexplored.size());
 		}
 		
 		return best;

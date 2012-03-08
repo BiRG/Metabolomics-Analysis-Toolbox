@@ -9,6 +9,8 @@ import java.util.List;
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
 
+import edu.wright.cs.birg.status.Status;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -87,6 +89,7 @@ public final class CSVUtil {
 		int linesRead = 0;
 		while((line = in.readNext()) != null){
 			++linesRead;
+			Status.update("Read CSV (unknown completion time)", linesRead, linesRead);
 			
 			//Skip blank lines
 			if(line.length == 0){ continue; } 
@@ -124,6 +127,8 @@ public final class CSVUtil {
 			ld.add(data);
 		}
 		
+		Status.update("Finish CSV processing", 0, 1);
+
 		//Now we have a list of lines all the same length, move them to an array
 		double[][] out = new double[ld.size()][];
 		int rowNum = 0;
@@ -145,6 +150,9 @@ public final class CSVUtil {
 		Matrix m = new Matrix();
 		m.entries = out;
 		m.header = header;
+		
+		Status.update("Finish CSV processing", 1, 1);
+
 		return m;
 	}
 

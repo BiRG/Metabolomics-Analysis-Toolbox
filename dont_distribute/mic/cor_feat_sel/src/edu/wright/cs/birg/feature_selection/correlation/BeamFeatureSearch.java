@@ -5,6 +5,8 @@ package edu.wright.cs.birg.feature_selection.correlation;
 
 import java.util.Collections;
 
+import edu.wright.cs.birg.status.Status;
+
 /**
  * @author Eric Moyer
  *
@@ -57,7 +59,9 @@ public class BeamFeatureSearch extends FeatureSelectionSearchMethod {
 		SearchBeam<FeatureSet> oldBeam = new SearchBeam<FeatureSet>
 			(maxBeamSize, new BetterFeatureSetCBFS(classDep, featureDep));
 		oldBeam.add(new FeatureSet(numFeatures));
+		int maxUnsuccessfulExpansions = 0;
 		int numUnsuccessfulExpansions = 0;
+		int numLoops = 0;
 		while(numUnsuccessfulExpansions < nonImprovementsBeforeQuit){
 			//Expand old beam into new beam
 			
@@ -81,6 +85,13 @@ public class BeamFeatureSearch extends FeatureSelectionSearchMethod {
 						
 			//Make the new beam into the old beam
 			oldBeam = newBeam;
+			
+			maxUnsuccessfulExpansions = Math.max(numUnsuccessfulExpansions, maxUnsuccessfulExpansions);
+			++numLoops;
+			double topScore = oldBeam.best().cbfsScore(classDep, featureDep);
+			Status.update("Beam search", nonImprovementsBeforeQuit, maxUnsuccessfulExpansions, 
+					"numLoops:", numLoops, " topScore:", topScore," beamSize:", oldBeam.size());
+
 		}
 		return oldBeam.best();	
 	}

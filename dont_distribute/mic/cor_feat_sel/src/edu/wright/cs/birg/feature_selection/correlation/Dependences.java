@@ -2,6 +2,7 @@ package edu.wright.cs.birg.feature_selection.correlation;
 
 import java.io.Serializable;
 
+import edu.wright.cs.birg.status.Status;
 import edu.wright.cs.birg.variable_dependence.SymmetricDependenceMeasure;
 import edu.wright.cs.birg.variable_dependence.Variable;
 
@@ -49,13 +50,16 @@ class Dependences implements Serializable{
 		
 		//Calculate the dependences
 		dep = new double[num][num];
-		System.err.print("Calculating dependence using "+measure.name()+" for feature: ");
+		int stepsCompleted = 0;
 		for(int f1 = 0; f1 < num; ++f1){
 			Variable v1 = vars[f1];
 			System.err.print(" "+v1.getIndex());
 			for(int f2 = 0; f2 <= f1; ++f2){
 				Variable v2 = vars[f2];
-				dep[f1][f2]=measure.dependence(v1, v2);
+				dep[f2][f1]=dep[f1][f2]=measure.dependence(v1, v2);
+				++stepsCompleted;
+				Status.update("Calculating dependences", num*(num+1)/2, stepsCompleted, 
+						"Method:",measure.name(), "Features: (", f1, ",", f2,")");
 			}
 		}
 	}
