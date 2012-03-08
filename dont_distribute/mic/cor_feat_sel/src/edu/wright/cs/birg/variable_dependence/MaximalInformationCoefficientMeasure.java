@@ -18,7 +18,7 @@ public class MaximalInformationCoefficientMeasure implements
 	 */
 	@Override
 	public double dependence(Variable x, Variable y) {
-		return MIC.mic(x.getData(), y.getData());
+		return MIC.mic(x.getData(), y.getData(),15);
 	}
 
 	/* (non-Javadoc)
