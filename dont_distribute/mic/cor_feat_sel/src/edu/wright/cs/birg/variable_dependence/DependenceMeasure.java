@@ -15,6 +15,9 @@ import org.sureassert.uc.annotation.Exemplar;
  * Since I've forgotten at this moment how CBFS handles things that do not have values in [0,1], it would
  * be wise to keep to dependence measures that have outputs within the interval [0,1] until I can reread that
  * section of Dr. Hall's dissertation.
+ * 
+ * For use with CBFS, you MUST keep the dependences >= 0 (there is a square root in the denominator, 
+ * so negative numbers will cause problems). I still haven't reread things for the numerator.
  *  
  * @author Eric Moyer
  *

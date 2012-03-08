@@ -8,6 +8,7 @@ import org.sureassert.uc.annotation.Exemplar;
 
 
 /**
+ * A dependence that is the absolute value of the pearson correlation between two variables
  * @author Eric Moyer
  *
  */
@@ -57,7 +58,7 @@ public class PearsonCorrelationMeasure implements SymmetricDependenceMeasure {
 			yssq += (dy[i]-my)*(dy[i]-my);  //sum of the squares of the centered y variables
 		}
 		
-		return cross/(Math.sqrt(xssq)*Math.sqrt(yssq));
+		return Math.abs(cross/(Math.sqrt(xssq)*Math.sqrt(yssq)));
 	}
 
 	/* (non-Javadoc)
