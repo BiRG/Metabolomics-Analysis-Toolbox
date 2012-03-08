@@ -32,7 +32,7 @@ public abstract class FeatureSelectionSearchMethod {
 	 *            The index of the feature to use as the label
 	 * @return the best feature set found for predicting the feature at
 	 *         labelIndex.
-	 * @throws OutOfMemoryError
+	 * @throws OutOfMemoryError when there is not enough memory for the given search
 	 */
 	public abstract FeatureSet bestFeatures(Dependences deps, int labelIndex)
 			throws OutOfMemoryError;

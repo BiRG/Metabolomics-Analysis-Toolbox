@@ -146,7 +146,7 @@ public final class ArrayUtils {
 	 * @param a the array to be represented as a Sureassert UC string.  May be null, but must not be empty 
 	 * (Sureassert has no way to represent empty arrays.)
 	 * @return a string representation of an array suitable for Sureassert test code.
-	 * @see exemplarString(double[])
+	 * @see #exemplarString(double[])
 	 */
 	@Exemplars(set={
 	@Exemplar(args={"null"}, expect="+('\"nul','l\"')"), //Note the Sureassert workaround

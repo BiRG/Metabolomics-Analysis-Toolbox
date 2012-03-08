@@ -14,6 +14,7 @@ import java.util.TreeSet;
  * the beam is deleted. Thus the comparator should rank elements by "cost" with the lowest cost being 
  * the best element.
  * @author Eric Moyer
+ * @param <E> The contents of the search beam. Each one should represent a potential solution to the problem
  *
  */
 public class SearchBeam<E> implements Collection<E>, Iterable<E>{

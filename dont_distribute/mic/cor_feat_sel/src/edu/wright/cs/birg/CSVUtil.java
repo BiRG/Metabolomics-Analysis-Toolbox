@@ -28,8 +28,16 @@ public final class CSVUtil {
 	 * @author Eric Moyer
 	 */
 	public static class Matrix{
+		/**
+		 * The header row in the CSV file for the matrix (or an artificial
+		 * header made up if the file lacked one)
+		 */
 		public String[] header;
+		/**
+		 * The data entries of the matrix arranged entries[row][column]
+		 */
 		public double[][] entries;
+		
 		/**
 		 * Return the number of rows in this matrix
 		 * @return the number of rows in this matrix

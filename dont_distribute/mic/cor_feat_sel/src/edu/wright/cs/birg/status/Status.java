@@ -87,12 +87,21 @@ public class Status {
 	}
 	
 	/**
-	 * Set the current status. If the operation changes, it is assumed to have started at the time the
-	 * status is set. Does not print. Resets the statusHasBeenPrinted variable.
+	 * Set the current status. If the operation changes, it is assumed to have
+	 * started at the time the status is set. Does not print. Resets the
+	 * statusHasBeenPrinted variable.
+	 * 
 	 * @param operation
+	 *            String description (and unique identifier) of the current
+	 *            operation being performed
 	 * @param stepsRequired
+	 *            The number of steps required to complete this operation
 	 * @param stepsCompleted
+	 *            The number of steps in this operation completed as of this
+	 *            point
 	 * @param additionalData
+	 *            Data items to convert to strings and append to the status
+	 *            report
 	 */
 	public void setStatus(String operation, long stepsRequired, long stepsCompleted,
 			Object ... additionalData){
@@ -112,6 +121,18 @@ public class Status {
 	/**
 	 * Update the current status and print it if enough time has elapsed since
 	 * the previous status
+	 * 
+	 * @param operation
+	 *            String description (and unique identifier) of the current
+	 *            operation being performed
+	 * @param stepsRequired
+	 *            The number of steps required to complete this operation
+	 * @param stepsCompleted
+	 *            The number of steps in this operation completed as of this
+	 *            point
+	 * @param additionalData
+	 *            Data items to convert to strings and append to the status
+	 *            report
 	 */
 	public static void update(String operation, long stepsRequired, long stepsCompleted,
 			Object ... additionalData) {
