@@ -77,13 +77,13 @@ public class CorrelationBasedFeatureSelection {
 		}
 		Operation operation;
 		String[] restOfArgs = Arrays.copyOfRange(args, Math.min(1, args.length), args.length);
-		if("testData".equals(args[0])){
+		if("-testData".equals(args[0])){
 			operation = new TestDataOperation(restOfArgs);			
-		}else if("features".equals(args[0])){
+		}else if("-features".equals(args[0])){
 			operation = new FeatureSelectionOperation(restOfArgs);
-		}else if("dependences".equals(args[0])){
+		}else if("-dependences".equals(args[0])){
 			operation = new DependenceCalculationOperation(restOfArgs);
-		}else if("maxBeamSize".equals(args[0])){
+		}else if("-maxBeamSize".equals(args[0])){
 			operation = new MaxBeamSizeOperation(restOfArgs);
 		}else{
 			printUsage("ERROR: Unknown operation \""+args[0]+"\"");
