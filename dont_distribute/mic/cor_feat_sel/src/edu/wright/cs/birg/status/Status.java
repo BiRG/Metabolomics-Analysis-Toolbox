@@ -16,7 +16,7 @@ public class Status {
 	 * The global status printer object
 	 */
 	private static Status global = new Status(
-			new PrintWriter(System.err), 30000L); //Update every 30 seconds
+			new PrintWriter(System.err), 3000L); //Update every 3 seconds
 
 	/**
 	 * The writer on which status updates are placed
@@ -76,9 +76,9 @@ public class Status {
 	 */
 	private Status(PrintWriter out, long minMSBetweenPrints) {
 		this.out = out;
-		this.lastPrintMS = Long.MIN_VALUE;
+		this.lastPrintMS = 0L;
 		this.currentOperation = "No operation set";
-		this.currentOperationStart = Long.MIN_VALUE;
+		this.currentOperationStart = 0L;
 		this.currentOperationStepsRequired = 1L;
 		this.currentOperationStepsCompleted = 1L;
 		this.additionalStatusInformation = new Object[0];
@@ -142,6 +142,7 @@ public class Status {
 	 * On return it is guaranteed that the current status has been printed to the output writer.
 	 */
 	public void ensurePrinted() {
+
 		if(!statusHasBeenPrinted){
 			print();
 		}
@@ -197,7 +198,8 @@ public class Status {
 	 */
 	public void print() {
 		statusHasBeenPrinted = true;
-		out.printf("%s (%3.1lf) %ld/%ld %s - ",currentOperation,
+		lastPrintMS = System.currentTimeMillis();
+		out.printf("%s (%3.1f) %d/%d %s - ",currentOperation,
 				fractionComplete()*100,
 				currentOperationStepsCompleted, currentOperationStepsRequired,
 				timeRemaining());
@@ -206,6 +208,7 @@ public class Status {
 			out.print(o.toString());
 		}
 		out.println();
+		out.flush();
 	}
 
 	/**
