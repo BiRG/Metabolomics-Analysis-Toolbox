@@ -53,7 +53,6 @@ class Dependences implements Serializable{
 		int stepsCompleted = 0;
 		for(int f1 = 0; f1 < num; ++f1){
 			Variable v1 = vars[f1];
-			System.err.print(" "+v1.getIndex());
 			for(int f2 = 0; f2 <= f1; ++f2){
 				Variable v2 = vars[f2];
 				dep[f2][f1]=dep[f1][f2]=measure.dependence(v1, v2);
