@@ -1,11 +1,14 @@
 #!/bin/bash
-if [ "$#" != 3 ]; then
-    echo "Usage: $0 directory basefilename options"
+if [ "$#" != 4 ]; then
+    echo "Usage: $0 directory basefilename firstattributespec options"
     echo "directory must end with a slash. Files to be combined etc must be"
     echo "basefilename_valid.data basefilename_valid.labels"
     echo "and"
     echo "basefilename_train.data basefilename_train.labels"
     echo "and must reside in directory. Labels will become the first column."
+    echo ""
+    echo "firstattributespec will be passed to ./change_first_attribute.pl for"
+    echo "making the label arff files"
     echo ""
     echo "options will be expanded and passed to waffles_transform import"
     echo "just pass an empty string if no options are needed"
@@ -30,7 +33,8 @@ touch $tmpname
 
 dir=$1
 base=$2
-options=$3
+first_attr=$3
+options=$4
 
 destdir="../processed_data/${dir}"
 if [ ! -e "${destdir}" ]; then
@@ -62,14 +66,14 @@ train_csv="${destdir}${base}_train.csv"
 
 cp $raw_valid_labels $valid_labels
 cp $raw_valid_data $valid_data
-waffles_transform import $valid_labels $options > $valid_labels_arff
+waffles_transform import $valid_labels $options | ./change_first_attribute.pl "$first_attr" > $valid_labels_arff
 waffles_transform import $valid_data $options > $valid_data_arff
 waffles_transform mergehoriz $valid_labels_arff $valid_data_arff > $valid_arff
 waffles_transform export $valid_arff > $valid_csv
 
 cp $raw_train_labels $train_labels
 cp $raw_train_data $train_data
-waffles_transform import $train_labels $options > $train_labels_arff
+waffles_transform import $train_labels $options | ./change_first_attribute.pl "$first_attr" > $train_labels_arff
 waffles_transform import $train_data $options > $train_data_arff
 waffles_transform mergehoriz $train_labels_arff $train_data_arff > $train_arff
 waffles_transform export $train_arff > $train_csv
