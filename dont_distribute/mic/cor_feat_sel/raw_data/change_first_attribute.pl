@@ -12,7 +12,8 @@ if(@ARGV != 1){
 	"\n",
 	"Note: this may not work if there are any funky characters in the \n",
 	"attribute name or current list of values. The code is a quick hack,\n",
-	"beware.\n"
+	"beware.\n",
+	;
     exit(-1);
 }
 
@@ -23,9 +24,9 @@ while(<STDIN>){
 	print $_;
     }else{
 	chomp;
-	if(m/\@attribute/){
+	if(m/\@attribute/i){
 	    $seen_attribute = 1;
-	    print "$1 $new_spec\n";
+	    print "\@ATTRIBUTE $new_spec\n";
 	}else{
 	    print "$_\n";
 	}
