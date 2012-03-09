@@ -12,7 +12,7 @@ sub usage($){
 	"giving the performance of a classifier trained on raw_train\n",
 	"(with only the file's features) on raw_test (with those same \n",
 	"features. Labels are assumed to be in attribute 0.\n",
-	"\n"
+	"\n",
 	"The order of the fields is: feature_filename,algorithm,\n",
 	"num_features_selected,list_of_features_selected,\n",
 	"autotune_parameters,confusion_matrix_entry_1,\n",
@@ -60,7 +60,7 @@ for my $feature_file_index (0..$#ARGV){
 	my $autotune_output = `waffles_learn autotune $reduced_train_file -labels 0 $algo`;
 	chomp $autotune_output;
 	print STDERR "Training $algo\n";
-	my ($model_fh, $model_file) = tempfile("rlmodel$algoXXXXXX");
+	my ($model_fh, $model_file) = tempfile("rlmodel${algo}XXXXXX");
 	system("waffles_learn train -seed $seedval $reduced_train_file -labels 0 $autotune_output > $model_file");
 	print STDERR "Testing $algo\n";
 	my $test_out=`waffles_learn test -seed $seedval -confusioncsv $model_file $reduced_test_file -labels 0`;
