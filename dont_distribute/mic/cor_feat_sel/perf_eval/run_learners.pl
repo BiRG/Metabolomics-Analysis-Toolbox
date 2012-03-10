@@ -71,9 +71,9 @@ for my $feature_file_index (0..$#ARGV){
 	chomp($accuracy,$confusion_head,$confusion_data);
 	unless($have_printed_header){
 	    $have_printed_header=1;
-	    print qq("Feature File","Machine Learning Algorithm","Number of features selected","Features selected","Autotune parameters",$confusion_head\n);
+	    print qq("Feature File","Machine Learning Algorithm","Number of features selected","Features selected","Autotune parameters","Accuracy",$confusion_head\n);
 	}
-	print qq("$feature_file","$algo",$numFeatures,"$featuresSelected","$autotune_output",$confusion_data\n);
+	print qq("$feature_file","$algo",$numFeatures,"$featuresSelected","$autotune_output",$accuracy,$confusion_data\n);
 	
     }
 }
