@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use File::Temp;
+use File::Temp qw(tempfile);
 
 #Print the usage to stderr follwed by the given message and exit
 sub usage($){
@@ -35,24 +35,27 @@ for my $feature_file_index (0..$#ARGV){
     my $feature_file = $ARGV[$feature_file_index];
     print STDERR 
 	"Working on $feature_file (",$feature_file_index+1,
-	" of ",scalar(@ARGV),"\n";
+	" of ",scalar(@ARGV),")\n";
 
     #Read in and count the selected features 
-    my $numFeatures = `./num_features $feature_file`;
+    my $numFeatures = `./num_features.pl $feature_file`;
     $numFeatures =~ s/(\d+)\D.*/$1/; #Cut off everything after digits end
     $numFeatures = $numFeatures + 0; #Force to number
     my $featuresSelected = `cat $feature_file`;
     chomp $featuresSelected;
+    #Features to keep includes the label features as well as the
+    #selected attribute features.
+    my $featuresToKeep = "0,$featuresSelected";
 
     print STDERR "Creating training and test sets\n";
 
     #Create temporary input files with only the selected features
     my ($reduced_test_fh, $reduced_test_file) = 
 	tempfile("rltestXXXXXX",SUFFIX=>".arff");
-    system("waffles_transform keeponlycolumns $raw_test_file $featuresSelected > $reduced_test_file");
+    system("waffles_transform keeponlycolumns $raw_test_file $featuresToKeep > $reduced_test_file");
     my ($reduced_train_fh, $reduced_train_file) = 
 	tempfile("rltrainXXXXXX",SUFFIX=>".arff");
-    system("waffles_transform keeponlycolumns $raw_train_file $featuresSelected > $reduced_train_file");
+    system("waffles_transform keeponlycolumns $raw_train_file $featuresToKeep > $reduced_train_file");
 
     my $seedval=237960763708426;
     for my $algo ("knn","decisiontree","naivebayes"){
@@ -63,12 +66,12 @@ for my $feature_file_index (0..$#ARGV){
 	my ($model_fh, $model_file) = tempfile("rlmodel${algo}XXXXXX");
 	system("waffles_learn train -seed $seedval $reduced_train_file -labels 0 $autotune_output > $model_file");
 	print STDERR "Testing $algo\n";
-	my $test_out=`waffles_learn test -seed $seedval -confusioncsv $model_file $reduced_test_file -labels 0`;
-	my ($accuracy,$confusion_head,$confusion_data)=split /\n/,$test_out;
-
+	my @lines=`waffles_learn test -seed $seedval -confusioncsv $model_file $reduced_test_file -labels 0`;
+	my ($accuracy,$confusion_head,$confusion_data)=@lines;
+	chomp($accuracy,$confusion_head,$confusion_data);
 	unless($have_printed_header){
 	    $have_printed_header=1;
-	    print qq("Feature File","Machine Learning Algorithm","Number of features selected","Features selected","Autotune parameters",$confusion_head);
+	    print qq("Feature File","Machine Learning Algorithm","Number of features selected","Features selected","Autotune parameters",$confusion_head\n);
 	}
 	print qq("$feature_file","$algo",$numFeatures,"$featuresSelected","$autotune_output",$confusion_data\n);
 	
