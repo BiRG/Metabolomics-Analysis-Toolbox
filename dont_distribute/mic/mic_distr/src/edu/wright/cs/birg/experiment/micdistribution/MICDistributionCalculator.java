@@ -76,6 +76,70 @@ public final class MICDistributionCalculator {
 			return;
 		}
 	}
+	
+	/**
+	 * Return true if and only if there are fewer than two distinct values for the entries of x
+	 * @param x The array whose contents are examined.  Cannot be null
+	 * @return true if and only if there are fewer than two distinct values for the entries of x
+	 */
+	private static boolean hasLessThanTwoValues(float[] x) {
+		for(int i = 1; i < x.length; ++i){
+			if(x[i] != x[0]){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	
+	/**
+	 * Wrapper around Reshef's code to generate the MINE characteristic matrix. The returned matrix will have
+	 * its first two rows as null. It will have entries for number of bins up to the sample size
+	 * 
+	 * @param x x[i] is the x coordinate of the ith point
+	 * @param y y[i] is the y coordinate of the ith point
+	 * @param maxClumpColumnRatio The maximum numberOfClumps/x_bins to use when calling optimizeXAxis. must be greater than 0
+	 * @return heuristic approximations to the entries of the MINE characteristic matrix 
+	 */
+	public static float[][] reshefMINEWrapper(float[] x, float[] y, double maxClumpColumnRatio){
+		if(x == null){
+			throw new NullPointerException("x passed to reshefMINEWrapper was null");
+		}
+		if(y == null){
+			throw new NullPointerException("y passed to reshefMINEWrapper was null");
+		}
+		if(x.length != y.length){
+			throw new IllegalArgumentException("x and y must have the same length");
+		}
+		if(maxClumpColumnRatio <= 0){
+			throw new IllegalArgumentException("maxClumpColumnRatio must be greater than 0, not "+maxClumpColumnRatio);
+		}
+
+		
+		int maxNumBins = x.length;
+		//Check for only input variables with no information content and return a 0 MINE matrix
+		if(hasLessThanTwoValues(x) || hasLessThanTwoValues(y)){
+			float[][] out = new float[maxNumBins][maxNumBins];
+			out[0]=out[1]=null;
+			for(int i = 2; i < maxNumBins; ++i){
+				Arrays.fill(out[i], 0);
+			}
+			return out;
+		}
+		
+		data.VarPairData d = new data.VarPairData(x,y);
+		float exponent = 1;
+		
+		//Call Reshef's code to do the calculation
+		mine.core.MineParameters mp = new mine.core.MineParameters(
+				exponent, (float)maxClumpColumnRatio, 0, null);
+		mine.core.Manifold man = new mine.core.Manifold(d, mp);
+		
+		//Return the result
+		assert(man.scores != null);
+		return man.scores;
+	}
+
 
 	/**
 	 * Calculate the distribution of the MIC over samples
