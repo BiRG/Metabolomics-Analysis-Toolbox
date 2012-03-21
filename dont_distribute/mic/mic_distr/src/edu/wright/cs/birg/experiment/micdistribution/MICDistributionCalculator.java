@@ -5,6 +5,7 @@ package edu.wright.cs.birg.experiment.micdistribution;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Eric Moyer
@@ -140,7 +141,33 @@ public final class MICDistributionCalculator {
 		return man.scores;
 	}
 
+	/**
+	 * Return the list of all relations that can be tested by this calculator
+	 * @return the list of all relations that can be tested by this calculator
+	 */
+	public static List<Relation> allRelations(){
+		List<Relation> rels = new java.util.LinkedList<Relation>();
+		rels.add(new RandomRel());
+		return rels;
+	}
 
+	
+	/**
+	 * Execute the listrelations command. Currently ignores all arguments.
+	 * @param args The command-line arguments to the listrelations command
+	 */
+	public static void listrelations(String[] args){
+		List<Relation> rels = allRelations();
+		System.out.println("ID\tShort Name\tFull Name");
+		for(Relation r:rels){
+			System.out.print(r.getId());
+			System.out.print("\t");
+			System.out.print(r.getShortName());
+			System.out.print("\t");
+			System.out.println(r.getFullName());
+		}
+	}
+	
 	/**
 	 * Calculate the distribution of the MIC over samples
 	 * @param args The command-line arguments
@@ -159,7 +186,7 @@ public final class MICDistributionCalculator {
 			System.err.println("Sorry, the generate command is not implemented yet.");
 			return;
 		}else if(args[0].equals("listrelations")){
-			System.err.println("Sorry, the listrelations command is not implemented yet.");
+			listrelations(rest);
 			return;
 		}else{
 			printUsage("Error: "+args[0]+" is not a known command.", System.err);
