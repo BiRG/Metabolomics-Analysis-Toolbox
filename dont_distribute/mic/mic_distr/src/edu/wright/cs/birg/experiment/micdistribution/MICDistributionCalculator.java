@@ -12,6 +12,10 @@ import java.util.List;
  *
  */
 public final class MICDistributionCalculator {
+	private static enum Command{
+		help, generate, listrelations, dbdump, dbmerge, dbtomat
+	}
+	
 	/**
 	 * Print the usage message followed by msg on its own line. If msg is null, it is not printed, 
 	 * but the usage is still printed.
@@ -22,7 +26,31 @@ public final class MICDistributionCalculator {
 		out.println("Usage: java -jar distr.jar command [command options] > output");
 		out.println("Executes command with its options and sends the result to standard output");
 		out.println("");
-		out.println("Valid commands are help, generate, and listrelations");
+		
+		out.print("Valid commands are: ");
+		int linePos = "Valid commands are: ".length();
+		
+		//Assemble the strings to be printed in listing the commands
+		Command[] cmds = Command.values();		
+		String[] strs = new String[cmds.length];
+		for(int i = 0; i+1 < cmds.length; ++i){
+			strs[i] = cmds[i].toString()+", ";
+		}
+		strs[cmds.length-1]="and "+cmds[cmds.length-1]+".";
+		
+		// Print the list of commands, word wrapping at the 75'th column (for
+		// simplicity, I ignore that spaces on the end shouldn't send you to the
+		// next row, so I'm really word-wrapping on the 74th column
+		for(String s:strs){
+			if(linePos + s.length() > 75){
+				System.out.println();
+				linePos = 0;
+			}
+			out.print(s);
+			linePos += s.length();
+		}
+		out.println(""); //End the line after the last command.
+		
 		out.println("The command \"help [command name]\" will print the usage information for that");
 		out.println("command.");
 		if(msg != null){
@@ -40,7 +68,17 @@ public final class MICDistributionCalculator {
 		if(args.length < 1){
 			printUsage(null, System.out);
 			return;
-		}else if(args[0].equals("generate")){
+		}
+		Command c;
+		try{
+			c = Command.valueOf(args[0]);
+		}catch (IllegalArgumentException e){
+			printUsage(args[0]+" is an unknown command. Help must be called with a known command.", System.err);
+			return;
+		}
+			
+		switch(c){
+		case generate: 
 			System.out.println("generate -xstd num -ystd num -rel shortname -smin minsamp -smax maxsamp ");
 			System.out.println("         -inst numinst -c num -seed num > database_file");
 			System.out.println("The generate command generates a database of measurements of the MIC");
@@ -66,15 +104,38 @@ public final class MICDistributionCalculator {
 			System.out.println("      the algorithm will start with at most cx clumps. This is the same as ");
 			System.out.println("      the c option to MINE.jar.");
 			System.out.println("-seed The seed to use in starting the pseudorandom number generator.");
-		}else if(args[0].equals("listrelations")){
+			break;
+		case listrelations:
 			System.out.println("listrelations");
 			System.out.println("The listrelations command takes no arguments and prints the available ");
 			System.out.println("base relations along with their names and ids as a tab-separated list ");
 			System.out.println("to stdout. Each row is one relation. The first column is the id, the ");
 			System.out.println("second, the relation's short name, and the third, the full name");
-		}else{
-			printUsage(args[0]+" is an unknown command. Help must be called with a known command.", System.err);
-			return;
+			break;
+		case dbdump:
+			System.out.println("dbdump [relationids|relationnames] < input_file.ser > output_file.tsv");
+			System.out.println("dumps the java serialized database to a tab-separated value file.");
+			System.out.println("The input database is read from standard input and the tab-separated");
+			System.out.println("file is written to standard output.");
+			System.out.println("");
+			System.out.println("The dbdump command takes one parameter which can be either \"relationids\"");
+			System.out.println("or \"relationames\". If the parameter is relationids, then the relation");
+			System.out.println("field is dumped as an ID number. If the parameter is relationnames");
+			System.out.println("then relation field is dumped as a string.");
+			break;
+		case dbmerge:
+			System.out.println("dbmerge db1.ser db2.ser db3.ser ... > outputdb.ser");
+			System.out.println("Merges all database files listed as arguments into one database and");
+			System.out.println("prints that to stdout.");
+			break;
+		case dbtomat:
+			System.out.println("dbtomat < inputdb.ser > outputdb.mat");
+			System.out.println("Reads a database from stdin and writes it to stdout as a mat file.");
+			System.out.println("Right now, the mat file will contain the relation id for each entry");			
+			break;
+		case help:
+			help(new String[0]);
+			break;
 		}
 	}
 	
@@ -156,7 +217,7 @@ public final class MICDistributionCalculator {
 	 * Execute the listrelations command. Currently ignores all arguments.
 	 * @param args The command-line arguments to the listrelations command
 	 */
-	public static void listrelations(String[] args){
+	public static void listrelations(@SuppressWarnings("unused") String[] args){
 		List<Relation> rels = allRelations();
 		System.out.println("ID\tShort Name\tFull Name");
 		for(Relation r:rels){
@@ -173,23 +234,46 @@ public final class MICDistributionCalculator {
 	 * @param args The command-line arguments
 	 */
 	public static void main(String[] args) {
+		//Print an error if there were no arguments
 		if(args.length < 1){
 			printUsage("Error: must have at least one argument",System.err); 
 			return;
 		}
 		assert(args.length >= 1);
+		
+		//Convert the first argument to a Command object
+		Command c;
+		try{
+			c = Command.valueOf(args[0]);
+		}catch (IllegalArgumentException e){
+			printUsage("Error: "+args[0]+" is not a known command.", System.err);
+			return;
+		}
+
+		//Execute the appropriate command
 		String[] rest = Arrays.copyOfRange(args, 1, args.length);
-		if(args[0].equals("help")){
+		switch(c){
+		case help:
 			help(rest);
 			return;
-		}else if(args[0].equals("generate")){
-			System.err.println("Sorry, the generate command is not implemented yet.");
+		case generate:
+			System.err.println("Sorry, the "+c+" command is not implemented yet.");
+			//TODO: implement generate command
 			return;
-		}else if(args[0].equals("listrelations")){
+		case listrelations:
 			listrelations(rest);
 			return;
-		}else{
-			printUsage("Error: "+args[0]+" is not a known command.", System.err);
+		case dbdump:
+			System.err.println("Sorry, the "+c+" command is not implemented yet.");
+			//TODO: implement dbdump command
+			return;
+		case dbmerge:
+			System.err.println("Sorry, the "+c+" command is not implemented yet.");
+			//TODO: implement dbmerge command
+			return;
+		case dbtomat:
+			System.err.println("Sorry, the "+c+" command is not implemented yet.");
+			//TODO: implement dbtomat command
 			return;
 		}
 	}
