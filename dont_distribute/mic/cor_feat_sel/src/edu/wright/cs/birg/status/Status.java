@@ -207,16 +207,17 @@ public class Status {
 		millisecondsRemaining -= seconds * msPerSec;
 		
 		//Build the output string
-		StringBuilder out = new StringBuilder();
-		if(hours > 0){ out.append(hours).append('h'); }
-		if(minutes > 0){ out.append(minutes).append('m'); }
-		out.append(seconds).append('s');
+		StringBuilder outstr = new StringBuilder();
+		if(hours > 0){ outstr.append(hours).append('h'); }
+		if(minutes > 0){ outstr.append(minutes).append('m'); }
+		outstr.append(seconds).append('s');
 		
-		return out.toString();
+		return outstr.toString();
 	}
 	/**
 	 * Print the status now, whether it has been printed before or not.
 	 */
+	@SuppressWarnings("boxing")
 	public void print() {
 		statusHasBeenPrinted = true;
 		lastPrintMS = System.currentTimeMillis();

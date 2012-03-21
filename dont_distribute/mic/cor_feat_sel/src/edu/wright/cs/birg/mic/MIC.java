@@ -138,7 +138,7 @@ public final class MIC {
 	 * @param in an array of doubles (none can be NaN), in cannot be null
 	 * @return a such that a[i] = k if in[i] is the k'th largest value in in.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "boxing" })
 	@Exemplars(set={
 	@Exemplar(args={"pa:d:0.0"}, expect="java/util/Arrays.equals(retval,pa:0)"),
 	@Exemplar(args={"pa:d:1.0"}, expect="java/util/Arrays.equals(retval,pa:0)"),
@@ -262,6 +262,7 @@ public final class MIC {
 	 * @param maxClumpColumnRatio The maximum numberOfClumps/x_bins to use when calling optimizeXAxis. must be greater than 0
 	 * @return heuristic approximations to the entries of the MINE characteristic matrix 
 	 */
+	@SuppressWarnings("unused") //TODO: remove when no longer a stub
 	public static double[][] ApproxMINECharacteristicMatrix(int[] x, int[] y, int maxBins, double maxClumpColumnRatio){
 		return null; //TODO: remove
 	}

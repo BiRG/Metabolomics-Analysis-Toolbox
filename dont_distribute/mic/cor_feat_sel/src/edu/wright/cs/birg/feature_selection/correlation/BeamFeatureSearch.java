@@ -48,6 +48,7 @@ public class BeamFeatureSearch extends FeatureSelectionSearchMethod {
 	/* (non-Javadoc)
 	 * @see edu.wright.cs.birg.feature_selection.correlation.FeatureSelectionSearchMethod#bestFeatures(edu.wright.cs.birg.feature_selection.correlation.Dependences, int)
 	 */
+	@SuppressWarnings("boxing")
 	@Override
 	public FeatureSet bestFeatures(Dependences deps, int labelIndex)
 			throws OutOfMemoryError {

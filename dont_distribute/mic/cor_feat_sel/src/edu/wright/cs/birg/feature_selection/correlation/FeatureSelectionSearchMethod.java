@@ -19,8 +19,8 @@ public abstract class FeatureSelectionSearchMethod {
 	 * @param args
 	 *            the command line arguments needed to initialize this method
 	 */
-	protected FeatureSelectionSearchMethod(String[] args) {
-	}
+	protected FeatureSelectionSearchMethod(@SuppressWarnings("unused") String[] args) { //Will be filled in for subclasses
+	} 
 
 	/**
 	 * Return the best feature set found for predicting the feature at
@@ -81,7 +81,7 @@ public abstract class FeatureSelectionSearchMethod {
 	 *            the dependence of the j-th non-label feature on the i-th
 	 *            non-label feature (not null)
 	 */
-	protected void depsToArrays(Dependences deps, int labelIndex,
+	protected static void depsToArrays(Dependences deps, int labelIndex,
 			double[] labelDeps, double[][] featureDeps) {
 		// Check for valid arguments
 		if (labelIndex >= deps.getNumFeatures() || labelIndex < 0) {

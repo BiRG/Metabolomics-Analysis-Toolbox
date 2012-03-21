@@ -8,6 +8,6 @@ package edu.wright.cs.birg.variable_dependence;
  * @author Eric Moyer
  *
  */
-public interface SymmetricDependenceMeasure extends DependenceMeasure {
+public interface SymmetricDependenceMeasure extends DependenceMeasure { //Just a tagging interface
 
 }

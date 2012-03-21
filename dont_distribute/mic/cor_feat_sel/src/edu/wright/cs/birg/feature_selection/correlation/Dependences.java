@@ -37,6 +37,7 @@ class Dependences implements Serializable{
 	 * @param vars The variables whose dependences are calculated 
 	 * @param measure The dependence measure to use
 	 */
+	@SuppressWarnings("boxing")
 	public Dependences(Variable[] vars, SymmetricDependenceMeasure measure) {
 		int num = vars.length;
 

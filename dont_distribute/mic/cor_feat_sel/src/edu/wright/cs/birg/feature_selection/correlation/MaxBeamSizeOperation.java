@@ -42,6 +42,7 @@ public class MaxBeamSizeOperation extends Operation {
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
+	@SuppressWarnings("boxing")
 	@Override
 	public void run() {
 		System.err.println("WARNING: right now this doesn't work because SearchBeam is a set. since I won't be using it, I won't be fixing it right now."); //TODO: fix MaxBeamSize so the set actually grows in size
@@ -61,7 +62,7 @@ public class MaxBeamSizeOperation extends Operation {
 						r.maxMemory(),	r.totalMemory() - r.freeMemory(), 
 						beam.size(), " Entries");
 			}
-		} catch (OutOfMemoryError e) {
+		} catch (OutOfMemoryError e) { //Do nothing
 		}
 		Status.update("Filling memory", r.maxMemory(), r.maxMemory(),
 				numEntries, " Entries");

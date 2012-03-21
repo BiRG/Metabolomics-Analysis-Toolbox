@@ -25,7 +25,7 @@ public class PearsonCorrelationMeasure implements SymmetricDependenceMeasure {
 	@Exemplar(args={"Variable/MyVar1_0"}, e="1.0"),
 	@Exemplar(args={"Variable/OneTwo"}, e="1.5"),
 	})
-	private double mean(Variable x){
+	private static double mean(Variable x){
 		double[] d = x.getData();
 		if(d.length < 1){
 			throw new IllegalArgumentException("You cannot take the mean of a variable with no samples.");

@@ -138,8 +138,8 @@ public final class CSVUtil {
 		
 		if(header == null){
 			if(len != null){
-				header = new String[len];
-				for(int i = 0; i < len; ++i){
+				header = new String[len.intValue()];
+				for(int i = 0; i < len.intValue(); ++i){
 					header[i]="Col"+i;
 				}
 			}else{
