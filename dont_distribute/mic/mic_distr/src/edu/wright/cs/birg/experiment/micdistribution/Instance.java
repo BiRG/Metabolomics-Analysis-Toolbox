@@ -48,4 +48,12 @@ public class Instance {
 		this.x = x;
 		this.y = y;
 	}
+
+	/**
+	 * Create an instance for numSamples samples with uninitialized values 
+	 * @param numSamples the number of samples in the resulting instance
+	 */
+	public Instance(int numSamples) {
+		this(new float[numSamples], new float[numSamples]);
+	}
 }
