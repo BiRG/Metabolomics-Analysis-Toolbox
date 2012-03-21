@@ -3,8 +3,6 @@
  */
 package edu.wright.cs.birg.experiment.micdistribution;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -113,32 +111,15 @@ public abstract class Relation {
 	}
 	
 	/**
-	 * Return a sample from the points in this relation
-	 * 
-	 * @param rng
-	 *            The random number generator used in creating the sample
-	 * @return a sample from the points in this relation
-	 */
-	public abstract Sample sample(Random rng);
-
-	/**
-	 * Return a list of numSamples independent, identically distributed samples
-	 * from the points in this relation. Should return a list distributed the
-	 * same way one would get by calling sample(rng) numSamples times. Does not
-	 * have to be implemented that way, however (though the default implementation is).
+	 * Return an instance composed of numSamples independent, identically
+	 * distributed samples from the points in this relation.
 	 * 
 	 * @param rng
 	 *            The random number generator used in creating the sample
 	 * @param numSamples
 	 *            The number of samples in the list that will be returned
-	 * @return a list of numSamples independent, identically distributed samples
-	 *         from the points in this relation.
-	 */	
-	public List<Sample> samples(Random rng, int numSamples){
-		Sample[] samps = new Sample[numSamples];
-		for(int i = 0; i < samps.length; ++i){
-			samps[i]=this.sample(rng);
-		}
-		return Arrays.asList(samps);
-	}
+	 * @return an Instance composed of numSamples independent, identically
+	 *         distributed samples from the points in this relation.
+	 */
+	public abstract Instance samples(Random rng, int numSamples);
 }
