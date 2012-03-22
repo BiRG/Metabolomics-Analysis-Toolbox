@@ -79,6 +79,7 @@ public final class MICDistributionCalculator {
 			
 		switch(c){
 		case generate: 
+			//TODO: fix generate command to reflect new use of a set of sample sizes rather than a range
 			System.out.println("generate -xstd num -ystd num -rel shortname -smin minsamp -smax maxsamp ");
 			System.out.println("         -inst numinst -c num -seed num > database_file");
 			System.out.println("The generate command generates a database of measurements of the MIC");
@@ -209,6 +210,7 @@ public final class MICDistributionCalculator {
 	public static List<Relation> allRelations(){
 		List<Relation> rels = new java.util.LinkedList<Relation>();
 		rels.add(new RandomRel());
+		//TODO: add categorical relationships
 		return rels;
 	}
 
