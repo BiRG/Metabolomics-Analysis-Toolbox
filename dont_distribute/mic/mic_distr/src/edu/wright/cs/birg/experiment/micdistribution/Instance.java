@@ -56,4 +56,12 @@ public class Instance {
 	public Instance(int numSamples) {
 		this(new float[numSamples], new float[numSamples]);
 	}
+
+	/**
+	 * Return the number of samples in this instance. The x and y arrays both have getNumSamples() entries.
+	 * @return the number of samples in this instance. 
+	 */
+	public int getNumSamples() {
+		return x.length;
+	}
 }
