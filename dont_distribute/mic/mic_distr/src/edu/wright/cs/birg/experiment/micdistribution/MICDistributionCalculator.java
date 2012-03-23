@@ -79,32 +79,32 @@ public final class MICDistributionCalculator {
 			
 		switch(c){
 		case generate: 
-			//TODO: fix generate command to reflect new use of a set of sample sizes rather than a range
-			System.out.println("generate -xstd num -ystd num -rel shortname -smin minsamp -smax maxsamp ");
+			System.out.println("generate -xstd num -ystd num -rel shortname -nsamp n1,n2,n3...nm ");
 			System.out.println("         -inst numinst -c num -seed num > database_file");
 			System.out.println("The generate command generates a database of measurements of the MIC");
-			System.out.println("using numinst instances of data representing a particular relation");
-			System.out.println("sampled a certain number of times with a particular noise distribution.");
-			System.out.println("It generates tuples for all sample sizes in the range [minsamp,maxsamp].");
+			System.out.println("and other dependence measures using numinst instances of data representing ");
+			System.out.println("a particular relation sampled a certain number of times with a particular ");
+			System.out.println("noise distribution. It generates tuples for each listed sample size.");
+			System.out.println("");
 			System.out.println("The command takes key-value pair arguments that can be listed in any");
 			System.out.println("order. All of the arguments must be present however. The meaning of each");
 			System.out.println("argument is:");
-			System.out.println("-xstd The standard deviation of the noise added to the x coordinate. If");
-			System.out.println("      0, then the x coordinate is sampled noise-free.");
-			System.out.println("-ystd The standard deviation of the noise added to the y coordinate. If");
-			System.out.println("      0, then the y coordinate is sampled noise-free.");
-			System.out.println("-rel  The short name of the base relation from which the samples are drawn");
-			System.out.println("-smin The inclusive lower bound on the range of number of samples to be");
-			System.out.println("      drawn for each instance.");
-			System.out.println("-smax The inclusive upper bound on the range of number of samples to be");
-			System.out.println("      drawn for each instance.");
-			System.out.println("-inst The number of instances which will be binned and their mics added");
-			System.out.println("      to the database");
-			System.out.println("-c    by what factor clumps may outnumber columns when OptimizeXAxis is ");
-			System.out.println("      called. When trying to partition the x-axis into x columns, ");
-			System.out.println("      the algorithm will start with at most cx clumps. This is the same as ");
-			System.out.println("      the c option to MINE.jar.");
-			System.out.println("-seed The seed to use in starting the pseudorandom number generator.");
+			System.out.println("-xstd  The standard deviation of the noise added to the x coordinate. If");
+			System.out.println("       0, then the x coordinate is sampled noise-free.");
+			System.out.println("-ystd  The standard deviation of the noise added to the y coordinate. If");
+			System.out.println("       0, then the y coordinate is sampled noise-free.");
+			System.out.println("-rel   The short name of the base relation from which the samples are drawn");
+			System.out.println("-nsamp a comma separated list of the sample sizes that will be used for");
+			System.out.println("       generating the instances. Note: do not include spaces or the shell");
+			System.out.println("       will break the list up into two options and you will get an error.");
+			System.out.println("-inst  The number of instances whose dependences will be added to the ");
+			System.out.println("       database");
+			System.out.println("-c     by what factor clumps may outnumber columns when OptimizeXAxis is ");
+			System.out.println("       called. When trying to partition the x-axis into x columns, ");
+			System.out.println("       the algorithm will start with at most cx clumps. This option only");
+			System.out.println("       affects the calculation of the MIC dependence and is the same as ");
+			System.out.println("       the c option to MINE.jar.");
+			System.out.println("-seed  The seed to use in starting the pseudorandom number generator.");
 			break;
 		case listrelations:
 			System.out.println("listrelations");
