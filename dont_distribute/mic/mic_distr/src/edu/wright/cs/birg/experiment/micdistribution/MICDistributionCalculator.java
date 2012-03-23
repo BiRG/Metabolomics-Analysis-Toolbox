@@ -396,6 +396,7 @@ public final class MICDistributionCalculator {
 	 */
 	private static List<DependenceMeasure> allDepsButMIC() {
 		List<DependenceMeasure> l = new LinkedList<DependenceMeasure>();
+		l.add(new DistanceCorrelationDep());
 		l.add(new SpearmanDep());
 		l.add(new PearsonDep());
 		return l;

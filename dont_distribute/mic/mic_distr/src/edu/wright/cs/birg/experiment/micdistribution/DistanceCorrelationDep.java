@@ -45,9 +45,9 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 		double[][] A = capitalLetterMatrix(inst.x);
 		double[][] B = capitalLetterMatrix(inst.y);
 		double vx = distanceCovariance(A, A);
-		if(vx == 0){ return 0; }
+		if(vx == 0){ return 0f; }
 		double vy = distanceCovariance(B, B);
-		if(vy == 0){ return 0; }
+		if(vy == 0){ return 0f; }
 		return (float)(distanceCovariance(A,B)/Math.sqrt(vx*vy));
 	}
 
