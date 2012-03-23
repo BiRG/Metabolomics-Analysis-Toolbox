@@ -35,7 +35,7 @@ interface DependenceMeasure {
 	 * instance.
 	 * 
 	 * @param inst
-	 *            The instance whose dependence is to be measured
+	 *            The instance whose dependence is to be measured. It must have at least 4 samples.
 	 * @return the dependence measured for the two variables in the given
 	 *         instance.
 	 */
