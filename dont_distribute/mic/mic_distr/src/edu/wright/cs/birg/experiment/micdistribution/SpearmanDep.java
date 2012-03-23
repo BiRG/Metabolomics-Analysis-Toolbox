@@ -39,9 +39,12 @@ public class SpearmanDep implements DependenceMeasure {
 	}
 
 	/**
-	 * Returns a such that a[i] == k if in[i] is the k'th largest value in in.
-	 * The smallest value of in will get the value 0, the second smallest, the
-	 * value 1, etc.
+	 * Returns an array a such that a[i] is the rank of the value in[i] among
+	 * in's values. More specifically, sort in, and assign each element its
+	 * 1-based index 1..N as a provisional rank. Next find groups of equal
+	 * elements and assign them all the mean of their provisional rank. Finally,
+	 * find those values in the original array and replace them with their
+	 * ranks.
 	 * 
 	 * @param in
 	 *            an array of floats (none can be NaN), in cannot be null
@@ -56,13 +59,38 @@ public class SpearmanDep implements DependenceMeasure {
 		
 		float[] sorted = in.clone();
 		Arrays.sort(sorted);
+		int[] provisionalRanks = new int[sorted.length];
+		for(int i = 0; i < sorted.length; ++i){
+			provisionalRanks[i]=i+1;
+		}
 		
-		for(int i = 0; i < sorted.length; ++i){ 
-			if(Float.isNaN(sorted[i])){
-				throw new IllegalArgumentException("The input to asRanks cannot contain any NaN values"); }
-			Float f=new Float(sorted[i]);
-			if(!rank.containsKey(f)){
-				rank.put(f, new Float(rank.size()));
+		{
+			int i = 0;
+			while(i < sorted.length){
+				float val = sorted[i];
+				if(Float.isNaN(sorted[i])){
+					throw new IllegalArgumentException("The input to asRanks cannot contain any NaN values"); 
+				}
+				Float newRank;
+				if(i + 1 >= sorted.length || val != sorted[i+1]){ //Not a tie
+					newRank = new Float(provisionalRanks[i]);
+				}else{ //This is a tie with the next one, advance i until we are at the first one that is a non-tie
+					++i; //Go to the next item in the array
+					int runLength = 2; //The number of elements (at indices less than or equal to i) with a value val 
+					int runSum = provisionalRanks[i-1]+provisionalRanks[i]; //The sum of the ranks of the elements in the run
+					while(i+1 < sorted.length && val == sorted[i+1]){ //While the current item is in a tie with the next one 
+						runSum += provisionalRanks[i+1];
+						++runLength;
+						++i;
+					}
+					// Here i is the last element in the run, so the runLength and
+					// runSum include the whole run of identical elements. We can now
+					// calculate the average rank and set that as the new rank.
+					newRank = new Float(((float)runSum)/runLength); 
+				}
+				Float f = new Float(val);
+				assert(!rank.containsKey(f));
+				rank.put(f, newRank);
 			}
 		}
 		
