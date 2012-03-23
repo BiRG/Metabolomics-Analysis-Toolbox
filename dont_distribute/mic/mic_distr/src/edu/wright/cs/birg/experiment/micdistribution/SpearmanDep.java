@@ -67,10 +67,13 @@ public class SpearmanDep implements DependenceMeasure {
 				if(Float.isNaN(sorted[i])){
 					throw new IllegalArgumentException("The input to asRanks cannot contain any NaN values"); 
 				}
+				
 				Float newRank;
 				if(i + 1 >= sorted.length || val != sorted[i+1]){ //Not a tie
 					newRank = new Float(i+1);
-				}else{ //This is a tie with the next one, advance i until we are at the first one that is a non-tie
+				}else{ //This is a tie with the next one, 
+					//Advance i until we are at the last item that is a tie with val.
+					
 					++i; //Go to the next item in the array
 					int runLength = 2; //The number of elements (at indices less than or equal to i) with a value val 
 					int runSum = (i-1+1)+(i+1); //The sum of the ranks of the elements in the run
@@ -84,6 +87,7 @@ public class SpearmanDep implements DependenceMeasure {
 					// calculate the average rank and set that as the new rank.
 					newRank = new Float(((float)runSum)/runLength); 
 				}
+				
 				Float f = new Float(val);
 				assert(!rank.containsKey(f));
 				rank.put(f, newRank);
