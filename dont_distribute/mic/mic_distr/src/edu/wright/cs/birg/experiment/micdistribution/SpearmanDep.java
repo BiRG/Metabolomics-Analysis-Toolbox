@@ -59,10 +59,6 @@ public class SpearmanDep implements DependenceMeasure {
 		
 		float[] sorted = in.clone();
 		Arrays.sort(sorted);
-		int[] provisionalRanks = new int[sorted.length];
-		for(int i = 0; i < sorted.length; ++i){
-			provisionalRanks[i]=i+1;
-		}
 		
 		{
 			int i = 0;
@@ -73,15 +69,15 @@ public class SpearmanDep implements DependenceMeasure {
 				}
 				Float newRank;
 				if(i + 1 >= sorted.length || val != sorted[i+1]){ //Not a tie
-					newRank = new Float(provisionalRanks[i]);
+					newRank = new Float(i+1);
 				}else{ //This is a tie with the next one, advance i until we are at the first one that is a non-tie
 					++i; //Go to the next item in the array
 					int runLength = 2; //The number of elements (at indices less than or equal to i) with a value val 
-					int runSum = provisionalRanks[i-1]+provisionalRanks[i]; //The sum of the ranks of the elements in the run
+					int runSum = (i-1+1)+(i+1); //The sum of the ranks of the elements in the run
 					while(i+1 < sorted.length && val == sorted[i+1]){ //While the current item is in a tie with the next one 
-						runSum += provisionalRanks[i+1];
-						++runLength;
-						++i;
+						++i; //Advance to the next item
+						++runLength; //Increase the length of the run
+						runSum += i+1; //Add the rank of the new (now current) item to the sum
 					}
 					// Here i is the last element in the run, so the runLength and
 					// runSum include the whole run of identical elements. We can now
