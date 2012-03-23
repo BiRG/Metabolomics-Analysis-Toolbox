@@ -95,8 +95,9 @@ public final class MICDistributionCalculator {
 			System.out.println("       0, then the y coordinate is sampled noise-free.");
 			System.out.println("-rel   The short name of the base relation from which the samples are drawn");
 			System.out.println("-nsamp a comma separated list of the sample sizes that will be used for");
-			System.out.println("       generating the instances. Note: do not include spaces or the shell");
-			System.out.println("       will break the list up into two options and you will get an error.");
+			System.out.println("       generating the instances. You must have at least 4 samples so that");
+			System.out.println("       MIC may be used. Note: do not include spaces or the shell will break");
+			System.out.println("       the list up into two options and you will get an error.");
 			System.out.println("-inst  The number of instances whose dependences will be added to the ");
 			System.out.println("       database");
 			System.out.println("-c     by what factor clumps may outnumber columns when OptimizeXAxis is ");
