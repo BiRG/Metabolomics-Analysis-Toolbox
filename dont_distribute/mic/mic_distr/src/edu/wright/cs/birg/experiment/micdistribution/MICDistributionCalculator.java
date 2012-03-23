@@ -5,6 +5,7 @@ package edu.wright.cs.birg.experiment.micdistribution;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public final class MICDistributionCalculator {
 	private static enum Command{
-		help, generate, listrelations, dbdump, dbmerge, dbtomat
+		help, generate, listrelations, listdeps, dbdump, dbmerge, dbtomat
 	}
 	
 	/**
@@ -110,9 +111,16 @@ public final class MICDistributionCalculator {
 		case listrelations:
 			System.out.println("listrelations");
 			System.out.println("The listrelations command takes no arguments and prints the available ");
-			System.out.println("base relations along with their names and ids as a tab-separated list ");
+			System.out.println("base relations including their names and ids as a tab-separated list ");
 			System.out.println("to stdout. Each row is one relation. The first column is the id, the ");
 			System.out.println("second, the relation's short name, and the third, the full name");
+			break;
+		case listdeps:
+			System.out.println("listdeps");
+			System.out.println("The listdeps command takes no arguments and prints the available ");
+			System.out.println("dependence measures along with their names and ids as a tab-separated list ");
+			System.out.println("to stdout. Each row is one measure. The first column is the id and the ");
+			System.out.println("second, the measure's name");
 			break;
 		case dbdump:
 			System.out.println("dbdump [relationids|relationnames] < input_file.ser > output_file.tsv");
@@ -138,6 +146,7 @@ public final class MICDistributionCalculator {
 		case help:
 			help(new String[0]);
 			break;
+
 		}
 	}
 	
@@ -154,7 +163,6 @@ public final class MICDistributionCalculator {
 		}
 		return true;
 	}
-
 	
 	/**
 	 * Wrapper around Reshef's code to generate the MINE characteristic matrix. The returned matrix will have
@@ -347,6 +355,9 @@ public final class MICDistributionCalculator {
 		case listrelations:
 			listrelations(rest);
 			return;
+		case listdeps:
+			listdeps(rest);
+			return;
 		case dbdump:
 			System.err.println("Sorry, the "+c+" command is not implemented yet.");
 			//TODO: implement dbdump command
@@ -360,6 +371,33 @@ public final class MICDistributionCalculator {
 			//TODO: implement dbtomat command
 			return;
 		}
+	}
+
+	/**
+	 * Execute the listdeps command.
+	 * @param rest Ignored argument containing the rest of the command line arguments
+	 */
+	private static void listdeps(@SuppressWarnings("unused") String[] rest) {
+		List<DependenceMeasure> measures=allDepsButMIC();
+		for(DependenceMeasure m: measures){
+			System.out.print(m.getID());
+			System.out.print('\t');
+			System.out.println(m.getName());
+		}
+		System.out.println("4+\tMaximal Information Coefficient (MIC) with that number of bins");
+	}
+
+	/**
+	 * Return a list containing objects for all available dependence measures
+	 * except MIC (which is a special case).
+	 * 
+	 * @return a list containing objects for all available dependence measures
+	 *         except MIC (which is a special case).
+	 */
+	private static List<DependenceMeasure> allDepsButMIC() {
+		List<DependenceMeasure> l = new LinkedList<DependenceMeasure>();
+		l.add(new PearsonDep());
+		return l;
 	}
 
 }
