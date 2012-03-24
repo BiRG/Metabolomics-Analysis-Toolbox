@@ -330,8 +330,9 @@ public final class MICDistributionCalculator {
 	 * @param args The command-line arguments
 	 */
 	public static void main(String[] args) {
-		PrintWriter errOut = new PrintWriter(System.err);
-		PrintWriter txtOut = new PrintWriter(System.out);
+		PrintWriter errOut = new PrintWriter(System.err, true); //Stream for errors and status
+		PrintWriter txtOut = new PrintWriter(System.out, true); //Stream for printing normal messages
+		OutputStream dbOut = System.out; //Stream for printing the output database
 		
 		//Print an error if there were no arguments
 		if(args.length < 1){
@@ -356,7 +357,7 @@ public final class MICDistributionCalculator {
 			help(rest, txtOut, errOut);
 			return;
 		case generate:
-			generate(rest, txtOut, errOut, System.out);
+			generate(rest, errOut, dbOut);
 			return;
 		case listrelations:
 			listrelations(txtOut);
@@ -534,10 +535,12 @@ public final class MICDistributionCalculator {
 	}
 
 	/**
-	 * Execute the generate command
-	 * @param args The command line arguments to the generate command 
+	 * Execute the generate command.
+	 * @param args The arguments to the generate command
+	 * @param errOut The stream for status messages and 
+	 * @param out The stream to which the generated database will be written
 	 */
-	private static void generate(String[] args, PrintWriter txtOut, PrintWriter errOut, @SuppressWarnings("unused") OutputStream out) {
+	private static void generate(String[] args, PrintWriter errOut, OutputStream out) {
 		ArgsForGenerate a;
 		try {
 			a = new ArgsForGenerate(args);
@@ -546,6 +549,7 @@ public final class MICDistributionCalculator {
 			return;
 		}
 		//TODO: a stub for generate
+		PrintWriter txtOut = new PrintWriter(out, true);
 		txtOut.println("Generate called with args corresponding to "+a.toString());
 	}
 
