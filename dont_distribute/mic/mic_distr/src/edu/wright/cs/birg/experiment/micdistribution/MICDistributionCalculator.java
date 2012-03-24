@@ -4,10 +4,14 @@
 package edu.wright.cs.birg.experiment.micdistribution;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -336,6 +340,7 @@ public final class MICDistributionCalculator {
 		PrintWriter errOut = new PrintWriter(System.err, true); //Stream for errors and status
 		PrintWriter txtOut = new PrintWriter(System.out, true); //Stream for printing normal messages
 		OutputStream dbOut = System.out; //Stream for printing the output database
+		InputStream dbIn = System.in; //Stream for reading the input database
 		
 		//Print an error if there were no arguments
 		if(args.length < 1){
@@ -369,8 +374,7 @@ public final class MICDistributionCalculator {
 			listdeps(txtOut);
 			return;
 		case dbdump:
-			errOut.println("Sorry, the "+c+" command is not implemented yet.");
-			//TODO: implement dbdump command
+			dbdump(rest, dbIn, txtOut, errOut);
 			return;
 		case dbmerge:
 			errOut.println("Sorry, the "+c+" command is not implemented yet.");
@@ -383,6 +387,78 @@ public final class MICDistributionCalculator {
 		}
 	}
 	
+	/**
+	 * Run the dbdump command. Prints the database read from dbIn to txtOut as a csv file. Whether the relations are printed as strings or numbers is determined by the contents of args.
+	 * @param args The command-line arguments to the dbdump command. Cannot be null.
+	 * @param dbIn The stream from which the input database will be read. Cannot be null.
+	 * @param txtOut The stream on which the output csv will be written. Cannot be null.
+	 * @param errOut The stream for errors and status messages. Cannot be null.
+	 */
+	private static void dbdump(String[] args, InputStream dbIn,
+			PrintWriter txtOut, PrintWriter errOut) {
+		ObjectInputStream obIn;
+		try {
+			obIn = new ObjectInputStream(dbIn);
+		} catch (IOException e) {
+			errOut.println("Error creating object input stream - probably wrong file format. The full error is: "+e.getLocalizedMessage());
+			return;
+		} 
+
+		Database db = null;
+		try {
+			db = (Database)obIn.readObject();
+		} catch (IOException e) {
+			errOut.println("Error: could read database from input io exception: "+e.getLocalizedMessage());
+			return;
+		} catch (ClassNotFoundException e) {
+			errOut.println("Error: could read database from input class not found exception: "+e.getLocalizedMessage());
+			return;
+		}
+		if(args.length != 1){
+			printUsage("Wrong number of arguments to dbdump", errOut);
+			return;
+		}
+		boolean printIds;
+		String relation_header;
+		if(args[0].equals("relationids")){
+			printIds = true;
+			relation_header = "relation id";
+		}else if(args[0].equals("relationnames")){
+			printIds = false;
+			relation_header = "relation name";
+		}else{
+			printUsage(args[0]+" is not a known argument to dbdump", errOut);
+			return;
+		}
+		List<Relation> relations=allRelations();
+		HashMap<Integer,String> relNameForID = new HashMap<Integer, String>(5*relations.size());
+		for(Relation r:relations){
+			relNameForID.put(new Integer(r.getId()), r.getShortName());
+		}
+		
+		
+		txtOut.println("instance id\t"+relation_header+"\tnumber of samples\tx noise standard deviation\ty noise standard deviation\tdependence measure id\tdependence value");
+		Iterator<DataPoint> it= db.dataPointIterator();
+		while(it.hasNext()){
+			DataPoint p = it.next();
+			txtOut.print(p.instanceID);	txtOut.print('\t');
+			if(printIds){
+				txtOut.print(p.relationID);
+			}else{
+				String name = relNameForID.get(new Integer(p.relationID));
+				txtOut.print(name);
+			}
+			txtOut.print('\t');
+
+			txtOut.print(p.numSamples); txtOut.print('\t');
+			txtOut.print(p.xNoiseStandardDeviation); txtOut.print('\t');
+			txtOut.print(p.yNoiseStandardDeviation); txtOut.print('\t');
+			txtOut.print(p.dependenceMeasureID); txtOut.print('\t');
+			txtOut.printf("%.9f",new Float(p.dependence)); 
+			txtOut.println();
+		}
+	}
+
 	/**
 	 * Class to encapsulate the parsing of command line arguments for the generate command
 	 * @author Eric Moyer
