@@ -582,6 +582,7 @@ public final class MICDistributionCalculator {
 					record.dependences[firstUnfilledDep] = dm.dependence(inst);
 					++firstUnfilledDep;
 				}
+				db.add(record);
 			}
 		}
 		ObjectOutputStream objOut;
@@ -656,9 +657,11 @@ public final class MICDistributionCalculator {
 			float[] row = mineMatrix[i];
 			if(row == null){ continue; }
 			for(int j = 2; j < row.length; ++j){
-				int numBins = i+j;
+				int numBins = i*j;
 				int micIndex = numBins - 4;
-				mic[micIndex] = Math.max(mic[micIndex], row[j]);
+				if(micIndex < mic.length){
+					mic[micIndex] = Math.max(mic[micIndex], row[j]);
+				}
 			}
 		}
 		
