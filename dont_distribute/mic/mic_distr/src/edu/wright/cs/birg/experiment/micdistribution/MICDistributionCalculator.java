@@ -3,7 +3,8 @@
  */
 package edu.wright.cs.birg.experiment.micdistribution;
 
-import java.io.PrintStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +24,7 @@ public final class MICDistributionCalculator {
 	 * @param msg The message to print after the usage message. not printed if null.
 	 * @param out The stream on which to print the message, can't be null
 	 */	
-	public static void printUsage(String msg, PrintStream out){
+	public static void printUsage(String msg, PrintWriter out){
 		out.println("Usage: java -jar distr.jar command [command options] > output");
 		out.println("Executes command with its options and sends the result to standard output");
 		out.println("");
@@ -44,7 +45,7 @@ public final class MICDistributionCalculator {
 		// next row, so I'm really word-wrapping on the 74th column
 		for(String s:strs){
 			if(linePos + s.length() > 75){
-				System.out.println();
+				out.println();
 				linePos = 0;
 			}
 			out.print(s);
@@ -64,88 +65,90 @@ public final class MICDistributionCalculator {
 	 * Print the help message given that args are the command-line arguments
 	 * that followed the help command on the command-line
 	 * @param args The command-line arguments occurring after "help" on the command line
+	 * @param errOut The stream for normal text
+	 * @param txtOut The stream for errors and status messages
 	 */
-	public static void help(String[] args){
+	public static void help(String[] args, PrintWriter txtOut, PrintWriter errOut){
 		if(args.length < 1){
-			printUsage(null, System.out);
+			printUsage(null, txtOut);
 			return;
 		}
 		Command c;
 		try{
 			c = Command.valueOf(args[0]);
 		}catch (IllegalArgumentException e){
-			printUsage(args[0]+" is an unknown command. Help must be called with a known command.", System.err);
+			printUsage(args[0]+" is an unknown command. Help must be called with a known command.", errOut);
 			return;
 		}
 			
 		switch(c){
 		case generate: 
-			System.out.println("generate -xstd num -ystd num -rel shortname -nsamp n1,n2,n3...nm ");
-			System.out.println("         -inst numinst -c num -seed num > database_file");
-			System.out.println("The generate command generates a database of measurements of the MIC");
-			System.out.println("and other dependence measures using numinst instances of data representing ");
-			System.out.println("a particular relation sampled a certain number of times with a particular ");
-			System.out.println("noise distribution. It generates tuples for each listed sample size.");
-			System.out.println("");
-			System.out.println("The command takes key-value pair arguments that can be listed in any");
-			System.out.println("order. All of the arguments must be present however. The meaning of each");
-			System.out.println("argument is:");
-			System.out.println("-xstd  The standard deviation of the noise added to the x coordinate. If");
-			System.out.println("       0, then the x coordinate is sampled noise-free.");
-			System.out.println("-ystd  The standard deviation of the noise added to the y coordinate. If");
-			System.out.println("       0, then the y coordinate is sampled noise-free.");
-			System.out.println("-rel   The short name of the base relation from which the samples are drawn");
-			System.out.println("-nsamp a comma separated list of the sample sizes that will be used for");
-			System.out.println("       generating the instances. You must have at least 4 samples so that");
-			System.out.println("       MIC may be used. Note: do not include spaces or the shell will break");
-			System.out.println("       the list up into two options and you will get an error.");
-			System.out.println("-inst  The number of instances whose dependences will be added to the ");
-			System.out.println("       database");
-			System.out.println("-c     by what factor clumps may outnumber columns when OptimizeXAxis is ");
-			System.out.println("       called. When trying to partition the x-axis into x columns, ");
-			System.out.println("       the algorithm will start with at most cx clumps. This option only");
-			System.out.println("       affects the calculation of the MIC dependence and is the same as ");
-			System.out.println("       the c option to MINE.jar.");
-			System.out.println("-seed  The seed to use in starting the pseudorandom number generator.");
-			System.out.println("       Cannot be 0.");
+			txtOut.println("generate -xstd num -ystd num -rel shortname -nsamp n1,n2,n3...nm ");
+			txtOut.println("         -inst numinst -c num -seed num > database_file");
+			txtOut.println("The generate command generates a database of measurements of the MIC");
+			txtOut.println("and other dependence measures using numinst instances of data representing ");
+			txtOut.println("a particular relation sampled a certain number of times with a particular ");
+			txtOut.println("noise distribution. It generates tuples for each listed sample size.");
+			txtOut.println("");
+			txtOut.println("The command takes key-value pair arguments that can be listed in any");
+			txtOut.println("order. All of the arguments must be present however. The meaning of each");
+			txtOut.println("argument is:");
+			txtOut.println("-xstd  The standard deviation of the noise added to the x coordinate. If");
+			txtOut.println("       0, then the x coordinate is sampled noise-free.");
+			txtOut.println("-ystd  The standard deviation of the noise added to the y coordinate. If");
+			txtOut.println("       0, then the y coordinate is sampled noise-free.");
+			txtOut.println("-rel   The short name of the base relation from which the samples are drawn");
+			txtOut.println("-nsamp a comma separated list of the sample sizes that will be used for");
+			txtOut.println("       generating the instances. You must have at least 4 samples so that");
+			txtOut.println("       MIC may be used. Note: do not include spaces or the shell will break");
+			txtOut.println("       the list up into two options and you will get an error.");
+			txtOut.println("-inst  The number of instances whose dependences will be added to the ");
+			txtOut.println("       database");
+			txtOut.println("-c     by what factor clumps may outnumber columns when OptimizeXAxis is ");
+			txtOut.println("       called. When trying to partition the x-axis into x columns, ");
+			txtOut.println("       the algorithm will start with at most cx clumps. This option only");
+			txtOut.println("       affects the calculation of the MIC dependence and is the same as ");
+			txtOut.println("       the c option to MINE.jar.");
+			txtOut.println("-seed  The seed to use in starting the pseudorandom number generator.");
+			txtOut.println("       Cannot be 0.");
 			break;
 		case listrelations:
-			System.out.println("listrelations");
-			System.out.println("The listrelations command takes no arguments and prints the available ");
-			System.out.println("base relations including their names and ids as a tab-separated list ");
-			System.out.println("to stdout. Each row is one relation. The first column is the id, the ");
-			System.out.println("second, the relation's short name, and the third, the full name");
+			txtOut.println("listrelations");
+			txtOut.println("The listrelations command takes no arguments and prints the available ");
+			txtOut.println("base relations including their names and ids as a tab-separated list ");
+			txtOut.println("to stdout. Each row is one relation. The first column is the id, the ");
+			txtOut.println("second, the relation's short name, and the third, the full name");
 			break;
 		case listdeps:
-			System.out.println("listdeps");
-			System.out.println("The listdeps command takes no arguments and prints the available ");
-			System.out.println("dependence measures along with their names and ids as a tab-separated list ");
-			System.out.println("to stdout. Each row is one measure. The first column is the id and the ");
-			System.out.println("second, the measure's name");
+			txtOut.println("listdeps");
+			txtOut.println("The listdeps command takes no arguments and prints the available ");
+			txtOut.println("dependence measures along with their names and ids as a tab-separated list ");
+			txtOut.println("to stdout. Each row is one measure. The first column is the id and the ");
+			txtOut.println("second, the measure's name");
 			break;
 		case dbdump:
-			System.out.println("dbdump [relationids|relationnames] < input_file.ser > output_file.tsv");
-			System.out.println("dumps the java serialized database to a tab-separated value file.");
-			System.out.println("The input database is read from standard input and the tab-separated");
-			System.out.println("file is written to standard output.");
-			System.out.println("");
-			System.out.println("The dbdump command takes one parameter which can be either \"relationids\"");
-			System.out.println("or \"relationames\". If the parameter is relationids, then the relation");
-			System.out.println("field is dumped as an ID number. If the parameter is relationnames");
-			System.out.println("then relation field is dumped as a string.");
+			txtOut.println("dbdump [relationids|relationnames] < input_file.ser > output_file.tsv");
+			txtOut.println("dumps the java serialized database to a tab-separated value file.");
+			txtOut.println("The input database is read from standard input and the tab-separated");
+			txtOut.println("file is written to standard output.");
+			txtOut.println("");
+			txtOut.println("The dbdump command takes one parameter which can be either \"relationids\"");
+			txtOut.println("or \"relationames\". If the parameter is relationids, then the relation");
+			txtOut.println("field is dumped as an ID number. If the parameter is relationnames");
+			txtOut.println("then relation field is dumped as a string.");
 			break;
 		case dbmerge:
-			System.out.println("dbmerge db1.ser db2.ser db3.ser ... > outputdb.ser");
-			System.out.println("Merges all database files listed as arguments into one database and");
-			System.out.println("prints that to stdout.");
+			txtOut.println("dbmerge db1.ser db2.ser db3.ser ... > outputdb.ser");
+			txtOut.println("Merges all database files listed as arguments into one database and");
+			txtOut.println("prints that to stdout.");
 			break;
 		case dbtomat:
-			System.out.println("dbtomat < inputdb.ser > outputdb.mat");
-			System.out.println("Reads a database from stdin and writes it to stdout as a mat file.");
-			System.out.println("Right now, the mat file will contain the relation id for each entry");			
+			txtOut.println("dbtomat < inputdb.ser > outputdb.mat");
+			txtOut.println("Reads a database from stdin and writes it to stdout as a mat file.");
+			txtOut.println("Right now, the mat file will contain the relation id for each entry");			
 			break;
 		case help:
-			help(new String[0]);
+			help(new String[0], txtOut, errOut);
 			break;
 
 		}
@@ -307,18 +310,18 @@ public final class MICDistributionCalculator {
 
 	
 	/**
-	 * Execute the listrelations command. Currently ignores all arguments.
-	 * @param args The command-line arguments to the listrelations command
+	 * Execute the listrelations command. Prints the list of relations as a tab-separated txt file to txtOut.
+	 * @param txtOut The stream for normal messages (on which the list will be printed)
 	 */
-	public static void listrelations(@SuppressWarnings("unused") String[] args){
+	public static void listrelations(PrintWriter txtOut){
 		List<Relation> rels = allRelations();
-		System.out.println("ID\tShort Name\tFull Name");
+		txtOut.println("ID\tShort Name\tFull Name");
 		for(Relation r:rels){
-			System.out.print(r.getId());
-			System.out.print("\t");
-			System.out.print(r.getShortName());
-			System.out.print("\t");
-			System.out.println(r.getFullName());
+			txtOut.print(r.getId());
+			txtOut.print("\t");
+			txtOut.print(r.getShortName());
+			txtOut.print("\t");
+			txtOut.println(r.getFullName());
 		}
 	}
 	
@@ -327,9 +330,12 @@ public final class MICDistributionCalculator {
 	 * @param args The command-line arguments
 	 */
 	public static void main(String[] args) {
+		PrintWriter errOut = new PrintWriter(System.err);
+		PrintWriter txtOut = new PrintWriter(System.out);
+		
 		//Print an error if there were no arguments
 		if(args.length < 1){
-			printUsage("Error: must have at least one argument",System.err); 
+			printUsage("Error: must have at least one argument",errOut); 
 			return;
 		}
 		assert(args.length >= 1);
@@ -339,7 +345,7 @@ public final class MICDistributionCalculator {
 		try{
 			c = Command.valueOf(args[0]);
 		}catch (IllegalArgumentException e){
-			printUsage("Error: "+args[0]+" is not a known command.", System.err);
+			printUsage("Error: "+args[0]+" is not a known command.", errOut);
 			return;
 		}
 
@@ -347,27 +353,27 @@ public final class MICDistributionCalculator {
 		String[] rest = Arrays.copyOfRange(args, 1, args.length);
 		switch(c){
 		case help:
-			help(rest);
+			help(rest, txtOut, errOut);
 			return;
 		case generate:
-			generate(rest);
+			generate(rest, txtOut, errOut, System.out);
 			return;
 		case listrelations:
-			listrelations(rest);
+			listrelations(txtOut);
 			return;
 		case listdeps:
-			listdeps(rest);
+			listdeps(txtOut);
 			return;
 		case dbdump:
-			System.err.println("Sorry, the "+c+" command is not implemented yet.");
+			errOut.println("Sorry, the "+c+" command is not implemented yet.");
 			//TODO: implement dbdump command
 			return;
 		case dbmerge:
-			System.err.println("Sorry, the "+c+" command is not implemented yet.");
+			errOut.println("Sorry, the "+c+" command is not implemented yet.");
 			//TODO: implement dbmerge command
 			return;
 		case dbtomat:
-			System.err.println("Sorry, the "+c+" command is not implemented yet.");
+			errOut.println("Sorry, the "+c+" command is not implemented yet.");
 			//TODO: implement dbtomat command
 			return;
 		}
@@ -531,16 +537,16 @@ public final class MICDistributionCalculator {
 	 * Execute the generate command
 	 * @param args The command line arguments to the generate command 
 	 */
-	private static void generate(String[] args) {
+	private static void generate(String[] args, PrintWriter txtOut, PrintWriter errOut, @SuppressWarnings("unused") OutputStream out) {
 		ArgsForGenerate a;
 		try {
 			a = new ArgsForGenerate(args);
 		} catch (ArgsForGenerate.ParseException e) {
-			printUsage(e.getMessage(),System.err);
+			printUsage(e.getMessage(),errOut);
 			return;
 		}
 		//TODO: a stub for generate
-		System.out.println("Generate called with args corresponding to "+a.toString());
+		txtOut.println("Generate called with args corresponding to "+a.toString());
 	}
 
 	/**
@@ -560,16 +566,15 @@ public final class MICDistributionCalculator {
 
 	/**
 	 * Execute the listdeps command.
-	 * @param rest Ignored argument containing the rest of the command line arguments
 	 */
-	private static void listdeps(@SuppressWarnings("unused") String[] rest) {
+	private static void listdeps(PrintWriter txtOut) {
 		List<DependenceMeasure> measures=allDepsButMIC();
 		for(DependenceMeasure m: measures){
-			System.out.print(m.getID());
-			System.out.print('\t');
-			System.out.println(m.getName());
+			txtOut.print(m.getID());
+			txtOut.print('\t');
+			txtOut.println(m.getName());
 		}
-		System.out.println("4+\tMaximal Information Coefficient (MIC) with that number of bins");
+		txtOut.println("4+\tMaximal Information Coefficient (MIC) with that number of bins");
 	}
 
 	/**
