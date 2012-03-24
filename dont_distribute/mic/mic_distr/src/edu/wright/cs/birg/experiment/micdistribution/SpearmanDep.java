@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Absolute value of the Spearman rank-correlation coefficient
  * @author Eric Moyer
  *
  */
@@ -26,7 +27,7 @@ public class SpearmanDep implements DependenceMeasure {
 	 */
 	@Override
 	public String getName() {
-		return "Spearman rank correlation";
+		return "Absolute value of Spearman rank correlation";
 	}
 
 	/* (non-Javadoc)
@@ -35,7 +36,7 @@ public class SpearmanDep implements DependenceMeasure {
 	@Override
 	public float dependence(Instance inst) {
 		Instance rankInst = new Instance(asRanks(inst.x), asRanks(inst.y));
-		return PearsonDep.valueOf(rankInst);
+		return Math.abs(PearsonDep.valueOf(rankInst));
 	}
 
 	/**

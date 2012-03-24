@@ -4,9 +4,11 @@
 package edu.wright.cs.birg.experiment.micdistribution;
 
 /**
+ * Absolute value of pearson coefficient
  * @author Eric Moyer
  *
  */
+//TODO: fix Pearson so it returns values in the interval 0..1, it currently can return values like 3.333333254
 public final class PearsonDep implements DependenceMeasure {
 
 	/* (non-Javadoc)
@@ -22,7 +24,7 @@ public final class PearsonDep implements DependenceMeasure {
 	 */
 	@Override
 	public String getName() {
-		return "Pearson product-moment correlation coefficient";
+		return "Absolute value of Pearson product-moment correlation coefficient";
 	}
 
 	/* (non-Javadoc)
@@ -30,7 +32,7 @@ public final class PearsonDep implements DependenceMeasure {
 	 */
 	@Override
 	public float dependence(Instance inst) {
-		return PearsonDep.valueOf(inst);
+		return Math.abs(PearsonDep.valueOf(inst));
 	}
 
 	/**
