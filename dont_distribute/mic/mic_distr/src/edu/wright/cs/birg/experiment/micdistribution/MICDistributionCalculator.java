@@ -3,11 +3,14 @@
  */
 package edu.wright.cs.birg.experiment.micdistribution;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author Eric Moyer
@@ -548,9 +551,125 @@ public final class MICDistributionCalculator {
 			printUsage(e.getMessage(),errOut);
 			return;
 		}
-		//TODO: a stub for generate
-		PrintWriter txtOut = new PrintWriter(out, true);
-		txtOut.println("Generate called with args corresponding to "+a.toString());
+
+		Database db = new Database();
+		Random rng = new Random(a.seed);
+		List<DependenceMeasure> deps = allDepsButMIC();
+		for(Integer sampleSize : a.sampleSizes){
+			int numSamples = sampleSize.intValue();
+			int numMICs = numSamples-4+1;
+			for(int instNum = 0; instNum < a.numInst; ++instNum){
+				DBInstance record = new DBInstance(a.relation.getId(), (float)a.xStd, (float)a.yStd, numSamples, 
+						deps.size()+numMICs);
+				Instance inst = a.relation.samples(rng, numSamples);
+				addNoise(inst.x, a.xStd, rng);
+				addNoise(inst.y, a.yStd, rng);
+				
+				//Record dependence measures
+				int firstUnfilledDep = 0;
+				
+				//First record mics
+				float[] mics = micScores(inst, a.clumpFactor);
+				assert(numMICs == mics.length);
+				for(; firstUnfilledDep < mics.length; ++firstUnfilledDep){
+					record.dependenceMeasureIds[firstUnfilledDep] = firstUnfilledDep+4;
+					record.dependences[firstUnfilledDep] = mics[firstUnfilledDep];
+				}
+				
+				//Then record the rest of the dependences
+				for(DependenceMeasure dm: deps){
+					record.dependenceMeasureIds[firstUnfilledDep] = dm.getID();
+					record.dependences[firstUnfilledDep] = dm.dependence(inst);
+					++firstUnfilledDep;
+				}
+			}
+		}
+		ObjectOutputStream objOut;
+		try {
+			objOut = new ObjectOutputStream(out);
+		} catch (IOException e) {
+			errOut.println("Error: Could not open the output stream to write the database: "+e.getLocalizedMessage());
+			return;
+		}
+		try {
+			objOut.writeObject(db);
+			return;
+		} catch (IOException e) {
+			errOut.println("Error: could not write database: "+e.getLocalizedMessage());
+			return;
+		}
+	}
+
+	/**
+	 * Adds zero-mean Gaussian noise with a standard deviation of std to each
+	 * entry in x. If std is 0, then does nothing.
+	 * 
+	 * @param x
+	 *            The entries to which noise will be added. Cannot be null. Will
+	 *            be modified
+	 * @param std
+	 *            The standard deviation of the noise. Cannot be negative.
+	 * @param rng
+	 *            The random number generator used to generate the noise.
+	 */
+	private static void addNoise(float[] x, double std, Random rng) {
+		if(std < 0.0){
+			throw new IllegalArgumentException("The standard deviation passed to addNoise cannot be negative");
+		}else if(std == 0){
+			return;
+		}else{
+			for(int i = 0; i < x.length; ++i){
+				x[i] += rng.nextGaussian()*std;
+			}
+			return;
+		}
+	}
+
+	/**
+	 * Return an array a such that a[i] is the MIC score of that instance for
+	 * i+4 bins. a will have inst.getNumSamples()-4+1 entries.
+	 * 
+	 * @param inst
+	 *            The instance for which to calculate the score. It must have at least 4 samples.
+	 * @param maxClumpColumnRatio
+	 *            The clump ratio used in the MIC approximation, must be greater than 0.
+	 * @return an array a such that a[i] is the MIC score of that instance for
+	 *         i+4 bins.
+	 */
+	private static float[] micScores(Instance inst, int maxClumpColumnRatio) {
+		if(inst.getNumSamples() < 4){
+			throw new IllegalArgumentException("The instances passed to micScores must have at least 4 samples. The instance passed had "+inst.getNumSamples());
+		}
+		if(maxClumpColumnRatio <= 0){
+			throw new IllegalArgumentException("The clump factor passed to micScores must be greater than 0. The clump factor passed had "+maxClumpColumnRatio);
+		}
+		// Initialize the array of MICs to the minimum possible MIC score - 0
+		float[] mic = new float[inst.getNumSamples()-4+1];
+		Arrays.fill(mic, 0);
+		
+		// Calculate the MINE characteristic matrix
+		float[][] mineMatrix = reshefMINEWrapper(inst.x, inst.y, maxClumpColumnRatio);
+		
+		// Fill mic with entries such that mic[i] is the maximum normalized mine
+		// score for a binning with exactly i+4 bins
+		for(int i = 2; i < mineMatrix.length; ++i){
+			float[] row = mineMatrix[i];
+			if(row == null){ continue; }
+			for(int j = 2; j < row.length; ++j){
+				int numBins = i+j;
+				int micIndex = numBins - 4;
+				mic[micIndex] = Math.max(mic[micIndex], row[j]);
+			}
+		}
+		
+		// Recalculate the mic entries so that mic[i] is the maximum score of any
+		// number of bins less than or equal to i+4, that is, it is the MIC for i+4
+		// bins
+		for(int i = 1; i < mic.length; ++i){
+			mic[i]=Math.max(mic[i-1],mic[i]);
+		}
+		
+		return mic;
 	}
 
 	/**
