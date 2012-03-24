@@ -91,6 +91,7 @@ public class SpearmanDep implements DependenceMeasure {
 				Float f = new Float(val);
 				assert(!rank.containsKey(f));
 				rank.put(f, newRank);
+				++i;
 			}
 		}
 		
