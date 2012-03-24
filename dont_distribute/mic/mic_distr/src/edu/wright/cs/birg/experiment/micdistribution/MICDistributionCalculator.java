@@ -107,6 +107,7 @@ public final class MICDistributionCalculator {
 			System.out.println("       affects the calculation of the MIC dependence and is the same as ");
 			System.out.println("       the c option to MINE.jar.");
 			System.out.println("-seed  The seed to use in starting the pseudorandom number generator.");
+			System.out.println("       Cannot be 0.");
 			break;
 		case listrelations:
 			System.out.println("listrelations");
@@ -349,8 +350,7 @@ public final class MICDistributionCalculator {
 			help(rest);
 			return;
 		case generate:
-			System.err.println("Sorry, the "+c+" command is not implemented yet.");
-			//TODO: implement generate command
+			generate(rest);
 			return;
 		case listrelations:
 			listrelations(rest);
@@ -371,6 +371,191 @@ public final class MICDistributionCalculator {
 			//TODO: implement dbtomat command
 			return;
 		}
+	}
+	
+	/**
+	 * Class to encapsulate the parsing of command line arguments for the generate command
+	 * @author Eric Moyer
+	 */
+	private static class ArgsForGenerate{
+		/**
+		 * The value of the -xstd argument
+		 */
+		double xStd; 
+		/**
+		 * The value of the -ystd argument
+		 */
+		double yStd; 
+		/**
+		 * The value of the -rel argument
+		 */
+		Relation relation;
+		/**
+		 * The value of the -nsamp argument 
+		 */
+		List<Integer> sampleSizes;
+		/**
+		 * The value of the -inst argument
+		 */
+		int numInst;
+		/**
+		 * The value of the -c argument
+		 */
+		int clumpFactor;
+		/**
+		 * The value of the -seed argument
+		 */		
+		long seed;
+		
+		/**
+		 * Indicates that there was a problem parsing the command line arguments for the generate command
+		 * 
+		 * @author Eric Moyer
+		 *
+		 */
+		@SuppressWarnings("serial")
+		public static class ParseException extends Exception{
+			ParseException(String usageError){
+				super(usageError);
+			}
+		}
+
+		/**
+		 * Parse args and create an ArgsForGenerate object if they are valid. If
+		 * not, throws a ParseException with an exception message that should be
+		 * passed to printUsage before exiting.
+		 * 
+		 * @param args
+		 * @throws ParseException
+		 *             If there is a syntax error in the arguments. The
+		 *             exception message is what should be passed to printUsage.
+		 */
+		ArgsForGenerate(String[] args) throws ParseException{
+			if(args.length != 14){
+				throw new ParseException("Wrong number of arguments passed to generate command. It should take 7 key-value pairs.");
+			}
+
+			xStd = -1; 
+			yStd = -1; 
+			relation = null;
+			sampleSizes = new LinkedList<Integer>();
+			numInst = -1;
+			clumpFactor = -1;
+			seed = 0;
+
+			for(int i = 0; i+1 < args.length; i+=2){
+				String key = args[i].toLowerCase();
+				String value = args[i+1];
+				try{
+					if(key.equals("-xstd")){
+						xStd = Double.valueOf(value).doubleValue();
+						if(xStd < 0){
+							throw new ParseException("The x standard deviation must not be negative.");
+						}
+					}else if(key.equals("-ystd")){
+						yStd = Double.valueOf(value).doubleValue();
+						if(yStd < 0){
+							throw new ParseException("The y standard deviation must not be negative.");
+						}
+					}else if(key.equals("-rel")){
+						relation = relationFor(value);
+						if(relation == null){
+							throw new ParseException("\""+value+"\" is not a known relation short name.");
+						}
+					}else if(key.equals("-nsamp")){
+						String[] values = value.split(",");
+						for(String v:values){
+							Integer size = Integer.valueOf(v);
+							if(size.intValue() < 4){
+								throw new ParseException("Sample sizes must be at least 4.");
+							}
+							sampleSizes.add(size);
+						}
+					}else if(key.equals("-inst")){
+						numInst = Integer.valueOf(value).intValue();
+						if(numInst < 1){
+							throw new ParseException("There must be at least one instance generated.");
+						}
+					}else if(key.equals("-c")){
+						clumpFactor = Integer.valueOf(value).intValue();
+						if(clumpFactor < 1){
+							throw new ParseException("The clump factor (c) must be at least 1");
+						}
+					}else if(key.equals("-seed")){
+						seed = Long.valueOf(value).longValue();
+						if(seed == 0){
+							throw new ParseException("The seed cannot be 0");
+						}
+					}else{
+						throw new ParseException("Error: \""+key+"\" is not a known option to the generate command.");
+					}
+				}catch (NumberFormatException e){
+					throw new ParseException("Error: \""+value+"\" is not a proper argument for the "+
+							key+" option.");
+				}
+			}
+			String missing="";
+			if(xStd == -1){
+				missing = "-xstd";
+			}else if(yStd == -1){
+				missing = "-ystd";
+			}else if(relation == null){
+				missing = "-rel";
+			}else if(sampleSizes.size() == 0){
+				missing = "-nsamp";
+			}else if(numInst == -1){
+				missing = "-inst";
+			}else if(clumpFactor == -1){
+				missing = "-c";
+			}else if(seed == 0){
+				missing = "-seed";
+			}
+			if(!missing.equals("")){
+				throw new ParseException("Error: missing the "+missing+" option to the generate command.");
+			}
+		}
+		
+		@Override
+		public String toString(){
+			String out = "-xstd "+xStd+" -ystd "+yStd+" -rel "+relation.getShortName()+
+					" -nsamp ";
+			for(int i = 0; i < sampleSizes.size(); ++i){
+				out = out + sampleSizes.get(i); if(i + 1 < sampleSizes.size()){ out = out + ","; }
+			}
+			out = out + " -inst "+numInst+" -c "+clumpFactor+" -seed "+seed;
+			return out;
+		}
+	}
+
+	/**
+	 * Execute the generate command
+	 * @param args The command line arguments to the generate command 
+	 */
+	private static void generate(String[] args) {
+		ArgsForGenerate a;
+		try {
+			a = new ArgsForGenerate(args);
+		} catch (ArgsForGenerate.ParseException e) {
+			printUsage(e.getMessage(),System.err);
+			return;
+		}
+		//TODO: a stub for generate
+		System.out.println("Generate called with args corresponding to "+a.toString());
+	}
+
+	/**
+	 * Returns the relation with the short name field equal to shortName or null if there is no such relation. 
+	 * @param shortName The name of the relation to return 
+	 * @return the relation with the short name field equal to shortName or null if there is no such relation.
+	 */
+	private static Relation relationFor(String shortName) {
+		List<Relation> relations=allRelations();
+		for(Relation r:relations){
+			if(r.getShortName().equals(shortName)){
+				return r;
+			}
+		}
+		return null;
 	}
 
 	/**
