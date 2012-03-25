@@ -3,6 +3,9 @@
  */
 package edu.wright.cs.birg.experiment.micdistribution;
 
+import org.sureassert.uc.annotation.Exemplar;
+import org.sureassert.uc.annotation.Exemplars;
+
 /**
  * An instance of a bivariate dataset which can be assigned a dependence score.
  * Envisioned to result from sampling a Relation object.
@@ -31,7 +34,28 @@ public class Instance {
 	 *            y[i] is the y value of the i'th sample in this Instance.
 	 *            Cannot be null. Must be the same length as x.
 	 */
+	@Exemplars(set={
+	@Exemplar(args={"null","null"}, ee="IllegalArgumentException"),
+	@Exemplar(args={"pa:[0.0f]","null"}, ee="IllegalArgumentException"),
+	@Exemplar(args={"pa:[0.0f]","pa:[0.0f,1.1f]"}, ee="IllegalArgumentException"), 
+	@Exemplar(name="i0_0",
+		args={"pa:[0.0f]","pa:[0.0f]"},e={
+			"java/util/Arrays.equals(retval.x,pa:0f)",
+			"java/util/Arrays.equals(retval.y,pa:0f)"}
+	), 
+	@Exemplar(name="i01_10",
+		args={"pa:[0.0f,1f]","pa:[1f,0.0f]"},e={
+			"java/util/Arrays.equals(retval.x,[pa:0f,1f])",
+			"java/util/Arrays.equals(retval.y,[pa:1f,0f])"}
+	), 
+	@Exemplar(name="i012_120",
+		args={"pa:[0f,1f,2f]","pa:[1f,2f,0f]"},e={
+		"java/util/Arrays.equals(retval.x,[pa:0f,1f,2f])",
+		"java/util/Arrays.equals(retval.y,[pa:1f,2f,0f])"}
+	), 
+	})
 	Instance(float[] x, float[] y){
+		java.util.Arrays.equals(x, y);
 		if (x == null) {
 			throw new IllegalArgumentException(
 					"The x parameter in creating an instance cannot be null.");
