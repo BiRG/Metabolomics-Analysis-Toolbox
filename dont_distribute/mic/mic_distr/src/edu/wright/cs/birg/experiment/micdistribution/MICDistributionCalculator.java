@@ -18,6 +18,7 @@ import java.util.Random;
 
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
+import org.sureassert.uc.annotation.IgnoreTestCoverage;
 
 /**
  * @author Eric Moyer
@@ -34,6 +35,7 @@ public final class MICDistributionCalculator {
 	 * @param msg The message to print after the usage message. not printed if null.
 	 * @param out The stream on which to print the message, can't be null
 	 */	
+	@IgnoreTestCoverage
 	public static void printUsage(String msg, PrintWriter out){
 		out.println("Usage: java -jar distr.jar command [command options] > output");
 		out.println("Executes command with its options and sends the result to standard output");
@@ -78,6 +80,7 @@ public final class MICDistributionCalculator {
 	 * @param errOut The stream for normal text
 	 * @param txtOut The stream for errors and status messages
 	 */
+	@IgnoreTestCoverage
 	public static void help(String[] args, PrintWriter txtOut, PrintWriter errOut){
 		if(args.length < 1){
 			printUsage(null, txtOut);
@@ -238,6 +241,7 @@ public final class MICDistributionCalculator {
 	 * Return the list of all relations that can be tested by this calculator
 	 * @return the list of all relations that can be tested by this calculator
 	 */
+	@IgnoreTestCoverage
 	public static List<Relation> allRelations(){
 		List<Relation> rels = new java.util.LinkedList<Relation>();
 		//Random relationship
@@ -331,6 +335,7 @@ public final class MICDistributionCalculator {
 	 * Execute the listrelations command. Prints the list of relations as a tab-separated txt file to txtOut.
 	 * @param txtOut The stream for normal messages (on which the list will be printed)
 	 */
+	@IgnoreTestCoverage
 	public static void listrelations(PrintWriter txtOut){
 		List<Relation> rels = allRelations();
 		txtOut.println("ID\tShort Name\tFull Name");
@@ -347,6 +352,7 @@ public final class MICDistributionCalculator {
 	 * Calculate the distribution of the MIC over samples
 	 * @param args The command-line arguments
 	 */
+	@IgnoreTestCoverage
 	public static void main(String[] args) {
 		PrintWriter errOut = new PrintWriter(System.err, true); //Stream for errors and status
 		PrintWriter txtOut = new PrintWriter(System.out, true); //Stream for printing normal messages
@@ -405,6 +411,7 @@ public final class MICDistributionCalculator {
 	 * @param txtOut The stream on which the output csv will be written. Cannot be null.
 	 * @param errOut The stream for errors and status messages. Cannot be null.
 	 */
+	@IgnoreTestCoverage
 	private static void dbdump(String[] args, InputStream dbIn,
 			PrintWriter txtOut, PrintWriter errOut) {
 		ObjectInputStream obIn;
@@ -630,6 +637,7 @@ public final class MICDistributionCalculator {
 	 * @param errOut The stream for status messages and 
 	 * @param out The stream to which the generated database will be written
 	 */
+	@IgnoreTestCoverage
 	private static void generate(String[] args, PrintWriter errOut, OutputStream out) {
 		ArgsForGenerate a;
 		try {
@@ -780,6 +788,7 @@ public final class MICDistributionCalculator {
 	/**
 	 * Execute the listdeps command.
 	 */
+	@IgnoreTestCoverage
 	private static void listdeps(PrintWriter txtOut) {
 		List<DependenceMeasure> measures=allDepsButMIC();
 		for(DependenceMeasure m: measures){
@@ -797,6 +806,7 @@ public final class MICDistributionCalculator {
 	 * @return a list containing objects for all available dependence measures
 	 *         except MIC (which is a special case).
 	 */
+	@IgnoreTestCoverage
 	private static List<DependenceMeasure> allDepsButMIC() {
 		List<DependenceMeasure> l = new LinkedList<DependenceMeasure>();
 		l.add(new DistanceCorrelationDep());
