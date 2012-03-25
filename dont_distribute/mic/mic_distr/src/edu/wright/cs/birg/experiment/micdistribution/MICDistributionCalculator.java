@@ -16,6 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import org.sureassert.uc.annotation.Exemplar;
+import org.sureassert.uc.annotation.Exemplars;
+
 /**
  * @author Eric Moyer
  *
@@ -166,6 +169,14 @@ public final class MICDistributionCalculator {
 	 * @param x The array whose contents are examined.  Cannot be null
 	 * @return true if and only if there are fewer than two distinct values for the entries of x
 	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, ee="NullPointerException"),
+	@Exemplar(args={"edu/wright/cs/birg/test/ArrayUtils.emptyFloat()"}, expect="true"),
+	@Exemplar(args={"[pa:1.0f]"}, expect="true"),
+	@Exemplar(args={"[pa:0.0f]"}, expect="true"),
+	@Exemplar(args={"[pa:1.0f,0.0f]"}, expect="false"),
+	@Exemplar(args={"[pa:1.0f,1.0f]"}, expect="true"),
+	})
 	private static boolean hasLessThanTwoValues(float[] x) {
 		for(int i = 1; i < x.length; ++i){
 			if(x[i] != x[0]){
