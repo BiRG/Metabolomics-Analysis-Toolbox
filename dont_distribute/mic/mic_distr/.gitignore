@@ -3,3 +3,6 @@ bin
 distr.jar
 distr_lib
 distr.tgz
+.sabin
+.sasrc
+.sauc.obj

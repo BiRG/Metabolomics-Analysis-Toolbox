@@ -63,7 +63,16 @@ public final class ArrayUtils {
 	public static double[] emptyDouble(){
 		return new double[0];
 	}
-	
+
+	/**
+	 * Return an empty array of float
+	 * @return an empty array of float
+	 */
+	@Exemplar(expect="=(len(retval),0)")
+	public static float[] emptyFloat(){
+		return new float[0];
+	}
+		
 	/**
 	 * Return a string representation of an array suitable for Sureassert test code.</p><p>
 	 * 

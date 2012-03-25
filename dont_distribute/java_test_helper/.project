@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>MIC Distribution</name>
+	<name>JavaTestHelper</name>
 	<comment></comment>
 	<projects>
-		<project>Correlation Based Feature Selection</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -11,14 +10,8 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>com.sureassert.uc.saucBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>com.sureassert.uc.saucNature</nature>
 	</natures>
 </projectDescription>
