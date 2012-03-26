@@ -5,5 +5,6 @@
 	<classpathentry exported="true" kind="lib" path="/home/eric/omics_dev/dont_distribute/mic/mic_distr/MINE.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/eric/omics_dev/dont_distribute/mic/mic_distr/org.sureassert.uc.annotation-1.3.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JavaTestHelper"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JMatIO"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
