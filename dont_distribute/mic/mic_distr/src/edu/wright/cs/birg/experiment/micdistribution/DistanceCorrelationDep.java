@@ -44,6 +44,14 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 	 * @see edu.wright.cs.birg.experiment.micdistribution.DependenceMeasure#dependence(edu.wright.cs.birg.experiment.micdistribution.Instance)
 	 */
 	@Override
+	@Exemplars(set={
+	@Exemplar(args={"null"}, ee="NullPointerException"),
+	@Exemplar(args={"Instance/i0_0"}, expect="0f"), 
+	@Exemplar(args={"Instance/i01_10"}, expect="1f"),
+	@Exemplar(args={"Instance/i012_120"}, expect="0.7f"),
+	@Exemplar(args={"Instance/i0123_1032"}, expect="0.692307692f"),
+	@Exemplar(args={"Instance/i01234_34330"}, expect="0.591232712f"),
+	})
 	public float dependence(Instance inst) {
 		double[][] A = capitalLetterMatrix(inst.x);
 		double[][] B = capitalLetterMatrix(inst.y);
@@ -63,10 +71,19 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 	@Exemplars(set={
 	@Exemplar(a={"null","null"},ee="NullPointerException"),
 	@Exemplar(a={"[a:[pa:12d]]","null"},ee="NullPointerException"),
-	@Exemplar(a={"[a:]","[a:]"},ee="IllegalArgumentException"),
+	@Exemplar(a={"[edu/wright/cs/birg/test/ArrayUtils.emptyDoubleMatrix()]","[edu/wright/cs/birg/test/ArrayUtils.emptyDoubleMatrix()]"},ee="IllegalArgumentException"),
 	@Exemplar(a={"[a:[pa:0d],[pa:1d]]","[a:[pa:0d]]"},ee="IllegalArgumentException"),
 	@Exemplar(a={"[a:[pa:0d,1d]]","[a:[pa:0d]]"},ee="IllegalArgumentException"),
 	@Exemplar(a={"[a:[edu/wright/cs/birg/test/ArrayUtils.nullDouble()],[pa:0d]]","[a:[pa:0d],[pa:0d]]"},ee="NullPointerException"),
+	@Exemplar(a={"[pa:[pa:-0.5,0.5],[pa:0.5,-0.5]]","[pa:[pa:-0.5,0.5],[pa:0.5,-0.5]]"},e="0.25"),
+	@Exemplar(a={
+			"[pa:[pa:-1.1111111111111111, 0.22222222222222222,  0.88888888888888889], " +
+			"[pa:0.22222222222222222, -0.44444444444444444,  0.22222222222222222]," +
+			"[pa:0.88888888888888889,  0.22222222222222222, -1.1111111111111111]]",
+			"[pa:[pa:-0.44444444444444444,0.22222222222222222,  0.22222222222222222]," +
+			"[pa:0.22222222222222222, -1.1111111111111111,   0.88888888888888889]," +
+			"[pa:0.22222222222222222,0.88888888888888889,-1.1111111111111111]]"
+			},e="0.34567901234567901"),
 	})
 	private static double distanceCovariance(double[][] A, double[][] B){
 		if(A == null || B==null){
