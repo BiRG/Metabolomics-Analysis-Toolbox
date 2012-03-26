@@ -5,6 +5,9 @@ package edu.wright.cs.birg.experiment.micdistribution;
 
 import java.util.Arrays;
 
+import org.sureassert.uc.annotation.Exemplar;
+import org.sureassert.uc.annotation.Exemplars;
+
 /**
  * The sample distance correlation measure of dependence.
  * 
@@ -34,7 +37,7 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 	 */
 	@Override
 	public String getName() {
-		return "Distance Covariance";
+		return "Distance Correlation";
 	}
 
 	/* (non-Javadoc)
@@ -57,6 +60,14 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 	 * @param B the capital letter matrix for the other sample.  Cannot be null and must be the same size as A.
 	 * @return the distance covariance for two variables that have capital letter matrices A and B
 	 */
+	@Exemplars(set={
+	@Exemplar(a={"null","null"},ee="NullPointerException"),
+	@Exemplar(a={"[a:[pa:12d]]","null"},ee="NullPointerException"),
+	@Exemplar(a={"[a:]","[a:]"},ee="IllegalArgumentException"),
+	@Exemplar(a={"[a:[pa:0d],[pa:1d]]","[a:[pa:0d]]"},ee="IllegalArgumentException"),
+	@Exemplar(a={"[a:[pa:0d,1d]]","[a:[pa:0d]]"},ee="IllegalArgumentException"),
+	@Exemplar(a={"[a:[edu/wright/cs/birg/test/ArrayUtils.nullDouble()],[pa:0d]]","[a:[pa:0d],[pa:0d]]"},ee="NullPointerException"),
+	})
 	private static double distanceCovariance(double[][] A, double[][] B){
 		if(A == null || B==null){
 			throw new NullPointerException("The matrix arguments to distanceCovariance cannot be null");
@@ -106,7 +117,34 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 	 * @return Return the A matrix (as defined in SZÉKELY AND RIZZO p. 1242)
 	 *         given a list of points a.
 	 */
-	private static double[][] capitalLetterMatrix(float[] a){
+	@Exemplars(set={
+			@Exemplar(a="null",ee="NullPointerException"),	
+			@Exemplar(a="edu/wright/cs/birg/test/ArrayUtils.emptyFloat()",ee="IllegalArgumentException"),
+			@Exemplar(a="pa:7f",e="#=(retval,[a:[pa:0d]])"),
+			@Exemplar(a="pa:0f,1f",e="#=(retval,[a:[pa:-0.5d,0.5d],[pa:0.5d,-0.5d]])"),
+			@Exemplar(a="pa:0f,1f,2f",
+					e="#=(retval,[a:" +
+					"[pa:-1.1111111111111111d, 0.22222222222222222d, 0.88888888888888889]," +
+					"[pa:0.22222222222222222d,-0.44444444444444444d, 0.22222222222222222]," +
+					"[pa:0.88888888888888889d, 0.22222222222222222d, -1.1111111111111111]])"),
+			@Exemplar(a="pa:0f,1f,2f,3f",e="#=(retval,[a:" +
+					"[pa:-1.75,-0.25, 0.75, 1.25]," +
+					"[pa:-0.25,-0.75, 0.25, 0.75]," +
+					"[pa: 0.75, 0.25,-0.75,-0.25]," +
+					"[pa: 1.25, 0.75,-0.25,-1.75]])"),
+			@Exemplar(a="pa:0f,1f,2f,3f,4f",e="#=(retval,[a:" +
+					"[pa:-2.40,               -0.7999999999999998,     0.40000000000000013,    1.2000000000000002,    1.60]," +
+					"[pa:-0.7999999999999998, -1.1999999999999997,     2.220446049250313E-16,  0.8000000000000003d,    1.2000000000000002]," +
+					"[pa: 0.40000000000000013, 2.220446049250313E-16d,-0.7999999999999998,     2.220446049250313E-16d,0.40000000000000013]," +
+					"[pa: 1.2000000000000002,  0.8000000000000003d,     2.220446049250313E-16d,-1.1999999999999997,   -0.7999999999999998]," +
+					"[pa: 1.60,                1.2000000000000002,     0.40000000000000013,   -0.7999999999999998,   -2.40]])"),
+			@Exemplar(a="pa:1f,0f",e="#=(retval,[a:[pa:-0.5d,0.5d],[pa:0.5d,-0.5d]])"),
+			@Exemplar(a="pa:1f,2f,0f",e="#=(retval,[a:" +
+					"[pa:-0.44444444444444444d, 0.22222222222222222d, 0.22222222222222222]," +
+					"[pa: 0.22222222222222222d,-1.1111111111111111d,  0.88888888888888889]," +
+					"[pa: 0.22222222222222222d, 0.88888888888888889d,-1.1111111111111111]])"),
+	})
+	public static double[][] capitalLetterMatrix(float[] a){
 		if(a == null){
 			throw new NullPointerException("The input to capitalLetterMatrix must have at least 1 element");
 		}
