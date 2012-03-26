@@ -259,9 +259,11 @@ public abstract class MLNumericArray<T extends Number> extends MLArray
     {
         if ( o instanceof  MLNumericArray )
         {
-            return Arrays.equals( real, ((MLNumericArray)o).real )
-                    && Arrays.equals( imaginary, ((MLNumericArray)o).imaginary )
-                    && Arrays.equals( dims, ((MLNumericArray)o).dims )
+        	@SuppressWarnings("unchecked")
+			MLNumericArray<T> rhs = (MLNumericArray<T>)o;
+            return 	Arrays.equals( real, rhs.real ) &&
+                    Arrays.equals( imaginary, rhs.imaginary ) &&
+                    Arrays.equals( dims, rhs.dims )
                     ;
         }
         return super.equals( o );
