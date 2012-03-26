@@ -706,9 +706,25 @@ public final class MICDistributionCalculator {
 	 * @param std
 	 *            The standard deviation of the noise. Cannot be negative.
 	 * @param rng
-	 *            The random number generator used to generate the noise.
+	 *            The random number generator used to generate the noise. Cannot be null
 	 */
+	@Exemplars(set={
+	@Exemplar(args={"null","0.0","null"}, ee="NullPointerException"),
+	@Exemplar(args={"[pa:1f]","-1d","null"}, ee="NullPointerException"),
+	@Exemplar(args={"[pa:1f]","-1d","new java/util/Random(1l)"}, ee="IllegalArgumentException"),
+	@Exemplar(args={"[pa:1f]","0d","new java/util/Random(1l)"}, e="java/util/Arrays.equals([pa:1f],$arg1)"),
+	@Exemplar(args={"[pa:1f]","1d","new java/util/Random(1l)"}, e="java/util/Arrays.equals([pa:2.5615811f],$arg1)"),
+	@Exemplar(args={"[pa:1f,0f]","1d","new java/util/Random(1l)"}, e="java/util/Arrays.equals([pa:2.5615811f,-0.6081826f],$arg1)"),
+	@Exemplar(args={"[pa:0f]","2d","new java/util/Random(1l)"}, e="java/util/Arrays.equals([pa:3.123162f],$arg1)"),
+	@Exemplar(args={"edu/wright/cs/birg/test/ArrayUtils.emptyFloat()","2d","new java/util/Random(1l)"}, e="java/util/Arrays.equals(edu/wright/cs/birg/test/ArrayUtils.emptyFloat(),$arg1)"),
+	})
 	private static void addNoise(float[] x, double std, Random rng) {
+		if(x == null){ 
+			throw new NullPointerException("The x array passed to addNoise cannot be null");
+		}
+		if(rng == null){ 
+			throw new NullPointerException("The random number generator passed to addNoise cannot be null");
+		}
 		if(std < 0.0){
 			throw new IllegalArgumentException("The standard deviation passed to addNoise cannot be negative");
 		}else if(std == 0){
@@ -772,9 +788,15 @@ public final class MICDistributionCalculator {
 
 	/**
 	 * Returns the relation with the short name field equal to shortName or null if there is no such relation. 
-	 * @param shortName The name of the relation to return 
+	 * @param shortName The name of the relation to return. 
 	 * @return the relation with the short name field equal to shortName or null if there is no such relation.
 	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, expect="null"),
+	@Exemplar(args={"''"}, expect="null"), 
+	@Exemplar(args={"'random'"}, expect="RandomRel"), 
+	@Exemplar(args={"'categorical01'"}, expect="CategoricalRel"), 
+	})
 	private static Relation relationFor(String shortName) {
 		List<Relation> relations=allRelations();
 		for(Relation r:relations){
