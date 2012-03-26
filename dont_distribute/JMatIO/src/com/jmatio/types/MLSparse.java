@@ -30,7 +30,7 @@ public class MLSparse extends MLNumericArray<Double>
     /**
      * Gets maximum number of non-zero values
      * 
-     * @return
+     * @return maximum number of non-zero values
      */
     public int getMaxNZ()
     {
@@ -53,16 +53,16 @@ public class MLSparse extends MLNumericArray<Double>
         return ir;
     }
     /**
-     * Gets collumn indices. 
+     * Gets column indices. 
      * 
      * <tt>jc</tt> points to an integer array of length N+1 that contains column index information.
-     * For j, in the range <tt>0&lt;=j&lt;=N–1</tt>, <tt>jc[j]</tt> is the index in ir and <tt>pr</tt> (and <tt>pi</tt>
-     * if it exists) of the first nonzero entry in the jth column and <tt>jc[j+1]–1</tt> index
+     * For j, in the range <tt>0&lt;=j&lt;=N-1</tt>, <tt>jc[j]</tt> is the index in ir and <tt>pr</tt> (and <tt>pi</tt>
+     * if it exists) of the first nonzero entry in the jth column and <tt>jc[j+1]-1</tt> index
      * of the last nonzero entry. As a result, <tt>jc[N]</tt> is also equal to nnz, the number
      * of nonzero entries in the matrix. If nnz is less than nzmax, then more nonzero
      * entries can be inserted in the array without allocating additional storage
      * 
-     * @return
+     * @return an array of column indices (see description)
      */
     public int[] getJC()
     {
