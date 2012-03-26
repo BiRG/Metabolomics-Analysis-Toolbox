@@ -10,6 +10,10 @@ import java.io.IOException;
 @SuppressWarnings("serial")
 public class MatlabIOException extends IOException
 {
+	/**
+	 * Create a MatlabIOException with <code>s</code> as the detail message
+	 * @param s the detail message
+	 */
     public MatlabIOException(String s)
     {
         super(s);

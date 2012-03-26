@@ -14,7 +14,7 @@ public class MLArray
     public static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger( MLArray.class.getName() );
 
     
-    /* Matlab Array Types (Classes) */
+    /* Matlab mx Array Types (Classes) */
     /**
      * Unknown type
      */

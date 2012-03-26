@@ -8,30 +8,102 @@ package com.jmatio.common;
 public class MatDataTypes
 {
     /* MAT-File Data Types */
+	/**
+	 * Unknown type
+	 */
     public static final int miUNKNOWN   = 0;
+    /**
+     * 8 bit signed integer type
+     */
     public static final int miINT8      = 1;
+    /**
+     * 8 bit unsigned integer type
+     */
     public static final int miUINT8     = 2;
+    /**
+     * 16 bit signed integer type
+     */
     public static final int miINT16     = 3;
+    /**
+     * 16 bit unsigned integer type
+     */
     public static final int miUINT16    = 4;
+    /**
+     * 32 bit signed integer type
+     */
     public static final int miINT32     = 5;
+    /**
+     * 32 bit unsigned integer type
+     */
     public static final int miUINT32    = 6;
+    /**
+     * single type
+     */
     public static final int miSINGLE    = 7;
+    /**
+     * double type
+     */
     public static final int miDOUBLE    = 9;
+    /**
+     * 64 bit signed integer type
+     */
     public static final int miINT64     = 12;
+    /**
+     * 64 bit unsigned integer type
+     */
     public static final int miUINT64    = 13;
+    /**
+     * matrix type
+     */
     public static final int miMATRIX    = 14;
+    /**
+     * compressed type
+     */
     public static final int miCOMPRESSED    = 15;
+    /**
+     * utf8 type
+     */
     public static final int miUTF8      = 16;
+    /**
+     * utf16 type
+     */
     public static final int miUTF16     = 17;
+    /**
+     * utf32 type
+     */
     public static final int miUTF32     = 18;
 
+    /**
+     * Size of an int32 in bytes
+     */
     public static final int miSIZE_INT32    = 4;
+    /**
+     * Size of an int16 in bytes
+     */
     public static final int miSIZE_INT16    = 2;
+    /**
+     * Size of an int8 in bytes
+     */
     public static final int miSIZE_INT8     = 1;
+    /**
+     * Size of a uint32 in bytes
+     */
     public static final int miSIZE_UINT32   = 4;
+    /**
+     * Size of a uint16 in bytes
+     */
     public static final int miSIZE_UINT16   = 2;
+    /**
+     * Size of a uint8 in bytes
+     */
     public static final int miSIZE_UINT8    = 1;
+    /**
+     * Size of a double in bytes
+     */
     public static final int miSIZE_DOUBLE   = 8;
+    /**
+     * Size of a char in bytes
+     */
     public static final int miSIZE_CHAR     = 1;
     
     /**

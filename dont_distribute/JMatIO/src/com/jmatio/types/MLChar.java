@@ -36,10 +36,19 @@ public class MLChar extends MLArray
         chars = new Character[getM()*getN()];
     }
 
+    /**
+     * Set the element at <code>index</code> to <code>ch</code>
+     * @param ch The new value for the element
+     * @param index The index of the element to change
+     */
     public void setChar(char ch, int index)
     {
         chars[index] = new Character(ch);
     }
+    /**
+     * Set the whole array to the characters in the string
+     * @param value The characters to put in the array, but as a string.
+     */
     public void set(String value)
     {
         char[] cha = value.toCharArray();
@@ -48,11 +57,21 @@ public class MLChar extends MLArray
             setChar(cha[i], i);
         }
     }
-    
+    /**
+     * Return the character at location <code>m</code>,<code>n</code>
+     * @param m The location of the character in the first dimension
+     * @param n The location of the character in the second dimension
+     * @return  the character at location <code>m</code>,<code>n</code>
+     */
     public Character getChar(int m, int n)
     {
         return chars[getIndex(m,n)];
     }
+    
+    /**
+     * Return the underlying Character array
+     * @return the underlying Character array
+     */
     public Character[] exportChar()
     {
         return chars;
@@ -67,12 +86,19 @@ public class MLChar extends MLArray
         }
         return super.equals( o );
     }
+
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() ^ Arrays.hashCode(chars);
+	}
+    
     
     /**
      * Gets the m-th character matrix's row as <code>String</code>.
      * 
-     * @param m - row number
-     * @return - <code>String</code>
+     * @param m row number
+     * @return the m-th character matrix's row as <code>String</code>.
      */
     public String getString( int m )
     {
