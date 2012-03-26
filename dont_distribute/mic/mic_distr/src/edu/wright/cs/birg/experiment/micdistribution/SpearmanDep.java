@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sureassert.uc.annotation.Exemplar;
+import org.sureassert.uc.annotation.Exemplars;
+
 /**
  * Absolute value of the Spearman rank-correlation coefficient
  * @author Eric Moyer
@@ -34,6 +37,14 @@ public class SpearmanDep implements DependenceMeasure {
 	 * @see edu.wright.cs.birg.experiment.micdistribution.DependenceMeasure#dependence(edu.wright.cs.birg.experiment.micdistribution.Instance)
 	 */
 	@Override
+	@Exemplars(set={
+	@Exemplar(args={"null"}, ee="NullPointerException"),
+	@Exemplar(args={"Instance/i0_0"}, ee="IllegalArgumentException"), 
+	@Exemplar(args={"Instance/i01_10"}, e="1f"),
+	@Exemplar(args={"Instance/i012_120"}, e="0.5f"),
+	@Exemplar(args={"Instance/i0123_1032"}, e="0.6f"),
+	@Exemplar(args={"Instance/i01234_34330"}, e="0.670820393f"),
+	})
 	public float dependence(Instance inst) {
 		Instance rankInst = new Instance(asRanks(inst.x), asRanks(inst.y));
 		return Math.abs(PearsonDep.valueOf(rankInst));
@@ -51,6 +62,24 @@ public class SpearmanDep implements DependenceMeasure {
 	 *            an array of floats (none can be NaN), in cannot be null
 	 * @return a such that a[i] = k if in[i] is the k'th largest value in in.
 	 */
+	@Exemplars(set={
+	@Exemplar(args={"[pa:0f]"}, expect="java/util/Arrays.equals(retval,pa:1f)"),
+	@Exemplar(args={"[pa:1f]"}, expect="java/util/Arrays.equals(retval,pa:1f)"),
+	@Exemplar(args={"[pa:2.5f,2.5f]"}, expect="java/util/Arrays.equals(retval,[pa:1.5f,1.5f])"),
+	@Exemplar(args={"[pa:1.0f,2.5f]"}, expect="java/util/Arrays.equals(retval,[pa:1.0f,2.0f])"),
+	@Exemplar(args={"[pa:1f,-2.5f]"}, expect="java/util/Arrays.equals(retval,[pa:2f,1f])"),
+	@Exemplar(args={"[pa:1f,-2.5f,56.21f]"}, expect="java/util/Arrays.equals(retval,[pa:2f,1f,3f])"),
+	@Exemplar(args={"[pa:-1f,2.5f,-56.21f]"}, expect="java/util/Arrays.equals(retval,[pa:2f,3f,1f])"),
+	@Exemplar(args={"[pa:-1f,2.5f,-1f]"}, expect="java/util/Arrays.equals(retval,[pa:1.5f,3f,1.5f])"),
+	@Exemplar(args={"[pa:-1f,2.5f,2.5f]"}, expect="java/util/Arrays.equals(retval,[pa:1f,2.5f,2.5f])"),
+	@Exemplar(args={"[pa:-1f,-1f,-1f]"}, expect="java/util/Arrays.equals(retval,[pa:2f,2f,2f])"),
+	@Exemplar(args={"edu/wright/cs/birg/test/ArrayUtils.emptyFloat()"}, expect="java/util/Arrays.equals(retval,edu/wright/cs/birg/test/ArrayUtils.emptyFloat())"),
+	@Exemplar(args={"pa:java/lang/Float.NaN"}, expectexception="java/lang/IllegalArgumentException"),
+	@Exemplar(args={"pa:1f,java/lang/Float.NaN"}, 
+		expectexception="java/lang/IllegalArgumentException"
+		), //Note 9221120237041090560l is NaN, I'm working around a bug in SureAssert
+	@Exemplar(args={"null"}, expectexception="java/lang/IllegalArgumentException"),
+	})	
 	private static float[] asRanks(float[] in){
 		if(in == null){ throw new IllegalArgumentException("null passed to asRanks(float[]) instead of an array"); }
 
