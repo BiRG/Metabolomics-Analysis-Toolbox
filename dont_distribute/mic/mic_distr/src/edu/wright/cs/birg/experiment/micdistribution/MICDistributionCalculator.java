@@ -3,6 +3,8 @@
  */
 package edu.wright.cs.birg.experiment.micdistribution;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -394,8 +396,7 @@ public final class MICDistributionCalculator {
 			dbdump(rest, dbIn, txtOut, errOut);
 			return;
 		case dbmerge:
-			errOut.println("Sorry, the "+c+" command is not implemented yet.");
-			//TODO: implement dbmerge command
+			dbmerge(rest, errOut, dbOut);
 			return;
 		case dbtomat:
 			errOut.println("Sorry, the "+c+" command is not implemented yet.");
@@ -404,6 +405,72 @@ public final class MICDistributionCalculator {
 		}
 	}
 	
+	/**
+	 * Run the dbmerge command. Starts with an empty database and adds the entries from each database file
+	 * on the command line to it. Writes the resulting database to dbOut
+	 * @param args  The command-line arguments to the dbdump command. Cannot be null.
+	 * @param errOut The stream for errors and status messages. Cannot be null.
+	 * @param dbOut The stream to which the combined database will be written
+	 */
+	@IgnoreTestCoverage
+	private static void dbmerge(String[] args, PrintWriter errOut,
+			OutputStream dbOut) {
+		Database db = new Database();
+		for(String filename:args){
+			FileInputStream fileIn = null;
+			try {
+				fileIn = new FileInputStream(filename);
+			} catch (FileNotFoundException e) {
+				errOut.println("Error: could not find database file \""+filename+"\". System error message: "+e.getLocalizedMessage());
+				return;
+			}
+			ObjectInputStream in = null;
+			try {
+				in = new ObjectInputStream(fileIn);
+			} catch (IOException e) {
+				errOut.println("Error: could not begin reading database from file \""+filename+"\". System error message: "+e.getLocalizedMessage());
+				return;
+			}
+			Database lastRead = null;
+			try {
+				lastRead = (Database)in.readObject();
+			} catch (IOException e) {
+				errOut.println("Error reading database from file \""+filename+"\". System error message: "+e.getLocalizedMessage());
+				return;
+			} catch (ClassNotFoundException e) {
+				errOut.println("Error: the file \""+filename+"\" contained an object of a class that could not be loaded. System error message: "+e.getLocalizedMessage());
+				return;
+			} catch (ClassCastException e) {
+				errOut.println("Error: the file \""+filename+"\" contained an object of a class that could not cast to type Database. System error message: "+e.getLocalizedMessage());
+				return;				
+			}
+			
+			db.splice(lastRead);
+			
+			try {
+				in.close();
+			} catch (IOException e) {
+				errOut.println("Error: could not close file \""+filename+"\". System error message: "+e.getLocalizedMessage());
+				return;
+			}
+		}
+		
+		ObjectOutputStream out = null; 
+		try {
+			out = new ObjectOutputStream(dbOut);
+		} catch (IOException e) {
+			errOut.println("Error: could not open the database output stream to write the database. System error message:"+e.getLocalizedMessage());
+			return;
+		}
+		
+		try {
+			out.writeObject(db);
+		} catch (IOException e) {
+			errOut.println("Error: could not write the database. System error message: "+e.getLocalizedMessage());
+			return;
+		}
+	}
+
 	/**
 	 * Run the dbdump command. Prints the database read from dbIn to txtOut as a csv file. Whether the relations are printed as strings or numbers is determined by the contents of args.
 	 * @param args The command-line arguments to the dbdump command. Cannot be null.
