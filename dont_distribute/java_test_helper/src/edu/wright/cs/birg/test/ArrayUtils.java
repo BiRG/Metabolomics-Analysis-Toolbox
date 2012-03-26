@@ -89,6 +89,24 @@ public final class ArrayUtils {
 	}
 		
 	/**
+	 * Return an matrix of double
+	 * @return an empty matrix of double
+	 */
+	@Exemplar(expect="=(len(retval),0)")
+	public static double[][] emptyDoubleMatrix(){
+		return new double[0][];
+	}
+
+	/**
+	 * Return an matrix of float
+	 * @return an empty matrix of float
+	 */
+	@Exemplar(expect="=(len(retval),0)")
+	public static float[][] emptyFloatMatrix(){
+		return new float[0][];
+	}
+
+	/**
 	 * Return a null identified as an array of double
 	 * @return a null identified as an array of double
 	 */
