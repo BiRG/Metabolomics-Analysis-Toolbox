@@ -9,11 +9,23 @@ import java.util.Arrays;
  *
  * @param <T> The type stored in the array
  */
-public abstract class MLNumericArray<T extends Number> extends MLArray implements GenericArrayCreator<T>
+public abstract class MLNumericArray<T extends Number> extends MLArray 
 {
     private T[] real;
     private T[] imaginary;
-    
+
+    /**
+     * Helper method for dense array subclasses called to allocate the real and imaginary arrays by the 
+     * MLNumericArray constructor
+     * 
+     * A subclass may return null but must handle its own storage allocation then.
+     * 
+     * @param m First dimension of the array to allocate
+     * @param n Second dimension of the array to allocate
+     * @return The allocated array
+     */
+    protected abstract T[] createArray(int m, int n);
+
     /**
      * Normally this constructor is used only by MatFileReader and MatFileWriter
      * 
