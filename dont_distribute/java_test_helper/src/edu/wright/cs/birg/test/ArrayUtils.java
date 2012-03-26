@@ -44,6 +44,21 @@ public final class ArrayUtils {
 	}
 
 	/**
+	 * Return the length of an array. Work-around for SecureAssert's having trouble with  
+	 * the length field of primitive arrays.
+	 * @param a The array whose length will be returned. If it is null, throws NullPointerException
+	 * @return Return the length of an array.
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"null"}, ee="NullPointerException"),
+	@Exemplar(args={"[pa:1.0f]"}, e="1"),
+	@Exemplar(args={"[pa: 1.0f,2.0f]"}, expect="2")
+	})
+	public static int len(float[] a){ 
+		return a.length; 
+	}
+
+	/**
 	 * Return an empty array of the given type
 	 * @param a an object of the given type
 	 * @return an empty array of the given type
@@ -73,6 +88,25 @@ public final class ArrayUtils {
 		return new float[0];
 	}
 		
+	/**
+	 * Return a null identified as an array of double
+	 * @return a null identified as an array of double
+	 */
+	@Exemplar(expect="=(retval,null)")
+	public static double[] nullDouble(){
+		return null;
+	}
+
+	/**
+	 * Return a null identified as an array of float
+	 * @return a null identified as an array of float
+	 */
+	@Exemplar(expect="=(retval,null)")
+	public static float[] nullFloat(){
+		return null;
+	}
+
+	
 	/**
 	 * Return a string representation of an array suitable for Sureassert test code.</p><p>
 	 * 
