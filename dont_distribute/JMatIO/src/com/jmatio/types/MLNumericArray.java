@@ -7,12 +7,7 @@ import java.util.Arrays;
  * 
  * @author Wojciech Gradkowski <wgradkowski@gmail.com>
  *
- * @param <T>
- */
-/**
- * @author Wojciech Gradkowski <wgradkowski@gmail.com>
- *
- * @param <T>
+ * @param <T> The type stored in the array
  */
 public abstract class MLNumericArray<T extends Number> extends MLArray implements GenericArrayCreator<T>
 {
@@ -192,8 +187,8 @@ public abstract class MLNumericArray<T extends Number> extends MLArray implement
         return getReal(m, n);
     }
     /**
-     * @param index
-     * @return
+     * @param index The index of the desired element
+     * @return the element at index
      */
     public T get ( int index )
     {
@@ -204,7 +199,8 @@ public abstract class MLNumericArray<T extends Number> extends MLArray implement
         return real[index];
     }
     /**
-     * @param vector
+     * Set the contents of this to the contents of vector
+     * @param vector the new values
      */
     public void set(T[] vector)
     {

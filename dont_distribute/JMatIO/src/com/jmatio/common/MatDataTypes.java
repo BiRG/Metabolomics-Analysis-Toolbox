@@ -38,7 +38,7 @@ public class MatDataTypes
      * Return number of bytes for given type.
      * 
      * @param type - <code>MatDataTypes</code>
-     * @return
+     * @return  number of bytes for given type.
      */
     public static int sizeOf(int type)
     {

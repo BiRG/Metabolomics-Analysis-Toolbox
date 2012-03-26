@@ -80,7 +80,8 @@ public class MLDouble extends MLNumericArray<Double>
      * 
      * @return - 2D real array
      */
-    public double[][] getArray()
+    @SuppressWarnings("boxing")
+	public double[][] getArray()
     {
         double[][] result = new double[getM()][];
         
@@ -98,10 +99,11 @@ public class MLDouble extends MLNumericArray<Double>
     /**
      * Casts <code>Double[]</code> to <code>double[]</code>
      * 
-     * @param - source <code>Double[]</code>
-     * @return - result <code>double[]</code>
+     * @param source <code>Double[]</code>
+     * @return result <code>double[]</code>
      */
-    private static Double[] castToDouble( double[] d )
+    @SuppressWarnings("boxing")
+	private static Double[] castToDouble( double[] d )
     {
         Double[] dest = new Double[d.length];
         for ( int i = 0; i < d.length; i++ )
@@ -116,7 +118,8 @@ public class MLDouble extends MLNumericArray<Double>
      * @param dd
      * @return
      */
-    private static Double[] double2DToDouble ( double[][] dd )
+    @SuppressWarnings("boxing")
+	private static Double[] double2DToDouble ( double[][] dd )
     {
         Double[] d = new Double[ dd.length*dd[0].length ];
         for ( int n = 0; n < dd[0].length; n++ )

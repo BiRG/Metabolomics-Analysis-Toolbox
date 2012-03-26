@@ -12,9 +12,8 @@ class MatTag
     protected int size;
     
     /**
-     * @param type
-     * @param size
-     * @param compressed
+     * @param type The type for this tag object 
+     * @param size The size field for this tag object
      */
     public MatTag(int type, int size)
     {
@@ -25,7 +24,7 @@ class MatTag
     /**
      * Calculate padding
      */
-    protected int getPadding(int size, boolean compressed)
+    protected int getPadding(@SuppressWarnings("hiding") int size, boolean compressed)
     {
         int padding;
         //data not packed in the tag
@@ -55,7 +54,7 @@ class MatTag
     /**
      * Get size of single data in this tag.
      * 
-     * @return - number of bytes for single data
+     * @return number of bytes for single data
      */
     public int sizeOf()
     {

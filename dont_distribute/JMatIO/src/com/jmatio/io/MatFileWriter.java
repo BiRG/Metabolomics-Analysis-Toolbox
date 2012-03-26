@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.util.Collection;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -58,8 +57,7 @@ public class MatFileWriter
      * 
      * @param fileName - name of ouput file
      * @param data - <code>Collection</code> of <code>MLArray</code> elements
-     * @throws IOException
-     * @throws DataFormatException
+     * @throws IOException if there is an error writing to the file
      */
     public MatFileWriter(String fileName, Collection<MLArray> data) throws IOException
     {
@@ -70,21 +68,20 @@ public class MatFileWriter
      * 
      * @param file - an output <code>File</code>
      * @param data - <code>Collection</code> of <code>MLArray</code> elements
-     * @throws IOException
-     * @throws DataFormatException
+     * @throws IOException if there is an error writing to the channel
      */
     public MatFileWriter(File file, Collection<MLArray> data) throws IOException
     {
         this( new FileOutputStream(file).getChannel(), data );
     }
     /**
-     * Writes MLArrays into <code>OuputSteram</code>.
+     * Writes MLArrays into <code>channel</code>.
      * 
      * Writes MAT-file header and compressed data (<code>miCOMPRESSED</code>).
      * 
-     * @param output - <code>OutputStream</code>
+     * @param channel - <code>WritableByteChannel</code> the output stream
      * @param data - <code>Collection</code> of <code>MLArray</code> elements
-     * @throws IOException
+     * @throws IOException if there is an error writing to the stream
      */
     public MatFileWriter(WritableByteChannel channel, Collection<MLArray> data) throws IOException
     {
@@ -130,9 +127,9 @@ public class MatFileWriter
     /**
      * Writes MAT-file header into <code>OutputStream</code>
      * @param os <code>OutputStream</code>
-     * @throws IOException
+     * @throws IOException if there is an error writing to the channel
      */
-    private void writeHeader(WritableByteChannel channel) throws IOException
+    private static void writeHeader(WritableByteChannel channel) throws IOException
     {
         //write descriptive text
         MatFileHeader header = MatFileHeader.createHeader();
@@ -313,9 +310,9 @@ public class MatFileWriter
      * 
      * @param os - <code>OutputStream</code>
      * @param array - a <code>MLArray</code>
-     * @throws IOException
+     * @throws IOException If there is a problem doing the writing
      */
-    private void writeFlags(DataOutputStream os, MLArray array) throws IOException
+    private static void writeFlags(DataOutputStream os, MLArray array) throws IOException
     {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         DataOutputStream bufferDOS = new DataOutputStream(buffer);
@@ -340,9 +337,9 @@ public class MatFileWriter
      * 
      * @param os - <code>OutputStream</code>
      * @param array - a <code>MLArray</code>
-     * @throws IOException
+     * @throws IOException If there is a problem doing the writing
      */
-    private void writeDimensions(DataOutputStream os, MLArray array) throws IOException
+    private static void writeDimensions(DataOutputStream os, MLArray array) throws IOException
     {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         DataOutputStream bufferDOS = new DataOutputStream(buffer);
@@ -362,9 +359,9 @@ public class MatFileWriter
      * 
      * @param os - <code>OutputStream</code>
      * @param array - a <code>MLArray</code>
-     * @throws IOException
+     * @throws IOException if there is a problem doing the writing
      */
-    private void writeName(DataOutputStream os, MLArray array) throws IOException
+    private static void writeName(DataOutputStream os, MLArray array) throws IOException
     {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         DataOutputStream bufferDOS = new DataOutputStream(buffer);
@@ -381,15 +378,15 @@ public class MatFileWriter
      * Tiny class that represents MAT-file TAG 
      * It simplifies writing data. Automates writing padding for instance.
      */
-    private class OSArrayTag extends MatTag
+    private static class OSArrayTag extends MatTag
     {
         private byte[] data;
         private int padding;
         /**
-         * Creates TAG and stets its <code>size</code> as size of byte array
+         * Creates TAG and sets its <code>size</code> as size of byte array
          * 
-         * @param type
-         * @param data
+         * @param type a type id
+         * @param data the attached data
          */
         public OSArrayTag(int type, byte[] data )
         {
@@ -401,8 +398,8 @@ public class MatFileWriter
         /**
          * Writes tag and data to <code>DataOutputStream</code>. Wites padding if neccesary.
          * 
-         * @param os
-         * @throws IOException
+         * @param os The stream to write to
+         * @throws IOException If there is a problem doing the writing
          */
         public void writeTo(DataOutputStream os) throws IOException
         {

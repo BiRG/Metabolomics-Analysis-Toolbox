@@ -31,15 +31,27 @@ public class MLStructure extends MLArray
      */
     private List< Map<String,MLArray> > mlStructArray;
     /**
-     * Current structure pointer for bulk insertation 
+     * Current structure pointer for bulk insertion 
      */
     private int currentIndex = 0;
     
+    /**
+     * Create a structure array with the given name and dimensions
+     * @param name The name of the array variable
+     * @param dims The dimensions of the struct array
+     */
     public MLStructure(String name, int[] dims)
     {
         this(name, dims, MLArray.mxSTRUCT_CLASS, 0 );
     }
-    
+
+    /**
+     * Create a structure array with the given name and dimensions
+     * @param name The name of the array variable
+     * @param dims The dimensions of the struct array
+     * @param type The array type
+     * @param attributes  array flags
+     */
     public MLStructure(String name, int[] dims, int type, int attributes)
     {
         super(name, dims, type, attributes);
@@ -63,8 +75,8 @@ public class MLStructure extends MLArray
      * 
      * @param name - name of the field
      * @param value - <code>MLArray</code> field value
-     * @param m
-     * @param n
+     * @param m first index of the structure whose field will be set
+     * @param n second index of the structure whose field will be set
      */
     public void setField(String name, MLArray value, int m, int n)
     {
@@ -75,7 +87,7 @@ public class MLStructure extends MLArray
      * 
      * @param name - name of the field
      * @param value - <code>MLArray</code> field value
-     * @param index
+     * @param index the index of the structure whose field will be set
      */
     public void setField(String name, MLArray value, int index)
     {
@@ -92,7 +104,7 @@ public class MLStructure extends MLArray
     /**
      * Gets the maximum length of field desctiptor
      * 
-     * @return
+     * @return the maximum length of field desctiptor
      */
     public int getMaxFieldLenth()
     {
@@ -107,9 +119,9 @@ public class MLStructure extends MLArray
     }
     
     /**
-     * Dumps field names to byte array. Field names are written as Zero End Strings
+     * Dumps field names to byte array. Field names are written as null-terminated Strings
      * 
-     * @return
+     * @return Field names are written as null-terminated Strings in a byte array.
      */
     public byte[] getKeySetToByteArray() 
     {
@@ -136,9 +148,9 @@ public class MLStructure extends MLArray
         
     }
     /**
-     * Gets all field from sruct array as flat list of fields.
+     * Gets all fields from struct array as flat list of fields.
      * 
-     * @return
+     * @return all fields from struct array as flat list of fields.
      */
     public Collection<MLArray> getAllFields()
     {
@@ -150,39 +162,51 @@ public class MLStructure extends MLArray
         }
         return fields;
     }
-    /**
-     * Gets a value of the field described by name from current structe
-     * in struc array.
-     * 
-     * @param name
-     * @return
-     */
-    public MLArray getField(String name)
+    
+	/**
+	 * Gets the value of the field described by name from current struct in
+	 * struct array.
+	 * 
+	 * @param name
+	 *            The name of the field to return
+	 * @return the value of the field described by name from current struct in
+	 *         struct array.
+	 */
+    public MLArray getField(@SuppressWarnings("hiding") String name)
     {
         return getField(name, currentIndex);
     }
-    /**
-     * Gets a value of the field described by name from (m,n)'th structe
-     * in struc array.
-     * 
-     * @param name
-     * @param m
-     * @param n
-     * @return
-     */
-    public MLArray getField(String name, int m, int n)
+
+	/**
+	 * Gets the value of the field described by name from (m,n)'th struct in
+	 * struct array.
+	 * 
+	 * @param name
+	 *            Name of the field to get
+	 * @param m
+	 *            first index
+	 * @param n
+	 *            second index
+	 * @return the value of the field described by name from (m,n)'th struct in
+	 *         struct array.
+	 */
+    public MLArray getField(@SuppressWarnings("hiding") String name, int m, int n)
     {
         return getField(name, getIndex(m,n) );
     }
-    /**
-     * Gets a value of the field described by name from index'th structe
-     * in struc array.
-     * 
-     * @param name
-     * @param index
-     * @return
-     */
-    public MLArray getField(String name, int index)
+
+	/**
+	 * Gets the value of the field described by name from index'th struct in
+	 * struct array.
+	 * 
+	 * @param name
+	 *            The name of the field to get
+	 * @param index
+	 *            The index of the field in the struct array
+	 * @return the value of the field described by name from index'th struct in
+	 *         struct array.
+	 */
+    public MLArray getField(@SuppressWarnings("hiding") String name, int index)
     {
         return mlStructArray.get(index).get(name);
     }

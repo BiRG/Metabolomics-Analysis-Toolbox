@@ -31,16 +31,17 @@ public class MatIOTest
      * 
      * @throws IOException
      */
-    @Test public void MLCharArrayTest() throws IOException
+    @SuppressWarnings({ "static-method", "javadoc", "unused" })
+	@Test public void MLCharArrayTest() throws IOException
     {
         //array name
         String name = "chararr";
-        //file name in which array will be storred
+        //file name in which array will be stored
         String fileName = "mlchar.mat";
-        //temp
+        //temporary
         String valueS;
 
-        //create MLChar array of a name "chararr" containig one
+        //create MLChar array of a name "chararr" containing one
         //string value "dummy"
         MLChar mlChar = new MLChar(name, "dummy");
         
@@ -73,18 +74,19 @@ public class MatIOTest
     /**
      * Tests <code>MLDouble</code> reading and writing.
      * 
-     * @throws IOException
+     * @throws IOException if there is a IO problem during the test
      */
-    @Test public void MLDoubleArrayTest() throws IOException
+    @SuppressWarnings({ "boxing", "static-method", "unused" })
+	@Test public void MLDoubleArrayTest() throws IOException
     {
         //array name
         String name = "doublearr";
-        //file name in which array will be storred
+        //file name in which array will be stored
         String fileName = "mldouble.mat";
 
         //test column-packed vector
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
-        //test 2D array coresponding to test vector
+        //test 2D array corresponding to test vector
         double[][] src2D = new double[][] { { 1.3, 4.0 },
                                             { 2.0, 5.0 },
                                             { 3.0, 6.0 }
@@ -126,7 +128,8 @@ public class MatIOTest
     /**
      * Test <code>MatFileFilter</code> options
      */
-    @Test public void filterTest()
+    @SuppressWarnings({ "boxing", "static-method" })
+	@Test public void filterTest()
     {
         //create new filter instance
         MatFileFilter filter = new MatFileFilter();
@@ -150,13 +153,14 @@ public class MatIOTest
      * 
      * @throws IOException
      */
-    @Test public void filteredReadingTest() throws IOException
+    @SuppressWarnings({ "javadoc", "static-method", "unused" })
+	@Test public void filteredReadingTest() throws IOException
     {
         //1. First create arrays
         //array name
         String name = "doublearr";
         String name2 = "dummy";
-        //file name in which array will be storred
+        //file name in which array will be stored
         String fileName = "filter.mat";
 
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -177,12 +181,13 @@ public class MatIOTest
         MatFileReader mfr = new MatFileReader( fileName, filter );
         
         //check size of
-        Map content = mfr.getContent();
+        Map<String, MLArray> content = mfr.getContent();
         assertEquals("Test if only one array was red", 1, content.size() );
         
     }
     
-    public static junit.framework.Test suite()
+    @SuppressWarnings("javadoc")
+	public static junit.framework.Test suite()
     {
         return new JUnit4TestAdapter( MatIOTest.class );
     }

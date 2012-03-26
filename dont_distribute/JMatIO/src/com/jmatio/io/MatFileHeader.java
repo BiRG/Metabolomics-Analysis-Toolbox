@@ -39,7 +39,7 @@ public class MatFileHeader
     /**
      * Gets descriptive text
      * 
-     * @return
+     * @return descriptive text
      */
     public String getDescription()
     {
@@ -56,16 +56,17 @@ public class MatFileHeader
         return endianIndicator;
     }
     /**
-     * When creating a MAT-file, set version to 0x0100
+     * Return the version for this header.
+     * When creating a MAT-file, we set version to 0x0100
      * 
-     * @return
+     * @return the version for this header
      */
     public int getVersion()
     {
         return version;
     }
     
-    //@facotry
+    //@factory
     /**
      * A factory. Creates new <code>MatFileHeader</code> instance with default header values:
      * <ul>

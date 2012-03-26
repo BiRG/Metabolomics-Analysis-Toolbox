@@ -40,9 +40,6 @@ import com.jmatio.types.MLStructure;
  * 
  * @see com.jmatio.io.MatFileFilter
  * @author Wojciech Gradkowski (<a href="mailto:wgradkowski@gmail.com">wgradkowski@gmail.com</a>)
- */
-/**
- * @author Wojciech Gradkowski (<a href="mailto:wgradkowski@gmail.com">wgradkowski@gmail.com</a>)
  *
  */
 public class MatFileReader
@@ -70,6 +67,7 @@ public class MatFileReader
      * This method reads MAT-file withiout filtering.
      * 
      * @param fileName the MAT-file path <code>String</code>
+     * @throws FileNotFoundException If the named file could not be found
      * @throws IOException when error occured while processing the file.
      */
     public MatFileReader(String fileName) throws FileNotFoundException, IOException
@@ -81,11 +79,11 @@ public class MatFileReader
      * from location given as <code>fileName</code>.
      * 
      * Results are filtered by <code>MatFileFilter</code>. Arrays that do not meet
-     * filter match condition will not be avalable in results.
+     * filter match condition will not be available in results.
      * 
      * @param fileName the MAT-file path <code>String</code>
-     * @param MatFileFilter array name filter.
-     * @throws IOException when error occured while processing the file.
+     * @param filter array name filter.
+     * @throws IOException when error occurred while processing the file.
      */
     public MatFileReader(String fileName, MatFileFilter filter ) throws IOException
     {
@@ -110,11 +108,11 @@ public class MatFileReader
      * from <code>file</code>.
      * 
      * Results are filtered by <code>MatFileFilter</code>. Arrays that do not meet
-     * filter match condition will not be avalable in results.
+     * filter match condition will not be available in results.
      * 
      * @param file the MAT-file
-     * @param MatFileFilter array name filter.
-     * @throws IOException when error occured while processing the file.
+     * @param filter array name filter.
+     * @throws IOException when error occurred while processing the file.
      */
     public MatFileReader(File file, MatFileFilter filter) throws IOException
     {
@@ -158,13 +156,13 @@ public class MatFileReader
         return new ArrayList<MLArray>( data.values() );
     }
     /**
-     * Returns the value to which the red file maps the specified array name.
+     * Returns the value to which the read file maps the specified array name.
      * 
      * Returns <code>null</code> if the file contains no content for this name.
      * 
-     * @param - array name
-     * @return - the <code>MLArray</code> to which this file maps the specified name, 
-     *           or null if the file contains no content for this name.
+     * @param name array name
+     * @return the <code>MLArray</code> to which this file maps the specified name, 
+     *         or null if the file contains no content for this name.
      */
     public MLArray getMLArray( String name )
     {
@@ -175,7 +173,7 @@ public class MatFileReader
      * 
      * MLArrays are mapped with MLArrays' names
      *  
-     * @return - a <code>Map</code> of MLArrays mapped with theid names.
+     * @return a <code>Map</code> of MLArrays mapped with their names.
      */
     public Map<String, MLArray> getContent()
     {
@@ -184,7 +182,7 @@ public class MatFileReader
     /**
      * Decompresses (inflates) bytes from input stream.
      * 
-     * Stream marker is being set at +<code>numOfBytes</code> positon of the
+     * Stream marker is being set at +<code>numOfBytes</code> position of the
      * stream.
      * 
      * @param is -
@@ -305,7 +303,8 @@ public class MatFileReader
      *         not match <code>filter</code>
      * @throws IOException when error occurs while reading the buffer.
      */
-    private MLArray readMatrix(ByteBuffer buf, boolean isRoot ) throws IOException
+    @SuppressWarnings("boxing")
+	private MLArray readMatrix(ByteBuffer buf, boolean isRoot ) throws IOException
     {
         //result
         MLArray mlArray;
@@ -472,10 +471,10 @@ public class MatFileReader
      * It assumes that String ends with \0 value.
      * 
      * @param bytes byte array containing the string.
-     * @return String retrived from byte array.
-     * @throws IOException if reading error occured.
+     * @return String retrieved from byte array.
+     * @throws IOException if reading error occurred.
      */
-    private String zeroEndByteArrayToString(byte[] bytes) throws IOException
+    private static String zeroEndByteArrayToString(byte[] bytes) throws IOException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream( baos );

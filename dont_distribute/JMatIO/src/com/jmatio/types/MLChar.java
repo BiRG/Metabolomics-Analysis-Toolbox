@@ -2,7 +2,7 @@ package com.jmatio.types;
 
 import java.util.Arrays;
 
-public class MLChar extends MLArray implements GenericArrayCreator<Character>
+public class MLChar extends MLArray
 {
     Character[] chars;
     public MLChar(String name, String value )

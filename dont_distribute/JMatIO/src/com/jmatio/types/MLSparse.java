@@ -5,6 +5,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Matlab sparse matrix
+ * 
+ * @author Wojciech Gradkowski <wgradkowski@gmail.com>
+ *
+ */
 public class MLSparse extends MLNumericArray<Double>
 {
     int nzmax;
@@ -13,10 +19,10 @@ public class MLSparse extends MLNumericArray<Double>
     private Map<IndexMN, Double> imaginary;  
     
     /**
-     * @param name
-     * @param dims
-     * @param attributes
-     * @param nzmax
+     * @param name Name of the sparse array
+     * @param dims dimensions of the sparse array
+     * @param attributes array flags
+     * @param nzmax maximum number of non-zero values
      */
     public MLSparse(String name, int[] dims, int attributes, int nzmax )
     {
@@ -41,6 +47,8 @@ public class MLSparse extends MLNumericArray<Double>
      * 
      * <tt>ir</tt> points to an integer array of length nzmax containing the row indices of
      * the corresponding elements in <tt>pr</tt> and <tt>pi</tt>.
+     * 
+     * @return array of row indices
      */
     public int[] getIR()
     {
@@ -112,9 +120,10 @@ public class MLSparse extends MLNumericArray<Double>
         return new Double(0);
     }
     /**
-     * @param value
-     * @param m
-     * @param n
+     * Set the real part of the element at m,n to value
+     * @param value The new value
+     * @param m first index
+     * @param n second index
      */
     public void setReal(Double value, int m, int n)
     {
@@ -123,8 +132,9 @@ public class MLSparse extends MLNumericArray<Double>
         real.put(i, value );
     }
     /**
-     * @param value
-     * @param index
+     * Set the real part of the element at index to value
+     * @param value The new value
+     * @param index The index which will be set
      */
     public void setReal(Double value, int index)
     {
@@ -132,9 +142,10 @@ public class MLSparse extends MLNumericArray<Double>
                 "Please use setReal(Double value, int m, int n) instead.");
     }
     /**
-     * @param value
-     * @param m
-     * @param n
+     * Set the imaginary part of the element at m,n to value
+     * @param value The new value
+     * @param m first index
+     * @param n second index
      */
     public void setImaginary(Double value, int m, int n)
     {
@@ -143,8 +154,9 @@ public class MLSparse extends MLNumericArray<Double>
         imaginary.put(new IndexMN(m,n), value );
     }
     /**
-     * @param value
-     * @param index
+     * Set the imaginary part of the element at index to value
+     * @param value The new value
+     * @param index The index which will be set
      */
     public void setImaginary(Double value, int index)
     {
