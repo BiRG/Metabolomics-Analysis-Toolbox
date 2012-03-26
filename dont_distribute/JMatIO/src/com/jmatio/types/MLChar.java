@@ -2,24 +2,40 @@ package com.jmatio.types;
 
 import java.util.Arrays;
 
+/**
+ * Matlab char array
+ * 
+ * @author Wojciech Gradkowski <wgradkowski@gmail.com>
+ * 
+ */
 public class MLChar extends MLArray
 {
     Character[] chars;
+
+    /**
+     * Create a char array with the given name and value
+     * @param name name of the array
+     * @param value The characters in this array as a string
+     */
     public MLChar(String name, String value )
     {
         this( name, new int[] { 1, value.length() } , MLArray.mxCHAR_CLASS, 0);
         set(value);
     }
+    
+    /**
+     * Create a character array with the given name and dimensions
+     * @param name name of the array
+     * @param dims dimensions of the array
+     * @param type Type field for the variable
+     * @param attributes Attributes for the variable
+     */
     public MLChar(String name, int[] dims, int type, int attributes)
     {
         super(name, dims, type, attributes);
-        chars = createArray(getM(), getN());
+        chars = new Character[getM()*getN()];
     }
 
-    public Character[] createArray(int m, int n)
-    {
-        return new Character[m*n];
-    }
     public void setChar(char ch, int index)
     {
         chars[index] = new Character(ch);
