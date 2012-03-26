@@ -33,6 +33,14 @@ public final class PearsonDep implements DependenceMeasure {
 	 * @see edu.wright.cs.birg.experiment.micdistribution.DependenceMeasure#dependence(edu.wright.cs.birg.experiment.micdistribution.Instance)
 	 */
 	@Override
+	@Exemplars(set={
+	@Exemplar(args={"null"}, ee="NullPointerException"),
+	@Exemplar(args={"Instance/i0_0"}, ee="IllegalArgumentException"), 
+	@Exemplar(args={"Instance/i01_10"}, e="1f"),
+	@Exemplar(args={"Instance/i012_120"}, e="0.5f"),
+	@Exemplar(args={"Instance/i0123_1032"}, e="0.6f"),
+	@Exemplar(args={"Instance/i01234_34330"}, e="0.72980046f"),
+	})
 	public float dependence(Instance inst) {
 		return Math.abs(PearsonDep.valueOf(inst));
 	}
@@ -49,6 +57,7 @@ public final class PearsonDep implements DependenceMeasure {
 	@Exemplar(args={"Instance/i01_10"}, e="-1f"),
 	@Exemplar(args={"Instance/i012_120"}, e="-0.5f"),
 	@Exemplar(args={"Instance/i0123_1032"}, e="0.6f"),
+	@Exemplar(args={"Instance/i01234_34330"}, e="-0.72980046f"),
 	})
 	public static float valueOf(Instance inst){
 		if(inst.getNumSamples() < 2){
