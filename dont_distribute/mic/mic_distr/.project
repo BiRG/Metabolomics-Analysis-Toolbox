@@ -3,7 +3,8 @@
 	<name>MIC Distribution</name>
 	<comment></comment>
 	<projects>
-		<project>Correlation Based Feature Selection</project>
+		<project>JavaTestHelper</project>
+		<project>JMatIO</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
