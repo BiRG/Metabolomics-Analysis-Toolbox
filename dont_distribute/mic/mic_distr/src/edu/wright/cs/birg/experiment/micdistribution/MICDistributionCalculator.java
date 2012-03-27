@@ -28,7 +28,7 @@ import org.sureassert.uc.annotation.IgnoreTestCoverage;
  */
 public final class MICDistributionCalculator {
 	private static enum Command{
-		help, generate, listrelations, listdeps, dbdump, dbmerge, dbtomat
+		help, generate, geninstance, listrelations, listdeps, dbdump, dbmerge, dbtomat
 	}
 	
 	/**
@@ -165,7 +165,18 @@ public final class MICDistributionCalculator {
 		case help:
 			help(new String[0], txtOut, errOut);
 			break;
-
+		case geninstance:
+			txtOut.println("genInstance relation numSamples xStd yStd > samples.tsv");
+			txtOut.println("Generates numSamples samples from the given relation and noise");
+			txtOut.println("condition and writes them to stdout.");
+			txtOut.println("");
+			txtOut.println("relation   the short name of a relation (see listrelations)");
+			txtOut.println("numSamples the number of samples to generate");
+			txtOut.println("xStd       the standard deviation of the noise added to the x axis");
+			txtOut.println("           0 for noiseless.");
+			txtOut.println("yStd       the standard deviation of the noise added to the y axis");
+			txtOut.println("           0 for noiseless.");
+			break;
 		}
 	}
 	
@@ -385,6 +396,10 @@ public final class MICDistributionCalculator {
 			return;
 		case generate:
 			generate(rest, errOut, dbOut);
+			return;
+		case geninstance:
+			errOut.println("Sorry, the "+c+" command is not implemented yet.");
+			//TODO: implement geninstance command
 			return;
 		case listrelations:
 			listrelations(txtOut);
