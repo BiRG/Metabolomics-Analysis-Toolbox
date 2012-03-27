@@ -414,12 +414,42 @@ public final class MICDistributionCalculator {
 			dbmerge(rest, errOut, dbOut);
 			return;
 		case dbtomat:
-			errOut.println("Sorry, the "+c+" command is not implemented yet.");
-			//TODO: implement dbtomat command
+			dbtomat(dbIn, errOut, dbOut);
 			return;
 		}
 	}
 	
+	/**
+	 * Run the <code>dbtomat</code> command. Reads a database from <code>dbIn</code> and writes it out as a mat file.
+	 * @param dbIn The stream from which the database will be read. Cannot be null.
+	 * @param errOut The stream for status and error messages
+	 * @param dbOut The stream on which the database will be written.
+	 */
+	@IgnoreTestCoverage
+	private static void dbtomat(InputStream dbIn, PrintWriter errOut, OutputStream dbOut) {
+		ObjectInputStream obIn;
+		try {
+			obIn = new ObjectInputStream(dbIn);
+		} catch (IOException e) {
+			errOut.println("Error creating object input stream - probably wrong file format. The full error is: "+e.getLocalizedMessage());
+			return;
+		} 
+
+		Database db = null;
+		try {
+			db = (Database)obIn.readObject();
+		} catch (IOException e) {
+			errOut.println("Error: could read database from input io exception: "+e.getLocalizedMessage());
+			return;
+		} catch (ClassNotFoundException e) {
+			errOut.println("Error: could read database from input class not found exception: "+e.getLocalizedMessage());
+			return;
+		}
+		
+		//TODO: finish implementing dbtomat command
+		errOut.println("Sorry, the dbtomat command is not finished yet.");
+	}
+
 	/**
 	 * Run the dbmerge command. Starts with an empty database and adds the entries from each database file
 	 * on the command line to it. Writes the resulting database to dbOut
