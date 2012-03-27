@@ -592,11 +592,11 @@ public final class MICDistributionCalculator {
 		}
 
 		/**
-		 * Parse args and create an ArgsForGenerate object if they are valid. If
-		 * not, throws a ParseException with an exception message that should be
-		 * passed to printUsage before exiting.
+		 * Parse <code>args</code> and create an <code>ArgsForGenerate</code> object if they are valid. If
+		 * not, throws a {@link ParseException}</code> with an exception message that should be
+		 * passed to {@link #printUsage} before exiting.
 		 * 
-		 * @param args
+		 * @param args The command line arguments that will be parsed
 		 * @throws ParseException
 		 *             If there is a syntax error in the arguments. The
 		 *             exception message is what should be passed to printUsage.
