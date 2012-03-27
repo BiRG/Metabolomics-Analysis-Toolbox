@@ -90,7 +90,7 @@ public class MLChar extends MLArray
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() ^ Arrays.hashCode(chars);
+		return Arrays.hashCode(chars);
 	}
     
     
