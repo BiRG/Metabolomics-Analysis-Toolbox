@@ -21,10 +21,15 @@ import com.jmatio.types.MLSparse;
 import com.jmatio.types.MLStructure;
 
 /**
- * MAT-file writer.
+ * Writes MAT-files.
  * 
- * Usage:
- * <pre><code>
+ * <h2>Static Method Usage</h2>
+ * 
+ * The basic method of writing MAT-files is to use the static methods called
+ * <code>MatFileWriter.writeMat</code>
+ * 
+ * <pre>
+ * <code>
  * //1. First create example arrays
  * double[] src = new double[] { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 };
  * MLDouble mlDouble = new MLDouble( "double_arr", src, 3 );
@@ -35,47 +40,132 @@ import com.jmatio.types.MLStructure;
  * list.add( mlDouble );
  * list.add( mlChar );
  * 
- * new MatFileWriter( "mat_file.mat", list );
- * </code></pre>
+ * MatFileWriter.writeMat( "mat_file.mat", list );
+ * </code>
+ * </pre>
  * 
  * this is "equal" to Matlab commands:
- * <pre><code>
+ * 
+ * <pre>
+ * <code>
  * >> double_arr = [ 1 2; 3 4; 5 6];
  * >> char_arr = 'I am dummy';
  * >>
  * >> save('mat_file.mat', 'double_arr', 'char_arr');
- * </pre></code>
+ * </code>
+ * </pre>
  * 
- * @author Wojciech Gradkowski (<a href="mailto:wgradkowski@gmail.com">wgradkowski@gmail.com</a>)
+ * <h2>Constructor Usage</h2>
+ * 
+ * To mirror the MatFileReader structure, you can also write files by creating a
+ * MatFileWriter object with the appropriate constructor.
+ * 
+ * So, the last line of the code above:
+ * 
+ * <pre>
+ * <code>
+ * MatFileWriter.writeMat( "mat_file.mat", list );
+ * </code>
+ * </pre>
+ * 
+ * Can be rewritten, with identical behavior, as:
+ * 
+ * <pre>
+ * <code>
+ * new MatFileWriter( "mat_file.mat", list );
+ * </code>
+ * </pre>
+ * 
+ * @author Wojciech Gradkowski (<a
+ *         href="mailto:wgradkowski@gmail.com">wgradkowski@gmail.com</a>)
+ * @author Eric Moyer (<img src="doc-files/eric_handwritten_email.png"
+ *         style="vertical-align:-50%"/>)
  */
 public class MatFileWriter
 {
 //    private static final Logger logger = Logger.getLogger(MatFileWriter.class);
     
+	/**
+	 * Writes a collection of <code>MLArrays</code> to the file named <code>fileName</code>.
+	 * 
+	 * @param fileName
+	 *            name of output file
+	 * @param data
+	 *            <code>Collection</code> of <code>MLArray</code> elements
+	 * @throws IOException
+	 *             if there is an error writing to the file
+	 */
+    @SuppressWarnings("unused")
+	public static void writeMat(String fileName, Collection<MLArray> data) throws IOException
+    {
+        new MatFileWriter( new File(fileName), data );
+    }
+
     /**
-     * Writes MLArrays into file given by <code>fileName</code>.
-     * 
-     * @param fileName - name of ouput file
-     * @param data - <code>Collection</code> of <code>MLArray</code> elements
-     * @throws IOException if there is an error writing to the file
-     */
+	 * Writes <code>MLArrays</code> into file given by <code>fileName</code>.
+	 * 
+	 * @param fileName
+	 *            name of output file
+	 * @param data
+	 *            A <code>Collection</code> of <code>MLArray</code> elements
+	 * @throws IOException
+	 *             if there is an error writing to the file
+	 * @see #writeMat(String fileName, Collection data)
+	 */
     public MatFileWriter(String fileName, Collection<MLArray> data) throws IOException
     {
         this( new File(fileName), data );
     }
+    
+    
+	/**
+	 * Writes a collection of <code>MLArrays</code> to the <code>File</code>, <code>file</code>
+	 * 
+	 * @param file
+	 *            The output file
+	 * @param data
+	 *            A <code>Collection</code> of <code>MLArray</code> elements
+	 * @throws IOException
+	 *             if there is an error writing to the file
+	 */
+    @SuppressWarnings("unused")
+	public static void writeMat(File file, Collection<MLArray> data) throws IOException
+    {
+        new MatFileWriter( file, data );
+    }
+
     /**
-     * Writes MLArrays into <code>File</code>.
+     * Writes <code>MLArrays</code> into <code>File</code>.
      * 
-     * @param file - an output <code>File</code>
-     * @param data - <code>Collection</code> of <code>MLArray</code> elements
-     * @throws IOException if there is an error writing to the channel
+     * @param file the output <code>File</code>
+     * @param data a <code>Collection</code> of <code>MLArray</code> elements
+     * @throws IOException if there is an error writing to the file
+     * @see #writeMat(File, Collection)
      */
     public MatFileWriter(File file, Collection<MLArray> data) throws IOException
     {
         this( new FileOutputStream(file).getChannel(), data );
     }
+    
+	/**
+	 * Writes a collection of <code>MLArrays</code> to <code>channel</code>
+	 * 
+	 * @param channel
+	 *            The output channel
+	 * @param data
+	 *            A <code>Collection</code> of <code>MLArray</code> elements
+	 * @throws IOException
+	 *             if there is an error writing to the channel
+	 */
+    @SuppressWarnings("unused")
+	public static void writeMat(WritableByteChannel channel, Collection<MLArray> data) throws IOException
+    {
+        new MatFileWriter( channel, data );
+    }
+
+
     /**
-     * Writes MLArrays into <code>channel</code>.
+     * Writes <code>MLArrays<code> into <code>channel</code>.
      * 
      * Writes MAT-file header and compressed data (<code>miCOMPRESSED</code>).
      * 
@@ -375,9 +465,12 @@ public class MatFileWriter
     }
     
     /**
-     * Tiny class that represents MAT-file TAG 
-     * It simplifies writing data. Automates writing padding for instance.
-     */
+	 * Tiny class that represents MAT-file TAG It simplifies writing data.
+	 * Automates writing padding for instance.
+	 * 
+	 * @author Wojciech Gradkowski (<a
+	 *         href="mailto:wgradkowski@gmail.com">wgradkowski@gmail.com</a>)
+	 */
     private static class OSArrayTag extends MatTag
     {
         private byte[] data;
