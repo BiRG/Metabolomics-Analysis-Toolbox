@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.util.Collection;
@@ -163,6 +164,22 @@ public class MatFileWriter
         new MatFileWriter( channel, data );
     }
 
+    /**
+	 * Writes a collection of <code>MLArrays</code> to <code>out</code>
+	 * 
+	 * @param out
+	 *            the stream on which the data will be written. Cannot be null.
+	 * @param data
+	 *            A <code>Collection</code> of <code>MLArray</code> elements. Cannot be null.
+	 * @throws IOException
+	 *             if there is an error writing to the channel
+     */
+    @SuppressWarnings("unused")
+	public static void writeMat(OutputStream out, Collection<MLArray> data) throws IOException
+    {
+        new MatFileWriter( new OutputStreamChannel(out), data );
+ 
+    }
 
     /**
      * Writes <code>MLArrays<code> into <code>channel</code>.
