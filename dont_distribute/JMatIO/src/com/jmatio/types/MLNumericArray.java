@@ -268,5 +268,13 @@ public abstract class MLNumericArray<T extends Number> extends MLArray
         }
         return super.equals( o );
     }
+
+	@Override
+	public int hashCode() {
+        return 	Arrays.hashCode( real ) ^
+                Arrays.hashCode( imaginary ) ^
+                Arrays.hashCode( dims )
+                ;
+	}
     
 }
