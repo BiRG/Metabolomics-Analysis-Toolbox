@@ -97,27 +97,29 @@ public class MLDouble extends MLNumericArray<Double>
         return result;
     }
     /**
-     * Casts <code>Double[]</code> to <code>double[]</code>
+     * Casts <code>double[]</code> to <code>Double[]</code>
      * 
-     * @param source <code>Double[]</code>
-     * @return result <code>double[]</code>
+     * @param d <code>double[]</code>
+     * @return <code>d</code>'s elements boxed into <code>Double[]</code>
      */
-    @SuppressWarnings("boxing")
 	private static Double[] castToDouble( double[] d )
     {
         Double[] dest = new Double[d.length];
         for ( int i = 0; i < d.length; i++ )
         {
-            dest[i] = (Double)d[i];
+            dest[i] = new Double(d[i]);
         }
         return dest;
     }
-    /**
-     * Converts double[][] to Double[]
-     * 
-     * @param dd
-     * @return
-     */
+
+	/**
+	 * Converts double[][] to Double[]
+	 * 
+	 * @param dd
+	 *            the two-dimensional primitive matrix that will be reshaped
+	 * @return the two dimensional primitive array <code>dd</code> reordered as
+	 *         a single dimensional array of Double objects
+	 */
     @SuppressWarnings("boxing")
 	private static Double[] double2DToDouble ( double[][] dd )
     {

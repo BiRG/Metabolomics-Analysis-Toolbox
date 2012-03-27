@@ -125,8 +125,8 @@ public class MatFileWriter
     }
     
     /**
-     * Writes MAT-file header into <code>OutputStream</code>
-     * @param os <code>OutputStream</code>
+     * Writes MAT-file header into <code>channel</code>
+     * @param channel The stream to which the header will be written
      * @throws IOException if there is an error writing to the channel
      */
     private static void writeHeader(WritableByteChannel channel) throws IOException
@@ -160,13 +160,13 @@ public class MatFileWriter
     }
     
     /**
-     * Writes MATRIX into <code>OutputStream</code>.
+     * Writes the matrix <code>array</code> to the stream <code>output</code>.
      * 
-     * @param os - <code>OutputStream</code>
-     * @param array - a <code>MLArray</code>
-     * @throws IOException
+     * @param output the stream to which the matrix will be written
+     * @param array the array or matrix to write to the stream
+     * @throws IOException if there is a problem with writing to <code>output</code>
      */
-    private void writeMatrix(DataOutputStream output, MLArray array) throws IOException
+    private static void writeMatrix(DataOutputStream output, MLArray array) throws IOException
     {   
         OSArrayTag tag;
         ByteArrayOutputStream buffer;         

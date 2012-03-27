@@ -24,9 +24,9 @@ import com.jmatio.types.MLSparse;
 import com.jmatio.types.MLStructure;
 
 /**
- * MAT-file reader. Reads MAT-file into <code>MLArray</code> objects.
+ * Reads MAT-files. Reads a MAT-file into <code>MLArray</code> objects.
  * 
- * Usage:
+ * <h2>Usage</h2>
  * <pre><code>
  * //read in the file
  * MatFileReader mfr = new MatFileReader( "mat_file.mat" );
@@ -179,20 +179,21 @@ public class MatFileReader
     {
         return data;
     }
-    /**
-     * Decompresses (inflates) bytes from input stream.
-     * 
-     * Stream marker is being set at +<code>numOfBytes</code> position of the
-     * stream.
-     * 
-     * @param is -
-     *            input byte buffer
-     * @param numOfBytes -
-     *            number of bytes to be red
-     * @return - new <code>ByteBuffer</code> with infladed block of data
-     * @throws IOException
-     *             when error occurs while reading or inflating the buffer .
-     */
+
+	/**
+	 * Decompresses (inflates) bytes from input stream.
+	 * 
+	 * Stream marker is being set at +<code>numOfBytes</code> position of the
+	 * stream.
+	 * 
+	 * @param buf
+	 *            input byte buffer
+	 * @param numOfBytes
+	 *            number of bytes to read
+	 * @return new <code>ByteBuffer</code> with inflated block of data
+	 * @throws IOException
+	 *             when error occurs while reading or inflating the buffer .
+	 */
     private ByteBuffer inflate(ByteBuffer buf, int numOfBytes) throws IOException
     {
         byte[] compressed = new byte[numOfBytes];
