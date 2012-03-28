@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * @author Eric Moyer
  * 
  */
-public final class Database implements Serializable{
+public final class Database implements Serializable, Iterable<DataPoint>{
 	/**
 	 * The version ID: if it is the same then the class can be deserialized 
 	 */
@@ -60,11 +60,46 @@ public final class Database implements Serializable{
 	}
 	
 	/**
+	 * Return true if and only if there are no instances in this
+	 * <code>Database</code>
+	 * 
+	 * @return true if and only if there are no instances in this
+	 *         <code>Database</code>
+	 */
+	public boolean isEmpty(){
+		return instances.isEmpty();
+	}
+	
+	/**
+	 * Removes and returns the first instance in the database. If the database is empty, returns null.
+	 * @return the first instance or null if there are no instances.
+	 */
+	public DBInstance popInstance(){
+		if(isEmpty()){
+			return null;
+		}else{
+			return instances.remove(0);
+		}
+	}
+	
+	/**
 	 * Return a read-only iterator that iterates over the contents of this database viewed as DataPoint objects
 	 * @return a read-only iterator that iterates over the contents of this database viewed as DataPoint objects
 	 */
-	public Iterator<DataPoint> dataPointIterator(){
+	public Iterator<DataPoint> iterator(){
 		return this.new DataPointIterator();
+	}
+	
+	/**
+	 * Return the number of {@link DataPoint} objects in this database
+	 * @return the number of <code>DataPoint</code> objects in this database
+	 */
+	public int getNumDatapoints(){
+		int sum = 0;
+		for(DBInstance inst:instances){
+			sum += inst.getNumDatapoints();
+		}
+		return sum;
 	}
 	
 	/**
