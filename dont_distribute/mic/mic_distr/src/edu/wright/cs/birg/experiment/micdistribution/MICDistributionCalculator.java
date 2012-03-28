@@ -25,7 +25,7 @@ import org.sureassert.uc.annotation.IgnoreTestCoverage;
 import com.jmatio.io.MatFileWriter;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLDouble;
-import com.jmatio.types.MLStructure;
+
 
 /**
  * @author Eric Moyer
@@ -481,30 +481,15 @@ public final class MICDistributionCalculator {
 				++curIdx;
 			}
 		}
-		db = null;
-		
-		for(int i = 0; i < numDP; ++i){
-			errOut.print(i);errOut.flush();
-			if(dependence.get(i) == null){ errOut.println("dependence:"+i); return; } 
-			if(dependenceMeasureID.get(i) == null){ errOut.println("dependenceMeasureID:"+i); return; } 
-			if(instanceID.get(i) == null){ errOut.println("instanceID:"+i); return; } 
-			if(numSamples.get(i) == null){ errOut.println("numSamples:"+i); return; } 
-			if(relationID.get(i) == null){ errOut.println("relationID:"+i); return; } 
-			if(xNoiseStd.get(i) == null){ errOut.println("xNoiseStd:"+i); return; } 
-			if(yNoiseStd.get(i) == null){ errOut.println("yNoiseStd:"+i); return; } 
-		}
-		
-		MLStructure str = new MLStructure("Data",new int[]{numDP,1});
-		str.setField("dependence", dependence); dependence = null;
-		str.setField("dependenceMeasureID", dependenceMeasureID); dependenceMeasureID = null;
-		str.setField("instanceID", instanceID); instanceID = null;
-		str.setField("numSamples", numSamples); numSamples = null;
-		str.setField("relationID", relationID); relationID = null;
-		str.setField("xNoiseStd", xNoiseStd); xNoiseStd = null;
-		str.setField("yNoiseStd", yNoiseStd); yNoiseStd = null;
-		
+				
 		List<MLArray> toSave = new LinkedList<MLArray>();
-		toSave.add(str);
+		toSave.add(dependence);
+		toSave.add(dependenceMeasureID);
+		toSave.add(instanceID);
+		toSave.add(numSamples);
+		toSave.add(relationID);
+		toSave.add(xNoiseStd);
+		toSave.add(yNoiseStd);
 		try {
 			MatFileWriter.writeMat(dbOut, toSave);
 		} catch (IOException e) {
