@@ -43,7 +43,7 @@ public class SpearmanDep implements DependenceMeasure {
 	@Exemplar(args={"Instance/i01_10"}, e="1f"),
 	@Exemplar(args={"Instance/i012_120"}, e="0.5f"),
 	@Exemplar(args={"Instance/i0123_1032"}, e="0.6f"),
-	@Exemplar(args={"Instance/i01234_34330"}, e="0.670820393f"),
+	@Exemplar(args={"Instance/i01234_34330"}, e="0.670820393f")
 	})
 	public float dependence(Instance inst) {
 		Instance rankInst = new Instance(asRanks(inst.x), asRanks(inst.y));
@@ -78,7 +78,7 @@ public class SpearmanDep implements DependenceMeasure {
 	@Exemplar(args={"pa:1f,java/lang/Float.NaN"}, 
 		expectexception="java/lang/IllegalArgumentException"
 		), //Note 9221120237041090560l is NaN, I'm working around a bug in SureAssert
-	@Exemplar(args={"null"}, expectexception="java/lang/IllegalArgumentException"),
+	@Exemplar(args={"null"}, expectexception="java/lang/IllegalArgumentException")
 	})	
 	private static float[] asRanks(float[] in){
 		if(in == null){ throw new IllegalArgumentException("null passed to asRanks(float[]) instead of an array"); }

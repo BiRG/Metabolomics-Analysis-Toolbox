@@ -191,7 +191,7 @@ public final class MICDistributionCalculator {
 	@Exemplar(args={"[pa:1.0f]"}, expect="true"),
 	@Exemplar(args={"[pa:0.0f]"}, expect="true"),
 	@Exemplar(args={"[pa:1.0f,0.0f]"}, expect="false"),
-	@Exemplar(args={"[pa:1.0f,1.0f]"}, expect="true"),
+	@Exemplar(args={"[pa:1.0f,1.0f]"}, expect="true")
 	})
 	private static boolean hasLessThanTwoValues(float[] x) {
 		for(int i = 1; i < x.length; ++i){
@@ -568,7 +568,7 @@ public final class MICDistributionCalculator {
 		
 		
 		txtOut.println("instance id\t"+relation_header+"\tnumber of samples\tx noise standard deviation\ty noise standard deviation\tdependence measure id\tdependence value");
-		Iterator<DataPoint> it= db.dataPointIterator();
+		Iterator<DataPoint> it= db.iterator();
 		while(it.hasNext()){
 			DataPoint p = it.next();
 			txtOut.print(p.instanceID);	txtOut.print('\t');
@@ -828,7 +828,7 @@ public final class MICDistributionCalculator {
 	@Exemplar(args={"[pa:1f]","1d","new java/util/Random(1l)"}, e="java/util/Arrays.equals([pa:2.5615811f],$arg1)"),
 	@Exemplar(args={"[pa:1f,0f]","1d","new java/util/Random(1l)"}, e="java/util/Arrays.equals([pa:2.5615811f,-0.6081826f],$arg1)"),
 	@Exemplar(args={"[pa:0f]","2d","new java/util/Random(1l)"}, e="java/util/Arrays.equals([pa:3.123162f],$arg1)"),
-	@Exemplar(args={"edu/wright/cs/birg/test/ArrayUtils.emptyFloat()","2d","new java/util/Random(1l)"}, e="java/util/Arrays.equals(edu/wright/cs/birg/test/ArrayUtils.emptyFloat(),$arg1)"),
+	@Exemplar(args={"edu/wright/cs/birg/test/ArrayUtils.emptyFloat()","2d","new java/util/Random(1l)"}, e="java/util/Arrays.equals(edu/wright/cs/birg/test/ArrayUtils.emptyFloat(),$arg1)")
 	})
 	private static void addNoise(float[] x, double std, Random rng) {
 		if(x == null){ 
@@ -907,7 +907,7 @@ public final class MICDistributionCalculator {
 	@Exemplar(args={"null"}, expect="null"),
 	@Exemplar(args={"''"}, expect="null"), 
 	@Exemplar(args={"'random'"}, expect="RandomRel"), 
-	@Exemplar(args={"'categorical01'"}, expect="CategoricalRel"), 
+	@Exemplar(args={"'categorical01'"}, expect="CategoricalRel")
 	})
 	private static Relation relationFor(String shortName) {
 		List<Relation> relations=allRelations();

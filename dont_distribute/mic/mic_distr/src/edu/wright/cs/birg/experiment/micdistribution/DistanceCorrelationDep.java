@@ -50,7 +50,7 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 	@Exemplar(args={"Instance/i01_10"}, expect="1f"),
 	@Exemplar(args={"Instance/i012_120"}, expect="0.7f"),
 	@Exemplar(args={"Instance/i0123_1032"}, expect="0.692307692f"),
-	@Exemplar(args={"Instance/i01234_34330"}, expect="0.591232712f"),
+	@Exemplar(args={"Instance/i01234_34330"}, expect="0.591232712f")
 	})
 	public float dependence(Instance inst) {
 		double[][] A = capitalLetterMatrix(inst.x);
@@ -83,7 +83,7 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 			"[pa:[pa:-0.44444444444444444,0.22222222222222222,  0.22222222222222222]," +
 			"[pa:0.22222222222222222, -1.1111111111111111,   0.88888888888888889]," +
 			"[pa:0.22222222222222222,0.88888888888888889,-1.1111111111111111]]"
-			},e="0.34567901234567901"),
+			},e="0.34567901234567901")
 	})
 	private static double distanceCovariance(double[][] A, double[][] B){
 		if(A == null || B==null){
@@ -159,7 +159,7 @@ public class DistanceCorrelationDep implements DependenceMeasure {
 			@Exemplar(a="pa:1f,2f,0f",e="#=(retval,[a:" +
 					"[pa:-0.44444444444444444d, 0.22222222222222222d, 0.22222222222222222]," +
 					"[pa: 0.22222222222222222d,-1.1111111111111111d,  0.88888888888888889]," +
-					"[pa: 0.22222222222222222d, 0.88888888888888889d,-1.1111111111111111]])"),
+					"[pa: 0.22222222222222222d, 0.88888888888888889d,-1.1111111111111111]])")
 	})
 	public static double[][] capitalLetterMatrix(float[] a){
 		if(a == null){

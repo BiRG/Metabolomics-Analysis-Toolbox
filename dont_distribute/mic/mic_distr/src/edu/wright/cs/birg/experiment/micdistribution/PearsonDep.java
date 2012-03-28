@@ -39,7 +39,7 @@ public final class PearsonDep implements DependenceMeasure {
 	@Exemplar(args={"Instance/i01_10"}, e="1f"),
 	@Exemplar(args={"Instance/i012_120"}, e="0.5f"),
 	@Exemplar(args={"Instance/i0123_1032"}, e="0.6f"),
-	@Exemplar(args={"Instance/i01234_34330"}, e="0.72980046f"),
+	@Exemplar(args={"Instance/i01234_34330"}, e="0.72980046f")
 	})
 	public float dependence(Instance inst) {
 		return Math.abs(PearsonDep.valueOf(inst));
@@ -57,7 +57,7 @@ public final class PearsonDep implements DependenceMeasure {
 	@Exemplar(args={"Instance/i01_10"}, e="-1f"),
 	@Exemplar(args={"Instance/i012_120"}, e="-0.5f"),
 	@Exemplar(args={"Instance/i0123_1032"}, e="0.6f"),
-	@Exemplar(args={"Instance/i01234_34330"}, e="-0.72980046f"),
+	@Exemplar(args={"Instance/i01234_34330"}, e="-0.72980046f")
 	})
 	public static float valueOf(Instance inst){
 		if(inst.getNumSamples() < 2){
@@ -88,7 +88,7 @@ public final class PearsonDep implements DependenceMeasure {
 	@Exemplar(args={"null","0d"}, ee="NullPointerException"),
 	@Exemplar(args={"edu/wright/cs/birg/test/ArrayUtils.emptyFloat()","1d"}, expect="0.0"),
 	@Exemplar(args={"[pa:1.0f]","1d"}, expect="0.0"),
-	@Exemplar(args={"[pa:1.0f,2.5f]","1.75"}, expect="1.0606601717798213"),
+	@Exemplar(args={"[pa:1.0f,2.5f]","1.75"}, expect="1.0606601717798213")
 	})
 	private static double std(float[] x, double mean) {
 		double sum = 0;
@@ -112,7 +112,7 @@ public final class PearsonDep implements DependenceMeasure {
 	@Exemplar(args={"null"}, ee="NullPointerException"),
 	@Exemplar(args={"edu/wright/cs/birg/test/ArrayUtils.emptyFloat()"}, expect="0.0"),
 	@Exemplar(args={"[pa:1.0f]"}, expect="1.0"),
-	@Exemplar(args={"[pa:1.0f,2.5f]"}, expect="1.75"),
+	@Exemplar(args={"[pa:1.0f,2.5f]"}, expect="1.75")
 	})
 	private static double mean(float[] x) {
 		double sum = 0;
