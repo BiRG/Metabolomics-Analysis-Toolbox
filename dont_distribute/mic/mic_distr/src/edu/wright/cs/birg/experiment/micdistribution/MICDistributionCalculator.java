@@ -26,10 +26,13 @@ import com.jmatio.io.MatFileWriter;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLDouble;
 
+import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthRelation;
+import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthSine;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
+import edu.wright.cs.birg.experiment.micdistribution.relations.UnionRelation;
 
 
 /**
@@ -272,6 +275,20 @@ public final class MICDistributionCalculator {
 		
 		//Parabolic relationship
 		rels.add(new ParabolicRel());
+		
+		//Sine relationships
+		ArcLengthRelation sin02pi = new ArcLengthSine(32, "sin02pi", "Sine 2pi", 2);
+		ArcLengthRelation sin03pi = new ArcLengthSine(33, "sin03pi", "Sine 3pi", 3);
+		ArcLengthRelation sin04pi = new ArcLengthSine(34, "sin04pi", "Sine 4pi", 4);
+		ArcLengthRelation sin10pi = new ArcLengthSine(40, "sin10pi", "Sine 10pi", 10);
+		rels.add(sin02pi);
+		rels.add(sin03pi);
+		rels.add(sin04pi);
+		rels.add(sin10pi);
+		
+		//Two sine relationships
+		rels.add(new UnionRelation(92, "2sin2_3",  "Two Sine (2,3)",  sin02pi, sin03pi));
+		rels.add(new UnionRelation(94, "2sin4_10", "Two Sine (4,10)", sin04pi, sin10pi));
 		
 		//Categorical relationships
 		rels.add(new CategoricalRel(150, "categorical01", "Categorical 1", 
