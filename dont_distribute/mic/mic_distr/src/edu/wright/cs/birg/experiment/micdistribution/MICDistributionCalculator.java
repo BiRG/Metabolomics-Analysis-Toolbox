@@ -435,10 +435,43 @@ public final class MICDistributionCalculator {
 	 * @param errOut
 	 *            The stream for error and status messages.
 	 */
+	@IgnoreTestCoverage
 	private static void geninstance(String[] args, PrintWriter txtOut,
 			PrintWriter errOut) {
-		// TODO Auto-generated method stub
+		if(args.length != 4){
+			help(new String[]{"geninstance"}, errOut, errOut);
+			errOut.println("Error: not enough arguments passed to geninstance");
+			return;			
+		}
 		
+		Relation relation = relationFor(args[0]);
+		if(relation == null){
+			help(new String[]{"geninstance"}, errOut, errOut);
+			errOut.println("Error: "+args[0]+" is not the name of a known relation");
+			return;
+		}
+		
+		double xStd = 0;
+		double yStd = 0;
+		int numSamples = 0;
+		try{
+			numSamples = Integer.valueOf(args[1]).intValue();
+			xStd = Double.valueOf(args[2]).doubleValue();
+			yStd = Double.valueOf(args[3]).doubleValue();
+		}catch(NumberFormatException e){
+			help(new String[]{"geninstance"}, errOut, errOut);
+			errOut.println("Error: could not parse one of the arguments to geninstance");
+			return;
+		}
+		
+		Random rng = new Random();
+		
+		Instance inst = newNoisyInstance(relation, xStd, yStd, rng, numSamples);
+		
+		txtOut.println("X\tY");
+		for(int i = 0; i < numSamples; ++i){
+			txtOut.println(inst.x[i]+"\t"+inst.y[i]);
+		}
 	}
 
 	/**
@@ -832,9 +865,7 @@ public final class MICDistributionCalculator {
 			for(int instNum = 0; instNum < a.numInst; ++instNum){
 				DBInstance record = new DBInstance(a.relation.getId(), (float)a.xStd, (float)a.yStd, numSamples, 
 						deps.size()+numMICs);
-				Instance inst = a.relation.samples(rng, numSamples);
-				addNoise(inst.x, a.xStd, rng);
-				addNoise(inst.y, a.yStd, rng);
+				Instance inst = newNoisyInstance(a.relation, a.xStd, a.yStd, rng, numSamples);
 				
 				//Record dependence measures
 				int firstUnfilledDep = 0;
@@ -870,6 +901,49 @@ public final class MICDistributionCalculator {
 			errOut.println("Error: could not write database: "+e.getLocalizedMessage());
 			return;
 		}
+	}
+
+	/**
+	 * Generate an instance with <code>numSamples</code> samples from the
+	 * <code>relation</code> with the given noise parameters
+	 * 
+	 * @param relation
+	 *            The relation from which the samples will be generated. Cannot
+	 *            be null.
+	 * @param xStd
+	 *            The standard deviation of the noise added to the x coordinate.
+	 *            If 0, then no noise is added. Cannot be negative.
+	 * @param yStd
+	 *            The standard deviation of the noise added to the y coordinate.
+	 *            If 0, then no noise is added. Cannot be negative.
+	 * @param rng
+	 *            The random number generator used to select the samples from
+	 *            the relation and to add the noise. Cannot be null.
+	 * @param numSamples
+	 *            The number of samples to generate from the relation. Cannot be negative.
+	 * @return a new instance with <code>numSamples</code> samples from the
+	 *         <code>relation</code> with the given noise parameters
+	 */
+	@Exemplars(set={
+	@Exemplar(args={"CategoricalRel/cat01","0.0","0.0","new java/util/Random(1l)","1"}, expect={
+		"java/util/Arrays.equals(retval.x,[pa:0f])",
+		"java/util/Arrays.equals(retval.y,[pa:0f])"}),
+	@Exemplar(args={"CategoricalRel/cat01","0.1","0.0","new java/util/Random(1l)","1"}, expect={
+			"java/util/Arrays.equals(retval.x,[pa:-0.08673886f])",
+			"java/util/Arrays.equals(retval.y,[pa:0f])"}),
+	@Exemplar(args={"CategoricalRel/cat01","0.0","0.1","new java/util/Random(1l)","1"}, expect={
+			"java/util/Arrays.equals(retval.y,[pa:-0.08673886f])",
+			"java/util/Arrays.equals(retval.x,[pa:0f])"}),
+	@Exemplar(args={"null","0.0","0.0","new java/util/Random(1l)","0"}, ee="NullPointerException"),
+	@Exemplar(args={"CategoricalRel/cat01","0.0","0.0","null","0"}, ee="NullPointerException"),
+	@Exemplar(args={"CategoricalRel/cat01","0.0","0.0","new java/util/Random(1l)","-1"}, ee="IllegalArgumentException")
+	})
+	private static Instance newNoisyInstance(Relation relation, double xStd, double yStd, Random rng,
+			int numSamples) {
+		Instance inst = relation.samples(rng, numSamples);
+		addNoise(inst.x, xStd, rng);
+		addNoise(inst.y, yStd, rng);
+		return inst;
 	}
 
 	/**
