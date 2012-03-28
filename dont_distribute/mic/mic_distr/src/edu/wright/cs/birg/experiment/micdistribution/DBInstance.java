@@ -98,4 +98,12 @@ public final class DBInstance implements Serializable {
 		return dependenceMeasureIds.length;
 	}
 
+	/**
+	 * Return the number of <code>DataPoint</code> objects that will be generated from this <code>Instance</code>
+	 * @return the number of <code>DataPoint</code> objects that will be generated from this <code>Instance</code>
+	 */
+	public long getNumDatapoints() {
+		return getNumDependenceMeasures();
+	}
+
 }
