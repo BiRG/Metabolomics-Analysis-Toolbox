@@ -27,6 +27,7 @@ import com.jmatio.types.MLArray;
 import com.jmatio.types.MLDouble;
 
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
 
@@ -269,6 +270,8 @@ public final class MICDistributionCalculator {
 		//Random relationship
 		rels.add(new RandomRel());
 		
+		//Parabolic relationship
+		rels.add(new ParabolicRel());
 		
 		//Categorical relationships
 		rels.add(new CategoricalRel(150, "categorical01", "Categorical 1", 
