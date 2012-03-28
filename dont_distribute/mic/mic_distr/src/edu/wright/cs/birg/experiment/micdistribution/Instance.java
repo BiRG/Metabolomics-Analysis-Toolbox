@@ -3,6 +3,8 @@
  */
 package edu.wright.cs.birg.experiment.micdistribution;
 
+import java.util.Arrays;
+
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
 
@@ -85,10 +87,18 @@ public class Instance {
 
 	/**
 	 * Create an instance for numSamples samples with uninitialized values 
-	 * @param numSamples the number of samples in the resulting instance
+	 * @param numSamples the number of samples in the resulting instance. Must be 0 or more
 	 */
+	@Exemplars(set={
+	@Exemplar(args={"0"}, expect="=(retval.getNumSamples(),0)"),
+	@Exemplar(args={"1"}, expect="=(retval.getNumSamples(),1)"),
+	@Exemplar(args={"150"}, expect="=(retval.getNumSamples(),150)"),
+	@Exemplar(args={"-1"}, ee="IllegalArgumentException") })
 	public Instance(int numSamples) {
-		this(new float[numSamples], new float[numSamples]);
+		if(numSamples < 0){
+			throw new IllegalArgumentException("Cannot create an instance with a negative number of samples.");
+		}
+		x = new float[numSamples]; y = new float[numSamples];
 	}
 
 	/**
@@ -97,5 +107,15 @@ public class Instance {
 	 */
 	public int getNumSamples() {
 		return x.length;
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder b = new StringBuilder();
+		b.append("[Instance x=");
+		b.append(Arrays.toString(x));
+		b.append(" y=");
+		b.append(Arrays.toString(y));
+		return b.toString();
 	}
 }

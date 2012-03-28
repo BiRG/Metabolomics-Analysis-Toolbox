@@ -111,13 +111,20 @@ public abstract class Relation {
 	}
 	
 	/**
-	 * Return an instance composed of numSamples independent, identically
-	 * distributed samples from the points in this relation.
+	 * <p>Return an instance composed of numSamples independent, identically
+	 * distributed samples from the points in this relation.</p><p>
+	 *
+	 *  <p>Copy the following exemplars into implementations:</p><pre><code>
+	 * 	@Exemplars(set={
+	 *	@Exemplar(args={"null","1"}, ee="NullPointerException"),
+	 *	@Exemplar(args={"new Random(1l)","0"}, expect={"Instance","=(retval.getNumSamples(),0)"})
+	 *	})
+	 *	</pre></code>
 	 * 
 	 * @param rng
-	 *            The random number generator used in creating the sample
+	 *            The random number generator used in creating the sample. Cannot be null.
 	 * @param numSamples
-	 *            The number of samples in the list that will be returned
+	 *            The number of samples in the list that will be returned. Cannot be negative.
 	 * @return an Instance composed of numSamples independent, identically
 	 *         distributed samples from the points in this relation.
 	 */
