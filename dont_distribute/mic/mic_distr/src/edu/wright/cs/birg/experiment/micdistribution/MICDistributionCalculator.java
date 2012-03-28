@@ -403,8 +403,7 @@ public final class MICDistributionCalculator {
 			generate(rest, errOut, dbOut);
 			return;
 		case geninstance:
-			errOut.println("Sorry, the "+c+" command is not implemented yet.");
-			//TODO: implement geninstance command
+			geninstance(rest, txtOut, errOut);
 			return;
 		case listrelations:
 			listrelations(txtOut);
@@ -424,6 +423,24 @@ public final class MICDistributionCalculator {
 		}
 	}
 	
+	/**
+	 * Run the <code>geninstance</code> command. Generate an instance and print
+	 * it to stdout as a tab-separated value file.
+	 * 
+	 * @param args
+	 *            The command line arguments to the <code>geninstance</code>
+	 *            command. Cannot be null.
+	 * @param txtOut
+	 *            The stream on which the instance will be output
+	 * @param errOut
+	 *            The stream for error and status messages.
+	 */
+	private static void geninstance(String[] args, PrintWriter txtOut,
+			PrintWriter errOut) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * Run the <code>dbtomat</code> command. Reads a database from <code>dbIn</code> and writes it out as a mat file.
 	 * @param dbIn The stream from which the database will be read. Cannot be null.
