@@ -26,6 +26,10 @@ import com.jmatio.io.MatFileWriter;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLDouble;
 
+import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
+
 
 /**
  * @author Eric Moyer

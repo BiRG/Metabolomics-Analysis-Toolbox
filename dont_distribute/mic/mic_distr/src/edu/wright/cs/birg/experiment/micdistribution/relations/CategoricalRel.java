@@ -1,12 +1,14 @@
 /**
  * 
  */
-package edu.wright.cs.birg.experiment.micdistribution;
+package edu.wright.cs.birg.experiment.micdistribution.relations;
 
 import java.util.Random;
 
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
+
+import edu.wright.cs.birg.experiment.micdistribution.Instance;
 
 /**
  * A relation consisting of a finite set of points. Generic version of the categorical relation 
@@ -85,7 +87,7 @@ public final class CategoricalRel extends Relation {
 	@Exemplar(args={"150", "'categorical01'", "'Categorical 1'","[pa:0f]","[pa:0f,1f]"}, ee="IllegalArgumentException"), 
 	@Exemplar(args={"0","null","null","null","null"}, ee="NullPointerException") 
 	})
-	CategoricalRel(int id, String shortName, String fullName, float[] x, float[] y){
+	public CategoricalRel(int id, String shortName, String fullName, float[] x, float[] y){
 		super(id, shortName, fullName);
 		
 		if (x == null) {

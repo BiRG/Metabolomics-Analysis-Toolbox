@@ -1,9 +1,11 @@
 /**
  * 
  */
-package edu.wright.cs.birg.experiment.micdistribution;
+package edu.wright.cs.birg.experiment.micdistribution.relations;
 
 import java.util.Random;
+
+import edu.wright.cs.birg.experiment.micdistribution.Instance;
 
 /**
  * A relation between two variables on the unit square from which samples can be

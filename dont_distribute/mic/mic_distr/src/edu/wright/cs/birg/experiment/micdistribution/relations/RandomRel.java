@@ -1,12 +1,14 @@
 /**
  * 
  */
-package edu.wright.cs.birg.experiment.micdistribution;
+package edu.wright.cs.birg.experiment.micdistribution.relations;
 
 import java.util.Random;
 
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
+
+import edu.wright.cs.birg.experiment.micdistribution.Instance;
 
 /**
  * A uniform random relation between two variables
