@@ -190,7 +190,7 @@ public class MLArray
     public int getM()
     {
         int i = 0;
-        if( dims != null )
+        if( dims != null && dims.length > 0)
         {
             i = dims[0];
         }
@@ -206,7 +206,7 @@ public class MLArray
         int i = 0;
         if(dims != null)
         {
-            if(dims.length > 2)
+            if(dims.length >= 2)
             {
                 i = 1;
                 for(int j = 1; j < dims.length; j++)
@@ -216,7 +216,7 @@ public class MLArray
             } 
             else
             {
-                i = dims[1];
+                i = 1;
             }
         }
         return i;

@@ -306,7 +306,7 @@ public class MatFileWriter
                 
                 break;
             case MLArray.mxDOUBLE_CLASS:
-                Double[] ad;                
+                Double[] ad; 
                 
                 //write real data
                 buffer = new ByteArrayOutputStream();
@@ -314,7 +314,14 @@ public class MatFileWriter
                 ad = ((MLDouble)array).exportReal();
                 for ( int i = 0; i < ad.length; i++ )
                 {
-                    bufferDOS.writeDouble( ad[i].doubleValue() );
+                	Double D = ad[i];
+                	double d = 0;
+                	try{
+                		d = D.doubleValue();
+                	}catch(NullPointerException e){
+                		System.err.println("Null double value at "+i+" replacing with 0.");
+                	}
+                    bufferDOS.writeDouble( d );
                 }
                 tag = new OSArrayTag(MatDataTypes.miDOUBLE, buffer.toByteArray() );
                 tag.writeTo( dos );
