@@ -22,6 +22,11 @@ import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
 import org.sureassert.uc.annotation.IgnoreTestCoverage;
 
+import com.jmatio.io.MatFileWriter;
+import com.jmatio.types.MLArray;
+import com.jmatio.types.MLDouble;
+import com.jmatio.types.MLStructure;
+
 /**
  * @author Eric Moyer
  *
@@ -439,15 +444,72 @@ public final class MICDistributionCalculator {
 		try {
 			db = (Database)obIn.readObject();
 		} catch (IOException e) {
-			errOut.println("Error: could read database from input io exception: "+e.getLocalizedMessage());
+			errOut.println("Error: could not read database from input; io exception: "+e.getLocalizedMessage());
 			return;
 		} catch (ClassNotFoundException e) {
-			errOut.println("Error: could read database from input class not found exception: "+e.getLocalizedMessage());
+			errOut.println("Error: could not read database from input; class not found exception: "+e.getLocalizedMessage());
 			return;
 		}
 		
-		//TODO: finish implementing dbtomat command
-		errOut.println("Sorry, the dbtomat command is not finished yet.");
+		MLDouble dependence;
+		MLDouble dependenceMeasureID;
+		MLDouble instanceID;
+		MLDouble numSamples;
+		MLDouble relationID;
+		MLDouble xNoiseStd;
+		MLDouble yNoiseStd;
+
+		int numDP = db.getNumDatapoints();
+		dependence = new MLDouble("dependences", new int[] {numDP,1});
+		dependenceMeasureID = new MLDouble("dependenceMeasureIDs", new int[] {numDP}); 
+		instanceID = new MLDouble("instanceIDs", new int[] {numDP,1});
+		numSamples = new MLDouble("numSamples", new int[] {numDP,1});
+		relationID = new MLDouble("relationIDs", new int[] {numDP,1});
+		xNoiseStd = new MLDouble("xNoiseStds", new int[] {numDP,1});
+		yNoiseStd = new MLDouble("yNoiseStds", new int[] {numDP,1});
+		
+		{
+			int curIdx = 0;
+			for(DataPoint p: db){
+				dependence.setReal(new Double(p.dependence), curIdx);
+				dependenceMeasureID.setReal(new Double(p.dependenceMeasureID), curIdx);
+				instanceID.setReal(new Double(p.instanceID), curIdx);
+				numSamples.setReal(new Double(p.numSamples), curIdx);
+				relationID.setReal(new Double(p.relationID), curIdx);
+				xNoiseStd.setReal(new Double(p.xNoiseStandardDeviation), curIdx);
+				yNoiseStd.setReal(new Double(p.yNoiseStandardDeviation), curIdx);
+				++curIdx;
+			}
+		}
+		db = null;
+		
+		for(int i = 0; i < numDP; ++i){
+			errOut.print(i);errOut.flush();
+			if(dependence.get(i) == null){ errOut.println("dependence:"+i); return; } 
+			if(dependenceMeasureID.get(i) == null){ errOut.println("dependenceMeasureID:"+i); return; } 
+			if(instanceID.get(i) == null){ errOut.println("instanceID:"+i); return; } 
+			if(numSamples.get(i) == null){ errOut.println("numSamples:"+i); return; } 
+			if(relationID.get(i) == null){ errOut.println("relationID:"+i); return; } 
+			if(xNoiseStd.get(i) == null){ errOut.println("xNoiseStd:"+i); return; } 
+			if(yNoiseStd.get(i) == null){ errOut.println("yNoiseStd:"+i); return; } 
+		}
+		
+		MLStructure str = new MLStructure("Data",new int[]{numDP,1});
+		str.setField("dependence", dependence); dependence = null;
+		str.setField("dependenceMeasureID", dependenceMeasureID); dependenceMeasureID = null;
+		str.setField("instanceID", instanceID); instanceID = null;
+		str.setField("numSamples", numSamples); numSamples = null;
+		str.setField("relationID", relationID); relationID = null;
+		str.setField("xNoiseStd", xNoiseStd); xNoiseStd = null;
+		str.setField("yNoiseStd", yNoiseStd); yNoiseStd = null;
+		
+		List<MLArray> toSave = new LinkedList<MLArray>();
+		toSave.add(str);
+		try {
+			MatFileWriter.writeMat(dbOut, toSave);
+		} catch (IOException e) {
+			errOut.println("Error writing database. The system message is: "+e.getLocalizedMessage());
+		}
 	}
 
 	/**
