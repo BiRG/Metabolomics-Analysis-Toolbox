@@ -31,12 +31,15 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthSine;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CosineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CubicRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.DownLineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ExponentialRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.NonCoexistenceRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.SineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UnionRelation;
+import edu.wright.cs.birg.experiment.micdistribution.relations.UpLineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.VaryingCosineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.VaryingSineRel;
 
@@ -397,6 +400,27 @@ public final class MICDistributionCalculator {
 						0.242f, 0.838f, 0.297f, 0.028f, 0.711f, 0.298f, 0.816f,
 						0.881f }		
 		));
+		
+		//Linear relationships
+		ArcLengthRelation lines1 = new UpLineRel(161, "lines1", "1 Line", 1.0);
+		ArcLengthRelation lines2 = new NonCoexistenceRel();
+		ArcLengthRelation linesqrt3 = new UpLineRel(0, "linesqrt3", "Line slope sqrt 3", Math.sqrt(3));
+		ArcLengthRelation linesqrt3recip = new UpLineRel(0, "linesqrt3recip", "Line slope one over sqrt 3", 1/Math.sqrt(3));
+		ArcLengthRelation linesqrt2m1 = new UpLineRel(0, "linesqrt2m1", "Line slope -1 plus sqrt 2", Math.sqrt(2)-1);
+		ArcLengthRelation linesqrt2m1recip = new UpLineRel(0, "linesqrt2m1recip", "Line slope one over -1 plus sqrt 2", 1/(Math.sqrt(2)-1));
+		ArcLengthRelation dline1 = new DownLineRel(0, "dline1", "1 Line Down", -1.0);
+		rels.add(lines1);
+		rels.add(lines2);
+		rels.add(new UnionRelation(163, "lines3", "3 Lines", lines2, lines1));
+		rels.add(new UnionRelation(164, "lines4", "4 Lines", lines2, 
+				new UnionRelation(0,"sqrt3Lines","Both lines based on sqrt 3",linesqrt3, linesqrt3recip)));
+		rels.add(new UnionRelation(165, "lines5", "5 Lines", lines2,
+				new UnionRelation(0, "inner3Of5","inner 3 of the 5 equispaced line group",
+						lines1,
+						new UnionRelation(0,"sqrt2m1Lines","Both lines based on sqrt 2 minus 1",
+								linesqrt2m1, linesqrt2m1recip))));
+		//X
+		rels.add(new UnionRelation(180, "x", "X", lines1, dline1));
 		
 		return rels;
 	}
