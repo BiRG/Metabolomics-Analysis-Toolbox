@@ -34,6 +34,7 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.ExponentialRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
+import edu.wright.cs.birg.experiment.micdistribution.relations.SineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UnionRelation;
 
 
@@ -288,14 +289,21 @@ public final class MICDistributionCalculator {
 		rels.add(new ExponentialRel(22, "exp1e10", "Exponential base 1e10", 1e10));
 		
 		//Sine relationships
-		ArcLengthRelation sin02pi = new ArcLengthSine(32, "sin02pi", "Sine 2pi", 2);
-		ArcLengthRelation sin03pi = new ArcLengthSine(33, "sin03pi", "Sine 3pi", 3);
-		ArcLengthRelation sin04pi = new ArcLengthSine(34, "sin04pi", "Sine 4pi", 4);
-		ArcLengthRelation sin10pi = new ArcLengthSine(40, "sin10pi", "Sine 10pi", 10);
+		ArcLengthRelation sin02pi = new ArcLengthSine(32, "sin02pi", "Sine 2 pi", 2);
+		ArcLengthRelation sin03pi = new ArcLengthSine(33, "sin03pi", "Sine 3 pi", 3);
+		ArcLengthRelation sin04pi = new ArcLengthSine(34, "sin04pi", "Sine 4 pi", 4);
+		ArcLengthRelation sin10pi = new ArcLengthSine(40, "sin10pi", "Sine 10 pi", 10);
+		rels.add(new SineRel(30, "sinhalfpi", "Sin 1/2 pi", 0.5));
+		rels.add(new SineRel(31, "sin01pi", "Sin 1 pi", 1.0));
 		rels.add(sin02pi);
 		rels.add(sin03pi);
 		rels.add(sin04pi);
+		rels.add(new SineRel(38, "sin08pi", "Sin 8 pi", 8.0));
+		rels.add(new SineRel(39, "sin09pi", "Sin 9 pi", 9.0));
 		rels.add(sin10pi);
+		rels.add(new SineRel(43, "sin13pi", "Sin 13 pi", 13.0));
+		rels.add(new SineRel(46, "sin16pi", "Sin 16 pi", 16.0));
+		rels.add(new SineRel(62, "sin32pi", "Sin 32 pi", 32.0));
 		
 		//Two sine relationships
 		rels.add(new UnionRelation(92, "2sin2_3",  "Two Sine (2,3)",  sin02pi, sin03pi));
