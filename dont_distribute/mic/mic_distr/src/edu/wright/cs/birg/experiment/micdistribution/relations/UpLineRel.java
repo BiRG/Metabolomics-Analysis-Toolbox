@@ -3,8 +3,12 @@
  */
 package edu.wright.cs.birg.experiment.micdistribution.relations;
 
+import java.util.Random;
+
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
+
+import edu.wright.cs.birg.experiment.micdistribution.Instance;
 
 /**
  * A relation signifying the line y=a*x where a >= 0.
@@ -12,7 +16,7 @@ import org.sureassert.uc.annotation.Exemplars;
  * @author Eric Moyer
  * 
  */
-public final class UpLineRel extends FunctionalArcLengthRelation {
+public final class UpLineRel extends ArcLengthRelation {
 
 	/**
 	 * The slope of the line
@@ -75,25 +79,28 @@ public final class UpLineRel extends FunctionalArcLengthRelation {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see edu.wright.cs.birg.experiment.micdistribution.relations.
-	 * FunctionalArcLengthRelation#val(float)
-	 */
-	@Override
-	@Exemplars(set={
-	@Exemplar(i="lines1",args={"0f"}, expect="0f"),
-	@Exemplar(i="lines1",args={"0.5f"}, expect="0.5f"),
-	@Exemplar(i="linesqrt3",args={"0.25f"}, expect="0.4330127019f"),
-	})
-	protected float val(float x) {
-		return (float) (slope*x);
-	}
 
 	@Override
 	@Exemplar(i="lines1",expect="'1.0*x'")
 	public String toString(){
 		return Double.toString(slope)+"*x";
 	}
+	
+	@Override
+	public Instance samples(Random rng, int numSamples) {
+		Instance i = new Instance(numSamples);
+		if(slope <= 1){
+			for(int j = 0; j < numSamples; ++j){
+				i.x[j]=rng.nextFloat();
+				i.y[j]=(float) (slope*i.x[j]);
+			}
+		}else{
+			for(int j = 0; j < numSamples; ++j){
+				i.y[j]=rng.nextFloat();
+				i.x[j]=(float) (i.y[j]/slope);
+			}			
+		}
+		return i;
+	}
+
 }
