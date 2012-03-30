@@ -29,6 +29,7 @@ import com.jmatio.types.MLDouble;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthRelation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthSine;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.CubicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
@@ -275,6 +276,10 @@ public final class MICDistributionCalculator {
 		
 		//Parabolic relationship
 		rels.add(new ParabolicRel());
+		
+		//Cubic relationship
+		rels.add(new CubicRel(10, "cubic1", "Cubic 1", 11, 47, 12, -11, 8));
+		rels.add(new CubicRel(11, "cubic2", "Cubic 2", 7, 57, 2, -73, 48));
 		
 		//Sine relationships
 		ArcLengthRelation sin02pi = new ArcLengthSine(32, "sin02pi", "Sine 2pi", 2);
