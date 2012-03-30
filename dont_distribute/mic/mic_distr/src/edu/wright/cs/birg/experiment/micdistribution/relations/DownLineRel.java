@@ -83,12 +83,12 @@ public final class DownLineRel extends FunctionalArcLengthRelation {
 	 */
 	@Override
 	@Exemplars(set={
-	@Exemplar(i="dline1",args={"0f"}, expect="-0f"),
-	@Exemplar(i="dline1",args={"0.5f"}, expect="-0.5f"),
-	@Exemplar(i="dlinesqrt3",args={"0.25f"}, expect="-0.4330127019f"),
+	@Exemplar(i="dline1",args={"0f"}, expect="1f"),
+	@Exemplar(i="dline1",args={"0.5f"}, expect="0.5f"),
+	@Exemplar(i="dlinesqrt3",args={"0.25f"}, expect="0.5669872981f"),
 	})
 	protected float val(float x) {
-		return (float) (slope*x);
+		return (float) (1.0+slope*x);
 	}
 
 	@Override
