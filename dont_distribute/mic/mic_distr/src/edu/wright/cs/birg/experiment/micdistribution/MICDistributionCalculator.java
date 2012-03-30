@@ -29,6 +29,7 @@ import com.jmatio.types.MLDouble;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthRelation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthSine;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.CircleRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CosineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CubicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.DownLineRel;
@@ -421,6 +422,9 @@ public final class MICDistributionCalculator {
 								linesqrt2m1, linesqrt2m1recip))));
 		//X
 		rels.add(new UnionRelation(180, "x", "X", lines1, dline1));
+		
+		//Circle
+		rels.add(new CircleRel());
 		
 		return rels;
 	}
