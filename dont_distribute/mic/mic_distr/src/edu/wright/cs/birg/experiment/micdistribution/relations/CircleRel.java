@@ -28,7 +28,7 @@ public final class CircleRel extends ArcLengthRelation {
 	public Instance samples(Random rng, int numSamples) {
 		Instance i = new Instance(numSamples);
 		for (int j = 0; j < numSamples; ++j) {
-			double theta = rng.nextDouble(); 
+			double theta = rng.nextDouble()*2*Math.PI; 
 			i.x[j] = (float) ((1+Math.cos(theta))/2);
 			i.y[j] = (float) ((1+Math.sin(theta))/2);
 		}
