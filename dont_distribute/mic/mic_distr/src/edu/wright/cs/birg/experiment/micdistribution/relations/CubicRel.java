@@ -16,19 +16,19 @@ public final class CubicRel extends FunctionalRelation {
 	/**
 	 * The coefficient on the constant term. a the formula for a general cubic: a+x*(b+x*(c+d*x)). 
 	 */
-	double a;
+	private final double a;
 	/**
 	 * The coefficient on the linear term. b the formula for a general cubic: a+x*(b+x*(c+d*x)). 
 	 */
-	double b;
+	private final double b;
 	/**
 	 * The coefficient on the quadratic term. c the formula for a general cubic: a+x*(b+x*(c+d*x)). 
 	 */
-	double c;
+	private final double c;
 	/**
 	 * The coefficient on the cubic term. d the formula for a general cubic: a+x*(b+x*(c+d*x)). 
 	 */
-	double d;
+	private final double d;
 
 	/**
 	 * Create a cubic relation defined by x*(q+r*x*(s*+t*x))/denom .
