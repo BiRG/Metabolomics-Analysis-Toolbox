@@ -29,6 +29,7 @@ import com.jmatio.types.MLDouble;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthRelation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthSine;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.CosineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CubicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ExponentialRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
@@ -36,6 +37,8 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.SineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UnionRelation;
+import edu.wright.cs.birg.experiment.micdistribution.relations.VaryingCosineRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.VaryingSineRel;
 
 
 /**
@@ -298,12 +301,19 @@ public final class MICDistributionCalculator {
 		rels.add(sin02pi);
 		rels.add(sin03pi);
 		rels.add(sin04pi);
+		rels.add(new CosineRel(37, "cos07pi", "Cosine 7 pi", 7));
 		rels.add(new SineRel(38, "sin08pi", "Sin 8 pi", 8.0));
 		rels.add(new SineRel(39, "sin09pi", "Sin 9 pi", 9.0));
 		rels.add(sin10pi);
 		rels.add(new SineRel(43, "sin13pi", "Sin 13 pi", 13.0));
 		rels.add(new SineRel(46, "sin16pi", "Sin 16 pi", 16.0));
+		rels.add(new CosineRel(44, "cos14pi", "Cosine 14 pi", 14.0));
 		rels.add(new SineRel(62, "sin32pi", "Sin 32 pi", 32.0));
+		
+		//Varying frequency sine and cosine relationships
+		rels.add(new VaryingCosineRel(85, "varfr5c", "Varying Freq 5 pi Cosine", 5.0));
+		rels.add(new VaryingSineRel(86, "varfr6s", "Varying Freq 6 pi Sine", 6.0));
+		rels.add(new VaryingSineRel(87, "varfr7s", "Varying Freq 7 pi Sine", 7.0));
 		
 		//Two sine relationships
 		rels.add(new UnionRelation(92, "2sin2_3",  "Two Sine (2,3)",  sin02pi, sin03pi));
