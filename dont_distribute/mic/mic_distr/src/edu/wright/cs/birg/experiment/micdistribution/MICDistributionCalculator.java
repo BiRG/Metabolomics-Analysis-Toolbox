@@ -30,6 +30,7 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthRelation
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthSine;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CubicRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.ExponentialRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
@@ -280,6 +281,11 @@ public final class MICDistributionCalculator {
 		//Cubic relationship
 		rels.add(new CubicRel(10, "cubic1", "Cubic 1", 11, 47, 12, -11, 8));
 		rels.add(new CubicRel(11, "cubic2", "Cubic 2", 7, 57, 2, -73, 48));
+		
+		//Exponential relationship
+		rels.add(new ExponentialRel(20, "exp2", "Exponential base 2", 2.0));
+		rels.add(new ExponentialRel(21, "exp10", "Exponential base 10", 10.0));
+		rels.add(new ExponentialRel(22, "exp1e10", "Exponential base 1e10", 1e10));
 		
 		//Sine relationships
 		ArcLengthRelation sin02pi = new ArcLengthSine(32, "sin02pi", "Sine 2pi", 2);
