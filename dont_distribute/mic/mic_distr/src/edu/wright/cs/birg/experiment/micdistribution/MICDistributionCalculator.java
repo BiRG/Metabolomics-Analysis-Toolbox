@@ -39,6 +39,8 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.NonCoexistenceRel
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
+import edu.wright.cs.birg.experiment.micdistribution.relations.ReshefLRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.ReshefLopLRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.SineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.SpikeRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UnionRelation;
@@ -436,6 +438,12 @@ public final class MICDistributionCalculator {
 		
 		//Sigmoid
 		rels.add(new LinearThresholdSigmoidRel());
+		
+		//L-shaped
+		rels.add(new ReshefLRel());
+		
+		//Lopsided L-shaped
+		rels.add(new ReshefLopLRel());
 		
 		return rels;
 	}
