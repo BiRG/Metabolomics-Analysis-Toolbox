@@ -426,6 +426,9 @@ public final class MICDistributionCalculator {
 		//Circle
 		rels.add(new CircleRel());
 		
+		//Line and Parabola
+		rels.add(new UnionRelation(200, "lineparab", "Line and Parabola", lines1, new ParabolicRel()));
+		
 		return rels;
 	}
 
