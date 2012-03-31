@@ -42,6 +42,7 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ReshefLRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ReshefLopLRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.SineRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.SlantSineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.SpikeRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UnionRelation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UpLineRel;
@@ -445,6 +446,19 @@ public final class MICDistributionCalculator {
 		//Lopsided L-shaped
 		rels.add(new ReshefLopLRel());
 		
+		//Slant-sine
+		rels.add(new SlantSineRel(408, "slsin0811116", "Slant Sine 11,8,116", -0.10541412190940591799, 
+				-8.0, 4.0, 1.1595553410034650979, -0.07977767050173254893));
+		rels.add(new SlantSineRel(421, "slsin2105110", "Slant Sine 5,21,110", -0.049616836075317710997, 
+				-21.2, 10.6, 1.0915703936569896419, -0.045785196828494820969));
+		rels.add(new SlantSineRel(423, "slsin2110106", "Slant Sine 10,21,106", -0.09591241288864109547, 
+				-21.2, 10.6, 1.0550365417750520501, -0.0275182708875260251));
+		rels.add(new SlantSineRel(428, "slsin2833033", "Slant Sine 33,28,33", -0.33333333333333333333, 
+				28.274333882308139146, 1.5707963267948966192, 
+				0.33333333333333333333, 0.33333333333333333333));
+		rels.add(new SlantSineRel(431, "slsin3137037", "Slant Sine 37,31,37", 0.3702314242429132339, 
+				31.415926535897932385, 0, 
+				0.3702314242429132339, 0.31488428787854338307));
 		return rels;
 	}
 
