@@ -39,6 +39,7 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.Relation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.SineRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.SpikeRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UnionRelation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.UpLineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.VaryingCosineRel;
@@ -428,6 +429,9 @@ public final class MICDistributionCalculator {
 		
 		//Line and Parabola
 		rels.add(new UnionRelation(200, "lineparab", "Line and Parabola", lines1, new ParabolicRel()));
+		
+		//Spike
+		rels.add(new SpikeRel());
 		
 		return rels;
 	}
