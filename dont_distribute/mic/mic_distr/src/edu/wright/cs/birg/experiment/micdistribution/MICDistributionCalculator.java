@@ -318,8 +318,8 @@ public final class MICDistributionCalculator {
 		rels.add(new SineRel(39, "sin09pi", "Sin 9 pi", 9.0));
 		rels.add(sin10pi);
 		rels.add(new SineRel(43, "sin13pi", "Sin 13 pi", 13.0));
-		rels.add(new SineRel(46, "sin16pi", "Sin 16 pi", 16.0));
 		rels.add(new CosineRel(44, "cos14pi", "Cosine 14 pi", 14.0));
+		rels.add(new SineRel(46, "sin16pi", "Sin 16 pi", 16.0));
 		rels.add(new SineRel(62, "sin32pi", "Sin 32 pi", 32.0));
 		
 		//Varying frequency sine and cosine relationships
