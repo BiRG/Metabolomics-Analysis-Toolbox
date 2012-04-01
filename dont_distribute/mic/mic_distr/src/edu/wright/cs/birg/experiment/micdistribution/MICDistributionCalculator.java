@@ -638,7 +638,7 @@ public final class MICDistributionCalculator {
 
 		int numDP = db.getNumDatapoints();
 		dependence = new MLDouble("dependences", new int[] {numDP,1});
-		dependenceMeasureID = new MLDouble("dependenceMeasureIDs", new int[] {numDP}); 
+		dependenceMeasureID = new MLDouble("dependenceMeasureIDs", new int[] {numDP,1}); 
 		instanceID = new MLDouble("instanceIDs", new int[] {numDP,1});
 		numSamples = new MLDouble("numSamples", new int[] {numDP,1});
 		relationID = new MLDouble("relationIDs", new int[] {numDP,1});
