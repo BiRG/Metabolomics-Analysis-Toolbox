@@ -29,7 +29,10 @@ unless($Config{use64bitint} eq 'define' || $Config{longsize} >= 8){
 }
 
 my $seed = shift @seeds;
-printf "java -jar distr.jar generate -xstd 0 -ystd 0 -rel random -nsamp 5,6,7,8,9,10,12,14,19,30,60,100 -inst 4608 -c 15 -seed $seed > experiment1/%05d_random_x000_y000.ser\n",0;
+my $filename = sprintf("experiment1/%05d_random_x000_y000.ser",0);
+print "echo \`date\` \": started $filename\" >> experiment1/log\n";
+printf "java -jar distr.jar generate -xstd 0 -ystd 0 -rel random -nsamp 5,6,7,8,9,10,12,14,19,30,60,100 -inst 4608 -c 15 -seed $seed > $filename\n";
+print "echo \`date\` \": finished $filename\" >> experiment1/log\n";
 
 for(my $idx = 0; $idx < @relations; ++$idx){
     my $rel = $relations[$idx];
@@ -39,11 +42,14 @@ for(my $idx = 0; $idx < @relations; ++$idx){
 	for my $yNoise (0,0.1,0.3){
 	    my $nameY = sprintf("y%03d", $yNoise * 100);
 	    $seed = shift @seeds;
+	    $filename = "experiment1/${id}_${rel}_${nameX}_${nameY}.ser"; 
+	    print "echo \`date\` \": started $filename\" >> experiment1/log\n";
 	    print "java -jar distr.jar generate ".
 		"-xstd $xNoise -ystd $yNoise -rel random ".
 		"-nsamp 5,6,7,8,9,10,12,14,19,30,60,100 ".
 		"-inst 512 -c 15 -seed $seed > ".
-		"experiment1/${id}_${rel}_${nameX}_${nameY}.ser\n";
+		"$filename\n";
+	    print "echo \`date\` \": finished $filename\" >> experiment1/log\n";
 	}
     }
 }
