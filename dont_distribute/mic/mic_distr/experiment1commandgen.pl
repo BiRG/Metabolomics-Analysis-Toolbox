@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use Config; 
+use strict;
 #Prints to standard output the commands needed to run the first mic
 #distribution estimation experiment.  The commands put their output in
 #experiment1 subdirectory of the current directory and assume that the
@@ -53,7 +54,7 @@ for(my $idx = 0; $idx < @relations; ++$idx){
 	    $filename = "experiment1/${id}_${rel}_${nameX}_${nameY}.ser"; 
 	    print "echo \`date\` \": started $filename\" >> experiment1/log\n";
 	    print "java -jar distr.jar generate ".
-		"-xstd $xNoise -ystd $yNoise -rel random ".
+		"-xstd $xNoise -ystd $yNoise -rel $rel ".
 		"-nsamp 5,6,7,8,9,10,12,14,19,30,60,100 ".
 		"-inst 512 -c 15 -seed $seed > ".
 		"$filename\n";
