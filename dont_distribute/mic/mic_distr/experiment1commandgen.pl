@@ -28,12 +28,20 @@ unless($Config{use64bitint} eq 'define' || $Config{longsize} >= 8){
    exit(-1);
 }
 
+#Clear the high bit on the seeds (java longs are SIGNED - can't have a high bit set)
+for(my $i=0; $i < @seeds; ++$i){
+    $seeds[$i]=$seeds[$i] & 0x7FFFFFFFFFFFFFFF;
+}
+
+#Print the random relation
 my $seed = shift @seeds;
 my $filename = sprintf("experiment1/%05d_random_x000_y000.ser",0);
 print "echo \`date\` \": started $filename\" >> experiment1/log\n";
 printf "java -jar distr.jar generate -xstd 0 -ystd 0 -rel random -nsamp 5,6,7,8,9,10,12,14,19,30,60,100 -inst 4608 -c 15 -seed $seed > $filename\n";
 print "echo \`date\` \": finished $filename\" >> experiment1/log\n";
 
+
+#Print the rest of the relations
 for(my $idx = 0; $idx < @relations; ++$idx){
     my $rel = $relations[$idx];
     my $id = sprintf("%05d",$relationids[$idx]);
