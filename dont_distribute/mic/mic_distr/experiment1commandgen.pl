@@ -1,5 +1,13 @@
 #!/usr/bin/perl
 use Config; 
+#Prints to standard output the commands needed to run the first mic
+#distribution estimation experiment.  The commands put their output in
+#experiment1 subdirectory of the current directory and assume that the
+#distribution estimation code is in distr.jar in the current
+#directory.  The resultant commands can then be divided up into
+#different files and run on different processors or machines for
+#parallelization.
+
 
 #477 random number seeds. This list came from random.org and was
 #originally 1908 hexadecimal values from 0..65535 inclusive arranged
@@ -21,7 +29,7 @@ unless($Config{use64bitint} eq 'define' || $Config{longsize} >= 8){
 }
 
 my $seed = shift @seeds;
-printf "java -jar ../distr.jar generate -xstd 0 -ystd 0 -rel random -nsamp 5,6,7,8,9,10,12,14,19,30,60,100 -inst 4608 -c 15 -seed $seed > %04d_random_000_000.ser\n",0;
+printf "java -jar ../distr.jar generate -xstd 0 -ystd 0 -rel random -nsamp 5,6,7,8,9,10,12,14,19,30,60,100 -inst 4608 -c 15 -seed $seed > experiment1/%04d_random_000_000.ser\n",0;
 
 for(my $idx = 0; $idx < @relations; ++$idx){
     my $rel = $relations[$idx];
@@ -35,7 +43,7 @@ for(my $idx = 0; $idx < @relations; ++$idx){
 		"-xstd $xNoise -ystd $yNoise -rel random ".
 		"-nsamp 5,6,7,8,9,10,12,14,19,30,60,100 ".
 		"-inst 512 -c 15 -seed $seed > ".
-		"${id}_${rel}_${nameX}_${nameY}.ser\n";
+		"experiment1/${id}_${rel}_${nameX}_${nameY}.ser\n";
 	}
     }
 }
