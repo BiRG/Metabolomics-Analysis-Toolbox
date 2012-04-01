@@ -26,6 +26,7 @@ import com.jmatio.io.MatFileWriter;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLDouble;
 
+import edu.wright.cs.birg.experiment.micdistribution.relations.AlmostFlatRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthRelation;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ArcLengthSine;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CategoricalRel;
@@ -34,7 +35,9 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.CosineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.CubicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.DownLineRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ExponentialRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.Halton23Rel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.LinearThresholdSigmoidRel;
+import edu.wright.cs.birg.experiment.micdistribution.relations.Monomial;
 import edu.wright.cs.birg.experiment.micdistribution.relations.NonCoexistenceRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.ParabolicRel;
 import edu.wright.cs.birg.experiment.micdistribution.relations.RandomRel;
@@ -459,6 +462,16 @@ public final class MICDistributionCalculator {
 		rels.add(new SlantSineRel(431, "slsin3137037", "Slant Sine 37,31,37", 0.3702314242429132339, 
 				31.415926535897932385, 0, 
 				0.3702314242429132339, 0.31488428787854338307));
+		
+		/////////////////////////
+		// Pathological relations
+		/////////////////////////
+		
+		rels.add(new AlmostFlatRel());
+		rels.add(new Halton23Rel());
+		rels.add(new SineRel(10003, "sin2046pi", "Sine 2046 pi", 2046));
+		rels.add(new Monomial(10004, "steeppoly", "Steep poly", 1000000000.0));
+		
 		return rels;
 	}
 
