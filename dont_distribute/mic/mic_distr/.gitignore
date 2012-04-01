@@ -2,6 +2,7 @@ MINE.jar
 bin
 doc
 instances
+experiment1/*.ser
 distr.jar
 distr_lib
 distr.tgz
