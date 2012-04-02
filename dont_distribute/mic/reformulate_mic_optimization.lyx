@@ -1,0 +1,308 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Reformulating Exact MIC Optimization
+\end_layout
+
+\begin_layout Author
+Eric Moyer
+\end_layout
+
+\begin_layout Date
+11 January 2012
+\end_layout
+
+\begin_layout Abstract
+I reformulate the MIC (maximal information coefficient) in a way that is
+ more revealing of the structure of the problem and that will facilitate
+ polynomial reduction to known problems.
+ The new formulation also suggests two potential algorithms for the problem
+ solution, one based on A* informed graph search and the other on AC-3 constrain
+t satisfaction.
+\end_layout
+
+\begin_layout Section
+Original MIC Optimization
+\end_layout
+
+\begin_layout Standard
+The current MIC (Maximal Information Coefficient) optimization formulation
+ is to find the grid that bins the given data so that the induced distribution
+ has maximal mutual information between the two variables.
+\end_layout
+
+\begin_layout Standard
+The algorithm presented in Reshef's paper is a heuristic lower-bound to
+ the real MIC.
+ As of December 2011, no polynomial time algorithm was known to find the
+ actual MIC.
+ The reformulation presented here may be a step towards either a tractable
+ algorithm or proving that no such algorithm exists.
+\end_layout
+
+\begin_layout Section
+Reformulation
+\end_layout
+
+\begin_layout Standard
+I can reformulate this in a way that suggests an admissible heuristic to
+ be used with A*.
+ The new formulation also makes the structure of the problem clearer and
+ looks more like the kind of thing one would use for proving NP-completeness
+ results.
+ I can also use that formulation to write the problem as a series of constraint
+ satisfaction problems.
+\end_layout
+
+\begin_layout Standard
+The new formulation constructs two directed graphs on the same set of nodes
+ and asks for the ordered-pair node-labeling which has maximal mutual informatio
+n while obeying constraints induced by the edges of both graphs.
+\end_layout
+
+\begin_layout Standard
+Let there be two graphs, a red one and a green one.
+ The red one is for the x variable and the green one is for the y variable.
+\end_layout
+
+\begin_layout Standard
+Let each data point be a node.
+ Sort the nodes according to x value.
+ Add red edges to make the red graph a chain reflecting this x ordering.
+ (For now, we assume that there are no identical values.
+ This case should be easy to handle later.) Then sort the nodes according
+ to y value and add green edges to make the green graph a chain reflecting
+ this y ordering.
+\end_layout
+
+\begin_layout Standard
+Now, we want to find an assignment of ordered pairs of integers to nodes
+ (the first integer being red and the second being green) that maximizes
+ the mutual information between the red and the green numbers given the
+ following constraints:
+\end_layout
+
+\begin_layout Enumerate
+If an edge goes from node a to node b the value of the same color as the
+ edge in b must be either the same as or 1 greater than that value in a.
+\end_layout
+
+\begin_layout Enumerate
+If a node has no incoming edge of a given color, its value for that color
+ is 1
+\end_layout
+
+\begin_layout Enumerate
+If a node has no outgoing edge of a given color, its value for that color
+ is the number of bins assigned to the variable of that color.
+\end_layout
+
+\begin_layout Standard
+Though it will make proofs harder, we can deal with the case of equal values
+ in practical cases by amending rule 1 to state that if node a and node
+ b were equal in that color to begin with, then the integers assigned to
+ them must be equal as well.
+\end_layout
+
+\begin_layout Section
+A* variant
+\end_layout
+
+\begin_layout Standard
+The reformulation can be adapted to make an A* variant for solving the problem.
+\end_layout
+
+\begin_layout Standard
+The state of the algorithm at any time is a list of the potential values
+ that can be assigned to each node.
+ The starting state has all variables taking on all feasible values.
+ The minimum green node has its green label 1 and the maximum green node
+ has its green label as num_green.
+ Same for red.
+ All other labels have all possible values.
+\end_layout
+
+\begin_layout Standard
+A goal state is any state with all its labels assigned.
+\end_layout
+
+\begin_layout Standard
+A step in the algorithm consists of choosing a label with more than one
+ possible assignment and choosing one of the assignments to set to one of
+ its possibilities.
+ When this is done, the potential values for the other node labels must
+ be pruned to account for the new constraints.
+\end_layout
+
+\begin_layout Standard
+The heuristic goodness f is just to make an assignment to the rest of the
+ variables that maximizes mutual information ignoring the constraints.
+ I believe this will be quite fast, since the problems I had in writing
+ a my own dynamic programming calculator were related to the constraints;
+ but I haven't worked it out yet.
+\end_layout
+
+\begin_layout Standard
+(Note that to see things in the A* framework, you want to look at f as being
+ the combination of g, the mutual information contribution for the assigned
+ labels and h, an upper bound on the rest of the data points found by ignoring
+ the geometric constraints on the bins.
+ This is not quite true (if the labels were for bins that were being expanded,
+ it would be) but because of the way the algorithm works, f must just never
+ underestimate the final value on any path and it must be equal to the final
+ value at the goal, which does hold for this formulation.
+ I believe that this formulation also works for the closed set proof - though
+ it is not monotonic strictly-speaking due to its lack of a real decomposition
+ into the sum of g and h - and thus, one can avoid revisiting nodes.
+ By construction, it is impossible to revisit nodes anyway.
+ Note also that I am using an inverted A* to maximize rather than minimize
+ the final value.)
+\end_layout
+
+\begin_layout Section
+Constraint Satisfaction Problem
+\end_layout
+
+\begin_layout Standard
+The constraint satisfaction problem is very simple to formulate.
+ I make two variables for each node in the graph, one holding the red label
+ and the other the green label.
+ Then, I write a formula for the objective and add the constraints listed
+ above.
+\end_layout
+
+\begin_layout Standard
+To do the optimization, I choose a value K half-way between 0 and the maximum
+ mutual information possible.
+ Then, I add one more constraint that the objective is greater than K.
+ If the solution is feasible, I divide the upper half of the search space
+ in half.
+ If not, the lower half.
+ This gets me 1 bit per constraint satisfaction.
+ Further, whenever there was a feasible solution, I can use that as the
+ initial state for the search from then on, saving time.
+\end_layout
+
+\begin_layout Standard
+Because the solver I plan to use (CHOCO) already includes an optimizer (which
+ probably works (under the hood) somewhat as I described), I just need the
+ formula for the objective.
+\end_layout
+
+\begin_layout Standard
+CHOCO does not include a log function.
+ So, I will punt using an integer solution.
+ I will choose some number F (maybe 1000000) and replace all occurrences
+ of 
+\begin_inset Formula $\log x$
+\end_inset
+
+ with 
+\begin_inset Formula $\left\lfloor F\log x\right\rfloor $
+\end_inset
+
+, which I can implement with a set of N if constraints (since the values
+ inside the logarithm will be between 0 and N).
+ I will also use the following formula rather than the probabilities, which
+ will keep everything in the integer domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{1}{N}\left(\sum_{x,y}a(x,y)\log N+\sum_{x,y}a(x,y)\log a(x,y)-\sum_{x,y}a(x,y)\log\left|X=x\right|-\sum_{x,y}a(x,y)\log\left|Y=y\right|\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With 
+\begin_inset Formula $a(x,y)=\left|X=x\cap Y=y\right|$
+\end_inset
+
+and setting log 0 to 0 (since whenever there will be a log of 0, we will
+ have it multiplied by 0 anyway.
+\end_layout
+
+\begin_layout Standard
+There will be a few implementation details like setting up intermediate
+ variables for calculating the cardinality of X=x and Y=y, but I anticipate
+ that things will go smoothly.
+\end_layout
+
+\begin_layout Section
+Time and space complexity
+\end_layout
+
+\begin_layout Standard
+Both A* and CSP are exponential worst case.
+ The average case for specific classes of problems can be much better if
+ your constraints or heuristics locally prune the search-space well.
+ Whether this will be the case for these problems requires implementing
+ them.
+\end_layout
+
+\end_body
+\end_document
