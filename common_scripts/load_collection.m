@@ -102,3 +102,8 @@ while line ~= -1
     line = fgetl(ifid);
 end
 fclose(ifid);
+
+if collection.x(1) < collection.x(2)
+    collection.x = collection.x(end:-1:1);
+    collection.Y = collection.Y(end:-1:1,:);
+end
