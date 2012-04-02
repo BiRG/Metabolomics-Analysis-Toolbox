@@ -3,6 +3,7 @@ bin
 doc
 instances
 experiment1/*.ser
+experiment1/*.mat
 distr.jar
 distr_lib
 distr.tgz
