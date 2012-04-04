@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
 import org.sureassert.uc.annotation.IgnoreTestCoverage;
@@ -763,7 +761,7 @@ public final class MICDistributionCalculator {
 		double altTotal = altVals.size();
 		
 		//Print the output
-		txtOut.print("False Positives\tTrue Positives");
+		//txtOut.print("False Positives\tTrue Positives\n");
 		for(Entry<Float, ThresholdCount> entry: depCounts.entrySet()){
 			txtOut.printf("%.9f\t%.9f\n",
 					entry.getValue().nullCount/nullTotal, entry.getValue().altCount/altTotal);
