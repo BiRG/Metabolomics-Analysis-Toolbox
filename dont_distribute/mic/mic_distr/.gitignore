@@ -4,6 +4,7 @@ doc
 instances
 experiment1/*.ser
 experiment1/*.mat
+experiment1/*.roc.tsv
 distr.jar
 distr_lib
 distr.tgz
