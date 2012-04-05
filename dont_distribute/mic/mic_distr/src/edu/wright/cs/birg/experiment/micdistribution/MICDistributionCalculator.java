@@ -705,7 +705,7 @@ public final class MICDistributionCalculator {
 		Database nullDB = loadDB(args[0], errOut);
 		Database altDB = loadDB(args[1], errOut);
 		int numSamples = toInt(args[2], 0, Integer.MAX_VALUE, errOut);
-		int depMethodID = toInt(args[2], minDependenceMethodID(), numSamples, errOut);
+		int depMethodID = toInt(args[3], minDependenceMethodID(), numSamples, errOut);
 		
 		//Set up as thresholds all dependence values that appear in either set.
 		TreeMap<Float, ThresholdCount> depCounts = new TreeMap<Float, ThresholdCount>();
