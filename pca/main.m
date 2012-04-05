@@ -481,7 +481,7 @@ for g = 1:length(handles.group_by_inxs)
             end
             if get(handles.ids_radiobutton,'Value')
                 for i = 1:length(inxs)
-                    if(iscell(handles.collection.subject_id))
+                    if iscell(handles.collection.subject_id) % This makes my skin crawl dealing with multiple formats this way, but it is a quick fix for now
                         text(score(inxs(i),x_pc_inx),score(inxs(i),y_pc_inx),num2str(handles.collection.subject_id{inxs(i)}),'VerticalAlignment','top');
                     else
                         text(score(inxs(i),x_pc_inx),score(inxs(i),y_pc_inx),num2str(handles.collection.subject_id(inxs(i))),'VerticalAlignment','top');
@@ -745,6 +745,7 @@ try
     guidata(hObject, handles);
 catch ME
     msgbox('Invalid collection');
+    throw(ME);
 end
 
 

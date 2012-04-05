@@ -78,7 +78,7 @@ end
 temp_bins = create_temp_bins(grouped_maxs,align_directions);
 
 bins = [];
-for i = length(temp_bins):-1:1
+for i = size(temp_bins,1):-1:1
     if temp_bins(i,1) ~= 0 && temp_bins(i,2) ~= 0
         bins(end+1,:) = [0,0];
         if temp_bins(i,1) ~= 1
