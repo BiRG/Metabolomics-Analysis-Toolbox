@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    211083,       4288]
-NotebookOptionsPosition[    203733,       4036]
-NotebookOutlinePosition[    204098,       4052]
-CellTagsIndexPosition[    204055,       4049]
+NotebookDataLength[    217698,       4490]
+NotebookOptionsPosition[    209527,       4211]
+NotebookOutlinePosition[    209893,       4227]
+CellTagsIndexPosition[    209850,       4224]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -538,21 +538,26 @@ Cell["Number of bins", "Subsubsubsection",
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{"nBins", "[", "filename_String", "]"}], ":=", 
-  RowBox[{"ToExpression", "[", 
-   RowBox[{"StringDrop", "[", 
-    RowBox[{
-     RowBox[{
+  RowBox[{"nBins", "[", "filename_String", "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"split", "=", 
       RowBox[{"StringSplit", "[", 
+       RowBox[{"filename", ",", "\"\<_\>\""}], "]"}]}], "}"}], ",", 
+    RowBox[{"ToExpression", "[", 
+     RowBox[{"StringDrop", "[", 
+      RowBox[{
        RowBox[{
-        RowBox[{
-         RowBox[{"StringSplit", "[", 
-          RowBox[{"filename", ",", "\"\<_\>\""}], "]"}], "[", 
-         RowBox[{"[", "4", "]"}], "]"}], ",", "\"\<.\>\""}], "]"}], "[", 
-      RowBox[{"[", "3", "]"}], "]"}], ",", "1"}], "]"}], "]"}]}]], "Input",
+        RowBox[{"StringSplit", "[", 
+         RowBox[{
+          RowBox[{"Last", "[", "split", "]"}], ",", "\"\<.\>\""}], "]"}], "[", 
+        RowBox[{"[", "3", "]"}], "]"}], ",", "1"}], "]"}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
  InitializationCell->True,
  CellChangeTimes->{{3.542651406485326*^9, 3.542651450641357*^9}, {
-  3.54265150239942*^9, 3.54265150828249*^9}}]
+  3.54265150239942*^9, 3.54265150828249*^9}, {3.5428137633348713`*^9, 
+  3.542813794039482*^9}}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1580,7 +1585,13 @@ Cell[BoxData[
 Cell[BoxData["\<\"foo.png\"\>"], "Output",
  CellChangeTimes->{3.542741971747394*^9, 3.542742193345325*^9, 
   3.542742312787237*^9}]
+}, Open  ]]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Zero pad", "Subsection",
+ CellChangeTimes->{{3.542808456787915*^9, 3.542808457931699*^9}}],
 
 Cell["\<\
 Return number padded on the right with 0's to have places digits\
@@ -1603,7 +1614,13 @@ Cell[BoxData[
    "]"}]}]], "Input",
  InitializationCell->True,
  CellChangeTimes->{{3.542743762425207*^9, 3.542743805471733*^9}, {
-  3.542744269959621*^9, 3.542744278484728*^9}}],
+  3.542744269959621*^9, 3.542744278484728*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Export plot to appropriately named png", "Subsection",
+ CellChangeTimes->{{3.54280846358292*^9, 3.5428084711197147`*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -1655,7 +1672,13 @@ Cell[BoxData["\<\"parabolic.x.010.y.010.s.012.png\"\>"], "Output",
  CellChangeTimes->{{3.542743941234541*^9, 3.542743989314765*^9}, 
    3.5427442847925253`*^9, 3.542744398392297*^9, 3.542744489062995*^9, 
    3.54276483005482*^9}]
+}, Open  ]]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["List of all the plot parameters to export", "Subsection",
+ CellChangeTimes->{{3.542808484868496*^9, 3.542808498690084*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -1753,8 +1776,6 @@ Cell[BoxData["4212"], "Output",
  CellChangeTimes->{3.5427652555709553`*^9, 3.542766332107305*^9}]
 }, Open  ]],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[
  RowBox[{"ParallelMap", "[", 
   RowBox[{
@@ -1770,7 +1791,151 @@ Cell[BoxData[
         RowBox[{"[", "4", "]"}], "]"}], "<", "30"}], "&"}]}], "]"}]}], 
   "]"}]], "Input",
  CellChangeTimes->{{3.542750930547079*^9, 3.5427509851815557`*^9}, {
-  3.5427662295959797`*^9, 3.542766257681031*^9}}],
+  3.5427662295959797`*^9, 3.542766257681031*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calculate AUC for the ROC curve in a file", "Subsection",
+ CellChangeTimes->{{3.5428085953927193`*^9, 3.5428086179452133`*^9}}],
+
+Cell["\<\
+Return the area below a horizontal line from the point with the lower x \
+coordinate to the point directly below or above the other point\
+\>", "Text",
+ CellChangeTimes->{{3.542809006843274*^9, 3.542809050683724*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"horizArea", "[", 
+   RowBox[{"p1_List", ",", "p2_List"}], "]"}], ":=", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"p2", "[", 
+      RowBox[{"[", "1", "]"}], "]"}], "<", 
+     RowBox[{"p1", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], ",", 
+    RowBox[{"horizArea", "[", 
+     RowBox[{"p2", ",", "p1"}], "]"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"p2", "[", 
+        RowBox[{"[", "1", "]"}], "]"}], "-", 
+       RowBox[{"p1", "[", 
+        RowBox[{"[", "1", "]"}], "]"}]}], ")"}], 
+     RowBox[{"p1", "[", 
+      RowBox[{"[", "2", "]"}], "]"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.542808622373384*^9, 3.542808624618544*^9}, {
+  3.54280884026324*^9, 3.542809001132217*^9}}],
+
+Cell["\<\
+Calculate the area under an ROC curve given by the points in data. Points are \
+added to ensure that all lines are horizontal. This is accurate in the case \
+of the MIC due to the discrete nature of the points. For the non-mic scores, \
+there are enough points that the approximation is not too far off.\
+\>", "Text",
+ CellChangeTimes->{{3.5428101642204638`*^9, 3.542810269872644*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"auc", "[", "data_List", "]"}], ":=", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"d", "=", 
+      RowBox[{"Sort", "[", 
+       RowBox[{"data", ",", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"#1", "[", 
+           RowBox[{"[", "1", "]"}], "]"}], "<", 
+          RowBox[{"#2", "[", 
+           RowBox[{"[", "1", "]"}], "]"}]}], "&"}]}], "]"}]}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"With", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"areas", "=", 
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"horizArea", "[", 
+            RowBox[{
+             RowBox[{"d", "[", 
+              RowBox[{"[", "#", "]"}], "]"}], ",", 
+             RowBox[{"d", "[", 
+              RowBox[{"[", 
+               RowBox[{"#", "+", "1"}], "]"}], "]"}]}], "]"}], "&"}], ",", 
+          RowBox[{"Range", "[", 
+           RowBox[{
+            RowBox[{"Length", "[", "d", "]"}], "-", "1"}], "]"}]}], "]"}]}], 
+       "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"Total", "[", "areas", "]"}]}], "\[IndentingNewLine]", "]"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.542809057506806*^9, 3.542809066351737*^9}, {
+  3.54280912947659*^9, 3.542809196121327*^9}, {3.54280928130301*^9, 
+  3.542809410720546*^9}, {3.542809444346457*^9, 3.5428095064477262`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"auc", "[", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"5", ",", "10"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"3", ",", "5"}], "}"}]}], "}"}], "]"}]], "Input",
+ CellChangeTimes->{{3.542809511065002*^9, 3.542809595821576*^9}}],
+
+Cell[BoxData["12"], "Output",
+ CellChangeTimes->{{3.542809532517919*^9, 3.542809600172819*^9}}]
+}, Open  ]],
+
+Cell["Calculate the AUC of the data stored in the given file", "Text",
+ CellChangeTimes->{{3.542810306174511*^9, 3.542810313176408*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"auc", "[", "filename_String", "]"}], ":=", 
+  RowBox[{"auc", "[", 
+   RowBox[{"Import", "[", "filename", "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5428101561154013`*^9, 3.542810157431233*^9}, {
+  3.542810275412788*^9, 3.542810299368948*^9}}],
+
+Cell[TextData[Cell[BoxData[
+ RowBox[{"Union", "[", 
+  RowBox[{"Map", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"nBins", "[", "#", "]"}], "&"}], ",", "rocFileNames"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.542813486413842*^9, 3.5428135509135303`*^9}}]], "Text",
+ CellChangeTimes->{3.542813650541123*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"allAUCs", "=", 
+   RowBox[{"ParallelMap", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"functionName", "[", "#", "]"}], ",", 
+        RowBox[{"xNoise", "[", "#", "]"}], ",", 
+        RowBox[{"yNoise", "[", "#", "]"}], ",", 
+        RowBox[{"nSamples", "[", "#", "]"}], ",", 
+        RowBox[{"nBins", "[", "#", "]"}]}], "}"}], "&"}], ",", 
+     "rocFileNames"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.542810474725013*^9, 3.542810482021306*^9}, 
+   3.542810772000184*^9, {3.542810855685668*^9, 3.542810913675248*^9}, 
+   3.542811048134056*^9, {3.542811107858672*^9, 3.5428111557139177`*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -1785,7 +1950,7 @@ exist.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
 ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768644797361*^9}],
+ CellChangeTimes->{3.542811766741605*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1803,7 +1968,7 @@ expected at position \\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/General/strse\\\", ButtonNote -> \
 \\\"StringDrop::strse\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.54276864567202*^9}],
+ CellChangeTimes->{3.54281176694975*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1818,7 +1983,7 @@ box. ToExpression can only interpret strings or boxes as Mathematica input.\\\
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/ToExpression/notstrbox\\\", ButtonNote -> \
 \\\"ToExpression::notstrbox\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768647455545*^9}],
+ CellChangeTimes->{3.542811767344401*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1833,7 +1998,7 @@ exist.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
 ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768649272767*^9}],
+ CellChangeTimes->{3.542811767771944*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1851,7 +2016,7 @@ expected at position \\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/General/strse\\\", ButtonNote -> \
 \\\"StringDrop::strse\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768651041264*^9}],
+ CellChangeTimes->{3.542811768034943*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1866,7 +2031,7 @@ box. ToExpression can only interpret strings or boxes as Mathematica input.\\\
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/ToExpression/notstrbox\\\", ButtonNote -> \
 \\\"ToExpression::notstrbox\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.5427686528860064`*^9}],
+ CellChangeTimes->{3.5428117684799128`*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1881,7 +2046,7 @@ exist.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
 ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768654683599*^9}],
+ CellChangeTimes->{3.542811768843565*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1894,7 +2059,7 @@ during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \\!\\(\\*ButtonBox[\\\"\
 \[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
 \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768656580728*^9}],
+ CellChangeTimes->{3.5428117693770933`*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1912,7 +2077,7 @@ expected at position \\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/General/strse\\\", ButtonNote -> \
 \\\"StringDrop::strse\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768658635354*^9}],
+ CellChangeTimes->{3.542811769862185*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1925,7 +2090,7 @@ suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
 ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.5427686599501963`*^9}],
+ CellChangeTimes->{3.5428117702961607`*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1940,7 +2105,7 @@ box. ToExpression can only interpret strings or boxes as Mathematica input.\\\
 ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
 ButtonData:>\\\"paclet:ref/message/ToExpression/notstrbox\\\", ButtonNote -> \
 \\\"ToExpression::notstrbox\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.5427686613868847`*^9}],
+ CellChangeTimes->{3.5428117707571583`*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1953,11 +2118,21 @@ will be suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
 \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
 ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
 ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
- CellChangeTimes->{3.542768663127763*^9}],
+ CellChangeTimes->{3.542811771173194*^9}]
+}, Open  ]],
 
-Cell[BoxData["$Aborted"], "Output",
- CellChangeTimes->{3.542766207853834*^9, 3.542766387221828*^9, 
-  3.542791947621964*^9}]
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"allAUCs", "[", 
+  RowBox[{"[", "138", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.542813369963601*^9, 3.5428134610393333`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"parabolic\"\>", ",", "0", ",", 
+   FractionBox["1", "10"], ",", "5", ",", "3"}], "}"}]], "Output",
+ CellChangeTimes->{{3.542813379896776*^9, 3.5428134619386683`*^9}}]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
@@ -4036,7 +4211,7 @@ ur8HH1XWZkM6g+zt1475/2VDIUkP/C/vfVS6\
 },
 AutoGeneratedPackage->None,
 WindowSize->{918, 655},
-WindowMargins->{{Automatic, 15}, {Automatic, 59}},
+WindowMargins->{{125, Automatic}, {Automatic, 38}},
 FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
 StyleDefinitions->"Default.nb"
 ]
@@ -4184,109 +4359,136 @@ Cell[16036, 528, 92, 1, 34, "Output"]
 }, Closed]],
 Cell[CellGroupData[{
 Cell[16177, 535, 110, 1, 26, "Subsubsubsection"],
-Cell[16290, 538, 629, 16, 59, "Input",
+Cell[16290, 538, 827, 21, 107, "Input",
  InitializationCell->True]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[16956, 559, 103, 1, 32, "Subsubsubsection"],
+Cell[17154, 564, 103, 1, 32, "Subsubsubsection"],
 Cell[CellGroupData[{
-Cell[17084, 564, 242, 5, 34, "Input"],
-Cell[17329, 571, 71, 1, 34, "Output"]
+Cell[17282, 569, 242, 5, 34, "Input"],
+Cell[17527, 576, 71, 1, 34, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[17437, 577, 237, 5, 34, "Input"],
-Cell[17677, 584, 72, 1, 34, "Output"]
+Cell[17635, 582, 237, 5, 34, "Input"],
+Cell[17875, 589, 72, 1, 34, "Output"]
 }, Open  ]]
 }, Closed]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[17810, 592, 113, 1, 39, "Subsection"],
-Cell[17926, 595, 1654, 44, 203, "Input",
+Cell[18008, 597, 113, 1, 39, "Subsection"],
+Cell[18124, 600, 1654, 44, 203, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[19605, 643, 98, 1, 31, "Subsubsection"],
+Cell[19803, 648, 98, 1, 31, "Subsubsection"],
 Cell[CellGroupData[{
-Cell[19728, 648, 202, 4, 34, "Input"],
-Cell[19933, 654, 433, 11, 240, "Output"]
+Cell[19926, 653, 202, 4, 34, "Input"],
+Cell[20131, 659, 433, 11, 240, "Output"]
 }, Open  ]]
 }, Closed]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[20427, 672, 227, 5, 39, "Subsection"],
-Cell[20657, 679, 5893, 143, 539, "Input",
+Cell[20625, 677, 227, 5, 39, "Subsection"],
+Cell[20855, 684, 5893, 143, 539, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[26575, 826, 530, 9, 34, "Input"],
-Cell[27108, 837, 40060, 701, 341, 9449, 198, "CachedBoxData", "BoxData", \
+Cell[26773, 831, 530, 9, 34, "Input"],
+Cell[27306, 842, 40060, 701, 341, 9449, 198, "CachedBoxData", "BoxData", \
 "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[67205, 1543, 416, 9, 34, "Input"],
-Cell[67624, 1554, 587, 9, 34, "Output"]
+Cell[67403, 1548, 416, 9, 34, "Input"],
+Cell[67822, 1559, 587, 9, 34, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[68248, 1568, 464, 9, 34, "Input"],
-Cell[68715, 1579, 131, 2, 34, "Output"]
+Cell[68446, 1573, 464, 9, 34, "Input"],
+Cell[68913, 1584, 131, 2, 34, "Output"]
+}, Open  ]]
 }, Open  ]],
-Cell[68861, 1584, 154, 3, 33, "Text"],
-Cell[69018, 1589, 613, 16, 59, "Input",
+Cell[CellGroupData[{
+Cell[69093, 1592, 96, 1, 39, "Subsection"],
+Cell[69192, 1595, 154, 3, 33, "Text"],
+Cell[69349, 1600, 613, 16, 59, "Input",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[69999, 1621, 127, 1, 39, "Subsection"],
+Cell[70129, 1624, 1438, 35, 179, "Input",
  InitializationCell->True],
-Cell[69634, 1607, 1438, 35, 179, "Input",
+Cell[CellGroupData[{
+Cell[71592, 1663, 246, 5, 34, "Input"],
+Cell[71841, 1670, 229, 3, 34, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[72119, 1679, 129, 1, 39, "Subsection"],
+Cell[72251, 1682, 1041, 27, 155, "Input",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[71097, 1646, 246, 5, 34, "Input"],
-Cell[71346, 1653, 229, 3, 34, "Output"]
-}, Open  ]],
-Cell[71590, 1659, 1041, 27, 155, "Input",
- InitializationCell->True],
-Cell[CellGroupData[{
-Cell[72656, 1690, 402, 10, 34, "Input"],
-Cell[73061, 1702, 544, 11, 83, "Output"],
-Cell[73608, 1715, 742, 18, 59, "Output"]
+Cell[73317, 1713, 402, 10, 34, "Input"],
+Cell[73722, 1725, 544, 11, 83, "Output"],
+Cell[74269, 1738, 742, 18, 59, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[74387, 1738, 355, 11, 34, "Input"],
-Cell[74745, 1751, 97, 1, 34, "Output"]
+Cell[75048, 1761, 355, 11, 34, "Input"],
+Cell[75406, 1774, 97, 1, 34, "Output"]
+}, Open  ]],
+Cell[75518, 1778, 514, 15, 34, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[74879, 1757, 514, 15, 34, "Input"],
-Cell[75396, 1774, 706, 13, 24, "Message"],
-Cell[76105, 1789, 846, 16, 24, "Message"],
-Cell[76954, 1807, 727, 13, 65, "Message"],
-Cell[77684, 1822, 706, 13, 24, "Message"],
-Cell[78393, 1837, 847, 16, 24, "Message"],
-Cell[79243, 1855, 729, 13, 65, "Message"],
-Cell[79975, 1870, 706, 13, 24, "Message"],
-Cell[80684, 1885, 627, 11, 24, "Message"],
-Cell[81314, 1898, 847, 16, 24, "Message"],
-Cell[82164, 1916, 635, 11, 24, "Message"],
-Cell[82802, 1929, 729, 13, 65, "Message"],
-Cell[83534, 1944, 639, 11, 24, "Message"],
-Cell[84176, 1957, 124, 2, 34, "Output"]
+Cell[76069, 1798, 133, 1, 39, "Subsection"],
+Cell[76205, 1801, 227, 4, 55, "Text"],
+Cell[76435, 1807, 789, 23, 59, "Input"],
+Cell[77227, 1832, 395, 6, 77, "Text"],
+Cell[77625, 1840, 1375, 38, 107, "Input"],
+Cell[CellGroupData[{
+Cell[79025, 1882, 333, 10, 34, "Input"],
+Cell[79361, 1894, 95, 1, 34, "Output"]
+}, Open  ]],
+Cell[79471, 1898, 136, 1, 33, "Text"],
+Cell[79610, 1901, 282, 6, 34, "Input"],
+Cell[79895, 1909, 315, 8, 33, "Text"],
+Cell[CellGroupData[{
+Cell[80235, 1921, 674, 16, 83, "Input"],
+Cell[80912, 1939, 706, 13, 24, "Message"],
+Cell[81621, 1954, 846, 16, 24, "Message"],
+Cell[82470, 1972, 727, 13, 65, "Message"],
+Cell[83200, 1987, 706, 13, 24, "Message"],
+Cell[83909, 2002, 847, 16, 24, "Message"],
+Cell[84759, 2020, 729, 13, 65, "Message"],
+Cell[85491, 2035, 706, 13, 24, "Message"],
+Cell[86200, 2050, 629, 11, 24, "Message"],
+Cell[86832, 2063, 847, 16, 24, "Message"],
+Cell[87682, 2081, 635, 11, 24, "Message"],
+Cell[88320, 2094, 729, 13, 65, "Message"],
+Cell[89052, 2109, 639, 11, 24, "Message"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[89728, 2125, 153, 3, 34, "Input"],
+Cell[89884, 2130, 210, 4, 47, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[84361, 1966, 95, 1, 73, "Section"],
-Cell[84459, 1969, 233, 6, 34, "Input"],
+Cell[90155, 2141, 95, 1, 73, "Section"],
+Cell[90253, 2144, 233, 6, 34, "Input"],
 Cell[CellGroupData[{
-Cell[84717, 1979, 730, 18, 59, "Input"],
-Cell[85450, 1999, 60666, 1018, 225, 45658, 770, "CachedBoxData", "BoxData", \
+Cell[90511, 2154, 730, 18, 59, "Input"],
+Cell[91244, 2174, 60666, 1018, 225, 45658, 770, "CachedBoxData", "BoxData", \
 "Output"]
 }, Open  ]],
-Cell[146131, 3020, 282, 7, 34, "Input"],
-Cell[146416, 3029, 331, 8, 34, "Input"],
-Cell[146750, 3039, 376, 8, 34, "Input"]
+Cell[151925, 3195, 282, 7, 34, "Input"],
+Cell[152210, 3204, 331, 8, 34, "Input"],
+Cell[152544, 3214, 376, 8, 34, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[147163, 3052, 158, 2, 73, "Section"],
-Cell[147324, 3056, 346, 9, 34, "Input"],
-Cell[147673, 3067, 392, 9, 34, "Input"],
-Cell[148068, 3078, 439, 10, 34, "Input"],
-Cell[148510, 3090, 436, 10, 34, "Input"],
+Cell[152957, 3227, 158, 2, 73, "Section"],
+Cell[153118, 3231, 346, 9, 34, "Input"],
+Cell[153467, 3242, 392, 9, 34, "Input"],
+Cell[153862, 3253, 439, 10, 34, "Input"],
+Cell[154304, 3265, 436, 10, 34, "Input"],
 Cell[CellGroupData[{
-Cell[148971, 3104, 913, 21, 59, "Input"],
-Cell[149887, 3127, 53818, 905, 225, 41800, 706, "CachedBoxData", "BoxData", \
+Cell[154765, 3279, 913, 21, 59, "Input"],
+Cell[155681, 3302, 53818, 905, 225, 41800, 706, "CachedBoxData", "BoxData", \
 "Output"]
 }, Open  ]]
 }, Open  ]]
