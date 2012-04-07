@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    200719,       4052]
-NotebookOptionsPosition[    194074,       3819]
-NotebookOutlinePosition[    194439,       3835]
-CellTagsIndexPosition[    194396,       3832]
+NotebookDataLength[    211083,       4288]
+NotebookOptionsPosition[    203733,       4036]
+NotebookOutlinePosition[    204098,       4052]
+CellTagsIndexPosition[    204055,       4049]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -1734,14 +1734,231 @@ Cell[BoxData[
   3.542745608581543*^9}}]
 }, Open  ]],
 
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Length", "[", 
+  RowBox[{"Select", "[", 
+   RowBox[{
+    RowBox[{"micROCsToExport", "[", "]"}], ",", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"#", "[", 
+       RowBox[{"[", "4", "]"}], "]"}], "<", "30"}], "&"}]}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.5427652057261*^9, 3.542765223735914*^9}, 
+   3.542766288412019*^9}],
+
+Cell[BoxData["4212"], "Output",
+ CellChangeTimes->{3.5427652555709553`*^9, 3.542766332107305*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell[BoxData[
  RowBox[{"ParallelMap", "[", 
   RowBox[{
    RowBox[{
     RowBox[{"Apply", "[", 
      RowBox[{"exportPlotMicROCs", ",", "#"}], "]"}], "&"}], ",", 
-   RowBox[{"micROCsToExport", "[", "]"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.542750930547079*^9, 3.5427509851815557`*^9}}]
+   RowBox[{"Select", "[", 
+    RowBox[{
+     RowBox[{"micROCsToExport", "[", "]"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"#", "[", 
+        RowBox[{"[", "4", "]"}], "]"}], "<", "30"}], "&"}]}], "]"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.542750930547079*^9, 3.5427509851815557`*^9}, {
+  3.5427662295959797`*^9, 3.542766257681031*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partw\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(3\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" of \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\({\\\"x000\\\"}\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" does not \
+exist.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
+ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768644797361*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"StringDrop", "::", "\<\"strse\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"String or list of strings \
+expected at position \\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\
+\\!\\(1\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" in \
+\\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(StringDrop[\\(\\(\\(\\(\\(\\({\
+\\\"x000\\\"}\\)\\) \[LeftDoubleBracket] 3 \[RightDoubleBracket]\\)\\), \
+1\\)\\)]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\".\\\\\\\"\\\", \\\"MT\\\
+\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/strse\\\", ButtonNote -> \
+\\\"StringDrop::strse\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.54276864567202*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ToExpression", "::", "\<\"notstrbox\"\>"}], 
+  RowBox[{
+  ":", " "}], \
+"\<\"\[NoBreak]\\!\\(\\*StyleBox[\\!\\(StringDrop[\\(\\(\\(\\(\\(\\({\\\"x000\
+\\\"}\\)\\) \[LeftDoubleBracket] 3 \[RightDoubleBracket]\\)\\), 1\\)\\)]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is not a string or a \
+box. ToExpression can only interpret strings or boxes as Mathematica input.\\\
+\\\\\"\\\", \\\"MT\\\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/ToExpression/notstrbox\\\", ButtonNote -> \
+\\\"ToExpression::notstrbox\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768647455545*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partw\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(3\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" of \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\({\\\"x000\\\"}\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" does not \
+exist.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
+ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768649272767*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"StringDrop", "::", "\<\"strse\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"String or list of strings \
+expected at position \\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\
+\\!\\(1\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" in \
+\\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(StringDrop[\\(\\(\\(\\(\\(\\({\
+\\\"x000\\\"}\\)\\) \[LeftDoubleBracket] 3 \[RightDoubleBracket]\\)\\), \
+1\\)\\)]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\".\\\\\\\"\\\", \\\"MT\\\
+\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/strse\\\", ButtonNote -> \
+\\\"StringDrop::strse\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768651041264*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ToExpression", "::", "\<\"notstrbox\"\>"}], 
+  RowBox[{
+  ":", " "}], \
+"\<\"\[NoBreak]\\!\\(\\*StyleBox[\\!\\(StringDrop[\\(\\(\\(\\(\\(\\({\\\"x000\
+\\\"}\\)\\) \[LeftDoubleBracket] 3 \[RightDoubleBracket]\\)\\), 1\\)\\)]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is not a string or a \
+box. ToExpression can only interpret strings or boxes as Mathematica input.\\\
+\\\\\"\\\", \\\"MT\\\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/ToExpression/notstrbox\\\", ButtonNote -> \
+\\\"ToExpression::notstrbox\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.5427686528860064`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partw\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(3\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" of \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\({\\\"x000\\\"}\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" does not \
+exist.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partw\\\", \
+ButtonNote -> \\\"Part::partw\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768654683599*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"General", "::", "\<\"stop\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Further output of \\\\\\\"\\\
+\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(Part :: \\\"partw\\\"\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" will be suppressed \
+during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/stop\\\", ButtonNote -> \
+\\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768656580728*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"StringDrop", "::", "\<\"strse\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"String or list of strings \
+expected at position \\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\
+\\!\\(1\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" in \
+\\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(StringDrop[\\(\\(\\(\\(\\(\\({\
+\\\"x000\\\"}\\)\\) \[LeftDoubleBracket] 3 \[RightDoubleBracket]\\)\\), \
+1\\)\\)]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\".\\\\\\\"\\\", \\\"MT\\\
+\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/strse\\\", ButtonNote -> \
+\\\"StringDrop::strse\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768658635354*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"General", "::", "\<\"stop\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Further output of \\\\\\\"\\\
+\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(StringDrop :: \\\"strse\\\
+\"\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" will be \
+suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
+ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.5427686599501963`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ToExpression", "::", "\<\"notstrbox\"\>"}], 
+  RowBox[{
+  ":", " "}], \
+"\<\"\[NoBreak]\\!\\(\\*StyleBox[\\!\\(StringDrop[\\(\\(\\(\\(\\(\\({\\\"x000\
+\\\"}\\)\\) \[LeftDoubleBracket] 3 \[RightDoubleBracket]\\)\\), 1\\)\\)]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is not a string or a \
+box. ToExpression can only interpret strings or boxes as Mathematica input.\\\
+\\\\\"\\\", \\\"MT\\\"]\\) \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/ToExpression/notstrbox\\\", ButtonNote -> \
+\\\"ToExpression::notstrbox\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.5427686613868847`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"General", "::", "\<\"stop\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Further output of \\\\\\\"\\\
+\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(ToExpression :: \
+\\\"notstrbox\\\"\\), \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" \
+will be suppressed during this calculation.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
+ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.542768663127763*^9}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{3.542766207853834*^9, 3.542766387221828*^9, 
+  3.542791947621964*^9}]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]],
 
@@ -3819,7 +4036,7 @@ ur8HH1XWZkM6g+zt1475/2VDIUkP/C/vfVS6\
 },
 AutoGeneratedPackage->None,
 WindowSize->{918, 655},
-WindowMargins->{{53, Automatic}, {Automatic, 27}},
+WindowMargins->{{Automatic, 15}, {Automatic, 59}},
 FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
 StyleDefinitions->"Default.nb"
 ]
@@ -4027,30 +4244,49 @@ Cell[72656, 1690, 402, 10, 34, "Input"],
 Cell[73061, 1702, 544, 11, 83, "Output"],
 Cell[73608, 1715, 742, 18, 59, "Output"]
 }, Open  ]],
-Cell[74365, 1736, 288, 7, 34, "Input"]
+Cell[CellGroupData[{
+Cell[74387, 1738, 355, 11, 34, "Input"],
+Cell[74745, 1751, 97, 1, 34, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[74879, 1757, 514, 15, 34, "Input"],
+Cell[75396, 1774, 706, 13, 24, "Message"],
+Cell[76105, 1789, 846, 16, 24, "Message"],
+Cell[76954, 1807, 727, 13, 65, "Message"],
+Cell[77684, 1822, 706, 13, 24, "Message"],
+Cell[78393, 1837, 847, 16, 24, "Message"],
+Cell[79243, 1855, 729, 13, 65, "Message"],
+Cell[79975, 1870, 706, 13, 24, "Message"],
+Cell[80684, 1885, 627, 11, 24, "Message"],
+Cell[81314, 1898, 847, 16, 24, "Message"],
+Cell[82164, 1916, 635, 11, 24, "Message"],
+Cell[82802, 1929, 729, 13, 65, "Message"],
+Cell[83534, 1944, 639, 11, 24, "Message"],
+Cell[84176, 1957, 124, 2, 34, "Output"]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[74702, 1749, 95, 1, 73, "Section"],
-Cell[74800, 1752, 233, 6, 34, "Input"],
+Cell[84361, 1966, 95, 1, 73, "Section"],
+Cell[84459, 1969, 233, 6, 34, "Input"],
 Cell[CellGroupData[{
-Cell[75058, 1762, 730, 18, 59, "Input"],
-Cell[75791, 1782, 60666, 1018, 225, 45658, 770, "CachedBoxData", "BoxData", \
+Cell[84717, 1979, 730, 18, 59, "Input"],
+Cell[85450, 1999, 60666, 1018, 225, 45658, 770, "CachedBoxData", "BoxData", \
 "Output"]
 }, Open  ]],
-Cell[136472, 2803, 282, 7, 34, "Input"],
-Cell[136757, 2812, 331, 8, 34, "Input"],
-Cell[137091, 2822, 376, 8, 34, "Input"]
+Cell[146131, 3020, 282, 7, 34, "Input"],
+Cell[146416, 3029, 331, 8, 34, "Input"],
+Cell[146750, 3039, 376, 8, 34, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[137504, 2835, 158, 2, 73, "Section"],
-Cell[137665, 2839, 346, 9, 34, "Input"],
-Cell[138014, 2850, 392, 9, 34, "Input"],
-Cell[138409, 2861, 439, 10, 34, "Input"],
-Cell[138851, 2873, 436, 10, 34, "Input"],
+Cell[147163, 3052, 158, 2, 73, "Section"],
+Cell[147324, 3056, 346, 9, 34, "Input"],
+Cell[147673, 3067, 392, 9, 34, "Input"],
+Cell[148068, 3078, 439, 10, 34, "Input"],
+Cell[148510, 3090, 436, 10, 34, "Input"],
 Cell[CellGroupData[{
-Cell[139312, 2887, 913, 21, 59, "Input"],
-Cell[140228, 2910, 53818, 905, 225, 41800, 706, "CachedBoxData", "BoxData", \
+Cell[148971, 3104, 913, 21, 59, "Input"],
+Cell[149887, 3127, 53818, 905, 225, 41800, 706, "CachedBoxData", "BoxData", \
 "Output"]
 }, Open  ]]
 }, Open  ]]
