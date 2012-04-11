@@ -17,7 +17,7 @@ if(@ARGV != 1){
 	"but sorted by auc rather than bin-name.\n",
 	"\n",
 	"The best bin size is chosen breaking ties for the same AUC by\n",
-	"giving preference to the smaller number of bins.\n",
+	"giving preference to the larger number of bins.\n",
 	"\n",
 	"Note that this is a hack that depends on the ROC files having a \n",
 	"specific filename format. It is designed so Mathematica can quickly\n",
@@ -64,9 +64,9 @@ while(<STDIN>){
     if($$cur[1] < $auc){
 	$$cur[0]=$endOfFilename;
 	$$cur[1]=$auc;
-    }elsif($$cur[1] == $auc && (!defined $$cur[0] || $endOfFilename lt $$cur[0] )){
+    }elsif($$cur[1] == $auc && (!defined $$cur[0] || $endOfFilename gt $$cur[0] )){
 	#Take care of ties among mic entries by choosing the one with 
-	#fewer bins
+	#more bins
 	$$cur[0]=$endOfFilename;	
     }
     
