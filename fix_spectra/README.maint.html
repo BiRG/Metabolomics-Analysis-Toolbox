@@ -21,17 +21,24 @@
 <p>Matlab is a language in which specifications of key data
       structures are seldom found at all and certainly not found in one
       place. This document provides the place to put such descriptions.
+      <br>
     </p>
 
     
-<h2>Appdata</h2>
+<h2>App Data<br>
+    </h2>
+
+    
+<h3>Main window<br>
+    </h3>
 
     
 <p>This section provides a list of all of the in-use keys for the <code>getappdata(handle,key)
 
 
 
-      </code> statement.</p>
+
+      </code> statement in the main window of fix_spectra.</p>
 
     
 <table class="identifier_defs">
@@ -123,6 +130,198 @@
 </table>
 
     <br>
+
+    
+<h3>Group Include<br>
+    </h3>
+
+    
+<p>This section provides a list of all of the in-use keys for the <code>getappdata(handle,key)</code>
+      in the group include/exclude window<br>
+    </p>
+
+    
+<table class="identifier_defs">
+
+      <tbody>
+        <tr>
+          <th>Identifier</th>
+          <th>Meaning</th>
+        </tr>
+        <tr class="ra">
+          <td class="id">binned_spectra</td>
+          <td>struct array of spectra binned to 0.04 ppm<br>
+          </td>
+        </tr>
+        <tr>
+          <td class="id">ref_spectrum</td>
+          <td>struct containing the current reference spectrum<br>
+          </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">collection_inx</td>
+          <td>index of the current collection in collections array </td>
+        </tr>
+        <tr>
+          <td class="id">spectrum_inx</td>
+          <td>index of the current spectrum in the current collection </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">use_spectrum<br>
+          </td>
+          <td>array of logical. use_spectrum(i) is true iff the spectrum at
+            index i is to be used in creating the reference
+            spectrum<br>
+          </td>
+        </tr>
+      </tbody>
+    
+</table>
+
+    <br>
+<h3>Spectrum quotient window<br>
+    </h3>
+
+
+    
+<p>This section provides a list of all of the in-use keys for the <code>getappdata(handle,key)
+
+
+
+
+      </code> statement in the spectrum quotient window of fix_spectra.</p>
+
+
+    
+<table class="identifier_defs">
+
+
+      <tbody>
+        <tr>
+          <th>Identifier</th>
+          <th>Meaning</th>
+        </tr>
+        <tr class="ra">
+          <td class="id">binned_spectra</td>
+          <td>struct array of spectra binned to 0.04 ppm and sum-normalized to 1000<br>
+</td>
+        </tr>
+        
+        <tr class="ra">
+          <td class="id">spectrum_inx</td>
+          <td>index of the current spectrum in the current collection </td>
+        </tr>
+        
+  <tr>
+<td class="id">ref_spectrum</td><td>struct containing the current reference spectrum<br>
+          </td>
+  </tr>
+
+        
+  <tr class="ra">
+<td class="id">use_spectrum<br>
+          </td><td>array of logical. use_spectrum(i) is true iff the spectrum at
+            index i is used in creating the reference
+            spectrum<br>
+          </td>
+  </tr>
+
+        <tr>
+          <td class="id">use_bin<br>
+</td>
+          <td><span style="font-family: monospace;"></span><code></code>array
+ of logical. use_bin(i) is true iff the bin at index i is used in 
+calculating quotients for determining the normalization coefficient<br>
+</td>
+        </tr>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </tbody>
+    
+</table>
+
+
+    <br>
+<h3>Probabilistic quotient normalization window<br>
+    </h3>
+
+
+
+    
+<p>This section provides a list of all of the in-use keys for the <code>getappdata(handle,key)
+
+
+
+
+      </code> statement in the probabilistic quotient normalization window of fix_spectra.</p>
+
+
+
+    
+<table class="identifier_defs">
+
+
+
+      <tbody>
+        <tr>
+          <th>Identifier</th>
+          <th>Meaning</th>
+        </tr>
+        <tr class="ra">
+          <td class="id">binned_spectra</td>
+          <td>struct array of spectra binned to 0.04 ppm and sum-normalized to 1000<br>
+</td>
+        </tr>
+        
+        
+        
+  <tr>
+<td class="id">ref_spectrum</td><td>struct containing the current reference spectrum<br>
+          </td>
+  </tr>
+
+        
+  <tr class="ra">
+<td class="id">use_spectrum<br>
+          </td><td>array of logical. use_spectrum(i) is true iff the spectrum at
+            index i is used in creating the reference
+            spectrum<br>
+          </td>
+  </tr>
+
+        <tr>
+          <td class="id">use_bin<br>
+</td>
+          <td><span style="font-family: monospace;"></span><code></code>array
+ of logical. use_bin(i) is true iff the bin at index i is used in 
+calculating quotients for determining the normalization coefficient<br>
+</td>
+        </tr>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </tbody>
+    
+</table>
+
+
+
+    <br>
+
+<br>
 
   
 
