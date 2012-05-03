@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 STRICT//EN">
+<html><head>
+    <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+    <title>Fix Spectra Maintainer Documentation</title>
+
+    <style type="text/css">
+        .ra {background-color: #FCF6CF; }
+        td.id {font-family: monospace}
+    </style>
+  </head>
+<body dir="LTR" lang="en-US">
+    
+<h1>Fix Spectra Maintainer Documentation</h1>
+
+    
+<p>This is an ad-hoc document set up to capture insights into the
+      code of so that future maintainers don't need to go through the
+      pain of figuring it out again. </p>
+
+    
+<p>Matlab is a language in which specifications of key data
+      structures are seldom found at all and certainly not found in one
+      place. This document provides the place to put such descriptions.
+    </p>
+
+    
+<h2>Appdata</h2>
+
+    
+<p>This section provides a list of all of the in-use keys for the <code>getappdata(handle,key)
+
+
+
+      </code> statement.</p>
+
+    
+<table class="identifier_defs">
+
+      <tbody>
+        <tr>
+          <th>Identifier</th>
+          <th>Meaning</th>
+        </tr>
+        <tr class="ra">
+          <td class="id">collections</td>
+          <td>cell array of spectral collections</td>
+        </tr>
+        <tr>
+          <td class="id">add_processing_log</td>
+          <td>text to add to the end of the processing log on save; a
+            string. </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">collection_inx</td>
+          <td>index of the current collection in collections array </td>
+        </tr>
+        <tr>
+          <td class="id">spectrum_inx</td>
+          <td>index of the current spectrum in the current collection </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">lh</td>
+          <td>Unknown. May have something to do with temporary data
+            waiting for acceptance. Used in <code>clear_all_except_regions.m</code>
+            and <code>plot.m</code></td>
+        </tr>
+        <tr>
+          <td class="id">yh</td>
+          <td>Unknown. May have something to do with temporary data
+            waiting for acceptance. Used in <code>clear_all_except_regions.m</code>
+            and <code>plot.m</code></td>
+        </tr>
+        <tr class="ra">
+          <td class="id">yh_fixed</td>
+          <td>Unknown. May have something to do with temporary data
+            waiting for acceptance. Used in <code>clear_all_except_regions.m</code>
+            and <code>plot.m</code></td>
+        </tr>
+        <tr>
+          <td class="id">yh_baseline</td>
+          <td>Unknown. May have something to do with temporary data
+            waiting for acceptance. Used in <code>clear_all_except_regions.m</code>
+            and <code>plot.m</code><br>
+          </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">suffix</td>
+          <td>Unknown. Used in <code>fix_click_menu.m</code><br>
+          </td>
+        </tr>
+        <tr>
+          <td class="id">temp_suffix</td>
+          <td>Unknown. Used in <code>fix_click_menu.m</code>, <code>normalize_to_reference.m</code>,
+            <code>zero_regions.m</code>, and <code>fix_baseline.m</code><br>
+          </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">xdist</td>
+          <td>Unknown. Used in <code>fix_click_menu.m</code> and <code>fix_key_press.m</code><br>
+          </td>
+        </tr>
+        <tr>
+          <td class="id">ydist</td>
+          <td>Unknown. Used in <code>fix_click_menu.m</code> and <code>fix_key_press.m</code>
+          </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">bin_inx</td>
+          <td>Unknown. Used in&nbsp;<code>fix_key_press.m</code> </td>
+        </tr>
+        <tr>
+          <td class="id">left_noise_cursor</td>
+          <td>Unknown. Used in <span style="font-family: monospace;">set_baseline_regions</span><code>.m</code>
+          </td>
+        </tr>
+        <tr class="ra">
+          <td class="id">right_noise_cursor</td>
+          <td>Unknown. Used in <span style="font-family: monospace;">set_baseline_regions</span><code>.m</code>
+          </td>
+        </tr>
+      </tbody>
+    
+</table>
+
+    <br>
+
+  
+
+</body></html>
