@@ -16,9 +16,9 @@ function [region_inx,left,right,left_handle,right_handle,extra_left_handle,extra
 %
 % region_inx - The index of the region to return in the array of regions.
 %
-%              {Optional} If omitted, I think it returns the region that 
-%              contains the most other regions, ties broken by region 
-%              with lower index.
+%              {Optional} If omitted, I think it returns the region with
+%              the greatest overlap with the current window breaking ties
+%              with the lowest index.
 %
 % main_h     - The GUI handle of the figure to use.
 %
@@ -69,8 +69,8 @@ if ~exist('region_inx','var')
     xlim = get(gca,'xlim');
 
     z = zeros(size(x));
-    x_in_range = xlim(1) <= x & x <= xlim(2);
-    z(x_in_range) = 1;
+    x_in_window = xlim(1) <= x & x <= xlim(2);
+    z(x_in_window) = 1;
     nm = size(regions_cursors);
     max_score = -Inf;
     max_b = 0;
@@ -90,7 +90,7 @@ if ~exist('region_inx','var')
         x_in_region = right <= x & x <= left;
         t = z;
         t(x_in_region) = t(x_in_region) + 1;
-        score = sum(find(t == 2));
+        score = sum(find(t == 2)); %This may be a bug - should it be "score = sum(t==2);" ?
         if score > max_score
             max_score = score;
             max_b = b;
