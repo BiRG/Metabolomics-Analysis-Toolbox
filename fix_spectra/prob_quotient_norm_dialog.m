@@ -2,26 +2,28 @@ function varargout = prob_quotient_norm_dialog(varargin)
 % PROB_QUOTIENT_NORM_DIALOG MATLAB code for prob_quotient_norm_dialog.fig
 %      Read this since it has been edited by a human.
 %
-%      [H, was_canceled, normalization_factors, processing_log_text] = prob_quotient_norm_dialog 
-%      returns the normalization factors calculated for each of the spectra passed 
-%      in the "binned_spectra" argument on the when the dialog was most 
-%      recently raised or created. And returns a string to be added to the
-%      processing log. The user should note what binning method was used to
-%      create the original binned spectra in the processing log. If
-%      was_canceled is true, then the normalization factors are invalid, as
-%      is the processing log text. The user clicked the cancel button and
-%      no normalization should be done.
-%
 %      prob_quotient_norm_dialog({binned_spectra, use_bin}) opens the
 %      dialog to compute the normalization constants for all the spectra in
 %      the struct array binned_spectra using the bins in the logical array
 %      use_bin
 %
+%      a = prob_quotient_norm_dialog(...)
+%      Returns a cell array a composed of:
+%        {H, was_canceled, normalization_factors, processing_log_text}.
+%
+%      H            is the handle to the dialog. 
+%      was_canceled is true iff the user pressed cancel (in
+%                   which case, none of the other factors are valid.
+%      normalization_factors are the normalization factors calculated for 
+%                   each of the spectra passed in the "binned_spectra" argument on 
+%                   the when the dialog was most recently raised or created. 
+%      processing_log_text is a string to be added to the processing log. 
+%                   The user should note what binning method was used to
+%                   create the original binned spectra in the processing 
+%                   log. 
+%
 %      PROB_QUOTIENT_NORM_DIALOG, by itself, creates a new PROB_QUOTIENT_NORM_DIALOG or raises the existing
 %      singleton*.
-%
-%      H = PROB_QUOTIENT_NORM_DIALOG returns the handle to a new PROB_QUOTIENT_NORM_DIALOG or the handle to
-%      the existing singleton*.
 %
 %      PROB_QUOTIENT_NORM_DIALOG('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in PROB_QUOTIENT_NORM_DIALOG.M with the given input arguments.
@@ -69,14 +71,16 @@ function prob_quotient_norm_dialog_OpeningFcn(hObject, eventdata, handles, varar
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to prob_quotient_norm_dialog (see VARARGIN)
 
-% Choose default command line output for prob_quotient_norm_dialog
-handles.output = hObject;
+% Set default command line output for prob_quotient_norm_dialog to the same
+% as a cancelled
+handles.output = {hObject, true(1), ones(length(varargin{1,1}{1,1}),1), ...
+    'No changes made during probabilistic quotient normalization'};
 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes prob_quotient_norm_dialog wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -88,6 +92,8 @@ function varargout = prob_quotient_norm_dialog_OutputFcn(hObject, eventdata, han
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+
+delete(handles.figure1);
 
 
 % --- Executes on button press in normalize_button.
@@ -112,7 +118,24 @@ function select_ref_spectra_button_Callback(hObject, eventdata, handles) %#ok<IN
 
 
 % --- Executes on button press in cancel_button.
-function cancel_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function cancel_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to cancel_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+uiresume(handles.figure1);
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if isequal(get(hObject, 'waitstatus'), 'waiting')
+    % The GUI is still in UIWAIT, us UIRESUME
+    uiresume(hObject);
+else
+    % The GUI is no longer waiting, just close it
+    delete(hObject);
+end
+
