@@ -4,8 +4,14 @@ function varargout = prob_quotient_norm_dialog(varargin)
 %
 %      prob_quotient_norm_dialog({binned_spectra, use_bin}) opens the
 %      dialog to compute the normalization constants for all the spectra in
-%      the struct array binned_spectra using the bins in the logical array
-%      use_bin
+%      the binned_spectra using the bins in the logical array
+%      use_bin. use_bin(b) is true if for all c binned_spectra{c}.x(b) should be
+%      used as a bin, false otherwise. binned_spectra is a cell array of
+%      spectral collections as returned by load_collections.
+%
+%      NOTE: the x field of all the collections in binned_spectra must be
+%      identical. If not, an error is raised. Check with
+%      only_one_x_in.m before calling prob_quotient_norm_dialog
 %
 %      a = prob_quotient_norm_dialog(...)
 %      Returns a cell array a composed of:
@@ -16,7 +22,11 @@ function varargout = prob_quotient_norm_dialog(varargin)
 %                   which case, none of the other factors are valid.
 %      normalization_factors are the normalization factors calculated for 
 %                   each of the spectra passed in the "binned_spectra" argument on 
-%                   the when the dialog was most recently raised or created. 
+%                   the when the dialog was most recently raised or
+%                   created. normalization_factors(c,s) is the
+%                   normalization factor by which spectrum s in
+%                   the collection binned_spectra{c} should be multiplied
+%                   in order to normalize it with respect to concentration.
 %      processing_log_text is a string to be added to the processing log. 
 %                   The user should note what binning method was used to
 %                   create the original binned spectra in the processing 
