@@ -51,7 +51,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 
 % Edit the above text to modify the response to help prob_quotient_norm_dialog
 
-% Last Modified by GUIDE v2.5 03-May-2012 18:04:17
+% Last Modified by GUIDE v2.5 05-May-2012 16:40:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -148,4 +148,3 @@ else
     % The GUI is no longer waiting, just close it
     delete(hObject);
 end
-
