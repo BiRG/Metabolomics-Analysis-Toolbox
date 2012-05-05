@@ -1,7 +1,7 @@
 function multiplied = multiply_collections( collections, multipliers )
-%Multiply the spectra in each collection by their corresponding multiplier
+% Multiply the spectra in each collection by their corresponding multiplier
 %
-%multiplied{i}.Y{:,j}=collections{i}.Y{:,j} * multipliers(i,j)
+% multiplied{i}.Y{:,j}=collections{i}.Y{:,j} * multipliers(i,j)
 %
 % -------------------------------------------------------------------------
 % Input arguments
@@ -22,7 +22,7 @@ function multiplied = multiply_collections( collections, multipliers )
 % Output parameters
 % -------------------------------------------------------------------------
 % 
-% multiplied - the spetra in collections after their y values have been
+% multiplied - the spectra in collections after their y values have been
 %              multiplied by the appropriate constants.
 %
 % -------------------------------------------------------------------------
