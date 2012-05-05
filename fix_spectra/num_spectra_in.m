@@ -34,7 +34,7 @@ if ~iscell( collections )
 end
 
 num_spectra = 0;
-if isempty(collections); then
+if isempty(collections)
     return;
 end
 
