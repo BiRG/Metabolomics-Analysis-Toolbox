@@ -264,7 +264,9 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     
     % Interactively generate the normalization multipliers
     retvals = prob_quotient_norm_dialog({binned, use_bin});
-    
+
+    % Parse return values (including aborting if cancel was clicked in the
+    % dialog box)
     was_canceled = retvals{2};
     if was_canceled; return; end
     
