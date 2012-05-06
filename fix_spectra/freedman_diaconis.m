@@ -19,7 +19,8 @@ function n_bins = freedman_diaconis( data )
 %
 % >> n_bins = freedman_diaconis([1,1,2,2,3,3,3,3,3,3,6])
 % 
-% n_bins will be 2 = ceil(2*1.5*(8^-1/3))
+% bin_width = 1.5 = 2*1.5*(8^-1/3)
+% n_bins = 4 = ceil((6-1)/1.5)
 %
 % -------------------------------------------------------------------------
 % Authors
@@ -29,7 +30,8 @@ function n_bins = freedman_diaconis( data )
 %
 
 d_vec = reshape(data,[],1);
-n_bins = ceil(2*iqr(d_vec)*(length(d_vec)^(-1/3)));
+bin_width = 2*iqr(d_vec)*(length(d_vec)^(-1/3));
+n_bins = ceil((max(d_vec) - min(d_vec))/bin_width);
 
 end
 
