@@ -81,9 +81,13 @@ function prob_quotient_norm_dialog_OpeningFcn(hObject, eventdata, handles, varar
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to prob_quotient_norm_dialog (see VARARGIN)
 
+% Put command line arguments into appdata.
+handles.binned_spectra = varargin{1}{1};
+handles.use_bin = varargin{1}{2};
+
 % Set default command line output for prob_quotient_norm_dialog to the same
 % as a cancelled
-handles.output = {hObject, true(1), ones(length(varargin{1,1}{1,1}),1), ...
+handles.output = {hObject, true(1), true, ...
     'No changes made during probabilistic quotient normalization'};
 
 % Update handles structure
