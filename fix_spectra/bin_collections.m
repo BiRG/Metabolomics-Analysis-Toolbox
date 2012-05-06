@@ -52,6 +52,10 @@ if isempty(collections)
     return;
 end
 
+if ~exist('use_waitbar','var')
+    use_waitbar = true;
+end
+
 if (use_waitbar); wait_h = waitbar(0, 'Binning spectrum collections'); end
 
 min_x = min(collections{1}.x);
