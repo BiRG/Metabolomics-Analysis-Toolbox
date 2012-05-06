@@ -110,9 +110,9 @@ bin_contents = cell(size(bin_centers));
 print_warning = false;
 for x_idx = 1:length(collection.x)
     x_val = collection.x(x_idx);
-    bin_idx = floor((x_val-first_bin)/bin_width) + 1;
+    bin_idx = floor((x_val-first_bin_min)/bin_width) + 1;
     if(bin_idx >= 1 && bin_idx <= length(bin_contents))
-        bin_contents{bin_idx}(end)=x_idx;
+        bin_contents{bin_idx}(end+1)=x_idx;
     else
         print_warning = true;
     end
