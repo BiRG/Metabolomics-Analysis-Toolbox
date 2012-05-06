@@ -113,13 +113,6 @@ function normalize_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in select_bins_button.
-function select_bins_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
-% hObject    handle to select_bins_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on button press in select_ref_spectra_button.
 function select_ref_spectra_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
 % hObject    handle to select_ref_spectra_button (see GCBO)
