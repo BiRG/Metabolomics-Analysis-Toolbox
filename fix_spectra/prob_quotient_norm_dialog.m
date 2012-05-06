@@ -81,9 +81,15 @@ function prob_quotient_norm_dialog_OpeningFcn(hObject, eventdata, handles, varar
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to prob_quotient_norm_dialog (see VARARGIN)
 
-% Put command line arguments into appdata.
+% Initialize handles structure using command line arguments
 handles.binned_spectra = varargin{1}{1};
 handles.use_bin = varargin{1}{2};
+handles.use_spectrum = cell(size(handles.binned_spectra));
+for i=1:length(handles.binned_spectra)
+    num_spectra = handles.binned_spectra{i}.num_spectra;
+    handles.use_spectrum{i} = true(num_spectra,1);
+end
+handles.ref_spectrum = calculate_reference_spectrum(handles.binned_spectra, handles.use_spectrum);
 
 % Set default command line output for prob_quotient_norm_dialog to the same
 % as a cancelled
