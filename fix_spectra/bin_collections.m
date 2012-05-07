@@ -5,7 +5,7 @@ function binned_collections = bin_collections( collections, bin_width, use_waitb
 % -------------------------------------------------------------------------
 % 
 % collections - a cell array of spectral collections. Each spectral
-%               collection is a struct array of spectra. This is the format
+%               collection is a struct. This is the format
 %               of the return value of load_collections.m in
 %               common_scripts.
 %
