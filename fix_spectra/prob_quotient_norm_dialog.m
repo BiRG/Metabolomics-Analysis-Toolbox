@@ -143,6 +143,8 @@ else
     num_bins = 2*length(skewnesses);
 end
 hist(handles.skewness_histogram_axes, skewnesses, num_bins);
+xlabel(handles.skewness_histogram_axes, 'Quartile Skewness of Quotient Distribution');
+ylabel(handles.skewness_histogram_axes, 'Number of Spectra');
 
 % --- Outputs from this function are returned to the command line.
 function varargout = prob_quotient_norm_dialog_OutputFcn(hObject, eventdata, handles)  %#ok<INUSL>
