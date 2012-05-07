@@ -83,13 +83,27 @@ function prob_quotient_norm_dialog_OpeningFcn(hObject, eventdata, handles, varar
 
 % Initialize handles structure using command line arguments
 handles.binned_spectra = varargin{1}{1};
+if ~only_one_x_in(handles.binned_spectra)
+    error('prob_quotient:one_x',['All the x vectors in the spectra ' ...
+        'collections passed to prob_quotient_norm_dialog must be ' ...
+        'identical.']);
+end
+
 handles.use_bin = varargin{1}{2};
+if size(handles.use_bin, 2) ~= 1 %Ensure that column vector
+    handles.use_bin = (handles.use_bin)';
+end
+
 handles.use_spectrum = cell(size(handles.binned_spectra));
 for i=1:length(handles.binned_spectra)
-    num_spectra = handles.binned_spectra{i}.num_spectra;
+    num_spectra = handles.binned_spectra{i}.num_samples;
     handles.use_spectrum{i} = true(num_spectra,1);
 end
-handles.ref_spectrum = calculate_reference_spectrum(handles.binned_spectra, handles.use_spectrum);
+
+handles.ref_spectrum = median_spectrum(handles.binned_spectra, handles.use_spectrum);
+
+handles.binned_spectra = set_quotients_field(handles.binned_spectra, handles.ref_spectrum);
+
 
 % Set default command line output for prob_quotient_norm_dialog to the same
 % as a cancelled
@@ -99,9 +113,36 @@ handles.output = {hObject, true(1), true, ...
 % Update handles structure
 guidata(hObject, handles);
 
+update_ui(handles);
+
 % UIWAIT makes prob_quotient_norm_dialog wait for user response (see UIRESUME)
 uiwait(handles.figure1);
 
+
+function update_ui(handles)
+% Update the UI according to the program state as reflected in the handles
+% object.
+%
+% handles structure with handles and user data (see GUIDATA)
+
+%Plot the quotient skewnesses
+num_spec = num_spectra_in(handles.binned_spectra);
+skewnesses = zeros(num_spec, 1);
+cur_spec = 1;
+for c=1:length(handles.binned_spectra)
+    num_samples = handles.binned_spectra{c}.num_samples;
+    selected_quotients = handles.binned_spectra{c}.quotients(handles.use_bin, :);
+    skewnesses(cur_spec:(cur_spec+num_samples-1))= ...
+        quartile_skewness(selected_quotients);
+    cur_spec = cur_spec + num_samples;
+end
+
+if length(skewnesses) >= 10
+    num_bins = freedman_diaconis(skewnesses);
+else
+    num_bins = 2*length(skewnesses);
+end
+hist(handles.skewness_histogram_axes, skewnesses, num_bins);
 
 % --- Outputs from this function are returned to the command line.
 function varargout = prob_quotient_norm_dialog_OutputFcn(hObject, eventdata, handles)  %#ok<INUSL>
@@ -117,11 +158,44 @@ delete(handles.figure1);
 
 
 % --- Executes on button press in normalize_button.
-function normalize_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function normalize_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to normalize_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+multipliers = cell(size(handles.binned_spectra));
+max_s = 0;
+for c=1:length(handles.binned_spectra)
+    selected_quotients = handles.binned_spectra{c}.quotients(handles.use_bin, :);
+    medians = prctile(selected_quotients,50);
+    multipliers{c} = medians;
+    max_s = max(max_s, length(multipliers{c}));
+end
+
+multipliers_array = zeros(length(multipliers), max_s);
+for c=1:length(multipliers)
+    for s=1:length(multipliers{c})
+        multipliers_array(c,s)=multipliers{c}(s);
+    end
+end
+
+multipliers = multipliers_array;
+
+spectrum_list_txt = to_str(cell_find(handles.use_spectrum));
+bin_centers_list_txt = to_str(handles.ref_spectrum.x(~handles.use_bin));
+normalization_facts_txt = to_str(multipliers);
+
+log_text = sprintf(['  Probabilistic quotient normalization '...
+    'using spectra %s to generate a reference spectrum and ignoring ' ...
+    'bins centered at %s in calculating the quotients. This resulted ' ...
+    'in normalization factors of %s.'], ...
+    spectrum_list_txt, bin_centers_list_txt, normalization_facts_txt);
+
+handles.output = {handles.figure1, false, multipliers, log_text};
+
+guidata(handles.figure1, handles);
+
+uiresume(handles.figure1);
 
 % --- Executes on button press in select_ref_spectra_button.
 function select_ref_spectra_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
