@@ -1,6 +1,5 @@
 function varargout = prob_quotient_norm_dialog(varargin)
-% PROB_QUOTIENT_NORM_DIALOG MATLAB code for prob_quotient_norm_dialog.fig
-%      Read this since it has been edited by a human.
+% Return normalization constants for spectra using the probabilistic quotient normalization algorithm
 %
 %      prob_quotient_norm_dialog({binned_spectra, use_bin}) opens the
 %      dialog to compute the normalization constants for all the spectra in
