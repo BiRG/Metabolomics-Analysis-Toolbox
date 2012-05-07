@@ -17,7 +17,7 @@ function n_bins = freedman_diaconis( data )
 % Examples
 % -------------------------------------------------------------------------
 %
-% >> n_bins = freedman_diaconis([1,1,2,2,3,3,3,3,3,3,6])
+% >> n_bins = freedman_diaconis([1,1,2,3,3,3,3,6])
 % 
 % bin_width = 1.5 = 2*1.5*(8^-1/3)
 % n_bins = 4 = ceil((6-1)/1.5)
