@@ -45,7 +45,7 @@ function matching = spectra_matching( spectra, field_name, field_value )
 
 matching=cell(size(spectra));
 for c=1:length(spectra)
-    if isfield(spectra{c}, fieldname) 
+    if isfield(spectra{c}, field_name) 
         vals = spectra{c}.(field_name);
         if length(vals) ~= spectra{c}.num_samples
             error('spectra_matching:field_length', ...
