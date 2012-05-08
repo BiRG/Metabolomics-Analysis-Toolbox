@@ -25,7 +25,8 @@ function matching = spectra_matching( spectra, field_name, field_value )
 % 
 % matching - matching{c}(s) is true iff spectra{c}.field_name(i) is 
 %            field_value. If matching{c} does not have that field name,
-%            then matching{c}(s) is false for all s.
+%            then matching{c}(s) is false for all s. matching{c} is a row
+%            vector.
 %
 % -------------------------------------------------------------------------
 % Examples
@@ -61,6 +62,10 @@ for c=1:length(spectra)
         end
     else
         matching{c}=false(1,spectra{c}.num_samples);
+    end
+    %Ensure that the match vector is a row vector
+    if size(matching{c},1) ~= 1
+        matching{c} = matching{c}';
     end
 end
 

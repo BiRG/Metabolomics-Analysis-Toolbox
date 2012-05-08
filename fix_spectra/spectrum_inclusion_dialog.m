@@ -15,7 +15,8 @@ function varargout = spectrum_inclusion_dialog(varargin)
 %     was_cancelled - true if the dialog box ended with the cancel button
 %
 %     use_spectrum  - use_spectrum{i}(j) is a logical value that is true if
-%                     collections{i}.Y(:,j) should be included
+%                     collections{i}.Y(:,j) should be included. 
+%                     use_spectrum{i} should be a row vector.
 % 
 % =========================================================================
 % The following are from the machine-generated documentation. I think they

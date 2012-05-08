@@ -96,7 +96,7 @@ end
 handles.use_spectrum = cell(size(handles.binned_spectra));
 for i=1:length(handles.binned_spectra)
     num_spectra = handles.binned_spectra{i}.num_samples;
-    handles.use_spectrum{i} = true(num_spectra,1);
+    handles.use_spectrum{i} = true(1, num_spectra);
 end
 
 handles.ref_spectrum = median_spectrum(handles.binned_spectra, handles.use_spectrum);
