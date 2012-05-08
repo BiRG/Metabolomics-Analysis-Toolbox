@@ -1,28 +1,43 @@
 function varargout = spectrum_inclusion_dialog(varargin)
-% SPECTRUM_INCLUSION_DIALOG MATLAB code for spectrum_inclusion_dialog.fig
-%      SPECTRUM_INCLUSION_DIALOG, by itself, creates a new SPECTRUM_INCLUSION_DIALOG or raises the existing
-%      singleton*.
+% Return list of spectra selected for inclusion
 %
-%      H = SPECTRUM_INCLUSION_DIALOG returns the handle to a new SPECTRUM_INCLUSION_DIALOG or the handle to
-%      the existing singleton*.
+%   out = spectrum_inclusion_dialog({collections, use_spectrum})
+%   
+%   collections - a cell array of spectral collections. Each spectral
+%                 collection is a struct. This is the format
+%                 of the return value of load_collections.m in
+%                 common_scripts.
 %
-%      SPECTRUM_INCLUSION_DIALOG('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in SPECTRUM_INCLUSION_DIALOG.M with the given input arguments.
+%   out - cell array {handle, was_cancelled, use_spectrum}
 %
-%      SPECTRUM_INCLUSION_DIALOG('Property','Value',...) creates a new SPECTRUM_INCLUSION_DIALOG or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before spectrum_inclusion_dialog_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to spectrum_inclusion_dialog_OpeningFcn via varargin.
+%     handle        - the handle to the spectrum_inclusion_dialog
 %
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
+%     was_cancelled - true if the dialog box ended with the cancel button
+%
+%     use_spectrum  - use_spectrum{i}(j) is a logical value that is true if
+%                     collections{i}.Y(:,j) should be included
+% 
+% =========================================================================
+% The following are from the machine-generated documentation. I think they
+% still hold, but, no guarantees.
+%
+%   SPECTRUM_INCLUSION_DIALOG('CALLBACK',hObject,eventData,handles,...) calls the local
+%   function named CALLBACK in SPECTRUM_INCLUSION_DIALOG.M with the given input arguments.
+%
+%   SPECTRUM_INCLUSION_DIALOG('Property','Value',...) creates a new SPECTRUM_INCLUSION_DIALOG or raises the
+%   existing singleton*.  Starting from the left, property value pairs are
+%   applied to the GUI before spectrum_inclusion_dialog_OpeningFcn gets called.  An
+%   unrecognized property name or invalid value makes property application
+%   stop.  All inputs are passed to spectrum_inclusion_dialog_OpeningFcn via varargin.
+%
+%   *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%   instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
 % Edit the above text to modify the response to help spectrum_inclusion_dialog
 
-% Last Modified by GUIDE v2.5 07-May-2012 13:17:29
+% Last Modified by GUIDE v2.5 07-May-2012 20:16:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,14 +67,19 @@ function spectrum_inclusion_dialog_OpeningFcn(hObject, eventdata, handles, varar
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to spectrum_inclusion_dialog (see VARARGIN)
 
+% Extract command-line arguments
+handles.spectra = varargin{1}{1};
+handles.use_spectrum = varargin{1}{2};
+
 % Choose default command line output for spectrum_inclusion_dialog
-handles.output = hObject;
+handles.output = {hObject, true, handles.use_spectrum};
 
 % Update handles structure
 guidata(hObject, handles);
+update_ui(handles);
 
 % UIWAIT makes spectrum_inclusion_dialog wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -72,33 +92,101 @@ function varargout = spectrum_inclusion_dialog_OutputFcn(hObject, eventdata, han
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
+delete(handles.figure1);
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if isequal(get(hObject, 'waitstatus'), 'waiting')
+    % The GUI is still in UIWAIT, us UIRESUME
+    uiresume(hObject);
+else
+    % The GUI is no longer waiting, just close it
+    delete(hObject);
+end
+
+
+function update_ui(handles)
+% Update the user interface to reflect the underlying gui state
+%
+% handles    structure with handles and user data (see GUIDATA)
+
+used_in_each_collection = cellfun(@(col) sum(col), handles.use_spectrum);
+total_used = sum(used_in_each_collection);
+
+total_spectra = sum(cellfun(@(col) length(col), handles.use_spectrum));
+
+set(handles.num_selected_label, 'String', sprintf(...
+    '%d of %d spectra selected', total_used, total_spectra));
+
+function described = described_spectra(handles)
+% Return spectra described by the dialog box text
+%
+% handles    structure with handles and user data (see GUIDATA)
+%
+% described  same format as use_spectrum described{i}(j) is true iff
+%            handles.spectra{i}.Y(:,j) should be used
+spectra = handles.spectra;
+
+field_name = cellstr(get(handles.field_name_popup,'String'));
+field_name = field_name{get(handles.field_name_popup,'Value')};
+
+field_value = cellstr(get(handles.field_value_popup,'String'));
+field_value = field_value{get(handles.field_value_popup,'Value')};
+
+described = spectra_matching(spectra, field_name, field_value);
 
 % --- Executes on button press in add_all_button.
-function add_all_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function add_all_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to add_all_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+for i=1:length(handles.use_spectrum)
+    handles.use_spectrum{i}=true(size(handles.use_spectrum{i}));
+end
+guidata(handles.figure1, handles);
+update_ui(handles);
 
 
 % --- Executes on button press in remove_all_button.
-function remove_all_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function remove_all_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to remove_all_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+for i=1:length(handles.use_spectrum)
+    handles.use_spectrum{i}=false(size(handles.use_spectrum{i}));
+end
+guidata(handles.figure1, handles);
+update_ui(handles);
 
 
 % --- Executes on button press in add_button.
-function add_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function add_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to add_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+described = described_spectra(handles);
+for i=1:length(handles.use_spectrum)
+    handles.use_spectrum{i}=handles.use_spectrum{i} | described{i};
+end
+guidata(handles.figure1, handles);
+update_ui(handles);
 
 
 % --- Executes on button press in remove_button.
-function remove_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function remove_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to remove_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+described = described_spectra(handles);
+for i=1:length(handles.use_spectrum)
+    handles.use_spectrum{i}=handles.use_spectrum{i} & ~described{i};
+end
+guidata(handles.figure1, handles);
+update_ui(handles);
 
 
 % --- Executes on selection change in field_name_popup.
@@ -148,7 +236,10 @@ end
 
 
 % --- Executes on button press in done_button.
-function done_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function done_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.output = {handles.figure1, true, handles.use_spectrum};
+guidata(handles.figure1, handles);
+uiresume(handles.figure1);
