@@ -93,15 +93,13 @@ if size(handles.use_bin, 2) ~= 1 %Ensure that column vector
     handles.use_bin = (handles.use_bin)';
 end
 
-handles.use_spectrum = cell(size(handles.binned_spectra));
+use_spectrum = cell(size(handles.binned_spectra));
 for i=1:length(handles.binned_spectra)
     num_spectra = handles.binned_spectra{i}.num_samples;
-    handles.use_spectrum{i} = true(1, num_spectra);
+    use_spectrum{i} = true(1, num_spectra);
 end
 
-handles.ref_spectrum = median_spectrum(handles.binned_spectra, handles.use_spectrum);
-
-handles.binned_spectra = set_quotients_field(handles.binned_spectra, handles.ref_spectrum);
+handles = set_use_spectrum(handles, use_spectrum);
 
 
 % Set default command line output for prob_quotient_norm_dialog to the same
@@ -116,6 +114,21 @@ update_ui(handles);
 
 % UIWAIT makes prob_quotient_norm_dialog wait for user response (see UIRESUME)
 uiwait(handles.figure1);
+
+function handles = set_use_spectrum(handles, use_spectrum)
+% Sets use_spectrum and the other values that depend on it in handles, returning the result
+%
+% Remember to do a guidata(handles.figure1, ...) on the return value.
+%
+% The other values that depend on use_spectrum are handles.ref_spectrum and
+% handles.binned_spectra (the quotients field)
+%
+% handles      - user data and gui handles
+% use_spectrum - cell array of logical row vectors. use_spectrum{i} has one
+%                entry for each spectrum in handles.binned_spectra{i}
+handles.use_spectrum = use_spectrum;
+handles.ref_spectrum = median_spectrum(handles.binned_spectra, use_spectrum);
+handles.binned_spectra = set_quotients_field(handles.binned_spectra, handles.ref_spectrum);
 
 
 function update_ui(handles)
@@ -207,7 +220,7 @@ out = spectrum_inclusion_dialog({handles.binned_spectra, handles.use_spectrum});
 
 if out{2}; return; end %Was cancelled
 
-handles.use_spectrum = out{3};
+handles = set_use_spectrum(handles, out{3});
 guidata(handles.figure1, handles);
 update_ui(handles);
 
