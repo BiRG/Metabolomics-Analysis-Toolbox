@@ -38,7 +38,9 @@ function q_skew = quartile_skewness( data )
 
 q = prctile(data,[75,50,25]);
 if isvector(data); q = q'; end
-q_skew = (q(1,:)-2*q(2,:)+q(3,:))./(q(1,:)-q(3,:));
+i_q_r = q(1,:)-q(3,:);
+i_q_r(i_q_r==0) = 1; %Avoid NaN if upper and lower quartiles are identical - will give 0 skewness, which is correct
+q_skew = (q(1,:)-2*q(2,:)+q(3,:))./i_q_r;
 
 end
 
