@@ -261,6 +261,6 @@ function done_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to done_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.output = {handles.figure1, true, handles.use_spectrum};
+handles.output = {handles.figure1, false, handles.use_spectrum};
 guidata(handles.figure1, handles);
 uiresume(handles.figure1);
