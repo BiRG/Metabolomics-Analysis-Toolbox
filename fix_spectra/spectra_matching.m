@@ -24,7 +24,8 @@ function matching = spectra_matching( spectra, field_name, field_value )
 % -------------------------------------------------------------------------
 % 
 % matching - matching{c}(s) is true iff spectra{c}.field_name(i) is 
-%            field_value
+%            field_value. If matching{c} does not have that field name,
+%            then matching{c}(s) is false for all s.
 %
 % -------------------------------------------------------------------------
 % Examples
@@ -44,18 +45,22 @@ function matching = spectra_matching( spectra, field_name, field_value )
 
 matching=cell(size(spectra));
 for c=1:length(spectra)
-    vals = spectra{c}.(field_name);
-    if length(vals) ~= spectra{c}.num_samples
-        error('spectra_matching:field_length', ...
-            ['The field ''%s'' in spectrum %d has %d values ', ...
-            'but should have %d.'], field_name, length(vals), ...
-            spectra{c}.num_samples);
-    end
-    
-    if ischar(field_value)
-        matching{c}=strcmp(field_value, vals);
+    if isfield(spectra{c}, fieldname) 
+        vals = spectra{c}.(field_name);
+        if length(vals) ~= spectra{c}.num_samples
+            error('spectra_matching:field_length', ...
+                ['The field ''%s'' in spectrum %d has %d values ', ...
+                'but should have %d.'], field_name, length(vals), ...
+                spectra{c}.num_samples);
+        end
+
+        if ischar(field_value)
+            matching{c}=strcmp(field_value, vals);
+        else
+            matching{c}=vals == field_value;
+        end
     else
-        matching{c}=vals == field_value;
+        matching{c}=false(1,spectra{c}.num_samples);
     end
 end
 
