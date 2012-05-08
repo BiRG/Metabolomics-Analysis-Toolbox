@@ -220,10 +220,17 @@ out = spectrum_inclusion_dialog({handles.binned_spectra, handles.use_spectrum});
 
 if out{2}; return; end %Was cancelled
 
-handles = set_use_spectrum(handles, out{3});
-guidata(handles.figure1, handles);
-update_ui(handles);
-
+used_in_each_collection = cellfun(@(col) sum(col), out{3});
+total_used = sum(used_in_each_collection);
+if total_used > 0
+    handles = set_use_spectrum(handles, out{3});
+    guidata(handles.figure1, handles);
+    update_ui(handles);
+else
+    msgbox(['You must select at least one spectrum to use in ' ...
+        'generating the reference spectrum. Ignoring empty selection.'],...
+        'Error: no spectra selected', 'error');
+end
 % --- Executes on button press in cancel_button.
 function cancel_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to cancel_button (see GCBO)
