@@ -199,11 +199,17 @@ guidata(handles.figure1, handles);
 uiresume(handles.figure1);
 
 % --- Executes on button press in select_ref_spectra_button.
-function select_ref_spectra_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function select_ref_spectra_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to select_ref_spectra_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+out = spectrum_inclusion_dialog({handles.binned_spectra, handles.use_spectrum});
 
+if out{2}; return; end %Was cancelled
+
+handles.use_spectrum = out{3};
+guidata(handles.figure1, handles);
+update_ui(handles);
 
 % --- Executes on button press in cancel_button.
 function cancel_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
