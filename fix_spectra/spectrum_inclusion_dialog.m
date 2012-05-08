@@ -38,7 +38,7 @@ function varargout = spectrum_inclusion_dialog(varargin)
 
 % Edit the above text to modify the response to help spectrum_inclusion_dialog
 
-% Last Modified by GUIDE v2.5 07-May-2012 20:16:21
+% Last Modified by GUIDE v2.5 08-May-2012 13:58:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -262,5 +262,15 @@ function done_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.output = {handles.figure1, false, handles.use_spectrum};
+guidata(handles.figure1, handles);
+uiresume(handles.figure1);
+
+
+% --- Executes on button press in cancel_button.
+function cancel_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to cancel_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.output = {handles.figure1, true, handles.use_spectrum};
 guidata(handles.figure1, handles);
 uiresume(handles.figure1);
