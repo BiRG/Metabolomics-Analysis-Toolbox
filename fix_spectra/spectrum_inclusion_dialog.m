@@ -74,6 +74,15 @@ handles.use_spectrum = varargin{1}{2};
 % Choose default command line output for spectrum_inclusion_dialog
 handles.output = {hObject, true, handles.use_spectrum};
 
+
+% Set the contents of the dropdown menus
+field_names = spectrum_attributes(handles.spectra);
+set(handles.field_name_popup,'String', field_names);
+set(handles.field_name_popup,'Value', 1);
+handles.field_values = ...
+    values_for_spectrum_attribute(field_names{1}, handles.spectra);
+set(handles.field_value_popup,'String', handles.field_values);
+
 % Update handles structure
 guidata(hObject, handles);
 update_ui(handles);
@@ -89,10 +98,15 @@ function varargout = spectrum_inclusion_dialog_OutputFcn(hObject, eventdata, han
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Get default command line output from handles structure
-varargout{1} = handles.output;
-
-delete(handles.figure1);
+if isstruct(handles)
+    % Get command line output from handles structure
+    varargout{1} = handles.output;
+    delete(hObject);
+else
+    % The close button was pressed and the handles object is invalid
+    varargout{1} = {hObject, true, 'Not valid, shouldn''t be using'};
+    % No need to delete the object, it has already been deleted
+end
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
@@ -134,7 +148,7 @@ spectra = handles.spectra;
 field_name = cellstr(get(handles.field_name_popup,'String'));
 field_name = field_name{get(handles.field_name_popup,'Value')};
 
-field_value = cellstr(get(handles.field_value_popup,'String'));
+field_value = handles.field_values;
 field_value = field_value{get(handles.field_value_popup,'Value')};
 
 described = spectra_matching(spectra, field_name, field_value);
@@ -190,14 +204,21 @@ update_ui(handles);
 
 
 % --- Executes on selection change in field_name_popup.
-function field_name_popup_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function field_name_popup_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to field_name_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns field_name_popup contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from field_name_popup
+field_names = cellstr(get(hObject,'String'));
+index = get(hObject,'Value');
+set(handles.field_value_popup,'Value', 1);
+handles.field_values = ...
+    values_for_spectrum_attribute(field_names{index}, handles.spectra);
+set(handles.field_value_popup,'String', handles.field_values);
 
+guidata(handles.figure1, handles);
 
 % --- Executes during object creation, after setting all properties.
 function field_name_popup_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
@@ -210,7 +231,6 @@ function field_name_popup_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFN
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on selection change in field_value_popup.
 function field_value_popup_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>

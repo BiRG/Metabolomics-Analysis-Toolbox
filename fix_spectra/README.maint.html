@@ -9,7 +9,8 @@
   <title>Fix Spectra Maintainer Documentation</title>
   <style type="text/css">
     .ra {background-color: #FCF6CF; }
-      td.id {font-family: monospace}
+    td.id {font-family: monospace; }
+    td {vertical-align:text-top; }
   </style>
 </head>
 
@@ -266,15 +267,32 @@
         <td class="id">spectra</td>
 
         <td>
-	  <p>cell array of spectral collection structs.</p>
-	  
-	  <p>Each struct has an extra field: use_spectrum. This is a
-            logical vector with the same number of entries as the
-            number of spectra in the collection. It is true if that
-            spectrum will be used in constructing the reference
-            spectrum.</p>
+	  cell array of spectral collection structs.
 	</td>
       </tr>
+      <tr>
+        <td class="id">use_spectrum</td>
+	  Parallel cell array to the spectra array. Each entry is a
+            logical vector with the same number of entries as the
+            number of spectra in the corresponding collection. One of
+            the logical values is true if that spectrum will be
+            used in constructing the reference spectrum.
+	</td>
+      </tr>
+      <tr class="ra">
+        <td class="id">field_values</td>
+
+        <td>
+	  A cell array containing the values used in some spectrum for
+	  the field name selected in the field_name_popup. These
+	  values are in the same order as the values of the
+	  field_value_popup, so indexing into this array gives the
+	  currently selected value. Since not all values are strings,
+	  this must be maintained separately from the string values of
+	  field_value_popup to allow for correct matching.
+	</td>
+      </tr>
+
     </tbody>
   </table>
 
