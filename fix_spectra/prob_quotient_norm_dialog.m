@@ -50,7 +50,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 
 % Edit the above text to modify the response to help prob_quotient_norm_dialog
 
-% Last Modified by GUIDE v2.5 05-May-2012 16:40:21
+% Last Modified by GUIDE v2.5 08-May-2012 19:05:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -137,7 +137,7 @@ function update_ui(handles)
 %
 % handles structure with handles and user data (see GUIDATA)
 
-%Plot the quotient skewnesses
+% Plot the quotient skewnesses
 num_spec = num_spectra_in(handles.binned_spectra);
 skewnesses = zeros(num_spec, 1);
 cur_spec = 1;
@@ -157,6 +157,11 @@ end
 hist(handles.skewness_histogram_axes, skewnesses, num_bins);
 xlabel(handles.skewness_histogram_axes, 'Quartile Skewness of Quotient Distribution');
 ylabel(handles.skewness_histogram_axes, 'Number of Spectra');
+
+% Reset the axis callback
+set(handles.skewness_histogram_axes, 'ButtonDownFcn', ...
+    prob_quotient_norm_dialog('skewness_histogram_axes_ButtonDownFcn',...
+        hObject,eventdata,guidata(hObject)));
 
 % --- Outputs from this function are returned to the command line.
 function varargout = prob_quotient_norm_dialog_OutputFcn(hObject, eventdata, handles)  %#ok<INUSL>
@@ -252,3 +257,13 @@ else
     % The GUI is no longer waiting, just close it
     delete(hObject);
 end
+
+
+% --- Executes on mouse press over axes background.
+function skewness_histogram_axes_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to skewness_histogram_axes (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+last_clicked_pt = num2cell(get(hObject, 'CurrentPoint'));
+[x,y]=last_clicked_pt{1,1:2};
+disp([x,y]);
