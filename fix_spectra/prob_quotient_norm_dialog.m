@@ -160,7 +160,7 @@ ylabel(handles.skewness_histogram_axes, 'Number of Spectra');
 
 % Reset the axis callback
 set(handles.skewness_histogram_axes, 'ButtonDownFcn', ...
-    prob_quotient_norm_dialog('skewness_histogram_axes_ButtonDownFcn',...
+    @(hObject, eventdata) prob_quotient_norm_dialog('skewness_histogram_axes_ButtonDownFcn',...
         hObject,eventdata,guidata(hObject)));
 
 % --- Outputs from this function are returned to the command line.
@@ -264,6 +264,3 @@ function skewness_histogram_axes_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to skewness_histogram_axes (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-last_clicked_pt = num2cell(get(hObject, 'CurrentPoint'));
-[x,y]=last_clicked_pt{1,1:2};
-disp([x,y]);
