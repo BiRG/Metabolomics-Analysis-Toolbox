@@ -286,12 +286,16 @@ end
 
 
 % --- Executes on mouse press over axes background.
-function skewness_histogram_axes_ButtonDownFcn(hObject, eventdata, handles,skew_bin_counts, skew_bin_edges, bin_for_spectrum, collection_indices_for_spectrum)
+function skewness_histogram_axes_ButtonDownFcn(hObject, eventdata, handles, skew_bin_counts, skew_bin_edges, bin_for_spectrum, collection_indices_for_spectrum) %#ok<INUSL>
 % hObject    handle to skewness_histogram_axes (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+%Get the last clicked point
 pt=get(hObject, 'CurrentPoint');
 x=pt(1,1); y=pt(1,2);
+
+% Calculate which bin horizontally
 bin_number = find(histc(x, skew_bin_edges));
 if isempty(bin_number)
     %No bin was clicked on, do nothing
@@ -301,9 +305,15 @@ if length(bin_number) > 1
     warning('Multiple bins for click - taking the first.');
     bin_number = bin_number(1);
 end
+
+% Calculate whether the click is inside the bin
 bin_height = skew_bin_counts(bin_number);
 if y > bin_height
     %Clicked above the bin, do nothing
     return;
 end
-disp(bin_number);
+
+% Get the coordinates of the spectra in that bin
+spectra_in_bin=bin_for_spectrum==bin_number;
+spectral_indices = collection_indices_for_spectrum(spectra_in_bin,:);
+disp(spectral_indices);
