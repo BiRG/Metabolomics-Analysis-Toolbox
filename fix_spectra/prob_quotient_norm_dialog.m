@@ -301,4 +301,9 @@ if length(bin_number) > 1
     warning('Multiple bins for click - taking the first.');
     bin_number = bin_number(1);
 end
+bin_height = skew_bin_counts(bin_number);
+if y > bin_height
+    %Clicked above the bin, do nothing
+    return;
+end
 disp(bin_number);
