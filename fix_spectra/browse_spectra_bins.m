@@ -46,7 +46,7 @@ function varargout = browse_spectra_bins(varargin)
 
 % Edit the above text to modify the response to help browse_spectra_bins
 
-% Last Modified by GUIDE v2.5 15-May-2012 18:01:01
+% Last Modified by GUIDE v2.5 15-May-2012 19:49:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -275,3 +275,11 @@ elseif strcmp(get(handles.zoom_h,'Enable'),'off')
 else
     set(handles.zoom_h, 'Enable', 'off');
 end    
+
+
+% --------------------------------------------------------------------
+function pan_tool_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pan_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pan
