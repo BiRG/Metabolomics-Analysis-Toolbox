@@ -302,7 +302,7 @@ if isempty(bin_number)
     return;
 end
 if length(bin_number) > 1
-    warning('Multiple bins for click - taking the first.');
+    warning('prob_quotient_norm_dialog:mult_bins_click','Multiple bins for click - taking the first.');
     bin_number = bin_number(1);
 end
 
