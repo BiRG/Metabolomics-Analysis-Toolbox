@@ -139,6 +139,21 @@ s=handles.display_indices(handles.display_index,2);
 set(handles.spectrum_properties_edit, 'String', ...
     spectrum_properties_string(handles.spectra{c},s));
 
+ref = median_spectrum(handles.spectra, handles.use_spectrum);
+handles.spectra = set_quotients_field(handles.spectra, ref);
+selected_quotients = handles.spectra{c}.quotients(handles.use_bin, :);
+medians = prctile(selected_quotients,50);
+mult = medians(s);
+
+hold(handles.spectrum_axes, 'off');
+plot(handles.spectrum_axes, handles.spectra{c}.x, ref);
+hold(handles.spectrum_axes, 'all');
+plot(handles.spectrum_axes, handles.spectra{c}.x, handles.spectra{c}.Y(:,s));
+
+
+
+
+
 
 
 % --- Outputs from this function are returned to the command line.
