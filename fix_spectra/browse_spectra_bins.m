@@ -46,7 +46,7 @@ function varargout = browse_spectra_bins(varargin)
 
 % Edit the above text to modify the response to help browse_spectra_bins
 
-% Last Modified by GUIDE v2.5 15-May-2012 13:36:21
+% Last Modified by GUIDE v2.5 15-May-2012 18:01:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,6 +82,7 @@ handles.use_bin = varargin{1}{2};
 handles.use_spectrum = varargin{1}{3};
 handles.display_indices = varargin{1}{4};
 handles.display_index = 1; % We will guarantee display_indices is non-empty later
+handles.zoom_h = zoom(handles.figure1); %TODO document
 
 % Error check command-line arguments
 if isempty(handles.spectra)
@@ -243,3 +244,34 @@ else
     % The GUI is no longer waiting, just close it
     delete(hObject);
 end
+
+
+% --------------------------------------------------------------------
+function zoom_in_tool_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to zoom_in_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if ~strcmp(get(handles.zoom_h,'Direction'),'in')
+    set(handles.zoom_h, 'Enable', 'on');
+    set(handles.zoom_h, 'Direction', 'in');
+elseif strcmp(get(handles.zoom_h,'Enable'),'off')
+    set(handles.zoom_h, 'Enable', 'on');
+    set(handles.zoom_h, 'Direction', 'in');
+else
+    set(handles.zoom_h, 'Enable', 'off');
+end    
+
+% --------------------------------------------------------------------
+function zoom_out_tool_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to zoom_out_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if ~strcmp(get(handles.zoom_h,'Direction'),'out')
+    set(handles.zoom_h, 'Enable', 'on');
+    set(handles.zoom_h, 'Direction', 'out');
+elseif strcmp(get(handles.zoom_h,'Enable'),'off')
+    set(handles.zoom_h, 'Enable', 'on');
+    set(handles.zoom_h, 'Direction', 'out');
+else
+    set(handles.zoom_h, 'Enable', 'off');
+end    
