@@ -129,18 +129,18 @@ elseif ismatrix(in)
     str = '[';
     for j = 1:cols
         if j == 1
-            str = sprintf('%s%d', str, in(1,j));
+            str = sprintf('%s%g', str, in(1,j));
         else
-            str = sprintf('%s, %d', str, in(1,j));
+            str = sprintf('%s, %g', str, in(1,j));
         end
     end
     for i = 2:rows
         str = [str, '; ']; %#ok<AGROW>
         for j = 1:cols
             if j == 1
-                str = sprintf('%s%d', str, in(i,j));
+                str = sprintf('%s%g', str, in(i,j));
             else
-                str = sprintf('%s, %d', str, in(i,j));
+                str = sprintf('%s, %g', str, in(i,j));
             end
         end        
     end
