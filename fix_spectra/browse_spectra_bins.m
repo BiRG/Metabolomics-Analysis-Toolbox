@@ -148,9 +148,7 @@ mult = medians(s);
 hold(handles.spectrum_axes, 'off');
 plot(handles.spectrum_axes, handles.spectra{c}.x, ref);
 hold(handles.spectrum_axes, 'all');
-plot(handles.spectrum_axes, handles.spectra{c}.x, handles.spectra{c}.Y(:,s));
-
-
+plot(handles.spectrum_axes, handles.spectra{c}.x, handles.spectra{c}.Y(:,s).*mult);
 
 
 
