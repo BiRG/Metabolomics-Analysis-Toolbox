@@ -24,8 +24,10 @@ function str = spectrum_properties_string( collection, index )
 %
 % >> str = spectrum_properties_string( collection, index )
 %
-% str = 'CollectionID: 127
-%        units of weight: lb'
+% str = 'CollectionID: 
+%        127
+%        units of weight: 
+%        lb'
 %
 % -------------------------------------------------------------------------
 % Authors
@@ -50,7 +52,7 @@ for i = 1:length(fns)
         end
         value = to_str(value);
     end
-    out{cur_idx}=sprintf('%s: %s\n', collection.input_names{i}, value);
+    out{cur_idx}=sprintf('%s:\n%s\n\n', collection.input_names{i}, value);
     cur_idx = cur_idx + 1;
 end
 
