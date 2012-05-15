@@ -176,13 +176,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in previous_button.
-function previous_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
-% hObject    handle to previous_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on button press in close_button.
 function close_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to close_button (see GCBO)
@@ -192,12 +185,27 @@ handles.output = false(0);
 guidata(handles.figure1, handles);
 uiresume(handles.figure1);
 
+% --- Executes on button press in previous_button.
+function previous_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to previous_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if handles.display_index > 1
+    handles.display_index = handles.display_index - 1;
+    guidata(handles.figure1, handles);
+    update_ui(handles);
+end
+
 % --- Executes on button press in next_button.
-function next_button_Callback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function next_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to next_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+if handles.display_index < size(handles.display_indices, 1)
+    handles.display_index = handles.display_index + 1;
+    guidata(handles.figure1, handles);
+    update_ui(handles);
+end
 
 % --- Executes when selected object is changed in color_by_group.
 function color_by_group_SelectionChangeFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
