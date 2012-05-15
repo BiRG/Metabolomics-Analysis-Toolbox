@@ -76,14 +76,69 @@ function browse_spectra_bins_OpeningFcn(hObject, eventdata, handles, varargin) %
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to browse_spectra_bins (see VARARGIN)
 
+% Get command-line arguments
+handles.spectra = varargin{1}{1};
+handles.use_bin = varargin{1}{2};
+handles.use_spectrum = varargin{1}{3};
+handles.display_indices = varargin{1}{4};
+handles.display_index = 1; % We will guarantee display_indices is non-empty later
+
+% Error check command-line arguments
+if isempty(handles.spectra)
+    error('browse_spectra_bins:input_err','spectra argument must be non-empty');
+elseif ~iscell(handles.spectra)
+    error('browse_spectra_bins:input_err','spectra argument must be cell array');
+elseif ~isfield(handles.spectra{1},'Y') || ~isfield(handles.spectra{1},'x')
+    error('browse_spectra_bins:input_err','spectra argument must have x and y fields');
+elseif ~only_one_x_in(handles.spectra)
+    error('browse_spectra_bins:input_err','all collections in spectra argument must have identical x fields');
+elseif length(size(handles.use_bin)) ~= length(size(handles.spectra{1}.x)) || ...
+        size(handles.use_bin) ~= size(handles.spectra{1}.x)
+    error('browse_spectra_bins:input_err','use_bins must be the same size as the spectra x fields');
+elseif ~iscell(use_spectrum)
+    error('browse_spectra_bins:input_err','use_spectrum argument must be cell array');
+elseif length(use_spectrum) ~= length(handles.spectra)
+    error('browse_spectra_bins:input_err','use_spectrum argument must have the same length as the spectra argument');
+elseif isempty(handles.display_indices)
+    return; % nothing to display
+elseif size(handles.display_indices,2) ~= 2
+    error('browse_spectra_bins:input_err','display_indices argument must have 2 columns');
+end
+
+for i=1:length(handles.display_indices)
+    c=handles.display_indices(i,1);
+    s=handles.display_indices(i,2);
+    if c < 1 || c > length(handles.spectra) || ...
+       s < 1 || s > handles.spectra{c}.num_samples
+        error('browse_spectra_bins:input_err',['display_indices '...
+            'argument index %d is [%d, %d] which does not refer to '...
+            'a valid spectrum']);
+    end 
+end
+
+% Draw the UI
+update_ui(handles)
+
 % Choose default command line output for browse_spectra_bins
 handles.output = false(0);
 
 % Update handles structure
 guidata(hObject, handles);
 
+
 % UIWAIT makes browse_spectra_bins wait for user response (see UIRESUME)
 uiwait(handles.figure1);
+
+function update_ui(handles)
+% Draw the plots and update other parts of the user interface depending on
+% the current state of the dialog
+%
+% handles    structure with handles and user data (see GUIDATA)
+c=handles.display_indices(handles.display_index,1);
+s=handles.display_indices(handles.display_index,2);
+set(handles.spectrum_properties_edit, 'String', ...
+    spectrum_properties_string(handles.spectra{c},s));
+
 
 
 % --- Outputs from this function are returned to the command line.
