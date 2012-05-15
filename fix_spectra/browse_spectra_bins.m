@@ -247,7 +247,7 @@ end
 
 
 % --------------------------------------------------------------------
-function zoom_in_tool_ClickedCallback(hObject, eventdata, handles)
+function zoom_in_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to zoom_in_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -262,7 +262,7 @@ else
 end    
 
 % --------------------------------------------------------------------
-function zoom_out_tool_ClickedCallback(hObject, eventdata, handles)
+function zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to zoom_out_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -278,7 +278,7 @@ end
 
 
 % --------------------------------------------------------------------
-function pan_tool_ClickedCallback(hObject, eventdata, handles)
+function pan_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
 % hObject    handle to pan_tool (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
