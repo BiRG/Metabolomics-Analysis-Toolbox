@@ -11,7 +11,7 @@ nboot = 500;
 tic
 for a = 1:length(Cent1),
     xpdf(a,:) = sort([Cent1(a)+randn(1,200) Cent2(a)+randn(1,200)]); %allocate 200 points in each
-    [dip(a), p(a)] = HartigansDipSignifTest(xpdf(a,:), nboot);
+    [dip(a), p(a)] = hartigansdipsigniftest(xpdf(a,:), nboot);
     
     subplot(3,3,a)
     hist(xpdf(a,:),-2:0.25:12)    

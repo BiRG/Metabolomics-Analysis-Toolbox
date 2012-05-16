@@ -1,6 +1,6 @@
-function	[dip,xl,xu, ifault, gcm, lcm, mn, mj] = HartigansDipTest(xpdf)
+function	[dip,xl,xu, ifault, gcm, lcm, mn, mj] = hartigansdiptest(xpdf)
 
-% function	[dip,xl,xu, ifault, gcm, lcm, mn, mj]=HartigansDipTest(xpdf)
+% function	[dip,xl,xu, ifault, gcm, lcm, mn, mj]=hartigansdiptest(xpdf)
 %
 % This is a direct translation by F. Mechler (August 27 2002)
 % into MATLAB from the original FORTRAN code of Hartigan's Subroutine DIPTST algorithm 
@@ -9,7 +9,7 @@ function	[dip,xl,xu, ifault, gcm, lcm, mn, mj] = HartigansDipTest(xpdf)
 % Appended by F. Mechler (September 2 2002) to deal with a perfectly unimodal input
 % This check the original Hartigan algorithm omitted, which leads to an infinite cycle
 %
-% HartigansDipTest, like DIPTST, does the dip calculation for an ordered vector XPDF using
+% hartigansdiptest, like DIPTST, does the dip calculation for an ordered vector XPDF using
 % the greatest convex minorant (gcm) and the least concave majorant (lcm),
 % skipping through the data using the change points of these distributions.
 % It returns the 'DIP' statistic, and 7 more optional results, which include
@@ -28,7 +28,7 @@ ifault=0;
 % Check that N is positive
 if (N<=0) 
    ifault=1;
-   fprintf(1,'\nHartigansDipTest.    InputError :  ifault=%d\n',ifault);
+   fprintf(1,'\nhartigansdiptest.    InputError :  ifault=%d\n',ifault);
    return;
 end;
 
@@ -38,7 +38,7 @@ if (N==1)
    xu=x(N);
    dip=0.0;
    ifault=2;
-   fprintf(1,'\nHartigansDipTest.    InputError :  ifault=%d\n',ifault);
+   fprintf(1,'\nhartigansdiptest.    InputError :  ifault=%d\n',ifault);
    return;
 end;
 
@@ -46,7 +46,7 @@ if (N>1)
    % Check that X is sorted
    if (x ~= sort(x))
       ifault=3;
-      fprintf(1,'\nHartigansDipTest.    InputError :  ifault=%d\n',ifault);
+      fprintf(1,'\nhartigansdiptest.    InputError :  ifault=%d\n',ifault);
       return;
    end;
    % Check for all values of X identical OR for case 1<N<4
@@ -55,7 +55,7 @@ if (N>1)
       xu=x(N);
       dip=0.0;
       ifault=4;
-      fprintf(1,'\nHartigansDipTest.    InputError :  ifault=%d\n',ifault);
+      fprintf(1,'\nhartigansdiptest.    InputError :  ifault=%d\n',ifault);
       return;
    end;
 end;
