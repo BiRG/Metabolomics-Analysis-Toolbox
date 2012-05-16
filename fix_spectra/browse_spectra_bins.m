@@ -159,13 +159,8 @@ cla(handles.quotient_axes);
 if get(handles.quotient_outlier_radio, 'Value')
     %Quotient outlier
     
-    % Take the absolute value of the log of the quotients. The log makes it
-    % so 1/10 and 10/1 are equidistant from 1.
-    abs_quotients = abs(log(abs(handles.spectra{c}.quotients(:, s))));
-    % Measure the iqr
-    i_q_r = iqr(abs_quotients);
-    % Scale the quotients by the IQR
-    scaled_quotients = abs_quotients / i_q_r;
+    scaled_quotients = iqr_normed_quotients(handles.spectra{c});
+    scaled_quotients = abs(scaled_quotients(:,s));
     % Truncate data at 5 iqr
     scaled_quotients(scaled_quotients > 5) = 5;
     % Draw the line on the second axes
@@ -174,7 +169,7 @@ if get(handles.quotient_outlier_radio, 'Value')
     set(handles.quotient_axes,'YTick',[1.5,3]);
     set(handles.quotient_axes,'YGrid','on');
 else
-    % Use the bin multimodality 
+    % Use the bin multimodality - 1-p_value for dip test
     wait_h=waitbar(0,'Starting multimodality calculation');
     num_spectra=num_spectra_in(handles.spectra);
     scaled_spectra = zeros(length(handles.use_bin),num_spectra);
