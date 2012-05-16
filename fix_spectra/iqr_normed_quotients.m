@@ -58,7 +58,7 @@ abs_quotients = log(collection.quotients);
 % Measure the iqr
 i_q_r = iqr(abs_quotients);
 rep_iqr = repmat(i_q_r, size(collection.quotients,1), 1);
-med = median(abs_quotients);
+med = prctile(abs_quotients,50);
 rep_median = repmat(med, size(collection.quotients,1), 1);
 % Scale the quotients by the IQR
 scaled_quotients = (abs_quotients - rep_median) ./ rep_iqr ;
