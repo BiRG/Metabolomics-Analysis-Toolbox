@@ -46,7 +46,7 @@ function varargout = browse_spectra_bins(varargin)
 
 % Edit the above text to modify the response to help browse_spectra_bins
 
-% Last Modified by GUIDE v2.5 15-May-2012 19:49:54
+% Last Modified by GUIDE v2.5 15-May-2012 22:48:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -152,7 +152,29 @@ plot(handles.spectrum_axes, handles.spectra{c}.x, ...
 hold(handles.spectrum_axes, 'all');
 plot(handles.spectrum_axes, handles.spectra{c}.x, ref.Y, '--r','LineWidth',1);
 
+% Clear the second axes
+cla(handles.quotient_axes);
 
+% Draw the bin badness value on the second axis
+if get(handles.quotient_outlier_radio, 'Value')
+    % Take the absolute value of the log of the quotients. The log makes it
+    % so 1/10 and 10/1 are equidistant from 1.
+    abs_quotients = abs(log(abs(handles.spectra{c}.quotients(:, s))));
+    % Measure the iqr
+    i_q_r = iqr(abs_quotients);
+    % Scale the quotients by the IQR
+    scaled_quotients = abs_quotients / i_q_r;
+    % Truncate data at 5 iqr
+    scaled_quotients(scaled_quotients > 5) = 5;
+    % Draw the line on the second axes
+    line(handles.spectra{c}.x, scaled_quotients, 'Color','g','Parent', handles.quotient_axes);
+    % Turn on the grid at the two critical values
+    set(handles.quotient_axes,'YTick',[1.5,3]);
+    set(handles.quotient_axes,'YGrid','on');
+end
+set(handles.spectrum_axes, 'XDir', 'reverse');
+set(handles.quotient_axes, 'XDir', 'reverse');
+linkaxes([handles.spectrum_axes, handles.quotient_axes],'x');
 
 
 
@@ -222,15 +244,15 @@ if handles.display_index < size(handles.display_indices, 1)
     update_ui(handles);
 end
 
-% --- Executes when selected object is changed in color_by_group.
-function color_by_group_SelectionChangeFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
-% hObject    handle to the selected object in color_by_group 
+% --- Executes when selected object is changed in diagnostics_group.
+function diagnostics_group_SelectionChangeFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+% hObject    handle to the selected object in diagnostics_group 
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
 %	EventName: string 'SelectionChanged' (read only)
 %	OldValue: handle of the previously selected object or empty if none was selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
-
+update_ui(handles);
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
