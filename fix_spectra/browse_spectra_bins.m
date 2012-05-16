@@ -157,6 +157,8 @@ cla(handles.quotient_axes);
 
 % Draw the bin badness value on the second axis
 if get(handles.quotient_outlier_radio, 'Value')
+    %Quotient outlier
+    
     % Take the absolute value of the log of the quotients. The log makes it
     % so 1/10 and 10/1 are equidistant from 1.
     abs_quotients = abs(log(abs(handles.spectra{c}.quotients(:, s))));
@@ -170,6 +172,71 @@ if get(handles.quotient_outlier_radio, 'Value')
     line(handles.spectra{c}.x, scaled_quotients, 'Color','g','Parent', handles.quotient_axes);
     % Turn on the grid at the two critical values
     set(handles.quotient_axes,'YTick',[1.5,3]);
+    set(handles.quotient_axes,'YGrid','on');
+else
+    % Use the bin multimodality 
+    wait_h=waitbar(0,'Starting multimodality calculation');
+    num_spectra=num_spectra_in(handles.spectra);
+    scaled_spectra = zeros(length(handles.use_bin),num_spectra);
+    first_unused = 1;
+    for col=1:length(handles.spectra)
+        waitbar((col-1)/length(handles.spectra), wait_h, sprintf(...
+            'Temp. quotient normalizing collection %d', ...
+            handles.spectra{col}.collection_id));
+        selected_quotients = handles.spectra{col}.quotients(handles.use_bin, :);
+        mults = prctile(selected_quotients,50);
+        last_to_use = first_unused + length(mults) - 1;
+        mults = repmat(mults, length(handles.use_bin),1);
+        tmp_scaled = (handles.spectra{col}.Y).*mults;
+        scaled_spectra(:,first_unused:last_to_use)=tmp_scaled;
+        first_unused = last_to_use + 1;
+    end
+    % no_nan_bins is the i'th bin after removing NaN values
+    no_nan_bins=cell(size(scaled_spectra,1));
+    for bin=1:size(scaled_spectra,1)
+        waitbar((bin-1)/size(scaled_spectra,1), wait_h, sprintf(...
+            'Removing NaN''s from bin %d', bin));
+        cur_bin = scaled_spectra(bin, :);
+        no_nan_bins{bin}=cur_bin(~isnan(cur_bin));
+    end
+    % unique_lengths is the different sample sizes after you remove NaN bins
+    lengths = cellfun(@(in) length(in), no_nan_bins);
+    unique_lengths = unique(lengths);
+    unique_lengths = unique_lengths(unique_lengths >= 4);
+    % Calculate dips on uniform for given sample sizes which is a lower
+    % bound on dips for any unimodal function. Ignore lengths less than 4 -
+    % dip is not defined for those lengths
+    unique_lengths = unique_lengths(unique_lengths >= 4);
+    if ~isfield(handles, 'unif_dip')
+        handles.unif_dip = cell(max(unique_lengths),1);
+    end
+    for i=1:length(unique_lengths)
+        waitbar((i-1)/length(unique_lengths), wait_h, sprintf(['Calculating '...
+            'Hartigan Null Distribution for length %d'], ...
+            unique_lengths(i)));
+        if length(handles.unif_dip{unique_lengths(i)}) < 2000
+            handles.unif_dip{unique_lengths(i)}=hartigansdipofuniform(2000, unique_lengths(i));
+        end
+    end
+
+    guidata(handles.figure1, handles);
+    p_values = zeros(length(no_nan_bins));
+    for i = 1:length(no_nan_bins)
+        waitbar((i-1)/length(no_nan_bins), wait_h, sprintf(...
+            'Calculating unimodality p-value for bin %d', i));
+        len = length(no_nan_bins{i});
+        if len < 4
+            p_values(i) = 1; %Not enough evidence to reject unimodality - not enough points
+        elseif all(no_nan_bins{i}(1)==no_nan_bins{i})
+            p_values(i) = 1; % more than 4 samples and all identical? No evidence of multimodality
+        else
+            dip = hartigansdiptest(no_nan_bins{i});
+            p_values(i) = sum(dip < handles.unif_dip{len})/length(handles.unif_dip{len});
+        end
+    end
+    delete(wait_h);
+    line(handles.spectra{c}.x, 1-p_values, 'Color','k','Parent', handles.quotient_axes);    
+    set(handles.quotient_axes,'YTick',[0.8,0.95]);
     set(handles.quotient_axes,'YGrid','on');
 end
 set(handles.spectrum_axes, 'XDir', 'reverse');
@@ -245,7 +312,7 @@ if handles.display_index < size(handles.display_indices, 1)
 end
 
 % --- Executes when selected object is changed in diagnostics_group.
-function diagnostics_group_SelectionChangeFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+function diagnostics_group_SelectionChangeFcn(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to the selected object in diagnostics_group 
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
 %	EventName: string 'SelectionChanged' (read only)
