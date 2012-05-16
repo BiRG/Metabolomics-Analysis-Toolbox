@@ -147,9 +147,10 @@ medians = prctile(selected_quotients,50);
 mult = medians(s);
 
 hold(handles.spectrum_axes, 'off');
-plot(handles.spectrum_axes, handles.spectra{c}.x, ref);
+plot(handles.spectrum_axes, handles.spectra{c}.x, ...
+    handles.spectra{c}.Y(:,s).*mult, '-b','LineWidth',1);
 hold(handles.spectrum_axes, 'all');
-plot(handles.spectrum_axes, handles.spectra{c}.x, handles.spectra{c}.Y(:,s).*mult);
+plot(handles.spectrum_axes, handles.spectra{c}.x, ref.Y, '--r','LineWidth',1);
 
 
 
