@@ -119,9 +119,9 @@ if length(use_row) ~= size(quotients, 1)
 end    
 
 
-% Take the absolute value of the log of the quotients. The log makes it
+% Take the log of the absolute value of the quotients. The log makes it
 % so 1/10 and 10/1 are equidistant from 1.
-abs_quotients = log(quotients);
+abs_quotients = log(abs(quotients));
 
 % Measure the iqr - or set it to 1 if there is only one row and we are only
 % subtracting
