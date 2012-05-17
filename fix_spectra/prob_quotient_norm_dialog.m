@@ -365,7 +365,7 @@ while true
     first_empty = 1;
     for col = 1:length(handles.binned_spectra)
         last_used = first_empty + handles.binned_spectra{col}.num_samples - 1;
-        scaled_quotients(:, first_empty:last_used) = iqr_normed_quotients(handles.binned_spectra{col}.quotients, false, handles.use_bin);
+        scaled_quotients(:, first_empty:last_used) = quotient_outlyingness(handles.binned_spectra{col}.quotients, handles.use_bin);
     end
 
     % Select bins to remove as remove bins those over 3 iqr away from the
