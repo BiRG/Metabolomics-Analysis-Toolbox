@@ -333,43 +333,65 @@ elseif sum(handles.use_bin) == 1
     msgbox('Only one bin is selected. Cannot exclude any more.','Can''t exclude more','help');
     return;
 end
-wait_h = waitbar(0,'Initializing auto-selection');
-%Ensure that use_bin is a row vector
+wait_h = waitbar(0,'Initializing auto-exclusion');
+%Ensure that use_bin is a row vector (if it is a vector -- which it ought to be)
 if size(handles.use_bin,2) > 1
     handles.use_bin = handles.use_bin';
 end
 
-% Flatten the quotients field and scale the quotients to the iqr for their
-% spectrum
-scaled_quotients = zeros(length(handles.use_bin),num_spectra_in(handles.binned_spectra));
-first_empty = 1;
-for col = 1:length(handles.binned_spectra)
-    waitbar(col-1/(2+length(handles.binned_spectra)),wait_h, 'Scaling quotients');
-    last_used = first_empty + handles.binned_spectra{col}.num_samples - 1;
-    scaled_quotients(:, first_empty:last_used) = iqr_normed_quotients(handles.binned_spectra{col}.quotients, false, handles.use_bin);
+% Each pass through the loop recalculate the iqrs and remove the 
+% worst-offending outliers - first the extreme outliers, then if none are 
+% left, the inner fence outliers. Stop when there are no outliers or when
+% you can't remove the outliers without running out of bins.
+last_removed = 'First removal.';
+while true
+    already_removed = ~handles.use_bin;
+    wait_text = sprintf('%d/%d remaining. %s', ...
+        sum(handles.use_bin), length(handles.use_bin), last_removed);
+    waitbar(sum(~handles.use_bin)/length(handles.use_bin), wait_h, ...
+        wait_text);
+    
+    % Flatten the quotients field and scale the quotients to the iqr for their
+    % spectrum
+    scaled_quotients = zeros(length(handles.use_bin),num_spectra_in(handles.binned_spectra));
+    first_empty = 1;
+    for col = 1:length(handles.binned_spectra)
+        last_used = first_empty + handles.binned_spectra{col}.num_samples - 1;
+        scaled_quotients(:, first_empty:last_used) = iqr_normed_quotients(handles.binned_spectra{col}.quotients, false, handles.use_bin);
+    end
+
+    % Select bins to remove as remove bins those over 3 iqr away from the
+    % median
+    last_removed = 'Removed > 3 iqr.';
+    to_remove = any(abs(scaled_quotients) > 3,2);
+    to_remove = to_remove & ~already_removed;
+
+    % If there were none, remove those which are only 1.5 iqr away
+    if ~any(to_remove)
+        last_removed = 'Removed > 1.5 iqr.';
+        to_remove = any(abs(scaled_quotients) > 1.5,2);
+        to_remove = to_remove & ~already_removed;
+    end
+   
+    % Break out of the loop if we didn't remove anything this pass or if
+    % removing what is left would leave us with no bins. Otherwise update
+    % handles
+    if ~any(to_remove)
+        break
+    end
+    new_use_bin = handles.use_bin & ~to_remove;
+    if ~any(new_use_bin)
+        break;
+    else
+        handles.use_bin = new_use_bin;
+    end
 end
 
-% Select bins to remove as remove bins those over 3 iqr away from the
-% median
-waitbar(col-1+1/(2+length(handles.binned_spectra)),wait_h, 'Removing bins over 3 iqr from median');
-to_remove = any(abs(scaled_quotients) > 3,2);
-
-% If there were none, remove those which are only 1.5 iqr away
-if ~any(to_remove)
-    waitbar(col-1+2/(2+length(handles.binned_spectra)),wait_h, 'Removing bins over 1.5 iqr from median');
-    to_remove = any(abs(scaled_quotients) > 1.5,2);
-end
-
+% Get rid of the wait-box
 delete(wait_h);
 
-% If the removal would still leave some bins selected, perform the removal,
-% otherwise print an informational message for the user.
-handles.use_bin = handles.use_bin & ~to_remove;
-if any(handles.use_bin)
-    guidata(handles.figure1, handles);
-else
-    msgbox('Autoremoval would result in no bins being selected. Cannot exclude any more.','Can''t exclude more','help');
-end
+% Update the handles structure
+guidata(handles.figure1, handles);
 update_ui(handles);
 
 % --- Executes on button press in see_spectra_button.
