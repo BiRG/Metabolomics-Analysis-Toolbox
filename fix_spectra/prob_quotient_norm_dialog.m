@@ -320,11 +320,57 @@ browse_spectra_bins({handles.binned_spectra, handles.use_bin, handles.use_spectr
 
 
 % --- Executes on button press in autoselect_bins_button.
-function autoselect_bins_button_Callback(hObject, eventdata, handles)
+function autoselect_bins_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% Changes the figure1 guidata handles structure by removing undesirable bins from use_bins
+%
 % hObject    handle to autoselect_bins_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if sum(handles.use_bin) == 0
+    msgbox('Error: No bins are selected. This should never happen.','Error: no bins','error');
+    return;
+elseif sum(handles.use_bin) == 1
+    msgbox('Only one bin is selected. Cannot exclude any more.','Can''t exclude more','help');
+    return;
+end
+wait_h = waitbar(0,'Initializing auto-selection');
+%Ensure that use_bin is a row vector
+if size(handles.use_bin,2) > 1
+    handles.use_bin = handles.use_bin';
+end
 
+% Flatten the quotients field and scale the quotients to the iqr for their
+% spectrum
+scaled_quotients = zeros(length(handles.use_bin),num_spectra_in(handles.binned_spectra));
+first_empty = 1;
+for col = 1:length(handles.binned_spectra)
+    waitbar(col-1/(2+length(handles.binned_spectra)),wait_h, 'Scaling quotients');
+    last_used = first_empty + handles.binned_spectra{col}.num_samples - 1;
+    scaled_quotients(:, first_empty:last_used) = iqr_normed_quotients(handles.binned_spectra{col}.quotients, false, handles.use_bin);
+end
+
+% Select bins to remove as remove bins those over 3 iqr away from the
+% median
+waitbar(col-1+1/(2+length(handles.binned_spectra)),wait_h, 'Removing bins over 3 iqr from median');
+to_remove = any(abs(scaled_quotients) > 3,2);
+
+% If there were none, remove those which are only 1.5 iqr away
+if ~any(to_remove)
+    waitbar(col-1+2/(2+length(handles.binned_spectra)),wait_h, 'Removing bins over 1.5 iqr from median');
+    to_remove = any(abs(scaled_quotients) > 1.5,2);
+end
+
+delete(wait_h);
+
+% If the removal would still leave some bins selected, perform the removal,
+% otherwise print an informational message for the user.
+handles.use_bin = handles.use_bin & ~to_remove;
+if any(handles.use_bin)
+    guidata(handles.figure1, handles);
+else
+    msgbox('Autoremoval would result in no bins being selected. Cannot exclude any more.','Can''t exclude more','help');
+end
+update_ui(handles);
 
 % --- Executes on button press in see_spectra_button.
 function see_spectra_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
