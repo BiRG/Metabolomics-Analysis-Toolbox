@@ -50,7 +50,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 
 % Edit the above text to modify the response to help prob_quotient_norm_dialog
 
-% Last Modified by GUIDE v2.5 17-May-2012 12:39:57
+% Last Modified by GUIDE v2.5 17-May-2012 16:09:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -137,8 +137,16 @@ function update_ui(handles)
 %
 % handles structure with handles and user data (see GUIDATA)
 
-% Calculate the quotient quartile skewnesses
 num_spec = num_spectra_in(handles.binned_spectra);
+set(handles.bin_count_text, 'String', sprintf(...
+    '%d of %d bins used to calculate normalization multiplier', ...
+    sum(handles.use_bin), length(handles.use_bin)));
+set(handles.spectra_count_text, 'String', sprintf(...
+    '%d of %d spectra used to calculate normalization multiplier', ...
+    sum(cellfun(@sum, handles.use_spectrum)), num_spec));
+
+
+% Calculate the quotient quartile skewnesses
 skewnesses = zeros(num_spec, 1);
 collection_indices_for_spectrum = zeros(num_spec, 2); %collection_indices(i,:)=[j,k] means that binned_spectra{j}.Y(:,k) is the spectrum whose skewness is recored in skewnesses(i)
 first_empty = 1;
