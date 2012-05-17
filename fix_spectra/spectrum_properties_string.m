@@ -49,7 +49,11 @@ for i = 1:length(fns)
     
     if ~any(strcmp(ignore, fn)) %If we are not ignoring the given fieldname
         value = collection.(fn);
-        if length(value) == num_spectra
+        if ischar(value)
+            % Do nothing - it doesn't matter what length the string is -
+            % there is really only one of them. No need to see if it should
+            % be broken up
+        elseif length(value) == num_spectra
             if iscell(value)
                 value = value{index};
             else
