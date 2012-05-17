@@ -2,7 +2,7 @@ function varargout = browse_spectra_bins(varargin)
 % BROWSE_SPECTRA_BINS MATLAB code for browse_spectra_bins.fig
 % Opens window to browse spectra and their relationship to a reference spectrum.
 %      
-%      use_bins=browse_spectra_bins({spectra, use_bin, use_spectrum, display_indices})
+%      use_bin=browse_spectra_bins({spectra, use_bin, use_spectrum, display_indices})
 %      opens the dialog to browse the spectra at display_indices in
 %      spectra. spectra{s}.Y(b,s) contains the value for bin b measured
 %      for spectrum s.
@@ -27,7 +27,7 @@ function varargout = browse_spectra_bins(varargin)
 % 
 %      Output
 %      ------
-%      use_bins - the bins selected by the user during browsing or empty if
+%      use_bin - the bins selected by the user during browsing or empty if
 %                 the caller should leave its bins unchanged.
 %
 %      BROWSE_SPECTRA_BINS('CALLBACK',hObject,eventData,handles,...) calls the local
@@ -95,7 +95,7 @@ elseif ~only_one_x_in(handles.spectra)
     error('browse_spectra_bins:input_err','all collections in spectra argument must have identical x fields');
 elseif (length(size(handles.use_bin)) ~= length(size(handles.spectra{1}.x))) || ...
         length(handles.use_bin) ~= length(handles.spectra{1}.x)
-    error('browse_spectra_bins:input_err','use_bins must be the same size as the spectra x fields');
+    error('browse_spectra_bins:input_err','use_bin must be the same size as the spectra x fields');
 elseif ~iscell(handles.use_spectrum)
     error('browse_spectra_bins:input_err','use_spectrum argument must be cell array');
 elseif length(handles.use_spectrum) ~= length(handles.spectra)
@@ -158,8 +158,11 @@ cla(handles.quotient_axes);
 % Draw the bin badness value on the second axis
 if get(handles.quotient_outlier_radio, 'Value')
     %Quotient outlier
-    
-    scaled_quotients = iqr_normed_quotients(handles.spectra{c}.quotients);
+    if sum(handles.use_bin) >= 2
+        scaled_quotients = iqr_normed_quotients(handles.spectra{c}.quotients);
+    else
+        scaled_quotients = handles.spectra{c}.quotients;
+    end
     scaled_quotients = abs(scaled_quotients(:,s));
     % Truncate data at 5 iqr
     scaled_quotients(scaled_quotients > 5) = 5;
@@ -314,6 +317,20 @@ function diagnostics_group_SelectionChangeFcn(hObject, eventdata, handles) %#ok<
 %	OldValue: handle of the previously selected object or empty if none was selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
+
+if get(handles.quotient_outlier_radio, 'Value')
+    if sum(handles.use_bin) < 2
+        msgbox(['Not enough bins selected to scale quotients. They ' ...
+            'will be left unchanged. Select at least two bins to properly ' ...
+            'scale quotients'],'Not enough bins for scaling','warn');
+    end
+else
+    if num_spectra_in(handles.spectra) < 4
+        msgbox(['Not enough spectra for multimodality calculation. ' ...
+            'A multimodality of 0 will be used.'], ...
+            'Not enough spectra for multimodality','warn');
+    end
+end
 update_ui(handles);
 
 % --- Executes when user attempts to close figure1.
