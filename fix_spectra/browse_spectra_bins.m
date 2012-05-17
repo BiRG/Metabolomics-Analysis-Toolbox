@@ -113,7 +113,7 @@ for i=1:length(handles.display_indices)
        s < 1 || s > handles.spectra{c}.num_samples
         error('browse_spectra_bins:input_err',['display_indices '...
             'argument index %d is [%d, %d] which does not refer to '...
-            'a valid spectrum']);
+            'a valid spectrum'], i, c, s);
     end 
 end
 
