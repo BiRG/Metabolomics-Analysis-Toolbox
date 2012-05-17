@@ -159,7 +159,7 @@ cla(handles.quotient_axes);
 if get(handles.quotient_outlier_radio, 'Value')
     %Quotient outlier
     
-    scaled_quotients = iqr_normed_quotients(handles.spectra{c});
+    scaled_quotients = iqr_normed_quotients(handles.spectra{c}.quotients);
     scaled_quotients = abs(scaled_quotients(:,s));
     % Truncate data at 5 iqr
     scaled_quotients(scaled_quotients > 5) = 5;

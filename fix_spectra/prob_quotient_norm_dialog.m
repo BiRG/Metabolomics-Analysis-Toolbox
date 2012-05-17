@@ -144,7 +144,7 @@ collection_indices_for_spectrum = zeros(num_spec, 2); %collection_indices(i,:)=[
 first_empty = 1;
 for c=1:length(handles.binned_spectra)
     num_samples = handles.binned_spectra{c}.num_samples;
-    selected_quotients = handles.binned_spectra{c}.quotients(handles.use_bin, :);
+    selected_quotients = iqr_normed_quotients(handles.binned_spectra{c}.quotients(handles.use_bin, :));
     last_filled = first_empty+num_samples-1;
     skewnesses(first_empty:last_filled)= quartile_skewness(selected_quotients);
     collection_indices_for_spectrum(first_empty:last_filled,1)=c*ones(1,num_samples);

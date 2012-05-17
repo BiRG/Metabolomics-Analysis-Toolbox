@@ -1,5 +1,5 @@
-function scaled_quotients = iqr_normed_quotients( collection )
-% Returns the quotients in collection scaled by their ratio with a quotient-appropriate iqr and shifted so median is 0
+function scaled_quotients = iqr_normed_quotients( quotients )
+% Returns the quotients scaled by their ratio with a quotient-appropriate iqr and shifted so median is 0
 % 
 % Quotients differ on a logarithmic scale when doing dilution
 % normalization. Otherwise, the midpoint between 1/10, 10/1 is near 5. A
@@ -18,8 +18,7 @@ function scaled_quotients = iqr_normed_quotients( collection )
 % Input arguments
 % -------------------------------------------------------------------------
 % 
-% collection  - a struct containing the member quotients which is a real
-%               matrix
+% quotients- a real matrix
 %
 % -------------------------------------------------------------------------
 % Output parameters
@@ -32,7 +31,7 @@ function scaled_quotients = iqr_normed_quotients( collection )
 % Examples
 % -------------------------------------------------------------------------
 %
-% >> collection.quotients = [0.1,1;0.2,3;4,0.25]; sc = iqr_scaled_quotients( collection )
+% >> sc = iqr_normed_quotients( [0.1,1;0.2,3;4,0.25] )
 %
 % sc =
 %
@@ -47,19 +46,14 @@ function scaled_quotients = iqr_normed_quotients( collection )
 % Eric Moyer (May 2012) eric_moyer@yahoo.com
 %
 
-if ~isfield(collection, 'quotients')
-    error('iqr_scaled_quotients:no_quotients',['The collection '...
-        'passed to iqr_scaled_quotients must have a quotients field']);
-end
-
 % Take the absolute value of the log of the quotients. The log makes it
 % so 1/10 and 10/1 are equidistant from 1.
-abs_quotients = log(collection.quotients);
+abs_quotients = log(quotients);
 % Measure the iqr
 i_q_r = iqr(abs_quotients);
-rep_iqr = repmat(i_q_r, size(collection.quotients,1), 1);
+rep_iqr = repmat(i_q_r, size(quotients,1), 1);
 med = prctile(abs_quotients,50);
-rep_median = repmat(med, size(collection.quotients,1), 1);
+rep_median = repmat(med, size(quotients,1), 1);
 % Scale the quotients by the IQR
 scaled_quotients = (abs_quotients - rep_median) ./ rep_iqr ;
 
