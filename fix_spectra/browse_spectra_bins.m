@@ -94,7 +94,7 @@ elseif ~isfield(handles.spectra{1},'Y') || ~isfield(handles.spectra{1},'x')
 elseif ~only_one_x_in(handles.spectra)
     error('browse_spectra_bins:input_err','all collections in spectra argument must have identical x fields');
 elseif (length(size(handles.use_bin)) ~= length(size(handles.spectra{1}.x))) || ...
-        any(size(handles.use_bin) ~= size(handles.spectra{1}.x))
+        length(handles.use_bin) ~= length(handles.spectra{1}.x)
     error('browse_spectra_bins:input_err','use_bins must be the same size as the spectra x fields');
 elseif ~iscell(handles.use_spectrum)
     error('browse_spectra_bins:input_err','use_spectrum argument must be cell array');
