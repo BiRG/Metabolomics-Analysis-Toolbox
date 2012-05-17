@@ -159,7 +159,7 @@ cla(handles.quotient_axes);
 if get(handles.quotient_outlier_radio, 'Value')
     %Quotient outlier
     if sum(handles.use_bin) >= 2
-        scaled_quotients = iqr_normed_quotients(handles.spectra{c}.quotients);
+        scaled_quotients = quotient_outlyingness(handles.spectra{c}.quotients);
     else
         scaled_quotients = handles.spectra{c}.quotients;
     end
