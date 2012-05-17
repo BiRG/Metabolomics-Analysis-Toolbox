@@ -316,7 +316,7 @@ end
 % Get the coordinates of the spectra in that bin
 spectra_in_bin=bin_for_spectrum==bin_number;
 spectral_indices = collection_indices_for_spectrum(spectra_in_bin,:);
-disp(spectral_indices);
+browse_spectra_bins({handles.binned_spectra, handles.use_bin, handles.use_spectrum, spectral_indices});
 
 
 % --- Executes on button press in autoselect_bins_button.
