@@ -50,7 +50,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 
 % Edit the above text to modify the response to help prob_quotient_norm_dialog
 
-% Last Modified by GUIDE v2.5 08-May-2012 19:05:46
+% Last Modified by GUIDE v2.5 17-May-2012 12:39:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -317,3 +317,26 @@ end
 spectra_in_bin=bin_for_spectrum==bin_number;
 spectral_indices = collection_indices_for_spectrum(spectra_in_bin,:);
 disp(spectral_indices);
+
+
+% --- Executes on button press in autoselect_bins_button.
+function autoselect_bins_button_Callback(hObject, eventdata, handles)
+% hObject    handle to autoselect_bins_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in see_spectra_button.
+function see_spectra_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to see_spectra_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+disp_all = zeros(num_spectra_in(handles.binned_spectra),2);
+curidx = 1; 
+for c=1:length(handles.binned_spectra)
+    for s=1:handles.binned_spectra{c}.num_samples
+        disp_all(curidx,:)=[c,s]; 
+        curidx=curidx+1; 
+    end
+end
+browse_spectra_bins({handles.binned_spectra, handles.use_bin, handles.use_spectrum, disp_all});
