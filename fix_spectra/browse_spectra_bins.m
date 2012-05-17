@@ -106,7 +106,7 @@ elseif size(handles.display_indices,2) ~= 2
     error('browse_spectra_bins:input_err','display_indices argument must have 2 columns');
 end
 
-for i=1:length(handles.display_indices)
+for i=1:size(handles.display_indices,1)
     c=handles.display_indices(i,1);
     s=handles.display_indices(i,2);
     if c < 1 || c > length(handles.spectra) || ...
