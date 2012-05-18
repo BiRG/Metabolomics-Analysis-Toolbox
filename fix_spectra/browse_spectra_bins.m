@@ -146,11 +146,36 @@ selected_quotients = handles.spectra{c}.quotients(handles.use_bin, :);
 medians = prctile(selected_quotients,50);
 mult = medians(s);
 
+blue = [0,  0,  1  ];
+red  = [1,  0,  0  ];
+gray = [0.8,0.8,0.8];
+
 hold(handles.spectrum_axes, 'off');
-plot(handles.spectrum_axes, handles.spectra{c}.x, ...
-    handles.spectra{c}.Y(:,s).*mult, '-b','LineWidth',1);
+num_vertices = numel(handles.spectra{c}.x);
+vertices = zeros(num_vertices, 3);
+vertex_colors = zeros(num_vertices, 3);
+vertex_colors(~handles.use_bin,:)=repmat(gray, sum(~handles.use_bin),1); %Unused bins to gray
+faces = [1:num_vertices, (num_vertices-1):-1:1];
+
+% Plot the main graph in blue - with unused bins in gray
+cla(handles.spectrum_axes);
+vertices(:,1)=handles.spectra{c}.x;            % set x coordinate
+vertices(:,2)=handles.spectra{c}.Y(:,s).*mult; % set y coordinate
+vertices(:,3)=1; %z coordinate - 1 to avoid going under background
+vertex_colors(handles.use_bin,:)=repmat(blue, sum(handles.use_bin), 1); %Used bins to blue
+patch('Parent',handles.spectrum_axes, 'Vertices', vertices, ...
+    'Faces', faces, 'EdgeColor', 'interp', 'FaceAlpha', 0, ...
+    'FaceVertexCData', vertex_colors);
+
+% Plot refrerence spectrum in red - but 50% transparent with markers at the
+% vertices
 hold(handles.spectrum_axes, 'all');
-plot(handles.spectrum_axes, handles.spectra{c}.x, ref.Y, '--r','LineWidth',1);
+vertices(:,2)=ref.Y; % set y coordinate
+vertices(:,3)=2;     % z coordinate to be on top of the main graph
+vertex_colors=repmat(red, num_vertices, 1);   % All bins to red
+patch('Parent',handles.spectrum_axes, 'Vertices', vertices, ...
+    'Faces', faces, 'EdgeColor', 'interp', 'FaceAlpha', 0, ...
+    'FaceVertexCData', vertex_colors, 'EdgeAlpha', 0.1, 'Marker', 'none');
 
 % Clear the second axes
 cla(handles.quotient_axes);
