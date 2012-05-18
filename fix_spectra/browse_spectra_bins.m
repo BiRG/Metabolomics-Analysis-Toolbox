@@ -46,7 +46,7 @@ function varargout = browse_spectra_bins(varargin)
 
 % Edit the above text to modify the response to help browse_spectra_bins
 
-% Last Modified by GUIDE v2.5 18-May-2012 09:58:36
+% Last Modified by GUIDE v2.5 18-May-2012 11:25:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -169,9 +169,13 @@ for i = to_display
     spec = handles.display_indices(i,2);
     
     %Calculate scaling factor for this spectrum
-    selected_quotients = handles.spectra{col}.quotients(handles.use_bin, :);
-    medians = prctile(selected_quotients,50);
-    mult = medians(spec);
+    if get(handles.display_normalized_checkbox, 'Value')
+        selected_quotients = handles.spectra{col}.quotients(handles.use_bin, :);
+        medians = prctile(selected_quotients,50);
+        mult = medians(spec);
+    else
+        mult = 1;
+    end
 
     vertices(:,1)=handles.spectra{col}.x;               % set x coordinate
     vertices(:,2)=handles.spectra{col}.Y(:,spec).*mult; % set y coordinate
@@ -434,4 +438,14 @@ function display_all_checkbox_Callback(hObject, eventdata, handles) %#ok<INUSL,D
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of display_all_checkbox
+update_ui(handles);
+
+
+% --- Executes on button press in display_normalized_checkbox.
+function display_normalized_checkbox_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to display_normalized_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of display_normalized_checkbox
 update_ui(handles);
