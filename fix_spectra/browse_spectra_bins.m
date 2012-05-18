@@ -142,9 +142,6 @@ set(handles.spectrum_properties_edit, 'String', ...
 
 ref = median_spectrum(handles.spectra, handles.use_spectrum);
 handles.spectra = set_quotients_field(handles.spectra, ref);
-selected_quotients = handles.spectra{c}.quotients(handles.use_bin, :);
-medians = prctile(selected_quotients,50);
-mult = medians(s);
 
 % Set up variables I use for the display code
 blue = [0,  0,  1  ];
@@ -170,6 +167,12 @@ end
 for i = to_display
     col  = handles.display_indices(i,1);
     spec = handles.display_indices(i,2);
+    
+    %Calculate scaling factor for this spectrum
+    selected_quotients = handles.spectra{col}.quotients(handles.use_bin, :);
+    medians = prctile(selected_quotients,50);
+    mult = medians(spec);
+
     vertices(:,1)=handles.spectra{col}.x;               % set x coordinate
     vertices(:,2)=handles.spectra{col}.Y(:,spec).*mult; % set y coordinate
     vertices(:,3)=1; %z coordinate - 1 to avoid going under background
