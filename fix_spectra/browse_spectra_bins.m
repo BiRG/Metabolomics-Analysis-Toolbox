@@ -46,7 +46,7 @@ function varargout = browse_spectra_bins(varargin)
 
 % Edit the above text to modify the response to help browse_spectra_bins
 
-% Last Modified by GUIDE v2.5 15-May-2012 22:48:53
+% Last Modified by GUIDE v2.5 18-May-2012 09:58:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -146,6 +146,7 @@ selected_quotients = handles.spectra{c}.quotients(handles.use_bin, :);
 medians = prctile(selected_quotients,50);
 mult = medians(s);
 
+% Set up variables I use for the display code
 blue = [0,  0,  1  ];
 red  = [1,  0,  0  ];
 gray = [0.8,0.8,0.8];
@@ -154,27 +155,39 @@ hold(handles.spectrum_axes, 'off');
 num_vertices = numel(handles.spectra{c}.x);
 vertices = zeros(num_vertices, 3);
 vertex_colors = zeros(num_vertices, 3);
-vertex_colors(~handles.use_bin,:)=repmat(gray, sum(~handles.use_bin),1); %Unused bins to gray
 faces = [1:num_vertices, (num_vertices-1):-1:1];
 
-% Plot the main graph in blue - with unused bins in gray
+% Clear the previous axes
 cla(handles.spectrum_axes);
-vertices(:,1)=handles.spectra{c}.x;            % set x coordinate
-vertices(:,2)=handles.spectra{c}.Y(:,s).*mult; % set y coordinate
-vertices(:,3)=1; %z coordinate - 1 to avoid going under background
-vertex_colors(handles.use_bin,:)=repmat(blue, sum(handles.use_bin), 1); %Used bins to blue
-patch('Parent',handles.spectrum_axes, 'Vertices', vertices, ...
-    'Faces', faces, 'EdgeColor', 'interp', 'FaceAlpha', 0, ...
-    'FaceVertexCData', vertex_colors);
 
-% Plot refrerence spectrum in red - but 90% transparent
+if get(handles.display_all_checkbox, 'Value')
+    to_display = 1:size(handles.display_indices,1);
+else
+    to_display = handles.display_index;
+end
+
+% Plot the main graph in blue - with unused bins in gray
+for i = to_display
+    col  = handles.display_indices(i,1);
+    spec = handles.display_indices(i,2);
+    vertices(:,1)=handles.spectra{col}.x;               % set x coordinate
+    vertices(:,2)=handles.spectra{col}.Y(:,spec).*mult; % set y coordinate
+    vertices(:,3)=1; %z coordinate - 1 to avoid going under background
+    vertex_colors(~handles.use_bin,:)=repmat(gray, sum(~handles.use_bin),1); %Unused bins to gray
+    vertex_colors(handles.use_bin,:)=repmat(blue, sum(handles.use_bin), 1); %Used bins to blue
+    patch('Parent',handles.spectrum_axes, 'Vertices', vertices, ...
+        'Faces', faces, 'EdgeColor', 'interp', 'FaceAlpha', 0, ...
+        'FaceVertexCData', vertex_colors);
+end
+
+% Plot refrerence spectrum in red - but 80% transparent
 hold(handles.spectrum_axes, 'all');
 vertices(:,2)=ref.Y; % set y coordinate
 vertices(:,3)=2;     % z coordinate to be on top of the main graph
 vertex_colors=repmat(red, num_vertices, 1);   % All bins to red
 patch('Parent',handles.spectrum_axes, 'Vertices', vertices, ...
     'Faces', faces, 'EdgeColor', 'interp', 'FaceAlpha', 0, ...
-    'FaceVertexCData', vertex_colors, 'EdgeAlpha', 0.1, 'Marker', 'none');
+    'FaceVertexCData', vertex_colors, 'EdgeAlpha', 0.2, 'Marker', 'none');
 
 % Clear the second axes
 cla(handles.quotient_axes);
@@ -409,3 +422,13 @@ function pan_tool_ClickedCallback(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 pan
+
+
+% --- Executes on button press in display_all_checkbox.
+function display_all_checkbox_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to display_all_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of display_all_checkbox
+update_ui(handles);
