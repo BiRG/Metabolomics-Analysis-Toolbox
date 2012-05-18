@@ -167,8 +167,7 @@ patch('Parent',handles.spectrum_axes, 'Vertices', vertices, ...
     'Faces', faces, 'EdgeColor', 'interp', 'FaceAlpha', 0, ...
     'FaceVertexCData', vertex_colors);
 
-% Plot refrerence spectrum in red - but 50% transparent with markers at the
-% vertices
+% Plot refrerence spectrum in red - but 90% transparent
 hold(handles.spectrum_axes, 'all');
 vertices(:,2)=ref.Y; % set y coordinate
 vertices(:,3)=2;     % z coordinate to be on top of the main graph
