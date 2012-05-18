@@ -374,13 +374,6 @@ while true
     to_remove = any(abs(scaled_quotients) > 3,2);
     to_remove = to_remove & ~already_removed;
 
-    % If there were none, remove those which are only 1.5 iqr away
-    if ~any(to_remove)
-        last_removed = 'Removed > 1.5 iqr.';
-        to_remove = any(abs(scaled_quotients) > 1.5,2);
-        to_remove = to_remove & ~already_removed;
-    end
-   
     % Break out of the loop if we didn't remove anything this pass or if
     % removing what is left would leave us with no bins. Otherwise update
     % handles
