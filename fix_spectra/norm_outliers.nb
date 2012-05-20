@@ -1,0 +1,350 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     10566,        341]
+NotebookOptionsPosition[      8781,        274]
+NotebookOutlinePosition[      9118,        289]
+CellTagsIndexPosition[      9075,        286]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Calculate the expected outliers in a normal distribution", "Title",
+ CellChangeTimes->{{3.546276401087556*^9, 3.546276408937706*^9}}],
+
+Cell["\<\
+Here I calculate the expected number of outliers that would be obtained from \
+the nearest quartile-k*iqr method using a standard normal distribution.\
+\>", "Text",
+ CellChangeTimes->{{3.546276411484825*^9, 3.546276453272217*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"zFirstQ", "=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"x", "/.", 
+     RowBox[{"Solve", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"CDF", "[", 
+          RowBox[{"NormalDistribution", "[", "]"}], "]"}], "[", "x", "]"}], 
+        "\[Equal]", 
+        RowBox[{"1", "/", "4"}]}], ",", 
+       RowBox[{"{", "x", "}"}]}], "]"}]}], ")"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5462751364466352`*^9, 3.546275151658186*^9}, {
+  3.54627526600727*^9, 3.546275389648198*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Solve", "::", "\<\"ifun\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Inverse functions are being \
+used by \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(Solve\\), \\\"MT\\\"]\\)\
+\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\", so some solutions may not be found; \
+use Reduce for complete solution information.\\\\\\\"\\\", \\\"MT\\\"]\\) \\!\
+\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/ifun\\\", \
+ButtonNote -> \\\"Solve::ifun\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{{3.546275335400009*^9, 3.5462753903529167`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   SqrtBox["2"]}], " ", 
+  RowBox[{"InverseErf", "[", 
+   FractionBox["1", "2"], "]"}]}]], "Output",
+ CellChangeTimes->{
+  3.546275153636443*^9, {3.546275273328628*^9, 3.5462753903583927`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"zThirdQ", "=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"x", "/.", 
+     RowBox[{"Solve", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"CDF", "[", 
+          RowBox[{"NormalDistribution", "[", "]"}], "]"}], "[", "x", "]"}], 
+        "\[Equal]", 
+        RowBox[{"3", "/", "4"}]}], ",", 
+       RowBox[{"{", "x", "}"}]}], "]"}]}], ")"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5462751364466352`*^9, 3.546275151658186*^9}, {
+  3.54627526600727*^9, 3.546275404544972*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Solve", "::", "\<\"ifun\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Inverse functions are being \
+used by \\\\\\\"\\\", \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(Solve\\), \\\"MT\\\"]\\)\
+\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\", so some solutions may not be found; \
+use Reduce for complete solution information.\\\\\\\"\\\", \\\"MT\\\"]\\) \\!\
+\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/ifun\\\", \
+ButtonNote -> \\\"Solve::ifun\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.5462754049852457`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  SqrtBox["2"], " ", 
+  RowBox[{"InverseErf", "[", 
+   FractionBox["1", "2"], "]"}]}]], "Output",
+ CellChangeTimes->{3.546275404988512*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"zIQR", "=", 
+  RowBox[{"zThirdQ", "-", "zFirstQ"}]}]], "Input",
+ CellChangeTimes->{{3.546275407546845*^9, 3.5462754212031183`*^9}, {
+  3.546275569352804*^9, 3.546275579832466*^9}}],
+
+Cell[BoxData[
+ RowBox[{"2", " ", 
+  SqrtBox["2"], " ", 
+  RowBox[{"InverseErf", "[", 
+   FractionBox["1", "2"], "]"}]}]], "Output",
+ CellChangeTimes->{3.546275422217369*^9, 3.546275580442211*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"N", "[", "zFirstQ", "]"}]], "Input",
+ CellChangeTimes->{{3.546276330049361*^9, 3.546276332948495*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.6744897501960818`"}]], "Output",
+ CellChangeTimes->{3.5462763334995127`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"N", "[", "zIQR", "]"}]], "Input",
+ CellChangeTimes->{{3.546275675366355*^9, 3.546275678324362*^9}}],
+
+Cell[BoxData["1.3489795003921636`"], "Output",
+ CellChangeTimes->{3.546275678855945*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"N", "[", 
+  RowBox[{"zFirstQ", "-", 
+   RowBox[{
+    RowBox[{"3", "/", "2"}], "zIQR"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.546276320798339*^9, 3.546276321870697*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "2.6979590007843273`"}]], "Output",
+ CellChangeTimes->{{3.546276318835162*^9, 3.5462763222920113`*^9}}]
+}, Open  ]],
+
+Cell["\<\
+And the probability for an outlier (1.5 iqr beyond the nearest quartile)\
+\>", "Text",
+ CellChangeTimes->{{3.546276805792139*^9, 3.546276825504437*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"p15IQR", "=", 
+  RowBox[{"N", "[", 
+   RowBox[{"2", 
+    RowBox[{
+     RowBox[{"CDF", "[", 
+      RowBox[{"NormalDistribution", "[", "]"}], "]"}], "[", 
+     RowBox[{"zFirstQ", "-", 
+      RowBox[{
+       RowBox[{"3", "/", "2"}], "zIQR"}]}], "]"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5462754331794987`*^9, 3.546275448665811*^9}, {
+  3.546275500262738*^9, 3.546275587141286*^9}, {3.546276219533547*^9, 
+  3.5462762400630627`*^9}, {3.546276279512436*^9, 3.546276286870955*^9}}],
+
+Cell[BoxData["0.006976603239280288`"], "Output",
+ CellChangeTimes->{{3.546275540326643*^9, 3.546275587673192*^9}, 
+   3.546276250500964*^9, {3.5462762809281263`*^9, 3.546276287670621*^9}}]
+}, Open  ]],
+
+Cell["Seeing by what factor the web-page \"why 1.5\" is off.", "Text",
+ CellChangeTimes->{{3.5462771035587883`*^9, 3.546277127483955*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{".0094", "/", "0.006976603239280288`"}]], "Input",
+ CellChangeTimes->{{3.546277064446094*^9, 3.546277069064741*^9}}],
+
+Cell[BoxData["1.3473605532095176`"], "Output",
+ CellChangeTimes->{3.546277070289905*^9}]
+}, Open  ]],
+
+Cell["\<\
+And the probability for a large outlier (2 iqr beyond the nearest quartile) - \
+I include this number because of the web page why 1.5 \
+\>", "Text",
+ CellChangeTimes->{{3.546276850082263*^9, 3.546276856851603*^9}, {
+  3.546276973240768*^9, 3.546277023674567*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"p2IQR", "=", 
+  RowBox[{"N", "[", 
+   RowBox[{"2", 
+    RowBox[{
+     RowBox[{"CDF", "[", 
+      RowBox[{"NormalDistribution", "[", "]"}], "]"}], "[", 
+     RowBox[{"zFirstQ", "-", 
+      RowBox[{"2", "zIQR"}]}], "]"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5462754331794987`*^9, 3.546275448665811*^9}, {
+  3.546275500262738*^9, 3.546275587141286*^9}, {3.546276219533547*^9, 
+  3.5462762400630627`*^9}, {3.546276279512436*^9, 3.546276286870955*^9}, {
+  3.546276983931287*^9, 3.546276987165007*^9}}],
+
+Cell[BoxData["0.0007450295031911081`"], "Output",
+ CellChangeTimes->{3.546276987906725*^9}]
+}, Open  ]],
+
+Cell["Seeing by what factor the web-page \"why 1.5\" is off.", "Text",
+ CellChangeTimes->{{3.5462771035587883`*^9, 3.546277127483955*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{".0008", "/", "0.0007450295031911081`"}]], "Input",
+ CellChangeTimes->{{3.5462770831339693`*^9, 3.546277088693421*^9}}],
+
+Cell[BoxData["1.0737829798329361`"], "Output",
+ CellChangeTimes->{3.5462770897821913`*^9}]
+}, Open  ]],
+
+Cell["\<\
+And the probability for an extreme outlier (3 iqr beyond the nearest quartile)\
+\>", "Text",
+ CellChangeTimes->{{3.546276850082263*^9, 3.546276856851603*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"p3IQR", "=", 
+  RowBox[{"N", "[", 
+   RowBox[{"2", 
+    RowBox[{
+     RowBox[{"CDF", "[", 
+      RowBox[{"NormalDistribution", "[", "]"}], "]"}], "[", 
+     RowBox[{"zFirstQ", "-", 
+      RowBox[{"3", "zIQR"}]}], "]"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5462754331794987`*^9, 3.546275448665811*^9}, {
+  3.546275500262738*^9, 3.546275587141286*^9}, {3.546276219533547*^9, 
+  3.5462762400630627`*^9}, {3.546276279512436*^9, 3.546276286870955*^9}, {
+  3.546276801040386*^9, 3.5462768013887444`*^9}, {3.546276870723164*^9, 
+  3.546276871613502*^9}}],
+
+Cell[BoxData["2.3419424629578245`*^-6"], "Output",
+ CellChangeTimes->{3.5462768722868557`*^9}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{640, 655},
+WindowMargins->{{Automatic, 17}, {28, Automatic}},
+FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 139, 1, 197, "Title"],
+Cell[709, 25, 240, 4, 55, "Text"],
+Cell[CellGroupData[{
+Cell[974, 33, 555, 16, 83, "Input"],
+Cell[1532, 51, 690, 12, 65, "Message"],
+Cell[2225, 65, 233, 7, 46, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2495, 77, 555, 16, 83, "Input"],
+Cell[3053, 95, 666, 12, 65, "Message"],
+Cell[3722, 109, 163, 5, 46, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3922, 119, 204, 4, 34, "Input"],
+Cell[4129, 125, 195, 5, 46, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4361, 135, 126, 2, 34, "Input"],
+Cell[4490, 139, 107, 2, 34, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4634, 146, 123, 2, 34, "Input"],
+Cell[4760, 150, 88, 1, 34, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4885, 156, 196, 5, 34, "Input"],
+Cell[5084, 163, 131, 2, 34, "Output"]
+}, Open  ]],
+Cell[5230, 168, 162, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[5417, 175, 507, 12, 59, "Input"],
+Cell[5927, 189, 188, 2, 34, "Output"]
+}, Open  ]],
+Cell[6130, 194, 138, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[6293, 199, 139, 2, 34, "Input"],
+Cell[6435, 203, 88, 1, 34, "Output"]
+}, Open  ]],
+Cell[6538, 207, 273, 5, 55, "Text"],
+Cell[CellGroupData[{
+Cell[6836, 216, 527, 12, 34, "Input"],
+Cell[7366, 230, 91, 1, 34, "Output"]
+}, Open  ]],
+Cell[7472, 234, 138, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[7635, 239, 142, 2, 34, "Input"],
+Cell[7780, 243, 90, 1, 34, "Output"]
+}, Open  ]],
+Cell[7885, 247, 168, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[8078, 254, 578, 13, 34, "Input"],
+Cell[8659, 269, 94, 1, 34, "Output"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

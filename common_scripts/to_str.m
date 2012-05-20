@@ -67,6 +67,10 @@ function str = to_str( in )
 %
 % str = '''foo'''
 %
+% >> str = to_str('')
+%
+% str = ['''','''']
+%
 % -------------------------------------------------------------------------
 % Authors
 % -------------------------------------------------------------------------
@@ -109,6 +113,8 @@ elseif ischar(in)
     rows = size(in,1);
     if rows == 1
         str = ['''',in,''''];
+    elseif rows == 0
+        str = ['''',''''];
     else
         str = ['[''', in(1,:), ''''];
         for i=2:rows
@@ -123,18 +129,18 @@ elseif ismatrix(in)
     str = '[';
     for j = 1:cols
         if j == 1
-            str = sprintf('%s%d', str, in(1,j));
+            str = sprintf('%s%g', str, in(1,j));
         else
-            str = sprintf('%s, %d', str, in(1,j));
+            str = sprintf('%s, %g', str, in(1,j));
         end
     end
     for i = 2:rows
         str = [str, '; ']; %#ok<AGROW>
         for j = 1:cols
             if j == 1
-                str = sprintf('%s%d', str, in(i,j));
+                str = sprintf('%s%g', str, in(i,j));
             else
-                str = sprintf('%s, %d', str, in(i,j));
+                str = sprintf('%s, %g', str, in(i,j));
             end
         end        
     end

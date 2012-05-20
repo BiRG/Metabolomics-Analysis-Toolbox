@@ -223,7 +223,7 @@
         prob_quotient_norm_dialog. Has an extra field quotients(i,j)
         that holds the most recently calculated value of
         ref_spectrum.Y(i)/Y(i,j) where ref_spectrum is the
-        ref_spectrum field of handles.</td>
+        ref_spectrum field of the handles object.</td>
       </tr>
 
       <tr>
@@ -291,6 +291,73 @@
 	  this must be maintained separately from the string values of
 	  field_value_popup to allow for correct matching.
 	</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <h3>Spectrum browser window</h3>
+
+  <p>This section provides a list of all of the in-use keys for the
+  handles object passed to every event handler in the spectrum browser
+  window of fix_spectra.</p>
+
+  <table class="identifier_defs">
+    <tbody>
+      <tr>
+        <th>Identifier</th>
+
+        <th>Meaning</th>
+      </tr>
+
+      <tr class="ra">
+        <td class="id">spectra</td>
+
+        <td>struct array of the binned spectra passed to
+        prob_quotient_norm_dialog. Has an extra field quotients(i,j)
+        that holds the most recently calculated value of
+        ref_spectrum.Y(i)/Y(i,j) where ref_spectrum is the
+        ref_spectrum field of the handles object.</td>
+      </tr>
+
+      <tr>
+        <td class="id">use_spectrum</td>
+
+        <td>array of logical. use_spectrum(i) is true iff the spectrum
+        at index i is used in creating the reference spectrum</td>
+      </tr>
+
+      <tr class="ra">
+        <td class="id">use_bin</td>
+
+        <td>array of logical. use_bin(i) is true iff the bin at index
+        i is used in calculating quotients for determining the
+        normalization coefficient</td>
+      </tr>
+
+      <tr>
+        <td class="id">display_indices</td>
+
+        <td>display_indices(i,:) is a pair (c,s) meaning that
+	spectrum{c}.Y(:,s) is the i'th spectrum to display in the
+	browser</td>
+      </tr>
+
+      <tr class="ra">
+        <td class="id">display_index</td>
+
+        <td>integer index into the array display_indices indicating
+        the current spectrum to display.
+	</td>
+      </tr>
+
+      <tr>
+        <td class="id">unif_dip</td>
+
+        <td>unif_dip{i} is a cell array for which each entry is a
+        Hartigan dip statistic for a set of i samples from a uniform
+        distribution. This is used in plotting the multimodality
+        diagnostic.</td>
       </tr>
 
     </tbody>

@@ -50,7 +50,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 
 % Edit the above text to modify the response to help prob_quotient_norm_dialog
 
-% Last Modified by GUIDE v2.5 05-May-2012 16:40:21
+% Last Modified by GUIDE v2.5 17-May-2012 16:09:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -137,26 +137,65 @@ function update_ui(handles)
 %
 % handles structure with handles and user data (see GUIDATA)
 
-%Plot the quotient skewnesses
 num_spec = num_spectra_in(handles.binned_spectra);
+set(handles.bin_count_text, 'String', sprintf(...
+    '%d of %d bins used to calculate normalization multiplier', ...
+    sum(handles.use_bin), length(handles.use_bin)));
+set(handles.spectra_count_text, 'String', sprintf(...
+    '%d of %d spectra used to calculate normalization multiplier', ...
+    sum(cellfun(@sum, handles.use_spectrum)), num_spec));
+
+
+% Calculate the quotient quartile skewnesses
 skewnesses = zeros(num_spec, 1);
-cur_spec = 1;
+collection_indices_for_spectrum = zeros(num_spec, 2); %collection_indices(i,:)=[j,k] means that binned_spectra{j}.Y(:,k) is the spectrum whose skewness is recored in skewnesses(i)
+first_empty = 1;
 for c=1:length(handles.binned_spectra)
     num_samples = handles.binned_spectra{c}.num_samples;
-    selected_quotients = handles.binned_spectra{c}.quotients(handles.use_bin, :);
-    skewnesses(cur_spec:(cur_spec+num_samples-1))= ...
-        quartile_skewness(selected_quotients);
-    cur_spec = cur_spec + num_samples;
+    selected_quotients = iqr_normed_quotients(handles.binned_spectra{c}.quotients(handles.use_bin, :));
+    last_filled = first_empty+num_samples-1;
+    skewnesses(first_empty:last_filled)= quartile_skewness(selected_quotients);
+    collection_indices_for_spectrum(first_empty:last_filled,1)=c*ones(1,num_samples);
+    collection_indices_for_spectrum(first_empty:last_filled,2)=(1:num_samples)';
+    first_empty = first_empty + num_samples;
 end
 
+% Calculate the bin_width
 if length(skewnesses) >= 10
-    num_bins = freedman_diaconis(skewnesses);
+    bin_width = freedman_diaconis(skewnesses);
 else
-    num_bins = 2*length(skewnesses);
+    num_bins  = 2*length(skewnesses);
+    if num_bins > 0
+        bin_width = (max(skewnesses)-min(skewnesses))*1.01/num_bins;
+    else
+        bin_width = 0.00001;
+    end
 end
-hist(handles.skewness_histogram_axes, skewnesses, num_bins);
+if bin_width <= 0 %Ensure that the next loop terminates
+    bin_width = 0.00001;
+end
+
+% Create the bin edges ensuring that the last bin does not end on the
+% maximum value (to avoid problems with a special case on histc)
+skew_bin_edges=min(skewnesses):bin_width:max(skewnesses);
+while skew_bin_edges(end) <= max(skewnesses)
+    skew_bin_edges = [skew_bin_edges, skew_bin_edges(end)+bin_width]; %#ok<AGROW>
+end
+skew_bin_centers = (skew_bin_edges(1:end-1)+skew_bin_edges(2:end))/2;
+
+% Count the number of spectra in each bin
+[skew_bin_counts, bin_for_spectrum]=histc(skewnesses, skew_bin_edges);
+hist_handle = bar(skew_bin_centers, skew_bin_counts(1:end-1)); 
 xlabel(handles.skewness_histogram_axes, 'Quartile Skewness of Quotient Distribution');
 ylabel(handles.skewness_histogram_axes, 'Number of Spectra');
+
+% Pass through clicks on the bars to the main axis
+set(hist_handle, 'HitTest', 'off');
+
+% Set the axis callback to respond to those clicks
+set(handles.skewness_histogram_axes, 'ButtonDownFcn', ...
+    @(hObject, eventdata) prob_quotient_norm_dialog('skewness_histogram_axes_ButtonDownFcn',...
+        hObject,eventdata,guidata(hObject), skew_bin_counts, skew_bin_edges, bin_for_spectrum, collection_indices_for_spectrum));
 
 % --- Outputs from this function are returned to the command line.
 function varargout = prob_quotient_norm_dialog_OutputFcn(hObject, eventdata, handles)  %#ok<INUSL>
@@ -252,3 +291,121 @@ else
     % The GUI is no longer waiting, just close it
     delete(hObject);
 end
+
+
+% --- Executes on mouse press over axes background.
+function skewness_histogram_axes_ButtonDownFcn(hObject, eventdata, handles, skew_bin_counts, skew_bin_edges, bin_for_spectrum, collection_indices_for_spectrum) %#ok<INUSL>
+% hObject    handle to skewness_histogram_axes (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%Get the last clicked point
+pt=get(hObject, 'CurrentPoint');
+x=pt(1,1); y=pt(1,2);
+
+% Calculate which bin horizontally
+bin_number = find(histc(x, skew_bin_edges));
+if isempty(bin_number)
+    %No bin was clicked on, do nothing
+    return;
+end
+if length(bin_number) > 1
+    warning('prob_quotient_norm_dialog:mult_bins_click','Multiple bins for click - taking the first.');
+    bin_number = bin_number(1);
+end
+
+% Calculate whether the click is inside the bin
+bin_height = skew_bin_counts(bin_number);
+if y > bin_height
+    %Clicked above the bin, do nothing
+    return;
+end
+
+% Get the coordinates of the spectra in that bin
+spectra_in_bin=bin_for_spectrum==bin_number;
+spectral_indices = collection_indices_for_spectrum(spectra_in_bin,:);
+browse_spectra_bins({handles.binned_spectra, handles.use_bin, handles.use_spectrum, spectral_indices});
+
+
+% --- Executes on button press in autoselect_bins_button.
+function autoselect_bins_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% Changes the figure1 guidata handles structure by removing undesirable bins from use_bins
+%
+% hObject    handle to autoselect_bins_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if sum(handles.use_bin) == 0
+    msgbox('Error: No bins are selected. This should never happen.','Error: no bins','error');
+    return;
+elseif sum(handles.use_bin) == 1
+    msgbox('Only one bin is selected. Cannot exclude any more.','Can''t exclude more','help');
+    return;
+end
+wait_h = waitbar(0,'Initializing auto-exclusion');
+%Ensure that use_bin is a row vector (if it is a vector -- which it ought to be)
+if size(handles.use_bin,2) > 1
+    handles.use_bin = handles.use_bin';
+end
+
+% Each pass through the loop recalculate the iqrs and remove the 
+% worst-offending outliers - first the extreme outliers, then if none are 
+% left, the inner fence outliers. Stop when there are no outliers or when
+% you can't remove the outliers without running out of bins.
+last_removed = 'First removal.';
+while true
+    already_removed = ~handles.use_bin;
+    wait_text = sprintf('%d/%d remaining. %s', ...
+        sum(handles.use_bin), length(handles.use_bin), last_removed);
+    waitbar(sum(~handles.use_bin)/length(handles.use_bin), wait_h, ...
+        wait_text);
+    
+    % Flatten the quotients field and scale the quotients to the iqr for their
+    % spectrum
+    scaled_quotients = zeros(length(handles.use_bin),num_spectra_in(handles.binned_spectra));
+    first_empty = 1;
+    for col = 1:length(handles.binned_spectra)
+        last_used = first_empty + handles.binned_spectra{col}.num_samples - 1;
+        scaled_quotients(:, first_empty:last_used) = quotient_outlyingness(handles.binned_spectra{col}.quotients, handles.use_bin);
+    end
+
+    % Select bins to remove as remove bins those over 3 iqr away from the
+    % median
+    last_removed = 'Removed > 3 iqr.';
+    to_remove = any(abs(scaled_quotients) > 3,2);
+    to_remove = to_remove & ~already_removed;
+
+    % Break out of the loop if we didn't remove anything this pass or if
+    % removing what is left would leave us with no bins. Otherwise update
+    % handles
+    if ~any(to_remove)
+        break
+    end
+    new_use_bin = handles.use_bin & ~to_remove;
+    if ~any(new_use_bin)
+        break;
+    else
+        handles.use_bin = new_use_bin;
+    end
+end
+
+% Get rid of the wait-box
+delete(wait_h);
+
+% Update the handles structure
+guidata(handles.figure1, handles);
+update_ui(handles);
+
+% --- Executes on button press in see_spectra_button.
+function see_spectra_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to see_spectra_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+disp_all = zeros(num_spectra_in(handles.binned_spectra),2);
+curidx = 1; 
+for c=1:length(handles.binned_spectra)
+    for s=1:handles.binned_spectra{c}.num_samples
+        disp_all(curidx,:)=[c,s]; 
+        curidx=curidx+1; 
+    end
+end
+browse_spectra_bins({handles.binned_spectra, handles.use_bin, handles.use_spectrum, disp_all});
