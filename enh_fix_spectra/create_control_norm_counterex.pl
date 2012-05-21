@@ -19,7 +19,8 @@ my $numSamples = $numTimePoints*$numAnimals;
 print 
     "Collection ID\t-200\n",
     "Type\tSpectraCollection\n",
-    "Processing log\tGenerated spectra\n";
+    "Description\tSpectra designed to cause problems for probabilistic quotient normalization when the reference spectrum is taken from the non-dosed animals only.",
+    "Processing log\tGenerated spectra synthetically.\n";
 
 print "Base sample ID";
 for my $id (1..$numSamples){ print "\t$id"; };
