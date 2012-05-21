@@ -64,6 +64,11 @@ public class Instance {
 		args={"pa:[0f,1f,2f,3f,4f]","pa:[3f,4f,3f,3f,0f]"},e={
 		"java/util/Arrays.equals(retval.x,[pa:0f,1f,2f,3f,4f])",
 		"java/util/Arrays.equals(retval.y,[pa:3f,4f,3f,3f,0f])"}
+	),
+	@Exemplar(name="i31204_01234",
+		args={"pa:[3f,1f,2f,0f,4f]","pa:[0f,1f,2f,3f,4f]"},e={
+		"java/util/Arrays.equals(retval.y,[pa:0f,1f,2f,3f,4f])",
+		"java/util/Arrays.equals(retval.x,[pa:3f,1f,2f,0f,4f])"}
 	)
 	})
 	Instance(float[] x, float[] y){

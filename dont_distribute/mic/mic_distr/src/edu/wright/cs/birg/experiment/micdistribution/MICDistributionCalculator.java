@@ -16,8 +16,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
-
+import java.util.TreeMap;
 import org.sureassert.uc.annotation.Exemplar;
 import org.sureassert.uc.annotation.Exemplars;
 import org.sureassert.uc.annotation.IgnoreTestCoverage;
@@ -59,15 +60,41 @@ import edu.wright.cs.birg.experiment.micdistribution.relations.VaryingSineRel;
  */
 public final class MICDistributionCalculator {
 	private static enum Command{
-		help, generate, geninstance, listrelations, listdeps, dbdump, dbmerge, dbtomat
+		help, generate, geninstance, roc, listrelations, listdeps, dbdump, dbmerge, dbtomat
 	}
 	
 	/**
-	 * Print the usage message followed by msg on its own line. If msg is null, it is not printed, 
-	 * but the usage is still printed.
-	 * @param msg The message to print after the usage message. not printed if null.
-	 * @param out The stream on which to print the message, can't be null
-	 */	
+	 * Print the usage message for a given command followed by an optional error
+	 * message <code>msg</code> on its own line.
+	 * 
+	 * @param msg
+	 *            The message to print or null
+	 * @param commandName
+	 *            The command for which to print the usage message (or null)
+	 * @param errOut
+	 *            The stream on which to print the usage and error message
+	 */
+	@IgnoreTestCoverage
+	private static void printUsage(String msg, String commandName,
+			PrintWriter errOut) {
+		help(new String[]{commandName}, errOut,errOut);
+		
+		if(msg != null){
+			errOut.println("");			
+			errOut.println(msg);
+		}
+	}
+
+	/**
+	 * Print the usage message followed by msg on its own line. If msg is null,
+	 * it is not printed, but the usage is still printed.
+	 * 
+	 * @param msg
+	 *            The message to print after the usage message. not printed if
+	 *            null.
+	 * @param out
+	 *            The stream on which to print the message, can't be null
+	 */
 	@IgnoreTestCoverage
 	public static void printUsage(String msg, PrintWriter out){
 		out.println("Usage: java -jar distr.jar command [command options] > output");
@@ -207,6 +234,28 @@ public final class MICDistributionCalculator {
 			txtOut.println("           0 for noiseless.");
 			txtOut.println("yStd       the standard deviation of the noise added to the y axis");
 			txtOut.println("           0 for noiseless.");
+			break;
+		case roc:
+			txtOut.println("roc nullHyp.ser altHyp.ser numSamples depMeasureID > roc_points.tsv");
+			txtOut.println("Prints a tab-separated value file of the points on the ");
+			txtOut.println("receiver-operator characteristic curve.");
+			txtOut.println("");
+			txtOut.println("The roc points are ordered pairs: the fraction of false positives then");
+			txtOut.println("the fraction true positives.");
+			txtOut.println("");
+			txtOut.println("A positive is when the classifier at a given threshold rejects ");
+			txtOut.println("the null hypothesis that the instance comes from sampling the relation ");
+			txtOut.println("in nullHyp.ser. ");
+			txtOut.println("");
+			txtOut.println("nullHyp.ser  The java-serialized databse holding the data from the ");
+			txtOut.println("             relation that forms the null hypothesis for the classifier.");
+			txtOut.println("             This will probably be the dependence measures of random ");
+			txtOut.println("             data.");
+			txtOut.println("altHyp.ser   Like nullHyp.ser but the data is from the alternative ");
+			txtOut.println("             hypothesis relation.");
+			txtOut.println("numSamples   Only instances with numSamples samples are considered");
+			txtOut.println("depMeasureID The threshold is applied to the dependence generated");
+			txtOut.println("             by the dependence measure with this id");
 			break;
 		}
 	}
@@ -547,9 +596,229 @@ public final class MICDistributionCalculator {
 		case dbtomat:
 			dbtomat(dbIn, errOut, dbOut);
 			return;
+		case roc:
+			roc(rest, txtOut, errOut);
+			break;
 		}
 	}
 	
+	/**
+	 * Return a new database object loaded from the file named
+	 * <code>filename</code>. Any errors in loading the database are fatal and
+	 * printed to the user.
+	 * 
+	 * @param filename
+	 *            The name of a file containing the serialized form of the
+	 *            database to load
+	 * @param errOut
+	 *            The stream on which error messages are printed
+	 * @return a new database object loaded from the file named
+	 *         <code>filename</code>
+	 */
+	@IgnoreTestCoverage	
+	private static Database loadDB(String filename, PrintWriter errOut) {
+		FileInputStream fIn;
+		try{
+			fIn = new FileInputStream(filename);
+		} catch (FileNotFoundException e1) {
+			errOut.println("Error: could not find the database file \""+filename+"\"");
+			System.exit(-1); return null;
+		}
+
+		ObjectInputStream obIn;
+		try {	
+			obIn = new ObjectInputStream(fIn);
+		} catch (IOException e) {
+			errOut.println("Error reading from the database file \""+filename+"\". System message: "+e.getLocalizedMessage());
+			System.exit(-1); return null;
+		}
+
+		try {
+			return (Database)obIn.readObject();
+		} catch (IOException e) {
+			errOut.println("Error: could not read database from input; io exception: "+e.getLocalizedMessage());
+			System.exit(-1); return null;
+		} catch (ClassNotFoundException e) {
+			errOut.println("Error: could not read database from input; class not found exception: "+e.getLocalizedMessage());
+			System.exit(-1); return null;
+		}
+	}
+	
+	/**
+	 * Counts of the number of dependencies above a threshold
+	 * in the null distribution and the alternative distribution
+	 * 
+	 * @author Eric Moyer
+	 * 
+	 */
+	private static final class ThresholdCount{
+		/**
+		 * The number of data points in the null distribution that have
+		 * dependence values greater than this threshold
+		 */
+		public int nullCount;
+		/**
+		 * The number of data points in the alternative distribution that have
+		 * dependence values greater than this threshold
+		 */
+		public int altCount;
+
+		/**
+		 * Create a ThresholdCount with zero counts
+		 */
+		@Exemplar(expect = {"=(retval.nullCount,0)", "=(retval.altCount,0)" })
+		ThresholdCount() {
+			nullCount = 0;
+			altCount = 0;
+		}
+
+		@Override
+		public String toString() {
+			return "ThresholdCount(n:" + nullCount + " a:"
+					+ altCount + ")";
+		}
+	}
+	
+	/**
+	 * Run the <code>roc</code> command. Generate points on the
+	 * receiver-operator characteristic curve.
+	 * 
+	 * @param args
+	 *            The command line arguments to the <code>roc</code> command.
+	 *            Cannot be null.
+	 * @param txtOut
+	 *            The stream on which the roc points will be output. Cannot be
+	 *            null.
+	 * @param errOut
+	 *            The stream for error and status messages. Cannot be null.
+	 */
+	@SuppressWarnings("boxing")
+	@IgnoreTestCoverage
+	private static void roc(String[] args, PrintWriter txtOut,
+			PrintWriter errOut) {
+		if (args.length != 4) {
+			printUsage(
+					"Error: wrong number of arguments passed to roc command.",
+					"roc", errOut);
+		}
+
+		Database nullDB = loadDB(args[0], errOut);
+		Database altDB = loadDB(args[1], errOut);
+		int numSamples = toInt(args[2], 0, Integer.MAX_VALUE, errOut);
+		int depMethodID = toInt(args[3], minDependenceMethodID(), numSamples, errOut);
+		
+		//Set up as thresholds all dependence values that appear in either set.
+		TreeMap<Float, ThresholdCount> depCounts = new TreeMap<Float, ThresholdCount>();
+		LinkedList<Float> nullVals = new LinkedList<Float>();
+		for(DataPoint dp:nullDB){
+			if(dp.numSamples == numSamples && dp.dependenceMeasureID == depMethodID){
+				Float thresh = new Float(dp.dependence);
+				nullVals.add(thresh);
+				if(!depCounts.containsKey(thresh)){
+					depCounts.put(thresh, new ThresholdCount());
+				}
+			}
+		}
+		nullDB = null;
+		
+		LinkedList<Float> altVals = new LinkedList<Float>();
+		for(DataPoint dp:altDB){
+			if(dp.numSamples == numSamples && dp.dependenceMeasureID == depMethodID){
+				Float thresh = new Float(dp.dependence);
+				altVals.add(thresh);
+				if(!depCounts.containsKey(thresh)){
+					depCounts.put(thresh, new ThresholdCount());
+				}
+			}
+		}
+		altDB = null;
+		
+
+		//Add thresholds above the highest dependence and below the lowest.
+		depCounts.put(Math.nextUp(depCounts.lastKey()), new ThresholdCount());
+		depCounts.put(Math.nextAfter(depCounts.firstKey(), Float.NEGATIVE_INFINITY), new ThresholdCount());
+		
+		//Set the counts to the number of values with exactly that threshold
+		for(Float dep:nullVals){
+			++depCounts.get(dep).nullCount;
+		}
+		for(Float dep:altVals){
+			++depCounts.get(dep).altCount;
+		}
+		
+		//Update the counts so they reflect the values of lower and higher thresholds
+		int altLessEqual = 0;  //Number of alternate distribution entries that have a threshold less than or equal to this entry
+		int nullLessEqual = 0; //Number of null distribution entries that have a threshold less than or equal to this entry
+		for(Entry<Float, ThresholdCount> entry: depCounts.entrySet()){
+			altLessEqual += entry.getValue().altCount;
+			nullLessEqual += entry.getValue().nullCount;
+			entry.getValue().altCount = altVals.size() - altLessEqual;
+			entry.getValue().nullCount = nullVals.size() - nullLessEqual;
+		}
+
+		//Convert the total counts to double for more readable division operations later
+		double nullTotal = nullVals.size();
+		double altTotal = altVals.size();
+		
+		//Print the output
+		//txtOut.print("False Positives\tTrue Positives\n");
+		for(Entry<Float, ThresholdCount> entry: depCounts.entrySet()){
+			txtOut.printf("%.9f\t%.9f\n",
+					entry.getValue().nullCount/nullTotal, entry.getValue().altCount/altTotal);
+		}
+	}
+
+	/**
+	 * Return the minimum id value used by any dependence method.
+	 * 
+	 * @return the minimum id value used by any dependence method.
+	 */
+	private static int minDependenceMethodID() {
+		List<DependenceMeasure> deps = allDepsButMIC();
+		int min = Integer.MAX_VALUE;
+		for (DependenceMeasure dep : deps) {
+			if (min > dep.getID()) {
+				min = dep.getID();
+			}
+		}
+		return min;
+	}
+
+	/**
+	 * Convert <code>string</code> to an integer. Prints error messages and
+	 * exits if <code>string</code> is not an integer or if it does not lie
+	 * between <code>minValue</code> and <code>maxValue</code>
+	 * 
+	 * @param string
+	 *            The string to convert. Cannot be null.
+	 * @param minValue
+	 *            The minimum acceptable value for the return.
+	 * @param maxValue
+	 *            The maximum acceptable value for the return.
+	 * @param errOut
+	 *            The stream on which to print error messages.
+	 * @return <code>string</code> as an integer
+	 */
+	@IgnoreTestCoverage
+	private static int toInt(String string, int minValue, int maxValue,
+			PrintWriter errOut) {
+		try{
+			int retval = Integer.parseInt(string);
+			if(retval < minValue){
+				errOut.println("Error: "+string+" cannot be less than "+minValue);				
+				System.exit(-1); return 0;
+			}
+			if(retval > maxValue){
+				errOut.println("Error: "+string+" cannot be greater than "+maxValue);				
+				System.exit(-1); return 0;
+			}
+			return retval;
+		}catch (NumberFormatException e){
+			errOut.println("Error: \""+string+"\" is not an integer.");
+			System.exit(-1); return 0;
+		}
+	}
+
 	/**
 	 * Run the <code>geninstance</code> command. Generate an instance and print
 	 * it to stdout as a tab-separated value file.
@@ -558,9 +827,9 @@ public final class MICDistributionCalculator {
 	 *            The command line arguments to the <code>geninstance</code>
 	 *            command. Cannot be null.
 	 * @param txtOut
-	 *            The stream on which the instance will be output
+	 *            The stream on which the instance will be output.  Cannot be null.
 	 * @param errOut
-	 *            The stream for error and status messages.
+	 *            The stream for error and status messages. Cannot be null.
 	 */
 	@IgnoreTestCoverage
 	private static void geninstance(String[] args, PrintWriter txtOut,
