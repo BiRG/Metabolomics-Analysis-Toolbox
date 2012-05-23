@@ -44,7 +44,26 @@
       <tr class="ra">
         <td class="id">collections</td>
 
-        <td>cell array of spectral collections</td>
+        <td>
+	  <p>Cell array of spectral collections</p>
+
+	  <p>There are several fields that hold temporary values until
+	  the user finalizes a change.
+	    <ul>
+	      <li><code>Y_fixed</code> = y values of the changed
+	      spectrum</li>
+	      <li><code>Y_baseline</code> = y values of the baseline
+	      (if there is one)</li>
+	      <li><code>original_multiplied_by_fixed</code> = the
+	      values for the
+	      <code>original_multiplied_by</code> field in the fixed
+	      spectrum</li>
+	      <li><code>handles</code> = handles for gui objects
+	      created during the <code>normalize_to_reference</code>
+	      routine.</li>
+	    </ul>
+	  </p>
+	</td>
       </tr>
 
       <tr>
@@ -107,7 +126,9 @@
       <tr>
         <td class="id">temp_suffix</td>
 
-        <td>Unknown. Used in <code>fix_click_menu.m</code> ,
+        <td>The suffix added to the end of the individual collection
+        filenames when save_collection is called. Used
+        in <code>fix_click_menu.m</code> ,
         <code>normalize_to_reference.m</code> , <code>zero_regions.m</code> ,
         and <code>fix_baseline.m</code></td>
       </tr>
@@ -223,7 +244,7 @@
         prob_quotient_norm_dialog. Has an extra field quotients(i,j)
         that holds the most recently calculated value of
         ref_spectrum.Y(i)/Y(i,j) where ref_spectrum is the
-        ref_spectrum field of the handles object.</td>
+        ref_spectrum field of handles.</td>
       </tr>
 
       <tr>
@@ -291,73 +312,6 @@
 	  this must be maintained separately from the string values of
 	  field_value_popup to allow for correct matching.
 	</td>
-      </tr>
-
-    </tbody>
-  </table>
-
-  <h3>Spectrum browser window</h3>
-
-  <p>This section provides a list of all of the in-use keys for the
-  handles object passed to every event handler in the spectrum browser
-  window of fix_spectra.</p>
-
-  <table class="identifier_defs">
-    <tbody>
-      <tr>
-        <th>Identifier</th>
-
-        <th>Meaning</th>
-      </tr>
-
-      <tr class="ra">
-        <td class="id">spectra</td>
-
-        <td>struct array of the binned spectra passed to
-        prob_quotient_norm_dialog. Has an extra field quotients(i,j)
-        that holds the most recently calculated value of
-        ref_spectrum.Y(i)/Y(i,j) where ref_spectrum is the
-        ref_spectrum field of the handles object.</td>
-      </tr>
-
-      <tr>
-        <td class="id">use_spectrum</td>
-
-        <td>array of logical. use_spectrum(i) is true iff the spectrum
-        at index i is used in creating the reference spectrum</td>
-      </tr>
-
-      <tr class="ra">
-        <td class="id">use_bin</td>
-
-        <td>array of logical. use_bin(i) is true iff the bin at index
-        i is used in calculating quotients for determining the
-        normalization coefficient</td>
-      </tr>
-
-      <tr>
-        <td class="id">display_indices</td>
-
-        <td>display_indices(i,:) is a pair (c,s) meaning that
-	spectrum{c}.Y(:,s) is the i'th spectrum to display in the
-	browser</td>
-      </tr>
-
-      <tr class="ra">
-        <td class="id">display_index</td>
-
-        <td>integer index into the array display_indices indicating
-        the current spectrum to display.
-	</td>
-      </tr>
-
-      <tr>
-        <td class="id">unif_dip</td>
-
-        <td>unif_dip{i} is a cell array for which each entry is a
-        Hartigan dip statistic for a set of i samples from a uniform
-        distribution. This is used in plotting the multimodality
-        diagnostic.</td>
       </tr>
 
     </tbody>

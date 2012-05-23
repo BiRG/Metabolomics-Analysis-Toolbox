@@ -44,7 +44,7 @@ str = {'Get collection(s)','Load collections', ...
     '','Set reference','Normalize to reference','Zero regions', 'Sum normalize','Normalize to weight',...     
     '','Save regions','Finalize','Save collections', ...
        'Post collections','Save figures','Save images', ...
-    '', 'Prob Quot Norm''n', ...
+    '', 'Prob Quot Norm''n', 'Hist Norm''n', ...
     '', 'Calc Area', 'Calc Norm Constant',...
 	'','Set zoom x distance','Set zoom y distance'};
 
@@ -286,6 +286,37 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);
     plot_all;
+elseif strcmp(str{s}, 'Hist Norm''n')
+    collections = getappdata(gcf,'collections');
+    
+    % Validate collections
+    if isempty(collections); return; end
+    
+    if ~only_one_x_in(collections)
+        msgbox(['The spectral collections use different sampling ' ...
+            'locations. Cannot normalize. Consider binning first.'], ...
+            'Error: different sample locations', 'Error');
+        return;
+    end
+    
+    % Get the parameters
+    answer = inputdlg({...
+        'Points to use for baseline noise estimate', ...
+        'Standard deviations from baseline mean to call noise.', ...
+        'Number of bins for the histogram'}, ...
+        'Enter Histogram Normalization Parameters', 1, ...
+        {'35','60','5'});
+        
+    baseline_pts = str2double(answer{1});
+    num_bins = str2double(answer{2});
+    std_dev = str2double(answer{3});
+    
+    % Do the Normalization
+    collections = histogram_normalize(collections, baseline_pts, std_dev, num_bins, true);
+
+    % set the result as the current app data
+    setappdata(gcf, 'collections', collections);
+    plot_all;    
 elseif strcmp(str{s},'Calc Area')
     area = calc_area;
     msgbox(['The area under the spectrum is: ',sprintf('%g',area)]);

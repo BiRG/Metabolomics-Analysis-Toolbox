@@ -63,10 +63,7 @@ end
 med_spec.x = collections{1}.x;
 
 % Count the number of used spectra
-num_used = 0;
-for c=1:length(collections)
-    num_used = num_used + sum(use_spectrum{c});
-end
+num_used = sum(cellfun(@sum, use_spectrum));
 med_spec.Y = zeros(length(med_spec.x), num_used);
 
 % Fill med_spec.Y with copies of all used spectra
