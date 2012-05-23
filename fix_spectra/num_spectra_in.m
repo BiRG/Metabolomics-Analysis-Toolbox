@@ -27,7 +27,7 @@ function num_spectra = num_spectra_in( collections )
 % Authors
 % -------------------------------------------------------------------------
 %
-% Eric Moyer (May 2012)
+% Eric Moyer (May 2012) eric_moyer@yahoo.com
 
 if ~iscell( collections )
     error('num_spectra_in:not_cell','The collections object passed to num_spectra_in must be a cell array');
