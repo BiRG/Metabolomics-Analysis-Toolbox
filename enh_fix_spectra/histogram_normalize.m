@@ -209,13 +209,21 @@ for cur = 1:length(y)
 end
 
 % Scale the spectra
+collections = ensure_original_multiplied_by_field(collections);
 cur = 1;
 for c=1:length(collections)
     if use_waitbar
         waitbar(0.95+0.05*(c-1)/length(collections), wait_h, 'Scaling spectra'); 
     end
+    collections{c}.processing_log = sprintf([...
+        '%s  Histogram normalized with %d bins using the first ' ...
+        '%d points for a noise estimate and excluding points with an ' ...
+        'intensity less than %g noise standard deviations above 0.'], ...
+        collections{c}.processing_log, num_bins, baseline_pts, n_std_dev);
     for s=1:collections{c}.num_samples
         collections{c}.Y(:,s)=multipliers(cur)*collections{c}.Y(:,s);
+        collections{c}.original_multiplied_by(s)=...
+            multipliers(cur)*collections{c}.original_multiplied_by(s);
         cur = cur + 1;
     end
 end
