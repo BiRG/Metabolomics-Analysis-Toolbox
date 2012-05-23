@@ -169,21 +169,39 @@ elseif strcmp(str{s},'Set reference')
 elseif strcmp(str{s},'Finalize')
     collections = getappdata(gcf,'collections');
     add_processing_log = getappdata(gcf,'add_processing_log');
+    
+    if ~iscell(collections)
+        msgbox('Nothing to finalize','Nothing to finalize');
+        return;
+    end
+    
+    has_fixed_data = any(cellfun(@(in) (isfield(in,'Y_fixed') && any(in.Y_fixed(:) > 0)), collections));
+    if ~has_fixed_data
+        msgbox('Nothing to finalize','Nothing to finalize');
+        return;
+    end
+    
     % Finalize
-    for c = 1:length(collections)
-        collections{c}.Y = collections{c}.Y_fixed;
-        collections{c}.Y_fixed = collections{c}.Y_fixed*0;
-        collections{c}.Y_baseline = collections{c}.Y_baseline*0;
-        try
-            for s = 1:collections{c}.num_samples
-                delete(collections{c}.handles{s});
+    if isappdata(gcf, 'fixed_collections')
+        collections = getappdata(gcf, 'fixed_collections');
+        rmappdata(gcf, 'fixed_collections');
+    else
+        for c = 1:length(collections)
+            collections{c}.Y = collections{c}.Y_fixed;
+            collections{c}.Y_fixed = collections{c}.Y_fixed*0;
+            collections{c}.Y_baseline = collections{c}.Y_baseline*0;
+            try
+                for s = 1:collections{c}.num_samples
+                    delete(collections{c}.handles{s});
+                end
+            catch unused %#ok<NASGU>
             end
-        catch unused %#ok<NASGU>
-        end
-        if ~isempty(add_processing_log)
-            collections{c}.processing_log = [collections{c}.processing_log,' ',add_processing_log];
+            if ~isempty(add_processing_log)
+                collections{c}.processing_log = [collections{c}.processing_log,' ',add_processing_log];
+            end
         end
     end
+    
     setappdata(gcf,'collections',collections);
     setappdata(gcf,'add_processing_log',[]);
     suffix = getappdata(gcf,'suffix');
@@ -278,13 +296,19 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     proc_log = retvals{4};
     
     % perform the normalization
-    collections = multiply_collections(collections, multipliers);
+    multiplied = multiply_collections(collections, multipliers);
+    multiplied = append_to_processing_log(multiplied, proc_log);
     
-    % update the processing log
-    collections = append_to_processing_log(collections, proc_log);
+    % Set the y_fixed for proper display and enabling of finalization
+    for c = 1:length(collections)
+        collections{c}.Y_fixed = multiplied{c}.Y;
+    end
     
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);
+    setappdata(gcf, 'fixed_collections', multiplied);
+    setappdata(gcf, 'add_processing_log', 'Prob. quot. normalized'); % This is just the legend
+    setappdata(gcf,'temp_suffix', '_pq_normalized');
     plot_all;
 elseif strcmp(str{s}, 'Hist Norm''n')
     collections = getappdata(gcf,'collections');
@@ -312,11 +336,19 @@ elseif strcmp(str{s}, 'Hist Norm''n')
     std_dev = str2double(answer{3});
     
     % Do the Normalization
-    collections = histogram_normalize(collections, baseline_pts, std_dev, num_bins, true);
+    normed = histogram_normalize(collections, baseline_pts, std_dev, num_bins, true);
+    
+    % Set the y_fixed for proper display and enabling of finalization
+    for c = 1:length(collections)
+        collections{c}.Y_fixed = normed{c}.Y;
+    end
 
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);
-    plot_all;    
+    setappdata(gcf, 'fixed_collections', normed);
+    setappdata(gcf, 'add_processing_log', 'Histogram normalized'); % This is just the legend
+    setappdata(gcf,'temp_suffix', '_histogram_normalized');
+    plot_all;
 elseif strcmp(str{s},'Calc Area')
     area = calc_area;
     msgbox(['The area under the spectrum is: ',sprintf('%g',area)]);
