@@ -44,7 +44,26 @@
       <tr class="ra">
         <td class="id">collections</td>
 
-        <td>cell array of spectral collections</td>
+        <td>
+	  <p>Cell array of spectral collections</p>
+
+	  <p>There are several fields that hold temporary values until
+	  the user finalizes a change.
+	    <ul>
+	      <li><code>Y_fixed</code> = y values of the changed
+	      spectrum</li>
+	      <li><code>Y_baseline</code> = y values of the baseline
+	      (if there is one)</li>
+	      <li><code>original_multiplied_by_fixed</code> = the
+	      values for the
+	      <code>original_multiplied_by</code> field in the fixed
+	      spectrum</li>
+	      <li><code>handles</code> = handles for gui objects
+	      created during the <code>normalize_to_reference</code>
+	      routine.</li>
+	    </ul>
+	  </p>
+	</td>
       </tr>
 
       <tr>
@@ -107,7 +126,9 @@
       <tr>
         <td class="id">temp_suffix</td>
 
-        <td>Unknown. Used in <code>fix_click_menu.m</code> ,
+        <td>The suffix added to the end of the individual collection
+        filenames when save_collection is called. Used
+        in <code>fix_click_menu.m</code> ,
         <code>normalize_to_reference.m</code> , <code>zero_regions.m</code> ,
         and <code>fix_baseline.m</code></td>
       </tr>
