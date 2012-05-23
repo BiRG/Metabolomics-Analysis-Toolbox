@@ -93,8 +93,47 @@ function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y)
     %
     % The search looks at all values between (min_y/max_y) and
     % (max_y/min_y). 0 < min_y <= max_y
+    
+    % Initialize the search bounds to (min_y/max_y) and (max_y/min_y).
+    low_b = min_y/max_y;
+    up_b  = max_y/min_y;
+    
+    % Now, tighten the search bounds because fminbnd does not do well
+    % searching for optima when there are large flat spaces in the upper
+    % part of the search range (probably in the lower part as well).
+    
+    % Make a list of the errors at multipliers low_b, low_b*2,
+    % low_b * 4 ... first_element_in_this_series_greater_than_up_b
+    num_steps = ceil(log2(up_b/low_b));
+    bound_mults = low_b.*(2.^(0:num_steps));
+    errs = arrayfun(@(m) err(m, values, y_bins, ref_histogram), ...
+        bound_mults);
+    
+    % Get the indices of the two elements that bound the first interval of minimum error
+    min_err_idx = find(errs == min(errs),1,'first');
+    low_b_idx = find(errs(1:min_err_idx-1) > errs(min_err_idx),1,'last');
+    if isempty(low_b_idx)
+        % All previous elements equal to the minimum - or there were no
+        % previous elements
+        low_b_idx = 1;
+    end
+    up_b_idx = find(errs(min_err_idx+1:end) > errs(min_err_idx),1,'first');
+    if isempty(up_b_idx)
+        up_b_idx = length(errs);
+    else
+        up_b_idx = up_b_idx + min_err_idx;
+    end
+    
+    % Make those two elements the new search bounds if they are tighter
+    if bound_mults(up_b_idx) < up_b
+        up_b = bound_mults(up_b_idx);
+    end
+    if bound_mults(low_b_idx) > low_b
+        low_b = bound_mults(low_b_idx);
+    end
+    
     mult = fminbnd(@(mult) err(mult, values, y_bins, ref_histogram), ...
-        min_y/max_y, max_y/min_y);
+       low_b , up_b);
 end
 
 if baseline_pts < 2
