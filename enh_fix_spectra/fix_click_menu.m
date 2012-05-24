@@ -133,7 +133,24 @@ elseif strcmp(str{s},'Normalize to reference')
 elseif strcmp(str{s},'Normalize to weight')
      normalize_to_weight;
 elseif strcmp(str{s},'Sum normalize')
-     sum_normalize;    
+    % Prompt for the sum
+    prompt={'Sum:'};
+    name='Normalize to what sum';
+    numlines=1;
+    defaultanswer={'1000'};
+    answer=inputdlg(prompt,name,numlines,defaultanswer);
+    target_sum = str2double(answer{1});
+
+    % Get the collections
+    collections = getappdata(gcf,'collections');
+    
+    % Sum-normalize and set the application state variables
+    fixed_collections = sum_normalize(collections, target_sum);
+    
+    setappdata(gcf, 'fixed_collections', fixed_collections);
+    setappdata(gcf, 'collections', copy_y_to_yfixed(fixed_collections, collections));
+    setappdata(gcf, 'temp_suffix','_sum_normalize');
+    plot_all;
 elseif strcmp(str{s},'Zero regions')
     zero_regions;
 elseif strcmp(str{s},'Set reference')
