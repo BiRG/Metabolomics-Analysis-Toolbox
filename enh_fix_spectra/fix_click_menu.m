@@ -133,7 +133,25 @@ elseif strcmp(str{s},'Normalize to reference')
 elseif strcmp(str{s},'Normalize to weight')
      normalize_to_weight;
 elseif strcmp(str{s},'Sum normalize')
-     sum_normalize;    
+    % Prompt for the sum
+    prompt={'Sum:'};
+    name='Normalize to what sum';
+    numlines=1;
+    defaultanswer={'1000'};
+    answer=inputdlg(prompt,name,numlines,defaultanswer);
+    target_sum = str2double(answer{1});
+
+    % Get the collections
+    collections = getappdata(gcf,'collections');
+    
+    % Sum-normalize and set the application state variables
+    fixed_collections = sum_normalize(collections, target_sum);
+    
+    setappdata(gcf, 'fixed_collections', fixed_collections);
+    setappdata(gcf, 'collections', copy_y_to_y_fixed(fixed_collections, collections));
+    setappdata(gcf, 'add_processing_log', 'Sum normalized'); % This is just the legend
+    setappdata(gcf, 'temp_suffix','_sum_normalize');
+    plot_all;
 elseif strcmp(str{s},'Zero regions')
     zero_regions;
 elseif strcmp(str{s},'Set reference')
@@ -188,20 +206,22 @@ elseif strcmp(str{s},'Finalize')
     else
         for c = 1:length(collections)
             collections{c}.Y = collections{c}.Y_fixed;
-            collections{c}.Y_fixed = collections{c}.Y_fixed*0;
-            collections{c}.Y_baseline = collections{c}.Y_baseline*0;
-            try
-                for s = 1:collections{c}.num_samples
-                    delete(collections{c}.handles{s});
-                end
-            catch unused %#ok<NASGU>
-            end
             if ~isempty(add_processing_log)
                 collections{c}.processing_log = [collections{c}.processing_log,' ',add_processing_log];
             end
         end
     end
-    
+    for c = 1:length(collections)
+        collections{c}.Y_fixed = collections{c}.Y_fixed*0;
+        collections{c}.Y_baseline = collections{c}.Y_baseline*0;
+        try
+            for s = 1:collections{c}.num_samples
+                delete(collections{c}.handles{s});
+            end
+        catch unused %#ok<NASGU>
+        end
+    end
+
     setappdata(gcf,'collections',collections);
     setappdata(gcf,'add_processing_log',[]);
     suffix = getappdata(gcf,'suffix');
@@ -278,7 +298,6 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     if isempty(collections); return; end
     
     % Prepare the data for quotient normalization
-    %TODO: add a dialog to ask for the widths
     binned = bin_collections(collections, 0.04, true);
     
     regions = get_regions;
@@ -300,9 +319,7 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     multiplied = append_to_processing_log(multiplied, proc_log);
     
     % Set the y_fixed for proper display and enabling of finalization
-    for c = 1:length(collections)
-        collections{c}.Y_fixed = multiplied{c}.Y;
-    end
+    collections = copy_y_to_y_fixed(multiplied, collections);
     
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);
@@ -322,14 +339,19 @@ elseif strcmp(str{s}, 'Hist Norm''n')
             'Error: different sample locations', 'Error');
         return;
     end
-    
+        
     % Get the parameters
     answer = inputdlg({...
-        'Points to use for baseline noise estimate', ...
-        'Standard deviations from baseline mean to call noise.', ...
-        'Number of bins for the histogram'}, ...
+            'Points to use for baseline noise estimate', ...
+            'Number of bins for the histogram', ...
+            'Standard deviations from baseline mean to call noise.', ...
+        }, ...
         'Enter Histogram Normalization Parameters', 1, ...
         {'35','60','5'});
+    
+	if isempty(answer)
+        return;
+	end
         
     baseline_pts = str2double(answer{1});
     num_bins = str2double(answer{2});
@@ -339,9 +361,7 @@ elseif strcmp(str{s}, 'Hist Norm''n')
     normed = histogram_normalize(collections, baseline_pts, std_dev, num_bins, true);
     
     % Set the y_fixed for proper display and enabling of finalization
-    for c = 1:length(collections)
-        collections{c}.Y_fixed = normed{c}.Y;
-    end
+    collections = copy_y_to_y_fixed(normed, collections);
 
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);

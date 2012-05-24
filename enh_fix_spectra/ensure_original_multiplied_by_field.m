@@ -38,7 +38,13 @@ function collections = ensure_original_multiplied_by_field( collections )
 
 for c=1:length(collections)
     if ~isfield(collections{c},'original_multiplied_by')
-        collections{c}.original_multiplied_by = ones(1,collections{c}.num_samples);
+        collections{c}.original_multiplied_by = ones(1,size(collections{c}.Y,2));
+        if ~isfield(collections{c}, 'input_names')
+            collections{c}.input_names = cell(0);
+        end
+        if ~isfield(collections{c}, 'formatted_input_names')
+            collections{c}.formatted_input_names = cell(0);
+        end
         collections{c}.input_names{end+1}='Original multiplied by';
         collections{c}.formatted_input_names{end+1}='original_multiplied_by';
     end
