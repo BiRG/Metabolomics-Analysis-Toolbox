@@ -2,6 +2,16 @@ function normalize_to_reference
 % Normalizes by dividing by the area under peaks selected by the user
 %
 % This is useful if there is an internal standard etc.
+%
+% -------------------------------------------------------------------------
+% Authors
+% -------------------------------------------------------------------------
+%
+% Paul Anderson (before Summer 2011) pauleanderson@gmail.com
+%
+% Eric Moyer (May 2012) eric_moyer@yahoo.com
+%
+
 prompt={'Left:','Right:','Reference Peaks:','Non-reference Peaks:'};
 name='Normalize to reference';
 numlines=1;
