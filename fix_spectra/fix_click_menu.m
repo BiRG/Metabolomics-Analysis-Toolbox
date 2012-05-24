@@ -148,7 +148,8 @@ elseif strcmp(str{s},'Sum normalize')
     fixed_collections = sum_normalize(collections, target_sum);
     
     setappdata(gcf, 'fixed_collections', fixed_collections);
-    setappdata(gcf, 'collections', copy_y_to_yfixed(fixed_collections, collections));
+    setappdata(gcf, 'collections', copy_y_to_y_fixed(fixed_collections, collections));
+    setappdata(gcf, 'add_processing_log', 'Sum normalized'); % This is just the legend
     setappdata(gcf, 'temp_suffix','_sum_normalize');
     plot_all;
 elseif strcmp(str{s},'Zero regions')
@@ -295,7 +296,6 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     if isempty(collections); return; end
     
     % Prepare the data for quotient normalization
-    %TODO: add a dialog to ask for the widths
     binned = bin_collections(collections, 0.04, true);
     
     regions = get_regions;
@@ -317,9 +317,7 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     multiplied = append_to_processing_log(multiplied, proc_log);
     
     % Set the y_fixed for proper display and enabling of finalization
-    for c = 1:length(collections)
-        collections{c}.Y_fixed = multiplied{c}.Y;
-    end
+    copy_y_to_y_fixed(multiplied, collections);
     
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);
@@ -356,9 +354,7 @@ elseif strcmp(str{s}, 'Hist Norm''n')
     normed = histogram_normalize(collections, baseline_pts, std_dev, num_bins, true);
     
     % Set the y_fixed for proper display and enabling of finalization
-    for c = 1:length(collections)
-        collections{c}.Y_fixed = normed{c}.Y;
-    end
+    collections = copy_y_to_y_fixed(normed, collections);
 
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);
