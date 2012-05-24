@@ -317,7 +317,7 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     multiplied = append_to_processing_log(multiplied, proc_log);
     
     % Set the y_fixed for proper display and enabling of finalization
-    copy_y_to_y_fixed(multiplied, collections);
+    collections = copy_y_to_y_fixed(multiplied, collections);
     
     % set the result as the current app data
     setappdata(gcf, 'collections', collections);
