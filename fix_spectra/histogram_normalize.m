@@ -186,14 +186,14 @@ end
 % autocorrelation trick, for example) but we are only doing multiplications
 % each time through the main optimization loop - and multiplications are
 % faster than additions for floating point.
-min_y = min(min(cellfun(@min, y)),min(ref_values));
-max_y = max(max(cellfun(@max, y)),max(ref_values));
+min_y = min(ref_values); % Calculate the bounds of the histogram based on the reference spectrum
+max_y = max(ref_values);
 assert(min_y > 0);
 assert(max_y >= min_y);
 min_z = log2(min_y+1); %z values are those transformed into logarithmic space
 max_z = log2(max_y+1); 
 z_bins = linspace(min_z, max_z, num_bins+1);
-y_bins = (2.^z_bins)+1;
+y_bins = (2.^z_bins)-1;
 y_bins(1) = -inf;
 y_bins(end) = inf;
 
