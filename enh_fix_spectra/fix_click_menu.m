@@ -206,20 +206,22 @@ elseif strcmp(str{s},'Finalize')
     else
         for c = 1:length(collections)
             collections{c}.Y = collections{c}.Y_fixed;
-            collections{c}.Y_fixed = collections{c}.Y_fixed*0;
-            collections{c}.Y_baseline = collections{c}.Y_baseline*0;
-            try
-                for s = 1:collections{c}.num_samples
-                    delete(collections{c}.handles{s});
-                end
-            catch unused %#ok<NASGU>
-            end
             if ~isempty(add_processing_log)
                 collections{c}.processing_log = [collections{c}.processing_log,' ',add_processing_log];
             end
         end
     end
-    
+    for c = 1:length(collections)
+        collections{c}.Y_fixed = collections{c}.Y_fixed*0;
+        collections{c}.Y_baseline = collections{c}.Y_baseline*0;
+        try
+            for s = 1:collections{c}.num_samples
+                delete(collections{c}.handles{s});
+            end
+        catch unused %#ok<NASGU>
+        end
+    end
+
     setappdata(gcf,'collections',collections);
     setappdata(gcf,'add_processing_log',[]);
     suffix = getappdata(gcf,'suffix');
