@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     32089,        753]
-NotebookOptionsPosition[     30093,        694]
-NotebookOutlinePosition[     30431,        709]
-CellTagsIndexPosition[     30388,        706]
+NotebookDataLength[     32330,        758]
+NotebookOptionsPosition[     30293,        698]
+NotebookOutlinePosition[     30631,        713]
+CellTagsIndexPosition[     30588,        710]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -44,11 +44,12 @@ fields as well) are typically explained by the procedures that you go through \
 to perform them and justified by arguments about the \"real concentration.\" \
 Another way to look at normalization methods is to examine them as geometric \
 operations on a vector space. This gives a different understanding of what is \
-occurring, which can give the practictioner a deeper intuition about \
-tradeoffs he makes when he says, \"sum-normalize the data.\"\
+occurring, which can give the practitioner a deeper intuition about \
+trade-offs he makes when he says, \"sum-normalize the data.\"\
 \>", "Text",
  CellChangeTimes->{{3.547139862175673*^9, 3.547139961290236*^9}, {
-  3.547140021256085*^9, 3.547140090613758*^9}}],
+  3.547140021256085*^9, 3.547140090613758*^9}, {3.5471503141743526`*^9, 
+  3.547150319533565*^9}}],
 
 Cell["\<\
 I look at each spectrum generated as a point in a vector space, one variable \
@@ -79,14 +80,14 @@ Cell["\<\
 If the spectra are interpreted as points in an n-dimensional vector space, \
 this projects all points onto (a set of) n-1 dimensional subspaces \
 (hyperplanes) along a line between the original point and the origin. In 3 \
-dimensions, it projects points onto 8 planes forming an octohedron about the \
+dimensions, it projects points onto 8 planes forming an octahedron about the \
 origin. In 2 dimensions, all points are projected onto a square rotated  \
 90-degrees. The size of these figures is determined by the constant.\
 \>", "Text",
  CellChangeTimes->{{3.547140681651354*^9, 3.5471406959475613`*^9}, {
-  3.547140770921924*^9, 3.547140855582036*^9}, {3.547140892956802*^9, 
-  3.547140993727613*^9}, {3.547141063390345*^9, 3.547141080699884*^9}, {
-  3.547141114226123*^9, 3.547141132073366*^9}}],
+   3.547140770921924*^9, 3.547140855582036*^9}, {3.547140892956802*^9, 
+   3.547140993727613*^9}, {3.547141063390345*^9, 3.547141080699884*^9}, {
+   3.547141114226123*^9, 3.547141132073366*^9}, 3.547150325936315*^9}],
 
 Cell["How can we see this?", "Text",
  CellChangeTimes->{{3.547141139476688*^9, 3.5471411457860193`*^9}}],
@@ -689,7 +690,10 @@ Cell[BoxData[
  CellGroupingRules->{GroupTogetherGrouping, 10000.},
  CellChangeTimes->{3.547149407009749*^9, 3.547149570403864*^9}]
 }, {6}]]
-}, Open  ]]
+}, Open  ]],
+
+Cell["Probabilistic Quotient Normalization", "Section",
+ CellChangeTimes->{{3.547150113963293*^9, 3.547150123581194*^9}}]
 }, Open  ]]
 },
 WindowSize->{640, 655},
@@ -715,45 +719,46 @@ Cell[872, 29, 99, 1, 32, "Subsubtitle"],
 Cell[974, 32, 108, 1, 32, "Subsubtitle"],
 Cell[CellGroupData[{
 Cell[1107, 37, 99, 1, 73, "Section"],
-Cell[1209, 40, 668, 10, 187, "Text"],
-Cell[1880, 52, 551, 9, 165, "Text"]
+Cell[1209, 40, 719, 11, 187, "Text"],
+Cell[1931, 53, 551, 9, 165, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2468, 66, 101, 1, 73, "Section"],
-Cell[2572, 69, 295, 6, 77, "Text"],
-Cell[2870, 77, 730, 11, 143, "Text"],
-Cell[3603, 90, 104, 1, 33, "Text"],
-Cell[3710, 93, 510, 8, 121, "Text"],
+Cell[2519, 67, 101, 1, 73, "Section"],
+Cell[2623, 70, 295, 6, 77, "Text"],
+Cell[2921, 78, 755, 11, 143, "Text"],
+Cell[3679, 91, 104, 1, 33, "Text"],
+Cell[3786, 94, 510, 8, 121, "Text"],
 Cell[CellGroupData[{
-Cell[4245, 105, 1210, 33, 107, "Input",
+Cell[4321, 106, 1210, 33, 107, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[5458, 140, 773, 17, 59, "Input",
+Cell[5534, 141, 773, 17, 59, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[6234, 159, 1315, 32, 107, "Input",
+Cell[6310, 160, 1315, 32, 107, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[7552, 193, 2856, 59, 251, "Input",
+Cell[7628, 194, 2856, 59, 251, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[10411, 254, 1705, 29, 131, "Input",
+Cell[10487, 255, 1705, 29, 131, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[12119, 285, 11078, 216, 337, "Output",
+Cell[12195, 286, 11078, 216, 337, "Output",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}]
 }, {6}]],
-Cell[23209, 504, 503, 8, 99, "Text"],
+Cell[23285, 505, 503, 8, 99, "Text"],
 Cell[CellGroupData[{
-Cell[23737, 516, 837, 25, 83, "Input",
+Cell[23813, 517, 837, 25, 83, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[24577, 543, 1082, 28, 155, "Input",
+Cell[24653, 544, 1082, 28, 155, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[25662, 573, 1003, 29, 131, "Input",
+Cell[25738, 574, 1003, 29, 131, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[26668, 604, 281, 8, 34, "Input",
+Cell[26744, 605, 281, 8, 34, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[26952, 614, 638, 15, 131, "Input",
+Cell[27028, 615, 638, 15, 131, "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}],
-Cell[27593, 631, 2463, 58, 469, "Output",
+Cell[27669, 632, 2463, 58, 469, "Output",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}]
 }, {6}]]
-}, Open  ]]
+}, Open  ]],
+Cell[30156, 694, 121, 1, 73, "Section"]
 }, Open  ]]
 }
 ]
