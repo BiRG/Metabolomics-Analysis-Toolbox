@@ -79,51 +79,30 @@
 
   <h4>Choosing a test</h4>
 
-  <p>Because squaring and taking the square root likely destroy the
-  Gaussian assumption, I decided to use non-parametric tests. Of the
-  tests I know, the Wilcoxon Signed Rank test seemed the most
-  appropriate. The assumptions
-  (<a href="http://en.wikipedia.org/wiki/Wilcoxon_signed-rank_test">as
-  given in Wikipedia's entry</a>) are:
-    <ol>
-      <li>Data is paired and comes from the same population.</li>
-      <li>Each pair is chosen randomly and independently.</li>
-      <li>The data is measured on an interval scale.</li>
-    </ol>
-  </p>
+  <p>Squaring and taking the square root in distance calculations
+  destroys Gaussian distribution assumptions. I verified this by
+  running a small experiment with one experimental condition (4
+  controls) and 1000 trials which did not calculate the all-samples
+  reference spectrum condition. The Lilliefors test rejected normality
+  of the distance distributions of the sum normalized and
+  gold-standard methods at a 1.67% level (5% with a Bonferroni
+  correction). It did not reject normality for the control-group
+  reference PQN.</p>
 
-  <p>All of these assumptions are met by my data. 
-    <ol>
-      <li>This comes from construction. The different distances are
-      different functional products of the same underlying random
-      sample. They are clearly dependent on a common factor and that
-      factor is generated from one population.</li>
-      <li>The underlying spectra are generated pseudo-randomly and
-      independently.</li>
-      <li>Distances are interval scale.</li>
-    </ol>  
-  </p>
-  
+  <p>Since the experimental design has paired samples, I initially
+  wanted to use the Wilcoxon Signed Rank test on the differences to
+  check whether the median of the differences is 0. However, (the
+  online resources are a bit ambiguious) it seems that the test
+  requires that the differences be from a symmetric distribution. A
+  quick look at the histograms of the differences reveals that they
+  are quite skewed. This leaves the unpaired Mann-Whitney-Wilcoxon
+  rank-sum test (which tests the odds of a sample from population one
+  being greater than one from population two) or the paired sign test
+  which tests whether the medians of the two populations are
+  equal. The Friedman test sounds promising at first blush but it
+  requires identical distributions except for location shifts.</p>
 
-  <p>Matlab only has facilities for calculating the two-sided
-  test. Since I did not want to code the test myself, I decided to
-  modify the hypothesis to match the hypothesis tested by the
-  test. Thus, the revised null-hypothesis is: for a given
-  normalization method and experimental condition, the median
-  difference between the distance from of that method and the true
-  distance is 0. What I'd really like to have tested is the
-  null-hypothesis that the median is less than or equal to 0 versus
-  the alternative of being positive. But that would have required
-  writing my own code for the test.</p>
 
-  <p>Note that I did not do what most texts mention when talking about
-  a paired signed rank test, which is testing whether the medians are
-  different. To do that, I would have had to make the additional
-  assumption that aside from a possible translation, the distributions
-  of the true and normalized distances are the same. I do not feel
-  justified in making this assumption and it is not necessary for my
-  experiment.
-  </p>
 
   <h4>Choosing significance level</h4>
 
