@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    328430,       7416]
-NotebookOptionsPosition[    316137,       7070]
-NotebookOutlinePosition[    316501,       7086]
-CellTagsIndexPosition[    316458,       7083]
+NotebookDataLength[    371623,       8516]
+NotebookOptionsPosition[    356233,       8095]
+NotebookOutlinePosition[    356597,       8111]
+CellTagsIndexPosition[    356554,       8108]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -7064,6 +7064,1031 @@ N0Hp14T87nq4gt608D0HzhOEkA8dlbu9apZEvJIL4YsIuVcrdXxujkS8WFOc
  CellGroupingRules->{GroupTogetherGrouping, 10000.},
  CellChangeTimes->{{3.5473940839874*^9, 3.5473941187331657`*^9}}]
 }, {3}]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["3D PQN", "Subsection",
+ CellChangeTimes->{{3.547394423389923*^9, 3.5473944252311497`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Sum-normalize", "Subsubsection",
+ CellChangeTimes->{{3.547401955719198*^9, 3.547401957963032*^9}}],
+
+Cell["\<\
+The PQN with 3D spectra starts out similar to 2D PQN. Figure 13 shows a group \
+of spectra normalized to a constant sum of 1. I only show the first quadrant \
+because of my earlier assumption that all points are positive.\
+\>", "Text",
+ CellChangeTimes->{{3.547395775886613*^9, 3.547395877526016*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Join", "[", 
+   RowBox[{
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"RandomReal", "[", 
+         RowBox[{"UniformDistribution", "[", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "2"}], "}"}], "]"}], "]"}], ",", 
+        RowBox[{"RandomReal", "[", 
+         RowBox[{"UniformDistribution", "[", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "3"}], "}"}], "]"}], "]"}], ",", 
+        RowBox[{"RandomReal", "[", 
+         RowBox[{"UniformDistribution", "[", 
+          RowBox[{"{", 
+           RowBox[{"1.2", ",", "1.3"}], "}"}], "]"}], "]"}]}], "}"}], ",", 
+      RowBox[{"{", "8", "}"}]}], "]"}], ",", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"RandomReal", "[", 
+         RowBox[{"UniformDistribution", "[", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "2"}], "}"}], "]"}], "]"}], ",", 
+        RowBox[{"RandomReal", "[", 
+         RowBox[{"UniformDistribution", "[", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "3"}], "}"}], "]"}], "]"}], ",", 
+        RowBox[{"RandomReal", "[", 
+         RowBox[{"UniformDistribution", "[", 
+          RowBox[{"{", 
+           RowBox[{"0.3", ",", "0.4"}], "}"}], "]"}], "]"}]}], "}"}], ",", 
+      RowBox[{"{", "8", "}"}]}], "]"}]}], "]"}], "/", "2"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.5473945285194893`*^9, 3.5473948433459167`*^9}, {
+  3.547394949185137*^9, 3.547394958418416*^9}, {3.547396148016735*^9, 
+  3.547396148150931*^9}, {3.547396332991932*^9, 3.547396335781905*^9}, {
+  3.5473964703163843`*^9, 3.54739647472621*^9}, {3.547396505240793*^9, 
+  3.547396519924708*^9}, {3.547396882736618*^9, 3.5473968928435097`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"orig3D", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "0.7887122746455992`", ",", "1.370162229032098`", ",", 
+       "0.6331315511805435`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.7458987631156281`", ",", "0.7715290755810482`", ",", 
+       "0.6148123738797091`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.657133266164412`", ",", "0.9221468105687936`", ",", 
+       "0.6040697246875196`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.5857304644159957`", ",", "0.5419021027040107`", ",", 
+       "0.6173275066394556`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.6919142797105331`", ",", "1.4387362033967048`", ",", 
+       "0.6247078566848845`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.5457398713571942`", ",", "0.8830657889311706`", ",", 
+       "0.6314481246718616`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.6175342173424286`", ",", "0.7957609324327515`", ",", 
+       "0.6258393391396256`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.9921345376422709`", ",", "0.690496919850571`", ",", 
+       "0.6062680422006831`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.5768632417698818`", ",", "0.7497757265321776`", ",", 
+       "0.19303894295071117`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.5084130070212706`", ",", "0.6455535679017173`", ",", 
+       "0.17770724565742288`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.552620580638311`", ",", "1.0787269445880796`", ",", 
+       "0.17767927573922487`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.8527000484773908`", ",", "0.7900375918166862`", ",", 
+       "0.1618452370779209`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.8558169686389362`", ",", "0.8381051726099`", ",", 
+       "0.19646170205328767`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.9128626837404124`", ",", "1.2855838089650504`", ",", 
+       "0.1525320368241421`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.5595750105400437`", ",", "1.4879212199688876`", ",", 
+       "0.19946889532440698`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.6276434675023799`", ",", "1.3262524986373982`", ",", 
+       "0.1958156408376076`"}], "}"}]}], "}"}]}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ InitializationCell->True,
+ CellChangeTimes->{{3.547396860077684*^9, 3.547396892843906*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"sumNorm3D", "=", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"#", "/", 
+       RowBox[{"Total", "[", "#", "]"}]}], "&"}], ",", "orig3D"}], "]"}]}], 
+  ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ InitializationCell->True,
+ CellChangeTimes->{{3.547396082040235*^9, 3.547396106215727*^9}, 
+   3.5473968928441067`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"thirteenthDiagram", "=", 
+   RowBox[{"Graphics3D", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"Blue", ",", 
+       RowBox[{"PointSize", "[", "Medium", "]"}], ",", 
+       RowBox[{"Point", "[", "orig3D", "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", "#"}], "}"}], 
+           "&"}], ",", "orig3D"}], "]"}], "]"}], ",", "Red", ",", 
+       RowBox[{"Opacity", "[", "0.85", "]"}], ",", 
+       RowBox[{"Polygon", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0", ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "0", ",", "0"}], "}"}]}], "}"}], "]"}], ",", 
+       "Magenta", ",", 
+       RowBox[{"Point", "[", "sumNorm3D", "]"}]}], "}"}], ",", 
+     RowBox[{"Axes", "\[Rule]", "True"}], ",", 
+     RowBox[{"AxesLabel", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "y", ",", "z"}], "}"}]}]}], "]"}]}], ";"}]], "Input",\
+
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547395888870414*^9, 3.5473960502502823`*^9}, {
+   3.5473961208697567`*^9, 3.5473961280452642`*^9}, {3.5473962717451353`*^9, 
+   3.5473962809372168`*^9}, {3.547396678849077*^9, 3.547396685997224*^9}, 
+   3.547396892844305*^9}],
+
+Cell[BoxData[
+ RowBox[{"thirteenthDiagramWithCaption", "=", 
+  RowBox[{"Labeled", "[", 
+   RowBox[{
+   "thirteenthDiagram", ",", 
+    "\"\<Figure 13: Sum-normalizing points in 3D.\>\"", ",", "Bottom", ",", 
+    RowBox[{"LabelStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "Times"}]}], "]"}]}]}], 
+   "]"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547396690052643*^9, 3.54739673912817*^9}, 
+   3.54739689284453*^9}],
+
+Cell[BoxData[
+ TemplateBox[{GraphicsBox[
+    InsetBox[
+     Graphics3DBox[{
+       RGBColor[0, 0, 1], 
+       PointSize[Medium], 
+       Point3DBox[CompressedData["
+1:eJwBkQFu/iFib1JlAgAAABAAAAADAAAA0s8xhiE96T9lhL46L+z1P6BbTBmd
+QuQ/0as2FWfe5z8wFHG+XbDoP8ip3/+KrOM/JkbpVzwH5T8cHjAHOoLtP/8r
+AQiKVOM/xACe0E2+4j9e6hcUQ1fhP4MBfp0lweM/lL9faikk5j+Sj9JAEAX3
+P7aBwFSb/eM/1EZzdrN24T9KoHUvE0LsP/XBkrLSNOQ/qbF0HtfC4z/UdYeh
+33bpP0/1xDjgBuQ/9foM7pC/7z/m5hf/jBjmP4mUuzyMZuM/YFG15ql14j98
+ShmqKf7nP4ryaQWAtcg/V47AWutE4D8Yh770X6jkP/cwLmwcv8Y/uQQeWxGv
+4T/tHUUvd0LxP0YMPcsxvsY/mkGwnFFJ6z8Q027q/EfpPzGrIUBYt8Q/mVB1
+RNpi6z9++V7wwdHqP34gnjSoJck/cOyMzSs27T8gWvxTwJH0PylA4HYrhsM/
+/LQ92gno4T8Ypyx7hs73P95o/l4yiMk/eBDPwKcV5D+wLD6KVDj1P+StuKZ8
+EMk/CqnDlw==
+        "]], 
+       Line3DBox[{{{0, 0, 0}, {0.7887122746455992, 1.370162229032098, 
+          0.6331315511805435}}, {{0, 0, 0}, {0.7458987631156281, 
+          0.7715290755810482, 0.6148123738797091}}, {{0, 0, 0}, {
+          0.657133266164412, 0.9221468105687936, 0.6040697246875196}}, {{0, 0,
+           0}, {0.5857304644159957, 0.5419021027040107, 
+          0.6173275066394556}}, {{0, 0, 0}, {0.6919142797105331, 
+          1.4387362033967048`, 0.6247078566848845}}, {{0, 0, 0}, {
+          0.5457398713571942, 0.8830657889311706, 0.6314481246718616}}, {{0, 
+          0, 0}, {0.6175342173424286, 0.7957609324327515, 
+          0.6258393391396256}}, {{0, 0, 0}, {0.9921345376422709, 
+          0.690496919850571, 0.6062680422006831}}, {{0, 0, 0}, {
+          0.5768632417698818, 0.7497757265321776, 0.19303894295071117`}}, {{0,
+           0, 0}, {0.5084130070212706, 0.6455535679017173, 
+          0.17770724565742288`}}, {{0, 0, 0}, {0.552620580638311, 
+          1.0787269445880796`, 0.17767927573922487`}}, {{0, 0, 0}, {
+          0.8527000484773908, 0.7900375918166862, 0.1618452370779209}}, {{0, 
+          0, 0}, {0.8558169686389362, 0.8381051726099, 
+          0.19646170205328767`}}, {{0, 0, 0}, {0.9128626837404124, 
+          1.2855838089650504`, 0.1525320368241421}}, {{0, 0, 0}, {
+          0.5595750105400437, 1.4879212199688876`, 0.19946889532440698`}}, {{
+          0, 0, 0}, {0.6276434675023799, 1.3262524986373982`, 
+          0.1958156408376076}}}], {
+        RGBColor[1, 0, 0], 
+        Opacity[0.85], 
+        Polygon3DBox[{{0, 0, 1}, {0, 1, 0}, {1, 0, 0}}], {
+         RGBColor[1, 0, 1], 
+         Point3DBox[CompressedData["
+1:eJwBkQFu/iFib1JlAgAAABAAAAADAAAAW0rsqE4U0j9MlYqKXGjfP7NAEpmp
+Bs0/ngx1dXBj1j8tEIuJYSjXPzfj/wAudNI/KJbvzCtD0z+zyDug2QfbPyah
+1JL6tNE/nU6WV5171T/szWiHGODTP3bjACFKpNY/HcTBaEgS0D+HUb+Wh7Xg
+P6kxf9NQBc0/VbTupvPz0D9W/Gwygm7bP1VPpCaKndM/RcHVosBh0z+lCZ/j
+w/nYPxU1i3l7pNM/s30GUbm92z/y15chmE7TP1qqYY2u89A/SG124EtL2D/l
+88aIgZPfP6g9hS1lQsA/LBqzFypv2D/gd6KbcgbfP+fbVJnGFME/SVd21vmM
+0z9mfQWu6BTjP5y3+jXTJLk/1/dIJsE93j+opEvb1QTcPwqOrfmj9bY/O4H7
+nmL53D81iTlv4F/cPzrWK8fzmro/WjnXfsDZ2D9H/T8KoH/hP1Ywo7L9m7A/
+yYHtpWjgzz97xpc9rDDlP5PIZsfMubY/P7M3qZOv0j98PvckAr7jPyU/ZzOg
+Ubc/QEvILA==
+          "]]}}}, AspectRatio -> 0.6826228964509987, Axes -> 
+      True, AxesLabel -> {
+        FormBox["x", TraditionalForm], 
+        FormBox["y", TraditionalForm], 
+        FormBox["z", TraditionalForm]}, Background -> None, ImageMargins -> 
+      0., ImageSize -> {360., 403.67588722577744`}, 
+      ViewPoint -> {2.7028583306915155`, -2.001748577592822, 
+       0.37089011353309126`}, 
+      ViewVertical -> {0.6120637778795446, -0.2831708283594404, 
+       1.2890940854588477`}], {0., 63.789883046659725`}, 
+     ImageScaled[{0., 0.}], {360., 404.}, ContentSelectable -> True], 
+    AspectRatio -> 0.8157663534049373, Background -> None, ContentSelectable -> 
+    True, ImageMargins -> 0., ImagePadding -> 0., 
+    ImageSize -> {360., 293.67588722577744`}, 
+    PlotRange -> {{0., 360.}, {57.04576549830023, 350.9574461156155}}, 
+    PlotRangePadding -> None],"\"Figure 13: Sum-normalizing points in 3D.\""},
+  
+  "Labeled",
+  DisplayFunction->(GridBox[{{
+      TagBox[
+       ItemBox[
+        PaneBox[
+         TagBox[#, "SkipImageSizeLevel"], Alignment -> {Center, Baseline}, 
+         BaselinePosition -> Baseline], DefaultBaseStyle -> "Labeled"], 
+       "SkipImageSizeLevel"]}, {
+      ItemBox[#2, BaseStyle -> Directive[Bold, FontFamily -> Times], 
+       DefaultBaseStyle -> "LabeledLabel"]}}, 
+    GridBoxAlignment -> {"Columns" -> {{Center}}, "Rows" -> {{Center}}}, 
+    AutoDelete -> False, 
+    GridBoxItemSize -> {"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+    BaselinePosition -> {1, 1}]& ),
+  InterpretationFunction->(RowBox[{"Labeled", "[", 
+     RowBox[{#, ",", #2, ",", "Bottom", ",", 
+       RowBox[{"LabelStyle", "\[Rule]", 
+         RowBox[{"Directive", "[", 
+           RowBox[{"Bold", ",", 
+             RowBox[{"FontFamily", "\[Rule]", "Times"}]}], "]"}]}]}], 
+     "]"}]& )]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{3.5473967412573*^9, 3.547396892844736*^9}]
+}, {6}]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Choose the reference", "Subsubsection",
+ CellChangeTimes->{{3.547401961196087*^9, 3.547401965083189*^9}}],
+
+Cell["\<\
+After sum-normalizing, you choose a reference spectrum. Note that, unlike the \
+2D case, the reference spectrum is not necessarily sum-normalized. Figure 14 \
+shows one such case.\
+\>", "Text",
+ CellChangeTimes->{{3.547396919795761*^9, 3.5473969456337442`*^9}, {
+  3.5473981260477457`*^9, 3.547398147665278*^9}, {3.547398184655978*^9, 
+  3.547398200809556*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"refPt3D", "=", 
+   RowBox[{"Median", "/@", 
+    RowBox[{"Transpose", "[", "sumNorm3D", "]"}]}]}], ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.54739704948209*^9, 3.547397093422785*^9}, 
+   3.547398357701996*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"fourteenthDiagram", "=", 
+   RowBox[{"Graphics3D", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"Red", ",", 
+       RowBox[{"Opacity", "[", "0.85", "]"}], ",", 
+       RowBox[{"Polygon", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0", ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "1", ",", "0"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "0", ",", "0"}], "}"}]}], "}"}], "]"}], ",", 
+       "Magenta", ",", 
+       RowBox[{"Point", "[", "sumNorm3D", "]"}], ",", "Green", ",", 
+       RowBox[{"PointSize", "[", "Large", "]"}], ",", 
+       RowBox[{"Point", "[", "refPt3D", "]"}], ",", 
+       RowBox[{"Opacity", "[", "1", "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0", ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "3", "]"}], "]"}]}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], ",", "0", ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], ",", "1", ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "3", "]"}], "]"}]}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], ",", "0"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], ",", 
+            RowBox[{"refPt3D", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], ",", "1"}], "}"}]}], "}"}], 
+        "]"}]}], "}"}], ",", 
+     RowBox[{"Axes", "\[Rule]", "True"}], ",", 
+     RowBox[{"AxesLabel", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "y", ",", "z"}], "}"}]}]}], "]"}]}], ";"}]], "Input",\
+
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547395888870414*^9, 3.5473960502502823`*^9}, {
+   3.5473961208697567`*^9, 3.5473961280452642`*^9}, {3.5473962717451353`*^9, 
+   3.5473962809372168`*^9}, {3.547396678849077*^9, 3.547396685997224*^9}, 
+   3.547396892844305*^9, {3.547396996128675*^9, 3.547397011004944*^9}, {
+   3.547397101720193*^9, 3.547397109851194*^9}, {3.547397214672595*^9, 
+   3.547397243994307*^9}, {3.547397285255617*^9, 3.547397311333056*^9}, {
+   3.547397415816349*^9, 3.547397524495929*^9}, {3.547397557249049*^9, 
+   3.547397634329254*^9}, {3.547397695337129*^9, 3.54739777423074*^9}, {
+   3.547397901273827*^9, 3.5473979954100533`*^9}, {3.547398085123536*^9, 
+   3.547398102047306*^9}, 3.547398287600065*^9}],
+
+Cell[BoxData[
+ RowBox[{"fourteenthDiagramWithCaption", "=", 
+  RowBox[{"Labeled", "[", 
+   RowBox[{
+   "fourteenthDiagram", ",", 
+    "\"\<Figure 14: A reference spectrum that is not sum-normalized derived \
+from sum-normalized spectra.\>\"", ",", "Bottom", ",", 
+    RowBox[{"LabelStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "->", "Times"}]}], "]"}]}]}], "]"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.5473982080684347`*^9, 3.5473982818753777`*^9}, {
+  3.5473983341463118`*^9, 3.5473983577023983`*^9}}],
+
+Cell[BoxData[
+ TemplateBox[{Graphics3DBox[{
+     RGBColor[1, 0, 0], 
+     Opacity[0.85], 
+     Polygon3DBox[{{0, 0, 1}, {0, 1, 0}, {1, 0, 0}}], {
+      RGBColor[1, 0, 1], 
+      Point3DBox[CompressedData["
+1:eJwBkQFu/iFib1JlAgAAABAAAAADAAAAW0rsqE4U0j9MlYqKXGjfP7NAEpmp
+Bs0/ngx1dXBj1j8tEIuJYSjXPzfj/wAudNI/KJbvzCtD0z+zyDug2QfbPyah
+1JL6tNE/nU6WV5171T/szWiHGODTP3bjACFKpNY/HcTBaEgS0D+HUb+Wh7Xg
+P6kxf9NQBc0/VbTupvPz0D9W/Gwygm7bP1VPpCaKndM/RcHVosBh0z+lCZ/j
+w/nYPxU1i3l7pNM/s30GUbm92z/y15chmE7TP1qqYY2u89A/SG124EtL2D/l
+88aIgZPfP6g9hS1lQsA/LBqzFypv2D/gd6KbcgbfP+fbVJnGFME/SVd21vmM
+0z9mfQWu6BTjP5y3+jXTJLk/1/dIJsE93j+opEvb1QTcPwqOrfmj9bY/O4H7
+nmL53D81iTlv4F/cPzrWK8fzmro/WjnXfsDZ2D9H/T8KoH/hP1Ywo7L9m7A/
+yYHtpWjgzz97xpc9rDDlP5PIZsfMubY/P7M3qZOv0j98PvckAr7jPyU/ZzOg
+Ubc/QEvILA==
+       "]]}, {
+      RGBColor[0, 1, 0], 
+      PointSize[Large], 
+      Point3DBox[{0.32057466267114804`, 0.4640601923965809, 
+       0.1800856247610254}], {
+       Opacity[1], 
+       Line3DBox[{{0, 0.4640601923965809, 0.1800856247610254}, {
+         1, 0.4640601923965809, 0.1800856247610254}}], 
+       Line3DBox[{{0.32057466267114804`, 0, 0.1800856247610254}, {
+         0.32057466267114804`, 1, 0.1800856247610254}}], 
+       Line3DBox[{{0.32057466267114804`, 0.4640601923965809, 0}, {
+         0.32057466267114804`, 0.4640601923965809, 1}}]}}}, Axes -> True, 
+    AxesLabel -> {
+      FormBox["x", TraditionalForm], 
+      FormBox["y", TraditionalForm], 
+      FormBox["z", TraditionalForm]}],
+   "\"Figure 14: A reference spectrum that is not sum-normalized derived from \
+sum-normalized points.\""},
+  "Labeled",
+  DisplayFunction->(GridBox[{{
+      TagBox[
+       ItemBox[
+        PaneBox[
+         TagBox[#, "SkipImageSizeLevel"], Alignment -> {Center, Baseline}, 
+         BaselinePosition -> Baseline], DefaultBaseStyle -> "Labeled"], 
+       "SkipImageSizeLevel"]}, {
+      ItemBox[#2, BaseStyle -> Directive[Bold, FontFamily -> Times], 
+       DefaultBaseStyle -> "LabeledLabel"]}}, 
+    GridBoxAlignment -> {"Columns" -> {{Center}}, "Rows" -> {{Center}}}, 
+    AutoDelete -> False, 
+    GridBoxItemSize -> {"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+    BaselinePosition -> {1, 1}]& ),
+  InterpretationFunction->(RowBox[{"Labeled", "[", 
+     RowBox[{#, ",", #2, ",", "Bottom", ",", 
+       RowBox[{"LabelStyle", "\[Rule]", 
+         RowBox[{"Directive", "[", 
+           RowBox[{"Bold", ",", 
+             RowBox[{"FontFamily", "\[Rule]", "Times"}]}], "]"}]}]}], 
+     "]"}]& )]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{
+  3.547397311862522*^9, 3.547397527342972*^9, {3.547397606876594*^9, 
+   3.547397636587237*^9}, {3.547397728269095*^9, 3.547397775075294*^9}, 
+   3.547397956831068*^9, 3.5473979962341137`*^9, 3.547398103037161*^9, 
+   3.547398290771674*^9, 3.547398357702662*^9}]
+}, {4}]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Form the r-quotient plane and divide into median regions", \
+"Subsubsection",
+ CellChangeTimes->{{3.5474019807543917`*^9, 3.5474020051123257`*^9}}],
+
+Cell[TextData[{
+ "Now, we form the reciprocal quotient plane from the sum-normalized plane by \
+dividing all points by the reference spectrum, R. We assume that none of the \
+coordinates of R is 0. This forms the plane ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"x", ",", "y", ",", "z"}], ")"}], "\[CenterDot]", "R"}], "=", 
+    "1"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ". Since we are in the first quadrant, the section of the plane we are \
+interested in is a triangle. If we draw lines cooresponding to ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x", "=", "y"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " ,",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x", "=", "z"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ", and ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"y", "=", "z"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ", we will divide the triangle into 6 regions. On each of these regions, the \
+median is one of the coordinates of the plane. These lines all intersect at \
+",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x", "=", 
+    RowBox[{"y", "=", 
+     RowBox[{"z", "=", 
+      FractionBox["1", 
+       RowBox[{
+        SubscriptBox["R", "x"], "+", 
+        SubscriptBox["R", "y"], "+", 
+        SubscriptBox["R", "z"]}]]}]}]}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ", where the reciprocal median quotient is ",
+ Cell[BoxData[
+  FormBox[
+   FractionBox["1", 
+    RowBox[{
+     SubscriptBox["R", "x"], "+", 
+     SubscriptBox["R", "y"], "+", 
+     SubscriptBox["R", "z"]}]], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ". Along each line, the median is the value of the two equal coordinates. \
+So, on the line ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x", "=", "y"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ", the median is ",
+ Cell[BoxData[
+  FormBox["x", TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " or equivalently, ",
+ Cell[BoxData[
+  FormBox["y", TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ". Each region is bounded by two lines. The median in that region is the \
+variable that is common to its two bounding lines. So, the median of the \
+region bounded by ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x", "=", "y"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " and ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x", "=", "z"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " is ",
+ Cell[BoxData[
+  FormBox["x", TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ ". If ",
+ Cell[BoxData[
+  FormBox["a", TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " and ",
+ Cell[BoxData[
+  FormBox["b", TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " are the coordinates of a line ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"a", "==", "b"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " and ",
+ Cell[BoxData[
+  FormBox["c", TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " is the non-included coordinate. The lines run from the corner where ",
+ Cell[BoxData[
+  FormBox["c", TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " is non-zero to the opposite edge where ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"c", "=", "0"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " and ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"a", "=", 
+    RowBox[{"b", "=", 
+     FractionBox["1", 
+      RowBox[{
+       SubscriptBox["R", "a"], "+", 
+       SubscriptBox["R", "b"]}]]}]}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ "."
+}], "Text",
+ CellChangeTimes->{{3.547398429192198*^9, 3.547398431425383*^9}, {
+  3.547398461790782*^9, 3.5473984879253883`*^9}, {3.547399887002164*^9, 
+  3.547399921462243*^9}, {3.547400003533226*^9, 3.54740010044049*^9}, {
+  3.5474010654678164`*^9, 3.5474011394618387`*^9}, {3.547401221127473*^9, 
+  3.547401255962309*^9}, {3.547401318779447*^9, 3.5474013565599947`*^9}, {
+  3.5474014118501787`*^9, 3.547401511571314*^9}, {3.547401805871662*^9, 
+  3.547401817221616*^9}, {3.547401847556612*^9, 3.5474019399803743`*^9}, {
+  3.5474020355022593`*^9, 3.547402101266095*^9}, {3.547404353030405*^9, 
+  3.547404565900749*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Simplify", "[", 
+  RowBox[{"Reduce", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"0", "<", "rx", "<", "1"}], "&&", 
+     RowBox[{"0", "<", "ry", "<", "1"}], "&&", 
+     RowBox[{
+      RowBox[{"t", "/", 
+       RowBox[{"(", 
+        RowBox[{"1", "-", "t"}], ")"}]}], "\[Equal]", 
+      RowBox[{"rx", "/", "ry"}]}], "&&", 
+     RowBox[{"x", "\[Equal]", 
+      RowBox[{"t", "/", "rx"}]}], "&&", 
+     RowBox[{"y", "==", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"1", "-", "t"}], ")"}], "/", "ry"}]}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "y", ",", "t", ",", "rx", ",", "ry"}], "}"}], ",", 
+    "Reals"}], "]"}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.5474022446392317`*^9, 3.547402309313661*^9}, {
+   3.547402720531225*^9, 3.547402831337352*^9}, {3.547402868273469*^9, 
+   3.5474028731079893`*^9}, {3.547402965985022*^9, 3.5474030675686827`*^9}, {
+   3.547403143994239*^9, 3.547403228826315*^9}, {3.547403332166478*^9, 
+   3.547403428704777*^9}, {3.547403692830295*^9, 3.547403721919084*^9}, {
+   3.547403957062478*^9, 3.547403981580202*^9}, {3.5474040595568132`*^9, 
+   3.547404081392223*^9}, 3.547404992246944*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"x", "\[Equal]", "y"}], "&&", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"x", ">", "1"}], "&&", 
+      RowBox[{"0", "<", "t"}], "&&", 
+      RowBox[{"t", "<", "1"}]}], ")"}], "||", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"t", "+", "x"}], ">", "1"}], "&&", 
+      RowBox[{
+       RowBox[{"2", " ", "x"}], ">", "1"}], "&&", 
+      RowBox[{"t", "<", "x"}], "&&", 
+      RowBox[{"x", "\[LessEqual]", "1"}]}], ")"}]}], ")"}], "&&", 
+  RowBox[{"rx", "\[Equal]", 
+   FractionBox["t", "x"]}], "&&", 
+  RowBox[{
+   RowBox[{"rx", "+", "ry"}], "\[Equal]", 
+   FractionBox["rx", "t"]}]}]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547402749025425*^9, 3.547402834499711*^9}, 
+   3.547402873763077*^9, 3.547402967383053*^9, 3.547403112810112*^9, {
+   3.547403201056781*^9, 3.547403233183613*^9}, 3.547403417955184*^9, {
+   3.547403688601891*^9, 3.547403722487492*^9}, 3.547403999763998*^9, 
+   3.5474040856778927`*^9, 3.5474049922471533`*^9}],
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"t", "/", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", "t"}], ")"}]}], "\[Equal]", 
+    RowBox[{"rx", "/", "rz"}]}], ",", 
+   RowBox[{"{", "t", "}"}]}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.5474042864040213`*^9, 3.547404300294341*^9}, 
+   3.547404992247208*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"t", "\[Rule]", 
+    FractionBox["rx", 
+     RowBox[{"rx", "+", "rz"}]]}], "}"}], "}"}]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{3.5474043009447937`*^9, 3.547404992247267*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["rx", 
+   RowBox[{"rx", "+", "rz"}]], "/", "rx"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547404315116642*^9, 3.54740433696175*^9}, 
+   3.547404992247321*^9}],
+
+Cell[BoxData[
+ FractionBox["1", 
+  RowBox[{"rx", "+", "rz"}]]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{3.547404347133869*^9, 3.547404992247373*^9}],
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"y", "\[Equal]", "z"}], "&&", 
+    RowBox[{"x", "\[Equal]", "y"}], "&&", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"x", " ", "rx"}], "+", 
+      RowBox[{"y", " ", "ry"}], "+", 
+      RowBox[{"z", " ", "rz"}]}], "\[Equal]", "1"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "y", ",", "z"}], "}"}]}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.54739888936059*^9, 3.547398894699534*^9}, {
+   3.547398926924963*^9, 3.547398929993906*^9}, {3.547398991117526*^9, 
+   3.547399048079217*^9}, {3.547399307641958*^9, 3.547399308055952*^9}, {
+   3.547399587198173*^9, 3.547399590404118*^9}, {3.547399811269721*^9, 
+   3.547399811719173*^9}, {3.5473998432078943`*^9, 3.547399843546021*^9}, 
+   3.547400713920554*^9, {3.547400937779107*^9, 3.547400965326005*^9}, {
+   3.547401024597677*^9, 3.54740102638202*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"rx", "+", "ry", "+", "rz"}], "\[NotEqual]", "0"}], "&&", 
+  RowBox[{"x", "\[Equal]", 
+   FractionBox["1", 
+    RowBox[{"rx", "+", "ry", "+", "rz"}]]}], "&&", 
+  RowBox[{"y", "\[Equal]", "x"}], "&&", 
+  RowBox[{"z", "\[Equal]", "x"}]}]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{3.547400972634695*^9, 3.547401027432807*^9, 
+  3.547401718610332*^9}],
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"y", "\[Equal]", "z"}], "&&", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"x", " ", 
+       RowBox[{"refPt3D", "[", 
+        RowBox[{"[", "1", "]"}], "]"}]}], "+", 
+      RowBox[{"y", " ", 
+       RowBox[{"refPt3D", "[", 
+        RowBox[{"[", "2", "]"}], "]"}]}], "+", 
+      RowBox[{"z", " ", 
+       RowBox[{"refPt3D", "[", 
+        RowBox[{"[", "3", "]"}], "]"}]}]}], "\[Equal]", "1"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"z", ",", "y"}], "}"}]}], "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.54739888936059*^9, 3.547398894699534*^9}, {
+   3.547398926924963*^9, 3.547398929993906*^9}, {3.547398991117526*^9, 
+   3.547399048079217*^9}, {3.547399307641958*^9, 3.547399308055952*^9}, {
+   3.547399587198173*^9, 3.547399590404118*^9}, {3.547399811269721*^9, 
+   3.547399811719173*^9}, {3.5473998432078943`*^9, 3.547399843546021*^9}, 
+   3.547400713920554*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"z", "\[Equal]", 
+   RowBox[{"1.5524435203393163`", "\[InvisibleSpace]", "-", 
+    RowBox[{"0.4976740578487859`", " ", "x"}]}]}], "&&", 
+  RowBox[{"y", "\[Equal]", 
+   RowBox[{"1.5524435203393163`", "\[InvisibleSpace]", "-", 
+    RowBox[{"0.4976740578487859`", " ", "x"}]}]}]}]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{
+  3.547398930731265*^9, 3.547399051052137*^9, 3.547399309272481*^9, 
+   3.5473995943299417`*^9, {3.547399819334371*^9, 3.5473998443071833`*^9}, 
+   3.5474007139210587`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"f", "[", "x_", "]"}], ":=", 
+  RowBox[{"1.5524435203393163`", "\[InvisibleSpace]", "-", 
+   RowBox[{"0.4976740578487859`", " ", "x"}]}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547399153847061*^9, 3.547399158882936*^9}, {
+   3.547399353293524*^9, 3.547399361816708*^9}, {3.547399598245482*^9, 
+   3.547399606718861*^9}, {3.547399823456868*^9, 3.547399824865265*^9}, 
+   3.547399857380827*^9, 3.5474007139213133`*^9}],
+
+Cell[BoxData[
+ RowBox[{"f", "[", "3", "]"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.5473991606375*^9, 3.5473991827998447`*^9}, {
+   3.5473992382432423`*^9, 3.547399239231241*^9}, {3.547399365717846*^9, 
+   3.5473993659610662`*^9}, {3.547399430569178*^9, 3.5473994306423187`*^9}, {
+   3.547399612012398*^9, 3.547399631629476*^9}, {3.547399861696869*^9, 
+   3.547399872439776*^9}, {3.547400173017227*^9, 3.547400173260462*^9}, {
+   3.547400216693941*^9, 3.547400216798695*^9}, 3.547400713921502*^9}],
+
+Cell[BoxData["0.05942134679295874`"], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547399163115535*^9, 3.547399183702611*^9}, 
+   3.547399240550035*^9, 3.547399366663069*^9, 3.5473994314792624`*^9, {
+   3.547399613580016*^9, 3.547399632135816*^9}, {3.5473998630215187`*^9, 
+   3.5473998733351393`*^9}, 3.547400174260373*^9, 3.5474002181897697`*^9, 
+   3.547400713921803*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"fifteenthDiagram", "=", 
+   RowBox[{"Graphics3D", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"Magenta", ",", 
+       RowBox[{"Opacity", "[", "0.85", "]"}], ",", 
+       RowBox[{"Polygon", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0", ",", "0", ",", "1"}], "}"}], "/", 
+           RowBox[{"refPt3D", "[", 
+            RowBox[{"[", "3", "]"}], "]"}]}], ",", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0", ",", "1", ",", "0"}], "}"}], "/", 
+           RowBox[{"refPt3D", "[", 
+            RowBox[{"[", "2", "]"}], "]"}]}], ",", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"1", ",", "0", ",", "0"}], "}"}], "/", 
+           RowBox[{"refPt3D", "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], "]"}], ",", 
+       RowBox[{"Opacity", "[", "1", "]"}], ",", "Yellow", ",", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"a", "=", 
+            RowBox[{"1", "/", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"refPt3D", "[", 
+                RowBox[{"[", "1", "]"}], "]"}], "+", 
+               RowBox[{"refPt3D", "[", 
+                RowBox[{"[", "2", "]"}], "]"}]}], ")"}]}]}], ",", 
+           RowBox[{"c", "=", 
+            RowBox[{"1", "/", 
+             RowBox[{"refPt3D", "[", 
+              RowBox[{"[", "3", "]"}], "]"}]}]}]}], "}"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"a", ",", "a", ",", "0"}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0", ",", "0", ",", "c"}], "}"}]}], "}"}], "]"}]}], 
+        "]"}], ",", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"a", "=", 
+            RowBox[{"1", "/", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"refPt3D", "[", 
+                RowBox[{"[", "1", "]"}], "]"}], "+", 
+               RowBox[{"refPt3D", "[", 
+                RowBox[{"[", "3", "]"}], "]"}]}], ")"}]}]}], ",", 
+           RowBox[{"c", "=", 
+            RowBox[{"1", "/", 
+             RowBox[{"refPt3D", "[", 
+              RowBox[{"[", "2", "]"}], "]"}]}]}]}], "}"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"a", ",", "0", ",", "a"}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0", ",", "c", ",", "0"}], "}"}]}], "}"}], "]"}]}], 
+        "]"}], ",", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"a", "=", 
+            RowBox[{"1", "/", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"refPt3D", "[", 
+                RowBox[{"[", "2", "]"}], "]"}], "+", 
+               RowBox[{"refPt3D", "[", 
+                RowBox[{"[", "3", "]"}], "]"}]}], ")"}]}]}], ",", 
+           RowBox[{"c", "=", 
+            RowBox[{"1", "/", 
+             RowBox[{"refPt3D", "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}]}]}], "}"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"0", ",", "a", ",", "a"}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"c", ",", "0", ",", "0"}], "}"}]}], "}"}], "]"}]}], 
+        "]"}]}], "}"}], ",", 
+     RowBox[{"Axes", "\[Rule]", "True"}], ",", 
+     RowBox[{"AxesLabel", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "y", ",", "z"}], "}"}]}], ",", 
+     RowBox[{"Lighting", "\[Rule]", "\"\<Neutral\>\""}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.547395888870414*^9, 3.5473960502502823`*^9}, {
+   3.5473961208697567`*^9, 3.5473961280452642`*^9}, {3.5473962717451353`*^9, 
+   3.5473962809372168`*^9}, {3.547396678849077*^9, 3.547396685997224*^9}, 
+   3.547396892844305*^9, {3.547396996128675*^9, 3.547397011004944*^9}, {
+   3.547397101720193*^9, 3.547397109851194*^9}, {3.547397214672595*^9, 
+   3.547397243994307*^9}, {3.547397285255617*^9, 3.547397311333056*^9}, {
+   3.547397415816349*^9, 3.547397524495929*^9}, {3.547397557249049*^9, 
+   3.547397634329254*^9}, {3.547397695337129*^9, 3.54739777423074*^9}, {
+   3.547397901273827*^9, 3.5473979954100533`*^9}, {3.547398085123536*^9, 
+   3.547398102047306*^9}, 3.547398287600065*^9, {3.547398528608972*^9, 
+   3.547398587747058*^9}, {3.547398630149794*^9, 3.547398630693344*^9}, {
+   3.547398821390777*^9, 3.547398865990122*^9}, {3.5473991122446327`*^9, 
+   3.547399123776905*^9}, {3.547399175303514*^9, 3.547399194373231*^9}, {
+   3.547399252536331*^9, 3.547399257712214*^9}, {3.547399387014571*^9, 
+   3.547399420669814*^9}, {3.547399476859741*^9, 3.547399490353692*^9}, {
+   3.547399625484057*^9, 3.5473996418248787`*^9}, {3.547400186695157*^9, 
+   3.5474002284796753`*^9}, {3.5474003367249002`*^9, 3.5474003629661207`*^9}, 
+   3.547400396272852*^9, {3.547404623990632*^9, 3.547404931485201*^9}}],
+
+Cell[BoxData[
+ RowBox[{"fifteenthDiagramWithCaption", "=", 
+  RowBox[{"Labeled", "[", 
+   RowBox[{
+   "fifteenthDiagram", ",", 
+    "\"\<Figure 15: The r-quotient plane derived from figure 14 split into \
+sections of uniform median coordinate.\>\"", ",", "Bottom", ",", 
+    RowBox[{"LabelStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Bold", ",", 
+       RowBox[{"FontFamily", "\[Rule]", "Times"}]}], "]"}]}]}], 
+   "]"}]}]], "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{{3.54740039823794*^9, 3.5474004036555557`*^9}, {
+   3.547400592143489*^9, 3.547400665583235*^9}, 3.547400713922076*^9}],
+
+Cell[BoxData[
+ TemplateBox[{Graphics3DBox[{{
+      RGBColor[1, 0, 1], 
+      Opacity[0.85], 
+      Polygon3DBox[{{0, 0, 5.552914072553016}, {0, 2.1548928703313783`, 0}, {
+        3.119398119825272, 0, 0}}]}, {
+      RGBColor[1, 1, 0], 
+      Opacity[1], 
+      Line3DBox[{{1.2744781773856848`, 1.2744781773856848`, 0}, {
+        0, 0, 5.552914072553016}}], 
+      Line3DBox[{{1.9973623335073767`, 0, 1.9973623335073767`}, {
+        0, 2.1548928703313783`, 0}}], 
+      Line3DBox[{{0, 1.5524435203393163`, 1.5524435203393163`}, {
+        3.119398119825272, 0, 0}}]}}, Axes -> True, AxesLabel -> {
+      FormBox["x", TraditionalForm], 
+      FormBox["y", TraditionalForm], 
+      FormBox["z", TraditionalForm]}, ImageSize -> {284.52907390513, 432.}, 
+    Lighting -> "Neutral", 
+    ViewPoint -> {3.3074626801063007`, -0.6167005917620957, 
+     0.3610692451931252}, 
+    ViewVertical -> {0.8803184538731847, -0.21738926704463185`, 
+     0.8650587406559501}],
+   "\"Figure 15: The r-quotient plane derived from figure 14 split into \
+sections of uniform median coordinate.\""},
+  "Labeled",
+  DisplayFunction->(GridBox[{{
+      TagBox[
+       ItemBox[
+        PaneBox[
+         TagBox[#, "SkipImageSizeLevel"], Alignment -> {Center, Baseline}, 
+         BaselinePosition -> Baseline], DefaultBaseStyle -> "Labeled"], 
+       "SkipImageSizeLevel"]}, {
+      ItemBox[#2, BaseStyle -> Directive[Bold, FontFamily -> Times], 
+       DefaultBaseStyle -> "LabeledLabel"]}}, 
+    GridBoxAlignment -> {"Columns" -> {{Center}}, "Rows" -> {{Center}}}, 
+    AutoDelete -> False, 
+    GridBoxItemSize -> {"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+    BaselinePosition -> {1, 1}]& ),
+  InterpretationFunction->(RowBox[{"Labeled", "[", 
+     RowBox[{#, ",", #2, ",", "Bottom", ",", 
+       RowBox[{"LabelStyle", "\[Rule]", 
+         RowBox[{"Directive", "[", 
+           RowBox[{"Bold", ",", 
+             RowBox[{"FontFamily", "\[Rule]", "Times"}]}], "]"}]}]}], 
+     "]"}]& )]], "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ CellChangeTimes->{3.5474006679326773`*^9, 3.54740071392233*^9, 
+  3.54740481496692*^9, 3.5474049355181637`*^9}]
+}, {16}]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -7415,6 +8440,81 @@ Cell[306237, 6882, 539, 13, 131, "Input",
 Cell[306779, 6897, 9309, 167, 332, "Output",
  CellGroupingRules->{GroupTogetherGrouping, 10000.}]
 }, {3}]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[316134, 7070, 96, 1, 39, "Subsection"],
+Cell[CellGroupData[{
+Cell[316255, 7075, 104, 1, 31, "Subsubsection"],
+Cell[316362, 7078, 311, 5, 77, "Text"],
+Cell[CellGroupData[{
+Cell[316698, 7087, 1784, 43, 155, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[318485, 7132, 2517, 71, 515, InheritFromParent,
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ InitializationCell->True],
+Cell[321005, 7205, 398, 12, 34, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.},
+ InitializationCell->True],
+Cell[321406, 7219, 1535, 39, 131, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[322944, 7260, 534, 13, 107, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[323481, 7275, 4889, 94, 331, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}]
+}, {6}]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[328416, 7375, 111, 1, 31, "Subsubsection"],
+Cell[328530, 7378, 371, 7, 77, "Text"],
+Cell[CellGroupData[{
+Cell[328926, 7389, 293, 7, 34, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[329222, 7398, 3445, 83, 299, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[332670, 7483, 615, 13, 131, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[333288, 7498, 2824, 61, 468, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}]
+}, {4}]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[336158, 7565, 153, 2, 31, "Subsubsection"],
+Cell[336314, 7569, 4145, 127, 318, "Text"],
+Cell[CellGroupData[{
+Cell[340484, 7700, 1213, 28, 83, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[341700, 7730, 1061, 28, 94, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[342764, 7760, 388, 11, 34, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[343155, 7773, 274, 7, 43, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[343432, 7782, 242, 6, 54, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[343677, 7790, 190, 4, 46, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[343870, 7796, 926, 20, 34, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[344799, 7818, 435, 11, 48, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[345237, 7831, 979, 24, 59, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[346219, 7857, 569, 12, 34, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[346791, 7871, 498, 9, 34, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[347292, 7882, 543, 8, 34, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[347838, 7892, 414, 6, 34, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[348255, 7900, 5112, 123, 275, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[353370, 8025, 647, 14, 131, "Input",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}],
+Cell[354020, 8041, 2151, 47, 498, "Output",
+ CellGroupingRules->{GroupTogetherGrouping, 10000.}]
+}, {16}]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
