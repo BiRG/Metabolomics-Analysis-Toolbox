@@ -1,0 +1,6 @@
+Citric_acid
+Creatinine
+2-oxoglutarate
+1	-0.7	0.8
+-0.7	1	-0.4
+0.8	-0.4	1
