@@ -216,23 +216,7 @@ function normalize_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-multipliers = cell(size(handles.binned_spectra));
-max_s = 0;
-for c=1:length(handles.binned_spectra)
-    selected_quotients = handles.binned_spectra{c}.quotients(handles.use_bin, :);
-    medians = prctile(selected_quotients,50);
-    multipliers{c} = medians;
-    max_s = max(max_s, length(multipliers{c}));
-end
-
-multipliers_array = zeros(length(multipliers), max_s);
-for c=1:length(multipliers)
-    for s=1:length(multipliers{c})
-        multipliers_array(c,s)=multipliers{c}(s);
-    end
-end
-
-multipliers = multipliers_array;
+multipliers = pq_multipliers(handles.binned_spectra, handles.use_bin);
 
 spectrum_list_txt = to_str(cell_find(handles.use_spectrum));
 bin_centers_list_txt = to_str(handles.ref_spectrum.x(~handles.use_bin));
