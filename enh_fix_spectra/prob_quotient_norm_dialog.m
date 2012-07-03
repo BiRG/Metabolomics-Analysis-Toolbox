@@ -22,7 +22,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 %      normalization_factors are the normalization factors calculated for 
 %                   each of the spectra passed in the "binned_spectra" argument on 
 %                   the when the dialog was most recently raised or
-%                   created. normalization_factors(c,s) is the
+%                   created. normalization_factors{c}(s) is the
 %                   normalization factor by which spectrum s in
 %                   the collection binned_spectra{c} should be multiplied
 %                   in order to normalize it with respect to concentration.

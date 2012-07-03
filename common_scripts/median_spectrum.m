@@ -69,7 +69,7 @@ med_spec.Y = zeros(length(med_spec.x), num_used);
 % Fill med_spec.Y with copies of all used spectra
 spec_idx = 1;
 for c=1:length(collections)
-    num_samples = collections{c}.num_samples;
+    num_samples = size(collections{c}.Y,2);
     for s=1:num_samples
         if use_spectrum{c}(s)
             med_spec.Y(:,spec_idx) = collections{c}.Y(:,s);

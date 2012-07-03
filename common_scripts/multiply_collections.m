@@ -92,7 +92,8 @@ end
 % Do the multiplication
 multiplied = ensure_original_multiplied_by_field( collections );
 for c = 1:length(multiplied)
-    for s = 1:multiplied{c}.num_samples
+    num_spectra = size(multiplied{c}.Y, 2);
+    for s = 1:num_spectra
         multiplied{c}.Y(:,s) = multiplied{c}.Y(:,s)*multipliers{c}(s);
         multiplied{c}.original_multiplied_by(s)=...
             multiplied{c}.original_multiplied_by(s)*multipliers{c}(s);

@@ -22,7 +22,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 %      normalization_factors are the normalization factors calculated for 
 %                   each of the spectra passed in the "binned_spectra" argument on 
 %                   the when the dialog was most recently raised or
-%                   created. normalization_factors(c,s) is the
+%                   created. normalization_factors{c}(s) is the
 %                   normalization factor by which spectrum s in
 %                   the collection binned_spectra{c} should be multiplied
 %                   in order to normalize it with respect to concentration.
@@ -50,7 +50,7 @@ function varargout = prob_quotient_norm_dialog(varargin)
 
 % Edit the above text to modify the response to help prob_quotient_norm_dialog
 
-% Last Modified by GUIDE v2.5 17-May-2012 16:09:23
+% Last Modified by GUIDE v2.5 05-May-2012 16:40:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -200,23 +200,7 @@ function normalize_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-multipliers = cell(size(handles.binned_spectra));
-max_s = 0;
-for c=1:length(handles.binned_spectra)
-    selected_quotients = handles.binned_spectra{c}.quotients(handles.use_bin, :);
-    medians = prctile(selected_quotients,50);
-    multipliers{c} = medians;
-    max_s = max(max_s, length(multipliers{c}));
-end
-
-multipliers_array = zeros(length(multipliers), max_s);
-for c=1:length(multipliers)
-    for s=1:length(multipliers{c})
-        multipliers_array(c,s)=multipliers{c}(s);
-    end
-end
-
-multipliers = multipliers_array;
+multipliers = pq_multipliers(handles.binned_spectra);
 
 spectrum_list_txt = to_str(cell_find(handles.use_spectrum));
 bin_centers_list_txt = to_str(handles.ref_spectrum.x(~handles.use_bin));

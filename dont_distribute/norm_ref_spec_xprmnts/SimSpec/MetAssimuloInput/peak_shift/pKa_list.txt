@@ -1,0 +1,354 @@
+1-Aminno-2,2-dimethylpropane	10.15
+1-Amino-6-hydroxynaphthalene	3.97
+1-Methylimidazol	6.95
+1-Methylpiperidine	10.08
+1-Naphthoic acid	3.7
+1-Naphthol	9.34
+1,1-Cyclopropanedicarboxylic acid	1.82
+1,10-Phenanthroline	4.84
+1,2-Dimethylaminoethane	10.4
+1,2-Dimethylpiperidine	10.22
+1,2-Propanediamine	9.82
+1H-Imidazole	6.95
+1H-Purin-6-amine	4.12
+2-(m-Anisyl)propanoic acid	4.65
+2-(Methylamino)benzoic acid	5.34
+2-(o-Anisyl)propanoic acid	4.8
+2-(p-Anisyl)propanoic acid	4.69
+2-Aminoadipic macid	2.14
+2-Aminobenzoic acid	2.11
+2-Aminobutanoic acid	2.29
+2-Benzylpyridine	5.13
+2-Bromoaniline	2.53
+2-Bromobenzoic acid	2.84
+2-Chloroaniline	2.65
+2-Chlorobenzoic acid	2.92
+2-Chlorophenol	8.49
+2-Chlorophenoxyacetic acid	3.05
+2-Chlorophenylacetic acid	4.07
+2-Chloropropanoic acid	2.83
+2-Ethylbenzimidazole	6.18
+2-Ethylpyridine	5.89
+2-Fluoroaniline	3.2
+2-Iodoaniline	2.6
+2-Iodobenzoic acid	2.85
+2-Methylalanine	2.36
+2-Methylbenzimidazole	6.19
+2-Methylbutanoic acid	4.8
+2-Methylpropanoic acid	4.88
+2-Naphthoic acid	4.17
+2-Naphthol	9.51
+2-Nitroaniline	-0.26
+2-Nitrophenol	7.17
+2-Nitrophenylacetic acid	4
+2-Oxo-3-methylpentanoic acid	2.3
+2-Oxobutanoic acid	2.5
+2-Oxoglutaric acid	2.47
+2-Phenylbenzimidazole	5.23
+2-Phenylbenzoic acid	3.46
+2,2,6,6-Tetramethylpiperidine	11.07
+2,3-Dichlorophenol	7.44
+2,3-Dimethylpyridine	6.57
+2,4-Diaminobutanoic acid	1.85
+2,4-Dimethylimidazzol	8.36
+2,4-Dimethylpyridine	6.99
+2,4,6-Trihydroxybenzoic acid	1.68
+2,4,6-Trimethylpyridine	7.43
+2,5-Dihydroxybenzoic acid	2.97
+2,5-Dimethylpiperazine	9.66
+2,5-Dimethylpyridine	6.4
+2,6-Dimethylpyridine	6.65
+3-(2-Chlorophenyl)propanoic acid	4.58
+3-(2-Nitrophenyl)propanoic acid	4.5
+3-(3-Chlorophenyl)propanoic acid	4.59
+3-(4-Chlorophenyl)propanoic acid	4.61
+3-(4-Nitrophenyl)propanoic acid	4.47
+3-(Methylamino)benzoic acid	5.1
+3-Acetylpiperidine	3.18
+3-Aminobenzoic acid	4.78
+3-Bromoaniline	3.58
+3-Bromobenzoic acid	3.86
+3-Bromopyridine	2.84
+3-Bromoquinoline	2.69
+3-Butenoic acid	4.34
+3-Chloroaniline	3.46
+3-Chlorobenzoic acid	3.82
+3-Chlorophenol	8.85
+3-Chlorophenoxyacetic acid	3.1
+3-Chlorophenylacetic acid	4.14
+3-Chloropropanoic acid	3.98
+3-Chloropyridine	2.84
+3-Fluoroaniline	3.5
+3-Hydroxybutanoic acid	4.7
+3-Hydroxypropanoic acid	4.51
+3-Iodobenzoic acid	3.8
+3-Iodotyrosine	2.2
+3-Methyl-1-butanamine	10.6
+3-Methylbutanoic acid	4.77
+3-Methylglutaric acid	4.24
+3-Nitroaniline	2.47
+3-Nitrobenzoic acid	3.47
+3-Nitrophenol	8.28
+3-Nitrophenylacetic acid	3.97
+3-Pyridinecarboxylic acid	4.85
+3,4-Dihydroxybenzoic acid	4.48
+3,4-Dimethylpyridine	6.46
+3,5-Dibromoaniline	2.34
+3,5-Dihydroxybenzoic acid	4.04
+3,5-Diiodityrosine	2.12
+3,5-Dimethylpyridine	6.15
+4-(Methylamino)benzoic acid	5.04
+4-(p-Aminobenzoyl)aniline	2.93
+4-Aminoazobenzene	2.82
+4-Aminobutanoic acid	4.03
+4-Animobenzoic acid	2.5
+4-Benzylaniline	2.17
+4-Bromo-N,N-dimethylaniline	4.23
+4-Bromoaniline	3.86
+4-Chloroaniline	4.15
+4-Chlorobenzoic acid	3.98
+4-Chlorophenol	9.18
+4-Chlorophenylacetic acid	4.19
+4-Cyanobutanoic acid	2.42
+4-Dimethylaminoazobenzene	3.23
+4-Fluoroaniline	4.65
+4-Hydroxybutanoic acid	4.72
+4-Methylthioaniline	4.35
+4-Nitroaniline	1
+4-Nitrobenzoic acid	3.41
+4-Nitrophenol	7.15
+4-Nitrophenylacetic acid	3.85
+4-Phenylbutanoic acid	4.76
+4-Pyridinamine	9.11
+4-Pyridinecarboxylic acid	4.96
+5-Aminolevulinic acid	4.05
+5-Aminopentanoic acid	4.27
+5-Hydroxylysine	2.13
+5-Hydroxytryptamine	9.8
+6-Aminohexanoic acid	4.37
+8-Quinolinecarboxylic acid	1.82
+a-Ethylglutamic acid	3.85
+a-Naphthylamine	3.92
+a-Phenylpropanoic acid	4.64
+a-Tartaric acid	2.98
+Acetamide	0.63
+Acetic acid	4.76
+Acrylic acid	4.25
+Adiparnic acid	4.63
+Adipic acid	4.43
+Allantoin	8.96
+Alloxanic acid	6.64
+Aniline	4.63
+Arginine	1.82
+Aspartic acid	1.99
+Azetidine	11.29
+b-Alanine	3.55
+b-Naphthylamine	4.16
+b-Phenylpropanoic acid	4.37
+Barbituric acid	4.01
+Benzenesulfonic acid	0.7
+Benzimidazole	5.53
+Benzoic acid	4.19
+Benzylamine	9.33
+Bornylamine	10.17
+Bromoacetic acid	2.69
+Brucine	8.28
+Butanoic acid	4.83
+Butylcyclohexylamine	11.23
+Cacodylic acid	1.57
+Cadaverine	10.05
+Carnitine	3.8
+Chloroacetic acid	2.85
+Choline	13.9
+cis-Aconitic acid	1.95
+cis-Cinnamic acid	3.89
+Citrulline	2.43
+Codeine	8.21
+Creatine	2.63
+Creatinine	4.83
+Cyanoacetic acid	2.45
+Cyclohexanecarboxylic acid	4.9
+Cysteamine	8.35
+Cysteine	1.92
+D-Adrenaline	8.66
+Decylamine	10.64
+Diaminopimelic acid	1.8
+Dichloroacetic acid	1.48
+Diethylmethylamine	10.35
+Dihydroxymalic acid	1.92
+Dihydroxytartaric acid	1.92
+Diisopropylamine	11.05
+Dimethylamine	10.68
+Dimethylmalonic acid	3.15
+Dinicotinic acid	2.8
+Diphenylacetic acid	3.94
+Diphenylamine	0.79
+Dipicolinic acid	2.16
+DL-Mandelic acid	3.85
+DL-Methoxyalanine	2.04
+Dodecylamine	10.63
+Dopamine	8.9
+Ethanolamine	9.5
+Ethylamine	10.7
+Ethylene glycol	14.22
+Ethyleneimine	8.01
+g-Carboxyglutamic acid	1.7
+Gallic acid	4.41
+Glutaric acid	4.31
+Glyceric acid	3.52
+Glycerol	14.15
+Glycine	2.35
+Glycocyamine	2.82
+Glycolic acid	3.83
+Glycylalanine	3.15
+Glycylasparagine	2.94
+Glycylserine	2.98
+Glyoxylic	3.18
+Heptanedioic acid	4.71
+Heptanoic acid	4.89
+Heptylamine	10.67
+Hexadecylamine	10.63
+Hexanoic acid	4.85
+Hexylamine	10.56
+Hippuric acid	3.62
+Histamine	6.04
+Histidine	1.8
+Homocysteine	2.22
+Homocystine	1.59
+Homogentisic acid	4.4
+Homoserine	2.71
+Iodoacetic acid	3.12
+Isocitric acid	3.29
+Isoleucine	2.32
+Itaconic acid	3.85
+l-1-Methylhistidine	1.69
+L-2-Pyrrolidone-5-carboxylic acid	3.32
+l-3-Methylhistidine	1.92
+L-3,4-Dihydroxyphenylalanine	2.32
+L-Alanine	2.34
+L-Argininosuccinic acid	1.62
+L-Carnosine	2.62
+l-Cysteic acid	1.3
+L-Glutamic acid	2.13
+L-Glutamine	2.17
+l-Glutathione	2.12
+L-Leucine	2.33
+l-Pipecolic acid	2.28
+Lutidinic acid	2.15
+Lysine	2.16
+m-Aminobenzenesulfonic acid	3.73
+m-Anisidine	4.23
+m-Chlorocinnamic acid	4.29
+m-Cresol	10.01
+m-Cyanophenoxyacetic acid	3.03
+m-Methylaniline	4.73
+m-Methylcinnamic acid	4.44
+m-Phenetidine	4.18
+m-Phthalic acid	3.54
+m-Toluic acid	4.27
+Maleic acid	1.83
+Malic acid	3.4
+Malonic acid	2.83
+Melamine	5
+Mesaconic acid	3.09
+Mesitylenic acid	4.32
+meso-Tartaric acid	3.22
+Methionine	2.13
+Methoxypyridine	6.47
+Methylamine	10.63
+Methylaminopyrazine	3.39
+Methylglycine	2.21
+Methylsuccinic acid	4.13
+Methymalonic acid	3.07
+Morphine	8.21
+Morpholine	8.33
+N-Acetylglycine	3.67
+N-Allylaniline	4.17
+N-Glycylglycine	3.14
+N-Glycylleucine	3.18
+N-Leucylglycine	3.25
+N-Methylaniline	4.84
+N-Methylpyrrolidine	10.32
+N-Propylglycine	2.35
+N,N-Dimethyl-1-naphthylamine	4.83
+N,N-Dimethyl-2-naphthylamine	4.57
+N,N-Dimethylaniline	5.15
+N,N-Dimethylglycine	9.89
+Neobornylamine	10.01
+Nicotine	8.02
+Nonanic acid	4.96
+Nonylamine	10.64
+Noradrenaline	8.64
+Norleucine	2.34
+Norvaline	2.32
+o-Aminobenzenesulfonic acid	2.48
+o-Anisidine	4.52
+o-Chlorocinnamic acid	4.23
+o-Cresol	10.2
+o-Cyanophenoxyacetic acid	2.98
+o-Methylaniline	4.44
+o-Methylcinnamic acid	4.5
+o-Phthalic acid	2.89
+o-Toluic acid	3.91
+Octadecylamine	10.6
+Octanedioic acid	4.52
+Octanoic acid	4.89
+Octylamine	10.65
+Ornithine	1.71
+Oxalic acid	1.23
+Oxaloacetic acid	2.22
+p-Aminobenzenesulfonic acid	3.24
+p-Anisidine	5.34
+p-Chlorocinnamic acid	4.41
+p-Cresol	10.17
+p-Cyanophenoxyacetic acid	2.93
+p-Methylaniline	5.08
+p-Methylcinnamic acid	4.56
+p-Phthalic acid	3.51
+p-Toluic acid	4.36
+Papaverine	6.4
+Pentadecylamine	10.61
+Pentanoic acid	4.84
+Pentylamine	10.63
+Phenylalanine	2.2
+Phenylethylamine	9.84
+Phenylglycine	1.83
+Picolinic acid	1.07
+Picric acid	0.38
+Piperidine	11.12
+Proline	1.95
+Propanoic acid	4.86
+Pyridine	5.25
+Pyrrolidine	11.27
+Pyruvic acid	2.39
+Quinine	8.52
+Quinolinic acid	2.43
+Resorcinol	9.81
+sec-Butylamine	10.56
+Serine	2.19
+Strychnine	8.26
+Succinic acid	4.16
+Taurine	1.5
+Terephthalic acid	3.51
+tert-Butylamine	10.68
+Tetradecylamine	10.62
+Thioacetic acid	3.33
+Threonine	2.09
+trans-4-Hydroxyroline	1.82
+trans-Aconitic acid	2.8
+trans-Cinnamic acid	4.44
+trans-Crotonic acid	4.69
+Trichloroacetic acid	0.7
+Tridecylamine	10.63
+Triethylamine	10.75
+Trimethylacetic acid  	5.03
+Trimethylamine	9.8
+Trimethylamine oxide	4.65
+Tryptamine	10.2
+Tryptophan	2.46
+Tyramine	9.74
+Tyrosine	2.2
+Tyrosineamide	7.33
+Undecylamine	10.63
+Valine	2.29
+Veronal	7.43
