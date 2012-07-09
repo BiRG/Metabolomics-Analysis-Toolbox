@@ -168,6 +168,17 @@ elseif strcmp(str{s},'Set reference')
         collections{c}.Y_fixed = collections{c}.Y;
         nm = size(collections{c}.Y);
         inxs = find(left >= collections{c}.x & collections{c}.x >= right);
+        if ~any(inxs)
+            msgbox(sprintf(['There are no samples in the region from' ...
+                ' %f to %f in collection %s. Please choose a ' ...
+                'different region for the location of the standard ' ...
+                'peak. Cannot set reference.'], ...
+                left, right, collections{c}.collection_id), ...
+                'Error: No samples', 'Error');
+            % No setappdata calls were made so everything is still
+            % unchanged, thus we can return to abort the process
+            return; 
+        end
         [unused,temp_inxs] = sort(abs(collections{c}.x - new_position),'ascend'); %#ok<ASGLU>
         zero_inx = temp_inxs(1);
         for s = 1:collections{c}.num_samples
