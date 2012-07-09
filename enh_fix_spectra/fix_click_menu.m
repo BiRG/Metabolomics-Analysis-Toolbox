@@ -168,6 +168,17 @@ elseif strcmp(str{s},'Set reference')
         collections{c}.Y_fixed = collections{c}.Y;
         nm = size(collections{c}.Y);
         inxs = find(left >= collections{c}.x & collections{c}.x >= right);
+        if ~any(inxs)
+            msgbox(sprintf(['There are no samples in the region from' ...
+                ' %f to %f in collection %s. Please choose a ' ...
+                'different region for the location of the standard ' ...
+                'peak. Cannot set reference.'], ...
+                left, right, collections{c}.collection_id), ...
+                'Error: No samples', 'Error');
+            % No setappdata calls were made so everything is still
+            % unchanged, thus we can return to abort the process
+            return; 
+        end
         [unused,temp_inxs] = sort(abs(collections{c}.x - new_position),'ascend'); %#ok<ASGLU>
         zero_inx = temp_inxs(1);
         for s = 1:collections{c}.num_samples
@@ -298,7 +309,14 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     if isempty(collections); return; end
     
     % Prepare the data for quotient normalization
-    binned = bin_collections(collections, 0.04, true);
+    bin_width = inputdlg('Bin width (0 for no binning)', ...
+        'Probabilistic Quotient Normalization', 1, {'0.04'});
+    if isempty(bin_width); return; end
+    bin_width = str2double(bin_width);
+    if isnan(bin_width); return; end
+    if bin_width ~= 0
+        binned = bin_collections(collections, bin_width, true);
+    end
     
     regions = get_regions;
     use_bin = ~bins_overlapping_regions(binned{1}.x, regions);

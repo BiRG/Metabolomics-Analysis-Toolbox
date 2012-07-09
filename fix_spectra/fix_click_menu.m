@@ -298,7 +298,14 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     if isempty(collections); return; end
     
     % Prepare the data for quotient normalization
-    binned = bin_collections(collections, 0.04, true);
+    bin_width = inputdlg('Bin width (0 for no binning)', ...
+        'Probabilistic Quotient Normalization', 1, {'0.04'});
+    if isempty(bin_width); return; end
+    bin_width = str2double(bin_width);
+    if isnan(bin_width); return; end
+    if bin_width ~= 0
+        binned = bin_collections(collections, bin_width, true);
+    end
     
     regions = get_regions;
     use_bin = ~bins_overlapping_regions(binned{1}.x, regions);

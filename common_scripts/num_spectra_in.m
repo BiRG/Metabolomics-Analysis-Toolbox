@@ -40,7 +40,7 @@ end
 
 for idx=1:length(collections)
     cur=collections{idx};
-    num_spectra = num_spectra + cur.num_samples;
+    num_spectra = num_spectra + size(cur.Y,2);
 end
 
 end
