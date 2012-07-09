@@ -1,0 +1,202 @@
+package com.jmatio.common;
+
+/**
+ * MAT-file data types
+ * 
+ * @author Wojciech Gradkowski <wgradkowski@gmail.com>
+ */
+public class MatDataTypes
+{
+    /* MAT-File Data Types */
+	/**
+	 * Unknown type
+	 */
+    public static final int miUNKNOWN   = 0;
+    /**
+     * 8 bit signed integer type
+     */
+    public static final int miINT8      = 1;
+    /**
+     * 8 bit unsigned integer type
+     */
+    public static final int miUINT8     = 2;
+    /**
+     * 16 bit signed integer type
+     */
+    public static final int miINT16     = 3;
+    /**
+     * 16 bit unsigned integer type
+     */
+    public static final int miUINT16    = 4;
+    /**
+     * 32 bit signed integer type
+     */
+    public static final int miINT32     = 5;
+    /**
+     * 32 bit unsigned integer type
+     */
+    public static final int miUINT32    = 6;
+    /**
+     * single type
+     */
+    public static final int miSINGLE    = 7;
+    /**
+     * double type
+     */
+    public static final int miDOUBLE    = 9;
+    /**
+     * 64 bit signed integer type
+     */
+    public static final int miINT64     = 12;
+    /**
+     * 64 bit unsigned integer type
+     */
+    public static final int miUINT64    = 13;
+    /**
+     * matrix type
+     */
+    public static final int miMATRIX    = 14;
+    /**
+     * compressed type
+     */
+    public static final int miCOMPRESSED    = 15;
+    /**
+     * utf8 type
+     */
+    public static final int miUTF8      = 16;
+    /**
+     * utf16 type
+     */
+    public static final int miUTF16     = 17;
+    /**
+     * utf32 type
+     */
+    public static final int miUTF32     = 18;
+
+    /**
+     * Size of an int32 in bytes
+     */
+    public static final int miSIZE_INT32    = 4;
+    /**
+     * Size of an int16 in bytes
+     */
+    public static final int miSIZE_INT16    = 2;
+    /**
+     * Size of an int8 in bytes
+     */
+    public static final int miSIZE_INT8     = 1;
+    /**
+     * Size of a uint32 in bytes
+     */
+    public static final int miSIZE_UINT32   = 4;
+    /**
+     * Size of a uint16 in bytes
+     */
+    public static final int miSIZE_UINT16   = 2;
+    /**
+     * Size of a uint8 in bytes
+     */
+    public static final int miSIZE_UINT8    = 1;
+    /**
+     * Size of a double in bytes
+     */
+    public static final int miSIZE_DOUBLE   = 8;
+    /**
+     * Size of a char in bytes
+     */
+    public static final int miSIZE_CHAR     = 1;
+    
+    /**
+     * Return number of bytes for given type.
+     * 
+     * @param type - <code>MatDataTypes</code>
+     * @return  number of bytes for given type.
+     */
+    public static int sizeOf(int type)
+    {
+        switch ( type )
+        {
+            case MatDataTypes.miINT8:
+                return miSIZE_INT8;
+            case MatDataTypes.miUINT8:
+                return miSIZE_UINT8;
+            case MatDataTypes.miINT16:
+                return miSIZE_INT16;
+            case MatDataTypes.miUINT16:
+                return miSIZE_UINT16;
+            case MatDataTypes.miINT32:
+                return miSIZE_INT32;
+            case MatDataTypes.miUINT32:
+                return miSIZE_UINT32;
+            case MatDataTypes.miDOUBLE:
+                return miSIZE_DOUBLE;
+            default:
+                return 1;
+        }
+    }
+    /**
+     * Get String representation of a data type
+     * 
+     * @param type - data type
+     * @return - String representation
+     */
+    public static String typeToString(int type)
+    {
+        String s;
+        switch (type)
+        {
+            case MatDataTypes.miUNKNOWN:
+                s = "unknown";
+                break;
+            case MatDataTypes.miINT8:
+                s = "int8";
+                break;
+            case MatDataTypes.miUINT8:
+                s = "uint8";
+                break;
+            case MatDataTypes.miINT16:
+                s = "int16";
+                break;
+            case MatDataTypes.miUINT16:
+                s = "uint16";
+                break;
+            case MatDataTypes.miINT32:
+                s = "int32";
+                break;
+            case MatDataTypes.miUINT32:
+                s = "uint32";
+                break;
+            case MatDataTypes.miSINGLE:
+                s = "single";
+                break;
+            case MatDataTypes.miDOUBLE:
+                s = "double";
+                break;
+            case MatDataTypes.miINT64:
+                s = "int64";
+                break;
+            case MatDataTypes.miUINT64:
+                s = "uint64";
+                break;
+            case MatDataTypes.miMATRIX:
+                s = "matrix";
+                break;
+            case MatDataTypes.miCOMPRESSED:
+                s = "compressed";
+                break;
+            case MatDataTypes.miUTF8:
+                s = "uft8";
+                break;
+            case MatDataTypes.miUTF16:
+                s = "utf16";
+                break;
+            case MatDataTypes.miUTF32:
+                s = "utf32";
+                break;
+            default:
+                s = "unknown";
+        }
+        return s;
+    }
+    
+}

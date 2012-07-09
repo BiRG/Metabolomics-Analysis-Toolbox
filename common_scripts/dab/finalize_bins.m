@@ -18,7 +18,11 @@ for bi = 1:nm(1)
     end
     if ~isempty(inxs)
         ix = find(all_mins(:,1) <= inxs(end),1,'last');
-        bins(bi,1) = all_mins(ix,1);        
+        if isempty(ix)
+            bins(bi,1) = inxs(1);
+        else
+            bins(bi,1) = all_mins(ix,1);        
+        end
 %         [v,ix] = min(composite_spectrum(inxs));
 %         bins(bi,1) = inxs(ix);
         
@@ -54,7 +58,11 @@ for bi = 1:nm(1)
     end
     if ~isempty(inxs)
         ix = find(all_mins(:,2) >= inxs(1),1,'first');
-        bins(bi,2) = all_mins(ix,2);
+        try
+            bins(bi,2) = all_mins(ix,2);
+        catch ME
+            disp('here');
+        end
 %         [v,ix] = min(composite_spectrum(inxs));
 %         bins(bi,2) = inxs(ix);
         
