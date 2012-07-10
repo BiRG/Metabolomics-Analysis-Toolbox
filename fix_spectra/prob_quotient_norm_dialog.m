@@ -200,17 +200,9 @@ function normalize_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-multipliers = pq_multipliers(handles.binned_spectra);
+multipliers = pq_multipliers(handles.binned_spectra, handles.use_bin);
 
-spectrum_list_txt = to_str(cell_find(handles.use_spectrum));
-bin_centers_list_txt = to_str(handles.ref_spectrum.x(~handles.use_bin));
-normalization_facts_txt = to_str(multipliers);
-
-log_text = sprintf(['  Probabilistic quotient normalization '...
-    'using spectra %s to generate a reference spectrum and ignoring ' ...
-    'bins centered at %s in calculating the quotients. This resulted ' ...
-    'in normalization factors of %s.'], ...
-    spectrum_list_txt, bin_centers_list_txt, normalization_facts_txt);
+log_text = '  Probabilistic quotient normalized.';
 
 handles.output = {handles.figure1, false, multipliers, log_text};
 
