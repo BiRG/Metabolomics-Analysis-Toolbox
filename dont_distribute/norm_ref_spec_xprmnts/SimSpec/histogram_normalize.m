@@ -1,4 +1,4 @@
-function collections = histogram_normalize(collections, baseline_pts, n_std_dev, num_bins, use_waitbar, hist_method)
+function [collections, multipliers] = histogram_normalize(collections, baseline_pts, n_std_dev, num_bins, use_waitbar, hist_method)
 % Applies Torgrip's histogram normalization to the spectra 
 %
 % collections = HISTOGRAM_NORMALIZE(collections, baseline_pts, std_dev, num_bins, use_waitbar, hist_method)
@@ -48,6 +48,10 @@ function collections = histogram_normalize(collections, baseline_pts, n_std_dev,
 % collections - the collections after normalization. The processing log is
 %               updated and the histograms are all multiplied by their
 %               respective dilution factors.
+%
+% multipliers - cell array of the dilution factors appropriate for passing
+%               to multiply_collections to scale the input collections to
+%               match the output collections
 %
 % -------------------------------------------------------------------------
 % Examples
@@ -255,6 +259,16 @@ for c=1:length(collections)
         cur = cur + 1;
     end
 end
+
+% Reformat the multipliers array into a cell array
+multipliers_cells = cell(size(collections));
+cur = 1;
+for c=1:length(collections)
+    cur_size = size(collections{c});
+    multipliers_cells{c} = multipliers(cur : cur+cur_size-1);
+    cur = cur + cur_size;
+end
+multipliers = multipliers_cells;
 
 if use_waitbar; delete(wait_h); end;
 
