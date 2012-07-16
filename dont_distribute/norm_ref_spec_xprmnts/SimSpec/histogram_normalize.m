@@ -1,7 +1,7 @@
-function collections = histogram_normalize(collections, baseline_pts, n_std_dev, num_bins, use_waitbar)
+function collections = histogram_normalize(collections, baseline_pts, n_std_dev, num_bins, use_waitbar, hist_method)
 % Applies Torgrip's histogram normalization to the spectra 
 %
-% collections = HISTOGRAM_NORMALIZE(collections, baseline_pts, std_dev, num_bins, use_waitbar)
+% collections = HISTOGRAM_NORMALIZE(collections, baseline_pts, std_dev, num_bins, use_waitbar, hist_method)
 %
 % Uses the algorithm from "A note on normalization of biofluid 1D 1H-NMR
 % data" by R. J. O. Torgrip, K. M. Aberg, E. Alm, I. Schuppe-Koistinen and
@@ -33,6 +33,20 @@ function collections = histogram_normalize(collections, baseline_pts, n_std_dev,
 %
 % use_waitbar  - if true then a waitbar is displayed during processing.
 %                Must be a logical.
+%
+% hist_method  - (optional) must be 'logarithmic' (the method from the
+%                original paper) or 'equal frequency'. 
+%
+%                If equal frequency, the bins boundaries are set from 
+%                lowest to highest so that the current bin contains at 
+%                least floor(num_entries/num_bins) entries from the 
+%                reference spectrum. This is repeated for the next bin with 
+%                num_entries being reduced by the number of entries in the
+%                previous bin and the number of bins being reduced by 1. If
+%                the number of entries is reduced to 0 before the last bin
+%                is filled, the remaining bins are set equal-width based on
+%                the mean width of the previous bins. If the mean width is
+%                0 or infinite, then the remaining bins are width 1.
 %
 % -------------------------------------------------------------------------
 % Output parameters
@@ -157,6 +171,15 @@ else
     wait_h = -1;
 end
 
+% I set these as constants so misspellings will not be a problem later in
+% the code.
+hist_method_log_string = 'logarithmic';
+hist_method_equ_string = 'equal frequency';
+
+if ~exist('hist_method','var')
+    hist_method = hist_method_log_string;
+end
+
 % Calculate the reference spectrum
 all_spectra = cellfun(@(in) true(in.num_samples,1), collections, 'UniformOutput', false);
 ref_spectrum = median_spectrum(collections, all_spectra);
@@ -179,23 +202,33 @@ for c=1:length(collections)
     end
 end
 
-% Calculate histogram edges. Note that rather than taking the log(y+1) each
-% iteration, I move the histogram edges according to the inverse of this
-% function. edge=2^edge-1. This means that we are not translating the y
-% values anymore (I'd have to change this if I wanted to use the fourier
-% autocorrelation trick, for example) but we are only doing multiplications
-% each time through the main optimization loop - and multiplications are
-% faster than additions for floating point.
-min_y = min(ref_values); % Calculate the bounds of the histogram based on the reference spectrum
-max_y = max(ref_values);
-assert(min_y > 0);
-assert(max_y >= min_y);
-min_z = log2(min_y+1); %z values are those transformed into logarithmic space
-max_z = log2(max_y+1); 
-z_bins = linspace(min_z, max_z, num_bins+1);
-y_bins = (2.^z_bins)-1;
-y_bins(1) = -inf;
-y_bins(end) = inf;
+% Calculate histogram edges.
+if strcmpi(hist_method, hist_method_log_string)
+    % Note that rather than taking the log(y+1) each
+    % iteration, I move the histogram edges according to the inverse of this
+    % function. edge=2^edge-1. This means that we are not translating the y
+    % values anymore (I'd have to change this if I wanted to use the fourier
+    % autocorrelation trick, for example) but we are only doing multiplications
+    % each time through the main optimization loop - and multiplications are
+    % faster than additions for floating point.
+    min_y = min(ref_values); % Calculate the bounds of the histogram based on the reference spectrum
+    max_y = max(ref_values);
+    assert(min_y > 0);
+    assert(max_y >= min_y);
+    min_z = log2(min_y+1); %z values are those transformed into logarithmic space
+    max_z = log2(max_y+1); 
+    z_bins = linspace(min_z, max_z, num_bins+1);
+    y_bins = (2.^z_bins)-1;
+    y_bins(1) = -inf;
+    y_bins(end) = inf;
+elseif strcmpi(hist_method, hist_method_equ_string)
+    y_bins = equal_frequency_histogram_boundaries(ref_values);
+else
+    error('histogram_normalize:bad_hist_method',['The method passed to '...
+        'histogram normalize must be either ''%s'' or ''%s''. Instead ' ...
+        '''%s'' was passed.'],  hist_method_equ_string,  ...
+        hist_method_log_string, hist_method);
+end
 
 % Calculate the multipliers
 ref_histogram = histc(ref_values, y_bins);
