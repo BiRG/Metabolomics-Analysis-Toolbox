@@ -28,7 +28,7 @@ function collections = histogram_normalize(collections, baseline_pts, n_std_dev,
 %                are ignored in creating the histogram. Must be
 %                non-negative.
 %
-% num_bins     - the number of bins to use in the histogram must be at
+% num_bins     - the number of bins to use in the histogram. Must be at
 %                least 1
 %
 % use_waitbar  - if true then a waitbar is displayed during processing.
@@ -37,16 +37,9 @@ function collections = histogram_normalize(collections, baseline_pts, n_std_dev,
 % hist_method  - (optional) must be 'logarithmic' (the method from the
 %                original paper) or 'equal frequency'. 
 %
-%                If equal frequency, the bins boundaries are set from 
-%                lowest to highest so that the current bin contains at 
-%                least floor(num_entries/num_bins) entries from the 
-%                reference spectrum. This is repeated for the next bin with 
-%                num_entries being reduced by the number of entries in the
-%                previous bin and the number of bins being reduced by 1. If
-%                the number of entries is reduced to 0 before the last bin
-%                is filled, the remaining bins are set equal-width based on
-%                the mean width of the previous bins. If the mean width is
-%                0 or infinite, then the remaining bins are width 1.
+%                If equal frequency, the bin boundaries are set using 
+%                the equal_frequency_histogram_boundaries routine. See
+%                algorithm description there.
 %
 % -------------------------------------------------------------------------
 % Output parameters
@@ -60,7 +53,7 @@ function collections = histogram_normalize(collections, baseline_pts, n_std_dev,
 % Examples
 % -------------------------------------------------------------------------
 %
-% >> collections = histogram_normalize(collections, 30, 5, 60, true)
+% >> collections = HISTOGRAM_NORMALIZE(collections, 30, 5, 60, true)
 %
 % Uses histogram normalization on the spectra in collections. It creates
 % an estimate of the noise standard deviation from the first 30 points in 
@@ -73,7 +66,7 @@ function collections = histogram_normalize(collections, baseline_pts, n_std_dev,
 % Authors
 % -------------------------------------------------------------------------
 %
-% Eric Moyer (May 2012) eric_moyer@yahoo.com
+% Eric Moyer (May-July 2012) eric_moyer@yahoo.com
 %
 
 function expurgated = remove_values(values, baseline_pts, n_std_dev)
