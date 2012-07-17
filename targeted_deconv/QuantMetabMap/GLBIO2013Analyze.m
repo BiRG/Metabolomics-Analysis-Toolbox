@@ -400,7 +400,9 @@ clear('samp_dist_cache_filename');
 % Later, (near 16 July) I was trying to make area behave better and it
 % seemed that the errors that the methods had in area calculation were near
 % the variance in the estimation. So, I upped the number of samples to
-% 10,000 to reduce the error in the area estimate.
+% 9,000 to reduce the error in the area estimate.
+%
+% I changed the boundary to 1/2 percent and got one difference.
 diffs = cell(num_sampd_params, num_congestions);
 for param_idx=1:num_sampd_params 
     for congestion=1:num_congestions
@@ -408,10 +410,10 @@ for param_idx=1:num_sampd_params
         diffs{param_idx,congestion}=diffs{param_idx,congestion}./sum(orig_sampd_counts_7bin{param_idx,congestion}); 
     end; 
 end;
-fprintf('Parameter, congestion, and whether a given bin differed by 1%% or more\n');
+fprintf('Parameter, congestion, and whether a given bin differed by 0.5%% or more\n');
 for param_idx=1:num_sampd_params
     for congestion=1:num_congestions
-        fprintf('%d %d %s\n',param_idx, congestion, to_str(diffs{param_idx,congestion}>=0.01)); 
+        fprintf('%d %d %s\n',param_idx, congestion, to_str(diffs{param_idx,congestion}>=0.005)); 
     end; 
 end;
 fprintf('\n');
@@ -1206,7 +1208,7 @@ clear('parameters_to_plot');
 %% Clean up temp variables
 clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v','w','s','figure_num','dsp_color','h');
 
-%% Are the original peak parameters correlated?
+%% Are the original peak parameters correlated? (calculate param list)
 %
 % The 100/large algorithm calculates inferiorly distributed areas, but it
 % produces all of the components of those areas with improved distributions
@@ -1261,6 +1263,11 @@ clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','pe
 %
 % The correlation with lorentzianness is harder to explain. See below for
 % my plot
+%
+% (17 July 2013) I have added area to the list of parameters for which
+% correlations are calculated. It will be quite correlated with
+% everything, but I'd like to include it in plots, and I think this is the
+% easiest way to do that. Area is the last column.
 
 % Count the number of peaks in the all datum objects
 tot_peaks = 0;
@@ -1272,13 +1279,14 @@ end
 % Make each row contain the parameters for 1 peak and each column the
 % values for a given parameter (in the order they are returned by the
 % GaussLorentzPeak.property_array function)
-params = nan(tot_peaks, 4);
+params = nan(tot_peaks, 5);
 prev_row = 0; % Used for storing the last valid row
 for res_idx = 1:length(glbio_combined_results)
     datum = glbio_combined_results(res_idx);
     num_peaks = length(datum.spectrum_peaks);
-    params(prev_row+1:prev_row+num_peaks,:) = reshape( ...
+    params(prev_row+1:prev_row+num_peaks,1:4) = reshape( ...
         datum.spectrum_peaks.property_array, 4, num_peaks)';
+    params(prev_row+1:prev_row+num_peaks,5) =  [datum.spectrum_peaks.area]';
     prev_row = prev_row + num_peaks;
 end
 
@@ -1287,8 +1295,11 @@ end
 
 % Do a bonferroni-holm correction on the values from the lower triangle of
 % the p-value matrix (these are the only tests we are looking at - we know
-% the diagonal is correlated and the upper triangle is redundant)
-indices_to_correct = [2,3,4,7,8,12];
+% the diagonal is correlated and the upper triangle is redundant) I don't
+% correct the p-values for area except for the x (since we know that the
+% other parameters will certainly be correlated with area because area is
+% generated from them.
+indices_to_correct = [2,3,4,8,9,14,20];
 uncorrected = orig_param_cors_pval(indices_to_correct);
 corrected = bonf_holm(uncorrected,0.05);
 orig_param_cors_pval(indices_to_correct) = corrected;
@@ -1306,7 +1317,18 @@ scatter(params(:,4),params(:,1)); ylabel('Height'); xlabel('Location');
 % There seems to be a significant darkening of the lower half of the height
 % graph near 0.7 but I don't know what is happening. May be things will
 % be clearer in the congestion-separated results.
-scatter(params(:,3),params(:,1)); ylabel('Height'); xlabel('Lorentzianness');
+scatter(params(:,3),params(:,1)); xlabel('Lorentzianness'); ylabel('Height'); 
+
+%% Plot original height versus area
+% To get a better idea of what is going on with my area problems, I want to
+% see what the relationship is between the original area and height.
+scatter(params(:,5),params(:,1)); xlabel('Area'); ylabel('Height'); 
+
+%% Plot original height versus area - rank order
+% The original plot was not a clear relationship because I had mistyped 
+% a number, so I plotted rank order. This forms a pretty picture, so I 
+% kept it.
+scatter(tiedrank(params(:,5))/length(params(:,5)),tiedrank(params(:,1))/length(params(:,1))); xlabel('Area pctile'); ylabel('Height pctile'); 
 
 %% Clear params variable
 % I wanted to look at a few quick scatter plots, so I kept the params
@@ -1340,17 +1362,18 @@ end
 % Make each row contain the parameters for 1 peak and each column the
 % values for a given parameter (in the order they are returned by the
 % GaussLorentzPeak.property_array function)
-params = arrayfun(@(tot) nan(tot, 4),tot_peaks,'uniformoutput',false);
+params = arrayfun(@(tot) nan(tot, 5),tot_peaks,'uniformoutput',false);
 prev_row = zeros(1,num_congestions); % Used for storing the last valid row
 for res_idx = 1:length(glbio_combined_results)
     datum = glbio_combined_results(res_idx);
-    num_peaks = length(datum.spectrum_peaks);
     con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+    num_peaks = length(datum.spectrum_peaks);
     p = params{con};
-    p(prev_row(con)+1:prev_row(con)+num_peaks,:) = reshape( ...
+    p(prev_row(con)+1:prev_row(con)+num_peaks,1:4) = reshape( ...
         datum.spectrum_peaks.property_array, 4, num_peaks)';
-    params{con} = p;
+    p(prev_row(con)+1:prev_row(con)+num_peaks,5) =  [datum.spectrum_peaks.area]';
     prev_row(con) = prev_row(con) + num_peaks;
+    params{con} = p;
 end
 
 % Calculate the correlations
@@ -1360,8 +1383,11 @@ for con=1:num_congestions
     [cors, pval] = corr(params{con},params{con},'type','spearman');
     % Do a bonferroni-holm correction on the values from the lower triangle of
     % the p-value matrix (these are the only tests we are looking at - we know
-    % the diagonal is correlated and the upper triangle is redundant)
-    indices_to_correct = [2,3,4,7,8,12];
+    % the diagonal is correlated and the upper triangle is redundant) I don't
+    % correct the p-values for area except for the x (since we know that the
+    % other parameters will certainly be correlated with area because area is
+    % generated from them.
+    indices_to_correct = [2,3,4,8,9,14,20];
     uncorrected = pval(indices_to_correct);
     corrected = bonf_holm(uncorrected,0.05);
     pval(indices_to_correct) = corrected;
@@ -1372,8 +1398,32 @@ for con=1:num_congestions
     orig_param_cors_pval{con} = pval;
 end
 
-clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corrected','datum','p','con','params');
+clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corrected','datum','p','con');
 
+%% Plot original height versus area separated by congestion - rank order
+% I am curious how things change with increasing congestion. I plot
+% everything on one graph with uncongested being almost blue and fully
+% congested being black.
+%
+% There was no obvious, large change in the relationship of height and area
+% as congestion increased.
+%
+% I also looked at the individual congestions in their own figure and saw
+% no pattern.
+for con = 1:num_congestions
+    p=params{con};    
+    if con == 1
+        hold off;
+    else
+        hold on;
+    end
+    scatter(tiedrank(p(:,5))/length(p(:,5)),tiedrank(p(:,1))/length(p(:,1)),[],[0,0,1-con/10]); 
+    xlabel('Area pctile'); ylabel('Height pctile'); 
+end
+hold off;
+
+%% I kept params along for plotting, now delete it
+clear('params');
 
 %% Calculate correlations on deconvolutions separated by congestion
 % Now, I will calculate the correlations within parameters for each
@@ -1402,8 +1452,8 @@ end
 
 % Make each row contain the parameters for 1 peak and each column the
 % values for a given parameter (in the order they are returned by the
-% GaussLorentzPeak.property_array function)
-params = arrayfun(@(tot) nan(tot, 4),tot_peaks,'uniformoutput',false);
+% GaussLorentzPeak.property_array function) (with area appended)
+params = arrayfun(@(tot) nan(tot, 5),tot_peaks,'uniformoutput',false);
 prev_row = zeros(num_deconv,num_congestions); % Used for storing the last valid row
 for res_idx = 1:length(glbio_combined_results)
 	datum = glbio_combined_results(res_idx);
@@ -1414,6 +1464,8 @@ for res_idx = 1:length(glbio_combined_results)
         p(prev_row(deconv_idx, con)+1:prev_row(deconv_idx, con)+num_peaks,:) ...
             = reshape( datum.deconvolutions(deconv_idx).peaks.property_array, ...
             4, num_peaks)';
+        p(prev_row(deconv_idx, con)+1:prev_row(deconv_idx, con)+num_peaks,5) = ...
+            [datum.spectrum_peaks.area]';
         params{deconv_idx, con} = p;
         prev_row(deconv_idx, con) = prev_row(deconv_idx, con) + num_peaks;
     end
@@ -1427,8 +1479,11 @@ for deconv_idx = 1:num_deconv
         [cors, pval] = corr(params{deconv_idx, con},params{deconv_idx, con},'type','spearman');
         % Do a bonferroni-holm correction on the values from the lower triangle of
         % the p-value matrix (these are the only tests we are looking at - we know
-        % the diagonal is correlated and the upper triangle is redundant)
-        indices_to_correct = [2,3,4,7,8,12];
+        % the diagonal is correlated and the upper triangle is redundant) I don't
+        % correct the p-values for area except for the x (since we know that the
+        % other parameters will certainly be correlated with area because area is
+        % generated from them.
+        indices_to_correct = [2,3,4,8,9,14,20];
         uncorrected = pval(indices_to_correct);
         corrected = bonf_holm(uncorrected,0.05);
         pval(indices_to_correct) = corrected;
