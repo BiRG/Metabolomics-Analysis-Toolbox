@@ -200,6 +200,8 @@ for c=1:length(collections)
 end
 
 % Calculate histogram edges.
+min_y = min(ref_values); % Calculate the bounds of the histogram based on the reference spectrum
+max_y = max(ref_values);
 if strcmpi(hist_method, hist_method_log_string)
     % Note that rather than taking the log(y+1) each
     % iteration, I move the histogram edges according to the inverse of this
@@ -208,8 +210,6 @@ if strcmpi(hist_method, hist_method_log_string)
     % autocorrelation trick, for example) but we are only doing multiplications
     % each time through the main optimization loop - and multiplications are
     % faster than additions for floating point.
-    min_y = min(ref_values); % Calculate the bounds of the histogram based on the reference spectrum
-    max_y = max(ref_values);
     assert(min_y > 0);
     assert(max_y >= min_y);
     min_z = log2(min_y+1); %z values are those transformed into logarithmic space
@@ -219,7 +219,7 @@ if strcmpi(hist_method, hist_method_log_string)
     y_bins(1) = -inf;
     y_bins(end) = inf;
 elseif strcmpi(hist_method, hist_method_equ_string)
-    y_bins = equal_frequency_histogram_boundaries(ref_values);
+    y_bins = equal_frequency_histogram_boundaries(ref_values, num_bins);
     y_bins(1) = -inf;
     y_bins(end) = inf;
 else
@@ -247,6 +247,9 @@ for c=1:length(collections)
     if use_waitbar
         waitbar(0.95+0.05*(c-1)/length(collections), wait_h, 'Scaling spectra'); 
     end
+    if ~isfield(collections{c}, 'processing_log')
+        collections{c}.processing_log = '';
+    end
     collections{c}.processing_log = sprintf([...
         '%s  Histogram normalized with %d bins using the first ' ...
         '%d points for a noise estimate and excluding points with an ' ...
@@ -264,7 +267,7 @@ end
 multipliers_cells = cell(size(collections));
 cur = 1;
 for c=1:length(collections)
-    cur_size = size(collections{c});
+    cur_size = size(collections{c}.Y,2);
     multipliers_cells{c} = multipliers(cur : cur+cur_size-1);
     cur = cur + cur_size;
 end
