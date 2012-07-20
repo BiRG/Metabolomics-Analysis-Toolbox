@@ -216,12 +216,13 @@ if strcmpi(hist_method, hist_method_log_string)
     max_z = log2(max_y+1); 
     z_bins = linspace(min_z, max_z, num_bins+1);
     y_bins = (2.^z_bins)-1;
-    y_bins(1) = -inf;
-    y_bins(end) = inf;
+    %y_bins(1) = -inf; 
+    %y_bins(end) = inf;
 elseif strcmpi(hist_method, hist_method_equ_string)
     y_bins = equal_frequency_histogram_boundaries(ref_values, num_bins);
-    y_bins(1) = -inf;
-    y_bins(end) = inf;
+    %y_bins(1) = -inf;  % Removing these improved performance on some test
+                        % spectra (artificial_test_dilution_spec_1)
+    %y_bins(end) = inf;
 else
     error('histogram_normalize:bad_hist_method',['The method passed to '...
         'histogram normalize must be either ''%s'' or ''%s''. Instead ' ...
