@@ -20,6 +20,14 @@ function [collections, multipliers] = histogram_normalize(collections, baseline_
 %                common_scripts. All collections must use the same set of x
 %                values. Check with only_one_x_in.m
 %
+%                Special: if there is only one argument and this argument
+%                is the string 'return subfunction handles for testing' 
+%                the 'collections' variable returned will be a cell array
+%                of function handles to the subfunctions so that they can be 
+%                tested using xUnit. Which functions are returned should 
+%                be of no concern to the user, though xUnit should check 
+%                this list as one of its tests using func2str.
+%
 % baseline_pts - the number of points to use at the beginning of each
 %                spectrum to estimate the standard deviation of the noise.
 %                Must be at least 2.
@@ -85,7 +93,8 @@ function expurgated = remove_values(values, baseline_pts, n_std_dev)
     %
     % n_std_dev must be a scalar
     
-    assert(length(values) >= baseline_pts);
+    assert(length(values) >= baseline_pts,'remove_values:enough_baseline',...
+        'Not enough values for %d baseline points', baseline_pts);
     dev = std(values(1:baseline_pts));
     expurgated = values(values > n_std_dev*dev);
 end
@@ -98,12 +107,16 @@ function err_v = err(mult, values, y_bins, ref_histogram)
     err_v = sum(diffs.^2);
 end
 
-function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y)
-    % Return the multiplier that minimizes the sum of squared differences
-    % between the histogram of values*mult using y_bins and ref_histogram.
+function [low_b, up_b] = mult_search_bounds_for(values, y_bins, ref_histogram, min_y, max_y)
+    % Return possibly improved lower and upper search bounds for
+    % best_mult_for
     %
-    % The search looks at all values between (min_y/max_y) and
-    % (max_y/min_y). 0 < min_y <= max_y
+    % Assumes 0 < min_y <= max_y
+    
+    assert(0 < min_y, 'mult_search_bounds_for:pos_min_y', ...
+        'min_y parameter must be strictly positive');
+    assert(min_y <= max_y, 'mult_search_bounds_for:min_at_most_max', ...
+        'min_y must be no larger than max_y');
     
     % Initialize the search bounds to (min_y/max_y) and (max_y/min_y).
     low_b = min_y/max_y;
@@ -134,17 +147,35 @@ function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y)
     else
         up_b_idx = up_b_idx + min_err_idx;
     end
-    
-    % Make those two elements the new search bounds if they are tighter
+
+	% Make those two elements the new search bounds if they are tighter
     if bound_mults(up_b_idx) < up_b
         up_b = bound_mults(up_b_idx);
     end
     if bound_mults(low_b_idx) > low_b
         low_b = bound_mults(low_b_idx);
     end
+end
+
+function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y)
+    % Return the multiplier that minimizes the sum of squared differences
+    % between the histogram of values*mult using y_bins and ref_histogram.
+    %
+    % The search looks at all values between (min_y/max_y) and
+    % (max_y/min_y). 0 < min_y <= max_y
+    
+    [low_b, up_b]=mult_search_bounds_for(values, y_bins, ref_histogram, min_y, max_y);
     
     mult = fminbnd(@(mult) err(mult, values, y_bins, ref_histogram), ...
        low_b , up_b);
+end
+
+% Special behavior supporting unit testing of sub-functions
+if nargin == 1 && ischar(collections) && ...
+        strcmpi(collections, 'return subfunction handles for testing')
+    collections = {@remove_values, @err, @best_mult_for, ...
+        @mult_search_bounds_for};
+    return;
 end
 
 if baseline_pts < 2
