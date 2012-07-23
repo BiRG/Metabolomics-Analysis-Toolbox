@@ -76,6 +76,9 @@ function collections = sum_normalize(collections, target_sum)
 
 collections = ensure_original_multiplied_by_field(collections);
 for c = 1:length(collections)
+    if ~isfield(collections{c},'processing_log')
+        collections{c}.processing_log = '';
+    end
     collections{c}.processing_log = strtrim(sprintf('%s Sum normalized to %g.', ...
         collections{c}.processing_log, target_sum));
     for s = 1:size(collections{c}.Y,2)

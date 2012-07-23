@@ -36,7 +36,11 @@ function appended = append_to_processing_log( collections, text )
 
 appended = collections;
 for c=1:length(appended)
-    appended{c}.processing_log = [appended{c}.processing_log ' ' text];
+    if ~isfield(appended{c}, 'processing_log')
+        appended{c}.processing_log = text;
+    else
+        appended{c}.processing_log = [appended{c}.processing_log ' ' text];
+    end
 end
 
 end
