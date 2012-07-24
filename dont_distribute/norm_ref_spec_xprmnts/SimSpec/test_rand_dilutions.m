@@ -11,7 +11,7 @@ randStr=RandStream('mt19937ar','Seed',3720541374);
 RandStream.setDefaultStream(randStr);
 
 
-function template_function %#ok<DEFNU>
+function test_template_function %#ok<DEFNU>
 % Description here
 oldRandStr = setRepeatableGen;
 RandStream.setDefaultStream(oldRandStr);
