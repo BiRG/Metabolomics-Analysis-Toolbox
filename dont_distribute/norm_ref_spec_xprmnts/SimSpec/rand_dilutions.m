@@ -70,11 +70,6 @@ if mx < 1
     mx = 2-1/mx;
 end
 
-% Ensure mn < mx
-if mn > mx
-    t = mn; mn = mx; mx = t;
-end
-
 d=mx-mn;
 dilutions = rand(num_dilutions, 1).*d+mn;
 
