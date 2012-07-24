@@ -62,20 +62,59 @@ oldRandStr = setRepeatableGen;
 assertTrue(isempty(rand_dilutions(0,[10,20])));
 RandStream.setDefaultStream(oldRandStr);
 
-function testDistribution %#ok<DEFNU>
-% Ensure that my distribution assumptions hold
+function testDistributionSymmetric %#ok<DEFNU>
+% Ensure that my distribution assumptions hold when the range is symmetric
 oldRandStr = setRepeatableGen;
 v = rand_dilutions(1000000,[0.1,10]);
 full_counts = histc(v,[0.1,1,10]);
 part_counts = histc(v,[0.1,0.2,5,10]);
-assertEqual(full_counts([1,2]), [499399; 500601]); %These probabilities are close to equal
-assertEqual(part_counts([1,3]), [277281; 278144]); %These probabilities are also close to equal
+assertElementsAlmostEqual(full_counts(1),full_counts(2),'relative',0.005);
+assertElementsAlmostEqual(part_counts(1),part_counts(3),'relative',0.005);
 RandStream.setDefaultStream(oldRandStr);
 
-function testPositiveException %#ok<DEFNU>
+function testDistributionAsymmetric %#ok<DEFNU>
+% Ensure that my distribution assumptions hold when the range is asymmetric
+oldRandStr = setRepeatableGen;
+v = rand_dilutions(1000000,[0.1,20]);
+full_counts = histc(v,[0.1,1,10]);
+part_counts = histc(v,[0.1,0.2,5,10]);
+assertElementsAlmostEqual(full_counts(1),full_counts(2),'relative',0.005);
+assertElementsAlmostEqual(part_counts(1),part_counts(3),'relative',0.005);
+RandStream.setDefaultStream(oldRandStr);
+
+function testPositiveRangeException %#ok<DEFNU>
+% Ensure that negative or 0 elements of the range are rejected with an
+% exception
 oldRandStr = setRepeatableGen;
 f = @() rand_dilutions(100,[0,10]);
-assertExceptionThrown(f, 'rand_dilutions:only_pos_dilutioons');
+assertExceptionThrown(f, 'rand_dilutions:only_pos_dilutions');
 g = @() rand_dilutions(10,[-1,10]);
-assertExceptionThrown(g, 'rand_dilutions:only_pos_dilutioons');
+assertExceptionThrown(g, 'rand_dilutions:only_pos_dilutions');
+RandStream.setDefaultStream(oldRandStr);
+
+function testRangeIs2Exception %#ok<DEFNU>
+% Ensure that ranges that don't have two elements are rejected with an
+% exception
+oldRandStr = setRepeatableGen;
+f = @() rand_dilutions(100,2);
+assertExceptionThrown(f, 'rand_dilutions:two_element_range');
+g = @() rand_dilutions(10,[5,10,20]);
+assertExceptionThrown(g, 'rand_dilutions:two_element_range');
+h = @() rand_dilutions(10,[]);
+assertExceptionThrown(h, 'rand_dilutions:two_element_range');
+RandStream.setDefaultStream(oldRandStr);
+
+function testInOrderRangeException %#ok<DEFNU>
+% Ensure that exception thrown when second element of range is less than 
+% first
+oldRandStr = setRepeatableGen;
+f = @() rand_dilutions(10,[10,9]);
+assertExceptionThrown(f, 'rand_dilutions:range_is_min_max');
+RandStream.setDefaultStream(oldRandStr);
+
+function testNonNegDilutionsException %#ok<DEFNU>
+% Ensure that exception thrown when number of dilutions is negative
+oldRandStr = setRepeatableGen;
+f = @() rand_dilutions(-1,[10,11]);
+assertExceptionThrown(f, 'rand_dilutions:non_neg_num_dilutions');
 RandStream.setDefaultStream(oldRandStr);
