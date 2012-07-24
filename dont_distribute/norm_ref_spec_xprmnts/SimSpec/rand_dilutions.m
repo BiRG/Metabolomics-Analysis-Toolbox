@@ -10,11 +10,13 @@ function dilutions = rand_dilutions( num_dilutions, range )
 % Input arguments
 % -------------------------------------------------------------------------
 % num_dilutions - scalar. The number of dilution factors to generate. The
-%                 number of rows in the returned vector
+%                 number of rows in the returned vector. Must be
+%                 non-negative.
 %
 % range         - vector with two entries [min max]. The entries in the
 %                 returned vector are distributed in the
-%                 half-open interval [min, max) see the description
+%                 half-open interval [min, max) see the description.
+%                 0 < min <= max
 %
 % -------------------------------------------------------------------------
 % Output parameters
