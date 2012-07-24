@@ -56,6 +56,14 @@ assertElementsAlmostEqual(rand_dilutions(3,[10,10]),...
     'absolute', 1e-5);
 RandStream.setDefaultStream(oldRandStr);
 
+function test3Entries001_005 %#ok<DEFNU>
+% Ensure that when both values in the range are less than 1 it still works.
+oldRandStr = setRepeatableGen;
+assertElementsAlmostEqual(rand_dilutions(3,[1/103,1/102]),...
+    [0.009748; 0.009766; 0.009732;], ...
+    'absolute', 1e-5);
+RandStream.setDefaultStream(oldRandStr);
+
 function test0Entries10_20 %#ok<DEFNU>
 % Ensure that a request for an empty vector is correctly fulfilled
 oldRandStr = setRepeatableGen;
