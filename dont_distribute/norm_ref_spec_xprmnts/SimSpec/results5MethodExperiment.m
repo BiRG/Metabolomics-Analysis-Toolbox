@@ -2,9 +2,7 @@ function  results = results5MethodExperiment( )
 % Return a structure array with the results of the experiment for 5 methods
 %
 % Uses the data obtained from loadSpectra and the random number generator
-% seeded with the number 59524208158 (subscriber number from a magazine
-% near my elbow concatenated with the shipping number on a box across the
-% room) to run the experiment
+% seeded with the number 2556545274.
 %
 % The structure has fields:
 %
@@ -35,7 +33,7 @@ function  results = results5MethodExperiment( )
 % Save the current random stream and make this experiment repeatable by 
 % creating our own stream
 oldRandStr = RandStream.getDefaultStream;
-randStr=RandStream('mt19937ar','Seed',59524208158);
+randStr=RandStream('mt19937ar','Seed',2556545274);
 RandStream.setDefaultStream(randStr);
 
 
@@ -142,12 +140,16 @@ results.method_key = { ...
 wait_h = waitbar(0, 'Loading spectra');
 spec=loadSpectra();
 
+% Calculate noise standard deviation
+noise_std = median(cellfun(@(s) median(noise_for_snr(s, 1000)), spec));
+
 % Preallocate storage for the results
 num_rows = 2*3*5*3*3*50*2; %Multiply out the number of loops
 results.data=zeros(num_rows, length(results.schema));
 
 % Run the experiment
 first_empty = 1;
+start_time = now;
 for num_spectra_idx = 1:2
     num_spectra=[10,20];
     num_spectra=num_spectra(num_spectra_idx);
@@ -165,35 +167,64 @@ for num_spectra_idx = 1:2
                 control_dilution_range = ...
                     dilution_ranges(control_dilution_range_id, :);
                 
-                waitbar((first_empty-1)/num_rows, wait_h, ...
-                    sprintf('%d/%d: %d %d%% %d %d', ...
-                    first_empty, num_rows, num_spectra,...
-                    percent_control_group, ...
-                    treatment_group_id, ...
-                    control_dilution_range_id ...
-                    ));
                 for treatment_dilution_range_id = 1:3
                     treatment_dilution_range = ...
                         dilution_ranges(treatment_dilution_range_id, :);
                     
-                    for trial_number = 1:50
-                        % TODO: set parameters for the trial
+                    elapsed_time = now - start_time;
+                    rows_complete = max(1,first_empty - 1);
+                    days_per_row = elapsed_time / rows_complete;
+                    mins_remaining = (num_rows - rows_complete)* days_per_row * 24* 60;
+                    
+                    waitbar((first_empty-1)/num_rows, wait_h, ...
+                        sprintf('%d/%d: %d %d%% %d %d %d (%f mins left)', ...
+                        first_empty, num_rows, num_spectra,...
+                        percent_control_group, ...
+                        treatment_group_id, ...
+                        control_dilution_range_id, ...
+                        treatment_dilution_range_id, ...
+                        mins_remaining ...
+                        ));
+                    for trial_number = 1:50                        
+                        % Calculate the dilution factors
                         true_dilutions = [rand_dilutions(num_control_spectra, ...
                             control_dilution_range); ...
                             rand_dilutions(num_treatment_spectra, ...
                             treatment_dilution_range) ...
                             ];
-                        true_mult_factors = 1./true_dilutions;
-                        log_true_mult_factors = log(true_mult_factors);
                         
+                        % Decide which spectra will be used for the subset
+                        cont_idxs = subset_indices(num_control_spectra, spec{1});
+                        treat_idxs = subset_indices(num_treatment_spectra, spec{treatment_group_id});
+                        
+                        % Create diluted subset
+                        to_dilute = spectrum_subset(cont_idxs, spec{1}, treat_idxs, spec{treatment_group_id});
+                        diluted_spec = dilute_spectra(to_dilute, true_dilutions);
+                        
+                        % Add noise
+                        diluted_spec = add_noise(diluted_spec, noise_std);
                         
                         for normalization_method_id_idx = 1:2
                             normalization_method_id = [1,5,6];
                             normalization_method_id = normalization_method_id(normalization_method_id_idx);
                             
-                            % TODO: get dilution factors calculated by method and set RMSE
-                            rmse = 0; rmse_log = 0; % TODO: remove
-
+                            switch(normalization_method_id)
+                                case 1
+                                    normed_spec=sum_normalize(diluted_spec, 1000);
+                                case 5
+                                    normed_spec=histogram_normalize(diluted_spec, 30, 5, 60, false, 'logarithmic');
+                                case 6
+                                    normed_spec=histogram_normalize(diluted_spec, 30, 5, 60, false, 'equal frequency');
+                                otherwise
+                                    error('results5MethodExperiment:invalid_norm_id', ...
+                                        ['The normalization method id '...
+                                        '%d is unknown.'], ...
+                                        normalization_method_id);
+                            end
+                            calculated_dilutions = normed_spec{1}.original_multiplied_by;
+                            [rmse, rmse_log] = normalization_error( ...
+                                true_dilutions, ...
+                                calculated_dilutions);
                             
                             results.data(first_empty,:)=[ ...
                                 num_spectra, ...
