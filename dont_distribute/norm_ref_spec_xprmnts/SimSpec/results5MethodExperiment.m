@@ -199,7 +199,8 @@ for num_spectra_idx = 1:2
                         
                         % Create diluted subset
                         to_dilute = spectrum_subset(cont_idxs, spec{1}, treat_idxs, spec{treatment_group_id});
-                        diluted_spec = dilute_spectra(to_dilute, true_dilutions);
+                        diluted_spec = {dilute_spectra(to_dilute{1}, true_dilutions)};
+                        diluted_spec{1} = rmfield(diluted_spec{1}, 'original_multiplied_by');
                         
                         % Add noise
                         diluted_spec = add_noise(diluted_spec, noise_std);
