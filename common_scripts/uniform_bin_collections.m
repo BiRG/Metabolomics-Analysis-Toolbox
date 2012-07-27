@@ -1,4 +1,4 @@
-function binned_collections = bin_collections( collections, bin_width, use_waitbar )
+function binned_collections = uniform_bin_collections( collections, bin_width, use_waitbar )
 % Return a new collection cell array with each sample binned to bin_width ppm bins
 % -------------------------------------------------------------------------
 % Input arguments
@@ -30,14 +30,14 @@ function binned_collections = bin_collections( collections, bin_width, use_waitb
 % Examples
 % -------------------------------------------------------------------------
 %
-% binned = bin_collections(my_collections, 0.04)
+% binned = uniform_bin_collections(my_collections, 0.04)
 %
 % Returns my_collections binned to 0.04 ppm bins after using a waitbar
 % object to display work-in progress
 %
 %
 %
-% binned = bin_collections(my_collections, 0, false)
+% binned = uniform_bin_collections(my_collections, 0, false)
 %
 % Returns a copy of my_collections and does not display a waitbar
 % 
@@ -68,7 +68,7 @@ end
 
 binned_collections=cell(length(collections),1);
 for idx = 1:length(collections)
-    binned_collections{idx}=bin_collection(collections{idx}, ... 
+    binned_collections{idx}=uniform_bin_collection(collections{idx}, ... 
         min_x, max_x, bin_width);
     if(use_waitbar); waitbar(idx/length(collections), wait_h); end
 end
