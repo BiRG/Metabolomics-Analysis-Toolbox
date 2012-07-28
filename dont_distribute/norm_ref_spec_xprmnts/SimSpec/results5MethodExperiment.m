@@ -209,8 +209,10 @@ for num_spectra_idx = 1:2
                         
                         % Uniform Bin and sum-normalize to prepare for PQN
                         binned_diluted_spec = uniform_bin_collections(diluted_spec, 0.04, false);
-                        discard_sample = samples_under_noise_threshold(diluted_spec, 30, 5);
-                        use_bin = ~bins_to_discard(binned_diluted_spec, discard_sample);
+                        discard_sample = noise_samples(diluted_spec{1}, 30, 5);
+                        use_bin = {~bins_to_discard(binned_diluted_spec{1}, ...
+                            diluted_spec{1}.x(discard_sample))};
+                        
                         
                         for normalization_method_id_idx = 1:2
                             normalization_method_id = [1,2,5,6];
