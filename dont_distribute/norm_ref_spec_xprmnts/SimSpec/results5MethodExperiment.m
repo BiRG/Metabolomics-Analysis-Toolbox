@@ -139,6 +139,7 @@ results.method_key = { ...
 % Load the spectra
 wait_h = waitbar(0, 'Loading spectra');
 spec=loadSpectra();
+wait_h = waitbar(0, wait_h, 'Binning collections');
 
 % Calculate noise standard deviation
 noise_std = median(cellfun(@(s) median(noise_for_snr(s, 1000)), spec));
@@ -202,16 +203,27 @@ for num_spectra_idx = 1:2
                         diluted_spec = {dilute_spectra(to_dilute{1}, true_dilutions)};
                         diluted_spec{1} = rmfield(diluted_spec{1}, 'original_multiplied_by');
                         
+                        
                         % Add noise
                         diluted_spec = add_noise(diluted_spec, noise_std);
                         
+                        % Uniform Bin and sum-normalize to prepare for PQN
+                        binned_diluted_spec = uniform_bin_collections(diluted_spec, 0.04, false);
+                        discard_sample = samples_under_noise_threshold(diluted_spec, 30, 5);
+                        use_bin = ~bins_to_discard(binned_diluted_spec, discard_sample);
+                        
                         for normalization_method_id_idx = 1:2
-                            normalization_method_id = [1,5,6];
+                            normalization_method_id = [1,2,5,6];
                             normalization_method_id = normalization_method_id(normalization_method_id_idx);
                             
                             switch(normalization_method_id)
                                 case 1
-                                    normed_spec=sum_normalize(diluted_spec, 1000);
+                                    normed_spec = sum_normalize(diluted_spec, 1000);
+                                case 2
+                                    use_all_spectra = {true(size(diluted_spec{1}))};
+                                    normed_spec = pq_normalize(diluted_spec,...
+                                        binned_diluted_spec, 1000, ...
+                                        use_all_spectra, use_bin);
                                 case 5
                                     normed_spec=histogram_normalize(diluted_spec, 30, 5, 60, false, 'logarithmic');
                                 case 6
