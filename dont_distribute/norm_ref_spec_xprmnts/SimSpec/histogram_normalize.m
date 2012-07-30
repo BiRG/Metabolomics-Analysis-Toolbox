@@ -1,4 +1,4 @@
-function [collections, multipliers] = histogram_normalize(collections, baseline_pts, n_std_dev, num_bins, use_waitbar, hist_method)
+function [collections, multipliers] = histogram_normalize(collections, baseline_pts, n_std_dev, num_bins, use_waitbar, hist_method, hist_scale)
 % Applies Torgrip's histogram normalization to the spectra 
 %
 % collections = HISTOGRAM_NORMALIZE(collections, baseline_pts, std_dev, num_bins, use_waitbar, hist_method)
@@ -49,6 +49,20 @@ function [collections, multipliers] = histogram_normalize(collections, baseline_
 %                the equal_frequency_histogram_boundaries routine. See
 %                algorithm description there.
 %
+% hist_scale   - (optional) must be 'count' or 'fraction of total'.
+%
+%                'count' - the histogram bins contain the number of 
+%                elements that fell into that bin - this is the method from 
+%                the original paper and the default if the parameter 
+%                is omitted.
+%
+%                'fraction of total' - the histogram bins contain the
+%                number of elements that fell into that bin divided by the
+%                total number of elements that could have fallen into any
+%                bins - this may help if some spectra had an especially low
+%                SNR and noise removal removed many of the points that
+%                found their way into the median spectrum)
+%
 % -------------------------------------------------------------------------
 % Output parameters
 % -------------------------------------------------------------------------
@@ -81,6 +95,15 @@ function [collections, multipliers] = histogram_normalize(collections, baseline_
 % Eric Moyer (May-July 2012) eric_moyer@yahoo.com
 %
 
+% I set these as constants so misspellings will not be a problem later in
+% the code.
+hist_method_log_string = 'logarithmic';
+hist_method_equ_string = 'equal frequency';
+
+hist_scale_count_string = 'count';
+hist_scale_frac_string = 'fraction of total';
+
+
 function expurgated = remove_values(values, baseline_pts, n_std_dev)
     % Return an array of the entries in values that were more than 
     % n_std_dev standard deviations above 0. The size of one standard
@@ -106,6 +129,17 @@ function err_v = err(mult, values, y_bins, ref_histogram)
     diffs = h-ref_histogram;
     err_v = sum(diffs.^2);
 end
+
+function err_v = err_scaled(mult, values, y_bins, ref_histogram, scale_factor)
+    % Returns the sum of squared differences between the histogram of 
+    % values*mult using y_bins and ref_histogram. The histogram of
+    % values*mult is multiplied by scale_factor before doing the
+    % comparison.
+    h = histc(mult.*values, y_bins);
+    diffs = (h.*scale_factor)-ref_histogram;
+    err_v = sum(diffs.^2);
+end
+
 
 function [low_b, up_b] = mult_search_bounds_for(values, y_bins, ref_histogram, min_y, max_y)
     % Return possibly improved lower and upper search bounds for
@@ -157,17 +191,36 @@ function [low_b, up_b] = mult_search_bounds_for(values, y_bins, ref_histogram, m
     end
 end
 
-function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y)
+function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y, hist_scale)
     % Return the multiplier that minimizes the sum of squared differences
     % between the histogram of values*mult using y_bins and ref_histogram.
+    %
+    %
+    % if hist_scale is hist_scale_count_string or if there are no entries
+    % in the values array, the value of the new histogram is left alone
+    % before comparing it to ref_histogram. 
+    % Otherwise, it is divided by the length of values.
     %
     % The search looks at all values between (min_y/max_y) and
     % (max_y/min_y). 0 < min_y <= max_y
     
     [low_b, up_b]=mult_search_bounds_for(values, y_bins, ref_histogram, min_y, max_y);
     
-    mult = fminbnd(@(mult) err(mult, values, y_bins, ref_histogram), ...
-       low_b , up_b);
+    if strcmpi(hist_scale, hist_scale_count_string) || isempty(values)
+        mult = fminbnd(@(mult) err(mult, values, y_bins, ref_histogram), ...
+           low_b , up_b);
+    elseif strcmpi(hist_scale, hist_scale_frac_string)
+        scale_factor = 1/length(values);
+        mult = fminbnd(@(mult) err_scaled(mult, values, y_bins, ...
+            ref_histogram, scale_factor), ...
+            low_b , up_b);
+    else
+        error('histogram_normalize___best_mult_for:bad_hist_scale', ...
+            ['The value of hist_scale passed to '...
+            'histogram_normalize/best_mult_for was ''%s'', which is '...
+            'not one of the recognized values.'], hist_scale);
+    end
+       
 end
 
 % Special behavior supporting unit testing of sub-functions
@@ -199,13 +252,20 @@ else
     wait_h = -1;
 end
 
-% I set these as constants so misspellings will not be a problem later in
-% the code.
-hist_method_log_string = 'logarithmic';
-hist_method_equ_string = 'equal frequency';
 
 if ~exist('hist_method','var')
     hist_method = hist_method_log_string;
+end
+
+if ~exist('hist_scale', 'var')
+    hist_scale = hist_scale_count_string;
+end
+
+if ~strcmpi(hist_scale, hist_scale_count_string) && ...
+        ~strcmpi(hist_scale, hist_scale_frac_string)
+    error('histogram_normalize:bad_hist_scale',['The hist_scale value '...
+        'passed to histogram_normalize was not one of the allowed ' ...
+        'values. See documentation.']);
 end
 
 % Calculate the reference spectrum
@@ -258,13 +318,17 @@ end
 
 % Calculate the multipliers
 ref_histogram = histc(ref_values, y_bins);
+if strcmpi(hist_scale, hist_scale_frac_string)
+    ref_histogram = ref_histogram ./ length(ref_values);
+end
+
 multipliers = zeros(length(y), 1);
 for cur = 1:length(y)
     if use_waitbar
         waitbar(0.1+0.85*(cur-1)/length(y), wait_h, 'Calcuating multipliers'); 
     end
 
-    multipliers(cur)=best_mult_for(y{cur}, y_bins, ref_histogram, min_y, max_y);
+    multipliers(cur)=best_mult_for(y{cur}, y_bins, ref_histogram, min_y, max_y, hist_scale);
 end
 
 % Scale the spectra
