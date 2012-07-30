@@ -192,7 +192,7 @@ for num_spectra_idx = 1:2
                             control_dilution_range); ...
                             rand_dilutions(num_treatment_spectra, ...
                             treatment_dilution_range) ...
-                            ];
+                            ]';
                         
                         % Decide which spectra will be used for the subset
                         cont_idxs = subset_indices(num_control_spectra, spec{1});
@@ -210,12 +210,12 @@ for num_spectra_idx = 1:2
                         % Uniform Bin and sum-normalize to prepare for PQN
                         binned_diluted_spec = uniform_bin_collections(diluted_spec, 0.04, false);
                         discard_sample = noise_samples(diluted_spec{1}, 30, 5);
-                        use_bin = {~bins_to_discard(binned_diluted_spec{1}, ...
-                            diluted_spec{1}.x(discard_sample))};
+                        use_bin = ~bins_to_discard(binned_diluted_spec{1}, ...
+                            diluted_spec{1}.x(discard_sample));
                         
                         
-                        for normalization_method_id_idx = 1:2
-                            normalization_method_id = [1,2,5,6];
+                        for normalization_method_id_idx = 1:5
+                            normalization_method_id = [1,2,3,5,6];
                             normalization_method_id = normalization_method_id(normalization_method_id_idx);
                             
                             switch(normalization_method_id)
@@ -223,7 +223,7 @@ for num_spectra_idx = 1:2
                                     normed_spec = sum_normalize(diluted_spec, 1000);
                                 case 2
                                     use_all_spectra = ...
-                                        {true(size(diluted_spec{1}))};
+                                        {true(1,size(diluted_spec{1}.Y,2))};
                                     normed_spec = pq_normalize(diluted_spec,...
                                         binned_diluted_spec, 1000, ...
                                         use_all_spectra, use_bin);
