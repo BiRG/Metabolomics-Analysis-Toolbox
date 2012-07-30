@@ -42,6 +42,11 @@ function scaled_quotients = quotient_outlyingness( quotients, use_row)
 % Examples
 % -------------------------------------------------------------------------
 %
+% Reviewing these, these are completely inaccurate - probably unupdated
+% from a cut-paste session.
+%
+% TODO: add real examples and test quotient_outlyingness
+%
 % >> sc = quotient_outlyingness( [0.1,1;0.2,3;4,0.25] )
 %
 % sc =
