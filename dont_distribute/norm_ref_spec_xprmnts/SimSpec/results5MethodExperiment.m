@@ -153,7 +153,7 @@ wait_h = waitbar(0, wait_h, 'Binning collections');
 noise_std = median(cellfun(@(s) median(noise_for_snr(s, 1000)), spec));
 
 % Preallocate storage for the results
-num_rows = 2*3*5*3*3*50*2; %Multiply out the number of loops
+num_rows = 2*3*5*3*3*50*9; %Multiply out the number of loops
 results.data=zeros(num_rows, length(results.schema));
 
 % Run the experiment
@@ -222,8 +222,8 @@ for num_spectra_idx = 1:2
                             diluted_spec{1}.x(discard_sample));
                         
                         
-                        for normalization_method_id_idx = 1:5
-                            normalization_method_id = [1,2,3,4,5,6,7];
+                        for normalization_method_id_idx = 1:9
+                            normalization_method_id = [1,2,3,4,5,6,7,8,9];
                             normalization_method_id = normalization_method_id(normalization_method_id_idx);
                             
                             switch(normalization_method_id)
@@ -261,9 +261,22 @@ for num_spectra_idx = 1:2
                                         binned_diluted_spec, 1000, ...
                                         use_all_spectra, use_2_inliers);
                                 case 6
-                                    normed_spec=histogram_normalize(diluted_spec, 30, 5, 60, false, 'logarithmic');
+                                    normed_spec=histogram_normalize(...
+                                        diluted_spec, 30, 5, 60, false, ...
+                                        'logarithmic', 'count');
                                 case 7
-                                    normed_spec=histogram_normalize(diluted_spec, 30, 5, 60, false, 'equal frequency');
+                                    normed_spec=histogram_normalize(...
+                                        diluted_spec, 30, 5, 60, false, ...
+                                        'equal frequency', 'count');
+                                case 8
+                                    normed_spec=histogram_normalize(...
+                                        diluted_spec, 30, 5, 60, false, ...
+                                        'logarithmic', 'fraction of total');
+                                case 9
+                                    normed_spec=histogram_normalize(...
+                                        diluted_spec, 30, 5, 60, false, ...
+                                        'equal frequency', ...
+                                        'fraction of total');
                                 otherwise
                                     error('results5MethodExperiment:invalid_norm_id', ...
                                         ['The normalization method id '...
