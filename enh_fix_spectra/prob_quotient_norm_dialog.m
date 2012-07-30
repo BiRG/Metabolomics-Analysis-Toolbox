@@ -345,7 +345,7 @@ while true
     end
 
     % Select bins to remove as remove bins those over 3 iqr away from the
-    % median
+    % nearest quartile
     last_removed = 'Removed > 3 iqr.';
     to_remove = any(abs(scaled_quotients) > 3,2);
     to_remove = to_remove & ~already_removed;
