@@ -156,6 +156,11 @@ noise_std = median(cellfun(@(s) median(noise_for_snr(s, 1000)), spec));
 num_rows = 2*3*5*3*3*50*9; %Multiply out the number of loops
 results.data=zeros(num_rows, length(results.schema));
 
+%DEBUG: Set up global variables that can be used for post-mortem debugging
+global num_spectra_idx percent_control_group_idx treatment_group_id;
+global control_dilution_range_id treatment_dilution_range_id;
+global trial_number rng_state;
+
 % Run the experiment
 first_empty = 1;
 start_time = now;
@@ -195,13 +200,17 @@ for num_spectra_idx = 1:2
                         mins_remaining ...
                         ));
                     for trial_number = 1:50                        
+                        %DEBUG: store the current state of the RNG for
+                        %reproducing the bug
+                        rng_state = RandStream.getDefaultStream();
+                        
                         % Calculate the dilution factors
                         true_dilutions = [rand_dilutions(num_control_spectra, ...
                             control_dilution_range); ...
                             rand_dilutions(num_treatment_spectra, ...
                             treatment_dilution_range) ...
                             ]';
-                        
+                                                
                         % Decide which spectra will be used for the subset
                         cont_idxs = subset_indices(num_control_spectra, spec{1});
                         treat_idxs = subset_indices(num_treatment_spectra, spec{treatment_group_id});
