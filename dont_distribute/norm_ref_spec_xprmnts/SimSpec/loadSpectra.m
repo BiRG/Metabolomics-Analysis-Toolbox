@@ -15,7 +15,14 @@ function spectra = loadSpectra( )
 
 % Read the subdirectory names into a cell array
 default_dir = 'spectra';
-subdirs = regexp(strtrim(ls(default_dir)),'\s+','split');
+if isunix
+    subdirs = regexp(strtrim(ls(default_dir)),'\s+','split');
+else
+    subdirs = dir(default_dir);
+    subdirs = {subdirs.name};
+    not_dot_dirs = ~(strcmp(subdirs,'.') | strcmp(subdirs,'..'));
+    subdirs = subdirs(not_dot_dirs);
+end
 subdirs = sort(subdirs);
 
 % Read each data file and extract its y-values
