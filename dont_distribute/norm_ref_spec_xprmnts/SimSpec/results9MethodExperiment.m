@@ -153,7 +153,7 @@ wait_h = waitbar(0, wait_h, 'Binning collections');
 noise_std = median(cellfun(@(s) median(noise_for_snr(s, 1000)), spec));
 
 % Preallocate storage for the results
-num_rows = 2*3*5*3*3*50*9; %Multiply out the number of loops
+num_rows = 3*3*5*5*5*50*9; %Multiply out the number of loops
 results.data=zeros(num_rows, length(results.schema));
 
 %DEBUG: Set up global variables that can be used for post-mortem debugging
@@ -169,7 +169,7 @@ global calculated_dilutions normed_spec rmse rmse_log;
 first_empty = 1;
 start_time = now;
 for num_spectra_idx = 1:2
-    num_spectra=[10,20];
+    num_spectra=[40,20,10];
     num_spectra=num_spectra(num_spectra_idx);
     
     for percent_control_group_idx = 1:3
@@ -180,12 +180,12 @@ for num_spectra_idx = 1:2
         
         for treatment_group_id = 2:6
     
-            dilution_ranges=[1,1;0.4,2.6;0.025,40];
-            for control_dilution_range_id = 1:3
+            dilution_ranges=[1,1;0.4,2.6;0.125,8;0.0625,16;0.025,40];
+            for control_dilution_range_id = 1:5
                 control_dilution_range = ...
                     dilution_ranges(control_dilution_range_id, :);
                 
-                for treatment_dilution_range_id = 1:3
+                for treatment_dilution_range_id = 1:5
                     treatment_dilution_range = ...
                         dilution_ranges(treatment_dilution_range_id, :);
                     
