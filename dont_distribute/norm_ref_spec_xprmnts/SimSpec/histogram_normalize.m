@@ -125,7 +125,11 @@ end
 function err_v = err(mult, values, y_bins, ref_histogram)
     % Returns the sum of squared differences between the histogram of 
     % values*mult using y_bins and ref_histogram.
-    h = histc(mult.*values, y_bins);
+    if ~isempty(values)
+        h = histc(mult.*values, y_bins, 1);
+    else
+        h = zeros(size(ref_histogram));
+    end
     diffs = h-ref_histogram;
     err_v = sum(diffs.^2);
 end
