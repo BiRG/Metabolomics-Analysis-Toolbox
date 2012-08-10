@@ -37,6 +37,9 @@ end
 
 url = sprintf('http://birg.cs.wright.edu/omics_analysis/collections/%d.xml',collection_id);
 try
+    if exist('proxy.conf','file')
+        load_proxy('proxy.conf');
+    end
     [xml,urlstatus] = urlread(url,'get',{'name',username,'password',password});
     if ~isempty(regexp(xml,'password', 'once'))
         message = 'Invalid password';

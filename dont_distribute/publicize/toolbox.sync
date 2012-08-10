@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+
+##############
+# This is boilerplate setting up the domain specific language under perl
+##############
+
+use FindBin; use lib "$FindBin::Bin"; use LocalMirror;
+parse_args(@ARGV) or die $@; dont_delete '^\\.git$'; delete_dest;
+
+
+##############
+# Add files to sync here
+#
+# To synchronize a file to the same place in both repositories
+#
+# mirror 'path/to/file';
+#
+# To synchronize a filename to a different place
+#
+# mirror2 'src/path/to/the/file' 'path/in/dest/repo';
+#
+##############
+
+mirror2 'dont_distribute/publicize/public_toolbox_specific_files/README.markdown','README.markdown';
+
+mirror 'bin';
+mirror 'common_scripts';
+mirror 'autoscale';
+mirror 'difference';
+mirror 'fix_spectra';
+mirror 'lib';
+mirror 'opls';
+mirror 'pca';
+mirror 'visualization';
+mirror 'startup.m';
+

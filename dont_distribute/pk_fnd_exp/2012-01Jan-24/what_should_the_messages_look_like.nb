@@ -1,0 +1,1195 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     37953,       1186]
+NotebookOptionsPosition[     34871,       1080]
+NotebookOutlinePosition[     35209,       1095]
+CellTagsIndexPosition[     35166,       1092]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[TextData[{
+ "I want to discover the equations for the messages I am using ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["\[Mu]", 
+     RowBox[{
+      SubscriptBox["f", "0"], "\[Rule]", 
+      SubscriptBox["a", "0"]}]], "(", 
+    SubscriptBox["a", "0"], ")"}], TraditionalForm]],
+  FormatType->"TraditionalForm"]
+}], "Text",
+ CellChangeTimes->{{3.53642018123238*^9, 3.5364202243156433`*^9}}],
+
+Cell["In general:", "Text",
+ CellChangeTimes->{{3.536420241391383*^9, 3.5364202434963703`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{
+    SubscriptBox["\[Mu]", 
+     RowBox[{
+      SubscriptBox["f", "0"], "\[Rule]", 
+      SubscriptBox["a", "0"]}]], "(", 
+    SubscriptBox["a", "0"], ")"}], "=", 
+   RowBox[{
+    SubsuperscriptBox["\[Integral]", 
+     RowBox[{
+      SubscriptBox["x", "0"], "-", 
+      RowBox[{
+       SubscriptBox["max", "0"], 
+       RowBox[{"(", 
+        SubscriptBox["a", "0"], ")"}]}]}], 
+     RowBox[{
+      SubscriptBox["x", "0"], "-", 
+      RowBox[{
+       SubscriptBox["min", "0"], 
+       RowBox[{"(", 
+        SubscriptBox["a", "0"], ")"}]}]}]], 
+    RowBox[{
+     RowBox[{"P", "(", 
+      RowBox[{
+       SubscriptBox["\[Aleph]", "0"], "=", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          SubscriptBox["x", "0"], "-", 
+          SubscriptBox["\[Xi]", "0"]}], "|", 
+         SubscriptBox["A", "0"]}], "=", 
+        SubscriptBox["a", "0"]}]}], ")"}], 
+     RowBox[{"P", "(", 
+      RowBox[{
+       SubscriptBox["\[CapitalXi]", "0"], "=", 
+       SubscriptBox["\[Xi]", "0"]}], ")"}], 
+     RowBox[{"\[DifferentialD]", 
+      SubscriptBox["\[Xi]", "0"]}]}]}]}], TraditionalForm]], "Input",
+ CellChangeTimes->{{3.536420562585451*^9, 3.536420567585888*^9}, {
+  3.536420607923687*^9, 3.536420622461039*^9}, {3.536420687259556*^9, 
+  3.536420784331135*^9}}],
+
+Cell["Which I show on page two of my paper notes for today.", "Text",
+ CellChangeTimes->{{3.536420794219198*^9, 3.536420811225287*^9}}],
+
+Cell[TextData[{
+ "I can write the expression ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"P", "(", 
+    RowBox[{
+     SubscriptBox["\[CapitalXi]", "0"], "=", 
+     SubscriptBox["\[Xi]", "0"]}], ")"}], TraditionalForm]], "Input",
+  CellChangeTimes->{{3.536420562585451*^9, 3.536420567585888*^9}, {
+   3.536420607923687*^9, 3.536420622461039*^9}, {3.536420687259556*^9, 
+   3.536420784331135*^9}}],
+ " as the function p\[Xi] (note that \[Sigma] is the standard deviation of \
+the noise that we assume is known a-priori."
+}], "Text",
+ CellChangeTimes->{{3.536420878220149*^9, 3.536420913014228*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p\[Xi]", "[", 
+   RowBox[{"\[Xi]_", ",", "\[Sigma]_"}], "]"}], ":=", 
+  RowBox[{"PDF", "[", 
+   RowBox[{
+    RowBox[{"NormalDistribution", "[", 
+     RowBox[{"0", ",", "\[Sigma]"}], "]"}], ",", "\[Xi]"}], "]"}]}]], "Input",\
+
+ CellChangeTimes->{{3.536419856941455*^9, 3.536419871224847*^9}, {
+  3.536420079816779*^9, 3.536420134334351*^9}}],
+
+Cell[TextData[{
+ "I can write ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"P", "(", 
+    RowBox[{
+     SubscriptBox["\[Aleph]", "0"], "=", 
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[Alpha]", "0"], "|", 
+       SubscriptBox["A", "0"]}], "=", 
+      SubscriptBox["a", "0"]}]}], ")"}], TraditionalForm]], "Input",
+  CellChangeTimes->{{3.536420562585451*^9, 3.536420567585888*^9}, {
+   3.536420607923687*^9, 3.536420622461039*^9}, {3.536420687259556*^9, 
+   3.536420784331135*^9}}],
+ " as p\[Aleph].  Note that I omit the bin number ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["a", "0"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " since that is just a place-holder giving access to the bin \
+characteristics.  Note also that the mean is unused except at the ends"
+}], "Text",
+ CellChangeTimes->{{3.536420917782365*^9, 3.536420919109981*^9}, {
+  3.5364209701335497`*^9, 3.536420984824952*^9}, {3.5364212166932993`*^9, 
+  3.5364212533566732`*^9}, {3.536421499712944*^9, 3.536421504755164*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p\[Aleph]", "[", 
+   RowBox[{"\[Alpha]_", ",", "min_", ",", "max_", ",", "mean_"}], "]"}], ":=", 
+  RowBox[{"Which", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"min", "\[Equal]", 
+     RowBox[{"-", "Infinity"}]}], ",", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"\[Alpha]", "<", "max"}], ",", 
+      FractionBox[
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         FractionBox[
+          RowBox[{"max", "-", "\[Alpha]"}], 
+          RowBox[{"max", "-", "mean"}]]}]], 
+       RowBox[{"max", "-", "mean"}]], ",", "0"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"max", "\[Equal]", "Infinity"}], ",", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"-", "min"}], "+", "\[Alpha]"}], ">", "0"}], ",", 
+      FractionBox[
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         FractionBox[
+          RowBox[{"\[Alpha]", "-", "min"}], 
+          RowBox[{"mean", "-", "min"}]]}]], 
+       RowBox[{"mean", "-", "min"}]], ",", "0"}], "]"}], ",", 
+    "\[IndentingNewLine]", "True", ",", 
+    RowBox[{"1", "/", 
+     RowBox[{"(", 
+      RowBox[{"max", "-", "min"}], ")"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.536421004021291*^9, 3.5364211242383833`*^9}, {
+   3.536421174860755*^9, 3.536421183205472*^9}, {3.536421448183125*^9, 
+   3.536421448798552*^9}, {3.536421482514922*^9, 3.5364214840968122`*^9}, {
+   3.536421526931266*^9, 3.5364215547768087`*^9}, 3.536421590433776*^9, {
+   3.536421887045167*^9, 3.5364218953391123`*^9}, {3.536421926349573*^9, 
+   3.536421927268238*^9}}],
+
+Cell["\<\
+To get the expressions to simplify, I need to get rid of the if's.  This is \
+the purpose of p\[Aleph]Expr.  It cannot be used in the integrations unless \
+\[Alpha] is within the correct bounds for that branch\
+\>", "Text",
+ CellChangeTimes->{{3.5364219326509943`*^9, 3.536422033327973*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p\[Aleph]Expr", "[", 
+   RowBox[{"\[Alpha]_", ",", "min_", ",", "max_", ",", "mean_"}], "]"}], ":=", 
+  RowBox[{"Which", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"min", "\[Equal]", 
+     RowBox[{"-", "Infinity"}]}], ",", 
+    FractionBox[
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"max", "-", "\[Alpha]"}], 
+        RowBox[{"max", "-", "mean"}]]}]], 
+     RowBox[{"max", "-", "mean"}]], ",", "\[IndentingNewLine]", 
+    RowBox[{"max", "\[Equal]", "Infinity"}], ",", 
+    FractionBox[
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"\[Alpha]", "-", "min"}], 
+        RowBox[{"mean", "-", "min"}]]}]], 
+     RowBox[{"mean", "-", "min"}]], ",", "\[IndentingNewLine]", "True", ",", 
+    RowBox[{"1", "/", 
+     RowBox[{"(", 
+      RowBox[{"max", "-", "min"}], ")"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.536421004021291*^9, 3.5364211242383833`*^9}, {
+   3.536421174860755*^9, 3.536421183205472*^9}, {3.536421448183125*^9, 
+   3.536421448798552*^9}, {3.536421482514922*^9, 3.5364214840968122`*^9}, {
+   3.536421526931266*^9, 3.5364215547768087`*^9}, 3.536421590433776*^9, {
+   3.536421887045167*^9, 3.5364218953391123`*^9}, {3.536421930493256*^9, 
+   3.5364219513522453`*^9}, {3.536421984056095*^9, 3.536421994881947*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["The expression inside the integral", "Subsection",
+ CellChangeTimes->{{3.536423325008144*^9, 3.53642333037978*^9}}],
+
+Cell["\<\
+Now, I can simplify the expression for the product in each of the three cases:\
+\>", "Text",
+ CellChangeTimes->{{3.5364217246942053`*^9, 3.5364217484032803`*^9}}],
+
+Cell["Start with the first case.", "Text",
+ CellChangeTimes->{{3.536422052338537*^9, 3.5364220565285673`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p\[Xi]", "[", 
+   RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+  RowBox[{"p\[Aleph]Expr", "[", 
+   RowBox[{
+    RowBox[{"x0", "-", "\[Xi]0"}], ",", 
+    RowBox[{"-", "Infinity"}], ",", "max", ",", "mean"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5364217527679377`*^9, 3.536421827901177*^9}, {
+  3.536422038904011*^9, 3.536422066283469*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{"max", "-", "x0", "+", "\[Xi]0"}], 
+      RowBox[{"max", "-", "mean"}]]}], "-", 
+    FractionBox[
+     SuperscriptBox["\[Xi]0", "2"], 
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[Sigma]", "2"]}]]}]], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"max", "-", "mean"}], ")"}], " ", 
+   SqrtBox[
+    RowBox[{"2", " ", "\[Pi]"}]], " ", "\[Sigma]"}]]], "Output",
+ CellChangeTimes->{
+  3.5364218302550697`*^9, {3.53642204060457*^9, 3.5364220689408503`*^9}}]
+}, Open  ]],
+
+Cell["It doesn't simplify at all", "Text",
+ CellChangeTimes->{{3.536422254121172*^9, 3.536422258138056*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"p\[Xi]", "[", 
+     RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+    RowBox[{"p\[Aleph]Expr", "[", 
+     RowBox[{
+      RowBox[{"x0", "-", "\[Xi]0"}], ",", 
+      RowBox[{"-", "Infinity"}], ",", "max", ",", "mean"}], "]"}]}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"max", ">", "mean"}], "&&", 
+     RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+     RowBox[{
+      RowBox[{"x0", "-", "\[Xi]0"}], "<", "max"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5364217527679377`*^9, 3.536421827901177*^9}, {
+  3.536422038904011*^9, 3.5364220845473948`*^9}, {3.536422120930009*^9, 
+  3.536422179582707*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{"max", "-", "x0", "+", "\[Xi]0"}], 
+      RowBox[{"max", "-", "mean"}]]}], "-", 
+    FractionBox[
+     SuperscriptBox["\[Xi]0", "2"], 
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[Sigma]", "2"]}]]}]], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"max", "-", "mean"}], ")"}], " ", 
+   SqrtBox[
+    RowBox[{"2", " ", "\[Pi]"}]], " ", "\[Sigma]"}]]], "Output",
+ CellChangeTimes->{3.5364220861234617`*^9, 3.536422194263476*^9}]
+}, Open  ]],
+
+Cell["\<\
+I won't bother simplifying the other cases.  I just include them here so I \
+can check my work on paper.  (Note that the Which does not simplify when its \
+first expression is unknown, so I first evaluated the actual expression then \
+copied the appropriate sub-clause of the Which statement over top of the p\
+\[Aleph] part to produce what you see below.)\
+\>", "Text",
+ CellChangeTimes->{{3.53642225087127*^9, 3.5364222513199997`*^9}, {
+  3.536423027097506*^9, 3.5364230410789824`*^9}, {3.536423200515573*^9, 
+  3.536423213501421*^9}, {3.536423248517996*^9, 3.536423295916257*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p\[Xi]", "[", 
+   RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+  FractionBox["1", 
+   RowBox[{"max", "-", "min"}]]}]], "Input",
+ CellChangeTimes->{{3.5364217527679377`*^9, 3.536421827901177*^9}, {
+  3.536422038904011*^9, 3.536422066283469*^9}, {3.5364230496787367`*^9, 
+  3.536423074445198*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{"-", 
+    FractionBox[
+     SuperscriptBox["\[Xi]0", "2"], 
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[Sigma]", "2"]}]]}]], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"max", "-", "min"}], ")"}], " ", 
+   SqrtBox[
+    RowBox[{"2", " ", "\[Pi]"}]], " ", "\[Sigma]"}]]], "Output",
+ CellChangeTimes->{{3.536423054179317*^9, 3.5364230759032917`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p\[Xi]", "[", 
+   RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+  FractionBox[
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"x0", "-", "\[Xi]0"}], ")"}], "-", "min"}], 
+      RowBox[{"mean", "-", "min"}]]}]], 
+   RowBox[{"mean", "-", "min"}]]}]], "Input",
+ CellChangeTimes->{{3.536423103694274*^9, 3.536423105484047*^9}, 
+   3.5364231718600483`*^9}],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"-", "min"}], "+", "x0", "-", "\[Xi]0"}], 
+      RowBox[{"mean", "-", "min"}]]}], "-", 
+    FractionBox[
+     SuperscriptBox["\[Xi]0", "2"], 
+     RowBox[{"2", " ", 
+      SuperscriptBox["\[Sigma]", "2"]}]]}]], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"mean", "-", "min"}], ")"}], " ", 
+   SqrtBox[
+    RowBox[{"2", " ", "\[Pi]"}]], " ", "\[Sigma]"}]]], "Output",
+ CellChangeTimes->{3.5364231727375383`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["The Integral itself", "Subsection",
+ CellChangeTimes->{{3.536423342194106*^9, 3.536423346591007*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["First bin", "Subsubsection",
+ CellChangeTimes->{{3.5364239165126753`*^9, 3.53642391759542*^9}}],
+
+Cell["\<\
+The first bin is the one which has no lower bound.  The message sent for the \
+first bin is calculated from the message integral given at the beginning of \
+this document.\
+\>", "Text",
+ CellChangeTimes->{{3.536423919704268*^9, 3.536424016631591*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"messageFirstBin", "=", 
+  RowBox[{"Integrate", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"p\[Xi]", "[", 
+      RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+     RowBox[{"p\[Aleph]", "[", 
+      RowBox[{
+       RowBox[{"x0", "-", "\[Xi]0"}], ",", 
+       RowBox[{"-", "Infinity"}], ",", "max", ",", "mean"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\[Xi]0", ",", 
+      RowBox[{"x0", "-", "max"}], ",", "Infinity"}], "}"}], ",", 
+    RowBox[{"Assumptions", "\[Rule]", 
+     RowBox[{
+      RowBox[{"max", ">", "mean"}], "&&", 
+      RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+      RowBox[{
+       RowBox[{"x0", "-", "\[Xi]0"}], "<", "max"}]}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.536423364199128*^9, 3.536423436583729*^9}, {
+  3.536423571759205*^9, 3.536423578019264*^9}, {3.536423792281797*^9, 
+  3.536423793289551*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["\[ExponentialE]", 
+      FractionBox[
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", "2"}], " ", 
+         SuperscriptBox["max", "2"]}], "-", 
+        RowBox[{"2", " ", "mean", " ", "x0"}], "+", 
+        RowBox[{"2", " ", "max", " ", 
+         RowBox[{"(", 
+          RowBox[{"mean", "+", "x0"}], ")"}]}], "+", 
+        SuperscriptBox["\[Sigma]", "2"]}], 
+       RowBox[{"2", " ", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"max", "-", "mean"}], ")"}], "2"]}]]], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "max"}], "+", "mean"}], ")"}], " ", 
+        RowBox[{"Abs", "[", 
+         RowBox[{
+          RowBox[{"-", "max"}], "+", "x0", "+", 
+          FractionBox[
+           SuperscriptBox["\[Sigma]", "2"], 
+           RowBox[{"max", "-", "mean"}]]}], "]"}]}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", 
+           SuperscriptBox["max", "2"]}], "-", 
+          RowBox[{"mean", " ", "x0"}], "+", 
+          RowBox[{"max", " ", 
+           RowBox[{"(", 
+            RowBox[{"mean", "+", "x0"}], ")"}]}], "+", 
+          SuperscriptBox["\[Sigma]", "2"]}], ")"}], " ", 
+        RowBox[{"Erf", "[", 
+         FractionBox[
+          RowBox[{"Abs", "[", 
+           RowBox[{
+            RowBox[{"-", "max"}], "+", "x0", "+", 
+            FractionBox[
+             SuperscriptBox["\[Sigma]", "2"], 
+             RowBox[{"max", "-", "mean"}]]}], "]"}], 
+          RowBox[{
+           SqrtBox["2"], " ", "\[Sigma]"}]], "]"}]}]}], ")"}]}], ")"}], "/", 
+   RowBox[{"(", 
+    RowBox[{"2", " ", 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"max", "-", "mean"}], ")"}], "2"], " ", 
+     RowBox[{"Abs", "[", 
+      RowBox[{
+       RowBox[{"-", "max"}], "+", "x0", "+", 
+       FractionBox[
+        SuperscriptBox["\[Sigma]", "2"], 
+        RowBox[{"max", "-", "mean"}]]}], "]"}]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{3.536423446158572*^9, 3.536423583667395*^9, 
+  3.5364238018197517`*^9}]
+}, Open  ]],
+
+Cell["Now, we simplify this expression. ", "Text",
+ CellChangeTimes->{{3.5364239608015947`*^9, 3.536423977677713*^9}, {
+  3.5364240302259703`*^9, 3.536424032177369*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", "messageFirstBin", "]"}]], "Input",
+ CellChangeTimes->{{3.536423458980358*^9, 3.536423476022729*^9}, {
+  3.536423658586391*^9, 3.536423659458858*^9}, {3.536423822058915*^9, 
+  3.536423825336712*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["1", 
+   RowBox[{"2", " ", 
+    RowBox[{"(", 
+     RowBox[{"max", "-", "mean"}], ")"}]}]], 
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"max", "-", "mean"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"max", "-", "x0"}], ")"}]}], "+", 
+      SuperscriptBox["\[Sigma]", "2"]}], 
+     RowBox[{"2", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"max", "-", "mean"}], ")"}], "2"]}]]], " ", 
+   RowBox[{"(", 
+    RowBox[{"1", "-", 
+     RowBox[{
+      RowBox[{"Erf", "[", 
+       FractionBox[
+        RowBox[{"Abs", "[", 
+         RowBox[{
+          RowBox[{"-", "max"}], "+", "x0", "+", 
+          FractionBox[
+           SuperscriptBox["\[Sigma]", "2"], 
+           RowBox[{"max", "-", "mean"}]]}], "]"}], 
+        RowBox[{
+         SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], " ", 
+      RowBox[{"Sign", "[", 
+       RowBox[{
+        RowBox[{"-", "max"}], "+", "x0", "+", 
+        FractionBox[
+         SuperscriptBox["\[Sigma]", "2"], 
+         RowBox[{"max", "-", "mean"}]]}], "]"}]}]}], ")"}]}]}]], "Output",
+ CellChangeTimes->{{3.536423470111302*^9, 3.53642348643528*^9}, 
+   3.536423660303293*^9, 3.536423755614389*^9, 3.53642383827416*^9}]
+}, Open  ]],
+
+Cell["\<\
+Now we calculate the same expression as in messageFirstBin, but because the \
+Integrator has now has access to the temporary results from the FullSimplify \
+plus extra constraint information it knows as it does the integral, we get a \
+much simpler form.\
+\>", "Text",
+ CellChangeTimes->{{3.536424035527919*^9, 3.5364241029404707`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"messageFirstBinRecalc", "=", 
+  RowBox[{"Integrate", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"p\[Xi]", "[", 
+      RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+     RowBox[{"p\[Aleph]", "[", 
+      RowBox[{
+       RowBox[{"x0", "-", "\[Xi]0"}], ",", 
+       RowBox[{"-", "Infinity"}], ",", "max", ",", "mean"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\[Xi]0", ",", 
+      RowBox[{"x0", "-", "max"}], ",", "Infinity"}], "}"}], ",", 
+    RowBox[{"Assumptions", "\[Rule]", 
+     RowBox[{
+      RowBox[{"max", ">", "mean"}], "&&", 
+      RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+      RowBox[{
+       RowBox[{"x0", "-", "\[Xi]0"}], "<", "max"}]}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.536423364199128*^9, 3.536423436583729*^9}, {
+  3.536423571759205*^9, 3.536423578019264*^9}, {3.536423792281797*^9, 
+  3.536423793289551*^9}, {3.5364238589682503`*^9, 3.536423859914184*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     RowBox[{
+      RowBox[{
+       RowBox[{"-", "2"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"max", "-", "mean"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"max", "-", "x0"}], ")"}]}], "+", 
+      SuperscriptBox["\[Sigma]", "2"]}], 
+     RowBox[{"2", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"max", "-", "mean"}], ")"}], "2"]}]]], " ", 
+   RowBox[{"Erfc", "[", 
+    FractionBox[
+     RowBox[{
+      RowBox[{"-", "max"}], "+", "x0", "+", 
+      FractionBox[
+       SuperscriptBox["\[Sigma]", "2"], 
+       RowBox[{"max", "-", "mean"}]]}], 
+     RowBox[{
+      SqrtBox["2"], " ", "\[Sigma]"}]], "]"}]}], 
+  RowBox[{"2", " ", 
+   RowBox[{"(", 
+    RowBox[{"max", "-", "mean"}], ")"}]}]]], "Output",
+ CellChangeTimes->{3.536423866830538*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Simplify", "[", 
+  RowBox[{
+   RowBox[{"messageFirstBinRecalc", "/.", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"max", "-", "mean"}], "\[Rule]", "d"}], ",", 
+      RowBox[{
+       RowBox[{"max", "-", "x0"}], "\[Rule]", 
+       RowBox[{"x", "'"}]}], ",", 
+      RowBox[{
+       RowBox[{"x0", "-", "max"}], "\[Rule]", 
+       RowBox[{"-", 
+        RowBox[{"x", "'"}]}]}]}], "}"}]}], "/.", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"max", "-", "mean"}], "\[Rule]", "d"}], "}"}]}], "]"}]], "Input",\
+
+ CellChangeTimes->{{3.536425046798168*^9, 3.536425109703429*^9}, {
+  3.536425194633074*^9, 3.536425203504732*^9}, {3.536425265719894*^9, 
+  3.536425270778427*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[Sigma]", "2"], "-", 
+      RowBox[{"2", " ", "d", " ", 
+       SuperscriptBox["x", "\[Prime]",
+        MultilineFunction->None]}]}], 
+     RowBox[{"2", " ", 
+      SuperscriptBox["d", "2"]}]]], " ", 
+   RowBox[{"Erfc", "[", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[Sigma]", "2"], "-", 
+      RowBox[{"d", " ", 
+       SuperscriptBox["x", "\[Prime]",
+        MultilineFunction->None]}]}], 
+     RowBox[{
+      SqrtBox["2"], " ", "d", " ", "\[Sigma]"}]], "]"}]}], 
+  RowBox[{"2", " ", "d"}]]], "Output",
+ CellChangeTimes->{3.5364250770685177`*^9, 3.536425110694933*^9, 
+  3.536425204166222*^9, 3.5364252713750477`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Middle bin", "Subsubsection",
+ CellChangeTimes->{{3.536425408126006*^9, 3.536425409719445*^9}}],
+
+Cell["\<\
+Here we calculate the message for a bin that has neither bound as infinity\
+\>", "Text",
+ CellChangeTimes->{{3.536425538962307*^9, 3.536425549967656*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"middleBinMessage", "=", 
+  RowBox[{"Integrate", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"p\[Xi]", "[", 
+      RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+     RowBox[{"p\[Aleph]", "[", 
+      RowBox[{
+       RowBox[{"x0", "-", "\[Xi]0"}], ",", "min", ",", "max", ",", "mean"}], 
+      "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\[Xi]0", ",", 
+      RowBox[{"x0", "-", "max"}], ",", 
+      RowBox[{"x0", "-", "min"}]}], "}"}], ",", 
+    RowBox[{"Assumptions", "\[Rule]", 
+     RowBox[{
+      RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+      RowBox[{
+       RowBox[{"-", "Infinity"}], "<", "min", "<=", 
+       RowBox[{"x0", "-", "\[Xi]0"}], "<=", "max", "<", "Infinity"}], "&&", 
+      RowBox[{"min", "<", "max"}]}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.536425412260281*^9, 3.5364254845916843`*^9}, {
+  3.536426137502123*^9, 3.5364261605734577`*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   RowBox[{"Erf", "[", 
+    FractionBox[
+     RowBox[{"max", "-", "x0"}], 
+     RowBox[{
+      SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], "-", 
+   RowBox[{"Erf", "[", 
+    FractionBox[
+     RowBox[{"min", "-", "x0"}], 
+     RowBox[{
+      SqrtBox["2"], " ", "\[Sigma]"}]], "]"}]}], 
+  RowBox[{"2", " ", 
+   RowBox[{"(", 
+    RowBox[{"max", "-", "min"}], ")"}]}]]], "Output",
+ CellChangeTimes->{
+  3.536425489254138*^9, {3.536426142090445*^9, 3.536426163414682*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Last bin", "Subsubsection",
+ CellChangeTimes->{{3.536425408126006*^9, 3.536425409719445*^9}, {
+  3.536425728563387*^9, 3.536425729010029*^9}}],
+
+Cell["\<\
+Here we calculate the message for a bin that has the upper bound as infinity\
+\>", "Text",
+ CellChangeTimes->{{3.536425538962307*^9, 3.536425549967656*^9}, {
+  3.536425736840266*^9, 3.536425741147171*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"lastBinMessage", "=", 
+  RowBox[{"Integrate", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"p\[Xi]", "[", 
+      RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+     RowBox[{"p\[Aleph]", "[", 
+      RowBox[{
+       RowBox[{"x0", "-", "\[Xi]0"}], ",", "min", ",", "Infinity", ",", 
+       "mean"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\[Xi]0", ",", 
+      RowBox[{"-", "Infinity"}], ",", 
+      RowBox[{"x0", "-", "min"}]}], "}"}], ",", 
+    RowBox[{"Assumptions", "\[Rule]", 
+     RowBox[{
+      RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+      RowBox[{
+       RowBox[{"-", "Infinity"}], "<", "min"}], "&&", 
+      RowBox[{"min", "<=", 
+       RowBox[{"x0", "-", "\[Xi]0"}], "<", "Infinity"}], "&&", 
+      RowBox[{"min", "<", "mean"}]}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.536425412260281*^9, 3.5364254845916843`*^9}, {
+  3.536425732956115*^9, 3.536425733371801*^9}, {3.536425786866623*^9, 
+  3.5364258285080748`*^9}, {3.5364259009295177`*^9, 3.5364259026264267`*^9}, {
+  3.5364260409621277`*^9, 3.53642605983706*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", 
+       FractionBox[
+        SuperscriptBox["min", "2"], 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"mean", "-", "min"}], ")"}], "2"]]}], "+", 
+      FractionBox[
+       RowBox[{"mean", " ", 
+        RowBox[{"(", 
+         RowBox[{"min", "-", "x0"}], ")"}]}], 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"mean", "-", "min"}], ")"}], "2"]], "+", 
+      FractionBox[
+       RowBox[{"min", " ", "x0"}], 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"mean", "-", "min"}], ")"}], "2"]], "+", 
+      FractionBox[
+       SuperscriptBox["\[Sigma]", "2"], 
+       RowBox[{"2", " ", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"mean", "-", "min"}], ")"}], "2"]}]]}]], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"mean", " ", "min"}], "-", 
+      SuperscriptBox["min", "2"], "-", 
+      RowBox[{"mean", " ", "x0"}], "+", 
+      RowBox[{"min", " ", "x0"}], "+", 
+      SuperscriptBox["\[Sigma]", "2"], "-", 
+      RowBox[{
+       RowBox[{"Abs", "[", 
+        RowBox[{
+         RowBox[{"-", 
+          SuperscriptBox["min", "2"]}], "+", 
+         RowBox[{"mean", " ", 
+          RowBox[{"(", 
+           RowBox[{"min", "-", "x0"}], ")"}]}], "+", 
+         RowBox[{"min", " ", "x0"}], "+", 
+         SuperscriptBox["\[Sigma]", "2"]}], "]"}], " ", 
+       RowBox[{"Erf", "[", 
+        FractionBox[
+         RowBox[{"Abs", "[", 
+          RowBox[{"min", "-", "x0", "+", 
+           FractionBox[
+            SuperscriptBox["\[Sigma]", "2"], 
+            RowBox[{"mean", "-", "min"}]]}], "]"}], 
+         RowBox[{
+          SqrtBox["2"], " ", "\[Sigma]"}]], "]"}]}]}], ")"}]}], ")"}], "/", 
+  RowBox[{"(", 
+   RowBox[{"2", " ", 
+    RowBox[{"(", 
+     RowBox[{"mean", "-", "min"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"mean", " ", "min"}], "-", 
+      SuperscriptBox["min", "2"], "-", 
+      RowBox[{"mean", " ", "x0"}], "+", 
+      RowBox[{"min", " ", "x0"}], "+", 
+      SuperscriptBox["\[Sigma]", "2"]}], ")"}]}], ")"}]}]], "Output",
+ CellChangeTimes->{{3.536425892980068*^9, 3.5364259043343554`*^9}, 
+   3.536426111445518*^9, 3.536426609535445*^9}]
+}, Open  ]],
+
+Cell["\<\
+Here, I use the same trick as above.  First I simplify, to force the kernel \
+to calculate useful simplification shortcuts.\
+\>", "Text",
+ CellChangeTimes->{{3.536426681878921*^9, 3.536426713688428*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", "lastBinMessage", "]"}]], "Input",
+ CellChangeTimes->{{3.536426629527092*^9, 3.536426636250044*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{"mean", "-", "min"}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{"min", "-", "x0"}], ")"}]}], "+", 
+       SuperscriptBox["\[Sigma]", "2"]}], 
+      RowBox[{"2", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"mean", "-", "min"}], ")"}], "2"]}]]], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", 
+      RowBox[{"Erfc", "[", 
+       FractionBox[
+        RowBox[{"Abs", "[", 
+         RowBox[{"min", "-", "x0", "+", 
+          FractionBox[
+           SuperscriptBox["\[Sigma]", "2"], 
+           RowBox[{"mean", "-", "min"}]]}], "]"}], 
+        RowBox[{
+         SqrtBox["2"], " ", "\[Sigma]"}]], "]"}], "+", 
+      RowBox[{"Sign", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"mean", "-", "min"}], ")"}], " ", 
+         RowBox[{"(", 
+          RowBox[{"min", "-", "x0"}], ")"}]}], "+", 
+        SuperscriptBox["\[Sigma]", "2"]}], "]"}]}], ")"}]}], ")"}], "/", 
+  RowBox[{"(", 
+   RowBox[{"2", " ", 
+    RowBox[{"(", 
+     RowBox[{"mean", "-", "min"}], ")"}], " ", 
+    RowBox[{"Sign", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"mean", "-", "min"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"min", "-", "x0"}], ")"}]}], "+", 
+      SuperscriptBox["\[Sigma]", "2"]}], "]"}]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.536426671343913*^9}]
+}, Open  ]],
+
+Cell["\<\
+Then, I recalculate so it can take advantage of those shortcuts.\
+\>", "Text",
+ CellChangeTimes->{{3.5364267531434107`*^9, 3.536426765733663*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"lastBinMessageRecalc", "=", 
+  RowBox[{"Integrate", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"p\[Xi]", "[", 
+      RowBox[{"\[Xi]0", ",", "\[Sigma]"}], "]"}], 
+     RowBox[{"p\[Aleph]", "[", 
+      RowBox[{
+       RowBox[{"x0", "-", "\[Xi]0"}], ",", "min", ",", "Infinity", ",", 
+       "mean"}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\[Xi]0", ",", 
+      RowBox[{"-", "Infinity"}], ",", 
+      RowBox[{"x0", "-", "min"}]}], "}"}], ",", 
+    RowBox[{"Assumptions", "\[Rule]", 
+     RowBox[{
+      RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+      RowBox[{
+       RowBox[{"-", "Infinity"}], "<", "min"}], "&&", 
+      RowBox[{"min", "<=", 
+       RowBox[{"x0", "-", "\[Xi]0"}], "<", "Infinity"}], "&&", 
+      RowBox[{"min", "<", "mean"}]}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.536425412260281*^9, 3.5364254845916843`*^9}, {
+  3.536425732956115*^9, 3.536425733371801*^9}, {3.536425786866623*^9, 
+  3.5364258285080748`*^9}, {3.5364259009295177`*^9, 3.5364259026264267`*^9}, {
+  3.5364260409621277`*^9, 3.53642605983706*^9}, {3.536426727615262*^9, 
+  3.5364267285412273`*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{
+     FractionBox["min", 
+      RowBox[{"mean", "-", "min"}]], "-", 
+     FractionBox["x0", 
+      RowBox[{"mean", "-", "min"}]], "+", 
+     FractionBox[
+      SuperscriptBox["\[Sigma]", "2"], 
+      RowBox[{"2", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"mean", "-", "min"}], ")"}], "2"]}]]}]], " ", 
+   RowBox[{"Erfc", "[", 
+    FractionBox[
+     RowBox[{"min", "-", "x0", "+", 
+      FractionBox[
+       SuperscriptBox["\[Sigma]", "2"], 
+       RowBox[{"mean", "-", "min"}]]}], 
+     RowBox[{
+      SqrtBox["2"], " ", "\[Sigma]"}]], "]"}]}], 
+  RowBox[{"2", " ", 
+   RowBox[{"(", 
+    RowBox[{"mean", "-", "min"}], ")"}]}]]], "Output",
+ CellChangeTimes->{3.536426733906518*^9, 3.536426771711865*^9}]
+}, Open  ]],
+
+Cell["\<\
+Things could be a little more compact, so I recalculate one more time.\
+\>", "Text",
+ CellChangeTimes->{{3.5364268038174973`*^9, 3.536426814254184*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"lastBinMessageRecalcSimp", "=", 
+  RowBox[{"FullSimplify", "[", "lastBinMessageRecalc", "]"}]}]], "Input",
+ CellChangeTimes->{{3.53642677543445*^9, 3.536426788565484*^9}, {
+  3.536426855690436*^9, 3.53642686107902*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     RowBox[{
+      RowBox[{"2", " ", 
+       RowBox[{"(", 
+        RowBox[{"mean", "-", "min"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"min", "-", "x0"}], ")"}]}], "+", 
+      SuperscriptBox["\[Sigma]", "2"]}], 
+     RowBox[{"2", " ", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"mean", "-", "min"}], ")"}], "2"]}]]], " ", 
+   RowBox[{"Erfc", "[", 
+    FractionBox[
+     RowBox[{"min", "-", "x0", "+", 
+      FractionBox[
+       SuperscriptBox["\[Sigma]", "2"], 
+       RowBox[{"mean", "-", "min"}]]}], 
+     RowBox[{
+      SqrtBox["2"], " ", "\[Sigma]"}]], "]"}]}], 
+  RowBox[{"2", " ", 
+   RowBox[{"(", 
+    RowBox[{"mean", "-", "min"}], ")"}]}]]], "Output",
+ CellChangeTimes->{3.536426792802721*^9, 3.5364268621189623`*^9}]
+}, Open  ]],
+
+Cell["\<\
+Finally, I make some semantic substitutions to get things really small.  d is \
+mean-min (distance from the minimum to the mean) and x'=x0-min (which is \
+equivalent to min-x0=-x') (vector from the minimum to x0).  These two \
+substitutions transform the expression for the last bin into the expression \
+for the first.\
+\>", "Text",
+ CellChangeTimes->{{3.536426867803623*^9, 3.536426956821642*^9}, {
+  3.536427673638773*^9, 3.536427759350761*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"lastBinMessageRecalcSimp", "/.", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"mean", "-", "min"}], "\[Rule]", "d"}], ",", 
+      RowBox[{
+       RowBox[{"min", "-", "x0"}], "\[Rule]", 
+       RowBox[{"-", 
+        RowBox[{"x", "'"}]}]}]}], "}"}]}], "/.", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"mean", "-", "min"}], "\[Rule]", "d"}], "}"}]}], "]"}]], "Input",\
+
+ CellChangeTimes->{{3.5364269693087683`*^9, 3.536427021039317*^9}, {
+   3.536427051308269*^9, 3.53642707842554*^9}, 3.536427295837459*^9, {
+   3.536427729443233*^9, 3.536427734214867*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["\[ExponentialE]", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[Sigma]", "2"], "-", 
+      RowBox[{"2", " ", "d", " ", 
+       SuperscriptBox["x", "\[Prime]",
+        MultilineFunction->None]}]}], 
+     RowBox[{"2", " ", 
+      SuperscriptBox["d", "2"]}]]], " ", 
+   RowBox[{"Erfc", "[", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[Sigma]", "2"], "-", 
+      RowBox[{"d", " ", 
+       SuperscriptBox["x", "\[Prime]",
+        MultilineFunction->None]}]}], 
+     RowBox[{
+      SqrtBox["2"], " ", "d", " ", "\[Sigma]"}]], "]"}]}], 
+  RowBox[{"2", " ", "d"}]]], "Output",
+ CellChangeTimes->{3.536427079602393*^9, 3.5364272970717697`*^9, 
+  3.536427734776012*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{640, 655},
+WindowMargins->{{147, Automatic}, {Automatic, 29}},
+FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[545, 20, 407, 12, 33, "Text"],
+Cell[955, 34, 95, 1, 33, "Text"],
+Cell[1053, 37, 1306, 42, 57, "Input"],
+Cell[2362, 81, 135, 1, 33, "Text"],
+Cell[2500, 84, 592, 14, 55, "Text"],
+Cell[3095, 100, 375, 10, 34, "Input"],
+Cell[3473, 112, 1007, 25, 77, "Text"],
+Cell[4483, 139, 1619, 41, 194, "Input"],
+Cell[6105, 182, 301, 5, 77, "Text"],
+Cell[6409, 189, 1375, 31, 194, "Input"],
+Cell[CellGroupData[{
+Cell[7809, 224, 121, 1, 39, "Subsection"],
+Cell[7933, 227, 172, 3, 33, "Text"],
+Cell[8108, 232, 110, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[8243, 237, 377, 9, 34, "Input"],
+Cell[8623, 248, 577, 18, 71, "Output"]
+}, Open  ]],
+Cell[9215, 269, 108, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[9348, 274, 705, 18, 83, "Input"],
+Cell[10056, 294, 549, 17, 71, "Output"]
+}, Open  ]],
+Cell[10620, 314, 593, 9, 121, "Text"],
+Cell[CellGroupData[{
+Cell[11238, 327, 330, 8, 56, "Input"],
+Cell[11571, 337, 424, 13, 71, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12032, 355, 464, 14, 67, "Input"],
+Cell[12499, 371, 550, 18, 71, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13098, 395, 107, 1, 39, "Subsection"],
+Cell[CellGroupData[{
+Cell[13230, 400, 101, 1, 31, "Subsubsection"],
+Cell[13334, 403, 261, 5, 77, "Text"],
+Cell[CellGroupData[{
+Cell[13620, 412, 858, 22, 107, "Input"],
+Cell[14481, 436, 2130, 64, 248, "Output"]
+}, Open  ]],
+Cell[16626, 503, 169, 2, 33, "Text"],
+Cell[CellGroupData[{
+Cell[16820, 509, 243, 4, 34, "Input"],
+Cell[17066, 515, 1325, 41, 168, "Output"]
+}, Open  ]],
+Cell[18406, 559, 346, 6, 99, "Text"],
+Cell[CellGroupData[{
+Cell[18777, 569, 912, 22, 107, "Input"],
+Cell[19692, 593, 870, 29, 74, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20599, 627, 707, 21, 107, "Input"],
+Cell[21309, 650, 763, 23, 69, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22121, 679, 101, 1, 31, "Subsubsection"],
+Cell[22225, 682, 164, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[22414, 689, 886, 23, 155, "Input"],
+Cell[23303, 714, 502, 17, 61, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23854, 737, 148, 2, 31, "Subsubsection"],
+Cell[24005, 741, 215, 4, 33, "Text"],
+Cell[CellGroupData[{
+Cell[24245, 749, 1056, 26, 131, "Input"],
+Cell[25304, 777, 2270, 68, 236, "Output"]
+}, Open  ]],
+Cell[27589, 848, 213, 4, 55, "Text"],
+Cell[CellGroupData[{
+Cell[27827, 856, 144, 2, 34, "Input"],
+Cell[27974, 860, 1549, 49, 154, "Output"]
+}, Open  ]],
+Cell[29538, 912, 156, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[29719, 919, 1113, 27, 131, "Input"],
+Cell[30835, 948, 817, 26, 74, "Output"]
+}, Open  ]],
+Cell[31667, 977, 162, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[31854, 984, 243, 4, 59, "Input"],
+Cell[32100, 990, 849, 27, 74, "Output"]
+}, Open  ]],
+Cell[32964, 1020, 458, 8, 121, "Text"],
+Cell[CellGroupData[{
+Cell[33447, 1032, 642, 18, 83, "Input"],
+Cell[34092, 1052, 739, 23, 69, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

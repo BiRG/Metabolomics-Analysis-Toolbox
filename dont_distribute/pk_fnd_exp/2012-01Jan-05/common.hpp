@@ -11,10 +11,13 @@
 #include <exception>
 #include <vector>
 #include <cmath>
+#include <stdint.h>
 
 //Allow boost serialization
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/utility.hpp>
+
 
 #include <GClasses/GError.h>
 
@@ -31,7 +34,7 @@ namespace Prior{
   const double freq_int_max=0.05504;
 
   ///\brief The number of samples to make of the frequency
-  const double freq_int_num_samp = 128;
+  const std::size_t freq_int_num_samp = 128;
 
   ///\brief The mean amplitude of the peaks generated
   const double mean_height=0.0668214984275779;
@@ -80,7 +83,7 @@ class Peak{
   ///
   ///\param version the version number
   template<class Archive>
-  void serialize(Archive& ar, const unsigned int version){
+  void serialize(Archive& ar, const unsigned int /*version*/){
     ar & amp;
     ar & gamma;
     ar & loc;
@@ -140,8 +143,8 @@ class PeakList:public std::vector<Peak>{
   ///
   ///\param version the version number
   template<class Archive>
-  void serialize(Archive& ar, const unsigned int version){
-    ar && boost::serialization::base_object<std::vector<Peak> >(*this);
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & boost::serialization::base_object<std::vector<Peak> >(*this);
   }
 
 public:
@@ -206,11 +209,14 @@ class UniformDiscretization{
   ///
   ///\param version the version number
   template<class Archive>
-  void serialize(Archive& ar, const unsigned int version){
-    ar && min;
-    ar && max;
-    ar && m_num_bins;
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & min;
+    ar & max;
+    ar & m_num_bins;
   }
+
+  ///\brief Creates an uninitialized UniformDiscretization for serialization
+  UniformDiscretization(){}
 
 public:
   ///\brief Create a uniform discretization for the closed interval
@@ -242,14 +248,14 @@ public:
 
   ///\brief Return the number of bins in this discretization
   ///\return the number of bins in this discretization
-  unsigned num_bins(){ return m_num_bins; }
+  unsigned num_bins() const{ return m_num_bins; }
 
   ///\brief Return the index of the bin containing the given number
   ///
   ///Bin indices are zero-based
   ///
   ///\return the index of the bin containing the given number
-  unsigned bin_for(double num){
+  unsigned bin_for(double num) const{
     if      (num <= min){  return 0;
     }else if(num >= max){  return num_bins()-1; 
     }else{                 return num_bins()*(num-min)/(max-min);    }
@@ -257,7 +263,443 @@ public:
   
 };
 
+///\brief A discrete variable counted by a CountTable
+class CountTableVariable{
+  ///\brief The name of this variable
+  std::string m_name;
+
+  ///\brief The number of values that this discrete variable can take
+  ///on
+  unsigned m_num_vals;
+
+
+  friend class boost::serialization::access;
+
+  ///\brief Serialization method - uses boost-serialize
+  ///
+  ///\param ar The archive to serialize to
+  ///
+  ///\param version the version number
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & m_name;
+    ar & m_num_vals;
+  }
+
+  ///\brief Creates an uninitialized CountTableVariable for serialization
+  CountTableVariable(){}
+
+  //this friend declaration is needed to keep the no-arg
+  //CountTableVariable constructor private
+  friend class CountTable2D;
+
+public:
+  ///\brief Create a CountTableVariable named \a name that can take on
+  ///\a num_vals values
+  ///
+  ///\param name The name of the new variable
+  ///
+  ///\param num_vals the number of values the variable can take on
+  CountTableVariable(std::string name, unsigned num_vals)
+    :m_name(name), m_num_vals(num_vals){}
+
+  ///\brief Create a CountTableVariable named \a base_name \a number that can
+  ///take on \a num_vals values 
+  ///
+  ///To create a variable named "a1" that takes on 256 values, you
+  ///call \code CountTableVariable("a",1, 256) \endcode
+  ///
+  ///\param base_name The base-name of the new variable
+  ///
+  ///\param index The index of the new variable
+  ///
+  ///\param num_vals the number of values the variable can take on
+  CountTableVariable(std::string base_name, unsigned index, unsigned num_vals)
+    :m_name(base_name+GClasses::to_str(index)), m_num_vals(num_vals){}
+
+  ///\brief Return the name of this variable
+  std::string name() const{ return m_name; }
+
+  ///\brief Return the number of values that this discrete variable can take
+  unsigned num_vals() const{ return m_num_vals; }
+};
+
+///\brief The counts of events for discrete variables
+///
+///I implemented a hierarchy with abstract base classes rather than
+///just using the explicit classes I needed because:
+///
+///1. The model fits the model in my head
+///
+///2. It might be desirable to have collecitons of CountTable later.
+///   This will be much easier if everything is already organized that
+///   way.
+///
+///3. As long as one uses the leaf-node objects explicitly in his
+///   code, the virtual functions will only provide a small memory
+///   penalty and no speed penalty (since the compiler can optimize
+///   those indirect calls away to direct function calls)
+///
+///\warning serialization through base-class pointers will require
+///         explicit registration of sub-classes in the base-class
+///         serialization method.  You have been warned.  (Right now
+///         no subclasses are registered, so hopefully things should
+///         break in a big way and be detected early before that
+///         happens.)
+class CountTable{
+
+  friend class boost::serialization::access;
+
+  ///\brief Serialization method - uses boost-serialize
+  ///
+  ///\param ar The archive to serialize to
+  ///
+  ///\param version the version number
+  ///
+  ///\warning serialization through base-class pointers will require
+  ///         explicit registration of sub-classes in the base-class
+  ///         serialization method.  You have been warned.  (Right now
+  ///         no subclasses are registered, so hopefully things should
+  ///         break in a big way and be detected early before that
+  ///         happens.)
+  template<class Archive>
+  void serialize(Archive& /*ar*/, const unsigned int /*version*/){}
+
+public:
+  ///\brief True if CountTable subclasses should check the ranges of
+  ///their arguments.
+  const static bool do_range_checking = true;
+
+
+  ///\brief Return a human-readable name for the table
+  ///
+  ///By default, lists the variables counted
+  virtual std::string name() const;
+
+  ///\brief Return a list of the variables counted by this table
+  ///
+  ///I use a vector rather than a list because we will not be adding
+  ///to or deleting from this list often.
+  virtual std::vector<CountTableVariable> variables() const = 0;
+};
+
+///\brief The counts of events for two discrete variables
+class CountTable2D:public CountTable{
+protected:
+  ///\brief the first variable counted by this table
+  CountTableVariable m_v1;
+
+  ///\brief the second variale counted by this table
+  CountTableVariable m_v2;
+
+  ///\brief An ordered pair of values, the first being the value of
+  ///m_v1 and the second being the value of m_v2
+  typedef std::pair<unsigned,unsigned> ValuePair;
+
+
+  ///\brief Create uninitialized CountTable2D
+  CountTable2D(){}
+
+  ///\brief Create a CountTalbe2D that counts the given variables
+  CountTable2D(CountTableVariable v1, CountTableVariable v2)
+    :m_v1(v1), m_v2(v2){}
+
+private:
+  friend class boost::serialization::access;
+
+  ///\brief Serialization method - uses boost-serialize
+  ///
+  ///\param ar The archive to serialize to
+  ///
+  ///\param version the version number
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & boost::serialization::base_object<CountTable>(*this);
+    ar & m_v1;
+    ar & m_v2;
+  }
+
+public:
+  ///\brief Return a list of the variables counted by this table
+  virtual std::vector<CountTableVariable> variables() const{
+    std::vector<CountTableVariable> ret; ret.reserve(2);
+    ret.push_back(m_v1); ret.push_back(m_v2);
+    return ret;
+  }
+
+  ///\brief Return the number of occurrences of the event that the
+  ///first variable == v1 and the second variable == v2
+  ///
+  ///\param v1 the value of the first variable
+  ///
+  ///\param v2 the value of the second variable
+  ///
+  ///\return the number of occurrences of the event that the first
+  ///variable == v1 and the second variable == v2
+  virtual unsigned count(unsigned v1, unsigned v2) const = 0;
+
+  ///\brief Increment the number of occurrences of the event that the
+  ///first variable == v1 and the second variable == v2
+  ///
+  ///\param v1 the value of the first variable
+  ///
+  ///\param v2 the value of the second variable
+  virtual void inc(unsigned v1, unsigned v2) = 0;
+};
+
+///\brief The counts of events for two discrete variables optimized
+///for memory when most counts will be 0
+class CountTable2DSparse:public CountTable2D{
+  ///\brief An iterator for use with the underlying count map
+  typedef std::map<ValuePair, unsigned>::iterator MapIter;
+
+  ///\brief A const_iterator for use with the underlying count map
+  typedef std::map<ValuePair, unsigned>::const_iterator MapIterConst;
+
+  ///\brief count[ValuePair] is the number of times that pair has occurred
+  std::map<ValuePair, unsigned> m_count;
+
+  friend class boost::serialization::access;
+
+  ///\brief Serialization method - uses boost-serialize
+  ///
+  ///\param ar The archive to serialize to
+  ///
+  ///\param version the version number
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & boost::serialization::base_object<CountTable2D>(*this);
+    ar & m_count;
+  }
+
+  ///\brief Create an uninitialized table for serialization purposes
+  CountTable2DSparse(){}
+
+public:
+  ///\brief Create a table that counts the joint occurrences of
+  ///variables \a v1 and \a v2
+  ///
+  ///The table initially has no occurrences
+  ///
+  ///\param v1 the first variable
+  ///
+  ///\param v2 the second variable
+  CountTable2DSparse(CountTableVariable v1, CountTableVariable v2)
+    :CountTable2D(v1,v2){}
+
+  ///\brief Return the number of occurrences of the event that the
+  ///first variable == v1 and the second variable == v2
+  ///
+  ///\param v1 the value of the first variable
+  ///
+  ///\param v2 the value of the second variable  
+  ///
+  ///\warning no range checking is done on v1 and v2
+  virtual unsigned count(unsigned v1, unsigned v2) const{
+    if(do_range_checking && (v1 >= m_v1.num_vals() || v2 >= m_v2.num_vals())){
+      std::string s("");
+      using GClasses::to_str;
+      GClasses::ThrowError(s+"Attempt to access cell out of range in the "
+			   "CountTable2DSparse named:" + this->name() + 
+			   ".  The indices of the cell were: "
+			   "("+to_str(v1)+", "+to_str(v2)+")");
+    }
+
+    MapIterConst loc = m_count.find(ValuePair(v1,v2));
+    if(loc == m_count.end()){ return 0; 
+    }else{ return loc->second; }
+  }
+
+  ///\brief Increment the number of occurrences of the event that the
+  ///first variable == v1 and the second variable == v2
+  ///
+  ///\param v1 the value of the first variable
+  ///
+  ///\param v2 the value of the second variable
+  ///
+  ///\warning no range checking is done on v1 and v2
+  virtual void inc(unsigned v1, unsigned v2){
+    if(do_range_checking && (v1 >= m_v1.num_vals() || v2 >= m_v2.num_vals())){
+      std::string s("");
+      using GClasses::to_str;
+      GClasses::ThrowError(s+"Attempt to increment cell out of range in the "
+			   "CountTable2DSparse named:" + this->name() + 
+			   ".  The indices of the cell were: "
+			   "("+to_str(v1)+", "+to_str(v2)+")");
+    }
+    MapIter loc = m_count.find(ValuePair(v1,v2));
+    if(loc == m_count.end()){ 
+      m_count.insert(std::make_pair(ValuePair(v1,v2),1));
+    }else{ ++loc->second; }
+  }
+
+  ///\brief Add all the counts in \a o to the counts in this
+  ///CountTable2DSparse
+  ///
+  ///\param o the table whose counts will be added
+  ///
+  ///\throw GException if the other table has different dimensions
+  virtual void add(const CountTable2DSparse& o);
+
+};
+
+
+///\brief The counts of events for two discrete variables
+class CountTable2DDense:public CountTable2D{
+  ///\brief count[v1+v2*m_v1.num_vals] is the number of times the pair
+  ///v1,v2 has occurred
+  std::vector<unsigned> m_count;
+
+  friend class boost::serialization::access;
+
+  ///\brief Serialization method - uses boost-serialize
+  ///
+  ///\param ar The archive to serialize to
+  ///
+  ///\param version the version number
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/){
+    ar & boost::serialization::base_object<CountTable2D>(*this);
+    ar & m_count;
+  }
+
+  ///\brief Create an uninitialized table for serialization purposes
+  CountTable2DDense(){}
+
+protected:
+
+  ///\brief Return the index of the cell holding the count for
+  ///variable 1 == v1 and variable 2 == v2
+  ///
+  ///\param v1 the value of variable 1 counted by the cell
+  ///
+  ///\param v2 the value of variable 2 counted by the cell
+  ///
+  ///\return the index of the cell holding the count for variable 1 ==
+  ///v1 and variable 2 == v2
+  std::size_t cell_idx(unsigned v1, unsigned v2) const{
+    if(do_range_checking && (v1 >= m_v1.num_vals() || v2 >= m_v2.num_vals())){
+      std::string s("");
+      using GClasses::to_str;
+      GClasses::ThrowError(s+"Attempt to access cell out of range in the "
+			   "CountTable2DDense named:" + this->name() + 
+			   ".  The indices of the cell were: "
+			   "("+to_str(v1)+", "+to_str(v2)+")");
+    }
+    return v1+v2*m_v1.num_vals(); 
+  }
+
+public:
+  ///\brief Create a table that counts the joint occurrences of
+  ///variables \a v1 and \a v2
+  ///
+  ///The table initially has no occurrences
+  ///
+  ///\param v1 the first variable
+  ///
+  ///\param v2 the second variable
+  CountTable2DDense(CountTableVariable v1, CountTableVariable v2)
+    :CountTable2D(v1,v2),m_count(v1.num_vals()*v2.num_vals(),0){}
+  
+  ///\brief Return the number of occurrences of the event that the
+  ///first variable == v1 and the second variable == v2
+  ///
+  ///\param v1 the value of the first variable
+  ///
+  ///\param v2 the value of the second variable  
+  ///
+  ///\warning no range checking is done on v1 and v2
+  virtual unsigned count(unsigned v1, unsigned v2) const{
+    return m_count[cell_idx(v1,v2)];
+  }
+
+  ///\brief Increment the number of occurrences of the event that the
+  ///first variable == v1 and the second variable == v2
+  ///
+  ///\param v1 the value of the first variable
+  ///
+  ///\param v2 the value of the second variable
+  ///
+  ///\warning no range checking is done on v1 and v2
+  virtual void inc(unsigned v1, unsigned v2){
+    ++m_count[cell_idx(v1,v2)];
+  }
+
+  ///\brief Add all the counts in \a o to the counts in this
+  ///CountTable2DDense
+  ///
+  ///\param o the table whose counts will be added
+  ///
+  ///\throw GException if the other table has different dimensions
+  virtual void add(const CountTable2DDense& o);
+
+};
+
 namespace GClasses{  class GRandMersenneTwister; }
+
+///\brief Holds the count tables used in the first experiment (the hmm
+///with different distributions for each node
+///
+///In this class a(i) is the discretized true amplitude at sample i
+///and l(i) is a boolean that is true if l(i) is the nearest sample to
+///one of the peaks in the spectrum
+struct CountTablesForFirstExperiment{
+  ///amp_pairs[i] has counts the occurrences of a(i) and a(i+1)
+  std::vector<CountTable2DSparse> amp_pairs;
+  ///l_pairs[i] has counts of the occurrences of l(i) and l(i+1)
+  std::vector<CountTable2DDense> l_pairs;
+  ///l_amp[i] has counts of the occurrences of l(i) and amp(i)
+  std::vector<CountTable2DDense> l_amp;
+
+  ///\brief Initialize from \a table_file.  If it can be read, read
+  ///from it.  If not, create tables with no events
+  CountTablesForFirstExperiment
+  (std::string table_file, 
+    std::vector<UniformDiscretization> discretizations);
+
+  ///\brief Initialize from \a table_file.  If it can be read, read
+  ///from it.  If not, throw a GException using GClasses::ThrowError
+  CountTablesForFirstExperiment(std::string table_file);
+
+
+  ///\brief Return true if the tables in this experiment are
+  ///compatible with the discretizations in discretizations
+  bool is_compatible_with(std::vector<UniformDiscretization> discretizations);
+
+  ///\brief Draws a sample from the prior (using \a rng) and
+  ///increments the cells in the tables that correspond to the results
+  ///from that sample
+  void add_sample_from_prior
+  (GClasses::GRandMersenneTwister& rng,
+   const std::vector<UniformDiscretization>& discretizations);
+
+  ///\brief Add the counts in \a o to the counts in these tables
+  void add(const CountTablesForFirstExperiment& o){
+    for(unsigned i = 0; i < l_amp.size(); ++i){
+      if(i < amp_pairs.size()){
+	amp_pairs[i].add(o.amp_pairs[i]);
+	l_pairs[i].add(o.l_pairs[i]);
+      }
+      l_amp[i].add(o.l_amp[i]);
+    }
+  }
+private:
+  friend class boost::serialization::access;
+
+  ///\brief Serialization method - uses boost-serialize
+  ///
+  ///\param ar The archive to serialize to
+  ///
+  ///\param version the version number
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int /*version*/){
+        ar & amp_pairs & l_pairs & l_amp;
+  }
+
+  ///\brief Create an uninitialized table for serialization purposes
+  CountTablesForFirstExperiment(){}
+
+};
 
 ///\brief Returns a peak-list sampled from the prior distribution for
 ///the noise-filtering/peak-locating test

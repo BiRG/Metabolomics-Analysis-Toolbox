@@ -1,0 +1,668 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     23588,        659]
+NotebookOptionsPosition[     20943,        564]
+NotebookOutlinePosition[     21280,        579]
+CellTagsIndexPosition[     21237,        576]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Overview", "Section",
+ CellChangeTimes->{{3.53641155618505*^9, 3.536411557123681*^9}}],
+
+Cell["\<\
+I need two conditional distributions that are the exponential distribution \
+but translated (and possibly flipped)\
+\>", "Text",
+ CellChangeTimes->{{3.536411572625689*^9, 3.5364116005126*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Translated exponential (used when minimum and mean are known)\
+\>", "Section",
+ CellChangeTimes->{{3.536411604945956*^9, 3.5364116303076*^9}, {
+  3.5364136613196487`*^9, 3.536413668013192*^9}}],
+
+Cell["Here I want mean \[Mu] and min min", "Text",
+ CellChangeTimes->{{3.536411613729684*^9, 3.536411638341627*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Derivation", "Subsection",
+ CellChangeTimes->{{3.536414881023905*^9, 3.536414882458123*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "p", "]"}]], "Input",
+ CellChangeTimes->{{3.536177640864625*^9, 3.536177645400765*^9}}],
+
+Cell["\<\
+Here I define the translated function, leaving k and l as the values I will \
+determine.  l will be the normalizing constant and k will determine the mean?\
+\
+\>", "Text",
+ CellChangeTimes->{{3.536411791856756*^9, 3.5364118228366947`*^9}, {
+  3.536411982537602*^9, 3.536411982720812*^9}, {3.536412479151992*^9, 
+  3.5364124881596193`*^9}, {3.53641277537329*^9, 3.5364128288431673`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p", "[", 
+   RowBox[{"x_", ",", "k_", ",", "\[Lambda]_", ",", "min_"}], "]"}], ":=", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"x", "-", "min"}], ">", "0"}], ",", 
+    RowBox[{"\[Lambda]", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", "k"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"x", "-", "min"}], ")"}]}]]}], ",", "0"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5364116436781*^9, 3.536411688704987*^9}, {
+  3.536411967780559*^9, 3.5364120039715633`*^9}, {3.536412118649289*^9, 
+  3.536412158104663*^9}, {3.536412188909095*^9, 3.536412200221993*^9}, {
+  3.5364123669454327`*^9, 3.536412403851474*^9}, {3.5364126247862167`*^9, 
+  3.536412637357795*^9}, {3.5364126716718483`*^9, 3.5364127044709473`*^9}, {
+  3.536412739487894*^9, 3.536412760492587*^9}, {3.536412808840508*^9, 
+  3.536412813817316*^9}, {3.536413088395061*^9, 3.536413092772215*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PDF", "[", 
+  RowBox[{
+   RowBox[{"ExponentialDistribution", "[", 
+    RowBox[{"1", "/", "\[Mu]"}], "]"}], ",", "x"}], "]"}]], "Input",
+ CellChangeTimes->{{3.536412078805225*^9, 3.536412098016945*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{"-", 
+    FractionBox["x", "\[Mu]"]}]], "\[Mu]"]], "Output",
+ CellChangeTimes->{{3.536412091532696*^9, 3.5364120991699553`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Simplify", "[", 
+  RowBox[{"p", "[", 
+   RowBox[{"x", ",", 
+    RowBox[{"1", "/", "\[Mu]"}], ",", 
+    RowBox[{"1", "/", "\[Mu]"}], ",", "0"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.536412433538803*^9, 3.536412448730051*^9}, {
+  3.536412848087051*^9, 3.53641285337092*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[Piecewise]", GridBox[{
+    {
+     FractionBox[
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"-", 
+        FractionBox["x", "\[Mu]"]}]], "\[Mu]"], 
+     RowBox[{"x", ">", "0"}]},
+    {"0", 
+     TagBox["True",
+      "PiecewiseDefault",
+      AutoDelete->False,
+      DeletionWarning->True]}
+   },
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}},
+   GridBoxItemSize->{
+    "Columns" -> {{Automatic}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+     "RowsIndexed" -> {}},
+   GridBoxSpacings->{"Columns" -> {
+       Offset[0.27999999999999997`], {
+        Offset[0.84]}, 
+       Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+       Offset[0.2], {
+        Offset[0.4]}, 
+       Offset[0.2]}, "RowsIndexed" -> {}}]}]], "Output",
+ CellChangeTimes->{{3.5364124400606213`*^9, 3.5364124492327557`*^9}, 
+   3.536412854156135*^9}]
+}, Open  ]],
+
+Cell["\<\
+Now, what do we need to do to normalize things (note that k>0 because \
+otherwise the integral will not converge)\
+\>", "Text",
+ CellChangeTimes->{{3.5364118381300993`*^9, 3.536411864159272*^9}, {
+  3.5364128608962727`*^9, 3.536412866450027*^9}, {3.5364131101916656`*^9, 
+  3.536413129729991*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"p", "[", 
+    RowBox[{"x", ",", "k", ",", "\[Lambda]", ",", "min"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "min", ",", " ", "Infinity"}], "}"}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"Element", "[", 
+      RowBox[{"min", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"k", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"\[Lambda]", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"k", ">", "0"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5361769810554256`*^9, 3.5361770370287027`*^9}, {
+  3.536177080328225*^9, 3.53617708214351*^9}, {3.536177678574643*^9, 
+  3.536177678908636*^9}, {3.536177799568656*^9, 3.536177799774942*^9}, {
+  3.536177880031088*^9, 3.5361779010155993`*^9}, {3.5361782987575912`*^9, 
+  3.536178302809265*^9}, {3.536178729396057*^9, 3.536178749054533*^9}, {
+  3.536178889269532*^9, 3.5361789147286263`*^9}, {3.5361789771928062`*^9, 
+  3.536178977506175*^9}, {3.536411869105583*^9, 3.536411899882728*^9}, {
+  3.53641199105811*^9, 3.536412021310589*^9}, {3.536412537808144*^9, 
+  3.536412563356428*^9}, {3.536412869671586*^9, 3.5364129284969673`*^9}, {
+  3.536413077752397*^9, 3.536413107420766*^9}}],
+
+Cell[BoxData[
+ FractionBox["\[Lambda]", "k"]], "Output",
+ CellChangeTimes->{
+  3.536411909212215*^9, 3.5364120250423594`*^9, 3.536412497778242*^9, {
+   3.5364125510521793`*^9, 3.536412565775538*^9}, 3.536412935640902*^9, {
+   3.5364130820668907`*^9, 3.53641310818041*^9}}]
+}, Open  ]],
+
+Cell["\<\
+So, to normalize things \[Lambda]=k.  Rewrite p with this constraint\
+\>", "Text",
+ CellChangeTimes->{{3.5364131734866867`*^9, 3.536413208779414*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "p", "]"}]], "Input",
+ CellChangeTimes->{{3.536177640864625*^9, 3.536177645400765*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p", "[", 
+   RowBox[{"x_", ",", "k_", ",", "min_"}], "]"}], ":=", 
+  RowBox[{"If", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"x", "-", "min"}], ">", "0"}], ",", 
+    RowBox[{"k", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", "k"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"x", "-", "min"}], ")"}]}]]}], ",", "0"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5364116436781*^9, 3.536411688704987*^9}, {
+  3.536411967780559*^9, 3.5364120039715633`*^9}, {3.536412118649289*^9, 
+  3.536412158104663*^9}, {3.536412188909095*^9, 3.536412200221993*^9}, {
+  3.5364123669454327`*^9, 3.536412403851474*^9}, {3.5364126247862167`*^9, 
+  3.536412637357795*^9}, {3.5364126716718483`*^9, 3.5364127044709473`*^9}, {
+  3.536412739487894*^9, 3.536412760492587*^9}, {3.536412808840508*^9, 
+  3.536412813817316*^9}, {3.536413088395061*^9, 3.536413092772215*^9}, {
+  3.53641321416494*^9, 3.536413218050008*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"p", "[", 
+    RowBox[{"x", ",", "k", ",", "min"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "min", ",", " ", "Infinity"}], "}"}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"Element", "[", 
+      RowBox[{"min", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"k", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"k", ">", "0"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5361769810554256`*^9, 3.5361770370287027`*^9}, {
+  3.536177080328225*^9, 3.53617708214351*^9}, {3.536177678574643*^9, 
+  3.536177678908636*^9}, {3.536177799568656*^9, 3.536177799774942*^9}, {
+  3.536177880031088*^9, 3.5361779010155993`*^9}, {3.5361782987575912`*^9, 
+  3.536178302809265*^9}, {3.536178729396057*^9, 3.536178749054533*^9}, {
+  3.536178889269532*^9, 3.5361789147286263`*^9}, {3.5361789771928062`*^9, 
+  3.536178977506175*^9}, {3.536411869105583*^9, 3.536411899882728*^9}, {
+  3.53641199105811*^9, 3.536412021310589*^9}, {3.536412537808144*^9, 
+  3.536412563356428*^9}, {3.536412869671586*^9, 3.5364129284969673`*^9}, {
+  3.536413077752397*^9, 3.536413107420766*^9}, {3.536413230277432*^9, 
+  3.536413238713472*^9}}],
+
+Cell[BoxData["1"], "Output",
+ CellChangeTimes->{
+  3.536411909212215*^9, 3.5364120250423594`*^9, 3.536412497778242*^9, {
+   3.5364125510521793`*^9, 3.536412565775538*^9}, 3.536412935640902*^9, {
+   3.5364130820668907`*^9, 3.53641310818041*^9}, 3.536413240570175*^9}]
+}, Open  ]],
+
+Cell["\<\
+Always normalized.  Now, what is the mean of this new translated beast?\
+\>", "Text",
+ CellChangeTimes->{{3.5364132455240717`*^9, 3.536413280821069*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"x", " ", 
+    RowBox[{"p", "[", 
+     RowBox[{"x", ",", "k", ",", "min"}], "]"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "min", ",", " ", "Infinity"}], "}"}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"Element", "[", 
+      RowBox[{"min", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"k", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"k", ">", "0"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5361769810554256`*^9, 3.5361770370287027`*^9}, {
+  3.536177080328225*^9, 3.53617708214351*^9}, {3.536177678574643*^9, 
+  3.536177678908636*^9}, {3.536177799568656*^9, 3.536177799774942*^9}, {
+  3.536177880031088*^9, 3.5361779010155993`*^9}, {3.5361782987575912`*^9, 
+  3.536178302809265*^9}, {3.536178729396057*^9, 3.536178749054533*^9}, {
+  3.536178889269532*^9, 3.5361789147286263`*^9}, {3.5361789771928062`*^9, 
+  3.536178977506175*^9}, {3.536411869105583*^9, 3.536411899882728*^9}, {
+  3.53641199105811*^9, 3.536412021310589*^9}, {3.536412537808144*^9, 
+  3.536412563356428*^9}, {3.536412869671586*^9, 3.5364129284969673`*^9}, {
+  3.536413077752397*^9, 3.536413107420766*^9}, {3.536413230277432*^9, 
+  3.536413238713472*^9}, {3.5364132931591053`*^9, 3.536413293600266*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["1", "k"], "+", "min"}]], "Output",
+ CellChangeTimes->{3.536413300660532*^9}]
+}, Open  ]],
+
+Cell["\<\
+The mean is just 1/k greater than the minimum (exactly as we would want it)\
+\>", "Text",
+ CellChangeTimes->{{3.536413308236188*^9, 3.536413341028401*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     FractionBox["1", "k"], "+", "min"}], "==", "\[Mu]"}], ",", "k"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.536413394879182*^9, 3.5364134157381973`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"k", "\[Rule]", 
+    FractionBox["1", 
+     RowBox[{
+      RowBox[{"-", "min"}], "+", "\[Mu]"}]]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{{3.5364134067390623`*^9, 3.5364134167615223`*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Final result", "Subsection",
+ CellChangeTimes->{{3.536414866989956*^9, 3.536414872088176*^9}}],
+
+Cell["\<\
+So, now rewrite p again this time taking the mean as the parameter.\
+\>", "Text",
+ CellChangeTimes->{{3.536413431771698*^9, 3.536413446806127*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"pKnownMin", "[", 
+   RowBox[{"x_", ",", "\[Mu]_", ",", "min_"}], "]"}], ":=", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"k", "=", 
+      FractionBox["1", 
+       RowBox[{"\[Mu]", "-", "min"}]]}], "}"}], ",", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"x", "-", "min"}], ">", "0"}], ",", 
+      RowBox[{"k", " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"-", "k"}], " ", 
+         RowBox[{"(", 
+          RowBox[{"x", "-", "min"}], ")"}]}]]}], ",", "0"}], "]"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.536413448537421*^9, 3.5364135168286943`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Result Verification", "Subsection",
+ CellChangeTimes->{{3.536414967724451*^9, 3.536414969389235*^9}, {
+  3.536415000488846*^9, 3.536415001403953*^9}}],
+
+Cell["Now, check that our new function has the desired mean", "Text",
+ CellChangeTimes->{{3.53641351955761*^9, 3.536413542771083*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"x", " ", 
+    RowBox[{"pKnownMin", "[", 
+     RowBox[{"x", ",", "\[Mu]", ",", "min"}], "]"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "min", ",", " ", "Infinity"}], "}"}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"Element", "[", 
+      RowBox[{"min", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"\[Mu]", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"\[Mu]", ">", "min"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5361769810554256`*^9, 3.5361770370287027`*^9}, {
+  3.536177080328225*^9, 3.53617708214351*^9}, {3.536177678574643*^9, 
+  3.536177678908636*^9}, {3.536177799568656*^9, 3.536177799774942*^9}, {
+  3.536177880031088*^9, 3.5361779010155993`*^9}, {3.5361782987575912`*^9, 
+  3.536178302809265*^9}, {3.536178729396057*^9, 3.536178749054533*^9}, {
+  3.536178889269532*^9, 3.5361789147286263`*^9}, {3.5361789771928062`*^9, 
+  3.536178977506175*^9}, {3.536411869105583*^9, 3.536411899882728*^9}, {
+  3.53641199105811*^9, 3.536412021310589*^9}, {3.536412537808144*^9, 
+  3.536412563356428*^9}, {3.536412869671586*^9, 3.5364129284969673`*^9}, {
+  3.536413077752397*^9, 3.536413107420766*^9}, {3.536413230277432*^9, 
+  3.536413238713472*^9}, {3.5364132931591053`*^9, 3.536413293600266*^9}, {
+  3.5364135613119507`*^9, 3.536413576858205*^9}}],
+
+Cell[BoxData["\[Mu]"], "Output",
+ CellChangeTimes->{3.53641357930497*^9}]
+}, Open  ]],
+
+Cell["And that it is normalized", "Text",
+ CellChangeTimes->{{3.536414932191654*^9, 3.536414937781402*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"pKnownMin", "[", 
+    RowBox[{"x", ",", "\[Mu]", ",", "min"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "min", ",", " ", "Infinity"}], "}"}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"Element", "[", 
+      RowBox[{"min", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"\[Mu]", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"\[Mu]", ">", "min"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5361769810554256`*^9, 3.5361770370287027`*^9}, {
+  3.536177080328225*^9, 3.53617708214351*^9}, {3.536177678574643*^9, 
+  3.536177678908636*^9}, {3.536177799568656*^9, 3.536177799774942*^9}, {
+  3.536177880031088*^9, 3.5361779010155993`*^9}, {3.5361782987575912`*^9, 
+  3.536178302809265*^9}, {3.536178729396057*^9, 3.536178749054533*^9}, {
+  3.536178889269532*^9, 3.5361789147286263`*^9}, {3.5361789771928062`*^9, 
+  3.536178977506175*^9}, {3.536411869105583*^9, 3.536411899882728*^9}, {
+  3.53641199105811*^9, 3.536412021310589*^9}, {3.536412537808144*^9, 
+  3.536412563356428*^9}, {3.536412869671586*^9, 3.5364129284969673`*^9}, {
+  3.536413077752397*^9, 3.536413107420766*^9}, {3.536413230277432*^9, 
+  3.536413238713472*^9}, {3.5364132931591053`*^9, 3.536413293600266*^9}, {
+  3.5364135613119507`*^9, 3.536413576858205*^9}, {3.536414949717752*^9, 
+  3.536414950835775*^9}}],
+
+Cell[BoxData["1"], "Output",
+ CellChangeTimes->{3.536414951496231*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Flipped-translated exponential (used when maximum and mean are known)\
+\>", "Section",
+ CellChangeTimes->{{3.536411548600211*^9, 3.536411553549366*^9}, {
+  3.536413674314912*^9, 3.536413680337825*^9}}],
+
+Cell["We can just use a modified version of the above ", "Text",
+ CellChangeTimes->{{3.536413650996747*^9, 3.5364136544709578`*^9}, {
+  3.5364143553194237`*^9, 3.5364143748971977`*^9}, {3.536414889919402*^9, 
+  3.536414898829596*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Final result", "Subsection",
+ CellChangeTimes->{{3.536414902452313*^9, 3.536414903954073*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"pKnownMax", "[", 
+   RowBox[{"x_", ",", "\[Mu]_", ",", "max_"}], "]"}], ":=", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"k", "=", 
+      FractionBox["1", 
+       RowBox[{"max", "-", "\[Mu]"}]]}], "}"}], ",", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"x", "<", "max"}], ",", 
+      RowBox[{"k", " ", 
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"-", "k"}], " ", 
+         RowBox[{"(", 
+          RowBox[{"max", "-", "x"}], ")"}]}]]}], ",", "0"}], "]"}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.536413448537421*^9, 3.5364135168286943`*^9}, {
+  3.5364143921313467`*^9, 3.536414428547864*^9}, {3.5364145198568153`*^9, 
+  3.5364145489551907`*^9}, {3.5364146830702972`*^9, 3.5364146844464207`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Result Verification", "Subsection",
+ CellChangeTimes->{{3.53641497443884*^9, 3.5364150058990192`*^9}}],
+
+Cell["First, verify that it is normalized", "Text",
+ CellChangeTimes->{{3.5364146050654793`*^9, 3.536414609940243*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"pKnownMax", "[", 
+    RowBox[{"x", ",", "\[Mu]", ",", "max"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", 
+     RowBox[{"-", "Infinity"}], ",", "max"}], "}"}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"Element", "[", 
+      RowBox[{"max", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"\[Mu]", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"\[Mu]", "<", "max"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5361769810554256`*^9, 3.5361770370287027`*^9}, {
+  3.536177080328225*^9, 3.53617708214351*^9}, {3.536177678574643*^9, 
+  3.536177678908636*^9}, {3.536177799568656*^9, 3.536177799774942*^9}, {
+  3.536177880031088*^9, 3.5361779010155993`*^9}, {3.5361782987575912`*^9, 
+  3.536178302809265*^9}, {3.536178729396057*^9, 3.536178749054533*^9}, {
+  3.536178889269532*^9, 3.5361789147286263`*^9}, {3.5361789771928062`*^9, 
+  3.536178977506175*^9}, {3.536411869105583*^9, 3.536411899882728*^9}, {
+  3.53641199105811*^9, 3.536412021310589*^9}, {3.536412537808144*^9, 
+  3.536412563356428*^9}, {3.536412869671586*^9, 3.5364129284969673`*^9}, {
+  3.536413077752397*^9, 3.536413107420766*^9}, {3.536413230277432*^9, 
+  3.536413238713472*^9}, {3.536414473065392*^9, 3.536414497821019*^9}, {
+  3.536414689779503*^9, 3.5364146927367268`*^9}}],
+
+Cell[BoxData["1"], "Output",
+ CellChangeTimes->{3.536414498832019*^9, 3.5364145590560827`*^9, 
+  3.5364146940962667`*^9}]
+}, Open  ]],
+
+Cell["Now check that it has the correct mean", "Text",
+ CellChangeTimes->{{3.536414627094379*^9, 3.536414631527687*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"x", " ", 
+    RowBox[{"pKnownMax", "[", 
+     RowBox[{"x", ",", "\[Mu]", ",", "max"}], "]"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", 
+     RowBox[{"-", "Infinity"}], ",", "max"}], "}"}], ",", 
+   RowBox[{"Assumptions", "\[Rule]", 
+    RowBox[{
+     RowBox[{"Element", "[", 
+      RowBox[{"max", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"Element", "[", 
+      RowBox[{"\[Mu]", ",", "Reals"}], "]"}], "&&", 
+     RowBox[{"\[Mu]", "<", "max"}]}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5361769810554256`*^9, 3.5361770370287027`*^9}, {
+  3.536177080328225*^9, 3.53617708214351*^9}, {3.536177678574643*^9, 
+  3.536177678908636*^9}, {3.536177799568656*^9, 3.536177799774942*^9}, {
+  3.536177880031088*^9, 3.5361779010155993`*^9}, {3.5361782987575912`*^9, 
+  3.536178302809265*^9}, {3.536178729396057*^9, 3.536178749054533*^9}, {
+  3.536178889269532*^9, 3.5361789147286263`*^9}, {3.5361789771928062`*^9, 
+  3.536178977506175*^9}, {3.536411869105583*^9, 3.536411899882728*^9}, {
+  3.53641199105811*^9, 3.536412021310589*^9}, {3.536412537808144*^9, 
+  3.536412563356428*^9}, {3.536412869671586*^9, 3.5364129284969673`*^9}, {
+  3.536413077752397*^9, 3.536413107420766*^9}, {3.536413230277432*^9, 
+  3.536413238713472*^9}, {3.536414473065392*^9, 3.536414497821019*^9}, {
+  3.5364146177537947`*^9, 3.536414618100659*^9}, {3.5364146975944357`*^9, 
+  3.536414698814435*^9}}],
+
+Cell[BoxData["\[Mu]"], "Output",
+ CellChangeTimes->{3.536414639589838*^9, 3.536414699658907*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{640, 655},
+WindowMargins->{{37, Automatic}, {Automatic, 27}},
+FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 92, 1, 73, "Section"],
+Cell[662, 25, 202, 4, 55, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[901, 34, 203, 4, 101, "Section"],
+Cell[1107, 40, 116, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[1248, 45, 98, 1, 39, "Subsection"],
+Cell[1349, 48, 124, 2, 34, "Input"],
+Cell[1476, 52, 396, 7, 55, "Text"],
+Cell[1875, 61, 941, 20, 34, "Input"],
+Cell[CellGroupData[{
+Cell[2841, 85, 225, 5, 34, "Input"],
+Cell[3069, 92, 204, 5, 58, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3310, 102, 305, 7, 34, "Input"],
+Cell[3618, 111, 953, 28, 67, "Output"]
+}, Open  ]],
+Cell[4586, 142, 307, 6, 55, "Text"],
+Cell[CellGroupData[{
+Cell[4918, 152, 1283, 25, 83, "Input"],
+Cell[6204, 179, 272, 5, 47, "Output"]
+}, Open  ]],
+Cell[6491, 187, 160, 3, 33, "Text"],
+Cell[6654, 192, 124, 2, 34, "Input"],
+Cell[6781, 196, 962, 21, 34, "Input"],
+Cell[CellGroupData[{
+Cell[7768, 221, 1227, 24, 83, "Input"],
+Cell[8998, 247, 266, 4, 34, "Output"]
+}, Open  ]],
+Cell[9279, 254, 163, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[9467, 261, 1301, 25, 83, "Input"],
+Cell[10771, 288, 115, 3, 46, "Output"]
+}, Open  ]],
+Cell[10901, 294, 165, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[11091, 301, 232, 7, 56, "Input"],
+Cell[11326, 310, 250, 7, 50, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11625, 323, 100, 1, 39, "Subsection"],
+Cell[11728, 326, 157, 3, 33, "Text"],
+Cell[11888, 331, 677, 21, 82, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12602, 357, 156, 2, 39, "Subsection"],
+Cell[12761, 361, 134, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[12920, 366, 1374, 26, 83, "Input"],
+Cell[14297, 394, 73, 1, 34, "Output"]
+}, Open  ]],
+Cell[14385, 398, 107, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[14517, 403, 1397, 26, 83, "Input"],
+Cell[15917, 431, 70, 1, 34, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16048, 439, 211, 4, 101, "Section"],
+Cell[16262, 445, 234, 3, 33, "Text"],
+Cell[CellGroupData[{
+Cell[16521, 452, 100, 1, 39, "Subsection"],
+Cell[16624, 455, 803, 22, 82, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17464, 482, 108, 1, 39, "Subsection"],
+Cell[17575, 485, 119, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[17719, 490, 1362, 26, 83, "Input"],
+Cell[19084, 518, 121, 2, 34, "Output"]
+}, Open  ]],
+Cell[19220, 523, 120, 1, 33, "Text"],
+Cell[CellGroupData[{
+Cell[19365, 528, 1439, 28, 83, "Input"],
+Cell[20807, 558, 96, 1, 34, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

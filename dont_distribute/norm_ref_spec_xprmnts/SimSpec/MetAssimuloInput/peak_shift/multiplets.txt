@@ -1,0 +1,209 @@
+2-Ketobutyric acid	q	2.76	2.71	2.8
+2-Ketobutyric acid	t	1.07	1.02	1.11
+2-Ketobutyric acid	t	1.07	1.02	1.11
+2-Hydroxybutyric acid	t	0.886	0.842	0.923
+2-Hydroxybutyric acid	m	1.644	1.594	1.685
+2-Hydroxybutyric acid	m	1.727	1.688	1.785
+2-Hydroxybutyric acid	dd	3.991	3.964	4.014
+2-Hydroxybutyric acid	dd	3.991	3.964	4.014
+2-Hydroxybutyric acid	dd	3.991	3.964	4.014
+Carnosine	dt	2.68	2.66	2.71
+Carnosine	dt	2.68	2.66	2.71
+Carnosine	dt	2.68	2.66	2.71
+Carnosine	dd	3.03	3	3.06
+Carnosine	dd	3.03	3	3.06
+Carnosine	dd	3.19	3.16	3.21
+Carnosine	dd	3.19	3.16	3.21
+Carnosine	dt	3.24	3.22	3.26
+Carnosine	dt	3.24	3.22	3.26
+Carnosine	dt	3.24	3.22	3.26
+Carnosine	m	4.48	4.45	4.51
+Carnosine	s	7.09	7.06	7.11
+Carnosine	s	8.08	7.96	8.17
+Carnosine	s	8.08	7.96	8.17
+Butyric acid	t	2.14	2.09	2.21
+Butyric acid	tq	1.55	1.49	1.6
+Butyric acid	t	0.88	0.85	0.92
+Butyric acid	t	0.88	0.85	0.92
+Betaine	s	3.89	3.84	3.93
+Betaine	s	3.25	3.19	3.31
+Betaine	s	3.25	3.19	3.31
+Creatine	s	3.92	3.85	3.94
+Creatine	s	3.02	2.98	3.07
+Creatine	s	3.02	2.98	3.07
+cis-Aconitic acid	d	3.43	3.42	3.45
+cis-Aconitic acid	s	6.58	6.56	6.59
+cis-Aconitic acid	s	6.58	6.56	6.59
+Dimethylamine	s	2.5	2.49	2.51
+Dimethylamine	s	2.5	2.49	2.51
+Dimethylglycine	s	2.91	2.9	2.93
+Dimethylglycine	s	3.71	3.7	3.72
+Dimethylglycine	s	3.71	3.7	3.72
+Citric acid	d	2.65	2.61	2.7
+Citric acid	d	2.53	2.48	2.57
+Citric acid	d	2.53	2.48	2.57
+Glycolic acid	s	3.94	3.8	4.06
+Glycolic acid	s	3.94	3.8	4.06
+D-Glucose	m	3.23	3.2	3.26
+D-Glucose	m	3.45	3.36	3.56
+D-Glucose	m	3.79	3.67	3.92
+D-Glucose	d	4.63	4.61	4.65
+D-Glucose	d	5.22	5.21	5.24
+D-Glucose	d	5.22	5.21	5.24
+Guanidoacetic acid	s	3.78	3.71	3.84
+Guanidoacetic acid	s	3.78	3.71	3.84
+Formic acid	s	8.44	8.38	8.51
+Formic acid	s	8.44	8.38	8.51
+D-Galactose	dd	3.48	3.45	3.51
+D-Galactose	dd	3.64	3.61	3.66
+D-Galactose	m	3.72	3.67	3.77
+D-Galactose	m	3.82	3.78	3.87
+D-Galactose	d	3.92	3.91	3.93
+D-Galactose	d	3.98	3.97	3.99
+D-Galactose	t	4.07	4.06	4.09
+D-Galactose	d	5.26	5.25	5.27
+D-Galactose	d	5.26	5.25	5.27
+L-Malic acid	dd	2.35	2.32	2.38
+L-Malic acid	dd	2.66	2.63	2.69
+L-Malic acid	dd	4.29	4.27	4.32
+L-Malic acid	dd	4.29	4.27	4.32
+L-Isoleucine	t	0.93	0.91	0.95
+L-Isoleucine	d	1	0.98	1.01
+L-Isoleucine	ddd	1.25	1.2	1.29
+L-Isoleucine	ddd	1.46	1.42	1.5
+L-Isoleucine	m	1.97	1.93	2.01
+L-Isoleucine	d	3.66	3.65	3.67
+L-Isoleucine	d	3.66	3.65	3.67
+L-Histidine	dd	3.16	3.12	3.18
+L-Histidine	dd	3.23	3.22	3.28
+L-Histidine	dd	3.98	3.96	4.01
+L-Histidine	d	7.09	7.07	7.11
+L-Histidine	d	7.9	7.88	7.92
+L-Histidine	d	7.9	7.88	7.92
+L-Lysine	m	1.46	1.38	1.55
+L-Lysine	m	1.72	1.67	1.75
+L-Lysine	m	1.89	1.83	1.95
+L-Lysine	t	3.02	3	3.04
+L-Lysine	t	3.02	3	3.04
+L-Lysine	t	3.75	3.72	3.77
+L-Lysine	t	3.75	3.72	3.77
+L-Lysine	t	3.75	3.72	3.77
+Isocitric acid	d	3.98	3.96	3.99
+Isocitric acid	m	2.97	2.94	3
+Isocitric acid	dq	2.46	2.38	2.54
+Isocitric acid	dq	2.46	2.38	2.54
+Taurine	t	3.25	3.22	3.28
+Taurine	t	3.25	3.22	3.28
+Taurine	t	3.42	3.37	3.46
+Taurine	t	3.42	3.37	3.46
+Taurine	t	3.42	3.37	3.46
+Creatinine	s	3.03	2.92	3.12
+Creatinine	s	4.05	3.97	4.12
+Creatinine	s	4.05	3.97	4.12
+L-Glutamine	m	2.125	2.062	2.188
+L-Glutamine	m	2.446	2.375	2.511
+L-Glutamine	t	3.766	3.726	3.81
+L-Glutamine	t	3.766	3.726	3.81
+L-Glutamine	t	3.766	3.726	3.81
+D-Fructose	m	3.58	3.54	3.62
+D-Fructose	m	3.69	3.66	3.74
+D-Fructose	m	3.8	3.79	3.85
+D-Fructose	dd	3.9	3.88	3.92
+D-Fructose	t	4	4	4.01
+D-Fructose	dd	4.03	4.01	4.05
+D-Fructose	d	4.12	4.11	4.13
+D-Fructose	d	4.12	4.11	4.13
+L-Leucine	d	0.94	0.93	0.95
+L-Leucine	d	0.95	0.94	0.96
+L-Leucine	m	1.7	1.64	1.76
+L-Leucine	m	3.73	3.7	3.75
+L-Leucine	m	3.73	3.7	3.75
+L-Methionine	m	2.15	2.01	2.3
+L-Methionine	t	2.63	2.55	2.7
+L-Methionine	m	3.85	3.77	3.91
+L-Methionine	m	3.85	3.77	3.91
+p-Hydroxyphenylacetic acid	s	3.44	3.43	3.45
+p-Hydroxyphenylacetic acid	d	6.85	6.83	6.87
+p-Hydroxyphenylacetic acid	d	7.15	7.14	7.18
+p-Hydroxyphenylacetic acid	d	7.15	7.14	7.18
+Acetic acid	s	1.91	1.89	1.93
+Acetic acid	s	1.91	1.89	1.93
+Trimethylamine	s	3.25	3.22	3.27
+Trimethylamine	s	3.25	3.22	3.27
+Nicotinic acid	ddd	7.51	7.49	7.54
+Nicotinic acid	dt	8.24	8.22	8.26
+Nicotinic acid	dd	8.6	8.57	8.61
+Nicotinic acid	dd	8.93	8.91	8.95
+Nicotinic acid	dd	8.93	8.91	8.95
+Succinic acid	s	2.39	2.32	2.48
+Succinic acid	s	2.39	2.32	2.48
+Hippuric acid	d	3.96	3.94	3.97
+Hippuric acid	non	7.54	7.52	7.56
+Hippuric acid	tt	7.62	7.6	7.64
+Hippuric acid	dd	7.82	7.81	7.83
+Hippuric acid	dd	7.82	7.81	7.83
+Citrulline	m	1.56	1.46	1.66
+Citrulline	m	1.87	1.79	1.94
+Citrulline	q	3.14	3.07	3.2
+Citrulline	dd	3.74	3.71	3.78
+Citrulline	dd	3.74	3.71	3.78
+N-Acetyl-L-aspartic acid	d	7.93	7.85	7.98
+N-Acetyl-L-aspartic acid	ddd	4.4	4.35	4.47
+N-Acetyl-L-aspartic acid	dd	2.7	2.63	2.76
+N-Acetyl-L-aspartic acid	dd	2.51	2.42	2.57
+N-Acetyl-L-aspartic acid	s	2.03	1.97	2.09
+N-Acetyl-L-aspartic acid	s	2.03	1.97	2.09
+Glycine	s	3.54	3.46	3.60
+L-Alanine	d	1.46	1.43	1.49
+L-Alanine	q	3.76	3.72	3.8
+L-Alanine	q	3.76	3.72	3.8
+Threonic acid	dd	3.62	3.6	3.65
+Threonic acid	dd	3.69	3.67	3.72
+Threonic acid	m	3.98	3.96	4.01
+Threonic acid	d	4.06	4.04	4.07
+Threonic acid	d	4.06	4.04	4.07
+1-Methylnicotinamide	s	4.48	4.45	4.51
+1-Methylnicotinamide	d	8.2	8.16	8.22
+1-Methylnicotinamide	d	8.91	8.89	8.93
+1-Methylnicotinamide	d	8.97	8.95	8.99
+1-Methylnicotinamide	s	9.29	9.27	9.3
+2_deoxyadenosine	ddd	2.56	2.53	2.58
+2_deoxyadenosine	ddd	2.82	2.79	2.85
+2_deoxyadenosine	dd	3.79	3.76	3.8
+2_deoxyadenosine	dd	3.84	3.82	3.87
+2_deoxyadenosine	q	4.18	4.16	4.2
+2_deoxyadenosine	dt	4.65	4.62	4.67
+2_deoxyadenosine	t	6.44	6.42	6.47
+2_deoxyadenosine	s	8.18	8.17	8.2
+2_deoxyadenosine	s	8.29	8.27	8.3
+2_deoxycytidine	m	2.38	2.33	2.43
+2_deoxycytidine	m	3.79	3.73	3.85
+2_deoxycytidine	dt	4.03	4.02	4.05
+2_deoxycytidine	dt	4.45	4.43	4.47
+2_deoxycytidine	d	5.88	5.86	5.9
+2_deoxycytidine	t	6.27	6.25	6.29
+2_deoxycytidine	d	7.83	7.82	7.85
+2_deoxycytidine	d	7.83	7.82	7.85
+Lactate	dd	1.32	1.3	1.34
+Lactate	q	4.1	1.3	1.34
+Lactate	q	4.1	1.3	1.34
+L-Glutamic acid	m	2.029	1.986	2.071
+L-Glutamic acid	m	2.121	2.070	2.173
+L-Glutamic acid	m	2.341	2.279	2.403
+L-Glutamic acid	dd	3.747	3.716	3.777
+Phenylacetate	s	3.53	3.51	3.54
+Phenylacetate	m	7.29	7.27	7.31
+Phenylacetate	m	7.36	7.35	7.39
+TMAO	s	3.25	3.22	3.27
+D-Arabitol	dd	3.57	3.54	3.60
+D-Arabitol	m	3.67	3.63	3.71
+D-Arabitol	m	3.75	3.72	3.79
+D-Arabitol	dd	3.84	3.81	3.87
+D-Arabitol	ddd	3.94	3.90	3.98
+L-Serine	m	3.96	3.90	4.01
+L-Serine	dd	3.83	3.80	3.86
+Oxoglutaric acid	t	2.428	2.407	2.446
+Oxoglutaric acid	t	2.996	2.977	3.014
+Glyceric acid	m	3.78	3.7	3.86
+Glyceric acid	m	4.13	4.12	4.15
+Glyceric acid	m	4.13	4.12	4.15
