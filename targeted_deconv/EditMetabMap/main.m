@@ -761,16 +761,15 @@ handles.workingMetabBinListboxIdx = ...
     get(handles.mapped_bins_listbox, 'Value');
 guidata(hObject, handles);
 
-if ( handles.workingMetabBinListboxIdx > 1 )
+if ( isnumeric(handles.workingMetabBinListboxIdx) && ...
+        handles.workingMetabBinListboxIdx > 1 )
     % Working with an existing metabolite spectral segment.
     
     if ( isfield(handles, 'storedBins') && ~isempty(handles.storedBins) )
         
         % Error check, just in case...
-        if ( isnumeric(handles.workingMetabBinListboxIdx) && ...
-                handles.workingMetabBinListboxIdx > 0 && ...
-                handles.workingMetabBinListboxIdx <= ...
-                handles.displayedBinCount )
+        if ( handles.workingMetabBinListboxIdx <= ...
+                handles.displayedBinCount + 1 )
             
             % Parse the bin's primary ID and map it back to its index
             % in the actual cell array of CompoundBin objects.
@@ -876,7 +875,8 @@ function delete_bin_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 selectedListboxIdx = get(handles.mapped_bins_listbox, 'Value');
-if ( selectedListboxIdx > 1 )
+if ( isnumeric(selectedListboxIdx) && ...
+        selectedListboxIdx > 1 )
     deleteAffirm = 'Yes, delete';
     deleteDeny = 'No, keep';
     userChoice = questdlg([ 'Are you sure you want to delete ' ...
@@ -885,10 +885,9 @@ if ( selectedListboxIdx > 1 )
     if ( strcmp(userChoice, deleteAffirm) )
         % User has confirmed the choice to delete.
         displayedBinCount = handles.displayedBinCount;
+        
         % Error check, just in case...
-        if (isnumeric(selectedListboxIdx) && selectedListboxIdx > 0 && ...
-                selectedListboxIdx <= displayedBinCount)
-            
+        if ( selectedListboxIdx <= displayedBinCount + 1 )
             % Retrieve the selected metab bin's
             % index position in the list.
             metabBinListboxIdx = ...
