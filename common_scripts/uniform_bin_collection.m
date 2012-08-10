@@ -1,4 +1,4 @@
-function binned = bin_collection( collection, first_bin_min, last_bin_pt, bin_width )
+function binned = uniform_bin_collection( collection, first_bin_min, last_bin_pt, bin_width )
 % Return collection with Y values summed into bin_width bins.
 %
 % To avoid double-counting, all bins except are half-open
@@ -45,41 +45,41 @@ function binned = bin_collection( collection, first_bin_min, last_bin_pt, bin_wi
 % Examples
 % -------------------------------------------------------------------------
 %
-% binned = bin_collection(my_collections, 0, 0.9, 0.5)
+% binned = uniform_bin_collection(my_collections, 0, 0.9, 0.5)
 %
 % Returns my_collections binned into two bins of width 0.5 centered at 0.25
 % and 0.75 respectively
 %
 %
 %
-% binned = bin_collections(my_collections, 0, 0.3, 0.5)
+% binned = uniform_bin_collections(my_collections, 0, 0.3, 0.5)
 %
 % Returns my_collections binned into one bin of width 0.5 centered at 0.25
 % 
 %
 %
-% binned = bin_collection(my_collections, 0, 1.1, 0.25)
+% binned = uniform_bin_collection(my_collections, 0, 1.1, 0.25)
 %
 % Returns my_collections binned into five bins of width 0.25 centered at 
 % 0.125, 0.375, 0.625, 0.875, and 1.125
 %
 %
 %
-% binned = bin_collection(my_collections, 0, 1.0, 0.25)
+% binned = uniform_bin_collection(my_collections, 0, 1.0, 0.25)
 %
 % Returns my_collections binned into four bins of width 0.25 centered at 
 % 0.125, 0.375, 0.625, and 0.875
 %
 %
 %
-% binned = bin_collection(my_collections, 0, 1.25, 0.25)
+% binned = uniform_bin_collection(my_collections, 0, 1.25, 0.25)
 %
 % Returns my_collections binned into six bins of width 0.25 centered at 
 % 0.125, 0.375, 0.625, 0.875, 1.125, and 1.375
 %
 %
 %
-% binned = bin_collection(my_collections, 0, 1.249, 0.25)
+% binned = uniform_bin_collection(my_collections, 0, 1.249, 0.25)
 %
 % Returns my_collections binned into five bins of width 0.25 centered at 
 % 0.125, 0.375, 0.625, 0.875, and 1.125
@@ -96,7 +96,7 @@ binned = collection;
 if(bin_width == 0)
     return;
 elseif (bin_width < 0)
-    error('bin_collection:neg_binwidth','Bin width passed to bin_collection cannot be negative');
+    error('uniform_bin_collection:neg_binwidth','Bin width passed to uniform_bin_collection cannot be negative');
 end
 
 % Calculate the centers of the new bins - these will be the new x-values
@@ -119,7 +119,7 @@ for x_idx = 1:length(collection.x)
 end
 
 if(print_warning)
-    warning('bin_collection:out_of_bin_val','Some x values passed to bin_collection were not included any bin');
+    warning('uniform_bin_collection:out_of_bin_val','Some x values passed to uniform_bin_collection were not included any bin');
 end
 
 % Do the summation

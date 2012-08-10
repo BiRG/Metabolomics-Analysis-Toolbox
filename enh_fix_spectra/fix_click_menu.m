@@ -315,7 +315,7 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     bin_width = str2double(bin_width);
     if isnan(bin_width); return; end
     if bin_width ~= 0
-        binned = bin_collections(collections, bin_width, true);
+        binned = uniform_bin_collections(collections, bin_width, true);
     end
     
     regions = get_regions;

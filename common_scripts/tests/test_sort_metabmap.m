@@ -2,7 +2,7 @@ function test_suite = test_sort_metabmap%#ok<STOUT>
 %matlab_xUnit tests excercising sort_metabap_by_name_then_ppm
 %
 % Usage:
-%   runtest test_sort_metabmap
+%   runtests test_sort_metabmap
 initTestSuite;
 
 function dir=data_dir

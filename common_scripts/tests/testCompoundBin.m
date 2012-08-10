@@ -2,7 +2,7 @@ function test_suite = testCompoundBin %#ok<STOUT>
 %matlab_xUnit tests excercising CompoundBin
 %
 % Usage:
-%   runtest testCompoundBin
+%   runtests testCompoundBin
 initTestSuite;
 
 function dir=data_dir
