@@ -16,10 +16,14 @@ res.short_method_names={...
 %% Set up some variables
 num_meth = 9;
 assert(num_meth == length(res.short_method_names));
-rmse_l_col = 9;
+num_spec_col = 1; % Number of spectra column
+pct_ctl_col = 2; % Percent control column
+trt_grp_col = 3; % Identifier for which spectra were used as the treatment group
 cdil_col = 4; %Control dilution range column
 tdil_col = 5; %Treatment dilution range column
 meth_col = 7;
+rmse_col = 8;
+rmse_l_col = 9;
 
 dil_name = {'None','Small','Large','Extreme'}; %Names for dilution ranges
 
@@ -223,10 +227,6 @@ mtit(8,'Affect of different dilution combinations on different methods', 'xoff',
 %% Look only at summary statistics for the different dilutions rather than plotting full pdfs (still ignore bad methods)
 figure(9);
 d = res.data;
-edgs = 0:0.125:12;
-centers = (edgs(1:end-1)+edgs(2:end))/2;
-colors = {[0.5,0.5,0.5],'m',[0.5,0,0],'r','y','g','b'};
-bar_objs = cell(1,16);
 for cdil = 1:4
     for tdil = 1:4
         plot_num = ((cdil-1)*4)+tdil;
@@ -246,6 +246,27 @@ for cdil = 1:4
     end
 end
 hold off;
-mtit(9,'Affect of different dilution combinations on different methods', 'xoff',0, 'yoff', 0.03);
+mtit(9,'Affect of different dilution combinations on different methods', 'xoff',0, 'yoff', 0.05);
 
-%% 
+%% Look at effect of number of spectra on the different methods for only normal and no dilution
+figure(10);
+d = res.data;
+for num_spec_idx=1:2
+    num_spec=num_spec_idx * 10;
+    subplot(1,2, num_spec_idx);
+
+    selected = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:, num_spec_col) == num_spec;
+    groups = d(selected, meth_col);
+    vals = d(selected, rmse_l_col);
+    boxplot(vals,groups,'notch','on');
+    ylim([0, 3.5]);
+    xlabel('Method');
+    ylabel('RMSE (Log)');
+    title(sprintf('%d Spectra',num_spec));
+end
+hold off;
+mtit(10,'Affect different % control group', 'xoff',0, 'yoff', 0.05);
+
