@@ -27,6 +27,17 @@ rmse_l_col = 9;
 
 dil_name = {'None','Small','Large','Extreme'}; %Names for dilution ranges
 
+%% Fix miscalculation in of RMSE and RMSE_Log
+% The original code forgot to divide by the number of spectra before taking
+% the square root, this can be fixed in post processing by dividing by the
+% square root of the number of spectra
+
+for row = 1:size(res.data,1)
+    cor_fac = sqrt(res.data(row, num_spec_col));
+    res.data(row, rmse_col) = res.data(row, rmse_col) / cor_fac;
+    res.data(row, rmse_l_col) = res.data(row, rmse_l_col) / cor_fac;
+end
+
 %% Split by method only
 figure(1);
 d = res.data;
