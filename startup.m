@@ -4,6 +4,7 @@ addpath([pwd,'/lib/munkres']);      %Linear assignment problem
 addpath([pwd,'/lib/rand_org']);     %True random numbers
 addpath([pwd,'/lib/matlab_xunit/xunit']); %Unit testing framework
 addpath([pwd,'/lib/hartigan_dip/']); % Statistical test for multimodality (i.e. reject unimodality with alpha=xyz)
+addpath([pwd,'/lib/mtit/']); % Code to add title to plot where subplots also have titles
 addpath([pwd,'/common_scripts']);
 addpath([pwd,'/common_scripts/cursors']);
 addpath([pwd,'/common_scripts/dab']);
