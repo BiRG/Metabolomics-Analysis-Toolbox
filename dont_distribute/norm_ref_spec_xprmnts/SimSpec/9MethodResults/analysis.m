@@ -25,7 +25,9 @@ meth_col = 7;
 rmse_col = 8;
 rmse_l_col = 9;
 
+meth_names = res.short_method_names;
 dil_name = {'None','Small','Large','Extreme'}; %Names for dilution ranges
+pct_ctl_vals = unique(d(:, pct_ctl_col));
 
 %% Fix miscalculation in of RMSE and RMSE_Log
 % The original code forgot to divide by the number of spectra before taking
@@ -179,7 +181,7 @@ for cdil = 1:4
     end
 end
 hold off;
-mtit(7,'Affect of different dilution combinations on different methods', 'xoff',0, 'yoff', 0.03);
+mtit(7,'Effect of different dilution combinations on different methods', 'xoff',0, 'yoff', 0.03);
 
 %% Looking at all combinations of control and treatment dilutions, but ignoring the prob histogram matching
 figure(8);
@@ -216,7 +218,7 @@ for cdil = 1:4
     end
 end
 hold off;
-mtit(8,'Affect of different dilution combinations on different methods (ignoring 2 worst)', 'xoff',0, 'yoff', 0.03);
+mtit(8,'Effect of different dilution combinations on different methods (ignoring 2 worst)', 'xoff',0, 'yoff', 0.03);
 
 %% Look only at summary statistics for the different dilutions rather than plotting full pdfs (still ignore bad methods)
 figure(9);
@@ -240,9 +242,9 @@ for cdil = 1:4
     end
 end
 hold off;
-mtit(9,'Affect of different dilution combinations on different methods', 'xoff',0, 'yoff', 0.05);
+mtit(9,'Effect of different dilution combinations on different methods', 'xoff',0, 'yoff', 0.05);
 
-%% Look at effect of number of spectra on the different methods for only normal and no dilution
+%% Look at effect of number of spectra on the different methods for only normal and no dilution - num_spec in subplots
 figure(10);
 d = res.data;
 for num_spec_idx=1:2
@@ -262,5 +264,142 @@ for num_spec_idx=1:2
     title(sprintf('%d Spectra',num_spec));
 end
 hold off;
-mtit(10,'Affect different % control group', 'xoff',0, 'yoff', 0.05);
+mtit(10,'Effect different # spectra', 'xoff',0, 'yoff', 0.05);
+
+%% Look at effect of number of spectra on the different methods for only normal and no dilution - method in subplots
+figure(11);
+d = res.data;
+
+for method = 1:7
+    subplot(2,4, method);
+
+    selected = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:,meth_col) == method;
+    groups = d(selected, num_spec_col);
+    vals = d(selected, rmse_l_col);
+    boxplot(vals,groups,'notch','on');
+    ylim([0, .82]);
+    xlabel('# Spectra');
+    ylabel('RMSE (Log)');
+    title(sprintf('%s',meth_names{method}));
+end
+hold off;
+mtit(11,'Effect different # spectra', 'xoff',0, 'yoff', 0.05);
+
+%% Just print the summary statistics rather than plotting the data summarized for num_spectra and method
+d = res.data;
+
+fprintf('Table showing change in medians for groups with different numbers of spectra\n');
+fprintf('%-12s %-8s %-8s %-8s\n','Method','#Spectra', 'Median', 'IQR');
+for method = 1:7
+    for num_spec_idx = 1:2
+        num_spec = 10*num_spec_idx;
+        
+        selected = d(:,meth_col) <= 7 & ...
+            d(:, cdil_col) <= 2 & ...
+            d(:, tdil_col) <= 2 & ...
+            d(:,meth_col) == method & ...
+            d(:,num_spec_col) == num_spec;
+        errs = d(selected, rmse_l_col);
+        
+        fprintf('%-12s %-8d %#8g %#8g\n', ...
+            meth_names{method}, num_spec ,median(errs), iqr(errs));
+    end
+end
+
+%% Now print the % change in the summary statistics for change in num spectra
+d = res.data;
+
+fprintf('Table showing %% change in median and iqr when going from 10 to 20 spectra\n');
+fprintf('%-12s %9s %9s\n','Method', 'd Median', 'd IQR');
+for method = 1:7        
+    selected_10 = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:,meth_col) == method & ...
+        d(:,num_spec_col) == 10;
+    selected_20 = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:,meth_col) == method & ...
+        d(:,num_spec_col) == 20;
+    errs_10 = d(selected_10, rmse_l_col);
+    errs_20 = d(selected_20, rmse_l_col);
+
+    fprintf('%-12s %#7.4g %% %#7.4g %%\n', ...
+        meth_names{method},...
+        100*(median(errs_20)-median(errs_10))/median(errs_10), ...
+        100*(iqr(errs_20)-iqr(errs_10))/iqr(errs_10));
+end
+
+
+%% Look at effect of percent control on the different methods for only normal and no dilution - % control in subplots
+figure(12);
+d = res.data;
+assert(length(pct_ctl_vals) == 3);
+for pct_ctl_idx = 1:3
+    pct_ctl = pct_ctl_vals(pct_ctl_idx);
+    
+    subplot(1,3, pct_ctl_idx);
+
+    selected = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:, pct_ctl_col) == pct_ctl;
+    groups = d(selected, meth_col);
+    vals = d(selected, rmse_l_col);
+    boxplot(vals,groups,'notch','on');
+    ylim([0, .82]);
+    xlabel('Method');
+    ylabel('RMSE (Log)');
+    title(sprintf('%d%% control',pct_ctl));
+end
+hold off;
+mtit(12,'Effect different percent control group', 'xoff',0, 'yoff', 0.05);
+
+
+%% Look at effect of percent control on the different methods for only normal and no dilution - method in subplots
+figure(13);
+d = res.data;
+
+for method = 1:7
+    subplot(2,4, method);
+
+    selected = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:,meth_col) == method;
+    groups = d(selected, pct_ctl_col);
+    vals = d(selected, rmse_l_col);
+    boxplot(vals,groups,'notch','on');
+    ylim([0, .82]);
+    xlabel('% Conrol');
+    ylabel('RMSE (Log)');
+    title(sprintf('%s',meth_names{method}));
+end
+hold off;
+mtit(13,'Effect different percent control group', 'xoff',0, 'yoff', 0.05);
+
+%% Just print the summary statistics rather than plotting the data summarized for percent control and method
+d = res.data;
+
+fprintf('Table showing medians for groups with different percentages of control spectra\n');
+fprintf('%-12s %-8s %-8s %-8s\n','Method','%Control', 'Median', 'IQR');
+for method = 1:7
+    for pct_ctl_idx = 1:3
+        pct_ctl = pct_ctl_vals(pct_ctl_idx);
+        
+        selected = d(:,meth_col) <= 7 & ...
+            d(:, cdil_col) <= 2 & ...
+            d(:, tdil_col) <= 2 & ...
+            d(:,meth_col) == method & ...
+            d(:,pct_ctl_col) == pct_ctl;
+        errs = d(selected, rmse_l_col);
+        
+        fprintf('%-12s %-8d %#8g %#8g\n', ...
+            meth_names{method}, pct_ctl ,median(errs), iqr(errs));
+    end
+end
 
