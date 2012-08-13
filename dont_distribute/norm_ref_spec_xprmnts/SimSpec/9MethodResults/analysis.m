@@ -446,5 +446,49 @@ for method = 1:7
     title(sprintf('%s',meth_names{method}));
 end
 hold off;
-mtit(15,'Effect different treatments on a method', 'xoff',0, 'yoff', 0.05);
+mtit(15,'Effect of different treatments on a method', 'xoff',0, 'yoff', 0.05);
 
+%% Look at effect of percent control on the different methods for only normal and no dilution - method in subplots
+figure(16);
+d = res.data;
+
+for method = 1:7
+    subplot(2,4, method);
+
+    selected = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:, cdil_col) == d(:, tdil_col)& ...
+        d(:,meth_col) == method;
+    groups = d(selected, pct_ctl_col);
+    vals = d(selected, rmse_l_col);
+    boxplot(vals,groups,'notch','on');
+    ylim([0, .82]);
+    xlabel('% Conrol');
+    ylabel('RMSE (Log)');
+    title(sprintf('%s',meth_names{method}));
+end
+hold off;
+mtit(16,'Effect different percent control group (same dilution and only good dilutions)', 'xoff',0, 'yoff', 0.05);
+
+%% Print the summary statistics for percent control when treatement and control have identical, reasonable dilutions
+d = res.data;
+
+fprintf('Table showing medians for groups with different percentages of control spectra but identical, resonable dilutions\n');
+fprintf('%-12s %-8s %-8s %-8s\n','Method','%Control', 'Median', 'IQR');
+for method = 1:7
+    for pct_ctl_idx = 1:3
+        pct_ctl = pct_ctl_vals(pct_ctl_idx);
+        
+        selected = d(:,meth_col) <= 7 & ...
+            d(:, cdil_col) <= 2 & ...
+            d(:, tdil_col) <= 2 & ...
+            d(:, cdil_col) == d(:, tdil_col)& ...
+            d(:,meth_col) == method & ...
+            d(:,pct_ctl_col) == pct_ctl;
+        errs = d(selected, rmse_l_col);
+        
+        fprintf('%-12s %-8d %#8g %#8g\n', ...
+            meth_names{method}, pct_ctl ,median(errs), iqr(errs));
+    end
+end
