@@ -28,6 +28,7 @@ rmse_l_col = 9;
 meth_names = res.short_method_names;
 dil_name = {'None','Small','Large','Extreme'}; %Names for dilution ranges
 pct_ctl_vals = unique(d(:, pct_ctl_col));
+trt_names={'Orig Ctl','00+ 0-','01+ sm 0-','01+ 0-','10+ 0-','07+ 8-'}; %Names for treatment groups
 
 %% Fix miscalculation in of RMSE and RMSE_Log
 % The original code forgot to divide by the number of spectra before taking
@@ -335,7 +336,7 @@ for method = 1:7
 end
 
 
-%% Look at effect of percent control on the different methods for only normal and no dilution - % control in subplots
+%% Compare performance of different methods on a given percent control experiment for only normal and no dilution - % control in subplots
 figure(12);
 d = res.data;
 assert(length(pct_ctl_vals) == 3);
@@ -402,4 +403,48 @@ for method = 1:7
             meth_names{method}, pct_ctl ,median(errs), iqr(errs));
     end
 end
+
+%% Look relative performance different methods on the different treatment groups for only normal and no dilution - % control in subplots
+figure(14);
+d = res.data;
+
+for grp = 2:6
+    subplot(2,3, grp-1);
+
+    selected = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:, trt_grp_col) == grp;
+    groups = d(selected, meth_col);
+    vals = d(selected, rmse_l_col);
+    boxplot(vals,groups,'notch','on');
+    ylim([0, .82]);
+    xlabel('Method');
+    ylabel('RMSE (Log)');
+    title(sprintf('%s',trt_names{grp}));
+end
+hold off;
+mtit(14,'Relative performance of methods for different treatment groups', 'xoff',0, 'yoff', 0.05);
+
+%% Look at effect of treatments on the different methods for only normal and no dilution - method in subplots
+figure(15);
+d = res.data;
+
+for method = 1:7
+    subplot(2,4, method);
+
+    selected = d(:,meth_col) <= 7 & ...
+        d(:, cdil_col) <= 2 & ...
+        d(:, tdil_col) <= 2 & ...
+        d(:,meth_col) == method;
+    groups = d(selected, trt_grp_col);
+    vals = d(selected, rmse_l_col);
+    boxplot(vals,groups,'notch','on');
+    ylim([0, .82]);
+    xlabel('Treatment group');
+    ylabel('RMSE (Log)');
+    title(sprintf('%s',meth_names{method}));
+end
+hold off;
+mtit(15,'Effect different treatments on a method', 'xoff',0, 'yoff', 0.05);
 
