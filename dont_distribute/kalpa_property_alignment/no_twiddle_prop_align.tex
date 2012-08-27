@@ -1,8 +1,6 @@
 %% LyX 2.0.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
 \documentclass[english]{article}
-\usepackage[T1]{fontenc}
-\usepackage[latin9]{inputenc}
 \usepackage{amsmath}
 
 \makeatletter
@@ -68,21 +66,38 @@ I think it is much clearer to write this as:
 \subsection{Problem}
 You introduce the $\alpha$ and $\beta$ parameters into your paper without giving a method to choose them. The performance of your algorithm is sensitive to those parameters, so this makes it difficult to apply in real life.
 \subsection{Simulation Solution}
-We can select the $\alpha$ and $\beta$ parameters for a given pair of databases by using the information in the original databases to create simulated database pairs which mimic properties of the original databases. Then we can select the parameters that give the best AUC across all of these possible databases. 
+We can select the $\alpha$ and $\beta$ parameters for a given pair of databases by using the information in the original databases to create simulated database pairs which mimic properties of the original databases. Then we can select the parameters that satisfy the user constraints on precision and recall. One could also use a similar method, but instead select the best classifier based on some single measure of classifier performance like AUC.
 \subsubsection{Main loop}
 The main concept is
 \begin{enumerate}
-  \item Generate lots of databases with known correspondences
-  \item Calculate the AUC for all possible $(\alpha,\beta)$ pairs on 
-        those databases.
-  \item Keep the pair with the highest AUC
+  \item Get user constraints on solution. Desired minimum precision or     
+        desired minimum recall. 
+  \item Generate lots of random databases with known correspondences - 
+        the parameters in the database generation step are generated randomly.
+  \item Calculate the precision and recall for all possible 
+        $(\alpha,\beta)$ pairs on those databases.
+  \item Take a satisficing approach to satisfying the constraints. If minimum
+        precision was specified, find the pairs 
+        with that precision and above and select the pair with the maximum
+        recall. If no pair meets the minimum precision, select the pair with the
+        maximum precision.
+        
+        If the minimum recall was specified, follow the same procedure
+        interchanging precision and recall.
 \end{enumerate}
 
-Because generating the databases is likely to be the resource intensive step, it is probably better to keep a grid of alpha and beta ranges where the true positive and false positive rates were constant for a particular database and merge those all into a final set of AUC calculations. Possibly a better classifier performance measure might be used.
+Because generating the databases is likely to be the resource intensive step, it is probably better to keep a grid of $\alpha$ and $\beta$ ranges where the confusion matrix is constant for a particular database and merge those all into a final grid. 
 
-{\Huge Finish THIS}
+The counts for true/false positive can probably be calculated during the database "generation" phase without any need to actually instantiate the new database.
+
+\subsubsection{Combining Confusion Matrices}
+
+To combine two confusion matrices where the $\alpha$ and $\beta$ intervals overlap, break them into rectangles that cover the overlap and the areas with no overlap. The areas with no overlap have the same confusion matrices. The areas of overlap have matrices that are the sum of the entries in the original areas.
+
+Note: this treats each potential match in each simulated database as equivalent. We could also just store the list of calculated P/R values in the interval and then make assumptions about their distribution to decide whether one $\alpha$, $\beta$ interval is better than another.
+
 \subsubsection{Generating a simulated database pair from an input database}
-Before I start note that this is a conceptual way to generate the simulated database. It seems likely that with the counts from the original database and an assignment of properties to the sub-databases, one can quickly calculate the appropriate AUC values for all combinations of parameters.
+Before I start note that this is a conceptual way to generate the simulated database. It seems likely that with the counts from the original database and an assignment of properties to the sub-databases, one can quickly calculate the appropriate confusion matrix values for all combinations of parameters.
 
 To generate a simulated database pair, you start with your input database and 5 parameters: $n_1$, $n_2$, $n_b$, $r_1$, and $r_2$. These are, respectively, the number of properties only in database 1, the number of properties only in database 2, the number of properties in both, the fraction of the tuples that are removed from database 1, and the fraction that are removed from database 2. These parameters have three constraints. First, $n_1 + n_2 + n_b \leq n$ where $n$ is the total number of properties in the original database. Second, neither database can be empty, so $n_1 \geq 1$, $n_2 \geq 1$, and $n_b \geq 0$. Finally, $0 \leq r < 1$ and $0 \leq r < 1$, so you can't remove all the tuples.
 
@@ -90,9 +105,52 @@ Then, you randomly select 3 non-overlapping subsets of properties of sizes $n_1$
 
 Next, $r_1 | db_1 |$ tuples are randomly selected and removed from database 1 and similarly for database 2.
 
-To reduce the number of parameters, it may be good to let $r_1 = r_2$ and $n_1 + n_2 + n_b = n$.
+To reduce the number of parameters, it may be good to let $r_1 = r_2$ and $n_1 + n_2 + n_b = n$. You could also use prior information that $\frac{n_1+n_b}{n_2+n_b}=\frac{|db_1|}{|db_2|}$ (so the generated databases have the same size ratio for number of properties.)
+
+It might be a good idea to have a separate same-as tuple removal rate. I am not sure it is a good assumption that the same-as tuples will be missing at the same rate as the original tuples.
 \subsubsection{Calculating Errors}
-{\Huge Finish THIS}
+
+Have the input database formatted as tables:
+\begin{enumerate}
+\item instance-id $\times$ has-same-as-link
+\item subject-id $\times$ object-id $\times$ property-id
+\end{enumerate}
+
+Sort the database (and/or query) by (subject-id,object-id)
+
+Now perform the following operation:
+
+\begin{enumerate}
+\item Decide whether each "same-as" tuple is included. 
+      This information should be small enough to keep in RAM.
+\item Partition the properties between in 1 database, 
+      in the other database, or in both and keep this assignment in RAM
+\item Keep match counts and potential match counts in RAM 
+      for each pair of properties.
+\item For each subject-object pair (so-pair) in the original database
+	\begin{enumerate}
+	\item Read all the properties that contain that so-pair (which is just 
+	      read until the next so-pair, since the query is sorted)
+	\item Each property generates 1 or 2 virtual tuples (1 tuple in 
+	      the appropriate database if it is in only one database, 2 if 
+	      it is in both)
+	\item Determine whether the virtual tuples were deleted for each property. 
+	\item Make a new local assignment of which property appears in 
+	      which database depending on where the virtual 
+	      tuples are. So if there are no virtual tuples, 
+	      this property doesn't appear in either database. 
+	      If there is only the first tuple, it is only in the first 
+	      database. (This assignment will go away for the next so-pair.)
+	\item For each possible ordered pair of properties $P_1$,$P_2$ where the first appears in database 1 and the second appears in database 2.
+	      \begin{enumerate}
+	      \item If the subject and object both have same-as links 
+	            increment \func{MatchCount}($P_1$,$P_2$)
+	      \item If the subject has a same-as link
+	            increment \func{PotentialMatchCount}($P_1$, $P_2$)
+	      \end{enumerate}
+	\end{enumerate}
+\end{enumerate}
+
 \subsubsection{Problems}
 Simulated databases are smaller than actual databases - is the denominator correct on $F'$?
 {\Huge Finish THIS}
