@@ -1,0 +1,99 @@
+%% LyX 2.0.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{amsmath}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\newcommand{\owl}[1]{\textit{#1}} % Format owl properties
+\newcommand{\func}[1]{\texttt{#1}} % Format function names
+
+\makeatother
+
+\usepackage{babel}
+\begin{document}
+
+\title{Proposal for Removing Twiddle Parameters in LOD Property Alignment
+Algorithm}
+
+
+\author{Eric Moyer}
+
+
+\date{26 August 2012}
+
+\maketitle
+
+\section{Introduction}
+
+This document actually includes two topics. First, I have a few quibbles
+with the original article that I did not think merited their own document
+because they are in the same line of improvement as the main proposal.
+Then, I write the main proposal for how to rationally select the $\alpha$
+and $\beta$ parameters.
+
+
+\section{Quibbles}
+
+
+\subsection{Assymetric Metric}
+
+The \owl{owl:equivalentProperty} relation is symmetric. The $\func{PotentialMatchCount}$
+function is defined to be asymmetric, that is, $\func{PotentialMatchCount}(P_{1},P_{2})\neq\func{PotentialMatchCount}(P_{2},P_{1})$.
+The same goes for $\func{MatchCount}(P_{1},P_{2})$ as well. (Though $\func{MatchCount}$ has constraints that may make it symmetric despite the asymmetric definition, I'd need to think about it more to be sure.) Usually, in my experience, this difference in symmetry means that there is a better metric that uses
+the information on the symmetry.
+
+\subsection{F' could be written more simply}
+
+You define 
+
+\begin{align*} 
+&F'=\frac{{\ln(\func{MatchCount}(P_{1},P_{2}))}}{\ln(\func{SubjectSize}(D_{1},D_{2}))}\geq\beta \\
+ & \text{where } \\
+ & \func{SubjectSize}(D_{1},D_{2})=\operatorname{min}(|S:\exists SPO\operatorname{in}D_{1}|,|S:\exists SPO\operatorname{in}D_{2}|) 
+\end{align*} 
+
+I think it is much clearer to write this as:
+
+\begin{align*} 
+&F'=\func{MatchCount}(P_{1},P_{2})) \geq S^\beta \\
+ & \text{where } \\
+ & S=\operatorname{min}(|S:\exists SPO\operatorname{in}D_{1}|,|S:\exists SPO\operatorname{in}D_{2}|) 
+\end{align*} 
+
+
+\section{Proposal}
+\subsection{Problem}
+You introduce the $\alpha$ and $\beta$ parameters into your paper without giving a method to choose them. The performance of your algorithm is sensitive to those parameters, so this makes it difficult to apply in real life.
+\subsection{Simulation Solution}
+We can select the $\alpha$ and $\beta$ parameters for a given pair of databases by using the information in the original databases to create simulated database pairs which mimic properties of the original databases. Then we can select the parameters that give the best AUC across all of these possible databases. 
+\subsubsection{Main loop}
+The main concept is
+\begin{enumerate}
+  \item Generate lots of databases with known correspondences
+  \item Calculate the AUC for all possible $(\alpha,\beta)$ pairs on 
+        those databases.
+  \item Keep the pair with the highest AUC
+\end{enumerate}
+
+Because generating the databases is likely to be the resource intensive step, it is probably better to keep a grid of alpha and beta ranges where the true positive and false positive rates were constant for a particular database and merge those all into a final set of AUC calculations. Possibly a better classifier performance measure might be used.
+
+{\Huge Finish THIS}
+\subsubsection{Generating a simulated database pair from an input database}
+Before I start note that this is a conceptual way to generate the simulated database. It seems likely that with the counts from the original database and an assignment of properties to the sub-databases, one can quickly calculate the appropriate AUC values for all combinations of parameters.
+
+To generate a simulated database pair, you start with your input database and 5 parameters: $n_1$, $n_2$, $n_b$, $r_1$, and $r_2$. These are, respectively, the number of properties only in database 1, the number of properties only in database 2, the number of properties in both, the fraction of the tuples that are removed from database 1, and the fraction that are removed from database 2. These parameters have three constraints. First, $n_1 + n_2 + n_b \leq n$ where $n$ is the total number of properties in the original database. Second, neither database can be empty, so $n_1 \geq 1$, $n_2 \geq 1$, and $n_b \geq 0$. Finally, $0 \leq r < 1$ and $0 \leq r < 1$, so you can't remove all the tuples.
+
+Then, you randomly select 3 non-overlapping subsets of properties of sizes $n_1$, $n_2$, and $n_b$. The tuples for the first set of properties go into database 1. The tuples for the second set of properties go into database 2. And the tuples from the third set go into both databases. Same-as tuples are generated on the same objects that had direct and inferred same-as links to the database not used as input.
+
+Next, $r_1 | db_1 |$ tuples are randomly selected and removed from database 1 and similarly for database 2.
+
+To reduce the number of parameters, it may be good to let $r_1 = r_2$ and $n_1 + n_2 + n_b = n$.
+\subsubsection{Calculating Errors}
+{\Huge Finish THIS}
+\subsubsection{Problems}
+Simulated databases are smaller than actual databases - is the denominator correct on $F'$?
+{\Huge Finish THIS}
+\end{document}
