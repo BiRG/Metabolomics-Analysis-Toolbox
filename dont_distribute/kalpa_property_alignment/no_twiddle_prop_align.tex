@@ -26,40 +26,7 @@ Algorithm}
 
 \section{Introduction}
 
-This document actually includes two topics. First, I have a few quibbles
-with the original article that I did not think merited their own document
-because they are in the same line of improvement as the main proposal.
-Then, I write the main proposal for how to rationally select the $\alpha$
-and $\beta$ parameters.
-
-
-\section{Quibbles}
-
-
-\subsection{Assymetric Metric}
-
-The \owl{owl:equivalentProperty} relation is symmetric. The $\func{PotentialMatchCount}$
-function is defined to be asymmetric, that is, $\func{PotentialMatchCount}(P_{1},P_{2})\neq\func{PotentialMatchCount}(P_{2},P_{1})$.
-The same goes for $\func{MatchCount}(P_{1},P_{2})$ as well. (Though $\func{MatchCount}$ has constraints that may make it symmetric despite the asymmetric definition, I'd need to think about it more to be sure.) Usually, in my experience, this difference in symmetry means that there is a better metric that uses
-the information on the symmetry.
-
-\subsection{F' could be written more simply}
-
-You define 
-
-\begin{align*} 
-&F'=\frac{{\ln(\func{MatchCount}(P_{1},P_{2}))}}{\ln(\func{SubjectSize}(D_{1},D_{2}))}\geq\beta \\
- & \text{where } \\
- & \func{SubjectSize}(D_{1},D_{2})=\operatorname{min}(|S:\exists SPO\operatorname{in}D_{1}|,|S:\exists SPO\operatorname{in}D_{2}|) 
-\end{align*} 
-
-I think it is much clearer to write this as:
-
-\begin{align*} 
-&F'=\func{MatchCount}(P_{1},P_{2})) \geq S^\beta \\
- & \text{where } \\
- & S=\operatorname{min}(|S:\exists SPO\operatorname{in}D_{1}|,|S:\exists SPO\operatorname{in}D_{2}|) 
-\end{align*} 
+This document actually includes two topics. First, I write the main proposal for how to rationally select the $\alpha$ and $\beta$ parameters. Then I finish with a few quibbles with the original article that I did not think merited their own document.
 
 
 \section{Proposal}
@@ -172,4 +139,33 @@ Simulated databases are smaller than actual databases - is the denominator corre
 
 Doesn't account for spurious same-as links
 {\Huge Finish THIS}
+\section{Quibbles}
+
+
+\subsection{Assymetric Metric}
+
+The \owl{owl:equivalentProperty} relation is symmetric. The $\func{PotentialMatchCount}$
+function is defined to be asymmetric, that is, $\func{PotentialMatchCount}(P_{1},P_{2})\neq\func{PotentialMatchCount}(P_{2},P_{1})$.
+The same goes for $\func{MatchCount}(P_{1},P_{2})$ as well. (Though $\func{MatchCount}$ has constraints that may make it symmetric despite the asymmetric definition, I'd need to think about it more to be sure.) Usually, in my experience, this difference in symmetry means that there is a better metric that uses
+the information on the symmetry.
+
+\subsection{F' could be written more simply}
+
+You define 
+
+\begin{align*} 
+&F'=\frac{{\ln(\func{MatchCount}(P_{1},P_{2}))}}{\ln(\func{SubjectSize}(D_{1},D_{2}))}\geq\beta \\
+ & \text{where } \\
+ & \func{SubjectSize}(D_{1},D_{2})=\operatorname{min}(|S:\exists SPO\operatorname{in}D_{1}|,|S:\exists SPO\operatorname{in}D_{2}|) 
+\end{align*} 
+
+I think it is much clearer to write this as:
+
+\begin{align*} 
+&F'=\func{MatchCount}(P_{1},P_{2})) \geq S^\beta \\
+ & \text{where } \\
+ & S=\operatorname{min}(|S:\exists SPO\operatorname{in}D_{1}|,|S:\exists SPO\operatorname{in}D_{2}|) 
+\end{align*} 
+
+
 \end{document}
