@@ -108,7 +108,7 @@ Next, $r_1 | db_1 |$ tuples are randomly selected and removed from database 1 an
 To reduce the number of parameters, it may be good to let $r_1 = r_2$ and $n_1 + n_2 + n_b = n$. You could also use prior information that $\frac{n_1+n_b}{n_2+n_b}=\frac{|db_1|}{|db_2|}$ (so the generated databases have the same size ratio for number of properties.)
 
 It might be a good idea to have a separate same-as tuple removal rate. I am not sure it is a good assumption that the same-as tuples will be missing at the same rate as the original tuples.
-\subsubsection{Calculating Errors}
+\subsubsection{Create Classifier}
 
 Have the input database formatted as tables:
 \begin{enumerate}
@@ -144,14 +144,32 @@ Now perform the following operation:
 	\item For each possible ordered pair of properties $P_1$,$P_2$ where the first appears in database 1 and the second appears in database 2.
 	      \begin{enumerate}
 	      \item If the subject and object both have same-as links 
-	            increment \func{MatchCount}($P_1$,$P_2$)
-	      \item If the subject has a same-as link
-	            increment \func{PotentialMatchCount}($P_1$, $P_2$)
+	            increment \func{MatchCount}($P_1$, $P_2$)
+	      \item If the subject has a same-as link, then increment \\ 
+	      	    \func{PotentialMatchCount}($P_1$, $P_2$)
 	      \end{enumerate}
 	\end{enumerate}
 \end{enumerate}
 
+This yields a set of filled-in \func{MatchCount} and \func{PotentialMatchCount} values for all pairs of properties. We can ignore all pairs where \func{MatchCount} is 0.
+
+Choose the strongest match (highest $\alpha$) for each property in the first
+database and the strongest for each property in the second database. (If they are
+not the same, I would discard them as spurious, but you don't mention that in
+your paper --- maybe it doesn't work well?) These property pairs along with their
+associated match counts, potential match counts, and database subject sizes are
+the input instances. We can label them: when $P_1 = P_2$ then we have a genuine
+match. When they are different we have a spurious match. 
+
+Now there are three approaches we could take. The easiest is to just accumulate all these instances over all generated databases. Then use this as a training set to train a classifier that uses the features $\frac{\text{\func{MatchCount}}}{\text{\func{PotentialMatchCount}}}$ and $\frac{\ln \text{\func{MatchCount}}}{\ln \text{\func{SubjectSize}}}$. If we're feeling really bold, we could throw a couple of more features into the mix like $\func{MatchCount}$ itself or the ratio $\frac{\func{SubjectsInDB1}}{\func{SubjectsInDB2}}$. Then we use cross-validation to choose the classifier that best fits the user's constraints.
+
+The second option is to roll our own training procedure and classifier. A simple version of this would be to create a grid of bins where one axis has a bin boundary half-way between each adjacent pair of $\alpha$ values and the other axis between each adjacent pair of $\beta$ values. Each bin contains a $2 \times 2$ confusion matrix. For each instance, update all the bins according to how that instance would be classified with those values of $\alpha$ and $\beta$. Now choose the bin which best satisfies the user's constraints.
+
+The final option is to, instead of classifying directly, try to infer the characteristics of the transformations of reality that created the original input databases. Run this on the original input and then simulate again using the narrowed estimate of the parameter space from which the original databases could have been generated. In other words, write a regressor that takes in the $\alpha$ and $\beta$ distributions from a database and infers the parameters of the simulation that generated that database. Next take that regressor and run it on the distributions from the original input databases. Now, make a new set of simulated databases using the inferred parameter distributions. Finally, use one of the first two options to create the classifier that will actually match the properties.
+
 \subsubsection{Problems}
 Simulated databases are smaller than actual databases - is the denominator correct on $F'$?
+
+Doesn't account for spurious same-as links
 {\Huge Finish THIS}
 \end{document}
