@@ -125,12 +125,10 @@ One could also do this using a classifier. Divide each of the parameter ranges i
 A soft version of the previous might also be useful. If you have a classifier that outputs probabilities of class membership, rather than replacing the ranges at each step, you can instead sample according to the predicted distribution and terminate when the predicted distribution no longer changes.
 
 \subsection{Problems}
-Simulated databases are smaller than actual databases - is the denominator correct on $F'$?
+My main misgiving on this technique is whether the simulation will be good enough to adequately train the classifier. For example, my model does not have incorrect same-as links. The paper assumes that they do not exist. However, everyone knows that they must because people make mistakes and computer software has bugs. I think the only way to be sure whether the simulation is good enough is to run the software and find out.
 
-Doesn't account for spurious same-as links
+A related issue has to do with the $F'$ parameter. All of the simulated databases will be smaller than actual input databases. If $F'$ doesn't work right for correcting for variation in the number of subjects, then the parameters derived may not be so good. This issue does not worry me as much as the first because the classifiers we are training will have several subject sizes, so they will already have to generalize over different sizes. However, models have significantly worse performance when extrapolating, so there is a bit of cause for concern here.
 
-Is the model of the simulated databases good enough to give good results on real databases.
-{\Huge Finish THIS}
 \part{Quibbles}
 
 
