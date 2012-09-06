@@ -6,8 +6,13 @@
 \makeatother
 
 \usepackage{babel}
+\usepackage{color}
 \setcounter{secnumdepth}{5}
 
+%
+% My Commands 
+%
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO:} #1}}
 
 
 \begin{document}
@@ -34,6 +39,13 @@ In NMR metabolomics, one common noise factor is the dilution of the sample. Dilu
 \section{Related Work}
 Because of the importance of this problem, many dilution normalization methods have been proposed. However, before now, there has not been a comprehensive comparison of all of them under a wide variety of conditions.
 
+(Dieterle 2006) compares their probabilistic quotient normalization (PQN) with constant sum normalization (CSN) on some highly simplified simulated datasets and on urine samples where one group had extreme glucose excretion. PQN outperformed CSN. At the time, they said that "no investigations concerning the normalization step of a set of NMR spectra of complex biofluids have been published." They recommended that small samples normalize to a reference spectrum generated only from the control population.
+
+(Torgrip 2007) followed up with another algorithm, histogram matching normalization (HMN). They tested PQN, HMN and CSN on simulated \textit{Arabidopsis thaliana} tissue extracts digitally manipulated before analysis introducing a simulated dilution and simulated highly variable large peaks. They also looked at the performance of their algorithm on mouse urine. HMN outperformed its competitors on the simulated data, but mouse urine results were inconclusive. \todo{Does the ethionine treated mouse-urine lack a large highly variable peak?}.
+
+Neither of these papers used data without a large, highly variable peak, which is the Achilles heel of CSN.
+
+(Schnackenberg 2007) \todo{Need to read this paper, then rewrite}
 
 \section{Dilution Recovery Normalization Algorithms}
 \section{Methods}
