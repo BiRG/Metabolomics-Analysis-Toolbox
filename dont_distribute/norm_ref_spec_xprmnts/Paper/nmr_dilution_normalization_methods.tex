@@ -36,6 +36,8 @@ Many noise factors are removed by careful experimental design and planning. Anim
 
 In NMR metabolomics, one common noise factor is the dilution of the sample. Dilution effects are very common in urine spectra, but they also appear in other biofluids. Experimental subjects frequently excrete or store different amounts of water for reasons that have nothing to do with the factor under study. Since NMR is mainly used to measure differences in concentration of various metabolites, water dilution results in a global change in the apparent concentrations of other elements measured. This change is well approximated by multiplying the measured amplitudes in a frequency-domain spectrum by a dilution-dependent constant.\footnote{(Zhang 2009) mentions that some of the smaller peaks had a non-linear response to dilution. However, we have seen no follow-up on this observation indicating a better model for this response, thus we will continue with the traditional approximation.} Dilution normalization techniques are those which attempt to recover this multiplicative constant by using statistical techniques. Technical limitations of NMR spectroscopy usually require the elimination of any water signal during spectrum acquisition, so the constant recovery must be done by comparing the statistical characteristics of the input spectra.
 
+\todo{Mention other functions for different types of normalization: range scaling and auto-scaling remove the dependence of rank of metabolites in PCA space on the average concentration and the magnitude of the fold changes (van den Berg 2006) Also rewrite in terms of the terminology: induced biological variation, uninduced biological variation, and technical variation}
+
 \section{Related Work}
 Because of the importance of this problem, many dilution normalization methods have been proposed. However, before now, there has not been a comprehensive comparison of all of them under a wide variety of conditions.
 
@@ -45,9 +47,15 @@ Because of the importance of this problem, many dilution normalization methods h
 
 Neither of these papers used data without a large, highly variable peak, which is the Achilles heel of CSN.
 
-(Schnackenberg 2007) \todo{Need to read this paper, then rewrite}
+(Wen 2007) compared 1-Norm, which is CSN but with an absolute value inside the summation with 2-Norm, for datasets that compare diabetes with normal populations. They concluded that both methods produced adequate results but 2-Norm gave better separation in PCA space.
 
-\todo{Mention other functions for different types of normalization: range scaling and auto-scaling remove the dependence of rank of metabolites in PCA space on the average concentration and the magnitude of the fold changes (van den Berg 2006)}
+(Schnackenberg 2007) Used two normalization factors based on the weight of the subject as well as creatinine normalization (CRN) and CSN. They noted that correlations between the normalization factor and age could lead to additional PCA separation between age groups and that of the factors studied CSN was least correlated to age. \todo{Need to read this paper, then rewrite}
+
+(Zhang 2009) used real spectra of spike-in urine samples with 3 different dilution levels. Then they compared CRN, CSN, and variance stabilizing normalization (VSN.) They found that VSN did the best in removing dilution artifacts in the spike-in metabolites and the PCA plot but that CSN was superior when using a T-test to confirm differences.
+
+(De Meyer 2010) made a detailed comparison of 14 CSN and PQN variants on plasma samples. They compared NMR metabolite concentration proxies with independent measurements of 3 metabolites of different peak heights. Their conclusion was that CSN was inferior and that PQN after adaptive-intelligent binning and maximum variable definition was the method best for general use.
+
+(Kohl 2012) compared 10 normalization methods but were focused on dealing with non-dilution non-induced variation. They kept dilution out of their spike-in dataset through careful measurement and they pre-normalized their urine spectra with CRN to remove dilution effects. Still, in Figure 1, PQN had the best between-sample normalization while retaining the most "biological" data from the spike-in metabolites. Other methods came to the fore when considering other factors like classification performance on an SVM or removing heteroscedasticity. Quantile Normalization and Cubic spline were their ultimate recommendations. They calculated the expected fold-change versus actual fold change, but only plotted it for 3 of the 10 normalization methods.
 
 \section{Dilution Recovery Normalization Algorithms}
 \section{Methods}
