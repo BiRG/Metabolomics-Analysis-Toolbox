@@ -44,6 +44,10 @@
  % Works with identical authors and year are further sorted by
  %   citation key, to preserve any natural sequence.
  %
+ %
+ % #################################
+ %
+ % Modified by Eric Moyer to lack the URL field
 ENTRY
   { address
     author
@@ -69,7 +73,6 @@ ENTRY
     series
     title
     type
-    url
     volume
     year
   }
@@ -279,13 +282,6 @@ FUNCTION {format.issn}
 { issn empty$
     { "" }
     { new.block "ISSN " issn * }
-  if$
-}
-
-FUNCTION {format.url}
-{ url empty$
-    { "" }
-    { new.block "URL \url{" url * "}" * }
   if$
 }
 
@@ -720,7 +716,6 @@ FUNCTION {article}
   if$
   format.issn output
   format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -757,7 +752,6 @@ FUNCTION {book}
   format.date "year" output.check
   format.isbn output
   format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -775,7 +769,6 @@ FUNCTION {booklet}
   format.date output
   format.isbn output
   format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -814,7 +807,6 @@ FUNCTION {inbook}
   format.date "year" output.check
   format.isbn output
   format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -844,7 +836,6 @@ FUNCTION {incollection}
   if$
   format.isbn output
   format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -882,7 +873,6 @@ FUNCTION {inproceedings}
   if$
   format.isbn output
   format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -901,7 +891,6 @@ FUNCTION {manual}
   address output
   format.edition output
   format.date output
-  format.url output
   new.block
   note output
   fin.entry
@@ -918,7 +907,6 @@ FUNCTION {mastersthesis}
   school "school" output.check
   address output
   format.date "year" output.check
-  format.url output
   new.block
   note output
   fin.entry
@@ -934,7 +922,6 @@ FUNCTION {misc}
   howpublished output
   format.date output
   format.issn output
-  format.url output
   new.block
   note output
   fin.entry
@@ -952,7 +939,6 @@ FUNCTION {phdthesis}
   school "school" output.check
   address output
   format.date "year" output.check
-  format.url output
   new.block
   note output
   fin.entry
@@ -973,7 +959,6 @@ FUNCTION {proceedings}
   publisher output
   format.isbn output
   format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -990,7 +975,6 @@ FUNCTION {techreport}
   institution "institution" output.check
   address output
   format.date "year" output.check
-  format.url output
   new.block
   note output
   fin.entry
@@ -1005,7 +989,6 @@ FUNCTION {unpublished}
   new.block
   note "note" output.check
   format.date output
-  format.url output
   fin.entry
 }
 
