@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 10-Nov-2011 23:54:56
+% Last Modified by GUIDE v2.5 14-Sep-2012 14:36:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -122,13 +122,9 @@ end
 out_handles = handles;
 
 
-function out_handles = init_handles_and_gui_from_scratch(handles)
-% Takes a handles structure that has handles for the gui components, a
-% metab_map and a collection as well as possibly a peaks cell array, and 
-% initializes the rest of the gui state from that.  Returns the new value 
-% for the handles structure
-%
-% Note that display components are not initialized 
+function out_handles = populate_metabolite_menu(handles)
+% Takes a handles structure that has handles for the gui components and a
+% metab_map structure and fills the metabolite dropdown menu.
 
 % Initialize the menu of metabolites from the metab map
 num_bins = length(handles.metab_map);
@@ -140,6 +136,20 @@ for bin_idx = 1:num_bins
         cur_bin.compound_name, cur_bin.id);
 end
 set(handles.metabolite_menu, 'String', metabolite_names);
+
+out_handles = handles;
+
+
+function out_handles = init_handles_and_gui_from_scratch(handles)
+% Takes a handles structure that has handles for the gui components, a
+% metab_map and a collection as well as possibly a peaks cell array, and 
+% initializes the rest of the gui state from that.  Returns the new value 
+% for the handles structure
+%
+% Note that display components are not initialized 
+
+% Fill the metabolite dropdown menu.
+handles = populate_metabolite_menu(handles);
 
 % Start with no identifications
 handles.identifications = [];
@@ -267,9 +277,9 @@ handles.auto_y_zoom = true; %True if should automatically reset the y axis' zoom
 
 % Initialize the display components
 update_display(handles);
-zoom_to_bin(handles);
+zoom_to_bin(handles); % DCW: Why are we zooming to the initial bin twice? Here...
 update_plot(handles);
-zoom_to_bin(handles);
+zoom_to_bin(handles); % DCW: ...and here.
 
 % Update handles structure
 guidata(hObject, handles);
@@ -978,9 +988,9 @@ handles.bin_idx = new_val;
 handles = potentially_autoidentify(handles);
 guidata(handles.figure1, handles);
 update_display(handles);
-zoom_to_bin(handles);
+zoom_to_bin(handles); % DCW: Why are we zooming to the selected bin twice? Here...
 update_plot(handles);
-zoom_to_bin(handles);
+zoom_to_bin(handles); % DCW: ...and here?
 
 function [change_is_ok, new_handles] = changing_spectrum_or_bin_is_ok(handles)
 % Confirms that changing spectrum_idx or bin_idx is ok with the user.
@@ -1936,6 +1946,50 @@ guidata(handles.figure1, handles);
 % Update gui
 update_plot(handles);
 update_display(handles);
+
+
+% --- Executes on button press in reload_metabmap_button.
+function reload_metabmap_button_Callback(hObject, eventdata, handles)
+% hObject    handle to reload_metabmap_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Fetch the metab map file to load.
+[filename,pathname] = uigetfile('*.csv','Select a metab map file');
+if ~ischar(filename)
+    return;
+else
+    fullpath=fullfile(pathname, filename);
+end
+
+% Store the metab map into the session data.
+metab_map = load_metabmap(fullpath, 'no_deleted_bins');
+if isempty(metab_map)
+    uiwait(msgbox('Could not read the metab map from the given file', ...
+        'Error', 'error'));
+    return;
+end
+setpref('Targeted_Deconvolution', 'last_metab_map_filename', fullpath);
+handles.metab_map = sort_metabmap_by_name_then_ppm(metab_map);
+
+% Re-populate the metabolite dropdown menu.
+handles = populate_metabolite_menu(handles);
+
+%Get confirmation from the user in situations where it might not be good to
+%change the bin or spectrum. Do nothing if not ok to change.
+[change_is_ok, handles] = changing_spectrum_or_bin_is_ok(handles);
+if ~change_is_ok
+    return;
+end
+set_spectrum_and_bin_idx(1, 1, handles);
+
+% Update handles structure
+guidata(hObject, handles);
+
+% Redraw window.
+update_display(handles);
+update_plot(handles);
+zoom_to_bin(handles);
 
 
 % --------------------------------------------------------------------
