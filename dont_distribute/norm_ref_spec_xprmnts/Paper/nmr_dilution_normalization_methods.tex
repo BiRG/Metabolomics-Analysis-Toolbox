@@ -52,7 +52,7 @@ Because of the importance of this problem, many dilution normalization methods h
 
 \citep{Torgrip2008} followed up with another algorithm, histogram matching normalization (HMN). They tested PQN, HMN and CSN on simulated \textit{Arabidopsis thaliana} tissue extracts digitally manipulated before analysis introducing a simulated dilution and simulated highly variable large peaks. They also looked at the performance of their algorithm on mouse urine. HMN outperformed its competitors on the simulated data, but mouse urine results were inconclusive. \todo{Does the ethionine treated mouse-urine lack a large highly variable peak?}.
 
-Neither of these papers used data without a large, highly variable peak, which is the Achilles heel of CSN.
+Neither of these papers used data without a large, highly variable peak, which is a well-known weakness of CSN \citep{VanDenBerg2006}.
 
 \citep{Wen2007} compared 1-Norm, which is CSN but with an absolute value inside the summation with 2-Norm, for datasets that compare diabetes with normal populations. They concluded that both methods produced adequate results but 2-Norm gave better separation in PCA space.
 
@@ -62,7 +62,7 @@ Neither of these papers used data without a large, highly variable peak, which i
 
 \citep{DeMeyer2010a} made a detailed comparison of 14 CSN and PQN variants on plasma samples. They compared NMR metabolite concentration proxies with independent measurements of 3 metabolites of different peak heights. Their conclusion was that CSN was inferior and that PQN after adaptive-intelligent binning and maximum variable definition was the method best for general use.
 
-\citep{Kohl2012} compared 10 normalization methods but were focused on dealing with non-dilution uninduced variation. They kept dilution out of their spike-in dataset through careful measurement and they pre-normalized their urine spectra with CRN to remove dilution effects. Still, in Figure 1, PQN had the best between-sample normalization while retaining the most "biological" data from the spike-in metabolites. Other methods came to the fore when considering other factors like classification performance on an SVM or removing heteroscedasticity. Quantile Normalization and Cubic spline were their ultimate recommendations. They calculated the expected fold-change versus actual fold change, but only plotted it for 3 of the 10 normalization methods.
+\citep{Kohl2012} compared 10 normalization methods but were focused on dealing with non-dilution uninduced variation. They kept dilution out of their spike-in dataset through careful measurement and they pre-normalized their urine spectra with CRN to remove dilution effects. Still, PQN had the best between-sample normalization while retaining the most "biological" data from the spike-in metabolites. Other methods came to the fore when considering other factors like classification performance on an SVM or removing heteroscedasticity. Quantile Normalization and Cubic spline were their ultimate recommendations. They calculated the expected fold-change versus actual fold change, but only plotted it for 3 of the 10 normalization methods.
 
 \section{Dilution Recovery Normalization Algorithms}
 \section{Methods}
