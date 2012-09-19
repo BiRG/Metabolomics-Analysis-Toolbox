@@ -67,8 +67,6 @@ if size(orig_col.Y, 2) ~= size(binned_col.Y, 2)
 end
 
 
-% Generate candidate pairs for each bin center
-wait_h = waitbar(0,'Phase 1 of 2: Select bin boundaries consistent with known bin centers (Phase 1 of 2)');
 orig_x = orig_col.x;
 binned_x = binned_col.x;
 
@@ -77,27 +75,78 @@ if ~(issorted(orig_x) || issorted(fliplr(orig_x)))
         'The x values in %s are not sorted.', original_collection_filename);
 end
 
-num_pairs = length(orig_x)*(length(orig_x)-1)/2;
+% Generate candidate pairs for each bin 
+wait_h = waitbar(0,'Select bin boundaries that have less than a given error on first spectrum (Phase 1 of 2)');
+
+max_bin_error = 1e-4;
+% The cumulative spectrum allows calculation of an interval by just
+% subtracting two numbers. Note the addition of zeros at the beginning,
+% this allows intervals consisting of only the first value.
+cumulative_spec = cumsum([zeros(1,size(orig_col.Y,2));orig_col.Y],1);
+expected_first_spec = binned_col.Y(:,1);
+cum_size = size(cumulative_spec,1);
 candidates = cell(size(binned_x));
-max_center_error = 0.0005;
-for idx1=1:length(orig_x)
-    num_pairs_remaining = (length(orig_x)-idx1+1)*(length(orig_x)-idx1)/2;
-    frac_done = 1 - num_pairs_remaining/num_pairs;
-    waitbar(frac_done, wait_h);
+for bin_idx = 1:length(binned_x)
+    waitbar((bin_idx-1)/length(binned_x), wait_h);
+    % Target is the expected sum
+    target = expected_first_spec(bin_idx);
+    % Take the first cumulative spectrum and subtract the target. Now, if
+    % spec(b)-spec(a) == target originally then subtracted(b)==spec(a). If
+    % we append these two lists and sort them, the appropriate values clump
+    % together and we can get all pairs that are within a certain distance
+    % of the target by looking at a moving window around the spec(a) value.
+    % We can keep track of which values are from where by using parallel
+    % lists sorted using the first as the key.
+    [sorted,permutation] = sort([cumulative_spec(:,1);cumulative_spec(:,1) - target]);
+    % negative_term is true if the value originally was from the list
+    % that didn't get target subtracted (thus, it is the negative term, the
+    % -spec(a) in the spec(b)-spec(a) == target equation)
+    negative_term = [true(cum_size, 1); false(cum_size, 1)];
+    negative_term = negative_term(permutation);
+    % original_index is the index of the sample in the original spectrum.
+    % The zeros added for the cumulative sum are given an index of 0.
+    original_index = [0:cum_size-1,0:cum_size-1]';
+    original_index = original_index(permutation);
     
-    coord_1 = orig_x(idx1);
-    idx2 = idx1:length(orig_x);
-    centers = (coord_1 + orig_x(idx2)) / 2;
-    potential_bin_indices = find(binned_x <= max(centers) & binned_x >= min(centers));
-    for i = 1:length(potential_bin_indices)
-        bin_idx = potential_bin_indices(i);
-        matches = abs(binned_x(bin_idx) - centers) <= max_center_error;
-        if any(matches)
-            candidates{bin_idx} = horzcat(candidates{bin_idx}, ...
-                [repmat(idx1,1,sum(matches)); ...
-                idx2(matches); ...
-                centers(matches)] ...
-                );
+    negative_indices = find(negative_term);
+    % pos_low is the index of the smallest entry which could form the upper
+    % bound of an acceptable interval for which cur_neg is the lower bound.
+    % That is, pos_low is the first entry which could have a value less
+    % than max_bin_error away from the value for cur_neg.
+    pos_low = 1;
+    for negative_indices_index = 1:length(negative_indices)
+        % cur_neg is the index of the current item in the negative list. 
+        cur_neg = negative_indices(negative_indices_index);
+        cur_neg_value = sorted(cur_neg);
+        % Skip all values that are too low and end on a positive term (or
+        % off the end of the array if there are no more suitable positive 
+        % terms)
+        while(pos_low <= length(sorted) && ...
+                (negative_term(pos_low) || ...
+                sorted(pos_low) < cur_neg_value-max_bin_error) ...
+                )
+           pos_low = pos_low + 1;
+        end
+        pos_temp = pos_low;
+        % Add all values that are just right and are from the positive list
+        while(pos_temp < length(sorted) && ...
+                cur_neg_value-max_bin_error <= sorted(pos_temp) && ...
+                sorted(pos_temp) <= cur_neg_value+max_bin_error)
+            if ~negative_term(pos_temp)
+                a=original_index(cur_neg)+1; b=original_index(pos_temp)+1;
+                if b <= cum_size
+                    x=orig_x(a); y=orig_x(b); center=(x+y)/2;
+                    candidates{bin_idx} = [...
+                        candidates{bin_idx}, ...
+                        [a;b;center]];
+                else
+                    warning('bin_reconstruct_bin_boundaries:no_candidates',...
+                        ['No way to include last sample in bin: ' ...
+                        'ignoring bin interval [%g-%g]'],orig_x(a), ...
+                        orig_x(b-1));
+                end
+            end
+            pos_temp = pos_temp + 1;
         end
     end
 end
@@ -107,7 +156,7 @@ if any(num_candidates == 0)
     error('bin_reconstruct_bin_boundaries:no_candidates',...
         ['No bin boundaries came close enough to giving a correct ' ...
         'bin center for %d bins. Try increasing the max_center_error variable ' ...
-        'in the source code.'], sum(num_candidates));
+        'in the source code.'], sum(num_candidates == 0));
 end
 
 % Choose those candidates with the minimum total error when their samples
@@ -135,7 +184,7 @@ for bin_idx = 1:length(candidates)
         % Get the starting and ending indices of the candidate bin in 
         % sorted order
         v = cur_cand(1:2, cand_idx);
-        sort(v);
+        v = sort(v);
         a=v(1); b = v(2); assert(a <= b);
         % Exclude the lower endpoint for non-singleton bins
         if a < b; b = b-1; end; 
