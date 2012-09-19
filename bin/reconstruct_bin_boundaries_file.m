@@ -79,16 +79,7 @@ end
 
 num_pairs = length(orig_x)*(length(orig_x)-1)/2;
 candidates = cell(size(binned_x));
-rounding_factor = 128;  % Use a fixed point integer representation with 3.6
-                         % decimal places for "rounded" values.
-                         % This rounding takes care of the loss of
-                         % precision that occurs when reading/writing
-                         % floating point values from/to a text file.
-                         %
-                         % I chose 3.6 decimal places because that would
-                         % take care of the error in one example I looked
-                         % at.
-rounded_binned_x = round(binned_x * rounding_factor); 
+max_center_error = 0.0005;
 for idx1=1:length(orig_x)
     num_pairs_remaining = (length(orig_x)-idx1+1)*(length(orig_x)-idx1)/2;
     frac_done = 1 - num_pairs_remaining/num_pairs;
@@ -97,11 +88,10 @@ for idx1=1:length(orig_x)
     coord_1 = orig_x(idx1);
     idx2 = idx1:length(orig_x);
     centers = (coord_1 + orig_x(idx2)) / 2;
-    rounded_centers = round(centers * rounding_factor);
-    potential_bin_indices = find(rounded_binned_x <= max(rounded_centers) & rounded_binned_x >= min(rounded_centers));
+    potential_bin_indices = find(binned_x <= max(centers) & binned_x >= min(centers));
     for i = 1:length(potential_bin_indices)
         bin_idx = potential_bin_indices(i);
-        matches = rounded_binned_x(bin_idx) == rounded_centers;
+        matches = abs(binned_x(bin_idx) - centers) <= max_center_error;
         if any(matches)
             candidates{bin_idx} = horzcat(candidates{bin_idx}, ...
                 [repmat(idx1,1,sum(matches)); ...
@@ -116,7 +106,7 @@ num_candidates = cellfun(@(x) size(x,1), candidates);
 if any(num_candidates == 0)
     error('bin_reconstruct_bin_boundaries:no_candidates',...
         ['No bin boundaries came close enough to giving a correct ' ...
-        'bin center for %d bins. Try reducing the rounding factor ' ...
+        'bin center for %d bins. Try increasing the max_center_error variable ' ...
         'in the source code.'], sum(num_candidates));
 end
 
