@@ -1,6 +1,8 @@
 function collection = load_collection(filename,pathname)
 % Returns the collection stored in the given file.  The file must be a text file and [pathname,
 % filename] must be the needed path to the file.
+%
+% On error, returns a scalar. On success returns a struct.
 
 %% Read the data once skipping the header information on the first pass
 ifid = fopen([pathname,filename]);

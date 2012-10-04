@@ -1,22 +1,22 @@
 function [smoothed_y,maxs,mins] = smooth(y,height_threshold,options)
 level = 3;
-if exist('options') && isfield(options,'level')
+if exist('options','var') && isfield(options,'level')
     level = options.level;
 end
 tptr = 'sqtwolog';
-if exist('options') && isfield(options,'tptr')
+if exist('options','var') && isfield(options,'tptr')
     tptr = options.tptr;
 end
 sorh = 's';
-if exist('options') && isfield(options,'sorh')
+if exist('options','var') && isfield(options,'sorh')
     sorh = options.sorh;
 end
 scal = 'mln';
-if exist('options') && isfield(options,'scal')
+if exist('options','var') && isfield(options,'scal')
     scal = options.scal;
 end
 wname = 'db3';
-if exist('options') && isfield(options,'wname')
+if exist('options','var') && isfield(options,'wname')
     wname = options.wname;
 end
 
@@ -25,7 +25,31 @@ deb = y(1);
 
 % De-noise signal using soft fixed form thresholding 
 % and unknown noise option. 
-smoothed_y = wden(y-deb,tptr,sorh,scal,level,wname)+deb;
+if exist('wden','builtin')
+    smoothed_y = wden(y-deb,tptr,sorh,scal,level,wname)+deb;
+else
+    smoothed_y = y;
+    
+    % Print the warning only once per day - use preferences to store last
+    % warning time
+    if ~ispref('omics_analysis_common_scripts_dab_smooth','last_warned')
+        should_warn = true;
+        addpref('omics_analysis_common_scripts_dab_smooth', ...
+            'last_warned', now);
+    else
+        last_warned = getpref(...
+            'omics_analysis_common_scripts_dab_smooth', 'last_warned');
+        should_warn = now - last_warned > 1;
+    end
+    
+    if should_warn
+        setpref('omics_analysis_common_scripts_dab_smooth', ...
+            'last_warned', now);
+        warning('common_scripts_dab_smooth:no_wden',['The wden function ' ...
+            'is not available on this computer. Using only triangle ' ...
+            'smoothing instead.']);
+    end
+end
 % smoothed_y = max(smoothed_y,y);
 % Now apply triangle smoothing
 n = 3;
