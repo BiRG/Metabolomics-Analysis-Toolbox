@@ -19,7 +19,7 @@ assert(size(score, 2) == 64); % 8x8 windows flattened --> 64 pixels
 assert(length(block_mean) == 64); % Should be mean of one block
 
 % Reconstruct the blocks
-blocks = score(:,1:num_components)*comp(:,1:num_components)'+repmat(block_mean,4096,1);
+blocks = score(:,1:num_components)*comp(:,1:num_components)'+repmat(block_mean,size(score,1),1);
 
 % Assemble the blocks into an image
 image=reconstruct_image(blocks,width,true);
