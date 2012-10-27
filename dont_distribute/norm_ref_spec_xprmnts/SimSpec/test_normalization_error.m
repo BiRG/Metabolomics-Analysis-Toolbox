@@ -18,7 +18,7 @@ function testErrorCase %#ok<DEFNU>
 [rmse,rmse_log]=normalization_error([1,2,3,4,5,6,7,8,9,10],...
     [ 9 18 33 44 45 54 63 88 99 110]);
 assertElementsAlmostEqual([rmse, rmse_log], ...
-    [17.9609967039,0.317288228655]);
+    [5.679765863109170,0.100335347731076]);
 
 function testExceptionRowVec %#ok<DEFNU>
 % Ensure that an exception is thown when one of the input arguments is not 
