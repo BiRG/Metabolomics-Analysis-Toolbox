@@ -4,8 +4,8 @@ function  results = resultsOverviewExperiment( )
 % The results should reflect a balanced experimental design where all
 % combinations of factors have the same number of observations.
 %
-% Uses the data obtained from loadSpectra and the random number generator
-% seeded with the number 2336850071.
+% Uses the data obtained from loadOverviewSpectra and the random number 
+% generator seeded with the number 2336850071.
 %
 % The structure has fields:
 %
@@ -22,16 +22,18 @@ function  results = resultsOverviewExperiment( )
 %                            than results.schema{i}
 %
 % results.dilution_key a cell array of strings results.dilution_key{i} is a
-%                      description of the dilution range indicated by a
-%                      value of i in a dilution parameter
+%                      description of the distribution from which dilution
+%                      factors were drawn indicated by i in the dilution 
+%                      parameter.
 %
 % results.treatment_key a cell array of strings results.treatment_key{i} is
 %                       a description of the treatment group indicated by i
 %                       in the treatment group parameter.
 %
 % results.method_key a cell array of strings results.method_key{i} is
-%                    a description of the noramlization method indicated 
-%                    by i in the normalization method parameter.
+%                    a description of the dilution noramlization method 
+%                    indicated by i in the normalization method parameter.
+%
 
 % Save the current random stream and make this experiment repeatable by 
 % creating our own stream
@@ -151,7 +153,7 @@ results.method_key = { ...
 
 % Load the spectra
 wait_h = waitbar(0, 'Loading spectra');
-spec=loadSpectra();
+spec=loadOverviewSpectra();
 wait_h = waitbar(0, wait_h, 'Binning collections');
 
 % Calculate noise standard deviation
