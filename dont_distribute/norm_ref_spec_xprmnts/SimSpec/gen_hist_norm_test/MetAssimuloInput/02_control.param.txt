@@ -8,7 +8,7 @@ Default Parameters
 "Same pH for all mix2 reps"	"0"
 "SNR"	"1.7976931348623157e308"
 "# of Replicates(Mix1)"	"0"
-"# of Replicates(Mix2)"	"200"
+"# of Replicates(Mix2)"	"5"
 "x-Axis Start"	"-1"
 "x-Axis End"	"12"
 "# of data points"	"32768"
