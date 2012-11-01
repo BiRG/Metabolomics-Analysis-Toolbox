@@ -149,6 +149,10 @@ function [low_b, up_b] = mult_search_bounds_for(values, y_bins, ref_histogram, m
     % Return possibly improved lower and upper search bounds for
     % best_mult_for
     %
+    % Current implementationStarts with bounds of min_y/max_y and 
+    % max_y/min_y then steps in powers of 2 and chooses power of 2 interval
+    % that had minimum error
+    %
     % Assumes 0 < min_y <= max_y
     
     assert(0 < min_y, 'mult_search_bounds_for:pos_min_y', ...
