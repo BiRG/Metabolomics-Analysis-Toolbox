@@ -1,0 +1,49 @@
+NMR STANDARDS	MEAN	ST DEV
+"Creatinine"	13200	4100
+"Hippuric acid"	2640	1300
+"Citric acid"	2022	1081
+"Glycine"	1029	440
+"Trimethylamine N-oxide"	982.08	1011.12
+"L-Histidine"	948	371
+"phenylacetylglutamine"	937.2	79.2
+"Taurine"	834.24	554.4
+"Glycolic acid"	752	304
+"Formic acid"	583	301
+"L-Glutamine"	485.8	147
+"L-Lactic acid"	441	127
+"L-Lysine"	422.4	356.4
+"cis-Aconitic acid"	393	259
+"L-Tyrosine"	361.02	184.54
+"Creatine"	343	303
+"Dimethylamine"	330	39.6
+"Guanidoacetic acid"	300	132
+"p-Cresol sulfate"	300	100
+"L-Alanine"	290	73
+"D-Arabitol"	250.8	79.2
+"Isocitric acid"	250	124
+"Betaine"	245.52	93.19
+"Trigonelline"	223	22.3
+"Acetic acid"	200	50
+"Succinic acid"	166.32	160.12
+"Threonic acid"	132	46.2
+"Trimethylamine"	101.6	98
+"p-Hydroxyphenylacetic acid"	92.4	27.75
+"D-Fructose"	85	46
+"Dimethylglycine"	81.84	35.2
+"1-Methylnicotinamide"	80.5	38.8
+"Oxoglutaric acid"	77	46
+"D-Galactose"	58.08	409.2
+"Benzeneacetic acid"	55	6.0
+"Carnosine"	46.2	35.64
+"Leucine"	39.6	9.9
+"L-Malic acid"	34.32	34.32
+"2-Hydroxybutyric acid"	32.27	16.55
+"L-Methionine"	30	10
+"Isoleucine"	23.8	6.6
+"L-Glutamic acid"	22.59	9.35
+"Citrulline"	14.26	6.89
+"Deoxycytidine"	8.58	3.56
+"N-Acetyl-L-aspartic acid"	5.28	5.68
+"Deoxyadenosine"	2.9	1.19
+"Butyric acid"	1.14	0.11
+"Serine"	396	179.52

@@ -1,0 +1,948 @@
+HMDB_metabolite_name	Peak_position(ppm)	Peak_Intensity	Multiplet_type	Multiplet_Centre(ppm)	Multiplet_Start(ppm)	Multiplet_End(ppm)
+2-Ketobutyric acid	 2.78 	 0.1939 	 q	 2.76	 2.71	 2.8
+2-Ketobutyric acid	 2.77 	 0.5910 	 q	 2.76	 2.71	 2.8
+2-Ketobutyric acid	 2.75 	 0.6006 	 q	 2.76	 2.71	 2.8
+2-Ketobutyric acid	 2.74 	 0.2044 	 q	 2.76	 2.71	 2.8
+2-Ketobutyric acid	 1.08 	 0.5044 	 t	 1.07	 1.02	 1.11
+2-Ketobutyric acid	 1.07 	 1.0000 	 t	 1.07	 1.02	 1.11
+2-Ketobutyric acid	 1.06 	 0.4961 	 t	 1.07	 1.02	 1.11
+2-Ketobutyric acid	 1.08 	 0.5044 	 t	 1.07	 1.02	 1.11
+2-Ketobutyric acid	 1.07 	 1.0000 	 t	 1.07	 1.02	 1.11
+2-Ketobutyric acid	 1.06 	 0.4961 	 t	 1.07	 1.02	 1.11
+2-Hydroxybutyric acid	 0.874	 0.4592	 t	 0.886	 0.842	 0.923
+2-Hydroxybutyric acid	 0.886	 1.0000	 t	 0.886	 0.842	 0.923
+2-Hydroxybutyric acid	 0.899	 0.4888	 t	 0.886	 0.842	 0.923
+2-Hydroxybutyric acid	 1.617	 0.0450	 m	 1.644	 1.594	 1.685
+2-Hydroxybutyric acid	 1.641	 0.1188	 m	 1.644	 1.594	 1.685
+2-Hydroxybutyric acid	 1.653	 0.1091	 m	 1.644	 1.594	 1.685
+2-Hydroxybutyric acid	 1.664	 0.0716	 m	 1.644	 1.594	 1.685
+2-Hydroxybutyric acid	 1.707	 0.0688	 m	 1.727	 1.688	 1.785
+2-Hydroxybutyric acid	 1.714	 0.0716	 m	 1.727	 1.688	 1.785
+2-Hydroxybutyric acid	 1.719	 0.0738	 m	 1.727	 1.688	 1.785
+2-Hydroxybutyric acid	 1.727	 0.0802	 m	 1.727	 1.688	 1.785
+2-Hydroxybutyric acid	 1.743	 0.0440	 m	 1.727	 1.688	 1.785
+2-Hydroxybutyric acid	 1.750	 0.0415	 m	 1.727	 1.688	 1.785
+2-Hydroxybutyric acid	 3.981	 0.1173	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.989	 0.1275	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.992	 0.1288	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 4.000	 0.1201	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 4.000	 0.1201	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.981	 0.1173	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.989	 0.1275	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.992	 0.1288	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 4.000	 0.1201	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 4.000	 0.1201	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.981	 0.1173	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.989	 0.1275	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 3.992	 0.1288	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 4.000	 0.1201	 dd	 3.991	 3.964	 4.014
+2-Hydroxybutyric acid	 4.000	 0.1201	 dd	 3.991	 3.964	 4.014
+Carnosine	 2.66	 0.0373	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.66	 0.1152	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.67	 0.2407	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.68	 0.1309	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.69	 0.1340	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.69	 0.1809	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.70	 0.1290	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.71	 0.0388	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.66	 0.0373	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.66	 0.1152	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.67	 0.2407	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.68	 0.1309	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.69	 0.1340	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.69	 0.1809	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.70	 0.1290	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.71	 0.0388	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.66	 0.0373	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.66	 0.1152	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.67	 0.2407	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.68	 0.1309	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.69	 0.1340	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.69	 0.1809	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.70	 0.1290	 dt	 2.68	 2.66	 2.71
+Carnosine	 2.71	 0.0388	 dt	 2.68	 2.66	 2.71
+Carnosine	 3.01	 0.1038	 dd	 3.03	 3	 3.06
+Carnosine	 3.03	 0.1049	 dd	 3.03	 3	 3.06
+Carnosine	 3.04	 0.1446	 dd	 3.03	 3	 3.06
+Carnosine	 3.05	 0.1440	 dd	 3.03	 3	 3.06
+Carnosine	 3.01	 0.1038	 dd	 3.03	 3	 3.06
+Carnosine	 3.03	 0.1049	 dd	 3.03	 3	 3.06
+Carnosine	 3.04	 0.1446	 dd	 3.03	 3	 3.06
+Carnosine	 3.05	 0.1440	 dd	 3.03	 3	 3.06
+Carnosine	 3.17	 0.1269	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.18	 0.1337	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.19	 0.0965	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.19	 0.0958	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.20	 0.0968	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.20	 0.0955	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.21	 0.0417	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.17	 0.1269	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.18	 0.1337	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.19	 0.0965	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.19	 0.0958	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.20	 0.0968	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.20	 0.0955	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.21	 0.0417	 dd	 3.19	 3.16	 3.21
+Carnosine	 3.23	 0.1968	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.23	 0.1799	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.3320	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.2338	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.2430	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.25	 0.1666	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.25	 0.1686	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.26	 0.0326	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.23	 0.1968	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.23	 0.1799	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.3320	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.2338	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.2430	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.25	 0.1666	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.25	 0.1686	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.26	 0.0326	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.23	 0.1968	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.23	 0.1799	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.3320	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.2338	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.24	 0.2430	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.25	 0.1666	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.25	 0.1686	 dt	 3.24	 3.22	 3.26
+Carnosine	 3.26	 0.0326	 dt	 3.24	 3.22	 3.26
+Carnosine	 4.47	 0.0382	 m	 4.48	 4.45	 4.51
+Carnosine	 4.48	 0.0750	 m	 4.48	 4.45	 4.51
+Carnosine	 4.49	 0.0710	 m	 4.48	 4.45	 4.51
+Carnosine	 4.50	 0.0305	 m	 4.48	 4.45	 4.51
+Carnosine	 7.09	 0.4358	 s	 7.09	 7.06	 7.11
+Carnosine	 8.07	 0.4069	 s	 8.08	 7.96	 8.17
+Carnosine	 8.08	 0.4412	 s	 8.08	 7.96	 8.17
+Carnosine	 8.07	 0.4069	 s	 8.08	 7.96	 8.17
+Carnosine	 8.08	 0.4412	 s	 8.08	 7.96	 8.17
+Butyric acid	 2.16 	 0.3168 	 t	 2.14	 2.09	 2.21
+Butyric acid	 2.14 	 0.6406 	 t	 2.14	 2.09	 2.21
+Butyric acid	 2.13 	 0.3629 	 t	 2.14	 2.09	 2.21
+Butyric acid	 1.58 	 0.0410 	 tq	 1.55	 1.49	 1.6
+Butyric acid	 1.57 	 0.1879 	 tq	 1.55	 1.49	 1.6
+Butyric acid	 1.55 	 0.3631 	 tq	 1.55	 1.49	 1.6
+Butyric acid	 1.54 	 0.3696 	 tq	 1.55	 1.49	 1.6
+Butyric acid	 1.52 	 0.1983 	 tq	 1.55	 1.49	 1.6
+Butyric acid	 1.51 	 0.0451 	 tq	 1.55	 1.49	 1.6
+Butyric acid	 0.90 	 0.4984 	 t	 0.88	 0.85	 0.92
+Butyric acid	 0.88 	 1.0000 	 t	 0.88	 0.85	 0.92
+Butyric acid	 0.87 	 0.4754 	 t	 0.88	 0.85	 0.92
+Butyric acid	 0.90 	 0.4984 	 t	 0.88	 0.85	 0.92
+Butyric acid	 0.88 	 1.0000 	 t	 0.88	 0.85	 0.92
+Butyric acid	 0.87 	 0.4754 	 t	 0.88	 0.85	 0.92
+Betaine	 3.89 	 0.1878 	 s	 3.89	 3.84	 3.93
+Betaine	 3.25 	 1.0000 	 s	 3.25	 3.19	 3.31
+Betaine	 3.25 	 1.0000 	 s	 3.25	 3.19	 3.31
+Creatine	 3.92 	 0.5503 	 s	 3.92	 3.85	 3.94
+Creatine	 3.02 	 1.0000 	 s	 3.02	 2.98	 3.07
+Creatine	 3.02 	 1.0000 	 s	 3.02	 2.98	 3.07
+cis-Aconitic acid	 3.43	 0.9490	 d	 3.43	 3.42	 3.45
+cis-Aconitic acid	 3.44	 1.0000	 d	 3.43	 3.42	 3.45
+cis-Aconitic acid	 6.58	 0.4805	 s	 6.58	 6.56	 6.59
+cis-Aconitic acid	 6.58	 0.4805	 s	 6.58	 6.56	 6.59
+Dimethylamine	 2.50 	 1.0000 	 s	 2.5	 2.49	 2.51
+Dimethylamine	 2.50 	 1.0000 	 s	 2.5	 2.49	 2.51
+Dimethylglycine	 2.91	 1.0000	 s	 2.91	 2.9	 2.93
+Dimethylglycine	 3.71	 0.2757	 s	 3.71	 3.7	 3.72
+Dimethylglycine	 3.71	 0.2757	 s	 3.71	 3.7	 3.72
+Citric acid	 2.67 	 0.6328 	 d	 2.65	 2.61	 2.7
+Citric acid	 2.64 	 0.9238 	 d	 2.65	 2.61	 2.7
+Citric acid	 2.54 	 1.0000 	 d	 2.53	 2.48	 2.57
+Citric acid	 2.51 	 0.5785 	 d	 2.53	 2.48	 2.57
+Citric acid	 2.54 	 1.0000 	 d	 2.53	 2.48	 2.57
+Citric acid	 2.51 	 0.5785 	 d	 2.53	 2.48	 2.57
+Glycolic acid	 3.94 	 1.0000	 s	 3.94	 3.8	 4.06
+Glycolic acid	 3.94 	 1.0000	 s	 3.94	 3.8	 4.06
+D-Glucose	 3.25 	 0.5760	 m	 3.23	 3.2	 3.26
+D-Glucose	 3.23 	 0.7039	 m	 3.23	 3.2	 3.26
+D-Glucose	 3.22 	 0.5007	 m	 3.23	 3.2	 3.26
+D-Glucose	 3.54 	 0.3547	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.53 	 0.3549	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.52 	 0.2997	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.51 	 0.2945	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.49 	 0.4225	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.48 	 1.0000	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.46 	 0.9013	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.46 	 0.2721	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.45 	 0.4156	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.45 	 0.4213	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.44 	 0.3995	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.44 	 0.3680	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.42 	 0.2840	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.41 	 0.8390	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.40 	 0.4679	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.39 	 0.8179	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.39 	 0.2779	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.38 	 0.3189	 m	 3.45	 3.36	 3.56
+D-Glucose	 3.90 	 0.4822	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.90 	 0.5022	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.88 	 0.6194	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.88 	 0.6200	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.85 	 0.2246	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.84 	 0.2758	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.83 	 0.2722	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.82 	 0.6359	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.82 	 0.2466	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.81 	 0.2183	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.80 	 0.1966	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.77 	 0.3464	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.76 	 0.3271	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.75 	 0.2639	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.74 	 0.1464	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.73 	 0.5426	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.72 	 0.7939	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.71 	 0.4751	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.70 	 0.6160	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.70 	 0.5539	 m	 3.79	 3.67	 3.92
+D-Glucose	 3.69 	 0.3486	 m	 3.79	 3.67	 3.92
+D-Glucose	 4.64 	 0.6349	 d	 4.63	 4.61	 4.65
+D-Glucose	 4.63 	 0.6456	 d	 4.63	 4.61	 4.65
+D-Glucose	 5.23 	 0.5574	 d	 5.22	 5.21	 5.24
+D-Glucose	 5.22 	 0.5618	 d	 5.22	 5.21	 5.24
+D-Glucose	 5.23 	 0.5574	 d	 5.22	 5.21	 5.24
+D-Glucose	 5.22 	 0.5618	 d	 5.22	 5.21	 5.24
+Guanidoacetic acid	 3.78 	 1.0000 	 s	 3.78	 3.71	 3.84
+Guanidoacetic acid	 3.78 	 1.0000 	 s	 3.78	 3.71	 3.84
+Formic acid	 8.44	 1.0000	 s	 8.44	 8.38	 8.51
+Formic acid	 8.44	 1.0000	 s	 8.44	 8.38	 8.51
+D-Galactose	 3.46 	 0.4695 	 dd	 3.48	 3.45	 3.51
+D-Galactose	 3.48 	 0.5036 	 dd	 3.48	 3.45	 3.51
+D-Galactose	 3.48 	 0.6077 	 dd	 3.48	 3.45	 3.51
+D-Galactose	 3.50 	 0.5261 	 dd	 3.48	 3.45	 3.51
+D-Galactose	 3.62 	 0.5521 	 dd	 3.64	 3.61	 3.66
+D-Galactose	 3.63 	 0.5496 	 dd	 3.64	 3.61	 3.66
+D-Galactose	 3.64 	 0.4081 	 dd	 3.64	 3.61	 3.66
+D-Galactose	 3.65 	 0.4268 	 dd	 3.64	 3.61	 3.66
+D-Galactose	 3.68 	 0.2687 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.69 	 0.3528 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.70 	 0.4021 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.70 	 0.4061 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.71 	 0.4695 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.72 	 0.4057 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.72 	 0.3853 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.73 	 0.5522 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.73 	 0.5505 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.74 	 0.8662 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.75 	 1.0000 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.76 	 0.4687 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.77 	 0.1270 	 m	 3.72	 3.67	 3.77
+D-Galactose	 3.78 	 0.1459 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.79 	 0.1910 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.80 	 0.3137 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.81 	 0.3251 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.83 	 0.2718 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.84 	 0.2579 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.85 	 0.1050 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.86 	 0.1240 	 m	 3.82	 3.78	 3.87
+D-Galactose	 3.92 	 0.5421 	 d	 3.92	 3.91	 3.93
+D-Galactose	 3.92 	 0.5125 	 d	 3.92	 3.91	 3.93
+D-Galactose	 3.98 	 0.2607 	 d	 3.98	 3.97	 3.99
+D-Galactose	 3.98 	 0.2189 	 d	 3.98	 3.97	 3.99
+D-Galactose	 4.06 	 0.1165 	 t	 4.07	 4.06	 4.09
+D-Galactose	 4.07 	 0.1565 	 t	 4.07	 4.06	 4.09
+D-Galactose	 4.08 	 0.0910 	 t	 4.07	 4.06	 4.09
+D-Galactose	 5.25 	 0.1585 	 d	 5.26	 5.25	 5.27
+D-Galactose	 5.26 	 0.1559 	 d	 5.26	 5.25	 5.27
+D-Galactose	 5.25 	 0.1585 	 d	 5.26	 5.25	 5.27
+D-Galactose	 5.26 	 0.1559 	 d	 5.26	 5.25	 5.27
+L-Malic acid	 2.33	 0.7902	 dd	 2.35	 2.32	 2.38
+L-Malic acid	 2.34	 0.8080	 dd	 2.35	 2.32	 2.38
+L-Malic acid	 2.35	 0.9234	 dd	 2.35	 2.32	 2.38
+L-Malic acid	 2.37	 0.9405	 dd	 2.35	 2.32	 2.38
+L-Malic acid	 2.65	 0.9638	 dd	 2.66	 2.63	 2.69
+L-Malic acid	 2.65	 1.0000	 dd	 2.66	 2.63	 2.69
+L-Malic acid	 2.67	 0.8319	 dd	 2.66	 2.63	 2.69
+L-Malic acid	 2.68	 0.8517	 dd	 2.66	 2.63	 2.69
+L-Malic acid	 4.28	 0.6540	 dd	 4.29	 4.27	 4.32
+L-Malic acid	 4.29	 0.7024	 dd	 4.29	 4.27	 4.32
+L-Malic acid	 4.30	 0.6707	 dd	 4.29	 4.27	 4.32
+L-Malic acid	 4.31	 0.6716	 dd	 4.29	 4.27	 4.32
+L-Malic acid	 4.28	 0.6540	 dd	 4.29	 4.27	 4.32
+L-Malic acid	 4.29	 0.7024	 dd	 4.29	 4.27	 4.32
+L-Malic acid	 4.30	 0.6707	 dd	 4.29	 4.27	 4.32
+L-Malic acid	 4.31	 0.6716	 dd	 4.29	 4.27	 4.32
+L-Isoleucine	 0.91	 0.4271	 t	 0.93	 0.91	 0.95
+L-Isoleucine	 0.93	 1.0000	 t	 0.93	 0.91	 0.95
+L-Isoleucine	 0.94	 0.4869	 t	 0.93	 0.91	 0.95
+L-Isoleucine	 0.99	 0.9347	 d	 1	 0.98	 1.01
+L-Isoleucine	 1.00	 0.9620	 d	 1	 0.98	 1.01
+L-Isoleucine	 1.21	 0.0179	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.22	 0.0507	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.23	 0.0229	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.23	 0.0548	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.24	 0.0569	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.24	 0.0668	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.25	 0.0431	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.25	 0.0579	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.26	 0.0621	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.26	 0.0722	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.27	 0.0219	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.27	 0.0621	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.28	 0.0182	 ddd	 1.25	 1.2	 1.29
+L-Isoleucine	 1.42	 0.0192	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.43	 0.0217	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.44	 0.0595	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.44	 0.0656	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.45	 0.0625	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.46	 0.0718	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.46	 0.0685	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.47	 0.0548	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.47	 0.0533	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.48	 0.0485	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.48	 0.0159	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.49	 0.0144	 ddd	 1.46	 1.42	 1.5
+L-Isoleucine	 1.94	 0.0081	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.94	 0.0147	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.95	 0.0287	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.95	 0.0461	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.96	 0.0454	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.96	 0.0545	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.97	 0.0559	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.97	 0.0554	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.97	 0.0537	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.98	 0.0450	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.98	 0.0436	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.99	 0.0211	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.99	 0.0276	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 1.99	 0.0138	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 2.00	 0.0076	 m	 1.97	 1.93	 2.01
+L-Isoleucine	 3.66	 0.3633	 d	 3.66	 3.65	 3.67
+L-Isoleucine	 3.66	 0.3645	 d	 3.66	 3.65	 3.67
+L-Isoleucine	 3.66	 0.3633	 d	 3.66	 3.65	 3.67
+L-Isoleucine	 3.66	 0.3645	 d	 3.66	 3.65	 3.67
+L-Histidine	 3.13	 0.2477	 dd	 3.16	 3.12	 3.18
+L-Histidine	 3.14	 0.2564	 dd	 3.16	 3.12	 3.18
+L-Histidine	 3.16	 0.4247	 dd	 3.16	 3.12	 3.18
+L-Histidine	 3.17	 0.4393	 dd	 3.16	 3.12	 3.18
+L-Histidine	 3.23	 0.4161	 dd	 3.23	 3.22	 3.28
+L-Histidine	 3.24	 0.4509	 dd	 3.23	 3.22	 3.28
+L-Histidine	 3.25	 0.2500	 dd	 3.23	 3.22	 3.28
+L-Histidine	 3.25	 0.2368	 dd	 3.23	 3.22	 3.28
+L-Histidine	 3.26	 0.2572	 dd	 3.23	 3.22	 3.28
+L-Histidine	 3.97	 0.5138	 dd	 3.98	 3.96	 4.01
+L-Histidine	 3.98	 0.2515	 dd	 3.98	 3.96	 4.01
+L-Histidine	 3.98	 0.5953	 dd	 3.98	 3.96	 4.01
+L-Histidine	 3.99	 0.6203	 dd	 3.98	 3.96	 4.01
+L-Histidine	 3.99	 0.2734	 dd	 3.98	 3.96	 4.01
+L-Histidine	 3.99	 0.4932	 dd	 3.98	 3.96	 4.01
+L-Histidine	 7.09	 1.0000	 d	 7.09	 7.07	 7.11
+L-Histidine	 7.09	 0.9588	 d	 7.09	 7.07	 7.11
+L-Histidine	 7.90	 0.8629	 d	 7.9	 7.88	 7.92
+L-Histidine	 7.90	 0.8028	 d	 7.9	 7.88	 7.92
+L-Histidine	 7.90	 0.8629	 d	 7.9	 7.88	 7.92
+L-Histidine	 7.90	 0.8028	 d	 7.9	 7.88	 7.92
+L-Lysine	 1.41	 0.0156	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.41	 0.0314	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.41	 0.0393	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.41	 0.0514	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.41	 0.0420	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.42	 0.0559	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.43	 0.0414	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.43	 0.0512	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.43	 0.0404	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.44	 0.1007	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.45	 0.0534	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.46	 0.1040	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.47	 0.0493	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.47	 0.0544	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.47	 0.0531	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.48	 0.0515	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.49	 0.0433	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.50	 0.0357	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.50	 0.0552	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.50	 0.0536	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.50	 0.0513	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.52	 0.0573	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.53	 0.0301	 m	 1.46	 1.38	 1.55
+L-Lysine	 1.69	 0.1760	 m	 1.72	 1.67	 1.75
+L-Lysine	 1.70	 0.3853	 m	 1.72	 1.67	 1.75
+L-Lysine	 1.70	 0.3390	 m	 1.72	 1.67	 1.75
+L-Lysine	 1.71	 0.4606	 m	 1.72	 1.67	 1.75
+L-Lysine	 1.73	 0.3058	 m	 1.72	 1.67	 1.75
+L-Lysine	 1.74	 0.0985	 m	 1.72	 1.67	 1.75
+L-Lysine	 1.74	 0.1040	 m	 1.72	 1.67	 1.75
+L-Lysine	 1.85	 0.0603	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.87	 0.1256	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.88	 0.3211	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.88	 0.1625	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.89	 0.3291	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.89	 0.2927	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.89	 0.3216	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.90	 0.3133	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.90	 0.2151	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.91	 0.3305	 m	 1.89	 1.83	 1.95
+L-Lysine	 1.92	 0.1179	 m	 1.89	 1.83	 1.95
+L-Lysine	 3.00	 0.6964	 t	 3.02	 3	 3.04
+L-Lysine	 3.02	 1.0000	 t	 3.02	 3	 3.04
+L-Lysine	 3.03	 0.6524	 t	 3.02	 3	 3.04
+L-Lysine	 3.00	 0.6964	 t	 3.02	 3	 3.04
+L-Lysine	 3.02	 1.0000	 t	 3.02	 3	 3.04
+L-Lysine	 3.03	 0.6524	 t	 3.02	 3	 3.04
+L-Lysine	 3.74	 0.3468	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.75	 0.6259	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.76	 0.3484	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.74	 0.3468	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.75	 0.6259	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.76	 0.3484	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.74	 0.3468	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.75	 0.6259	 t	 3.75	 3.72	 3.77
+L-Lysine	 3.76	 0.3484	 t	 3.75	 3.72	 3.77
+L-Cystine	 3.16	 0.0237	 dd	 3.18	 3.15	 3.21
+L-Cystine	 3.17	 0.0235	 dd	 3.18	 3.15	 3.21
+L-Cystine	 3.19	 0.0297	 dd	 3.18	 3.15	 3.21
+L-Cystine	 3.20	 0.0306	 dd	 3.18	 3.15	 3.21
+L-Cystine	 3.36	 0.0300	 dd	 3.38	 3.35	 3.4
+L-Cystine	 3.37	 0.0301	 dd	 3.38	 3.35	 3.4
+L-Cystine	 3.39	 0.0241	 dd	 3.38	 3.35	 3.4
+L-Cystine	 3.39	 0.0245	 dd	 3.38	 3.35	 3.4
+L-Cystine	 4.09	 0.0341	 dd	 4.1	 4.08	 4.13
+L-Cystine	 4.10	 0.0401	 dd	 4.1	 4.08	 4.13
+L-Cystine	 4.11	 0.0383	 dd	 4.1	 4.08	 4.13
+L-Cystine	 4.11	 0.0340	 dd	 4.1	 4.08	 4.13
+L-Cystine	 4.09	 0.0341	 dd	 4.1	 4.08	 4.13
+L-Cystine	 4.10	 0.0401	 dd	 4.1	 4.08	 4.13
+L-Cystine	 4.11	 0.0383	 dd	 4.1	 4.08	 4.13
+L-Cystine	 4.11	 0.0340	 dd	 4.1	 4.08	 4.13
+Isocitric acid	 3.97 	 0.6217 	 d	 3.98	 3.96	 3.99
+Isocitric acid	 3.98 	 0.3423 	 d	 3.98	 3.96	 3.99
+Isocitric acid	 2.95 	 0.2861 	 m	 2.97	 2.94	 3
+Isocitric acid	 2.96 	 0.3979 	 m	 2.97	 2.94	 3
+Isocitric acid	 2.97 	 0.6356 	 m	 2.97	 2.94	 3
+Isocitric acid	 2.98 	 0.5274 	 m	 2.97	 2.94	 3
+Isocitric acid	 2.98 	 0.3954 	 m	 2.97	 2.94	 3
+Isocitric acid	 2.99 	 0.1988 	 m	 2.97	 2.94	 3
+Isocitric acid	 2.40 	 0.4517 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.41 	 0.4943 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.43 	 0.9049 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.44 	 0.8655 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.48 	 0.8050 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.50 	 1.0000 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.52 	 0.4768 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.53 	 0.4452 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.40 	 0.4517 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.41 	 0.4943 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.43 	 0.9049 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.44 	 0.8655 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.48 	 0.8050 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.50 	 1.0000 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.52 	 0.4768 	 dq	 2.46	 2.38	 2.54
+Isocitric acid	 2.53 	 0.4452 	 dq	 2.46	 2.38	 2.54
+Taurine	 3.24	 0.4644	 t	 3.25	 3.22	 3.28
+Taurine	 3.25	 1.0000	 t	 3.25	 3.22	 3.28
+Taurine	 3.26	 0.6359	 t	 3.25	 3.22	 3.28
+Taurine	 3.24	 0.4644	 t	 3.25	 3.22	 3.28
+Taurine	 3.25	 1.0000	 t	 3.25	 3.22	 3.28
+Taurine	 3.26	 0.6359	 t	 3.25	 3.22	 3.28
+Taurine	 3.40	 0.5930	 t	 3.42	 3.37	 3.46
+Taurine	 3.42	 0.9022	 t	 3.42	 3.37	 3.46
+Taurine	 3.43	 0.3847	 t	 3.42	 3.37	 3.46
+Taurine	 3.40	 0.5930	 t	 3.42	 3.37	 3.46
+Taurine	 3.42	 0.9022	 t	 3.42	 3.37	 3.46
+Taurine	 3.43	 0.3847	 t	 3.42	 3.37	 3.46
+Taurine	 3.40	 0.5930	 t	 3.42	 3.37	 3.46
+Taurine	 3.42	 0.9022	 t	 3.42	 3.37	 3.46
+Taurine	 3.43	 0.3847	 t	 3.42	 3.37	 3.46
+Creatinine	 3.03 	 1.0000	 s	 3.03	 2.92	 3.12
+Creatinine	 4.05 	 0.4374	 s	 4.05	 3.97	 4.12
+Creatinine	 4.05 	 0.4374	 s	 4.05	 3.97	 4.12
+L-Glutamine	 2.086	 0.0438	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.101	 0.3039	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.106	 0.2769	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.115	 0.4611	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.118	 0.6724	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.120	 0.5773	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.122	 0.4401	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.128	 0.3889	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.132	 0.8706	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.136	 0.4371	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.145	 0.3668	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.148	 0.3791	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.162	 0.0404	 m	 2.125	 2.062	 2.188
+L-Glutamine	 2.392	 0.1213	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.407	 0.1308	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.422	 0.6081	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.432	 0.5646	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.438	 0.8876	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.447	 0.6860	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.449	 0.6285	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.453	 0.5102	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.464	 0.4812	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.478	 0.0929	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.480	 0.0780	 m	 2.446	 2.375	 2.511
+L-Glutamine	 2.495	 0.0684	 m	 2.446	 2.375	 2.511
+L-Glutamine	 3.754	 0.5095	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.766	 1.0000	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.778	 0.5318	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.778	 0.5318	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.754	 0.5095	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.766	 1.0000	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.778	 0.5318	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.778	 0.5318	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.754	 0.5095	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.766	 1.0000	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.778	 0.5318	 t	 3.766	 3.726	 3.81
+L-Glutamine	 3.778	 0.5318	 t	 3.766	 3.726	 3.81
+D-Fructose	 3.55	 0.0503	 m	 3.58	 3.54	 3.62
+D-Fructose	 3.56	 0.2703	 m	 3.58	 3.54	 3.62
+D-Fructose	 3.57	 0.1206	 m	 3.58	 3.54	 3.62
+D-Fructose	 3.58	 0.3399	 m	 3.58	 3.54	 3.62
+D-Fructose	 3.59	 0.1106	 m	 3.58	 3.54	 3.62
+D-Fructose	 3.61	 0.0423	 m	 3.58	 3.54	 3.62
+D-Fructose	 3.66	 0.0429	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.66	 0.0475	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.67	 0.0395	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.68	 0.0459	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.69	 0.0573	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.69	 0.0298	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.70	 0.1880	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.70	 0.1688	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.71	 0.3355	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.72	 0.1684	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.72	 0.1766	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.73	 0.2595	 m	 3.69	 3.66	 3.74
+D-Fructose	 3.80	 0.2786	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.80	 0.0690	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.81	 0.3717	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.82	 0.0815	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.83	 0.0369	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.83	 0.0318	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.84	 0.0397	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.84	 0.0368	 m	 3.8	 3.79	 3.85
+D-Fructose	 3.89	 0.1934	 dd	 3.9	 3.88	 3.92
+D-Fructose	 3.90	 0.2075	 dd	 3.9	 3.88	 3.92
+D-Fructose	 3.91	 0.1300	 dd	 3.9	 3.88	 3.92
+D-Fructose	 3.91	 0.1522	 dd	 3.9	 3.88	 3.92
+D-Fructose	 4.00	 0.1686	 t	 4	 4	 4.01
+D-Fructose	 4.00	 0.1928	 t	 4	 4	 4.01
+D-Fructose	 4.01	 0.1662	 t	 4	 4	 4.01
+D-Fructose	 4.01	 0.1156	 t	 4	 4	 4.01
+D-Fructose	 4.01	 0.1662	 dd	 4.03	 4.01	 4.05
+D-Fructose	 4.01	 0.1156	 dd	 4.03	 4.01	 4.05
+D-Fructose	 4.02	 0.2072	 dd	 4.03	 4.01	 4.05
+D-Fructose	 4.02	 0.1673	 dd	 4.03	 4.01	 4.05
+D-Fructose	 4.04	 0.1692	 dd	 4.03	 4.01	 4.05
+D-Fructose	 4.04	 0.1551	 dd	 4.03	 4.01	 4.05
+D-Fructose	 4.11	 0.1342	 d	 4.12	 4.11	 4.13
+D-Fructose	 4.12	 0.1649	 d	 4.12	 4.11	 4.13
+D-Fructose	 4.11	 0.1342	 d	 4.12	 4.11	 4.13
+D-Fructose	 4.12	 0.1649	 d	 4.12	 4.11	 4.13
+L-Leucine	 0.94	 0.4975	 d	 0.94	 0.93	 0.95
+L-Leucine	 0.95	 1.0000	 d	 0.94	 0.93	 0.95
+L-Leucine	 0.94	 0.4975	 d	 0.95	 0.94	 0.96
+L-Leucine	 0.95	 1.0000	 d	 0.95	 0.94	 0.96
+L-Leucine	 0.96	 0.5487	 d	 0.95	 0.94	 0.96
+L-Leucine	 1.65	 0.0577	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.67	 0.0845	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.67	 0.0709	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.68	 0.0659	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.69	 0.1526	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.69	 0.0872	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.70	 0.1367	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.71	 0.0935	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.71	 0.1686	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.72	 0.0811	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.73	 0.0662	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.73	 0.0806	 m	 1.7	 1.64	 1.76
+L-Leucine	 1.75	 0.0644	 m	 1.7	 1.64	 1.76
+L-Leucine	 3.71	 0.0709	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.72	 0.0302	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.72	 0.1468	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.73	 0.0344	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.73	 0.0410	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.73	 0.0334	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.74	 0.0953	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.71	 0.0709	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.72	 0.0302	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.72	 0.1468	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.73	 0.0344	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.73	 0.0410	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.73	 0.0334	 m	 3.73	 3.7	 3.75
+L-Leucine	 3.74	 0.0953	 m	 3.73	 3.7	 3.75
+L-Methionine	 2.21 	 0.0231	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.19 	 0.0362	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.18 	 0.0376	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.18 	 0.0553	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.17 	 0.0518	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.16 	 0.0289	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.15 	 0.0254	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.14 	 0.0297	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.12 	 1.0000	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.11 	 0.0928	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.10 	 0.0582	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.08 	 0.0336	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.08 	 0.0336	 m	 2.15	 2.01	 2.3
+L-Methionine	 2.64 	 0.1310	 t	 2.63	 2.55	 2.7
+L-Methionine	 2.63 	 0.2540	 t	 2.63	 2.55	 2.7
+L-Methionine	 2.61 	 0.1505	 t	 2.63	 2.55	 2.7
+L-Methionine	 3.86 	 0.0555	 m	 3.85	 3.77	 3.91
+L-Methionine	 3.85 	 0.0676	 m	 3.85	 3.77	 3.91
+L-Methionine	 3.84 	 0.0562	 m	 3.85	 3.77	 3.91
+L-Methionine	 3.86 	 0.0555	 m	 3.85	 3.77	 3.91
+L-Methionine	 3.85 	 0.0676	 m	 3.85	 3.77	 3.91
+L-Methionine	 3.84 	 0.0562	 m	 3.85	 3.77	 3.91
+p-Hydroxyphenylacetic acid	 3.44	 1.0000	 s	 3.44	 3.43	 3.45
+p-Hydroxyphenylacetic acid	 6.84	 0.4145	 d	 6.85	 6.83	 6.87
+p-Hydroxyphenylacetic acid	 6.85	 0.1689	 d	 6.85	 6.83	 6.87
+p-Hydroxyphenylacetic acid	 6.85	 0.1381	 d	 6.85	 6.83	 6.87
+p-Hydroxyphenylacetic acid	 6.86	 0.4744	 d	 6.85	 6.83	 6.87
+p-Hydroxyphenylacetic acid	 7.15	 0.3727	 d	 7.15	 7.14	 7.18
+p-Hydroxyphenylacetic acid	 7.16	 0.3551	 d	 7.15	 7.14	 7.18
+p-Hydroxyphenylacetic acid	 7.15	 0.3727	 d	 7.15	 7.14	 7.18
+p-Hydroxyphenylacetic acid	 7.16	 0.3551	 d	 7.15	 7.14	 7.18
+Acetic acid	 1.91	 1.0000	 s	 1.91	 1.89	 1.93
+Acetic acid	 1.91	 1.0000	 s	 1.91	 1.89	 1.93
+Trimethylamine	3.25 	 1.0000 	 s	 3.25	 3.22	 3.27
+Trimethylamine	3.25 	 1.0000 	 s	 3.25	 3.22	 3.27
+Nicotinic acid	 7.50	 0.5494	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 7.50	 0.5616	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 7.51	 0.5682	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 7.51	 0.5898	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 7.52	 0.5755	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 7.52	 0.5798	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 7.52	 0.5735	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 7.53	 0.5808	 ddd	 7.51	 7.49	 7.54
+Nicotinic acid	 8.23	 0.4819	 dt	 8.24	 8.22	 8.26
+Nicotinic acid	 8.24	 0.7718	 dt	 8.24	 8.22	 8.26
+Nicotinic acid	 8.24	 0.5005	 dt	 8.24	 8.22	 8.26
+Nicotinic acid	 8.25	 0.4660	 dt	 8.24	 8.22	 8.26
+Nicotinic acid	 8.25	 0.7393	 dt	 8.24	 8.22	 8.26
+Nicotinic acid	 8.25	 0.4747	 dt	 8.24	 8.22	 8.26
+Nicotinic acid	 8.59	 0.7124	 dd	 8.6	 8.57	 8.61
+Nicotinic acid	 8.60	 0.7386	 dd	 8.6	 8.57	 8.61
+Nicotinic acid	 8.60	 0.7155	 dd	 8.6	 8.57	 8.61
+Nicotinic acid	 8.60	 0.7048	 dd	 8.6	 8.57	 8.61
+Nicotinic acid	 8.93	 0.9991	 dd	 8.93	 8.91	 8.95
+Nicotinic acid	 8.93	 1.0000	 dd	 8.93	 8.91	 8.95
+Nicotinic acid	 8.93	 0.9991	 dd	 8.93	 8.91	 8.95
+Nicotinic acid	 8.93	 1.0000	 dd	 8.93	 8.91	 8.95
+Succinic acid	 2.39 	 1.0000	 s	 2.39	 2.32	 2.48
+Succinic acid	 2.39 	 1.0000	 s	 2.39	 2.32	 2.48
+Hippuric acid	 3.95	 1.0000	 d	 3.96	 3.94	 3.97
+Hippuric acid	 3.96	 0.9673	 d	 3.96	 3.94	 3.97
+Hippuric acid	 7.52	 0.2803	 non	 7.54	 7.52	 7.56
+Hippuric acid	 7.53	 0.1232	 non	 7.54	 7.52	 7.56
+Hippuric acid	 7.54	 0.5759	 non	 7.54	 7.52	 7.56
+Hippuric acid	 7.54	 0.5632	 non	 7.54	 7.52	 7.56
+Hippuric acid	 7.55	 0.1605	 non	 7.54	 7.52	 7.56
+Hippuric acid	 7.55	 0.4110	 non	 7.54	 7.52	 7.56
+Hippuric acid	 7.61	 0.1022	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.61	 0.2074	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.61	 0.1333	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.62	 0.0912	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.62	 0.2841	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.63	 0.0988	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.63	 0.0616	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.64	 0.1131	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.64	 0.0671	 tt	 7.62	 7.6	 7.64
+Hippuric acid	 7.81	 0.4922	 dd	 7.82	 7.81	 7.83
+Hippuric acid	 7.81	 0.6328	 dd	 7.82	 7.81	 7.83
+Hippuric acid	 7.83	 0.5421	 dd	 7.82	 7.81	 7.83
+Hippuric acid	 7.83	 0.4837	 dd	 7.82	 7.81	 7.83
+Hippuric acid	 7.81	 0.4922	 dd	 7.82	 7.81	 7.83
+Hippuric acid	 7.81	 0.6328	 dd	 7.82	 7.81	 7.83
+Hippuric acid	 7.83	 0.5421	 dd	 7.82	 7.81	 7.83
+Hippuric acid	 7.83	 0.4837	 dd	 7.82	 7.81	 7.83
+Citrulline	 1.48	 0.0343	 m	 1.56	 1.46	 1.66
+Citrulline	 1.49	 0.0978	 m	 1.56	 1.46	 1.66
+Citrulline	 1.51	 0.1861	 m	 1.56	 1.46	 1.66
+Citrulline	 1.52	 0.2571	 m	 1.56	 1.46	 1.66
+Citrulline	 1.53	 0.2773	 m	 1.56	 1.46	 1.66
+Citrulline	 1.53	 0.2782	 m	 1.56	 1.46	 1.66
+Citrulline	 1.54	 0.3217	 m	 1.56	 1.46	 1.66
+Citrulline	 1.55	 0.2741	 m	 1.56	 1.46	 1.66
+Citrulline	 1.56	 0.2578	 m	 1.56	 1.46	 1.66
+Citrulline	 1.58	 0.3052	 m	 1.56	 1.46	 1.66
+Citrulline	 1.59	 0.2735	 m	 1.56	 1.46	 1.66
+Citrulline	 1.59	 0.2447	 m	 1.56	 1.46	 1.66
+Citrulline	 1.60	 0.3063	 m	 1.56	 1.46	 1.66
+Citrulline	 1.60	 0.1546	 m	 1.56	 1.46	 1.66
+Citrulline	 1.61	 0.2263	 m	 1.56	 1.46	 1.66
+Citrulline	 1.62	 0.1309	 m	 1.56	 1.46	 1.66
+Citrulline	 1.64	 0.0456	 m	 1.56	 1.46	 1.66
+Citrulline	 1.80	 0.0767	 m	 1.87	 1.79	 1.94
+Citrulline	 1.82	 0.1232	 m	 1.87	 1.79	 1.94
+Citrulline	 1.83	 0.3049	 m	 1.87	 1.79	 1.94
+Citrulline	 1.84	 0.4124	 m	 1.87	 1.79	 1.94
+Citrulline	 1.85	 0.4643	 m	 1.87	 1.79	 1.94
+Citrulline	 1.86	 0.3642	 m	 1.87	 1.79	 1.94
+Citrulline	 1.86	 0.6956	 m	 1.87	 1.79	 1.94
+Citrulline	 1.87	 0.5524	 m	 1.87	 1.79	 1.94
+Citrulline	 1.88	 0.3519	 m	 1.87	 1.79	 1.94
+Citrulline	 1.88	 0.4978	 m	 1.87	 1.79	 1.94
+Citrulline	 1.89	 0.1567	 m	 1.87	 1.79	 1.94
+Citrulline	 1.90	 0.2645	 m	 1.87	 1.79	 1.94
+Citrulline	 1.90	 0.1196	 m	 1.87	 1.79	 1.94
+Citrulline	 1.91	 0.1400	 m	 1.87	 1.79	 1.94
+Citrulline	 1.92	 0.0618	 m	 1.87	 1.79	 1.94
+Citrulline	 3.11	 0.3769	 q	 3.14	 3.07	 3.2
+Citrulline	 3.12	 0.4009	 q	 3.14	 3.07	 3.2
+Citrulline	 3.13	 0.9852	 q	 3.14	 3.07	 3.2
+Citrulline	 3.13	 1.0000	 q	 3.14	 3.07	 3.2
+Citrulline	 3.14	 0.8673	 q	 3.14	 3.07	 3.2
+Citrulline	 3.14	 0.9715	 q	 3.14	 3.07	 3.2
+Citrulline	 3.15	 0.3297	 q	 3.14	 3.07	 3.2
+Citrulline	 3.16	 0.3447	 q	 3.14	 3.07	 3.2
+Citrulline	 3.73	 0.6545	 dd	 3.74	 3.71	 3.78
+Citrulline	 3.74	 0.9112	 dd	 3.74	 3.71	 3.78
+Citrulline	 3.74	 0.8990	 dd	 3.74	 3.71	 3.78
+Citrulline	 3.76	 0.6509	 dd	 3.74	 3.71	 3.78
+Citrulline	 3.73	 0.6545	 dd	 3.74	 3.71	 3.78
+Citrulline	 3.74	 0.9112	 dd	 3.74	 3.71	 3.78
+Citrulline	 3.74	 0.8990	 dd	 3.74	 3.71	 3.78
+Citrulline	 3.76	 0.6509	 dd	 3.74	 3.71	 3.78
+N-Acetyl-L-aspartic acid	 7.93 	 0.0130 	 d	 7.93	 7.85	 7.98
+N-Acetyl-L-aspartic acid	 7.92 	 0.0127 	 d	 7.93	 7.85	 7.98
+N-Acetyl-L-aspartic acid	 4.42 	 0.0106 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 4.41 	 0.0126 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 4.41 	 0.0138 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 4.40 	 0.0165 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 4.40 	 0.0155 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 4.40 	 0.0133 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 4.39 	 0.0131 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 4.39 	 0.0107 	 ddd	 4.4	 4.35	 4.47
+N-Acetyl-L-aspartic acid	 2.72 	 0.0204 	 dd	 2.7	 2.63	 2.76
+N-Acetyl-L-aspartic acid	 2.71 	 0.0209 	 dd	 2.7	 2.63	 2.76
+N-Acetyl-L-aspartic acid	 2.69 	 0.0271 	 dd	 2.7	 2.63	 2.76
+N-Acetyl-L-aspartic acid	 2.69 	 0.0260 	 dd	 2.7	 2.63	 2.76
+N-Acetyl-L-aspartic acid	 2.53 	 0.0262 	 dd	 2.51	 2.42	 2.57
+N-Acetyl-L-aspartic acid	 2.51 	 0.0261 	 dd	 2.51	 2.42	 2.57
+N-Acetyl-L-aspartic acid	 2.50 	 0.0205 	 dd	 2.51	 2.42	 2.57
+N-Acetyl-L-aspartic acid	 2.49 	 0.0202 	 dd	 2.51	 2.42	 2.57
+N-Acetyl-L-aspartic acid	 2.03 	 0.2546 	 s	 2.03	 1.97	 2.09
+N-Acetyl-L-aspartic acid	 2.03 	 0.2546 	 s	 2.03	 1.97	 2.09
+Glycine	3.54	1	s	3.54	3.46	3.60
+L-Alanine	 1.47 	 1.0000	 d	 1.46	 1.43	 1.49
+L-Alanine	 1.45 	 0.9852	 d	 1.46	 1.43	 1.49
+L-Alanine	 3.79 	 0.0673	 q	 3.76	 3.72	 3.8
+L-Alanine	 3.77 	 0.2067	 q	 3.76	 3.72	 3.8
+L-Alanine	 3.76 	 0.2040	 q	 3.76	 3.72	 3.8
+L-Alanine	 3.74 	 0.0663	 q	 3.76	 3.72	 3.8
+L-Alanine	 3.79 	 0.0673	 q	 3.76	 3.72	 3.8
+L-Alanine	 3.77 	 0.2067	 q	 3.76	 3.72	 3.8
+L-Alanine	 3.76 	 0.2040	 q	 3.76	 3.72	 3.8
+L-Alanine	 3.74 	 0.0663	 q	 3.76	 3.72	 3.8
+Threonic acid	 3.61	 0.3385	 dd	 3.62	 3.6	 3.65
+Threonic acid	 3.62	 0.3594	 dd	 3.62	 3.6	 3.65
+Threonic acid	 3.63	 0.5696	 dd	 3.62	 3.6	 3.65
+Threonic acid	 3.64	 0.6072	 dd	 3.62	 3.6	 3.65
+Threonic acid	 3.68	 0.5731	 dd	 3.69	 3.67	 3.72
+Threonic acid	 3.69	 0.6229	 dd	 3.69	 3.67	 3.72
+Threonic acid	 3.70	 0.3411	 dd	 3.69	 3.67	 3.72
+Threonic acid	 3.71	 0.3518	 dd	 3.69	 3.67	 3.72
+Threonic acid	 3.97	 0.2243	 m	 3.98	 3.96	 4.01
+Threonic acid	 3.97	 0.1852	 m	 3.98	 3.96	 4.01
+Threonic acid	 3.97	 0.2556	 m	 3.98	 3.96	 4.01
+Threonic acid	 3.98	 0.2394	 m	 3.98	 3.96	 4.01
+Threonic acid	 3.98	 0.4596	 m	 3.98	 3.96	 4.01
+Threonic acid	 3.99	 0.2524	 m	 3.98	 3.96	 4.01
+Threonic acid	 3.99	 0.1983	 m	 3.98	 3.96	 4.01
+Threonic acid	 4.00	 0.2242	 m	 3.98	 3.96	 4.01
+Threonic acid	 4.06	 1.0000	 d	 4.06	 4.04	 4.07
+Threonic acid	 4.06	 0.9275	 d	 4.06	 4.04	 4.07
+Threonic acid	 4.06	 1.0000	 d	 4.06	 4.04	 4.07
+Threonic acid	 4.06	 0.9275	 d	 4.06	 4.04	 4.07
+1-Methylnicotinamide	4.479	1	s	4.48	4.45	4.51
+1-Methylnicotinamide	8.179	0.0542	d	8.2	8.16	8.22
+1-Methylnicotinamide	8.192	0.0749	d	8.2	8.16	8.22
+1-Methylnicotinamide	8.203	0.0579	d	8.2	8.16	8.22
+1-Methylnicotinamide	8.898	0.1036	d	8.91	8.89	8.93
+1-Methylnicotinamide	8.912	0.0992	d	8.91	8.89	8.93
+1-Methylnicotinamide	8.968	0.1029	d	8.97	8.95	8.99
+1-Methylnicotinamide	8.979	0.1009	d	8.97	8.95	8.99
+1-Methylnicotinamide	9.286	0.1849	s	9.29	9.27	9.3
+2_deoxyadenosine	2.54	0.1064	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.54	0.1097	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.55	0.1129	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.55	0.1111	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.56	0.1332	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.57	0.1356	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.57	0.1308	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.58	0.1261	ddd	2.56	2.53	2.58
+2_deoxyadenosine	2.79	0.1228	ddd	2.82	2.79	2.85
+2_deoxyadenosine	2.80	0.1601	ddd	2.82	2.79	2.85
+2_deoxyadenosine	2.81	0.1456	ddd	2.82	2.79	2.85
+2_deoxyadenosine	2.82	0.2194	ddd	2.82	2.79	2.85
+2_deoxyadenosine	2.83	0.1318	ddd	2.82	2.79	2.85
+2_deoxyadenosine	2.83	0.1279	ddd	2.82	2.79	2.85
+2_deoxyadenosine	2.84	0.1061	ddd	2.82	2.79	2.85
+2_deoxyadenosine	3.77	0.1593	dd	3.79	3.76	3.8
+2_deoxyadenosine	3.78	0.1649	dd	3.79	3.76	3.8
+2_deoxyadenosine	3.79	0.3019	dd	3.79	3.76	3.8
+2_deoxyadenosine	3.80	0.3090	dd	3.79	3.76	3.8
+2_deoxyadenosine	3.83	0.3144	dd	3.84	3.82	3.87
+2_deoxyadenosine	3.84	0.3275	dd	3.84	3.82	3.87
+2_deoxyadenosine	3.85	0.1695	dd	3.84	3.82	3.87
+2_deoxyadenosine	3.86	0.1677	dd	3.84	3.82	3.87
+2_deoxyadenosine	4.17	0.1274	q	4.18	4.16	4.2
+2_deoxyadenosine	4.18	0.3015	q	4.18	4.16	4.2
+2_deoxyadenosine	4.19	0.2851	q	4.18	4.16	4.2
+2_deoxyadenosine	4.19	0.1178	q	4.18	4.16	4.2
+2_deoxyadenosine	4.64	0.0990	dt	4.65	4.62	4.67
+2_deoxyadenosine	4.64	0.1873	dt	4.65	4.62	4.67
+2_deoxyadenosine	4.65	0.1946	dt	4.65	4.62	4.67
+2_deoxyadenosine	4.65	0.1829	dt	4.65	4.62	4.67
+2_deoxyadenosine	4.66	0.0888	dt	4.65	4.62	4.67
+2_deoxyadenosine	6.43	0.2214	t	6.44	6.42	6.47
+2_deoxyadenosine	6.44	0.3214	t	6.44	6.42	6.47
+2_deoxyadenosine	6.46	0.2173	t	6.44	6.42	6.47
+2_deoxyadenosine	8.18	1	s	8.18	8.17	8.2
+2_deoxyadenosine	8.29	0.9832	s	8.29	8.27	8.3
+Deoxycytidine	 2.33	 0.1179	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.35	 0.2099	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.35	 0.1022	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.36	 0.3533	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.36	 0.2055	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.37	 0.5588	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.38	 0.3085	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.39	 0.3143	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.39	 0.3182	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.40	 0.3240	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.40	 0.3223	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.41	 0.1313	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.42	 0.1169	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.42	 0.1229	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 2.43	 0.1094	 m	 2.38	 2.33	 2.43
+Deoxycytidine	 3.73	 0.3136	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 3.74	 0.4676	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 3.75	 0.4946	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 3.76	 0.5501	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 3.81	 0.4839	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 3.82	 0.5248	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 3.83	 0.3032	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 3.84	 0.3101	 m	 3.79	 3.73	 3.85
+Deoxycytidine	 4.02	 0.2003	 dt	 4.03	 4.02	 4.05
+Deoxycytidine	 4.03	 0.4128	 dt	 4.03	 4.02	 4.05
+Deoxycytidine	 4.03	 0.2873	 dt	 4.03	 4.02	 4.05
+Deoxycytidine	 4.04	 0.2873	 dt	 4.03	 4.02	 4.05
+Deoxycytidine	 4.04	 0.3871	 dt	 4.03	 4.02	 4.05
+Deoxycytidine	 4.04	 0.1837	 dt	 4.03	 4.02	 4.05
+Deoxycytidine	 4.44	 0.1598	 dt	 4.45	 4.43	 4.47
+Deoxycytidine	 4.44	 0.3225	 dt	 4.45	 4.43	 4.47
+Deoxycytidine	 4.45	 0.1910	 dt	 4.45	 4.43	 4.47
+Deoxycytidine	 4.45	 0.1998	 dt	 4.45	 4.43	 4.47
+Deoxycytidine	 4.46	 0.3070	 dt	 4.45	 4.43	 4.47
+Deoxycytidine	 4.46	 0.1501	 dt	 4.45	 4.43	 4.47
+Deoxycytidine	 5.87	 0.8198	 d	 5.88	 5.86	 5.9
+Deoxycytidine	 5.89	 0.8231	 d	 5.88	 5.86	 5.9
+Deoxycytidine	 6.26	 0.3366	 t	 6.27	 6.25	 6.29
+Deoxycytidine	 6.27	 0.6834	 t	 6.27	 6.25	 6.29
+Deoxycytidine	 6.28	 0.3311	 t	 6.27	 6.25	 6.29
+Deoxycytidine	 7.83	 1.0000	 d	 7.83	 7.82	 7.85
+Deoxycytidine	 7.84	 0.9720	 d	 7.83	 7.82	 7.85
+Deoxycytidine	 7.83	 1.0000	 d	 7.83	 7.82	 7.85
+Deoxycytidine	 7.84	 0.9720	 d	 7.83	 7.82	 7.85
+L-Lactic acid	 1.31	 0.9570	 dd	 1.32	 1.3	 1.34
+L-Lactic acid	 1.31	 0.9772	 dd	 1.32	 1.3	 1.34
+L-Lactic acid	 1.32	 0.9846	 dd	 1.32	 1.3	 1.34
+L-Lactic acid	 1.32	 1.0000	 dd	 1.32	 1.3	 1.34
+L-Lactic acid	 1.31	 0.9570	 q	 4.1	 1.3	 1.34
+L-Lactic acid	 1.31	 0.9772	 q	 4.1	 1.3	 1.34
+L-Lactic acid	 1.32	 0.9846	 q	 4.1	 1.3	 1.34
+L-Lactic acid	 1.32	 1.0000	 q	 4.1	 1.3	 1.34
+L-Lactic acid	 1.31	 0.9570	 q	 4.1	 1.3	 1.34
+L-Lactic acid	 1.31	 0.9772	 q	 4.1	 1.3	 1.34
+L-Lactic acid	 1.32	 0.9846	 q	 4.1	 1.3	 1.34
+L-Lactic acid	 1.32	 1.0000	 q	 4.1	 1.3	 1.34
+L-Glutamic acid	2.003	0.0981	m	2.029	1.986	2.071
+L-Glutamic acid	2.017	0.2012	m	2.029	1.986	2.071
+L-Glutamic acid	2.019	0.1818	m	2.029	1.986	2.071
+L-Glutamic acid	2.033	0.3980	m	2.029	1.986	2.071
+L-Glutamic acid	2.047	0.4714	m	2.029	1.986	2.071
+L-Glutamic acid	2.063	0.4999	m	2.029	1.986	2.071
+L-Glutamic acid	2.077	0.2561	m	2.121	2.070	2.173
+L-Glutamic acid	2.084	0.2129	m	2.121	2.070	2.173
+L-Glutamic acid	2.094	0.2216	m	2.121	2.070	2.173
+L-Glutamic acid	2.1	0.3796	m	2.121	2.070	2.173
+L-Glutamic acid	2.109	0.4033	m	2.121	2.070	2.173
+L-Glutamic acid	2.115	0.3359	m	2.121	2.070	2.173
+L-Glutamic acid	2.124	0.3306	m	2.121	2.070	2.173
+L-Glutamic acid	2.129	0.2373	m	2.121	2.070	2.173
+L-Glutamic acid	2.139	0.2104	m	2.121	2.070	2.173
+L-Glutamic acid	2.144	0.1443	m	2.121	2.070	2.173
+L-Glutamic acid	2.154	0.1349	m	2.121	2.070	2.173
+L-Glutamic acid	2.324	0.8001	m	2.341	2.279	2.403
+L-Glutamic acid	2.327	0.8077	m	2.341	2.279	2.403
+L-Glutamic acid	2.339	0.9945	m	2.341	2.279	2.403
+L-Glutamic acid	2.343	1	m	2.341	2.279	2.403
+L-Glutamic acid	2.353	0.6102	m	2.341	2.279	2.403
+L-Glutamic acid	2.359	0.6607	m	2.341	2.279	2.403
+L-Glutamic acid	3.736	0.5946	dd	3.747	3.716	3.777
+L-Glutamic acid	3.745	0.6797	dd	3.747	3.716	3.777
+L-Glutamic acid	3.75	0.6567	dd	3.747	3.716	3.777
+L-Glutamic acid	3.76	0.5805	dd	3.747	3.716	3.777
+Phenylacetate	3.53	1	s	3.53	3.51	3.54
+Phenylacetate	7.28	0.2920	m	7.29	7.27	7.31
+Phenylacetate	7.29	0.3769	m	7.29	7.27	7.31
+Phenylacetate	7.3	0.0861	m	7.29	7.27	7.31
+Phenylacetate	7.31	0.0882	m	7.29	7.27	7.31
+Phenylacetate	7.36	0.2166	m	7.36	7.35	7.39
+Phenylacetate	7.36	0.0554	m	7.36	7.35	7.39
+Phenylacetate	7.37	0.2340	m	7.36	7.35	7.39
+Phenylacetate	7.38	0.048	m	7.36	7.35	7.39
+Phenylacetate	7.38	0.1110	m	7.36	7.35	7.39
+TMAO	3.25	1	s	3.25	3.22	3.27
+D-Arabitol	3.566	0.4267	dd	3.57	3.54	3.60
+D-Arabitol	3.569	0.4343	dd	3.57	3.54	3.60
+D-Arabitol	3.580	0.5011	dd	3.57	3.54	3.60
+D-Arabitol	3.583	0.4983	dd	3.57	3.54	3.60
+D-Arabitol	3.648	0.3207	m	3.67	3.63	3.71
+D-Arabitol	3.658	0.4319	m	3.67	3.63	3.71
+D-Arabitol	3.664	0.6639	m	3.67	3.63	3.71
+D-Arabitol	3.667	0.5139	m	3.67	3.63	3.71
+D-Arabitol	3.671	0.7132	m	3.67	3.63	3.71
+D-Arabitol	3.676	1.0000	m	3.67	3.63	3.71
+D-Arabitol	3.678	0.8630	m	3.67	3.63	3.71
+D-Arabitol	3.690	0.1229	m	3.67	3.63	3.71
+D-Arabitol	3.700	0.0853	m	3.67	3.63	3.71
+D-Arabitol	3.739	0.2469	m	3.75	3.72	3.79
+D-Arabitol	3.744	0.2819	m	3.75	3.72	3.79
+D-Arabitol	3.754	0.3727	m	3.75	3.72	3.79
+D-Arabitol	3.758	0.2685	m	3.75	3.72	3.79
+D-Arabitol	3.764	0.1806	m	3.75	3.72	3.79
+D-Arabitol	3.769	0.1958	m	3.75	3.72	3.79
+D-Arabitol	3.824	0.4496	dd	3.84	3.81	3.87
+D-Arabitol	3.829	0.4110	dd	3.84	3.81	3.87
+D-Arabitol	3.843	0.3669	dd	3.84	3.81	3.87
+D-Arabitol	3.849	0.3266	dd	3.84	3.81	3.87
+D-Arabitol	3.925	0.2490	ddd	3.94	3.90	3.98
+D-Arabitol	3.928	0.2491	ddd	3.94	3.90	3.98
+D-Arabitol	3.934	0.3342	ddd	3.94	3.90	3.98
+D-Arabitol	3.936	0.4793	ddd	3.94	3.90	3.98
+D-Arabitol	3.939	0.2631	ddd	3.94	3.90	3.98
+D-Arabitol	3.945	0.2364	ddd	3.94	3.90	3.98
+D-Arabitol	3.948	0.2062	ddd	3.94	3.90	3.98
+L-Serine	3.84	0.7440	m	3.96	3.90	4.01
+L-Serine	3.83	0.8098	m	3.96	3.90	4.01
+L-Serine	3.83	0.8120	m	3.96	3.90	4.01
+L-Serine	3.82	0.6333	m	3.96	3.90	4.01
+L-Serine	4.00	0.2347	dd	3.83	3.80	3.86
+L-Serine	3.99	0.3108	dd	3.83	3.80	3.86
+L-Serine	3.97	0.8431	dd	3.83	3.80	3.86
+L-Serine	3.96	0.9172	dd	3.83	3.80	3.86
+L-Serine	3.95	0.7498	dd	3.83	3.80	3.86
+L-Serine	3.94	1.0000	dd	3.83	3.80	3.86
+L-Serine	3.93	0.2248	dd	3.83	3.80	3.86
+L-Serine	3.92	0.3351	dd	3.83	3.80	3.86
+Oxoglutaric acid	2.416	0.4847	t	2.428	2.407	2.446
+Oxoglutaric acid	2.428	1.0000	t	2.428	2.407	2.446
+Oxoglutaric acid	2.440	0.5016	t	2.428	2.407	2.446
+Oxoglutaric acid	2.984	0.5077	t	2.996	2.977	3.014
+Oxoglutaric acid	2.996	0.9996	t	2.996	2.977	3.014
+Oxoglutaric acid	3.007	0.4397	t	2.996	2.977	3.014
+Glyceric acid	 3.72	 0.4461	 m	 3.78	 3.7	 3.86
+Glyceric acid	 3.73	 0.6201	 m	 3.78	 3.7	 3.86
+Glyceric acid	 3.74	 0.7879	 m	 3.78	 3.7	 3.86
+Glyceric acid	 3.75	 0.9907	 m	 3.78	 3.7	 3.86
+Glyceric acid	 3.81	 0.8292	 m	 3.78	 3.7	 3.86
+Glyceric acid	 3.81	 1.0000	 m	 3.78	 3.7	 3.86
+Glyceric acid	 3.83	 0.5207	 m	 3.78	 3.7	 3.86
+Glyceric acid	 3.84	 0.5428	 m	 3.78	 3.7	 3.86
+Glyceric acid	 4.12	 0.4023	 m	 4.13	 4.12	 4.15
+Glyceric acid	 4.13	 0.4993	 m	 4.13	 4.12	 4.15
+Glyceric acid	 4.14	 0.5375	 m	 4.13	 4.12	 4.15
+Glyceric acid	 4.14	 0.5683	 m	 4.13	 4.12	 4.15
+Glyceric acid	 4.12	 0.4023	 m	 4.13	 4.12	 4.15
+Glyceric acid	 4.13	 0.4993	 m	 4.13	 4.12	 4.15
+Glyceric acid	 4.14	 0.5375	 m	 4.13	 4.12	 4.15
+Glyceric acid	 4.14	 0.5683	 m	 4.13	 4.12	 4.15

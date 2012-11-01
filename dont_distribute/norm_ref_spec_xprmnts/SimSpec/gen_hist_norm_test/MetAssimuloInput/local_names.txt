@@ -1,0 +1,50 @@
+Creatinine	Creatinine
+Hippuric_acid	Hippuric acid
+Citric_acid	Citric acid
+Glycine	Glycine
+TMAO	Trimethylamine N-oxide
+Histidine	L-Histidine
+phenylacetylglutamine	Alpha-N-Phenylacetyl-L-
+Taurine	Taurine
+glycolic_acid	Glycolic acid
+Formate	Formic acid
+Glutamine	L-Glutamine
+Lactate	L-Lactic acid
+lysine	L-Lysine
+cis-aconitic_acid	cis-Aconitic acid
+L_Tyrosine	L-Tyrosine
+Creatine	Creatine
+Dimethylamine	Dimethylamine
+guanidoacetic_acid	Guanidoacetic acid
+p-cresol_sulfate	p-Cresol sulfate
+L-alanine	L-Alanine
+Arabitol	D-Arabitol
+Isocitrate	Isocitric acid
+Betaine	Betaine
+N-methylnicotinic_acid	Trigonelline
+NMND	1-Methylnicotinamide
+acetate	Acetic acid
+succinic_acid	Succinic acid
+Threonic_acid	Threonic acid
+Trimethylamine	Trimethylamine
+p-Hydroxyphenylacetic acid	p-Hydroxyphenylacetic acid
+beta-D-fructose	D-Fructose
+Dimethylglycine	Dimethylglycine
+2-oxoglutarate	Oxoglutaric acid
+Galactose	D-Galactose
+Phenylacetate	Benzeneacetic acid
+L-carnosine	Carnosine
+leucine	L-Leucine
+Malic_acid	L-Malic acid
+2_hydroxybutyrate	2-Hydroxybutyric acid
+Methionine	L-Methionine
+Isoleucine	L-Isoleucine
+L-Glutamic_acid	L-Glutamic acid
+citrulline	Citrulline
+2_deoxycytidine	Deoxycytidine
+N-Acetyl-L-aspartic_acid	N-Acetyl-L-aspartic acid
+2_deoxyadenosine	Deoxyadenosine
+n-butyrate	Butyric acid
+L-serine	Serine
+glyceric_acid	Glyceric acid
+glyceric_acid	Glyceric acid
