@@ -105,7 +105,7 @@ hist_scale_frac_string = 'fraction of total';
 
 
 function expurgated = remove_values(values, baseline_pts, n_std_dev)
-    % Return an array of the entries in values that were more than 
+    % Return an array of the entries in values that were strictly more than 
     % n_std_dev standard deviations above 0. The size of one standard
     % deviation is calcualted from the first baseline_pts entries in
     % values. 
