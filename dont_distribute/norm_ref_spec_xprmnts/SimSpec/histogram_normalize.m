@@ -149,9 +149,15 @@ function [low_b, up_b] = mult_search_bounds_for(values, y_bins, ref_histogram, m
     % Return possibly improved lower and upper search bounds for
     % best_mult_for
     %
-    % Current implementationStarts with bounds of min_y/max_y and 
-    % max_y/min_y then steps in powers of 2 and chooses power of 2 interval
-    % that had minimum error
+    % min_y and max_y are the minimum and maximum values in the reference
+    % spectrum.
+    %
+    % Let min_v and max_v be the min and max values in the values array. 
+    % Then the current implementationStarts with bounds of min_y/max_v and 
+    % max_y/min_v. These initial bounds are the most conservative
+    % multipliers - they bring at least one value in the values list into
+    % the range [min_y,max_y]. Then the routine steps in powers of 2 and 
+    % chooses the power of 2 interval that had minimum error when binned.
     %
     % Assumes 0 < min_y <= max_y
     
@@ -160,9 +166,11 @@ function [low_b, up_b] = mult_search_bounds_for(values, y_bins, ref_histogram, m
     assert(min_y <= max_y, 'mult_search_bounds_for:min_at_most_max', ...
         'min_y must be no larger than max_y');
     
-    % Initialize the search bounds to (min_y/max_y) and (max_y/min_y).
-    low_b = min_y/max_y;
-    up_b  = max_y/min_y;
+    % Initialize the search bounds to (min_y/max_v) and (max_y/min_v).
+    min_v = min(values);
+    max_v = max(values);
+    low_b = min_y/max_v;
+    up_b  = max_y/min_v;
     
     % Now, tighten the search bounds because fminbnd does not do well
     % searching for optima when there are large flat spaces in the upper
@@ -209,8 +217,8 @@ function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y, hist_
     % before comparing it to ref_histogram. 
     % Otherwise, it is divided by the length of values.
     %
-    % The search looks at all values between (min_y/max_y) and
-    % (max_y/min_y). 0 < min_y <= max_y
+    % The search looks at all values between (min_y/max(values) and
+    % (max_y/min(values)). 0 <= min_y <= max_y & 0 < min(values)
     
     [low_b, up_b]=mult_search_bounds_for(values, y_bins, ref_histogram, min_y, max_y);
     
