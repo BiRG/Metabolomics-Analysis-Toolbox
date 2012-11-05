@@ -123,3 +123,23 @@ end
 
 %% Note that this procedure always makes the new lower bound half the value of multiplier that gave the minimum and the new upper bound twice its value (truncated to the original range, of course). I can use this fact to optimize the original code after I finish writing the test case
 
+%% Now do exhaustive search accumulating the errors for the first spectrum (just to see what the curve looks like
+multiplier=log_bin_new_lb(1);
+diff=log_bin_new_ub(1)-log_bin_new_lb(1);
+num_steps = 0;
+progress_bar=waitbar(0,sprintf('Counting steps to complete exhaustive error: %d steps or %g/%g %g secs rem',num_steps,log_bin_new_lb(1),diff,0));
+start_time=now;
+while(multiplier <= log_bin_new_ub(1))
+    num_steps = num_steps+1;
+    multiplier = java.lang.Math.nextUp(multiplier);
+    if mod(num_steps, 100000)==0
+        elapsed_days = now - start_time;
+        elapsed_seconds = 60*60*24*elapsed_days;
+        fraction_completed = (multiplier-log_bin_new_lb(1))/diff;
+        seconds_remaining = elapsed_seconds*(1-fraction_completed)/fraction_completed;
+        waitbar(fraction_completed,progress_bar,sprintf(...
+            'Counting steps to complete exhaustive error: %gM steps or %g %g secs rem',...
+            num_steps/1000000, multiplier-log_bin_new_lb(1), ...
+            seconds_remaining));
+    end
+end
