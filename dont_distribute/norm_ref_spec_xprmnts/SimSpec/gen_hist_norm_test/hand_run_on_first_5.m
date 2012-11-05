@@ -123,23 +123,58 @@ end
 
 %% Note that this procedure always makes the new lower bound half the value of multiplier that gave the minimum and the new upper bound twice its value (truncated to the original range, of course). I can use this fact to optimize the original code after I finish writing the test case
 
-%% Now do exhaustive search accumulating the errors for the first spectrum (just to see what the curve looks like
-multiplier=log_bin_new_lb(1);
-diff=log_bin_new_ub(1)-log_bin_new_lb(1);
-num_steps = 0;
-progress_bar=waitbar(0,sprintf('Counting steps to complete exhaustive error: %d steps or %g/%g %g secs rem',num_steps,log_bin_new_lb(1),diff,0));
+%% Now do exhaustive search accumulating the errors for the first spectrum (just to see what the curve looks like)
+
+% First make a list of the multipliers to make each value go to each bin
+% boundary
+values=ds{1};
+exhaustive_multipliers=zeros(length(log_bins)-1, length(values));
+for bin_edge_idx = 1:length(log_bins)-1
+    exhaustive_multipliers(bin_edge_idx, :) = log_bins(bin_edge_idx)./values;
+end
+clear('bin_edge_idx');
+
+% Now, get rid of those multipliers that are out of range and sort the rest
+exhaustive_multipliers = reshape(exhaustive_multipliers,[],1);
+in_range_multipliers = exhaustive_multipliers >= log_bin_new_lb(1) & ...
+    exhaustive_multipliers <= log_bin_new_ub(1);
+exhaustive_multipliers = sort(exhaustive_multipliers(in_range_multipliers));
+exhaustive_multiplier_error_log = zeros(size(exhaustive_multipliers));
+exhaustive_multiplier_error_equi = zeros(size(exhaustive_multipliers));
+num_mults = length(exhaustive_multipliers);
+clear('in_range_multipliers');
+
+% Now calculate one error value for each multiplier
+progress_bar=waitbar(0,sprintf('Calcd mult %d/%d %g secs remaining',0,num_mults,0));
 start_time=now;
-while(multiplier <= log_bin_new_ub(1))
-    num_steps = num_steps+1;
-    multiplier = java.lang.Math.nextUp(multiplier);
-    if mod(num_steps, 100000)==0
+for mult_idx = 1:num_mults
+    mult = exhaustive_multipliers(mult_idx);
+    exhaustive_multiplier_error_log(mult_idx) = multiplierErr(values, mult, log_bins, ref_log_binned); 
+    exhaustive_multiplier_error_equi(mult_idx) = multiplierErr(values, mult, equi_bins, ref_equi_binned);
+    if mod(mult_idx, 1000)==0
         elapsed_days = now - start_time;
         elapsed_seconds = 60*60*24*elapsed_days;
-        fraction_completed = (multiplier-log_bin_new_lb(1))/diff;
+        fraction_completed = (mult_idx-1)/num_mults;
         seconds_remaining = elapsed_seconds*(1-fraction_completed)/fraction_completed;
         waitbar(fraction_completed,progress_bar,sprintf(...
-            'Counting steps to complete exhaustive error: %gM steps or %g %g secs rem',...
-            num_steps/1000000, multiplier-log_bin_new_lb(1), ...
-            seconds_remaining));
+            'Calcd mult %d/%d %g secs remaining',...
+            mult_idx, num_mults, seconds_remaining));
     end
 end
+delete(progress_bar);
+clear('progress_bar', 'num_mults', 'mult_idx', 'mult', 'elapsed_days', 'elapsed_seconds', 'fraction_completed', 'seconds_remaining');
+
+%% Plot the resulting curves with the true dilution factor
+%true_dilution_factor = real_dilution_factors{1};
+%true_dilution_factor = median(true_dilution_factor)/true_dilution_factor(1);
+figure(1);
+figure_min = min([exhaustive_multiplier_error_equi; exhaustive_multiplier_error_log]);
+figure_max = max([exhaustive_multiplier_error_equi; exhaustive_multiplier_error_log]);
+plot(exhaustive_multipliers, exhaustive_multiplier_error_log, exhaustive_multipliers, exhaustive_multiplier_error_equi);
+title('Comparison of equi and log binned error for exhaustive multiplier search');
+ylabel('Squared error from reference distribution');
+xlabel('Multiplier');
+legend('log binned error','equi binned error');
+%hold('on');
+%line([true_dilution_factor, true_dilution_factor],[figure_min, figure_max]);
+
