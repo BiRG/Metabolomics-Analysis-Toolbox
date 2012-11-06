@@ -2,12 +2,12 @@
 [diluted_spectra, real_dilution_factors]=loadDilutedSpectra;
 
 %% Put first 5 diluted spectra in ds
-first_5=diluted_spectra{1};
+second_5=diluted_spectra{2};
 
 %% Generate reference spectrum (ignoring most of the metadata)
-ref=median(first_5.Y,2); %Take median of each row
+ref=median(second_5.Y,2); %Take median of each row
 
-%% Note min_y and max_y - they are -1.237992488132203 and 1.516414163764348e+03 respectively
+%% Note min_y and max_y - they are -0.713581050990660 and 7.497300177964634e+02 respectively
 min_y = min(ref);
 max_y = max(ref);
 
