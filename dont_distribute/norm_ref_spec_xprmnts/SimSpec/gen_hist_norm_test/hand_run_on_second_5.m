@@ -50,7 +50,7 @@ inner_bin_boundaries=(sorted_ref(bin_first_elements(2:end))+...
 equi_bins(2:10)=inner_bin_boundaries;
 clear('inner_bin_boundaries','bin_first_elements','bin_last_elements','sorted_ref');
 
-%% Note original search bounds for each spectrum - lower bounds were [3.275050410521820e-04,4.509839217431247e-04,4.965917048370774e-04,0.001282969179976,0.001027549984853] and upper bounds: [1.340740072772356e+03,1.699648066791515e+03,1.772289803537955e+03,3.438209518954707e+03,2.308977384106270e+03]
+%% Note original search bounds for each spectrum - lower bounds were [5.046111334029359e-04,1.682876547419140e-04,0.001569668812473,5.304028029394091e-04,5.793763334729645e-04] and upper bounds: [1.827858029785367e+03,5.384528592991884e+02,2.070009695142594e+03,1.662743473178270e+03,1.836752641298792e+03]
 orig_min=cellfun(@(x) min(x),ds)';
 orig_max=cellfun(@(x) max(x),ds)';
 potential_extreme_multipliers=[min_y_no_noise./orig_min; ...
@@ -59,6 +59,7 @@ potential_extreme_multipliers=[min_y_no_noise./orig_min; ...
 potential_extreme_multipliers = sort(potential_extreme_multipliers);
 orig_lb=min(potential_extreme_multipliers);
 orig_ub=max(potential_extreme_multipliers);
+clear('potential_extreme_multipliers','orig_min','orig_max');
 
 %% Note greatest integer power of 2 multiple of lower bound which is still less than upper bound - it is 21 for all of them
 multiples = floor(log(orig_ub./orig_lb)/log(2));
