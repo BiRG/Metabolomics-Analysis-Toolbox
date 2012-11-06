@@ -61,9 +61,9 @@ orig_lb=min(potential_extreme_multipliers);
 orig_ub=max(potential_extreme_multipliers);
 clear('potential_extreme_multipliers','orig_min','orig_max');
 
-%% Note greatest integer power of 2 multiple of lower bound which is still less than upper bound - it is 21 for all of them
+%% Note greatest integer power of 2 multiple of lower bound which is still less than upper bound - it is 21 for all of them but the third spectrum
 multiples = floor(log(orig_ub./orig_lb)/log(2));
-assert(all(multiples==21)); % a little check for next time
+assert(all(multiples==[21,21,20,21,21])); % a little check for next time
 
 %% Create an array of potential multipliers
 max_multiple = max(multiples);
@@ -94,28 +94,28 @@ for spec_idx = 1:5
         mults);
 end
 
-%% The indices of minimum error for equi_bin are (by inspection) [12, 12, 12, 11, 11]
-equi_bin_min_index = [12,12,12,11,11];
+%% The indices of minimum error for equi_bin are (by inspection) [12, 12, 10, 12, 12]
+equi_bin_min_index = [12, 12, 10, 12, 12];
 
-%% The indices of minimum error for log_bin are (by inspection) [12, 12, 12, 11, 11]
-log_bin_min_index = [12,12,12,11,11];
+%% The indices of minimum error for log_bin are (by inspection) [12, 12, 10, 12, 12]
+log_bin_min_index = [12, 12, 10, 12, 12];
 
-%% The new equi_bin lower bounds are: [0.335365162037434,0.461807535864960,0.508509905753167,0.656880220147673,0.526105592244654]
+%% The new equi_bin lower bounds are: [0.516721800604606,0.172326558455720,0.401835215993156,0.543132470209955,0.593281365476316]
 for spec_idx = 1:5
     equi_bin_new_lb(spec_idx) = potential_multipliers(equi_bin_min_index(spec_idx)-1,spec_idx);
 end
 
-%% The new log_bin lower bounds are: [0.335365162037434,0.461807535864960,0.508509905753167,0.656880220147673,0.526105592244654]
+%% The new log_bin lower bounds are: [0.516721800604606,0.172326558455720,0.401835215993156,0.543132470209955,0.593281365476316]
 for spec_idx = 1:5
     log_bin_new_lb(spec_idx) = potential_multipliers(log_bin_min_index(spec_idx)-1,spec_idx);
 end
 
-%% The new equi_bin upper bounds are: [1.341460648149738,1.847230143459839,2.034039623012669,2.627520880590694,2.104422368978614]
+%% The new equi_bin upper bounds are: [2.066887202418426,0.689306233822880,1.607340863972625,2.172529880839820,2.373125461905262]
 for spec_idx = 1:5
     equi_bin_new_ub(spec_idx) = potential_multipliers(equi_bin_min_index(spec_idx)+1,spec_idx);
 end
 
-%% The new log_bin upper bounds are: [1.341460648149738,1.847230143459839,2.034039623012669,2.627520880590694,2.104422368978614]
+%% The new log_bin upper bounds are: [2.066887202418426,0.689306233822880,1.607340863972625,2.172529880839820,2.373125461905262]
 for spec_idx = 1:5
     log_bin_new_ub(spec_idx) = potential_multipliers(log_bin_min_index(spec_idx)+1,spec_idx);
 end
