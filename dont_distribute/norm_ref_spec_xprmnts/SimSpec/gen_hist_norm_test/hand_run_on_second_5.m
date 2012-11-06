@@ -15,15 +15,15 @@ max_y = max(ref);
 ref_denoise=ref(ref > 5*std(ref(1:30)));
 
 %% Eliminate noise points from the main spectra
-stds=std(first_5.Y(1:30,:));
-is_signal = first_5.Y > repmat(5*stds,size(first_5.Y,1),1);
+stds=std(second_5.Y(1:30,:));
+is_signal = second_5.Y > repmat(5*stds,size(second_5.Y,1),1);
 ds=cell(5,1); %ds is denoised diluted spectra
 for i=1:5
-    ds{i}=first_5.Y(is_signal(:,i),i);
+    ds{i}=second_5.Y(is_signal(:,i),i);
 end
 clear('i','is_signal','stds');
 
-%% Note min and max y when no noise: 0.753038694822829 and 1.516414163764348e+03 - note that max is unchanged
+%% Note min and max y when no noise: 0.397658902887057 and 7.497300177964634e+02 - note that max is unchanged
 clear('min_y','max_y');
 min_y_no_noise = min(ref_denoise);
 max_y_no_noise = max(ref_denoise);
@@ -40,12 +40,10 @@ sorted_ref=sort(ref_denoise);
 equi_bins = zeros(1,11);
 equi_bins(1)=sorted_ref(1);
 equi_bins(11)=sorted_ref(end);
-assert(length(sorted_ref)==6412);
-bin_last_elements=[642,... 642 in first bin, so 642 is last element of first bin
-    1284, ... 642 in second bin, so last element of second bin is 642+642=1284
-    1284+641,... 641 in every other bin
-    1284+2*641, 1284+3*641, 1284+4*641, 1284+5*641, 1284+6*641, ...
-    1284+7*641, 1284+8*641];
+assert(length(sorted_ref)==6970);
+bin_last_elements=[697,... 697 in first bin, so 697 is last element of first bin
+    697*2, ... 697 in second bin, so last element of second bin is 697+697=1394
+    697*3, 697*4, 697*5, 697*6, 697*7, 697*8, 697*9, 697*10];
 bin_first_elements=[1,bin_last_elements(1:9)+1];
 inner_bin_boundaries=(sorted_ref(bin_first_elements(2:end))+...
     sorted_ref(bin_last_elements(1:end-1)))/2;
