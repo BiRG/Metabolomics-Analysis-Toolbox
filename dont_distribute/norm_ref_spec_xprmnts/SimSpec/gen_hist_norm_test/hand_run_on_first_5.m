@@ -199,6 +199,7 @@ clear('progress_bar', 'num_mults', 'mult_idx', 'mult', 'elapsed_days', 'elapsed_
 sum_1=sum(first_5.Y(:,1));
 sum_2=sum(first_5.Y(:,2));
 sum_n_ratio=sum_2/sum_1;
+clear('sum_1','sum_2');
 
 %% Plot the resulting curves with the true dilution factor
 true_multiplier = real_dilution_factors{1};
@@ -227,3 +228,117 @@ legend(curve_handles,'log binned error','equi binned error','actual ratio', 'sum
 %line([best_multiplier_log_fminbnd, best_multiplier_log_fminbnd],[figure_min, figure_max], 'Color', 'm');
 %line([best_multiplier_equi_fminbnd, best_multiplier_equi_fminbnd],[figure_min, figure_max], 'Color', 'k');
 hold('off');
+
+clear('exhaustive_multiplier_error_equi', 'exhaustive_multiplier_error_log');
+clear('curve_handles');
+clear('values','exhaustive_multipliers');
+%% Now do exhaustive search accumulating the errors for the all spectra - we can see the curve and the also an idea of what the optimum value should be when we do fminbnd
+
+% First make a list of the multipliers to make each value go to each bin
+% boundary in both types of bin
+exhaustive_mults=cell(size(ds));
+for spec = 1:length(ds)
+    exhaustive_mults{spec}=zeros(length(log_bins)-1, 2*length(ds{spec}));
+    for bin_edge_idx = 1:length(log_bins)-1
+        exhaustive_mults{spec}(bin_edge_idx, :) = ...
+            [log_bins(bin_edge_idx)./ds{spec}; ...
+            equi_bins(bin_edge_idx)./ds{spec}];
+    end
+end
+clear('bin_edge_idx');
+
+% Now, get rid of those multipliers that are out of range and sort the rest
+exhaustive_mults_error_log{spec} = cell(size(ds));
+exhaustive_mults_error_equi{spec} = cell(size(ds));
+num_mults = zeros(size(ds));
+for spec = 1:length(ds)
+    exhaustive_mults{spec} = reshape(exhaustive_mults{spec},[],1);
+    in_range_multipliers = exhaustive_mults{spec} >= log_bin_new_lb(spec) & ...
+        exhaustive_mults{spec} <= log_bin_new_ub(spec);
+    exhaustive_mults{spec} = sort(exhaustive_mults{spec}(in_range_multipliers));
+    exhaustive_mults_error_log{spec} = zeros(size(exhaustive_mults{spec}));
+    exhaustive_mults_error_equi{spec} = zeros(size(exhaustive_mults{spec}));
+    num_mults(spec) = length(exhaustive_mults{spec});
+end
+clear('in_range_multipliers');
+
+% Now calculate one error value for each multiplier
+progress_bar=waitbar(0,...
+    sprintf('Calcd mult %d/%d %g secs remaining',0,num_mults,0));
+start_time=now;
+total_mults = sum(num_mults);
+completed_mults = 0;
+best_mult_log_fminbnd = zeros(size(ds));
+best_mult_equi_fminbnd = best_mult_log_fminbnd;
+for spec = 1:length(ds)
+    for mult_idx = 1:num_mults(spec)
+        mult = exhaustive_mults{spec}(mult_idx);
+        exhaustive_mults_error_log{spec}(mult_idx) = ...
+            multiplierErr(ds{spec}, mult, log_bins, ref_log_binned); 
+        exhaustive_mults_error_equi{spec}(mult_idx) = ...
+            multiplierErr(ds{spec}, mult, equi_bins, ref_equi_binned);
+        completed_mults = completed_mults + 1;
+        if mod(completed_mults, 1000)==0
+            elapsed_days = now - start_time;
+            elapsed_seconds = 60*60*24*elapsed_days;
+            fraction_completed = (completed_mults)/total_mults;
+            seconds_remaining = ...
+                elapsed_seconds*(1-fraction_completed)/fraction_completed;
+            waitbar(fraction_completed,progress_bar,sprintf(...
+                'Calcd mult %d/%d %g secs remaining',...
+                completed_mults, total_mults, seconds_remaining));
+        end
+    end
+    best_mult_log_fminbnd(spec) = fminbnd(@(mult) ...
+        multiplierErr(ds{spec}, mult, log_bins, ref_log_binned), ...
+        log_bin_new_lb(spec),log_bin_new_ub(spec));
+    best_mult_equi_fminbnd(spec) = fminbnd(@(mult) ...
+        multiplierErr(ds{spec}, mult, equi_bins, ref_equi_binned), ...
+        equi_bin_new_lb(spec),equi_bin_new_ub(spec));
+end
+delete(progress_bar);
+clear('progress_bar', 'num_mults', 'mult_idx', 'mult', 'elapsed_days', 'elapsed_seconds', 'fraction_completed', 'seconds_remaining');
+
+%% Calculate the best multipliers from the exhaustive search error values
+best_mult_log = zeros(size(ds));
+best_mult_equi = zeros(size(ds));
+for spec = 1:length(ds)
+    [~,best_mult_idx_log] = min(exhaustive_mults_error_log{spec});
+    best_mult_log(spec) = exhaustive_mults{spec}(best_mult_idx_log);
+    [~,best_mult_idx_equi] = min(exhaustive_mults_error_equi{spec});
+    best_mult_equi(spec) = exhaustive_mults{spec}(best_mult_idx_equi);
+    clear('best_mult_idx_log','best_mult_idx_equi');
+end
+
+%% Plot the resulting error curves 
+figure(2);
+for spec = 1:length(ds)
+    subplot(2,3,spec);
+
+    figure_min = min([exhaustive_mults_error_equi{spec}; exhaustive_mults_error_log{spec}]);
+    figure_max = max([exhaustive_mults_error_equi{spec}; exhaustive_mults_error_log{spec}]);
+    semilogx(exhaustive_mults{spec}, exhaustive_mults_error_log{spec},'b', exhaustive_mults{spec}, exhaustive_mults_error_equi{spec},'g');
+    title(sprintf('Exhaustive search spectrum #%d',spec));
+    ylabel('Squared error from reference distribution');
+    xlabel('Multiplier');
+    hold('on');
+    curve_handles(1)=line([best_mult_log(spec), best_mult_log(spec)], ...
+        [figure_min, figure_max], 'Color','b');
+    curve_handles(2)=line([best_mult_equi(spec), best_mult_equi(spec)], ...
+        [figure_min, figure_max], 'Color','g');
+    curve_handles(3)=line([best_mult_log_fminbnd(spec), ...
+        best_mult_log_fminbnd(spec)],[figure_min, figure_max], 'Color', 'm');
+    curve_handles(4)=line([best_mult_equi_fminbnd(spec), ...
+        best_mult_equi_fminbnd(spec)],[figure_min, figure_max], 'Color', 'k');
+    hold('off');
+end
+legend(curve_handles,'Log', 'Equi', 'Log fminbnd', 'Equi fminbnd');
+clear('curve_handles','spec');
+
+%% The correct optima for the log bins: [0.654899414333789;0.844031131111041;0.880169360211605;1.408041239350831;1.194753087783243]
+
+%% The fminbnd optima for the log bins: [0.664533945882573;0.844352112586803;0.881299911400366;1.408074173051747;1.026035380983180]
+
+%% The correct optima for the equi bins: [0.625732103855733;0.855531961116681;0.884916622907972;1.433332295895275;1.020355664982607]
+
+%% The fminbnd optima for the equi bins: [0.626131994855447;0.853725263383132;0.868822896769768;1.436144120569287;1.003444739445858]
