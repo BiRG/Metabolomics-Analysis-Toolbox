@@ -5,6 +5,12 @@ function test_suite = test_histogram_normalize%#ok<STOUT>
 %   runtests test_histogram_normalize
 initTestSuite;
 
+% ######################################
+%
+% Utility functions
+%
+% ######################################
+
 function h=func_handles
 % Returns a cell array of the function handles from histogram_normalize
 h=histogram_normalize('return subfunction handles for testing');
@@ -32,6 +38,19 @@ function mult = mult_search_bounds_for(values, y_bins, ref_histogram, min_y, max
 % from test code
 h = func_handles(); h=h{4};
 mult = h(values, y_bins, ref_histogram, min_y, max_y);
+
+function specs=loadTestSpectraYValues(set_number)
+% Utility function returning the y-values of the test spectra in test set
+% set_number
+s = load('hist_norm_test_spectra.mat');
+specs = s.diluted_spectra{set_number}.Y;
+
+
+% ######################################
+%
+% Actual tests
+%
+% ######################################
 
 
 function testFunctionHandleList %#ok<DEFNU>
