@@ -45,6 +45,11 @@ function specs=loadTestSpectraYValues(set_number)
 s = load('hist_norm_test_spectra.mat');
 specs = s.diluted_spectra{set_number}.Y;
 
+function specs=loadTestSpectra(set_number)
+% Utility function returning the test spectra in test set set_number
+s = load('hist_norm_test_spectra.mat');
+specs = s.diluted_spectra{set_number};
+
 
 % ######################################
 %
@@ -121,3 +126,12 @@ f = @() remove_values([15,10,4,5,9], 3, 2);
 assertEqual(f(),15);
 
 
+function testEnd2End_log_set_1 %#ok<DEFNU>
+% Check that histogram normalize returns the expected values for log
+% binning and the firs set of test spectra
+spec=loadTestSpectra(1);
+[~,mults]=histogram_normalize({spec}, 30, 5, 10, false, 'logarithmic', ...
+    'count');
+assertEqual(mults, ...
+    [0.664533945882573;0.844352112586803;0.881299911400366;...
+    1.408074173051747;1.026035380983180]);
