@@ -128,10 +128,56 @@ assertEqual(f(),15);
 
 function testEnd2End_log_set_1 %#ok<DEFNU>
 % Check that histogram normalize returns the expected values for log
-% binning and the firs set of test spectra
+% binning and the first set of test spectra
 spec=loadTestSpectra(1);
 [~,mults]=histogram_normalize({spec}, 30, 5, 10, false, 'logarithmic', ...
     'count');
-assertEqual(mults, ...
+assertEqual(mults{1}, ...
     [0.664533945882573;0.844352112586803;0.881299911400366;...
     1.408074173051747;1.026035380983180]);
+
+function testEnd2End_log_set_2 %#ok<DEFNU>
+% Check that histogram normalize returns the expected values for log
+% binning and the second set of test spectra
+spec=loadTestSpectra(2);
+[~,mults]=histogram_normalize({spec}, 30, 5, 10, false, 'logarithmic', ...
+    'count');
+assertEqual(mults{1}, ...
+    [0.924046981720666;0.328650786890630;1.033449110788699; ...
+    0.882750821925743;0.974280081676548]);
+
+function testEnd2End_equi_set_1 %#ok<DEFNU>
+% Check that histogram normalize returns the expected values for equi
+% binning and the first set of test spectra
+spec=loadTestSpectra(1);
+[~,mults]=histogram_normalize({spec}, 30, 5, 10, false, 'equal frequency', ...
+    'count');
+assertEqual(mults{1}, ...
+    [0.664533945882573;0.844352112586803;0.881299911400366;...
+    1.408074173051747;1.026035380983180]);
+
+function testEnd2End_equi_set_2 %#ok<DEFNU>
+% Check that histogram normalize returns the expected values for equi
+% binning and the second set of test spectra
+spec=loadTestSpectra(2);
+[~,mults]=histogram_normalize({spec}, 30, 5, 10, false, 'equal frequency', ...
+    'count');
+assertEqual(mults{1}, ...
+    [0.924046981720666;0.328650786890630;1.033449110788699; ...
+    0.882750821925743;0.974280081676548]);
+
+function testMultSearchBoundsFor_equi_set_1 %#ok<DEFNU>
+% Check that mult_search_bounds_for returns the expected values for log
+% binning and the first set of test data
+spec_struct=loadTestSpectra(1);
+ref_struct=median_spectrum(spec_struct, {true});
+ref=remove_values(ref_struct.Y, 30, 5);
+bin_bounds = [0.753038694822828703, 2.44764678487853882, 5.78037991311116706, 12.3347627047418307, 25.2250638858646212, 50.5760190897972279, 100.432955768123847, 198.485045519797779, 391.321046790805894, 770.565624651088456, 1516.4141637643479];
+spec=cell(5,1);
+for i = 1:5
+    spec{i}=remove_values(spec_struct.Y(:,i), 30, 5);
+    %TODO: finish
+end
+%TODO: finish
+
+    
