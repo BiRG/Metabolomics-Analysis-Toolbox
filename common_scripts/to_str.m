@@ -1,4 +1,4 @@
-function str = to_str( in )
+function str = to_str( in, extra_precision )
 % To str returns a string that if entered as code would evaluate to in.
 %
 % Note that floats are rounded, so the 'eval to in' is not complete, but
@@ -15,6 +15,10 @@ function str = to_str( in )
 % -------------------------------------------------------------------------
 % 
 % in - a matlab variable
+%
+% extra_precision - (optional) a logical that is true if scalar matrices 
+% should be printed with extra precision (18 decimal places). If omitted,
+% treated as false.
 %
 % -------------------------------------------------------------------------
 % Output parameters
@@ -77,6 +81,9 @@ function str = to_str( in )
 %
 % Eric Moyer (May 2012) eric_moyer@yahoo.com
 %
+if ~exist('extra_precision', 'var')
+    extra_precision = false;
+end
 
 if iscell(in) && is_matrix(in)
     % Cell matrices and vectors
@@ -129,18 +136,34 @@ elseif is_matrix(in)
     str = '[';
     for j = 1:cols
         if j == 1
-            str = sprintf('%s%g', str, in(1,j));
+            if extra_precision
+                str = sprintf('%s%.18g', str, in(1,j));
+            else
+                str = sprintf('%s%g', str, in(1,j));
+            end
         else
-            str = sprintf('%s, %g', str, in(1,j));
+            if extra_precision
+                str = sprintf('%s, %.18g', str, in(1,j));
+            else
+                str = sprintf('%s, %g', str, in(1,j));
+            end
         end
     end
     for i = 2:rows
         str = [str, '; ']; %#ok<AGROW>
         for j = 1:cols
             if j == 1
-                str = sprintf('%s%g', str, in(i,j));
+                if extra_precision
+                    str = sprintf('%s%.18g', str, in(i,j));
+                else
+                    str = sprintf('%s%g', str, in(i,j));
+                end
             else
-                str = sprintf('%s, %g', str, in(i,j));
+                if extra_precision
+                    str = sprintf('%s, %.18g', str, in(i,j));
+                else
+                    str = sprintf('%s, %g', str, in(i,j));
+                end
             end
         end        
     end
