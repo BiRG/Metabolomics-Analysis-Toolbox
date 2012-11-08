@@ -103,27 +103,6 @@ hist_method_equ_string = 'equal frequency';
 hist_scale_count_string = 'count';
 hist_scale_frac_string = 'fraction of total';
 
-function counts = histc_inclusive( vector, bins, dim)
-% Like histc except that the last count includes values == bins(end)
-%
-% All of the bins from the histc command are open intervals - count of
-% values in the range a <= x < b. Then the last bin returned is the count
-% of the values exactly equal to b. This command returns the values in
-% histc except with the modification that the next to last bin is the 
-% values in the range a <= x <= b and the last bin is 0.
-
-if exists(dim,'var')
-    counts = histc(vector, bins, dim);
-else
-    counts = histc(vector, bins);
-end
-
-if length(counts) >= 2
-    counts(end-1) = counts(end-1) + counts(end);
-    counts(end) = 0;
-end
-
-end
 
 
 function expurgated = remove_values(values, baseline_pts, n_std_dev)
@@ -261,11 +240,33 @@ function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y, hist_
        
 end
 
+function counts = histc_inclusive(vector, bins, dim)
+    % Like histc except that the last count includes values == bins(end)
+    %
+    % All of the bins from the histc command are open intervals - count of
+    % values in the range a <= x < b. Then the last bin returned is the count
+    % of the values exactly equal to b. This command returns the values in
+    % histc except with the modification that the next to last bin is the 
+    % values in the range a <= x <= b and the last bin is 0.
+
+    if exist('dim','var')
+        counts = histc(vector, bins, dim);
+    else
+        counts = histc(vector, bins);
+    end
+
+    if length(counts) >= 2
+        counts(end-1) = counts(end-1) + counts(end);
+        counts(end) = 0;
+    end
+end
+
+
 % Special behavior supporting unit testing of sub-functions
 if nargin == 1 && ischar(collections) && ...
         strcmpi(collections, 'return subfunction handles for testing')
     collections = {@remove_values, @err, @best_mult_for, ...
-        @mult_search_bounds_for};
+        @mult_search_bounds_for, @histc_inclusive};
     return;
 end
 
