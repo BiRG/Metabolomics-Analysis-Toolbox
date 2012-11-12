@@ -111,6 +111,13 @@ for i = 1:num_compounds
 end
 union_x = unique(union_x);
 
+% Find the interval covered by all spectra and restrict the union points to
+% fall strictly within that interval.
+consensus_minimum = max(cellfun(@(x) min(x(:,1)), spec));
+consensus_maximum = min(cellfun(@(x) max(x(:,1)), spec));
+union_x = union_x(union_x < consensus_maximum & union_x > consensus_minimum);
+
+
 % Interpolate the spectra - adding normally distributed noise where
 % extrapolation would be needed (with mean and standard deviation of the
 % noise taken from the mean and std of the first 100 points of the
@@ -126,11 +133,9 @@ for i = 1:num_compounds
         error('nssd_spectra_to_spectral_collection:not_sorted',...
             'Spectrum %d (%s) is not sorted', i, NSSD_names{i, idx_nssd_dirname});
     end
-    noise_mean = 0;
-    noise_std = std(cs(1:100));
     interpd=interp1(spec{i,1}(:,1), cs, union_x, 'pchip', NaN);
-    nans = isnan(interpd);
-    interpd(nans) = randn(size(interpd(nans)))*noise_std + noise_mean;
+    assert(~any(isnan(interpd))); % shouldn't be any extrapolation going on
+    
     final_y(:,i) = interpd;
 end
 
