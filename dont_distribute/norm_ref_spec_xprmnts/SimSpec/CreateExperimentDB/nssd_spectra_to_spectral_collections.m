@@ -24,6 +24,7 @@ nssd_root = '../NSSD'; % Root for the NSSD
 idx_nssd_dirname = 1; % Index of the compound's subdirectory in the database
 idx_nssd_exp = 2; % Index of the experiment number in the database
 idx_nssd_proc = 3; % Index of the processed data number in the database
+idx_mean_urine_conc=6; % Index of the mean urine concentration in the database
 idx_hmdb_id = 8; % Index of the HMDB ID in the database
 
 NSSD_names = { ...
@@ -140,12 +141,35 @@ for i = 1:num_compounds
 end
 
 % Set up the spectral collection structure
-
-%TODO: finish adding the fields to the structure and save to the output
-%file.
 waitbar(0, wait_h, 'Writing spectrum file');
 clear('spec');
 spec.x = union_x;
 spec.Y = final_y;
+
+num_samples = size(spec.Y,2);
+
+spec.input_names = {'Collection ID', 'Type', 'Description', 'Processing log', 'Base sample ID', 'Time', 'Classification', 'Sample ID', 'Subject ID', 'Sample Description', 'Weight', 'Units of weight', 'Species'};
+spec.formatted_input_names = {'collection_id', 'type', 'description', 'processing_log', 'base_sample_id', 'time', 'classification', 'sample_id', 'subject_id', 'sample_description', 'weight', 'units_of_weight', 'species'};
+spec.collection_id=sprintf('%d',-45572);
+spec.type='SpectraCollection';
+spec.description=sprintf('Converted spectra from NSSD library of standards included from MetAssimulo 1.2');
+spec.processing_log='Created converted from MetAssimulo 1.2 NSSD.';
+spec.num_samples=num_samples; 
+spec.time=zeros(1,num_samples);
+spec.classification=zeros(1,num_samples);
+spec.sample_id=arrayfun(@(x) sprintf('%s', NSSD_names{i, idx_hmdb_id} ), ...
+    1:num_samples,'UniformOutput',false); % HMDB_ID as sample id
+spec.subject_id=1:num_samples;
+spec.sample_description=arrayfun(@(x) sprintf('Spectrum of %s (%s)', ...
+    NSSD_names{i, idx_nssd_dirname}, NSSD_names{i, idx_hmdb_id} ), ...
+    1:num_samples,'UniformOutput',false); % Use sample description to describe what compound it is a spectrum of
+spec.weight=arrayfun(@(x) sprintf('%s', NSSD_names{i, idx_mean_urine_conc} ), ...
+    1:num_samples,'UniformOutput',false); % Mean urine concentration as sample weight
+spec.units_of_weight=arrayfun(@(x) 'Weight is mean urine concentration',1:num_samples,'UniformOutput',false);
+spec.species=arrayfun(@(x) 'No species',1:num_samples,'UniformOutput',false);
+spec.base_sample_id=1:num_samples;
+
+% Write the spectrum to a file
+save_collection(output_name, spec);
 
 delete(wait_h);
