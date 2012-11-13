@@ -104,6 +104,7 @@ hist_scale_count_string = 'count';
 hist_scale_frac_string = 'fraction of total';
 
 
+
 function expurgated = remove_values(values, baseline_pts, n_std_dev)
     % Return an array of the entries in values that were strictly more than 
     % n_std_dev standard deviations above 0. The size of one standard
@@ -126,7 +127,7 @@ function err_v = err(mult, values, y_bins, ref_histogram)
     % Returns the sum of squared differences between the histogram of 
     % values*mult using y_bins and ref_histogram.
     if ~isempty(values)
-        h = histc(mult.*values, y_bins, 1);
+        h = histc_inclusive(mult.*values, y_bins, 1);
     else
         h = zeros(size(ref_histogram));
     end
@@ -139,7 +140,7 @@ function err_v = err_scaled(mult, values, y_bins, ref_histogram, scale_factor)
     % values*mult using y_bins and ref_histogram. The histogram of
     % values*mult is multiplied by scale_factor before doing the
     % comparison.
-    h = histc(mult.*values, y_bins);
+    h = histc_inclusive(mult.*values, y_bins);
     diffs = (h.*scale_factor)-ref_histogram;
     err_v = sum(diffs.^2);
 end
@@ -239,11 +240,33 @@ function mult = best_mult_for(values, y_bins, ref_histogram, min_y, max_y, hist_
        
 end
 
+function counts = histc_inclusive(vector, bins, dim)
+    % Like histc except that the last count includes values == bins(end)
+    %
+    % All of the bins from the histc command are open intervals - count of
+    % values in the range a <= x < b. Then the last bin returned is the count
+    % of the values exactly equal to b. This command returns the values in
+    % histc except with the modification that the next to last bin is the 
+    % values in the range a <= x <= b and the last bin is 0.
+
+    if exist('dim','var')
+        counts = histc(vector, bins, dim);
+    else
+        counts = histc(vector, bins);
+    end
+
+    if length(counts) >= 2
+        counts(end-1) = counts(end-1) + counts(end);
+        counts(end) = 0;
+    end
+end
+
+
 % Special behavior supporting unit testing of sub-functions
 if nargin == 1 && ischar(collections) && ...
         strcmpi(collections, 'return subfunction handles for testing')
     collections = {@remove_values, @err, @best_mult_for, ...
-        @mult_search_bounds_for};
+        @mult_search_bounds_for, @histc_inclusive};
     return;
 end
 
@@ -333,7 +356,7 @@ else
 end
 
 % Calculate the multipliers
-ref_histogram = histc(ref_values, y_bins);
+ref_histogram = histc_inclusive(ref_values, y_bins);
 if strcmpi(hist_scale, hist_scale_frac_string)
     ref_histogram = ref_histogram ./ length(ref_values);
 end

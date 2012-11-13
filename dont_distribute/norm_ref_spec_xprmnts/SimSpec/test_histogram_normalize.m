@@ -50,6 +50,15 @@ function specs=loadTestSpectra(set_number)
 s = load('hist_norm_test_spectra.mat');
 specs = s.diluted_spectra{set_number};
 
+function out=histc_inclusive(values, edges, dim)
+h = func_handles(); h=h(5);
+if exist('dim','var')
+    out = h(values, edges, dim);
+else
+    out = h(values, edges);
+end
+
+
 
 % ######################################
 %
@@ -63,7 +72,7 @@ function testFunctionHandleList %#ok<DEFNU>
 names = cellfun(@func2str, func_handles, 'UniformOutput', false);
 assertEqual(names, {'histogram_normalize/remove_values', ...
     'histogram_normalize/err','histogram_normalize/best_mult_for', ...
-    'histogram_normalize/mult_search_bounds_for'});
+    'histogram_normalize/mult_search_bounds_for','histogram_normalize/histc_inclusive'});
 
 
 function testRemoveV_0ValuesNoBaseline %#ok<DEFNU>
@@ -173,6 +182,7 @@ spec_struct=loadTestSpectra(1);
 ref_struct=median_spectrum(spec_struct, {true});
 ref=remove_values(ref_struct.Y, 30, 5);
 bin_bounds = [0.753038694822828703, 2.44764678487853882, 5.78037991311116706, 12.3347627047418307, 25.2250638858646212, 50.5760190897972279, 100.432955768123847, 198.485045519797779, 391.321046790805894, 770.565624651088456, 1516.4141637643479];
+ref_histogram = histc_inclusive(ref, bin_bounds);
 spec=cell(5,1);
 for i = 1:5
     spec{i}=remove_values(spec_struct.Y(:,i), 30, 5);
