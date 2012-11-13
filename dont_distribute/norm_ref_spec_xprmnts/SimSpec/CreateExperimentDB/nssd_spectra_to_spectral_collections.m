@@ -105,26 +105,24 @@ end
 % Calculate all the ppms (x values) that will be needed in the combined
 % spectra
 waitbar(0, wait_h, 'Calculating the final x values');
-union_x = [];
-for i = 1:num_compounds
-    waitbar((i-1)/num_compounds, wait_h);
-    union_x = [union_x; spec{i}(:,1)]; %#ok<AGROW>
-end
-union_x = unique(union_x);
 
-% Find the interval covered by all spectra and restrict the union points to
-% fall strictly within that interval.
+% Find the interval covered by all spectra 
 consensus_minimum = max(cellfun(@(x) min(x(:,1)), spec));
 consensus_maximum = min(cellfun(@(x) max(x(:,1)), spec));
-union_x = union_x(union_x < consensus_maximum & union_x > consensus_minimum);
 
+% Set the resample locations to 32768 values that lie strictly in that 
+% region
+final_x = linspace(consensus_minimum, consensus_maximum, 32768+2);
+final_x = final_x(2:end-1);
+assert(length(final_x) == 32768);
+assert(all(final_x < consensus_maximum & final_x > consensus_minimum));
 
 % Interpolate the spectra - adding normally distributed noise where
 % extrapolation would be needed (with mean and standard deviation of the
 % noise taken from the mean and std of the first 100 points of the
 % spectrum)
 waitbar(0, wait_h, 'Interpolating');
-final_y = zeros(length(union_x), num_compounds);
+final_y = zeros(length(final_x), num_compounds);
 for i = 1:num_compounds
     waitbar((i-1)/num_compounds, wait_h);
     cs = spec{i,1}(:,2);
@@ -134,7 +132,7 @@ for i = 1:num_compounds
         error('nssd_spectra_to_spectral_collection:not_sorted',...
             'Spectrum %d (%s) is not sorted', i, NSSD_names{i, idx_nssd_dirname});
     end
-    interpd=interp1(spec{i,1}(:,1), cs, union_x, 'pchip', NaN);
+    interpd=interp1(spec{i,1}(:,1), cs, final_x, 'pchip', NaN);
     assert(~any(isnan(interpd))); % shouldn't be any extrapolation going on
     
     final_y(:,i) = interpd;
@@ -143,7 +141,7 @@ end
 % Set up the spectral collection structure
 waitbar(0, wait_h, 'Writing spectrum file');
 clear('spec');
-spec.x = union_x;
+spec.x = final_x;
 spec.Y = final_y;
 
 num_samples = size(spec.Y,2);
