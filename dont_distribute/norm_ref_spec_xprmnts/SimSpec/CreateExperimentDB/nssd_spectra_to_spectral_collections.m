@@ -101,6 +101,14 @@ for i=1:num_compounds
     spec{i, 1} = cs;
 end
 
+% Fix the baselines
+waitbar(0, wait_h, 'Fixing baselines');
+for i = 1:num_compounds
+    waitbar((i-1)/num_compounds, wait_h);
+    y = spec{i,1}(:,2);
+    spec{i,1}(:,2) = metassimulo_fix_baseline(y', 64)'; % Use baseline correction routine from MetAssimulo - 32 bins is the MetAssimulo default value, but the baselines still look a bit rough. With my improvement, we can go down to 64 bins without ringing.
+end
+
 
 % Calculate all the ppms (x values) that will be needed in the combined
 % spectra
