@@ -68,15 +68,18 @@ for pass = 1:2
         % the current peak's value at that point
         p = peaks(peak_idx);
         M = interp1(local_x, local_rem, p.x0); %Start the peak at the peak value for its remainder
-        err_fun=@(params) local_rem-(GaussLorentzPeak([params,p.x0]).at(local_x));
-        new_params = lsqnonlin(err_fun, [M, p.G, p.P],[],[],optimset('Display','off'));
+        err_fun=@(params) sum(abs(local_rem-(GaussLorentzPeak([params,p.x0]).at(local_x))));
+        new_params = fminsearch(err_fun, [M, p.G, p.P],optimset('Display','off'));
         peaks(peak_idx)=GaussLorentzPeak([new_params, p.x0]);
 
-        quick_plot_bin(local_x, local_y, peaks);
-        hold on; plot(local_x, local_rem); hold off;
-        uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
-        p=peaks(peak_idx);
-        fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
+        % *****************************************************************
+        % Uncomment the following to get nice graphical plots of debugging
+        % and current point each iteration
+        % *****************************************************************
+%        quick_plot_bin(x, y, peaks);
+%        uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
+%        p=peaks(peak_idx);
+%        fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
     end
 end
 
