@@ -27,7 +27,7 @@ for i = 1:length(peaks)
     plot_handles(2)=plot(bx, py, 'g-');
 end
 plot_handles(3)=plot(bx, bp, 'r--');
-plot_handles(4)=plot(bx, bp-by, 'k:');
+plot_handles(4)=plot(bx, by-bp, 'k:');
 
 legend(plot_handles, 'Raw data','Individual Peaks','Peak sum', 'Residual');
 hold off;
