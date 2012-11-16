@@ -12,6 +12,11 @@ function quick_plot_bin( bx, by, peaks)
 
 plot_handles(1) = plot(bx, by, 'b-');
 
+if ~all(size(bx) == size(by))
+    by = by';
+end
+assert(all(size(bx) == size(by)));
+
 % Now plot the peaks and their sum
 hold on;
 bp = zeros(size(bx)); %sum of the peak values in the bin
@@ -22,8 +27,9 @@ for i = 1:length(peaks)
     plot_handles(2)=plot(bx, py, 'g-');
 end
 plot_handles(3)=plot(bx, bp, 'r--');
+plot_handles(4)=plot(bx, bp-by, 'k:');
 
-legend(plot_handles, 'Raw data','Individual Peaks','Peak sum');
+legend(plot_handles, 'Raw data','Individual Peaks','Peak sum', 'Residual');
 hold off;
 
 end
