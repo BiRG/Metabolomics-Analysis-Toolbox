@@ -57,7 +57,7 @@ peaks = GaussLorentzPeak(initial_peak_params);
 peak_heights = interp1(x, y, peak_x);
 [~, peak_fit_order] = sort(peak_heights,'descend');
 
-for pass = 1:2
+for pass = 1:3
     for peak_to_fit_idx = 1:length(peak_x)
         peak_idx = peak_fit_order(peak_to_fit_idx);
         [local_x,order] = sort(peak_neighborhood_x{peak_idx});
