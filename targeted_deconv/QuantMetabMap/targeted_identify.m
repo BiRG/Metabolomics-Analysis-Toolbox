@@ -376,7 +376,7 @@ function new_val=substitute(old_val, from, to)
 % new_val    old_val after the replacements have been made
 
 if length(from) ~= length(to)
-    error('"From" and "to" arrays must be the same size in substitue');
+    error('targeted_identify__substitute:not_same_size','"From" and "to" arrays must be the same size in substitue');
 end
 new_val = old_val;
 for i=1:length(from)
