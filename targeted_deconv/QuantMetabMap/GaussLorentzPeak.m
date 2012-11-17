@@ -129,7 +129,7 @@ classdef GaussLorentzPeak
         sigma
         
         % The area under this peak.  A scalar.
-        area
+        area        
     end
     
     methods
@@ -204,6 +204,37 @@ classdef GaussLorentzPeak
         %Calculates the sigma value for the Gaussian portion of the
         %Gaussian-Lorentzian curve
             sigma = obj.half_height_width ./ (2 * sqrt(2*log(2)));
+        end
+        
+        function arr=property_array(obj)
+        %Calculates an row-vector array of properties suitable for passing 
+        %to the GaussLorentzPeak constructor for recreating obj
+        %
+        %Example: 
+        % >> GaussLorentzPeak([1,2,0.3,4,5,6,0.7,8]).property_array
+        %
+        % ans =
+        %
+        %   Columns 1 through 5
+        % 
+        %     1.0000    2.0000    0.3000    4.0000    5.0000
+        % 
+        %   Columns 6 through 8
+        % 
+        %     6.0000    0.7000    8.0000
+        %
+        %
+        % >> GaussLorentzPeak([1,2,0.3,4]).property_array
+        % 
+        % ans =
+        % 
+        %     1.0000    2.0000    0.3000    4.0000            
+        %
+            arr = zeros(1, 4*length(obj));
+            arr(1:4:4*length(obj)-3) = [obj.M];
+            arr(2:4:4*length(obj)-2) = [obj.G];
+            arr(3:4:4*length(obj)-1) = [obj.P];
+            arr(4:4:4*length(obj)-0) = [obj.x0];
         end
         
         function h=at(obj, x)
