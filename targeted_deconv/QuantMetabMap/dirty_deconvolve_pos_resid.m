@@ -104,10 +104,10 @@ for pass = 1:3
         % Uncomment the following to get nice graphical plots of debugging
         % and current point each iteration
         % *****************************************************************
-        quick_plot_bin(x, y, peaks);
-        uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
-        p=peaks(peak_idx);
-        fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
+%         quick_plot_bin(x, y, peaks);
+%         uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
+%         p=peaks(peak_idx);
+%         fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
     end
 end
 
