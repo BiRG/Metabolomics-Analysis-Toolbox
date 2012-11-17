@@ -42,6 +42,7 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 %
 
 % Calculate initial peak parameters
+peak_xs = peak_xs(peak_xs <= region_max & peak_xs >= region_min);
 peaks = dirty_deconvolve(x, y, peak_xs, num_neighbors);
 
 BETA0 = peaks.property_array';
@@ -52,7 +53,9 @@ ub = lb;
 
 % Set the location bounds to half-way to the nearest neighbor (and equal
 % distance on the other side for the peaks without neighbors on one side
-locs = [peaks.x0];
+[locs, peak_for_loc] = sort([peaks.x0]);
+[~, loc_for_peak] = sort(peak_for_loc);
+
 assert(issorted(locs));
 
 if length(locs) > 1
@@ -70,19 +73,20 @@ assert(length(bounds) == length(locs)+1);
     
 for i = 1:length(peaks)
     % Set minimum and maximum x0 - the region bounds
-    lb(i*4-0) = bounds(i);
-    ub(i*4-0) = bounds(i+1);
+    b = loc_for_peak(i); % The index into the bounds array corresponding to the minimum of the interval containing peak i
+    lb(i*4-0) = bounds(b);
+    ub(i*4-0) = bounds(b+1);
     
     
     % Minimum/Maximum height
-    x_in_region = x >= bounds(i) & x <= bounds(i+1);
+    x_in_region = x >= bounds(b) & x <= bounds(b+1);
     lb(i*4-3) = 0; 
     ub(i*4-3) = max(y(x_in_region)); 
     
     % Minimum/Maximum half-width
     lb(i*4-2) = 0;
-    ub(i*4-2) = 2*(bounds(i+1)-bounds(i)); %Half width at most twice distance between peaks
-    assert(ub(i*4-2) == 0);
+    ub(i*4-2) = 2*(bounds(b+1)-bounds(b)); %Half width at most twice distance between peaks
+    assert(ub(i*4-2) >= 0);
     
     % Minimum/Maximum Lorentzianness
     lb(i*4-1) = 0;
