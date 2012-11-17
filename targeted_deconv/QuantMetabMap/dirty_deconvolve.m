@@ -68,7 +68,7 @@ for pass = 1:2
         % the current peak's value at that point
         p = peaks(peak_idx);
         M = interp1(local_x, local_rem, p.x0); %Start the peak at the peak value for its remainder
-        err_fun=@(params) sum(abs(local_rem-(GaussLorentzPeak([params,p.x0]).at(local_x))));
+        err_fun=@(params) sum(abs(local_rem-(GaussLorentzPeak([params,p.x0]).at(local_x))).^2);
         new_params = fminsearch(err_fun, [M, p.G, p.P],optimset('Display','off'));
         peaks(peak_idx)=GaussLorentzPeak([new_params, p.x0]);
 
