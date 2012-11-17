@@ -29,6 +29,8 @@ end
 plot_handles(3)=plot(bx, bp, 'r--');
 plot_handles(4)=plot(bx, by-bp, 'k:');
 
+set(gca,'XDir','reverse');
+
 legend(plot_handles, 'Raw data','Individual Peaks','Peak sum', 'Residual');
 hold off;
 
