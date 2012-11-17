@@ -29,10 +29,10 @@ function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise
     
     % Calculate the regularization - penalize negative values more than
     % num_std noise standard deviations below 0
-    num_std = 3;
+    num_std = 4;
     val = (global_rem - glp.at(global_x)) + num_std*noise_std;
     val(val > 0) = 0;
-    val = sum(val.^4);
+    val = sum((val/noise_std).^4);
     
     % Add the penalty for misfit in the local neighborhood: the local 
     % remainder at that point minus the current peak's value at that point
@@ -92,10 +92,11 @@ for pass = 1:3
         [global_x, global_x_idx] = setdiff(x, local_x);
         global_y = y(global_x_idx);
         global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
-        % Error at a local point is 
+
+        % Do the minimization
         p = peaks(peak_idx);
         M = interp1(local_x, local_rem, p.x0); %Start the peak at the peak value for its remainder
-        err_fun=@(params) penalty(local_x, local_rem, global_x, global_rem, params, x0, noise_std);
+        err_fun=@(params) penalty(local_x, local_rem, global_x, global_rem, params, p.x0, noise_std);
         new_params = fminsearch(err_fun, [M, p.G, p.P],optimset('Display','off'));
         peaks(peak_idx)=GaussLorentzPeak([new_params, p.x0]);
 
@@ -110,3 +111,4 @@ for pass = 1:3
     end
 end
 
+end
