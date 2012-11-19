@@ -410,6 +410,13 @@ end
 pks = handles.peaks{spectrum_idx};
 %Calculate the peaks
 if ischar(pks) && strcmp(pks,'Uninitialized')
+    % I've tried to put a waitbar in here, but something about the way
+    % matlab allocates handles and the use of global variables elsewhere
+    % (gca in the plotting routines) causes problems - the guidata doesn't
+    % get set properly, and, if I don't close the waitbar, the plot gets
+    % drawn on the waitbar. I decided adding the waitbar wasn't worth the 
+    % but that I should add this note to outline the problems I found for
+    % future maintainers who might want to add a waitbar.
     col = handles.collection;
     noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
     %If there are too few points, use them all as noise
@@ -475,7 +482,7 @@ function handles=set_spectrum_peaks_no_gui(spectrum_idx, new_val, handles)
 % Just like set_spectrum_peaks but does not update the gui (note that you
 % will need to update both the plot and display after calling this routine)
 changed_indices = bins_invalidated_by_peak_change(handles.metab_map, ...
-    handles.peaks{spectrum_idx}, new_val);
+    get_spectrum_peaks(handles, spectrum_idx), new_val);
 if ~isempty(changed_indices)
     for bin_idx = changed_indices
         handles.deconvolutions(bin_idx, spectrum_idx).invalidate;
