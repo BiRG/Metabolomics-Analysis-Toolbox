@@ -80,7 +80,14 @@ else
         'You must have at least one peak to deconvolve.');
 end
 assert(length(bounds) == length(locs)+1);
-    
+
+% Outlier half-height width is the extreme outlier bound for quartiles:
+% 75th percentile + 3 IQR. No peak should be wider than this unless the
+% initial estimates were surpassingly bad.
+trial_widths = [peaks.half_height_width];
+outlier_width = prctile(trial_widths, 75)+3*iqr(trial_widths);
+
+
 for i = 1:length(peaks)
     % Set minimum and maximum x0 - the region bounds
     b = loc_for_peak(i); % The index into the bounds array corresponding to the minimum of the interval containing peak i
@@ -95,7 +102,7 @@ for i = 1:length(peaks)
     
     % Minimum/Maximum half-width
     lb(i*4-2) = 0;
-    ub(i*4-2) = 2*(bounds(b+1)-bounds(b)); %Half width at most twice distance between peaks
+    ub(i*4-2) = outlier_width;
     assert(ub(i*4-2) >= 0);
     
     % Minimum/Maximum Lorentzianness
