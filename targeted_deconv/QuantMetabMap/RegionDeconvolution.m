@@ -54,7 +54,8 @@ classdef RegionDeconvolution
         % -----------------------------------------------------------------
         % Input Arguments
         % -----------------------------------------------------------------
-        % x               The x values for the spectrum
+        % x               The x values for the spectrum (we use the entire
+        %                 thing
         %
         % y               The y values for the spectrum
         %
