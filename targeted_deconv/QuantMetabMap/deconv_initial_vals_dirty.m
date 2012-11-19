@@ -1,4 +1,4 @@
-function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, num_neighbors)
+function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, num_neighbors, progress_func)
 %Computes starting values for the deconvolution fitting routines using dirty_deconv
 %
 % -------------------------------------------------------------------------
@@ -14,6 +14,14 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 % region_max The maximum x value in the region being deconvolved
 %
 % peak_xs   The x values of the peaks
+%
+% progress_func (optional) A function handle. It is called with parameters: 
+% progres_func(frac_done, pass_num, peak_num). frac_done is the estimated
+% completion fraction and will be a double in the closed interval [0..1]. 
+% pass_num is the number of the peak-parameter refinement pass being
+% completed. peak_num is the number of next peak whose parameters will be
+% adjusted. A suggested use for progress_func is to update a waitbar. If
+% omitted, no function is called.
 %
 % num_neighbors The number of neighbor pixels used in the dirty
 % deconvolution
@@ -41,6 +49,11 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 %                    -- used in constraining the optimization
 %
 
+% Deal with optional arguments
+if ~exist('progress_func', 'var')
+    progress_func = @do_nothing; 
+end
+
 % Calculate initial peak parameters
 peak_xs = peak_xs(peak_xs <= region_max & peak_xs >= region_min);
 noise_std_pts = min(100, length(x)/10);
@@ -51,9 +64,10 @@ if ~issorted(-x)
 end
 noise_std = std(y(1:noise_std_pts));
 x_in_region = x <= region_max & x >= region_min;
-bx = x(x_in_region);
-by = y(x_in_region);
-peaks = dirty_deconvolve_pos_resid(bx, by, peak_xs, num_neighbors, noise_std);
+bx = x(x_in_region); % x values in bin, thus bx
+by = y(x_in_region); % y values in bin
+peaks = dirty_deconvolve_pos_resid(bx, by, peak_xs, num_neighbors, ...
+    noise_std, progress_func);
 
 BETA0 = peaks.property_array';
 
