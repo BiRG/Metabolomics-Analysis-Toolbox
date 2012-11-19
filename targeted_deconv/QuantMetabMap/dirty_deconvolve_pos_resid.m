@@ -1,6 +1,8 @@
-function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, num_neighbors, noise_std )
+function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, num_neighbors, noise_std, progress_func )
 % Does a quick and dirty deconvolution of region given by x,y if the peaks have location parameters peak_x
 % 
+% Usage: peaks = dirty_deconvolve_pos_resid( x, y, peak_x, num_neighbors, noise_std, iter_func )
+%
 % Does a greedy fit, starting with the highest peak x's of 1 peak at a
 % time, looking only at the points near the x location of that peak. Now
 % includes a regularization that penalizes negative residuals for the rest
@@ -22,6 +24,15 @@ function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, num_neighbors, noise_
 %
 % noise_std - the standard deviation of the noise regions in the spectrum
 %
+% progress_func (optional) - A function handle called every iteration.
+% It is called with the parameters: 
+% progres_func(frac_done, pass_num, peak_num). frac_done is the estimated
+% completion fraction and will be a double in the closed interval [0..1]. 
+% pass_num is the number of the peak-parameter refinement pass being
+% completed. peak_num is the number of next peak whose parameters will be
+% adjusted. A suggested use for progress_func is to update a waitbar. If
+% omitted, no function is called.
+%
 % Returns an array of GaussLorentzPeak objects
 
 function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise_std)
@@ -37,6 +48,10 @@ function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise
     % Add the penalty for misfit in the local neighborhood: the local 
     % remainder at that point minus the current peak's value at that point
     val = val + sum(abs(local_rem-(glp.at(local_x))).^2);
+end
+
+if ~exist('progress_func', 'var')
+    progress_func = @do_nothing; 
 end
 
 assert(noise_std > 0);
@@ -79,8 +94,13 @@ peaks = GaussLorentzPeak(initial_peak_params);
 peak_heights = interp1(x, y, peak_x);
 [~, peak_fit_order] = sort(peak_heights,'descend');
 
-for pass = 1:3
+num_passes = 3;
+fit_ops_total = num_passes * length(peak_x);
+fit_ops_complete = 0;
+for pass = 1:num_passes
     for peak_to_fit_idx = 1:length(peak_x)
+        progress_func(fit_ops_complete/fit_ops_total, pass, peak_to_fit_idx);
+        
         peak_idx = peak_fit_order(peak_to_fit_idx);
         [local_x,order] = sort(peak_neighborhood_x{peak_idx});
         local_y = peak_neighborhood_y{peak_idx}(order);
@@ -99,6 +119,8 @@ for pass = 1:3
         err_fun=@(params) penalty(local_x, local_rem, global_x, global_rem, params, p.x0, noise_std);
         new_params = fminsearch(err_fun, [M, p.G, p.P],optimset('Display','off'));
         peaks(peak_idx)=GaussLorentzPeak([new_params, p.x0]);
+        
+        fit_ops_complete=fit_ops_complete+1;
 
         % *****************************************************************
         % Uncomment the following to get nice graphical plots of debugging
