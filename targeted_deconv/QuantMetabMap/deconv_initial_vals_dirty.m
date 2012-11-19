@@ -50,7 +50,10 @@ if ~issorted(-x)
     clear('order');
 end
 noise_std = std(y(1:noise_std_pts));
-peaks = dirty_deconvolve_pos_resid(x, y, peak_xs, num_neighbors, noise_std);
+x_in_region = x <= region_max & x >= region_min;
+bx = x(x_in_region);
+by = y(x_in_region);
+peaks = dirty_deconvolve_pos_resid(bx, by, peak_xs, num_neighbors, noise_std);
 
 BETA0 = peaks.property_array';
 
