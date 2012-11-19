@@ -43,7 +43,14 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 
 % Calculate initial peak parameters
 peak_xs = peak_xs(peak_xs <= region_max & peak_xs >= region_min);
-peaks = dirty_deconvolve(x, y, peak_xs, num_neighbors);
+noise_std_pts = min(100, length(x)/10);
+if ~issorted(-x)
+    [x, order] = sort(x,'descend');
+    y = y(order);
+    clear('order');
+end
+noise_std = std(y(1:noise_std_pts));
+peaks = dirty_deconvolve_pos_resid(x, y, peak_xs, num_neighbors, noise_std);
 
 BETA0 = peaks.property_array';
 
