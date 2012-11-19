@@ -81,7 +81,15 @@ classdef RegionDeconvolution
         % load('collection.mat');  c=collection; m=RegionalSpectrumModel; d=RegionDeconvolution(c.x, c.Y, c.x(c.maxs{1}), 8.6-8.41, 8.41, 8.6, m)
         %
             if nargin > 0
-                [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, 10);
+                gcftmp = gcf; %Waitbar can mess with the current figure, save it
+                
+                wait_h = waitbar(0, sprintf('Rough deconvolution pass %d peak %d',10000,10000));
+                [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, ...
+                    region_min, region_max, peak_xs, 10, ...
+                    @(f,ps,pk) waitbar(f/2, wait_h, ...
+                    sprintf('Rough deconvolution pass %d peak %d',ps,pk)));
+                
+                waitbar(0.5, wait_h, 'Performing fine deconvolution');
 
                 [unused, obj.baseline_BETA, obj.fit_indices, obj.y_fitted, ...
                     obj.y_baseline,obj.R2, unused, peak_BETA] = ...
@@ -89,6 +97,10 @@ classdef RegionDeconvolution
                     [region_max;region_min], ...
                     model); %#ok<ASGLU>
                 obj.peaks = GaussLorentzPeak(peak_BETA);
+                
+                close(wait_h);
+                
+                figure(gcftmp); %Restore the current figure
             end
         end
         
