@@ -150,6 +150,68 @@ classdef RegionDeconvolution
             exes = [obj.peaks.location];
             peaks = obj.peaks(exes == x);
         end
+        
+        function obj=set_from_peaks(obj, peaks, x, fit_indices, y)
+        % Return a copy of this object with the fields set as if peaks were a deconvolution of (x,y)
+        %
+        % -----------------------------------------------------------------
+        % Usage
+        % -----------------------------------------------------------------
+        % rd_copy = rd.set_from_peaks(peaks, x, fit_indices, y)
+        %
+        % -----------------------------------------------------------------
+        % Input Arguments
+        % -----------------------------------------------------------------
+        % obj   The RegionDeconvolution whose values will be set
+        %       Must be a single object not an array.
+        %
+        % peaks An array of GaussLorentzPeak objects
+        %
+        % x           the array of ppm values where the deconvolution 
+        %             took place
+        %
+        % fit_indices if XX is the x values for the whole spectrum,
+        %             XX(fit_indices) == x
+        %
+        % y           y(i) is the sample intensity at ppm x(i)
+        %
+        % -----------------------------------------------------------------
+        % Outputs
+        % -----------------------------------------------------------------
+        %
+        % obj   The RegionDeconvolutionObject with its private variables
+        %       set as if peaks were the output of its internal
+        %       deconvolution routines.
+        %
+        % -----------------------------------------------------------------
+        % Examples:
+        % -----------------------------------------------------------------
+        %
+        % p=GaussLorentzPeak([1,2,3,4]); rd = rd.set_from_peaks(p, [1,2], [1024,1025], [5.7,6.12]);
+        
+            obj.peaks = peaks;
+            obj.fit_indices = fit_indices;
+            obj.y_fitted = sum(peaks.at(x));
+            
+            % Make the baseline a moving window median of the residual spectrum
+            residual = y - obj.y_fitted;
+            baseline = residual;
+            window_width = 64;
+            assert(mod(window_width, 2) == 0);
+            for i=1:length(residual)
+                i_start = max(1, i-window_width/2);
+                i_end = min(length(residual), i+window_width/2);
+                baseline(i) = median(residual(i_start:i_end));
+            end
+            obj.y_baseline = baseline;
+            obj.baseline_BETA = baseline;
+            
+            % Calculate the goodness of fit parameter
+            orig_var = var(y);
+            ssqe = sum(residual.^2)/length(residual);
+            obj.R2=1-ssqe/orig_var;
+        end
+        
     end
 end
 
