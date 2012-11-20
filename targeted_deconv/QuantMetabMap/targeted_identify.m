@@ -157,8 +157,14 @@ if ~isfield(handles, 'peaks')
     end
 end
 
-% Start with default model for each bin/spectrum combination
-handles.models(num_bins, num_samples)=RegionalSpectrumModel;
+% Start with constant model with no pentalties as the default for each 
+% bin/spectrum combination
+handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0);
+for b=1:num_bins
+    for s=1:num_samples
+        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0);
+    end
+end
 
 % Start with deconvolutions as a matrix of empty CachedValue
 % objects
