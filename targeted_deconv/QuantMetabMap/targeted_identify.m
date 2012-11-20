@@ -1448,6 +1448,18 @@ else
             save_collection(fullfile(resid_path, resid_name), res);
         end
         
+        % Write the full deconvolution to a file in the current directory
+        fraction_done = 0.92;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Saving full deconvolution']);
+        all_peaks=cell(num_spec,1);
+        for spec_idx = 1:num_spec
+            for bin_idx = 1:num_bins
+                all_peaks{spec_idx}=[all_peaks{spec_idx},handles.deconvolutions(bin_idx, spec_idx).value.peaks];
+            end
+        end
+        save('saved_full_deconvolution.mat','all_peaks');
+        
         %Save the deconvolved peaks in a nice csv format
 
         fraction_done = 0.99;
