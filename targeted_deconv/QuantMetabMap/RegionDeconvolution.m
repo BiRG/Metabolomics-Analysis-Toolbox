@@ -173,7 +173,8 @@ classdef RegionDeconvolution
         % fit_indices if XX is the x values for the whole spectrum,
         %             XX(fit_indices) == x
         %
-        % y           y(i) is the sample intensity at ppm x(i)
+        % y           y(i) is the sample intensity at ppm x(i). Must be the
+        %             same shape as x
         %
         % -----------------------------------------------------------------
         % Outputs
@@ -189,9 +190,12 @@ classdef RegionDeconvolution
         %
         % p=GaussLorentzPeak([1,2,3,4]); rd = rd.set_from_peaks(p, [1,2], [1024,1025], [5.7,6.12]);
         
+            assert(all(size(x) == size(y)));
+            
             obj.peaks = peaks;
             obj.fit_indices = fit_indices;
-            obj.y_fitted = sum(peaks.at(x));
+            y_fits = [peaks.at(x)]; %#ok<NBRAK>
+            obj.y_fitted = sum(y_fits,1);
             
             % Make the baseline a moving window median of the residual spectrum
             residual = y - obj.y_fitted;
