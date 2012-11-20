@@ -1,5 +1,7 @@
-function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,model)
+function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,model,progress_func)
 % Deconvolves a region of a spectrum
+%
+% Usage: [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,model,progress_func)
 %
 % This is code modified from Paul Anderson.  These comments 
 % were first added as part of exploring the code.
@@ -36,6 +38,11 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 %
 % model              A RegionalSpectrumModel giving the assumptions for
 %                    this deconvolution
+%
+% progress_func      (optional) Called every iteration of the optimization 
+%                    engine with a single parameter. progress_func(frac) 
+%                    where frac is the estimated fraction of completion.
+%
 % ------------------------------------------------------------------------
 % Output Parameters
 % ------------------------------------------------------------------------
@@ -151,8 +158,15 @@ ub_region = [ub_region;ub_baseline];
 num_maxima = length(inxs);
 
 if num_maxima > 0
-    [BETA_region,EXITFLAG] = ...
-        perform_deconvolution(x_region',y_region,BETA0_region,lb_region,ub_region,x_baseline_BETA, model);
+    if exist('progress_func', 'var')
+        [BETA_region,EXITFLAG] = ...
+            perform_deconvolution(x_region',y_region,BETA0_region, ...
+            lb_region,ub_region,x_baseline_BETA, model, progress_func);
+    else
+        [BETA_region,EXITFLAG] = ...
+            perform_deconvolution(x_region',y_region,BETA0_region, ...
+            lb_region,ub_region,x_baseline_BETA, model);
+    end
     BETA(4*(inxs-1)+1) = BETA_region(1:4:4*num_maxima);
     BETA(4*(inxs-1)+2) = BETA_region(2:4:4*num_maxima);
     BETA(4*(inxs-1)+3) = BETA_region(3:4:4*num_maxima);
