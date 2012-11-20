@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 10-Nov-2011 23:54:56
+% Last Modified by GUIDE v2.5 20-Nov-2012 15:00:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1981,3 +1981,67 @@ function vertical_zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#o
 handles.auto_y_zoom = false;
 zoom_plot(5/3, false, handles);
 guidata(handles.figure1, handles);
+
+
+% --- Executes on button press in auto_deconvolve_button.
+function auto_deconvolve_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to auto_deconvolve_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get the current bin and spectrum indices
+bin_idx = handles.bin_idx;
+spec_idx = handles.spectrum_idx;
+
+% Get the bin boundary
+bin = handles.metab_map(bin_idx).bin;
+
+% Calculate the noise standard deviation
+num_noise_pts = 100;
+noise_std = std(handles.collection.Y(num_noise_pts:2*num_noise_pts, spec_idx));
+
+% Set the number of points used for fitting the neighborhood of each local
+% peak
+pk_pts = 25;
+
+% Get the points for the bin
+in_bin = handles.collection.x <= bin.left & handles.collection.x >= bin.right;
+fit_indices = find(in_bin);
+bx = handles.collection.x(in_bin);
+by = handles.collection.Y(in_bin, spec_idx);
+
+% Save the global figure handle because waitbar can cause problems
+global_fig_tmp = gcf;
+
+% Do the deconvolution while displaying a progress bar
+wait_h = waitbar(0, sprintf('Auto deconvolution pass %s: peak %s of %s', ...
+    'Initializing', '0', 'unknown'));
+
+peaks=auto_dirty_deconvolve_pos_resid(bx, by, pk_pts, 5.5*noise_std, noise_std,...
+    @(frac_done, pass_num, peak_num, num_peaks) waitbar(frac_done, ...
+    wait_h, sprintf('Auto deconvolution pass %d: peak %d of %d', ...
+    pass_num, peak_num, num_peaks)));
+
+close(wait_h);
+
+% Restore the global figure handle
+figure(global_fig_tmp);
+
+
+% Set the region deconvolution
+d = RegionDeconvolution();
+d = d.set_from_peaks(peaks, bx, fit_indices, by'); %#ok<FNDSB>
+handles.deconvolutions(bin_idx, spec_idx).update_to(d);
+
+% Eliminate the old peaks and set the new ones
+pks = get_spectrum_peaks(handles, spec_idx);
+pks = pks(pks > bin.left | pks < bin.right); % Keep only peaks not in the bin
+pks = sort([pks, peaks.location],'descend'); % Add the new peaks
+handles = set_spectrum_peaks_no_gui(spec_idx, pks, handles);
+
+% Update the global guidata
+guidata(handles.figure1, handles);
+
+% Update the display
+update_plot(handles);
+update_display(handles);
