@@ -25,6 +25,12 @@ foo.excel.dec.csv
 foo.resid.xy.txt
 foo.xy.txt
 
+########
+# Fixed file used to store full deconvolution of the last set of
+# spectra deconvolved
+########
+saved_full_deconvolution.mat
+
 #######
 # File to keep emails from being sent (keeps testing the 
 # code from spamming my inbox
