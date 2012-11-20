@@ -1,5 +1,7 @@
-function peaks = auto_dirty_deconvolve_pos_resid( x, y, num_neighbors, smallest_peak_height, noise_std )
+function peaks = auto_dirty_deconvolve_pos_resid( x, y, num_neighbors, smallest_peak_height, noise_std, progress_func )
 % Does a quick and dirty deconvolution of region given by x,y
+%
+% Usage: peaks = auto_dirty_deconvolve_pos_resid( x, y, num_neighbors, smallest_peak_height, noise_std, progress_func )
 % 
 % Does a greedy fit, starting with the highest peak x's of 1 peak at a
 % time, looking only at the points near the x location of that peak. Stops
@@ -22,6 +24,16 @@ function peaks = auto_dirty_deconvolve_pos_resid( x, y, num_neighbors, smallest_
 %
 % noise_std - the standard deviation of the noise regions in the spectrum
 %
+% progress_func (optional) - A function handle called every iteration.
+% It is called with the parameters: 
+% progres_func(frac_done, pass_num, peak_num, num_peaks). frac_done is the 
+% estimated completion fraction and will be a double in the closed interval
+% [0..1]. pass_num is the number of the peak-parameter refinement pass 
+% being completed. peak_num is the number of next peak whose parameters 
+% will be adjusted. num_peaks is the number of peaks in the current fit. A 
+% suggested use for progress_func is to update a waitbar. If omitted, no 
+% function is called.
+%
 % Returns an array of GaussLorentzPeak objects
 
 function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise_std)
@@ -39,6 +51,11 @@ function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise
     val = val + sum(abs(local_rem-(glp.at(local_x))).^2);
 end
 
+% Take care of optional arguments
+if ~exist('progress_func', 'var')
+    progress_func = @do_nothing; 
+end
+
 
 % Sort x (and put y in the same order)
 if all(size(x) ~= size(y))
@@ -49,6 +66,7 @@ assert(all(size(x) == size(y)));
 [x, order] = sort(x);
 y = y(order);
 
+highest_peak = max(y);
 residuals = y; % With no peaks, the residual is just the original values
 pass = 1;
 finishing_passes_to_make = 2; % Do this many finishing passes to fine-tune the peaks after all peaks have been added
@@ -84,6 +102,10 @@ while(remaining_finishing_passes > 0)
     
     % Refit all the peaks, starting and ending with the newly added one
     for peak_idx = [length(peak_x):-1:1,length(peak_x)]
+        max_residuals = max(residuals);
+        progress = max(0,highest_peak - max_residuals)/max(0,highest_peak - smallest_peak_height);
+        progress_func(progress, pass, peak_idx, length(peak_x));
+
         local_x = peak_neighborhood_x{peak_idx};
         local_y = peak_neighborhood_y{peak_idx};
         local_sum = sum(peaks.at(local_x),1)-peaks(peak_idx).at(local_x); % Sum of all peaks but this one (really sum of all peaks - value of this peak)
