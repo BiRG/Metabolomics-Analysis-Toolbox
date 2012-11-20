@@ -64,7 +64,7 @@ for spec=1:num_spec
         all_peaks{spec}.lorentzianness];
     for field=1:4
         fprintf(fid,'%s\t%s', spectrum_ids{spec},field_names{field});
-        fprintf(fid,'\t%18g',params(field,:));
+        fprintf(fid,'\t%.18g',params(field,:));
         fprintf(fid,'\n');
     end
 end
