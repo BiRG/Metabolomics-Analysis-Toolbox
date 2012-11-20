@@ -26,7 +26,7 @@ function peaks = auto_dirty_deconvolve_pos_resid( x, y, num_neighbors, smallest_
 %
 % progress_func (optional) - A function handle called every iteration.
 % It is called with the parameters: 
-% progres_func(frac_done, pass_num, peak_num, num_peaks). frac_done is the 
+% progress_func(frac_done, pass_num, peak_num, num_peaks). frac_done is the 
 % estimated completion fraction and will be a double in the closed interval
 % [0..1]. pass_num is the number of the peak-parameter refinement pass 
 % being completed. peak_num is the number of next peak whose parameters 
@@ -104,6 +104,11 @@ while(remaining_finishing_passes > 0)
     for peak_idx = [length(peak_x):-1:1,length(peak_x)]
         max_residuals = max(residuals);
         progress = max(0,highest_peak - max_residuals)/max(0,highest_peak - smallest_peak_height);
+        expected_passes = pass+remaining_finishing_passes;
+        if remaining_finishing_passes < finishing_passes_to_make
+            expected_passes = expected_passes + 1;
+        end
+        progress = progress*pass/expected_passes;
         progress_func(progress, pass, peak_idx, length(peak_x));
 
         local_x = peak_neighborhood_x{peak_idx};
