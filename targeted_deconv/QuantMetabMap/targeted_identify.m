@@ -324,7 +324,7 @@ function ret=am_connected_to_internet
 [unused, success] = urlread('http://www.google.com/'); %#ok<ASGLU>
 ret = success;
 
-function draw_circle(center, radius_inches, color)
+function draw_circle(center, radius_inches, color) %#ok<DEFNU>
 % Draws a circle on the current axes at the center location (in data 
 % coordinates).  The radius of the circle drawn is in inches.
 %
@@ -332,6 +332,9 @@ function draw_circle(center, radius_inches, color)
 %               Pass as [x y]
 % radius_inches The radius of the circle as plotted on the screen in inches
 % color         The color of the circle to plot
+%
+% It is OK that this function is unused - it is a useful utility function
+% that I don't want to forget having written.
 center_x = center(1);
 center_y = center(2);
 oldunits = get(gca, 'Units');
@@ -608,16 +611,6 @@ function num=cur_num_identified(handles)
 % Return the number of identified peaks for current metabolite and spectrum
 num = length(cur_peak_identifications(handles));
 
-function draw_identification(peak_id_obj, collection)
-% DRAW_IDENTIFICATION Draws the selected peak identification on the current plot
-%
-% peak_id_obj The PeakIdentification object to draw
-% collection  The collection referenced by that object
-pid = peak_id_obj;
-spectrum = collection.Y(:,pid.spectrum_index);
-center = [pid.ppm, spectrum(pid.height_index)];
-draw_circle(center, 0.0625, 'r');
-
 function remove_identification(ppm, handles)
 % Removes the identification at the given ppm - if there is no
 % identification there, does nothing
@@ -737,13 +730,8 @@ if get(handles.should_show_deconv_box,'Value')
     end
 end
 
-%Draw peak identification circles
-ids = cur_peak_identifications(handles);
-for id=ids
-    draw_identification(id, handles.collection);
-end
-
 %Draw peak location lines
+ids = cur_peak_identifications(handles);
 cur_y = y_values_in_cur_bin(handles);
 y_bounds = [min(cur_y), max(cur_y)];
 if isempty(ids)
