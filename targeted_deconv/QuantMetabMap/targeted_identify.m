@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 20-Nov-2012 15:00:59
+% Last Modified by GUIDE v2.5 20-Nov-2012 20:09:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -2045,3 +2045,22 @@ guidata(handles.figure1, handles);
 % Update the display
 update_plot(handles);
 update_display(handles);
+
+
+% --------------------------------------------------------------------
+function vertical_zoom_all_tool_ClickedCallback(hObject, eventdata, handles) %#ok<DEFNU,INUSL>
+% hObject    handle to vertical_zoom_all_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.auto_y_zoom = true;
+
+xlims=xlim;
+x = handles.collection.x;
+in_lims = xlims(1) <= x & x <= xlims(2);
+y = handles.collection.Y(in_lims, handles.spectrum_idx);
+yrange = max(y)-min(y);
+zoom_to_box(xlims(1),xlims(2),min(y)-yrange/20,max(y)+yrange/20);
+handles.auto_y_zoom = false;
+guidata(handles.figure1, handles);
+%update_plot(handles);
