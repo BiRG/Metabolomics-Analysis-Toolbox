@@ -108,26 +108,28 @@ for pass = 1:num_passes
 
         % Rescale other peaks if they are completely obscuring the peak -
         % assume that all marked peaks are really at least 1 noise_std high
-        if max(local_rem) < 0.1*noise_std
+        p = peaks(peak_idx);
+        rough_peak_height = interp1(local_x, local_rem, p.x0); 
+        if rough_peak_height < 1*noise_std
             % Calculate how much to rescale by
-            max_pt_select = local_rem == max(local_rem);
-            max_pt = local_x(max_pt_select);
-            max_pt_sum = sum(peaks.at(max_pt));
-            new_sum = max(0,local_y(max_pt_select) - 0.1 * noise_std); % After scaling, the remainder at the peak will be exactly 5 noise std high - which probably underestimates the peak height
-            multiplier = new_sum / max_pt_sum;
-            
-            % Rescale other peak heights
-            this_peak = peaks(peak_idx);
-            peak_property_array=peaks.property_array();
-            peak_property_array(1:4:length(peak_property_array))= ...
-                peak_property_array(1:4:length(peak_property_array))* multiplier;
-            peaks = GaussLorentzPeak(peak_property_array);
-            peaks(peak_idx) = this_peak;
-            
-            % Recalculate the remainder
-            local_sum = sum(peaks.at(local_x))-peaks(peak_idx).at(local_x);
-            local_rem = local_y - local_sum;
-            global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
+            max_pt_sum = sum(peaks.at(p.x0));
+            new_sum = max(0,interp1(local_x, local_y, p.x0)-1 * noise_std); % After scaling, the remainder at the peak will be exactly 5 noise std high - which probably underestimates the peak height
+            if new_sum > 0
+                multiplier = new_sum / max_pt_sum;
+
+                % Rescale other peak heights
+                this_peak = peaks(peak_idx);
+                peak_property_array=peaks.property_array();
+                peak_property_array(1:4:length(peak_property_array))= ...
+                    peak_property_array(1:4:length(peak_property_array))* multiplier;
+                peaks = GaussLorentzPeak(peak_property_array);
+                peaks(peak_idx) = this_peak;
+
+                % Recalculate the remainder
+                local_sum = sum(peaks.at(local_x))-peaks(peak_idx).at(local_x);
+                local_rem = local_y - local_sum;
+                global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
+            end
             
             % Get rid of temporary variables (wish matlab had lexical scope)
             clear('max_pt', 'max_pt_select', 'max_pt_sum', 'new_sum', 'peak_property_array', 'multiplier', 'this_peak');
