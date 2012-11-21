@@ -43,6 +43,38 @@ function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise
     val = sqrt(sum(val));
 end
 
+% Penalty used for uncovering a buried peak ppm - minimize local residuals
+% which are raised to a power of the number of noise standard deviations
+% the sum at the buried ppm exceeds the target height (minimum power is 2)
+%
+% local_x, local_y - the local neighborhoods and the corresponding
+%                    intensities for the peaks being adjusted
+%
+% widths           - the new widths for the peaks being adjusted (numeric
+%                    vector 1/4 length of original_params)
+%
+% lorentziannesses - the new lorentziannesses for the peaks being adjusted
+%                    (numeric vector 1/4 length of original_params)
+%
+% buried_ppm       - (scalar) the ppm that needs to be uncovered
+%
+% target_height    - (scalar) the height that the adjusted peaks should sum
+%                    to at the buried ppm
+%
+% noise_std        - noise standard deviation for the spectrum
+%
+% original_params  - the properties_array return for the collection of
+%                    peaks being adjusted
+function val=uncover_penalty(local_x, local_y, widths, lorentziannesses, buried_ppm, target_height, noise_std, original_params)
+    original_params(2:4:end)=widths;
+    original_params(3:4:end)=lorentziannesses; %#ok<NASGU>
+    glp = GaussLorentzPeak(orignal_params);
+    residual = abs(local_y - glp.at(local_x));
+    actual_height = glp.at(buried_ppm);
+    exponent = 2+max(0,(actual_height-target_height)/noise_std);
+    val = residual.^exponent;
+end
+
 if ~exist('progress_func', 'var')
     progress_func = @do_nothing; 
 end
@@ -106,34 +138,59 @@ for pass = 1:num_passes
         global_y = y(global_x_idx);
         global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
 
-        % Rescale other peaks if they are completely obscuring the peak -
+        % Rescale other peak widths if they are completely obscuring the peak -
         % assume that all marked peaks are really at least 1 noise_std high
-        p = peaks(peak_idx);
-        rough_peak_height = interp1(local_x, local_rem, p.x0); 
+        this_peak = peaks(peak_idx);
+        rough_peak_height = interp1(local_x, local_rem, this_peak.x0); 
         if rough_peak_height < 1*noise_std
-            % Calculate how much to rescale by
-            max_pt_sum = sum(peaks.at(p.x0));
-            new_sum = max(0,interp1(local_x, local_y, p.x0)-1 * noise_std); % After scaling, the remainder at the peak will be exactly 5 noise std high - which probably underestimates the peak height
-            if new_sum > 0
-                multiplier = new_sum / max_pt_sum;
-
-                % Rescale other peak heights
+            % Calculate target height
+            target_height= max(0,interp1(local_x, local_y, this_peak.x0)-1 * noise_std); % After scaling, the remainder at the peak will be exactly 1 noise std high - which probably underestimates the peak height
+            if target_height > 0
+                % Get the local x and y for the other peaks - removing any
+                % duplicates from overlapping neighborhoods
+                not_this_peak = 1:length(peaks) ~= peak_idx;
+                other_local_x = [peak_neighborhood_x{not_this_peak}];
+                other_local_y = [peak_neighborhood_y{not_this_peak}];
+                [other_local_x,order]=unique(other_local_x);
+                other_local_y = other_local_y(order);
+                
+                other_peaks = peaks(not_this_peak);
                 this_peak = peaks(peak_idx);
-                peak_property_array=peaks.property_array();
-                peak_property_array(1:4:length(peak_property_array))= ...
-                    peak_property_array(1:4:length(peak_property_array))* multiplier;
-                peaks = GaussLorentzPeak(peak_property_array);
+                
+                other_peak_properties = other_peaks.property_array();
+                initial_widths = other_peak_properties(2:4:end);
+                initial_loren  = other_peak_properties(3:4:end);
+                num_other_peaks = length(other_peaks);
+                
+                err_fun=@(params) uncover_penalty(...
+                    other_local_x, other_local_y, ...
+                    params(1:num_other_peaks), ...
+                    params(num_other_peaks+1:end), ...
+                    this_peak.x0, target_height, noise_std, ...
+                    other_peak_properties);
+                new_params = fminsearch(err_fun, ...
+                    [initial_widths,initial_loren], ...
+                    optimset('Display','off'));
+                other_peak_properties(2:4:end)=new_params(1:num_other_peaks);
+                other_peak_properties(3:4:end)=new_params(num_other_peaks+1:end);
+                peaks(not_this_peak)=GaussLorentzPeak(other_peak_properties);
                 peaks(peak_idx) = this_peak;
 
+                % Get rid of temporary variables (wish matlab had lexical scope)
+                clear not_this_peak; clear other_local_x; clear other_local_y;
+                clear order; clear other_peaks; clear this_peak; clear other_peak_properties;
+                clear initial_widths; clear initial_loren; clear num_other_peaks;
+                clear err_fun; clear new_params;
+                
                 % Recalculate the remainder
                 local_sum = sum(peaks.at(local_x))-peaks(peak_idx).at(local_x);
                 local_rem = local_y - local_sum;
                 global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
+                
             end
-            
-            % Get rid of temporary variables (wish matlab had lexical scope)
-            clear('max_pt', 'max_pt_select', 'max_pt_sum', 'new_sum', 'peak_property_array', 'multiplier', 'this_peak');
+            clear target_height;
         end
+        clear('this_peak','rough_peak_height');
         
         % Do the minimization
         p = peaks(peak_idx);
