@@ -37,17 +37,10 @@ function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, num_neighbors, noise_
 
 function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise_std)
     glp = GaussLorentzPeak([params, x0]);
+    peak_height = glp.at(local_x);
     
-    % Calculate the regularization - penalize negative values more than
-    % num_std noise standard deviations below 0
-    num_std = 4;
-    val = (global_rem - glp.at(global_x)) + num_std*noise_std;
-    val(val > 0) = 0;
-    val = sum((val/noise_std).^4);
-    
-    % Add the penalty for misfit in the local neighborhood: the local 
-    % remainder at that point minus the current peak's value at that point
-    val = val + sum(abs(local_rem-(glp.at(local_x))).^2);
+    val = (local_rem - peak_height).^2/length(peak_height);
+    val = sqrt(sum(val));
 end
 
 if ~exist('progress_func', 'var')
@@ -113,9 +106,40 @@ for pass = 1:num_passes
         global_y = y(global_x_idx);
         global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
 
+        % Rescale other peaks if they are completely obscuring the peak -
+        % assume that all marked peaks are really at least 1 noise_std high
+        if max(local_rem) < 0.1*noise_std
+            % Calculate how much to rescale by
+            max_pt_select = local_rem == max(local_rem);
+            max_pt = local_x(max_pt_select);
+            max_pt_sum = sum(peaks.at(max_pt));
+            new_sum = max(0,local_y(max_pt_select) - 0.1 * noise_std); % After scaling, the remainder at the peak will be exactly 5 noise std high - which probably underestimates the peak height
+            multiplier = new_sum / max_pt_sum;
+            
+            % Rescale other peak heights
+            this_peak = peaks(peak_idx);
+            peak_property_array=peaks.property_array();
+            peak_property_array(1:4:length(peak_property_array))= ...
+                peak_property_array(1:4:length(peak_property_array))* multiplier;
+            peaks = GaussLorentzPeak(peak_property_array);
+            peaks(peak_idx) = this_peak;
+            
+            % Recalculate the remainder
+            local_sum = sum(peaks.at(local_x))-peaks(peak_idx).at(local_x);
+            local_rem = local_y - local_sum;
+            global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
+            
+            % Get rid of temporary variables (wish matlab had lexical scope)
+            clear('max_pt', 'max_pt_select', 'max_pt_sum', 'new_sum', 'peak_property_array', 'multiplier', 'this_peak');
+        end
+        
         % Do the minimization
         p = peaks(peak_idx);
-        M = interp1(local_x, local_rem, p.x0); %Start the peak at the peak value for its remainder
+        if pass == 1
+            M = interp1(local_x, local_rem, p.x0); %Start the peak at the peak value for its remainder
+        else
+            M = p.M; % After the first round, set the peak height to what it was in the last round
+        end
         err_fun=@(params) penalty(local_x, local_rem, global_x, global_rem, params, p.x0, noise_std);
         new_params = fminsearch(err_fun, [M, p.G, p.P],optimset('Display','off'));
         peaks(peak_idx)=GaussLorentzPeak([new_params, p.x0]);
