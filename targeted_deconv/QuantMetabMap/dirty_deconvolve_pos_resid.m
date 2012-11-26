@@ -68,11 +68,12 @@ end
 function val=uncover_penalty(local_x, local_y, widths, lorentziannesses, buried_ppm, target_height, noise_std, original_params)
     original_params(2:4:end)=widths;
     original_params(3:4:end)=lorentziannesses; %#ok<NASGU>
-    glp = GaussLorentzPeak(orignal_params);
-    residual = abs(local_y - glp.at(local_x));
-    actual_height = glp.at(buried_ppm);
+    glp = GaussLorentzPeak(original_params);
+    peak_sum = sum(glp.at(local_x),1);
+    residual = abs(local_y - peak_sum);
+    actual_height = sum(glp.at(buried_ppm),1);
     exponent = 2+max(0,(actual_height-target_height)/noise_std);
-    val = residual.^exponent;
+    val = sum(residual.^exponent);
 end
 
 if ~exist('progress_func', 'var')
@@ -129,7 +130,7 @@ for pass = 1:num_passes
         peak_idx = peak_fit_order(peak_to_fit_idx);
         [local_x,order] = sort(peak_neighborhood_x{peak_idx});
         local_y = peak_neighborhood_y{peak_idx}(order);
-        local_sum = sum(peaks.at(local_x))-peaks(peak_idx).at(local_x); % Sum of all peaks but this one (really sum of all peaks - value of this peak)
+        local_sum = sum(peaks.at(local_x),1)-peaks(peak_idx).at(local_x); % Sum of all peaks but this one (really sum of all peaks - value of this peak)
         local_rem = local_y - local_sum; % Remainder in the neighborhood
         
         % Compute the non-local x and y (called global here) for use in the
@@ -145,7 +146,7 @@ for pass = 1:num_passes
         if rough_peak_height < 1*noise_std
             % Calculate target height
             target_height= max(0,interp1(local_x, local_y, this_peak.x0)-1 * noise_std); % After scaling, the remainder at the peak will be exactly 1 noise std high - which probably underestimates the peak height
-            if target_height > 0
+            if target_height > 0 && length(peaks) > 1
                 % Get the local x and y for the other peaks - removing any
                 % duplicates from overlapping neighborhoods
                 not_this_peak = 1:length(peaks) ~= peak_idx;
@@ -187,6 +188,17 @@ for pass = 1:num_passes
                 local_rem = local_y - local_sum;
                 global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
                 
+                
+                % *****************************************************************
+                % Uncomment the following to get nice graphical plots of debugging
+                % and current point each iteration
+                % *****************************************************************
+%                  saved_figure = gcf;
+%                  figure(5);
+%                  quick_plot_bin(x, y, peaks);
+%                  uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
+%                  figure(saved_figure);
+                
             end
             clear target_height;
         end
@@ -209,8 +221,11 @@ for pass = 1:num_passes
         % Uncomment the following to get nice graphical plots of debugging
         % and current point each iteration
         % *****************************************************************
+%         saved_figure = gcf;
+%         figure(5);
 %         quick_plot_bin(x, y, peaks);
 %         uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
+%         figure(saved_figure);
 %         p=peaks(peak_idx);
 %         fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
     end
