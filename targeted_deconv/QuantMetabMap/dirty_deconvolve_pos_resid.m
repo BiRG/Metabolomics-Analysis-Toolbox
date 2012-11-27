@@ -85,7 +85,7 @@ peaks = GaussLorentzPeak(initial_peak_params);
 
 % Find out the heights at the initial peak coordinates
 peak_heights = interp1(x, y, peak_x);
-[~, peak_fit_order] = sort(peak_heights,'descend');
+[~, peak_fit_order] = sort(peak_heights,'ascend');
 
 num_passes = 3;
 fit_ops_total = num_passes * length(peak_x);
@@ -123,13 +123,13 @@ for pass = 1:num_passes
         % Uncomment the following to get nice graphical plots of debugging
         % and current point each iteration
         % *****************************************************************
-%         saved_figure = gcf;
-%         figure(5);
-%         quick_plot_bin(x, y, peaks);
-%         uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
-%         figure(saved_figure);
-%         p=peaks(peak_idx);
-%         fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
+        saved_figure = gcf;
+        figure(5);
+        quick_plot_bin(x, y, peaks);
+        uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
+        figure(saved_figure);
+        p=peaks(peak_idx);
+        fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
     end
 end
 
