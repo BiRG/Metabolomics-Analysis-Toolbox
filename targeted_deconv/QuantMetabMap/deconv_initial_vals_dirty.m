@@ -5,7 +5,7 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 % Input arguments
 % -------------------------------------------------------------------------
 %
-% x        The x values of the spectrum being fit
+% x        The x values of the spectrum being fit (must be non-empty)
 %
 % y        The corresponding y values
 %
@@ -83,10 +83,16 @@ ub = lb;
 assert(issorted(locs));
 
 if length(locs) > 1
+    % Most bounds are the midpoints
     bounds = (locs(1:end-1)+locs(2:end))/2;
-    bounds = [max(region_min, locs(1)-abs(locs(1)-bounds(1))) ...
+    % Now set up the non-end-point bounds
+    % First, find the median length of an inter-peak interval
+    interval_widths = abs(locs(2:end)-(locs(1:end-1)));
+    median_i_width = median(reshape(interval_widths,[],1));
+    % Then make a buffer of half that on either side of the end peaks
+    bounds = [max(region_min, locs(1)-median_i_width/2) ...
         ,bounds, ...
-        min(region_max, locs(end)+abs(locs(end)-bounds(end)))];
+        min(region_max, locs(end)+median_i_width/2)];
 elseif length(locs) == 1
     bounds = [region_min, region_max];
 else 
@@ -103,16 +109,39 @@ outlier_width = prctile(trial_widths, 75)+3*iqr(trial_widths);
 
 
 for i = 1:length(peaks)
-    % Set minimum and maximum x0 - the region bounds
+    % Find the boundaries around the current peak - taking care of the
+    % possible but degenerate situation where adjacent peaks have the same 
+    % x coordinate
     b = loc_for_peak(i); % The index into the bounds array corresponding to the minimum of the interval containing peak i
-    lb(i*4-0) = bounds(b);
-    ub(i*4-0) = bounds(b+1);
+    cur_bound = bounds(b);
+    next_bound_idx = b+1;
+    next_bound = bounds(next_bound_idx);
+    
+    while next_bound == cur_bound
+        if  next_bound_idx + 1 <= length(bounds)
+            next_bound_idx = next_bound_idx + 1;
+            next_bound = bounds(next_bound_idx);
+        end
+    end
+    while next_bound == cur_bound
+        if  b - 1 >= 1
+            b = b - 1;
+            cur_bound = bounds(b);
+        end
+    end
+    
+    % Set minimum and maximum x0 - the region bounds
+    lb(i*4-0) = cur_bound;
+    ub(i*4-0) = next_bound;
     
     
     % Minimum/Maximum height
-    x_in_region = x >= bounds(b) & x <= bounds(b+1);
+    x_in_region = x >= cur_bound & x <= next_bound;
+    if isempty(x_in_region)
+        x_in_region = x;
+    end
     lb(i*4-3) = 0; 
-    ub(i*4-3) = max(y(x_in_region)); 
+	ub(i*4-3) = max(y(x_in_region)); 
     
     % Minimum/Maximum half-width
     lb(i*4-2) = 0;
