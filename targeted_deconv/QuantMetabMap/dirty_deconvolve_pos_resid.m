@@ -39,8 +39,10 @@ function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise
     glp = GaussLorentzPeak([params, x0]);
     peak_height = glp.at(local_x);
     
+    width_penalty = max(0,params(2) - 0.02)/0.001; % Penalty when width > one half conventional bin
+    
     val = (local_rem - peak_height).^2/length(peak_height);
-    val = sqrt(sum(val));
+    val = sqrt(sum(val))*(1+width_penalty);
 end
 
 if ~exist('progress_func', 'var')
@@ -79,7 +81,7 @@ end
 clear i;
 
 % Start with 0 height peaks at the correct x values
-initial_peak_params = repmat([0, 0.5, 0.5, 0],1,length(peak_x));
+initial_peak_params = repmat([0, 0.005, 0.5, 0],1,length(peak_x));
 initial_peak_params(4:4:4*length(peak_x))=peak_x;
 peaks = GaussLorentzPeak(initial_peak_params);
 
@@ -115,6 +117,9 @@ for pass = 1:num_passes
         end
         err_fun=@(params) penalty(local_x, local_rem, global_x, global_rem, params, p.x0, noise_std);
         new_params = fminsearch(err_fun, [M, p.G, p.P],optimset('Display','off'));
+        if new_params(2) > 0.02
+            new_params(2) = 0.02;
+        end
         peaks(peak_idx)=GaussLorentzPeak([new_params, p.x0]);
         
         fit_ops_complete=fit_ops_complete+1;
@@ -123,13 +128,13 @@ for pass = 1:num_passes
         % Uncomment the following to get nice graphical plots of debugging
         % and current point each iteration
         % *****************************************************************
-        saved_figure = gcf;
-        figure(5);
-        quick_plot_bin(x, y, peaks);
-        uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
-        figure(saved_figure);
-        p=peaks(peak_idx);
-        fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
+%         p=peaks(peak_idx);
+%         fprintf('Cur [M G P x0]: %g %g %g %g\n', p.M, p.G, p.P, p.x0);
+%         saved_figure = gcf;
+%         figure(5);
+%         quick_plot_bin(x, y, peaks);
+%         uiwait(msgbox(sprintf('Done with peak %d pass %d. Click to continue.', peak_idx, pass)));
+%         figure(saved_figure);
     end
 end
 
