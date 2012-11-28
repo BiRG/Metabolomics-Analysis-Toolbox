@@ -88,11 +88,11 @@ pfile = fullfile(nssd_root, dirname, exp_no, 'pdata', proc_no,'procs'); % Proces
 
 % Write the processing parameters
 fid = fopen(pfile,'wt');
-fprintf(fid,'##$OFFSET= %.18g', offset);
-fprintf(fid,'##$SW_p= %.18g', sw);
-fprintf(fid,'##$SF= %.18g', sf);
-fprintf(fid,'##$SI= %.18g', si);
-fprintf(fid,'##$BYTORDP= %d', byteordp);
+fprintf(fid,'##$OFFSET= %.18g\n', offset);
+fprintf(fid,'##$SW_p= %.18g\n', sw);
+fprintf(fid,'##$SF= %.18g\n', sf);
+fprintf(fid,'##$SI= %.18g\n', si);
+fprintf(fid,'##$BYTORDP= %d\n', byteordp);
 fclose(fid);
 
 % Write the real data
