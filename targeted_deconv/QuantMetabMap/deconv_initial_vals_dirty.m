@@ -105,7 +105,15 @@ assert(length(bounds) == length(locs)+1);
 % 75th percentile + 3 IQR. No peak should be wider than this unless the
 % initial estimates were surpassingly bad.
 trial_widths = [peaks.half_height_width];
-outlier_width = prctile(trial_widths, 75)+3*iqr(trial_widths);
+if length(trial_widths) > 1
+    outlier_width = prctile(trial_widths, 75)+3*iqr(trial_widths);
+elseif length(trial_widths) == 1
+    outlier_width = 2*trial_widths(1); % If there is only one peak, let the main optimization routine grow it twice as wide, if necessary
+else
+    error('deconv_initial_vals_dirty:at_least_one_peak',['There must be '...
+        'at least one peak in the interval passed to ' ...
+        'deconv_initial_vals_dirty']);
+end
 
 
 for i = 1:length(peaks)
@@ -140,8 +148,14 @@ for i = 1:length(peaks)
     if isempty(x_in_region)
         x_in_region = x;
     end
-    lb(i*4-3) = 0; 
-	ub(i*4-3) = max(y(x_in_region)); 
+    ub(i*4-3) = max(y(x_in_region)); 
+    if length(trial_widths) > 1
+        lb(i*4-3) = 0; 
+    else
+        % For a single peak, the local deconvolution will be quite
+        % accurate, set it as a lower bound
+        lb(i*4-3) = max(0, peaks(1).height);
+    end
     
     % Minimum/Maximum half-width
     lb(i*4-2) = 0;
