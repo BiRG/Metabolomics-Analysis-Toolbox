@@ -35,11 +35,11 @@ function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, num_neighbors, noise_
 %
 % Returns an array of GaussLorentzPeak objects
 
-function val=penalty(local_x, local_rem, global_x, global_rem, params, x0, noise_std)
+function val=penalty(local_x, local_rem, params, x0, max_width)
     glp = GaussLorentzPeak([params, x0]);
     peak_height = glp.at(local_x);
     
-    width_penalty = max(0,params(2) - 0.02)/0.001; % Penalty when width > one half conventional bin
+    width_penalty = 20*max(0,params(2) - max_width); % Penalty when width > max_width
     
     val = (local_rem - peak_height).^2/length(peak_height);
     val = sqrt(sum(val))*(1+width_penalty);
@@ -102,12 +102,6 @@ for pass = 1:num_passes
         local_sum = sum(peaks.at(local_x),1)-peaks(peak_idx).at(local_x); % Sum of all peaks but this one (really sum of all peaks - value of this peak)
         local_rem = local_y - local_sum; % Remainder in the neighborhood
         
-        % Compute the non-local x and y (called global here) for use in the
-        % regularization term
-        [global_x, global_x_idx] = setdiff(x, local_x);
-        global_y = y(global_x_idx);
-        global_rem = global_y - sum(peaks.at(global_x)) + peaks(peak_idx).at(global_x); 
-
         % Do the minimization
         p = peaks(peak_idx);
         if pass == 1
@@ -115,10 +109,11 @@ for pass = 1:num_passes
         else
             M = p.M; % After the first round, set the peak height to what it was in the last round
         end
-        err_fun=@(params) penalty(local_x, local_rem, global_x, global_rem, params, p.x0, noise_std);
+        max_width = 0.06; %Maximum width allowed for peaks is 1.5 conventional bins
+        err_fun=@(params) penalty(local_x, local_rem, params, p.x0, max_width);
         new_params = fminsearch(err_fun, [M, p.G, p.P],optimset('Display','off'));
-        if new_params(2) > 0.02
-            new_params(2) = 0.02;
+        if new_params(2) > max_width
+            new_params(2) = max_width;
         end
         peaks(peak_idx)=GaussLorentzPeak([new_params, p.x0]);
         
