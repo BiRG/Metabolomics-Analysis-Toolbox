@@ -57,13 +57,10 @@ x = linspace(max_f, min_f, num_samples);
 % Determine the y values (makes a row vector)
 y = sum(peaks.at(x),1);
 
-% Scale the y values to a 64 bit signed integer.
-max_int64 = int64(9223372036854775807);
+% Scale the y values to a 32 bit signed integer.
+max_int32 = 2147483647;
 max_y = max(abs(y));
-y_int = int64(zeros(size(y)));
-for i = 1:length(y_int)
-    y_int(i) = int64(max_int64*(y(i)/max_y));
-end
+y_int = int32(round(max_int32*(y/max_y)));
 
 % Determine the sw, sf, si, byteordp, and offset parameters
 offset = max_f;
