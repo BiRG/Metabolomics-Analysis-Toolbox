@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 20-Nov-2012 20:09:08
+% Last Modified by GUIDE v2.5 03-Dec-2012 16:00:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -2052,3 +2052,26 @@ zoom_to_box(xlims(1),xlims(2),min(y)-yrange/20,max(y)+yrange/20);
 handles.auto_y_zoom = false;
 guidata(handles.figure1, handles);
 %update_plot(handles);
+
+
+
+function rough_peak_samples_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to rough_peak_samples_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rough_peak_samples_edit as text
+%        str2double(get(hObject,'String')) returns contents of rough_peak_samples_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function rough_peak_samples_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rough_peak_samples_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
