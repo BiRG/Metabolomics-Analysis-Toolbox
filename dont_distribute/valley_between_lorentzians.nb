@@ -1,0 +1,1010 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     30923,       1001]
+NotebookOptionsPosition[     28261,        910]
+NotebookOutlinePosition[     28599,        925]
+CellTagsIndexPosition[     28556,        922]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Valley Between Two Lorentzians", "Title",
+ CellChangeTimes->{{3.5634882558419523`*^9, 3.563488282036936*^9}}],
+
+Cell["Eric Moyer", "Subtitle",
+ CellChangeTimes->{{3.563488296824839*^9, 3.563488299180793*^9}}],
+
+Cell["2 December 2012", "Subsubtitle",
+ CellChangeTimes->{{3.563488312088662*^9, 3.5634883143149967`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Synopsis", "Section",
+ CellChangeTimes->{{3.563488347733482*^9, 3.5634883573137817`*^9}}],
+
+Cell[TextData[{
+ "I need to add a function to approximate the contributions of external peaks \
+to my dirty deconvolution routine. Because the external peaks are (roughly) \
+Lorentzian a simple function to approximate them would be two Lorentzians \
+outside of the region of interest. An desirable constraint on the external \
+peak contribution is that it should not generate a peak inside the region of \
+interest (the closed interval ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"[", 
+    RowBox[{
+     SubscriptBox["r", "min"], ",", 
+     SubscriptBox["r", "max"]}], "]"}], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ "). I wrote this code to determine whether two Lorentzian peaks would have \
+this characteristic."
+}], "Text",
+ CellChangeTimes->{{3.563488316997673*^9, 3.563488332674807*^9}, {
+   3.563488372020186*^9, 3.563488392447853*^9}, {3.563488424977791*^9, 
+   3.563488430081416*^9}, {3.5634884772788477`*^9, 3.56348848067159*^9}, {
+   3.563489305625678*^9, 3.563489497252747*^9}, {3.563492696127956*^9, 
+   3.56349271315767*^9}, 3.5634927511117153`*^9, {3.563492787497631*^9, 
+   3.563492789025646*^9}}],
+
+Cell["\<\
+I was surprised that if two Lorentzians are close enough, they can generate a \
+peak between them. Though I haven't checked it, my intuition says that this \
+would occur when they are so close that they merge into a third \
+non-Lorentzian peak.\
+\>", "Text",
+ CellChangeTimes->{{3.5634895109022827`*^9, 3.563489604163663*^9}}],
+
+Cell[TextData[{
+ "We can avoid generating a peak in the region of interest if the nearest \
+boundary of the region of interest is at least ",
+ Cell[BoxData[
+  FormBox[
+   FractionBox["width", 
+    SqrtBox["3"]], TraditionalForm]]],
+ " ppm away from each external peak maximum."
+}], "Text",
+ CellChangeTimes->{{3.56348963776224*^9, 3.563489831506214*^9}, {
+  3.5634900075551767`*^9, 3.5634900100482807`*^9}}],
+
+Cell[TextData[{
+ "This means that I would want to fit a curve: ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{"l", "(", 
+     RowBox[{
+      SubscriptBox["m", "0"], ",", 
+      SubscriptBox["\[Gamma]", "0"], ",", 
+      SubscriptBox["x", "0"]}], ")"}], "+", 
+    RowBox[{"l", "(", 
+     RowBox[{
+      SubscriptBox["m", "1"], ",", 
+      SubscriptBox["\[Gamma]", "1"], ",", 
+      SubscriptBox["x", "1"]}], ")"}]}], TraditionalForm]]],
+ " with the constraints ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["m", "0"], ",", 
+    RowBox[{
+     SubscriptBox["m", "1"], "\[GreaterEqual]", "0"}]}], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["\[Gamma]", "0"], ",", 
+    RowBox[{
+     SubscriptBox["\[Gamma]", "1"], ">", "0"}]}], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{" ", 
+    RowBox[{
+     SubscriptBox["x", "0"], "<", " ", 
+     RowBox[{
+      SubscriptBox["r", "min"], "-", 
+      FractionBox[
+       SubscriptBox["\[Gamma]", "0"], 
+       SqrtBox["3"]]}]}]}], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["r", "max"], "+", 
+     FractionBox[
+      SubscriptBox["\[Gamma]", "1"], 
+      SqrtBox["3"]]}], ">", " ", 
+    SubscriptBox["x", "1"]}], TraditionalForm]]],
+ ". Where ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"l", "(", 
+    RowBox[{"m", ",", "\[Gamma]", ",", "x"}], ")"}], TraditionalForm]]],
+ " is the Lorentzian function with mode ",
+ Cell[BoxData[
+  FormBox["m", TraditionalForm]]],
+ ", width at half-height, \[Gamma], and mode location ",
+ Cell[BoxData[
+  FormBox["x", TraditionalForm]]],
+ "."
+}], "Text",
+ CellChangeTimes->{{3.563490050134923*^9, 3.563490162880497*^9}, {
+  3.5634902076978493`*^9, 3.563490450515757*^9}, {3.5634905119706163`*^9, 
+  3.5634907139499273`*^9}, {3.563491259766636*^9, 3.563491334280572*^9}, {
+  3.563491533438401*^9, 3.563491564052133*^9}}],
+
+Cell[TextData[{
+ "The least squares software in Matlab has built-in constrained optimization \
+for hyper-rectangles, so to use it, I need to make one side of each \
+inequality a variable and the other a constant. I can do this by making a \
+substitue for the Lorentzian, ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{"p", "(", 
+     RowBox[{"m", ",", "\[Gamma]", ",", "r", ",", "\[Xi]"}], ")"}], "=", 
+    RowBox[{"l", "(", 
+     RowBox[{"m", ",", "\[Gamma]", ",", 
+      RowBox[{"r", "+", 
+       RowBox[{
+        FractionBox["\[Xi]", 
+         SqrtBox["3"]], " ", "\[Gamma]"}]}]}], ")"}]}], TraditionalForm]]],
+ ". The curve being fit becomes then: ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{"p", "(", 
+     RowBox[{
+      SubscriptBox["m", "0"], ",", 
+      SubscriptBox["\[Gamma]", "0"], ",", 
+      SubscriptBox["r", "min"], ",", 
+      SubscriptBox["\[Xi]", "0"]}], ")"}], "+", 
+    RowBox[{"p", "(", 
+     RowBox[{
+      SubscriptBox["m", "1"], ",", 
+      SubscriptBox["\[Gamma]", "1"], ",", 
+      SubscriptBox["r", "max"], ",", 
+      SubscriptBox["\[Xi]", "1"]}], ")"}]}], TraditionalForm]]],
+ " and the constraints become: ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["m", "0"], ",", 
+    RowBox[{
+     SubscriptBox["m", "1"], "\[GreaterEqual]", "0"}]}], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["\[Gamma]", "0"], ",", 
+    RowBox[{
+     SubscriptBox["\[Gamma]", "1"], ">", " ", "0"}]}], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["\[Xi]", "0"], "<", 
+    RowBox[{"-", "1"}]}], TraditionalForm]]],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["\[Xi]", "1"], ">", "1"}], TraditionalForm]]],
+ "."
+}], "Text",
+ CellChangeTimes->{{3.563490723373082*^9, 3.563490726090831*^9}, {
+  3.563490774063149*^9, 3.563490837630657*^9}, {3.5634908767321777`*^9, 
+  3.563490880362261*^9}, {3.5634909126868258`*^9, 3.563490952291607*^9}, {
+  3.563491011771904*^9, 3.563491016799148*^9}, {3.563491053207741*^9, 
+  3.563491078777315*^9}, {3.563491149928802*^9, 3.563491244512158*^9}, {
+  3.563491279198876*^9, 3.563491279454205*^9}, {3.563491342770402*^9, 
+  3.563491525735511*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Derivation", "Section",
+ CellChangeTimes->{{3.563488363627002*^9, 3.563488366322016*^9}}],
+
+Cell["Sum of two Lorentzians, one of amplitude 1 and mode 0", "Text",
+ CellChangeTimes->{{3.56348673518292*^9, 3.563486766402728*^9}, {
+  3.563488251738544*^9, 3.563488253667149*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"f", "[", "x_", "]"}], ":=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"m0", "/", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"x", "^", "2"}], "+", "1"}], ")"}]}], ")"}], "+", 
+   RowBox[{"(", 
+    RowBox[{"m1", " ", 
+     RowBox[{"g1", "/", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"x", "-", "x1"}], ")"}], "^", "2"}], "+", 
+        RowBox[{"g1", "^", "2"}]}], ")"}]}]}], ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.563485176618134*^9, 3.5634852440660257`*^9}}],
+
+Cell["First derivative of the sum of two Lorentzians", "Text",
+ CellChangeTimes->{{3.5634867441240673`*^9, 3.563486754057975*^9}, {
+  3.563487970820819*^9, 3.563487973625235*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"f", "[", "x", "]"}], ",", "x"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.563485253028014*^9, 3.563485330492463*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{"2", " ", "m0", " ", "x"}], 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"1", "+", 
+       SuperscriptBox["x", "2"]}], ")"}], "2"]]}], "+", 
+  FractionBox[
+   RowBox[{"2", " ", "g1", " ", "m1", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "x"}], "+", "x1"}], ")"}]}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["g1", "2"], "+", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"x", "-", "x1"}], ")"}], "2"]}], ")"}], "2"]]}]], "Output",
+ CellChangeTimes->{
+  3.563485270042418*^9, {3.563485316234572*^9, 3.563485331476177*^9}}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"df", "[", "x_", "]"}], ":=", 
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"2", " ", "m0", " ", "x"}], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        SuperscriptBox["x", "2"]}], ")"}], "2"]]}], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "g1", " ", "m1", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "x"}], "+", "x1"}], ")"}]}], 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox["g1", "2"], "+", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"x", "-", "x1"}], ")"}], "2"]}], ")"}], "2"]]}]}]], "Input",
+ CellChangeTimes->{{3.563485280488018*^9, 3.563485325051548*^9}}],
+
+Cell["Second derivative of sum of two Lorentzians", "Text",
+ CellChangeTimes->{{3.56348678207408*^9, 3.563486792520343*^9}, {
+  3.563487977203624*^9, 3.563487977929701*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"df", "[", "x", "]"}], ",", "x"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5634853428663893`*^9, 3.563485351706929*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox[
+   RowBox[{"2", " ", "m0", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", 
+      RowBox[{"3", " ", 
+       SuperscriptBox["x", "2"]}]}], ")"}]}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"1", "+", 
+      SuperscriptBox["x", "2"]}], ")"}], "3"]], "-", 
+  FractionBox[
+   RowBox[{"2", " ", "g1", " ", "m1", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["g1", "2"], "-", 
+      RowBox[{"3", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"x", "-", "x1"}], ")"}], "2"]}]}], ")"}]}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["g1", "2"], "+", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"x", "-", "x1"}], ")"}], "2"]}], ")"}], "3"]]}]], "Output",
+ CellChangeTimes->{3.563485355624242*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ddf", "[", "x_", "]"}], ":=", 
+  RowBox[{
+   FractionBox[
+    RowBox[{"2", " ", "m0", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "1"}], "+", 
+       RowBox[{"3", " ", 
+        SuperscriptBox["x", "2"]}]}], ")"}]}], 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"1", "+", 
+       SuperscriptBox["x", "2"]}], ")"}], "3"]], "-", 
+   FractionBox[
+    RowBox[{"2", " ", "g1", " ", "m1", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox["g1", "2"], "-", 
+       RowBox[{"3", " ", 
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"x", "-", "x1"}], ")"}], "2"]}]}], ")"}]}], 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox["g1", "2"], "+", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"x", "-", "x1"}], ")"}], "2"]}], ")"}], "3"]]}]}]], "Input",
+ CellChangeTimes->{{3.5634853594336452`*^9, 3.563485371773418*^9}}],
+
+Cell[TextData[{
+ "What are the conditions where there is a peak at a point lying between the \
+peaks of the individual Lorentzians. (Not impossible as I had hoped, but \
+there is something special about ",
+ Cell[BoxData[
+  FractionBox["1", 
+   SqrtBox["3"]]], "Output",
+  CellChangeTimes->{
+   3.5634868821630697`*^9, 3.563487024211879*^9, {3.563487289621936*^9, 
+    3.563487304353745*^9}, 3.5634874344512177`*^9}],
+ ", maybe it's an inflection point)"
+}], "Text",
+ CellChangeTimes->{{3.563486866750249*^9, 3.563486867890169*^9}, {
+  3.5634868980804*^9, 3.5634869047643147`*^9}, {3.563487002140167*^9, 
+  3.563487006355486*^9}, {3.563487096756474*^9, 3.5634871150739737`*^9}, {
+  3.563487538062232*^9, 3.563487581371613*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{"0", "<", "a", "<", "x1"}], "&&", 
+   RowBox[{
+    RowBox[{"ddf", "[", "a", "]"}], "<", "0"}], " ", "&&", " ", 
+   RowBox[{
+    RowBox[{"df", "[", "a", "]"}], "\[Equal]", "0"}], " ", "&&", 
+   RowBox[{"m0", ">", "0"}], "&&", 
+   RowBox[{"m1", ">", "0"}], "&&", 
+   RowBox[{"g1", ">", "0"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.563485392219199*^9, 3.563485467699012*^9}, {
+  3.563485538326075*^9, 3.563485548839178*^9}, {3.563485580123239*^9, 
+  3.5634855821389847`*^9}, {3.563486959684602*^9, 3.5634869597698298`*^9}, {
+  3.563487028507987*^9, 3.5634870847180557`*^9}, {3.563487293488461*^9, 
+  3.563487294246241*^9}, {3.563487432668496*^9, 3.5634874328063507`*^9}, {
+  3.5634880888247557`*^9, 3.563488092786682*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"0", "<", "a", "<", 
+       FractionBox["1", 
+        SqrtBox["3"]]}], "&&", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"a", "<", "x1", "<", 
+           RowBox[{"-", 
+            FractionBox[
+             RowBox[{"4", " ", "a"}], 
+             RowBox[{
+              RowBox[{"-", "1"}], "+", 
+              RowBox[{"3", " ", 
+               SuperscriptBox["a", "2"]}]}]]}]}], "&&", 
+          RowBox[{"g1", ">", 
+           SqrtBox[
+            FractionBox[
+             RowBox[{
+              RowBox[{"4", " ", 
+               SuperscriptBox["a", "3"]}], "-", 
+              RowBox[{"9", " ", 
+               SuperscriptBox["a", "2"], " ", "x1"}], "+", 
+              RowBox[{"3", " ", 
+               SuperscriptBox["a", "4"], " ", "x1"}], "+", 
+              RowBox[{"6", " ", "a", " ", 
+               SuperscriptBox["x1", "2"]}], "-", 
+              RowBox[{"6", " ", 
+               SuperscriptBox["a", "3"], " ", 
+               SuperscriptBox["x1", "2"]}], "-", 
+              SuperscriptBox["x1", "3"], "+", 
+              RowBox[{"3", " ", 
+               SuperscriptBox["a", "2"], " ", 
+               SuperscriptBox["x1", "3"]}]}], 
+             RowBox[{
+              RowBox[{"4", " ", 
+               SuperscriptBox["a", "3"]}], "+", "x1", "-", 
+              RowBox[{"3", " ", 
+               SuperscriptBox["a", "2"], " ", "x1"}]}]]]}], "&&", 
+          RowBox[{"m1", ">", "0"}]}], ")"}], "||", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"x1", "\[GreaterEqual]", 
+           RowBox[{"-", 
+            FractionBox[
+             RowBox[{"4", " ", "a"}], 
+             RowBox[{
+              RowBox[{"-", "1"}], "+", 
+              RowBox[{"3", " ", 
+               SuperscriptBox["a", "2"]}]}]]}]}], "&&", 
+          RowBox[{"g1", ">", "0"}], "&&", 
+          RowBox[{"m1", ">", "0"}]}], ")"}]}], ")"}]}], ")"}], "||", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"a", "\[Equal]", 
+       FractionBox["1", 
+        SqrtBox["3"]]}], "&&", 
+      RowBox[{"x1", ">", 
+       FractionBox["1", 
+        SqrtBox["3"]]}], "&&", 
+      RowBox[{"g1", ">", 
+       RowBox[{
+        FractionBox["1", "2"], " ", 
+        SuperscriptBox["3", 
+         RowBox[{"3", "/", "4"}]], " ", 
+        SqrtBox[
+         RowBox[{
+          FractionBox["4", 
+           RowBox[{"3", " ", 
+            SqrtBox["3"]}]], "-", 
+          FractionBox[
+           RowBox[{"8", " ", "x1"}], "3"], "-", 
+          FractionBox[
+           RowBox[{"2", " ", 
+            SuperscriptBox["x1", "2"]}], 
+           SqrtBox["3"]], "+", 
+          RowBox[{"2", " ", 
+           SqrtBox["3"], " ", 
+           SuperscriptBox["x1", "2"]}]}]]}]}], "&&", 
+      RowBox[{"m1", ">", "0"}]}], ")"}], "||", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"a", ">", 
+       FractionBox["1", 
+        SqrtBox["3"]]}], "&&", 
+      RowBox[{"a", "<", "x1", "<", 
+       FractionBox[
+        RowBox[{"4", " ", 
+         SuperscriptBox["a", "3"]}], 
+        RowBox[{
+         RowBox[{"-", "1"}], "+", 
+         RowBox[{"3", " ", 
+          SuperscriptBox["a", "2"]}]}]]}], "&&", 
+      RowBox[{"g1", ">", 
+       SqrtBox[
+        FractionBox[
+         RowBox[{
+          RowBox[{"4", " ", 
+           SuperscriptBox["a", "3"]}], "-", 
+          RowBox[{"9", " ", 
+           SuperscriptBox["a", "2"], " ", "x1"}], "+", 
+          RowBox[{"3", " ", 
+           SuperscriptBox["a", "4"], " ", "x1"}], "+", 
+          RowBox[{"6", " ", "a", " ", 
+           SuperscriptBox["x1", "2"]}], "-", 
+          RowBox[{"6", " ", 
+           SuperscriptBox["a", "3"], " ", 
+           SuperscriptBox["x1", "2"]}], "-", 
+          SuperscriptBox["x1", "3"], "+", 
+          RowBox[{"3", " ", 
+           SuperscriptBox["a", "2"], " ", 
+           SuperscriptBox["x1", "3"]}]}], 
+         RowBox[{
+          RowBox[{"4", " ", 
+           SuperscriptBox["a", "3"]}], "+", "x1", "-", 
+          RowBox[{"3", " ", 
+           SuperscriptBox["a", "2"], " ", "x1"}]}]]]}], "&&", 
+      RowBox[{"m1", ">", "0"}]}], ")"}]}], ")"}], "&&", 
+  RowBox[{"m0", "\[Equal]", 
+   FractionBox[
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "a"}], " ", "g1", " ", "m1"}], "-", 
+     RowBox[{"2", " ", 
+      SuperscriptBox["a", "3"], " ", "g1", " ", "m1"}], "-", 
+     RowBox[{
+      SuperscriptBox["a", "5"], " ", "g1", " ", "m1"}], "+", 
+     RowBox[{"g1", " ", "m1", " ", "x1"}], "+", 
+     RowBox[{"2", " ", 
+      SuperscriptBox["a", "2"], " ", "g1", " ", "m1", " ", "x1"}], "+", 
+     RowBox[{
+      SuperscriptBox["a", "4"], " ", "g1", " ", "m1", " ", "x1"}]}], 
+    RowBox[{
+     SuperscriptBox["a", "5"], "+", 
+     RowBox[{"2", " ", 
+      SuperscriptBox["a", "3"], " ", 
+      SuperscriptBox["g1", "2"]}], "+", 
+     RowBox[{"a", " ", 
+      SuperscriptBox["g1", "4"]}], "-", 
+     RowBox[{"4", " ", 
+      SuperscriptBox["a", "4"], " ", "x1"}], "-", 
+     RowBox[{"4", " ", 
+      SuperscriptBox["a", "2"], " ", 
+      SuperscriptBox["g1", "2"], " ", "x1"}], "+", 
+     RowBox[{"6", " ", 
+      SuperscriptBox["a", "3"], " ", 
+      SuperscriptBox["x1", "2"]}], "+", 
+     RowBox[{"2", " ", "a", " ", 
+      SuperscriptBox["g1", "2"], " ", 
+      SuperscriptBox["x1", "2"]}], "-", 
+     RowBox[{"4", " ", 
+      SuperscriptBox["a", "2"], " ", 
+      SuperscriptBox["x1", "3"]}], "+", 
+     RowBox[{"a", " ", 
+      SuperscriptBox["x1", "4"]}]}]]}]}]], "Output",
+ CellChangeTimes->{
+  3.5634868821630697`*^9, 3.563487024211879*^9, {3.563487289621936*^9, 
+   3.563487304353745*^9}, 3.5634874344512177`*^9, 3.563488094962637*^9}]
+}, Open  ]],
+
+Cell["\<\
+Things simplify a bit in the original sum, but it is probably an inflection \
+in the standard Lorentzian\
+\>", "Text",
+ CellChangeTimes->{{3.563487597824709*^9, 3.5634876202174*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"ddf", "[", 
+   RowBox[{"1", "/", 
+    RowBox[{"Sqrt", "[", "3", "]"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5634856729553556`*^9, 3.563485692796948*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"2", " ", "g1", " ", "m1", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", 
+      SuperscriptBox["g1", "2"], "+", 
+      RowBox[{"2", " ", 
+       SqrtBox["3"], " ", "x1"}], "-", 
+      RowBox[{"3", " ", 
+       SuperscriptBox["x1", "2"]}]}], ")"}]}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["g1", "2"], "+", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{
+         FractionBox["1", 
+          SqrtBox["3"]], "-", "x1"}], ")"}], "2"]}], ")"}], "3"]]}]], "Output",\
+
+ CellChangeTimes->{{3.56348568306432*^9, 3.563485693397952*^9}}]
+}, Open  ]],
+
+Cell["Equation of standard Lorentzian", "Text",
+ CellChangeTimes->{{3.563487623056404*^9, 3.563487628391835*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"lor", "[", "x_", "]"}], ":=", 
+  RowBox[{"m0", "/", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"x", "^", "2"}], "+", "1"}], ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.563485741459779*^9, 3.563485786922411*^9}}],
+
+Cell["Second Derivative of standard Lorentzian", "Text",
+ CellChangeTimes->{{3.56348763259223*^9, 3.563487658158452*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"D", "[", 
+     RowBox[{
+      RowBox[{"lor", "[", "x", "]"}], ",", "x"}], "]"}], ",", "x"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.563485773480673*^9, 3.563485825130054*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"2", " ", "m0", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", 
+     RowBox[{"3", " ", 
+      SuperscriptBox["x", "2"]}]}], ")"}]}], 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{"1", "+", 
+     SuperscriptBox["x", "2"]}], ")"}], "3"]]], "Output",
+ CellChangeTimes->{{3.563485803589867*^9, 3.56348582560326*^9}}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ddlor", "[", "x_", "]"}], ":=", 
+  FractionBox[
+   RowBox[{"2", " ", "m0", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", 
+      RowBox[{"3", " ", 
+       SuperscriptBox["x", "2"]}]}], ")"}]}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{"1", "+", 
+      SuperscriptBox["x", "2"]}], ")"}], "3"]]}]], "Input",
+ CellChangeTimes->{{3.563485830085073*^9, 3.563485841376081*^9}}],
+
+Cell["And indeed, it is an inflection point", "Text",
+ CellChangeTimes->{{3.563487653592186*^9, 3.563487669389669*^9}, {
+  3.563487724549409*^9, 3.5634877301141*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ddlor", "[", 
+  RowBox[{"1", "/", 
+   RowBox[{"Sqrt", "[", "3", "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.563485844230287*^9, 3.563485849576721*^9}}],
+
+Cell[BoxData["0"], "Output",
+ CellChangeTimes->{3.563485850117159*^9}]
+}, Open  ]],
+
+Cell["\<\
+Now find the inflection points of a general-width Lorentzian (ignoring height \
+and location parameters, since they will not change the relative location of \
+the inflection point). 
+
+Equation and second derivative of my width-parameterized Lorentzian:\
+\>", "Text",
+ CellChangeTimes->{{3.5634876491448507`*^9, 3.563487651294045*^9}, {
+  3.563487734627741*^9, 3.563487825480503*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"lorg", "[", 
+   RowBox[{"x_", ",", "g0_"}], "]"}], ":=", 
+  RowBox[{"g0", "/", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"x", "^", "2"}], "+", 
+     RowBox[{"g0", "^", "2"}]}], ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.5634858534790707`*^9, 3.563485938606675*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"D", "[", 
+     RowBox[{
+      RowBox[{"lorg", "[", 
+       RowBox[{"x", ",", "g0"}], "]"}], ",", "x"}], "]"}], ",", "x"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.563485942135557*^9, 3.5634859826389914`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"2", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["g0", "3"], "-", 
+      RowBox[{"3", " ", "g0", " ", 
+       SuperscriptBox["x", "2"]}]}], ")"}]}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["g0", "2"], "+", 
+      SuperscriptBox["x", "2"]}], ")"}], "3"]]}]], "Output",
+ CellChangeTimes->{{3.563485967500164*^9, 3.563485984371332*^9}}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ddlorg", "[", 
+   RowBox[{"x_", ",", "g0_"}], "]"}], ":=", 
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox["g0", "3"], "-", 
+       RowBox[{"3", " ", "g0", " ", 
+        SuperscriptBox["x", "2"]}]}], ")"}]}], 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox["g0", "2"], "+", 
+       SuperscriptBox["x", "2"]}], ")"}], "3"]]}]}]], "Input",
+ CellChangeTimes->{{3.5634859900524473`*^9, 3.56348601938903*^9}}],
+
+Cell[TextData[{
+ "Now, where are those inflection points? At ",
+ Cell[BoxData[
+  RowBox[{"\[PlusMinus]", 
+   FractionBox["g0", 
+    SqrtBox["3"]]}]], "Output",
+  CellChangeTimes->{3.5634860449639*^9}]
+}], "Text",
+ CellChangeTimes->{{3.5634878314556847`*^9, 3.563487864512671*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ddlorg", "[", 
+     RowBox[{"x", ",", "g0"}], "]"}], "\[Equal]", "0"}], ",", "x"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.563486026023369*^9, 3.5634860443018103`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"x", "\[Rule]", 
+     RowBox[{"-", 
+      FractionBox["g0", 
+       SqrtBox["3"]]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", "\[Rule]", 
+     FractionBox["g0", 
+      SqrtBox["3"]]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.5634860449639*^9}]
+}, Open  ]],
+
+Cell["\<\
+If we restrict our point between the Lorentzians to also be between their \
+inflection points, there can't be a peak.\
+\>", "Text",
+ CellChangeTimes->{{3.563487871830917*^9, 3.5634879195003157`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"Reduce", "[", 
+   RowBox[{
+    RowBox[{"a", "<", 
+     RowBox[{"x1", "-", 
+      RowBox[{"g1", "/", 
+       RowBox[{"Sqrt", "[", "3", "]"}]}]}]}], "&&", 
+    RowBox[{
+     RowBox[{"1", "/", 
+      RowBox[{"Sqrt", "[", "3", "]"}]}], "<", "a"}], "&&", 
+    RowBox[{
+     RowBox[{"ddf", "[", "a", "]"}], "<", "0"}], "&&", 
+    RowBox[{
+     RowBox[{"df", "[", "a", "]"}], "\[Equal]", "0"}], "&&", 
+    RowBox[{"g1", ">", "0"}], " ", "&&", 
+    RowBox[{"m1", ">", "0"}], "&&", 
+    RowBox[{"m0", ">", "0"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.563485392219199*^9, 3.563485467699012*^9}, {
+  3.563485538326075*^9, 3.563485548839178*^9}, {3.563485580123239*^9, 
+  3.5634855821389847`*^9}, {3.563486076461896*^9, 3.5634861152419*^9}, {
+  3.5634874619818277`*^9, 3.563487508205353*^9}}],
+
+Cell[BoxData["False"], "Output",
+ CellChangeTimes->{
+  3.563486116021021*^9, {3.563487498072506*^9, 3.563487515371262*^9}}]
+}, Open  ]],
+
+Cell["However, there can be a valley.", "Text",
+ CellChangeTimes->{{3.563487921948042*^9, 3.563487926741539*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"Reduce", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"x", "<", 
+      RowBox[{"x1", "-", 
+       RowBox[{"g1", "/", 
+        RowBox[{"Sqrt", "[", "3", "]"}]}]}]}], "&&", 
+     RowBox[{
+      RowBox[{"1", "/", 
+       RowBox[{"Sqrt", "[", "3", "]"}]}], "<", "a", "<", "x"}], "&&", 
+     RowBox[{
+      RowBox[{"ddf", "[", "x", "]"}], ">", "0"}], "&&", 
+     RowBox[{"g1", ">", "0"}], " ", "&&", 
+     RowBox[{"m1", ">", "0"}], "&&", 
+     RowBox[{"m0", ">", "0"}]}], ",", "a", ",", "Reals"}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.563485392219199*^9, 3.563485467699012*^9}, {
+  3.563485538326075*^9, 3.563485548839178*^9}, {3.563485580123239*^9, 
+  3.5634855821389847`*^9}, {3.563486076461896*^9, 3.5634861152419*^9}, {
+  3.563486164793345*^9, 3.563486165094627*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"x", ">", 
+   FractionBox["1", 
+    SqrtBox["3"]]}], "&&", 
+  RowBox[{"x1", ">", "x"}], "&&", 
+  RowBox[{"0", "<", "g1", "<", 
+   RowBox[{
+    SqrtBox["3"], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "x"}], "+", "x1"}], ")"}]}]}], "&&", 
+  RowBox[{"m0", ">", "0"}], "&&", 
+  RowBox[{"m1", ">", "0"}], "&&", 
+  RowBox[{
+   FractionBox["1", 
+    SqrtBox["3"]], "<", "a", "<", "x"}]}]], "Output",
+ CellChangeTimes->{3.563486166478449*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Minuti\[AE]", "Section",
+ CellChangeTimes->{{3.563491603475691*^9, 3.563491609234871*^9}, 
+   3.563491668363263*^9}],
+
+Cell[TextData[{
+ "This file is ",
+ StyleBox["valley_between_lorentzians.nb",
+  FontFamily->"Courier New"],
+ " in the repository."
+}], "Text",
+ CellChangeTimes->{{3.563491615547702*^9, 3.563491628616454*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{961, 747},
+WindowMargins->{{134, Automatic}, {-7, Automatic}},
+FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 115, 1, 85, "Title"],
+Cell[685, 25, 96, 1, 53, "Subtitle"],
+Cell[784, 28, 106, 1, 32, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[915, 33, 95, 1, 73, "Section"],
+Cell[1013, 36, 1122, 22, 91, "Text"],
+Cell[2138, 60, 336, 6, 51, "Text"],
+Cell[2477, 68, 407, 10, 67, "Text"],
+Cell[2887, 80, 1911, 66, 73, "Text"],
+Cell[4801, 148, 2201, 65, 112, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7039, 218, 95, 1, 73, "Section"],
+Cell[7137, 221, 183, 2, 31, "Text"],
+Cell[7323, 225, 554, 18, 32, "Input"],
+Cell[7880, 245, 179, 2, 31, "Text"],
+Cell[CellGroupData[{
+Cell[8084, 251, 213, 5, 32, "Input"],
+Cell[8300, 258, 657, 22, 54, "Output"]
+}, Open  ]],
+Cell[8972, 283, 704, 23, 60, "Input"],
+Cell[9679, 308, 173, 2, 31, "Text"],
+Cell[CellGroupData[{
+Cell[9877, 314, 216, 5, 32, "Input"],
+Cell[10096, 321, 835, 29, 59, "Output"]
+}, Open  ]],
+Cell[10946, 353, 942, 31, 64, "Input"],
+Cell[11891, 386, 726, 15, 60, "Text"],
+Cell[CellGroupData[{
+Cell[12642, 405, 783, 16, 32, "Input"],
+Cell[13428, 423, 5633, 163, 367, "Output"]
+}, Open  ]],
+Cell[19076, 589, 192, 4, 31, "Text"],
+Cell[CellGroupData[{
+Cell[19293, 597, 220, 5, 32, "Input"],
+Cell[19516, 604, 652, 22, 75, "Output"]
+}, Open  ]],
+Cell[20183, 629, 113, 1, 31, "Text"],
+Cell[20299, 632, 246, 7, 32, "Input"],
+Cell[20548, 641, 121, 1, 31, "Text"],
+Cell[CellGroupData[{
+Cell[20694, 646, 276, 8, 32, "Input"],
+Cell[20973, 656, 371, 12, 59, "Output"]
+}, Open  ]],
+Cell[21359, 671, 438, 14, 64, "Input"],
+Cell[21800, 687, 166, 2, 31, "Text"],
+Cell[CellGroupData[{
+Cell[21991, 693, 179, 4, 32, "Input"],
+Cell[22173, 699, 70, 1, 31, "Output"]
+}, Open  ]],
+Cell[22258, 703, 393, 8, 91, "Text"],
+Cell[22654, 713, 302, 9, 32, "Input"],
+Cell[CellGroupData[{
+Cell[22981, 726, 308, 9, 32, "Input"],
+Cell[23292, 737, 436, 14, 59, "Output"]
+}, Open  ]],
+Cell[23743, 754, 532, 17, 64, "Input"],
+Cell[24278, 773, 280, 8, 40, "Text"],
+Cell[CellGroupData[{
+Cell[24583, 785, 245, 7, 32, "Input"],
+Cell[24831, 794, 328, 12, 52, "Output"]
+}, Open  ]],
+Cell[25174, 809, 209, 4, 31, "Text"],
+Cell[CellGroupData[{
+Cell[25408, 817, 846, 21, 32, "Input"],
+Cell[26257, 840, 123, 2, 31, "Output"]
+}, Open  ]],
+Cell[26395, 845, 113, 1, 31, "Text"],
+Cell[CellGroupData[{
+Cell[26533, 850, 833, 21, 32, "Input"],
+Cell[27369, 873, 483, 17, 52, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27901, 896, 122, 2, 73, "Section"],
+Cell[28026, 900, 207, 6, 31, "Text"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
