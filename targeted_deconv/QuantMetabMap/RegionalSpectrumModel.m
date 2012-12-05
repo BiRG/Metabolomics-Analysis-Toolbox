@@ -34,6 +34,11 @@ classdef RegionalSpectrumModel
         % linewidth to penalize those solutions with a much greater
         % linewidth
         linewidth_variation_penalty
+        
+        % The size of the window around each peak that the rough
+        % deconvolution uses. This is double holding the width in x units
+        % (usually ppm)
+        rough_peak_window_width
     end
     
     methods(Static)
@@ -65,7 +70,8 @@ classdef RegionalSpectrumModel
     end
     methods
         function obj=RegionalSpectrumModel(baseline_type, ...
-                baseline_area_penalty, linewidth_variation_penalty)
+                baseline_area_penalty, linewidth_variation_penalty, ...
+                rough_peak_window_width)
         % Create a RegionalSpectrumModel
         %
         % -----------------------------------------------------------------
@@ -74,7 +80,7 @@ classdef RegionalSpectrumModel
         %
         % obj=RegionalSpectrumModel(...
         %     baseline_type, baseline_area_penalty, ...
-        %     linewidth_variation_penalty)
+        %     linewidth_variation_penalty, rough_peak_window_width)
         %
         % or
         % 
@@ -96,11 +102,13 @@ classdef RegionalSpectrumModel
         % linewidth_variation_penalty - real numerical value of the
         %                         linewidth_variation_penalty property
         %
+        % rough_peak_window_width - real numerical value of the 
+        %                         rough_peak_window_width property
         % -----------------------------------------------------------------
         % Examples:
         % -----------------------------------------------------------------
         %
-        % m=RegionalSpectrumModel('line_up', 10, 1);
+        % m=RegionalSpectrumModel('line_up', 10, 1, 0.002);
         %
         % or
         %
@@ -114,10 +122,12 @@ classdef RegionalSpectrumModel
                 obj.baseline_type = baseline_type;
                 obj.baseline_area_penalty = baseline_area_penalty;
                 obj.linewidth_variation_penalty = linewidth_variation_penalty;
+                obj.rough_peak_window_width = rough_peak_window_width;
             else
                 obj.baseline_type = 'spline';
                 obj.baseline_area_penalty = 0;
                 obj.linewidth_variation_penalty = 0;
+                obj.rough_peak_window_width = 0.0086;
             end
         end
     end
