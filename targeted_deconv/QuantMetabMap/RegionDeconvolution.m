@@ -83,12 +83,23 @@ classdef RegionDeconvolution
             if nargin > 0
                 gcftmp = gcf; %Waitbar can mess with the current figure, save it
                 
+                % Calculate the number of samples needed for the
+                % rough deconvolution - assumes samples equally spaced
+                samples_per_ppm = length(x)/max(x)-min(x);
+                rough_window_samples = model.rough_peak_window_width * samples_per_ppm;
+                if rough_window_samples < 2
+                    msgbox(sprintf('A width of 
+                
+                
+                % Do rough deconvolution
                 wait_h = waitbar(0, sprintf('Rough deconvolution pass %d peak %d',10000,10000));
                 [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, ...
                     region_min, region_max, peak_xs, 20, ...
                     @(f,ps,pk) waitbar(f/2, wait_h, ...
                     sprintf('Rough deconvolution pass %d peak %d',ps,pk)));
                 
+                
+                % Do fine deconvolution
                 waitbar(0.5, wait_h, 'Performing fine deconvolution');
 
                 [unused, obj.baseline_BETA, obj.fit_indices, obj.y_fitted, ...
