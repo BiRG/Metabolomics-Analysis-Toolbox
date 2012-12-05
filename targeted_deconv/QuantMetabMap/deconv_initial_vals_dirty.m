@@ -23,7 +23,7 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 % adjusted. A suggested use for progress_func is to update a waitbar. If
 % omitted, no function is called.
 %
-% num_neighbors The number of neighbor pixels used in the dirty
+% num_neighbors The number of neighbor samples used in the dirty
 % deconvolution
 %
 % -------------------------------------------------------------------------
