@@ -2057,7 +2057,7 @@ guidata(handles.figure1, handles);
 
 
 
-function rough_peak_window_ppm_edit_Callback(hObject, eventdata, handles) %#ok<DEFNU>
+function rough_peak_window_ppm_edit_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to rough_peak_window_ppm_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -2079,7 +2079,7 @@ else
     ppm_between_samples = 0;
 end
 assert(ppm_between_samples >= 0);
-min_window_width_samples = 7; % 7 samples wide will contain 6 intervals between samples, and at least 6 samples total
+min_window_width_samples = 5; % 5 samples wide will contain 4 intervals between samples, and at least 4 samples total
 min_window_width_ppm = (min_window_width_samples - 1)*ppm_between_samples;
 
 % Check the entry typed in and set the value if it is valid
