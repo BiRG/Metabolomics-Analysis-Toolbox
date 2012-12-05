@@ -811,6 +811,8 @@ set(handles.baseline_area_penalty_edit_box, 'String', ...
 set(handles.width_variance_penalty_edit_box, 'String', ...
     num2str(model.linewidth_variation_penalty,5));
 
+% Set the rough deconvolution boxes
+
 % Show or hide update deconvolution button depending on whether the current
 % deconvolution is updated
 if get(handles.should_show_deconv_box,'Value')
@@ -2063,9 +2065,52 @@ function rough_peak_window_ppm_edit_Callback(hObject, eventdata, handles) %#ok<D
 % Hints: get(hObject,'String') returns contents of rough_peak_window_ppm_edit as text
 %        str2double(get(hObject,'String')) returns contents of rough_peak_window_ppm_edit as a double
 
+% Calculate the minimum allowable ppm
+collection = handles.collection;
+x = collection.x;
+num_samp = length(x);
+if num_samp >= 2
+    ppm_between_samples = (max(x)-min(x))/(num_samp-1);
+elseif num_samp == 1
+    ppm_between_samples = 0;
+else
+    msgbox(['To do operations on the spectra they must have at least '...
+        'one sample point.'],'Not enough samples','Error');
+    ppm_between_samples = 0;
+end
+assert(ppm_between_samples >= 0);
+min_window_width_samples = 7; % 7 samples wide will contain 6 intervals between samples, and at least 6 samples total
+min_window_width_ppm = (min_window_width_samples - 1)*ppm_between_samples;
+
+% Check the entry typed in and set the value if it is valid
+entry  = str2double(get(hObject,'String'));
+invalid_entry = true;
+if ~isnan(entry) %If the user typed a number
+    if entry >= min_window_width
+        m=handles.models(handles.bin_idx, handles.spectrum_idx);
+        m.rough_peak_window_width = entry;
+        handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+        guidata(handles.figure1, handles);
+
+        invalid_entry = false;
+    else
+        msgbox(sprintf(['The window must be at least %d samples '...
+            'wide (%g ppm)'], min_window_width_samples, ...
+            min_window_width_ppm),'Window too small','Error');
+    end
+end
+
+% If the value typed into the box was not a valid field value, reset the
+% edit box to the current field value.
+if invalid_entry
+	m = handles.models(handles.bin_idx, handles.spectrum_idx);
+    val = m.rough_peak_window_width;
+    set(hObject,'String',sprintf('%g',val));
+end
+
 
 % --- Executes during object creation, after setting all properties.
-function rough_peak_window_ppm_edit_CreateFcn(hObject, eventdata, handles) %#ok<DEFNU>
+function rough_peak_window_ppm_edit_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
 % hObject    handle to rough_peak_window_ppm_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
