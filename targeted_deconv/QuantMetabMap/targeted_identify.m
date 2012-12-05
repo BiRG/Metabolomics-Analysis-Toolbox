@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 03-Dec-2012 16:00:49
+% Last Modified by GUIDE v2.5 05-Dec-2012 14:01:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -2055,18 +2055,18 @@ guidata(handles.figure1, handles);
 
 
 
-function rough_peak_samples_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to rough_peak_samples_edit (see GCBO)
+function rough_peak_window_ppm_edit_Callback(hObject, eventdata, handles) %#ok<DEFNU>
+% hObject    handle to rough_peak_window_ppm_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of rough_peak_samples_edit as text
-%        str2double(get(hObject,'String')) returns contents of rough_peak_samples_edit as a double
+% Hints: get(hObject,'String') returns contents of rough_peak_window_ppm_edit as text
+%        str2double(get(hObject,'String')) returns contents of rough_peak_window_ppm_edit as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function rough_peak_samples_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to rough_peak_samples_edit (see GCBO)
+function rough_peak_window_ppm_edit_CreateFcn(hObject, eventdata, handles) %#ok<DEFNU>
+% hObject    handle to rough_peak_window_ppm_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
