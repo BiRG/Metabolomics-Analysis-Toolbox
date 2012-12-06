@@ -160,10 +160,10 @@ end
 
 % Start with constant model with no pentalties as the default for each 
 % bin/spectrum combination
-handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0086);
+handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0086, 0.004);
 for b=1:num_bins
     for s=1:num_samples
-        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0086);
+        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0086, 0.004);
     end
 end
 
@@ -815,6 +815,8 @@ set(handles.width_variance_penalty_edit_box, 'String', ...
 % Set the rough deconvolution boxes
 set(handles.rough_peak_window_ppm_edit, 'String', ...
     num2str(model.rough_peak_window_width,6));
+set(handles.rough_peak_max_width_edit, 'String', ...
+    num2str(model.max_rough_peak_width,6));
 
 % Show or hide update deconvolution button depending on whether the current
 % deconvolution is updated
@@ -2108,7 +2110,7 @@ end
 if invalid_entry
 	m = handles.models(handles.bin_idx, handles.spectrum_idx);
     val = m.rough_peak_window_width;
-    set(hObject,'String',sprintf('%g',val));
+    set(hObject,'String',num2str(val,6));
 end
 
 
@@ -2126,7 +2128,7 @@ end
 
 
 
-function rough_peak_max_width_edit_Callback(hObject, eventdata, handles)
+function rough_peak_max_width_edit_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to rough_peak_max_width_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -2134,9 +2136,25 @@ function rough_peak_max_width_edit_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of rough_peak_max_width_edit as text
 %        str2double(get(hObject,'String')) returns contents of rough_peak_max_width_edit as a double
 
+% Check the entry typed in and set the value if it is valid, reset the edit
+% box to the current value if the value typed is invalid
+entry  = str2double(get(hObject,'String'));
+
+if ~isnan(entry) ... % If the user typed a number
+   && entry > 0      % And the peak width is non-negative
+    m=handles.models(handles.bin_idx, handles.spectrum_idx);
+    m.max_rough_peak_width = entry;
+    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+    guidata(handles.figure1, handles);
+else
+    m = handles.models(handles.bin_idx, handles.spectrum_idx);
+    val = m.max_rough_peak_width;
+    set(hObject,'String',num2str(val,6));
+end
+
 
 % --- Executes during object creation, after setting all properties.
-function rough_peak_max_width_edit_CreateFcn(hObject, eventdata, handles)
+function rough_peak_max_width_edit_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
 % hObject    handle to rough_peak_max_width_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
