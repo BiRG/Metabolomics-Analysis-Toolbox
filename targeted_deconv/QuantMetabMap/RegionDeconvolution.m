@@ -121,19 +121,28 @@ classdef RegionDeconvolution
                         @(f,ps,pk) waitbar(f/2, wait_h, ...
                         sprintf('Rough deconvolution pass %d peak %d',ps,pk)));
 
+                    if model.only_do_rough_deconv
+                        % Return the results of the rough deconvolution
+                        obj.fit_indices = find(region_max >= x & x >= region_min);
+                        obj.y_baseline = zeros(size(obj.fit_indices))';
+                        obj.peaks = GaussLorentzPeak(BETA0);
+                        obj.y_fitted = sum(obj.peaks.at(x(obj.fit_indices)),1)';
+                        y_region = y(obj.fit_indices);
+                        obj.R2 = 1 - sum((obj.y_fitted - y_region).^2)/sum((mean(y_region) - y_region).^2);
+                        obj.baseline_BETA = [];
+                    else
+                        % Do fine deconvolution
+                        waitbar(0.5, wait_h, 'Performing fine deconvolution');
 
-                    % Do fine deconvolution
-                    waitbar(0.5, wait_h, 'Performing fine deconvolution');
-
-                    [unused, obj.baseline_BETA, obj.fit_indices, obj.y_fitted, ...
-                        obj.y_baseline,obj.R2, unused, peak_BETA] = ...
-                        region_deconvolution(x,y,BETA0,lb,ub,baseline_width, ...
-                        [region_max;region_min], ...
-                        model, @(f) waitbar(0.5+f/2, wait_h)); %#ok<ASGLU>
-                    obj.peaks = GaussLorentzPeak(peak_BETA);
+                        [unused, obj.baseline_BETA, obj.fit_indices, obj.y_fitted, ...
+                            obj.y_baseline,obj.R2, unused, peak_BETA] = ...
+                            region_deconvolution(x,y,BETA0,lb,ub,baseline_width, ...
+                            [region_max;region_min], ...
+                            model, @(f) waitbar(0.5+f/2, wait_h)); %#ok<ASGLU>
+                        obj.peaks = GaussLorentzPeak(peak_BETA);
+                    end
 
                     close(wait_h);
-
                     figure(gcftmp); %Restore the current figure
                 end
             end
