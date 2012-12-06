@@ -160,10 +160,10 @@ end
 
 % Start with constant model with no pentalties as the default for each 
 % bin/spectrum combination
-handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0086, 0.004);
+handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.004);
 for b=1:num_bins
     for s=1:num_samples
-        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0086, 0.004);
+        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.004);
     end
 end
 

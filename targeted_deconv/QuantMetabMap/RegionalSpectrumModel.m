@@ -137,7 +137,7 @@ classdef RegionalSpectrumModel
                 obj.baseline_type = 'spline';
                 obj.baseline_area_penalty = 0;
                 obj.linewidth_variation_penalty = 0;
-                obj.rough_peak_window_width = 0.0086;
+                obj.rough_peak_window_width = 0.0052; % 12 samples in 64k sample spectra
                 obj.max_rough_peak_width = 0.004; % 1 conventional bin default
             end
         end
