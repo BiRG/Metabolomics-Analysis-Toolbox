@@ -44,6 +44,10 @@ classdef RegionalSpectrumModel
         % allowed to be. This is a double holding the width in x units
         % (usually ppm)
         max_rough_peak_width
+        
+        % True iff the deconvolution should stop with the rough deconv
+        % step. This is a logical.
+        only_do_rough_deconv
     end
     
     methods(Static)
@@ -76,7 +80,8 @@ classdef RegionalSpectrumModel
     methods
         function obj=RegionalSpectrumModel(baseline_type, ...
                 baseline_area_penalty, linewidth_variation_penalty, ...
-                rough_peak_window_width, max_rough_peak_width)
+                rough_peak_window_width, max_rough_peak_width, ...
+                only_do_rough_deconv)
         % Create a RegionalSpectrumModel
         %
         % -----------------------------------------------------------------
@@ -86,7 +91,7 @@ classdef RegionalSpectrumModel
         % obj=RegionalSpectrumModel(...
         %     baseline_type, baseline_area_penalty, ...
         %     linewidth_variation_penalty, rough_peak_window_width ...
-        %     max_rough_peak_width)
+        %     max_rough_peak_width, only_do_rough_deconv)
         %
         % or
         % 
@@ -113,11 +118,14 @@ classdef RegionalSpectrumModel
         %
         % max_rough_peak_width  - real numerical value of the 
         %                         max_rough_peak_width property
+        %
+        % only_do_rough_deconv  - logical value of the only_do_rough_deconv
+        %                         property
         % -----------------------------------------------------------------
         % Examples:
         % -----------------------------------------------------------------
         %
-        % m=RegionalSpectrumModel('line_up', 10, 1, 0.007, 0.006);
+        % m=RegionalSpectrumModel('line_up', 10, 1, 0.007, 0.006, false);
         %
         % or
         %
@@ -133,12 +141,14 @@ classdef RegionalSpectrumModel
                 obj.linewidth_variation_penalty = linewidth_variation_penalty;
                 obj.rough_peak_window_width = rough_peak_window_width;
                 obj.max_rough_peak_width = max_rough_peak_width;
+                obj.only_do_rough_deconv = only_do_rough_deconv;
             else
                 obj.baseline_type = 'spline';
                 obj.baseline_area_penalty = 0;
-                obj.linewidth_variation_penalty = 0;
+                obj.linewidth_variation_penalty = 0; 
                 obj.rough_peak_window_width = 0.0052; % 12 samples in 64k sample spectra
                 obj.max_rough_peak_width = 0.004; % 1 conventional bin default
+                obj.only_do_rough_deconv = false; % Do the fine deconv steps by default
             end
         end
     end
