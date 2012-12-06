@@ -721,6 +721,7 @@ if get(handles.should_show_deconv_box,'Value')
     hold on;
     cv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
     if cv.exists
+        % Plot baseline, fitted value, and peaks
         deconv = cv.value;
         fit_x = handles.collection.x(deconv.fit_indices);
         plot(fit_x, deconv.y_baseline, 'Color', 'y');    %Yellow baseline
@@ -728,6 +729,11 @@ if get(handles.should_show_deconv_box,'Value')
         for pk = deconv.peaks
             plot(fit_x, pk.at(fit_x),'Color','m'); %Magenta peaks
         end
+        
+        % Plot residual
+        orig_y = handles.collection.Y(deconv.fit_indices, handles.spectrum_idx);
+        resid_y = orig_y - deconv.y_fitted;
+        plot(fit_x, resid_y,'Color','k','Linestyle',':');
     end
 end
 
