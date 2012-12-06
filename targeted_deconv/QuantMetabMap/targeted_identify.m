@@ -160,10 +160,10 @@ end
 
 % Start with constant model with no pentalties as the default for each 
 % bin/spectrum combination
-handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.004);
+handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.004, false);
 for b=1:num_bins
     for s=1:num_samples
-        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.004);
+        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.004, false);
     end
 end
 
@@ -823,6 +823,8 @@ set(handles.rough_peak_window_ppm_edit, 'String', ...
     num2str(model.rough_peak_window_width,6));
 set(handles.rough_peak_max_width_edit, 'String', ...
     num2str(model.max_rough_peak_width,6));
+set(handles.only_do_rough_deconv_checkbox, 'Value', ...
+    model.only_do_rough_deconv);
 
 % Show or hide update deconvolution button depending on whether the current
 % deconvolution is updated
@@ -2095,15 +2097,12 @@ min_window_width_ppm = (min_window_width_samples - 1)*ppm_between_samples;
 
 % Check the entry typed in and set the value if it is valid
 entry  = str2double(get(hObject,'String'));
-invalid_entry = true;
 if ~isnan(entry) %If the user typed a number
     if entry >= min_window_width_ppm
         m=handles.models(handles.bin_idx, handles.spectrum_idx);
         m.rough_peak_window_width = entry;
         handles.models(handles.bin_idx, handles.spectrum_idx) = m;
         guidata(handles.figure1, handles);
-
-        invalid_entry = false;
     else
         msgbox(sprintf(['The window must be at least %d samples '...
             'wide (%g ppm)'], min_window_width_samples, ...
@@ -2111,14 +2110,7 @@ if ~isnan(entry) %If the user typed a number
     end
 end
 
-% If the value typed into the box was not a valid field value, reset the
-% edit box to the current field value.
-if invalid_entry
-	m = handles.models(handles.bin_idx, handles.spectrum_idx);
-    val = m.rough_peak_window_width;
-    set(hObject,'String',num2str(val,6));
-end
-
+update_display(handles);
 
 % --- Executes during object creation, after setting all properties.
 function rough_peak_window_ppm_edit_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
@@ -2152,12 +2144,9 @@ if ~isnan(entry) ... % If the user typed a number
     m.max_rough_peak_width = entry;
     handles.models(handles.bin_idx, handles.spectrum_idx) = m;
     guidata(handles.figure1, handles);
-else
-    m = handles.models(handles.bin_idx, handles.spectrum_idx);
-    val = m.max_rough_peak_width;
-    set(hObject,'String',num2str(val,6));
 end
 
+update_display(handles);
 
 % --- Executes during object creation, after setting all properties.
 function rough_peak_max_width_edit_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
@@ -2173,9 +2162,14 @@ end
 
 
 % --- Executes on button press in only_do_rough_deconv_checkbox.
-function only_do_rough_deconv_checkbox_Callback(hObject, eventdata, handles)
+function only_do_rough_deconv_checkbox_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to only_do_rough_deconv_checkbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of only_do_rough_deconv_checkbox
+m=handles.models(handles.bin_idx, handles.spectrum_idx);
+m.only_do_rough_deconv = get(hObject,'Value');
+handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+guidata(handles.figure1, handles);
+update_display(handles);
