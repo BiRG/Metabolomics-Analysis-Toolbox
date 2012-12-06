@@ -85,6 +85,7 @@ function out_handles = init_handles_and_gui_from_session_data(handles, session_d
 %
 % Note that display components are not initialized 
 if(session_data.version ~= 0.3)
+    % TODO: handle session data for version 0.4
     uiwait(msgbox(['This session data was generated from a ', ...
         'different version of the targeted deconvolution program (#', ...
         sprintf('%0.2f',session_data.version), ...
@@ -159,10 +160,10 @@ end
 
 % Start with constant model with no pentalties as the default for each 
 % bin/spectrum combination
-handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0);
+handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0086);
 for b=1:num_bins
     for s=1:num_samples
-        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0);
+        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0086);
     end
 end
 
@@ -812,6 +813,8 @@ set(handles.width_variance_penalty_edit_box, 'String', ...
     num2str(model.linewidth_variation_penalty,5));
 
 % Set the rough deconvolution boxes
+set(handles.rough_peak_window_ppm_edit, 'String', ...
+    num2str(model.rough_peak_window_width,6));
 
 % Show or hide update deconvolution button depending on whether the current
 % deconvolution is updated
@@ -1731,7 +1734,7 @@ end
 
 %Save
 fullname = fullfile(pathname, filename);
-session_data.version = 0.3;
+session_data.version = 0.4;
 session_data.metabolite_menu_string = get(handles.metabolite_menu,'String');
 session_data.collection = handles.collection;
 session_data.metab_map = handles.metab_map;
@@ -2086,7 +2089,7 @@ min_window_width_ppm = (min_window_width_samples - 1)*ppm_between_samples;
 entry  = str2double(get(hObject,'String'));
 invalid_entry = true;
 if ~isnan(entry) %If the user typed a number
-    if entry >= min_window_width
+    if entry >= min_window_width_ppm
         m=handles.models(handles.bin_idx, handles.spectrum_idx);
         m.rough_peak_window_width = entry;
         handles.models(handles.bin_idx, handles.spectrum_idx) = m;
