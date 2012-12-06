@@ -14,7 +14,7 @@ classdef RegionalSpectrumModel
     % deconvolution software.
     
     properties
-        % Gives the functional form of the baseline
+        % Gives the functional form of the baseline. A string.
         %
         % One of
         %   'spline'    - a cubic spline from interp1
@@ -48,6 +48,16 @@ classdef RegionalSpectrumModel
         % True iff the deconvolution should stop with the rough deconv
         % step. This is a logical.
         only_do_rough_deconv
+        
+        % Gives the method to be used in generating the initial peak
+        % parameters and constraints for the fine deconvolution. A string.
+        %
+        % One of
+        %   'Anderson'        - Paul Anderson's original method
+        %   'Short Peak 1st'  - Deconvolves one peak at a time, starting
+        %                       with the shortest peaks
+        rough_deconv_method
+
     end
     
     methods(Static)
@@ -76,12 +86,38 @@ classdef RegionalSpectrumModel
         
             cellarray={'spline','constant','line_up','line_down','v'};
         end
+        
+        function cellarray=rough_deconv_methods()
+        % A cell array of the acceptable values for rough_deconv_method
+        %
+        % -----------------------------------------------------------------
+        % Usage
+        % -----------------------------------------------------------------
+        %
+        % cellarray=rough_deconv_methods()
+        % 
+        % -----------------------------------------------------------------
+        % Input Arguments
+        % -----------------------------------------------------------------
+        %
+        % None
+        %
+        % -----------------------------------------------------------------
+        % Examples:
+        % -----------------------------------------------------------------
+        %
+        % >> c=RegionalSpectrumModel.rough_deconv_methods
+        %
+        %
+        
+            cellarray={'Anderson','Short Peak 1st'};
+        end
     end
     methods
         function obj=RegionalSpectrumModel(baseline_type, ...
                 baseline_area_penalty, linewidth_variation_penalty, ...
                 rough_peak_window_width, max_rough_peak_width, ...
-                only_do_rough_deconv)
+                only_do_rough_deconv, rough_deconv_method)
         % Create a RegionalSpectrumModel
         %
         % -----------------------------------------------------------------
@@ -91,7 +127,8 @@ classdef RegionalSpectrumModel
         % obj=RegionalSpectrumModel(...
         %     baseline_type, baseline_area_penalty, ...
         %     linewidth_variation_penalty, rough_peak_window_width ...
-        %     max_rough_peak_width, only_do_rough_deconv)
+        %     max_rough_peak_width, only_do_rough_deconv, ...
+        %     rough_deconv_method)
         %
         % or
         % 
@@ -121,11 +158,14 @@ classdef RegionalSpectrumModel
         %
         % only_do_rough_deconv  - logical value of the only_do_rough_deconv
         %                         property
+        %
+        % rough_deconv_method   - string value of the rough_deconv_method
+        %                         property
         % -----------------------------------------------------------------
         % Examples:
         % -----------------------------------------------------------------
         %
-        % m=RegionalSpectrumModel('line_up', 10, 1, 0.007, 0.006, false);
+        % m=RegionalSpectrumModel('line_up', 10, 1, 0.007, 0.006, false, 'Short Peak 1st');
         %
         % or
         %
@@ -142,6 +182,7 @@ classdef RegionalSpectrumModel
                 obj.rough_peak_window_width = rough_peak_window_width;
                 obj.max_rough_peak_width = max_rough_peak_width;
                 obj.only_do_rough_deconv = only_do_rough_deconv;
+                obj.rough_deconv_method = rough_deconv_method;
             else
                 obj.baseline_type = 'spline';
                 obj.baseline_area_penalty = 0;
@@ -149,6 +190,7 @@ classdef RegionalSpectrumModel
                 obj.rough_peak_window_width = 0.0052; % 12 samples in 64k sample spectra
                 obj.max_rough_peak_width = 0.004; % 1 conventional bin default
                 obj.only_do_rough_deconv = false; % Do the fine deconv steps by default
+                obj.rough_deconv_method = 'Short Peak 1st'; % New short peak 1st method is default
             end
         end
     end
