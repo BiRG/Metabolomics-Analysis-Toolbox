@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 05-Dec-2012 19:55:59
+% Last Modified by GUIDE v2.5 06-Dec-2012 10:22:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -2170,3 +2170,12 @@ function rough_peak_max_width_edit_CreateFcn(hObject, eventdata, handles) %#ok<I
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in only_do_rough_deconv_checkbox.
+function only_do_rough_deconv_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to only_do_rough_deconv_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of only_do_rough_deconv_checkbox
