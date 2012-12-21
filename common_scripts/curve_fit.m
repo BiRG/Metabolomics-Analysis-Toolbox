@@ -48,8 +48,8 @@ model = @(PARAMS,x_) (global_model(PARAMS,x_,length(X),x_baseline_BETA));
 
 fprintf('Starting fit...\n');
 options = optimset('lsqcurvefit');
-% options = optimset(options,'MaxIter',10);
-options = optimset(options,'MaxFunEvals',10000);
+options = optimset(options,'MaxIter',50000);
+options = optimset(options,'MaxFunEvals',50000);
 [ALL_BETA,R,RESIDUAL,EXITFLAG] = lsqcurvefit(model,[BETA0,baseline_BETA0],x(fit_inxs)',y(fit_inxs),lb,ub,options);
 fprintf('Finished fit\n');
 
