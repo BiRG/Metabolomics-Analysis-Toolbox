@@ -1,3 +1,6 @@
 Deconvolution is essential to accurate quantitation of NMR data. I
 improve Paul Anderson's deconvolution algorithm by changing the part
-that calculates the search starting point.
+that calculates the search starting point. I demonstrate the
+improvement by showing some portions of real spectra that cannot be
+deconvolved using the old starting point and by deconvolving a simple
+simulation of random peaks with both methods.
