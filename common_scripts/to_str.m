@@ -92,29 +92,29 @@ if iscell(in) && is_matrix(in)
     str = '{';
     for j = 1:cols
         if j == 1
-            str = sprintf('%s%s', str, to_str(in{1,j}));
+            str = sprintf('%s%s', str, to_str(in{1,j}, extra_precision));
         else
-            str = sprintf('%s, %s', str, to_str(in{1,j}));
+            str = sprintf('%s, %s', str, to_str(in{1,j}, extra_precision));
         end
     end
     for i = 2:rows
         str = [str, '; ']; %#ok<AGROW>
         for j = 1:cols
             if j == 1
-                str = sprintf('%s%s', str, to_str(in{i,j}));
+                str = sprintf('%s%s', str, to_str(in{i,j}, extra_precision));
             else
-                str = sprintf('%s, %s', str, to_str(in{i,j}));
+                str = sprintf('%s, %s', str, to_str(in{i,j}, extra_precision));
             end
         end        
     end
     str = [str, '}'];
 elseif iscell(in) && ~is_matrix(in)
     % Muldidimensional cell arrays
-    str=sprintf('reshape(%s,%s)',to_str(reshape(in, [], 1)), to_str(size(in)));    
+    str=sprintf('reshape(%s,%s)',to_str(reshape(in, [], 1), extra_precision), to_str(size(in), extra_precision));    
 elseif isstruct(in)
     % Structs and struct arrays
-    str=sprintf('cell2struct(%s, %s, 1)',to_str(struct2cell(in)), ...
-        to_str(fieldnames(in)));
+    str=sprintf('cell2struct(%s, %s, 1)',to_str(struct2cell(in), extra_precision), ...
+        to_str(fieldnames(in), extra_precision));
 elseif ischar(in)
     % Strings and string matrices
     rows = size(in,1);
@@ -170,7 +170,7 @@ elseif is_matrix(in)
     str = [str, ']'];
 elseif length(size(in)) > 2
     % Multidimensional arrays
-    str=sprintf('reshape(%s,%s)',to_str(reshape(in, [], 1)), to_str(size(in)));
+    str=sprintf('reshape(%s,%s)',to_str(reshape(in, [], 1), extra_precision), to_str(size(in), extra_precision));
 else
     % Unknown type (probably object)
     error('to_str:unknown_type',['Variable of unanticipated type ', ...
