@@ -1,4 +1,4 @@
-function spec = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, num_intensities, noise_std)
+function [spec,peaks] = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, num_intensities, noise_std)
 % Usage: spec = RANDOM_SPEC_FROM_NSSD_DATA(num_peaks,min_ppm, max_ppm, num_intensities, noise_std)
 %
 % Uses data derived from the NSSD deconvolution as the distribution from
@@ -26,6 +26,10 @@ function spec = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, num_inten
 %
 % spec - a spectral collection struct like that returned from
 %        load_collection. See there for format.
+%
+% peaks - a row vector of GaussLorentzPeak objects containing the peaks 
+%         used to generate the spectrum. There will be exactly num_peaks 
+%         entries in the vector.
 %
 % Note: the mean half height half-width is 0.00453630122481774988
 
@@ -107,6 +111,7 @@ if num_peaks > 0
     spec.Y = sum(peaks.at(spec.x),1)';
     spec.Y = spec.Y / max(spec.Y);
 else
+    peaks = GaussLorentzPeak([]);
     spec.Y = zeros(num_intensities,1);
 end
 
