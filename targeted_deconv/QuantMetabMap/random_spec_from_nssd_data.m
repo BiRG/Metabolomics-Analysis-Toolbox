@@ -111,5 +111,25 @@ else
 end
 
 spec.Y = spec.Y + (randn(size(spec.Y))*noise_std);
+
+spec.input_names = {'Collection ID', 'Type', 'Description', 'Processing log', 'Base sample ID', 'Time', 'Classification', 'Sample ID', 'Subject ID', 'Sample Description', 'Weight', 'Units of weight', 'Species'};
+spec.formatted_input_names = {'collection_id', 'type', 'description', 'processing_log', 'base_sample_id', 'time', 'classification', 'sample_id', 'subject_id', 'sample_description', 'weight', 'units_of_weight', 'species'};
+spec.collection_id=sprintf('%d',-randi(200)-1500);
+spec.type='SpectraCollection';
+spec.description=sprintf(['Random spectrum for evaluating '...
+    'deconvolution']);
+spec.processing_log='Created by random_spec_From_nssd_data.';
+spec.num_samples=1; 
+spec.time=0;
+spec.classification={'Random spectrum'};
+spec.sample_id=1;
+spec.subject_id=1;
+spec.sample_description=spec.classification;
+spec.weight=1;
+spec.units_of_weight=arrayfun(@(x) 'No weight unit',1:1,'UniformOutput',false);
+spec.species=arrayfun(@(x) 'No species',1:1,'UniformOutput',false);
+spec.base_sample_id=1;
+
+
 end
 
