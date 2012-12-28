@@ -27,14 +27,24 @@ function width = bin_width_for_complete_separation_probability( target_probabili
 %
 % width - the bin width that should give the chosen probability
 
+last_calc_prob = 0;
+
     function e=error_for_width(w)
         % Returns the calculated probability of complete separation for a bin of width w
         s = probability_of_peak_merging_in_random_spec(num_peaks, w, num_reps, num_intensities, false);
         p = s.counts(num_peaks)/num_reps;
+        last_calc_prob = p;
         e = abs(target_probability-p);
     end
 
-width = fminbnd(@error_for_width, min_width, max_width, optimset('TolX',tolerance,'PlotFcns',{@optimplotfval,@optimplotx}));
+    function stop = print_search_state(cur_width, optimValues, ~)
+        % Prints the current point searched, and the probability and error
+        % at that point
+        fprintf('%.18g\t%.18g\t%.18g\n',cur_width, last_calc_prob, optimValues. fval);
+        stop = false;
+    end
+
+width = fminbnd(@error_for_width, min_width, max_width, optimset('TolX',tolerance,'PlotFcns',@optimplotfval,'OutputFcn',@print_search_state));
 
 end
 
