@@ -1,4 +1,4 @@
-function results = probability_of_peak_merging_in_random_spec( numbers_of_peaks, numbers_of_peak_widths, num_reps, num_intensities )
+function results = probability_of_peak_merging_in_random_spec( numbers_of_peaks, numbers_of_peak_widths, num_reps, num_intensities, use_waitbar )
 % Return a monte-carolo estimate the joint probability distribution of certain numbers of local maxima being generated in a random spectrum when 
 %
 % Usage: results = probability_of_peak_merging_in_random_spec( numbers_of_peaks, numbers_of_peak_widths, num_reps )
@@ -29,6 +29,13 @@ function results = probability_of_peak_merging_in_random_spec( numbers_of_peaks,
 % num_reps - (scalar) the number of noiseless random spectra to generate 
 %            for each member of the cartesian product of numbers_of_peaks 
 %            and numbers_of_peak_widths
+%
+% num_intensities - (scalar) the number of intensities to use for each
+%            generated spectrum
+%
+% use_waitbar - (logical, optional) if true, then a waitbar is used
+%            otherwise no waitbar is used. If omitted, then treated as
+%            true.
 %
 % Output params:
 %
@@ -70,6 +77,10 @@ function results = probability_of_peak_merging_in_random_spec( numbers_of_peaks,
 % maxima were detected
 %
 
+if ~exist('use_waitbar','var')
+    use_waitbar = true;
+end
+
 % Mean peak half width at half height from random_spec_from_nssd_data
 mean_width = 0.00453630122481774988;
 
@@ -80,9 +91,13 @@ pairs = [A(:),B(:)];
 % Generate the results
 num_pairs = size(pairs,1);
 results(num_pairs).num_peaks = 0; % Preallocate results as a struct array
-wait_h = waitbar(0,'Running monte-carlo simulation');
+if use_waitbar
+    wait_h = waitbar(0,'Running monte-carlo simulation');
+end
 for i = 1:num_pairs
-    waitbar((i-1)/num_pairs, wait_h);
+    if use_waitbar
+        waitbar((i-1)/num_pairs, wait_h);
+    end
     num_peaks = pairs(i,1);
     width = pairs(i,2)*mean_width;
     
@@ -96,7 +111,7 @@ for i = 1:num_pairs
     % Fill counts field in results 
     results(i).counts = zeros(1,num_peaks);
     for rep = 1:num_reps
-        if mod(rep,16) == 0
+        if use_waitbar && mod(rep,16) == 0
             waitbar((i-1)/num_pairs+rep/(num_pairs*num_reps), wait_h);
         end
         sp = random_spec_from_nssd_data(num_peaks, 0, width, ...
@@ -120,7 +135,9 @@ for i = 1:num_pairs
 end
 
 % Close the waitbar now that we're done
-close(wait_h);
+if use_waitbar
+    close(wait_h);
+end
 
 end
 
