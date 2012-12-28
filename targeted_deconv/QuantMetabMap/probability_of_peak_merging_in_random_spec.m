@@ -96,6 +96,9 @@ for i = 1:num_pairs
     % Fill counts field in results 
     results(i).counts = zeros(1,num_peaks);
     for rep = 1:num_reps
+        if mod(rep,16) == 0
+            waitbar((i-1)/num_pairs+rep/(num_pairs*num_reps), wait_h);
+        end
         sp = random_spec_from_nssd_data(num_peaks, 0, width, ...
             num_intensities, 0);
         assert(issorted(sp.x) || issorted(fliplr(sp.x)));
