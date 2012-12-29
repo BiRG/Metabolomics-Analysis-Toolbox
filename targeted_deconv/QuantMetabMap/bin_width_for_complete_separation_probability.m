@@ -15,7 +15,8 @@ function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_s
 %
 % min_width - the minimum width of bin to consider
 %
-% max_width - the maximum widht of bin to consider
+% max_width - the maximum width of bin to consider must be strictly greater
+%             than min_width
 %
 % tolerance - the first bin width that lies within tolerance of the target
 %    probability will be returned
@@ -55,21 +56,66 @@ global results;
             r.width, r.prob, half_interval(r), r.count, r.reps);
     end
 
+    function idx = index_for_result_with_width(w)
+        % Gives the index for a result with width w - creates an empty
+        % result if no such result exists
+        if isstruct(results)
+            result_widths = [results.width];
+            are_same_as_new = result_widths == w;
+            if any(are_same_as_new)
+                idx = find(are_same_as_new);
+                assert(length(idx) == 1);
+            else
+                idx = length(results)+1;
+
+                results(idx).width = w; 
+                results(idx).count = 0; 
+                results(idx).reps = 0; 
+                results(idx).prob = 0; 
+            end
+        else % Not a struct - so make it one
+            results = struct('width',w,'count',0,'reps',0,'prob',0);
+            idx = 1;
+        end
+    end
+
+    function add_reps_to_result(idx)
+        % Adds num_reps repetitions to the result at index idx and prints
+        % the result to standard output
+        results(idx).count = results(idx).count + count_for_width(results(idx).width);
+        results(idx).reps = results(idx).reps + num_reps;
+        results(idx).prob = results(idx).count/results(idx).reps;
+        print_result(results(idx));
+    end
+
+    function add_reps_to_result_until_unambiguous(idx)
+        % Adds num_reps repetitions to the result at index idx and then 
+        % continues adding until its status as a candidate is unambiguous, 
+        % that is, until it is either a solution or until its 95% 
+        % confidence interval does not contain the target value. (And 
+        % prints a comment line first)
+        is_first = true;
+        add_reps_to_result(idx);
+        while abs(results(idx).prob-target_probability) < half_interval(results(idx)) && ... %CI includes target probability
+                tolerance < half_interval(results(idx))                                      %CI is larger than tolerance
+            if is_first
+                fprintf('# Starting deep search to remove ambiguity\n');
+                is_first = false;
+            end
+            add_reps_to_result(idx);
+        end
+        if ~is_first
+            fprintf('# Ambiguity removed\n');
+        end
+    end
+
 if ~isempty(results)
     warning('bin_width:results_not_empty', ...
         'The results global variable was not empty on starting the search - skipping initialization to continue previous run');
 else
-    results(1).width = min_width;
-    results(1).count = count_for_width(min_width);
-    results(1).reps = num_reps;
-    results(1).prob = results(1).count/num_reps;
-    print_result(results(1));
-
-    results(2).width = max_width;
-    results(2).count = count_for_width(max_width);
-    results(2).reps = num_reps;
-    results(2).prob = results(2).count/num_reps;
-    print_result(results(2));
+    assert(min_width < max_width);
+    add_reps_to_result_until_unambiguous(index_for_result_with_width(min_width));
+    add_reps_to_result_until_unambiguous(index_for_result_with_width(max_width));
 end
 
 % Algorithm: 
@@ -112,25 +158,10 @@ while(should_continue)
     
     % Add the width to the results list (or just set the index variable if
     % it is already present)
-    result_widths = [results.width];
-    are_same_as_new = result_widths == new_width;
-    if any(are_same_as_new)
-        result_idx = find(are_same_as_new);
-        assert(length(result_idx) == 1);
-    else
-        result_idx = length(results)+1;
-        
-        results(result_idx).width = new_width; %#ok<AGROW>
-        results(result_idx).count = 0; %#ok<AGROW>
-        results(result_idx).reps = 0; %#ok<AGROW>
-        results(result_idx).prob = 0; %#ok<AGROW>
-    end
+    result_idx = index_for_result_with_width(new_width);
     
     % Add new counts to the selected width
-    results(result_idx).count = results(result_idx).count + count_for_width(new_width);%#ok<AGROW>
-    results(result_idx).reps = results(result_idx).reps + num_reps;                    %#ok<AGROW>
-    results(result_idx).prob = results(result_idx).count/results(result_idx).reps;     %#ok<AGROW>
-    print_result(results(result_idx));
+    add_reps_to_result_until_unambiguous(result_idx);
     
     % Find the index of the closest point to the target
     dists = [abs([results.prob] - target_probability); ...
@@ -139,10 +170,7 @@ while(should_continue)
     closest_idx = dists(1,2);
     
     % Add counts to the closest point
-    results(closest_idx).count = results(closest_idx).count + count_for_width(new_width);%#ok<AGROW>
-    results(closest_idx).reps = results(closest_idx).reps + num_reps;                    %#ok<AGROW>
-    results(closest_idx).prob = results(closest_idx).count/results(closest_idx).reps;    %#ok<AGROW>
-    print_result(results(closest_idx));
+    add_reps_to_result_until_unambiguous(closest_idx);
     
     % Check for termination
     if half_interval(results(closest_idx)) < tolerance && abs(target_probability - results(closest_idx).prob) < tolerance
