@@ -1,10 +1,14 @@
-function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps, num_intensities)
+function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps)
 % Return the bin width that will ensure (approximately) that there is the target probability of having num_peaks local maxima in a spectrum generated with num_peaks peaks from the nssd data.
 % 
-% Usage: width = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps, num_intensities)
+% Usage: width = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps)
+%
 % IMPORTANT NOTE: to aid debugging & plotting this function uses the global variable
 % results to store its intermediate results. This allows me to stop the
-% program and immediately recover the current state.
+% program and immediately recover the current state. It also allows me to
+% bootstrap the program using results from previous runs.
+%
+% The generated spectra are made with 25 intensities per sample width.
 %
 % Input parameters:
 %
@@ -24,9 +28,6 @@ function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_s
 % num_reps - the number of repetitions - the number of spectra generated to
 %    estimate the probability for a given width
 %
-% num_intensities - the number of intensities to use in the generated
-%    spectra
-%
 % Output parameters:
 %
 % width - the bin width that should give the chosen probability
@@ -37,11 +38,13 @@ function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_s
 % little by not updating my prior each time, but I gain that in procedural 
 % simplicity.
 
+intensities_per_width = 25;
+
 global results;
 
     function c = count_for_width(w)
         % Returns the number of occurrences of complete separation for a bin of width w when num_reps samples were taken
-        s = probability_of_peak_merging_in_random_spec(num_peaks, w, num_reps, num_intensities, false);
+        s = probability_of_peak_merging_in_random_spec(num_peaks, w, num_reps, ceil(intensities_per_width*w), false);
         c = s.counts(num_peaks);
     end
 
