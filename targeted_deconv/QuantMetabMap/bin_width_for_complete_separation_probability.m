@@ -2,6 +2,9 @@ function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_s
 % Return the bin width that will ensure (approximately) that there is the target probability of having num_peaks local maxima in a spectrum generated with num_peaks peaks from the nssd data.
 % 
 % Usage: width = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps, num_intensities)
+% IMPORTANT NOTE: to aid debugging & plotting this function uses the global variable
+% results to store its intermediate results. This allows me to stop the
+% program and immediately recover the current state.
 %
 % Input parameters:
 %
@@ -33,6 +36,8 @@ function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_s
 % little by not updating my prior each time, but I gain that in procedural 
 % simplicity.
 
+global results;
+
     function c = count_for_width(w)
         % Returns the number of occurrences of complete separation for a bin of width w when num_reps samples were taken
         s = probability_of_peak_merging_in_random_spec(num_peaks, w, num_reps, num_intensities, false);
@@ -49,17 +54,23 @@ function [width,final_count_for_width,reps_for_width] = bin_width_for_complete_s
         fprintf('%.18g\t%.18g\t+/- %0.5g = %8d\t%8d\n', ...
             r.width, r.prob, half_interval(r), r.count, r.reps);
     end
-results(1).width = min_width;
-results(1).count = count_for_width(min_width);
-results(1).reps = num_reps;
-results(1).prob = results(1).count/num_reps;
-print_result(results(1));
 
-results(2).width = max_width;
-results(2).count = count_for_width(max_width);
-results(2).reps = num_reps;
-results(2).prob = results(2).count/num_reps;
-print_result(results(2));
+if ~isempty(results)
+    warning('bin_width:results_not_empty', ...
+        'The results global variable was not empty on starting the search - skipping initialization to continue previous run');
+else
+    results(1).width = min_width;
+    results(1).count = count_for_width(min_width);
+    results(1).reps = num_reps;
+    results(1).prob = results(1).count/num_reps;
+    print_result(results(1));
+
+    results(2).width = max_width;
+    results(2).count = count_for_width(max_width);
+    results(2).reps = num_reps;
+    results(2).prob = results(2).count/num_reps;
+    print_result(results(2));
+end
 
 % Algorithm: 
 % Take the closest 10 points (or fewer if there are not 10 points yet) and
