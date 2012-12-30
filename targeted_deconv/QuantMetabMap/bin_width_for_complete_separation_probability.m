@@ -122,18 +122,27 @@ else
 end
 
 % Algorithm: 
-% Take the closest 10 points (or fewer if there are not 10 points yet) and
-% calculate the best fit line. Calculate the point on that line where the
-% target should lie. Add that point to the list of results, counting the
-% successes in num_reps samples.
+% Take the closest 10 points (or fewer if there are not 10 points yet).
 %
-% Look through the list for the width which is closest to the target. Shrink 
-% the credible interval by running another num_reps samples (do this no 
-% matter what because the closest point is guaranteed to be in the list of
-% points we use in the next iteration - this makes it a more accurate
-% estimate the random variation in the closest point should also help to 
-% keep the algorithm from getting stuck in a loop). If its credible 
-% interval contains the target and if the distance from the end of the 
+% Choose the one of this set that has the least repetitions and add
+% repetitons to it, improving its estimate. This lowers the risk of getting
+% stuck in a loop because the points from which the new point is derived
+% will always be changing, and their estimates will always be improving.
+% Additionally, this will happen in a way that tends to make the variance
+% of their estimators the same - ensuring better performance from the
+% linear fit.
+% 
+% Now, calculate the best fit line. Calculate the point on that line where 
+% the target should lie. Add that point to the list of results, counting 
+% the successes in num_reps samples.
+%
+% Each time repetitons are added to a width, see if it is a candidate for a
+% solution (if its credible interval contains the target point but is
+% wider than twice the tolerance). While it remains a candidate keep adding
+% points. 
+%
+% Now, check for termination: If the closest point's credible interval 
+% contains the target and if the distance from the end of the 
 % credible interval to the proportion estimate is less than tolerance, 
 % we're done. Otherwise do another iteration.
 %
@@ -150,9 +159,16 @@ while(should_continue)
     indices = dists(1:num_pts_to_get,2);
     selected = results(indices);
     
-    % Calculate the best fit line (note that it is for the function from
-    % probabilities to widths) and the new best width estimate based on
-    % that fit
+    % Find the selected result with the lowest number of reps
+    [~, min_rep_sel_idx] = min([selected.reps]);
+    min_rep_orig_idx = indices(min_rep_sel_idx); % Original index of the selected result with the minimum number of repetitions
+    
+    % Add counts to that result 
+    add_reps_to_result_until_unambiguous(min_rep_orig_idx);
+    
+    % Calculate the best fit line for the closest 10 points (note that the 
+    % line fits the function from probabilities to widths) and the new 
+    % best width estimate based on that fit
     widths = [selected.width];
     probs = [selected.prob];
     poly = polyfit(probs, widths, 1);
@@ -166,14 +182,9 @@ while(should_continue)
     % Add new counts to the selected width
     add_reps_to_result_until_unambiguous(result_idx);
     
-    % Find the index of the closest point to the target
-    dists = [abs([results.prob] - target_probability); ...
-             1:length(results)];
-    dists = sortrows(dists',1);
-    closest_idx = dists(1,2);
-    
-    % Add counts to the closest point
-    add_reps_to_result_until_unambiguous(closest_idx);
+    % Find the closest index
+    unsorted_dists = [abs([results.prob] - target_probability)];
+    [~,closest_idx] = min(unsorted_dists);
     
     % Check for termination
     if half_interval(results(closest_idx)) < tolerance && abs(target_probability - results(closest_idx).prob) < tolerance
