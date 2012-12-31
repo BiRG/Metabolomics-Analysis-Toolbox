@@ -153,9 +153,10 @@ while(should_continue)
     dists = sortrows(dists',1);
     indices = dists(1:num_pts_to_get,2);
     selected = results(indices);
+    selected_experiments = [selected.exp];
     
     % Find the selected result with the lowest number of reps
-    [~, min_rep_sel_idx] = min([selected.reps]);
+    [~, min_rep_sel_idx] = min([selected_experiments.trials]);
     min_rep_orig_idx = indices(min_rep_sel_idx); % Original index of the selected result with the minimum number of repetitions
     
     % Add counts to that result 
@@ -165,7 +166,7 @@ while(should_continue)
     % line fits the function from probabilities to widths) and the new 
     % best width estimate based on that fit
     widths = [selected.width];
-    probs = [selected.prob];
+    probs = [selected_experiments.prob];
     poly = polyfit(probs, widths, 1);
     new_width = polyval(poly, target_probability);
     
