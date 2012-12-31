@@ -175,10 +175,8 @@ classdef BinomialExperiment
         %              <= 1.
         %              
 	%
-	% interval - (row vector) contains two entries, the first
-        %            is the minimum of the credible interval, the
-        %            second is the maximum. If the algorithm fails
-        %            to converge, outputs NaN.
+	% interval - (ClosedInterval or Nan) The interval calculated
+        %            by the algorithm or NaN if it doesn't converge.
 	%
 	% This algorithm can fail to converge. This failure becomes
         % more probable as the product successes*trials increases. On
@@ -190,19 +188,19 @@ classdef BinomialExperiment
 	% Returns the shortest 95% credible interval with a uniform
         % prior
 	%
-        % ans = [0.229108, 0.589409]
+        % ans = ClosedInterval(0.229108, 0.589409)
         %
         % >> BinomialExperiment(2,2,1,1).shortestCredibleInterval(.95)
         %
-        % ans = [0.146633, 0.853367]
+        % ans = ClosedInterval(0.146633, 0.853367)
 	%
         % >> BinomialExperiment(0,2,1,1).shortestCredibleInterval(.95)
         %
-        % ans = [0, 0.631597]
+        % ans = ClosedInterval(0, 0.631597)
 	%
         % >> BinomialExperiment(1,0,1,1).shortestCredibleInterval(.95)
         %
-        % ans = [0.223607, 1]
+        % ans = ClosedInterval(0.223607, 1)
 	%
 	%
 
@@ -221,17 +219,18 @@ classdef BinomialExperiment
 	    j = 0;
 	    if k == 0
 	      % No successes
-	      interval = [0, betainv(confidence, a, b)];
+	      interval = ClosedInterval(0, betainv(confidence, a, b));
 	      return;
 	    elseif k == N
 	      % No failures
-	      interval = [betainv(1-confidence, a, b), 1];
+	      interval = ClosedInterval(betainv(1-confidence, a, b), 1);
 	      return;
 	    elseif obj.successes == obj.failures
 	      % Symmetric beta distribution so smallest CI is the
               % one containing the median
-	      interval = [betainv(0.5*(1 - confidence), a, b), ...
-			  betainv(0.5*(1 + confidence), a, b)];
+	      interval = ClosedInterval(...
+		  betainv(0.5*(1 - confidence), a, b), ...
+		  betainv(0.5*(1 + confidence), a, b));
 	      return;
 	    else
 	      [interval_start,length,status] = fminbnd(...
@@ -239,7 +238,8 @@ classdef BinomialExperiment
 				   a, b) - start, ...
 		  0, betainv(1-confidence, a, b));
 	      if status == 1
-		interval = [interval_start, interval_start + length];
+		interval = ClosedInterval(interval_start, ...
+					  interval_start + length);
 	      else
 		interval = nan;
 	      end
