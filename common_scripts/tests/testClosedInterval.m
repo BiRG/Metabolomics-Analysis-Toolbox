@@ -5,11 +5,6 @@ function test_suite = testClosedInterval %#ok<STOUT>
 %   runtests testClosedInterval
 initTestSuite;
 
-function dir=data_dir
-% Return the directory in which this test case data is located
-thisfile = mfilename('fullpath');
-dir=regexprep(thisfile,'/[^/]*$','');
-
 function testConstructor %#ok<DEFNU>
 % Tests the inputs of the constructor and if it fails appropriately
 
