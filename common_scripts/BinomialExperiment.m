@@ -245,7 +245,35 @@ classdef BinomialExperiment
 	      end
 	      return;
 	    end
-
+	    
+	    function str=char(obj)
+	    % Return a human-readable string representation of this
+            % object. (Matlab's version of toString, however, Matlab
+            % doesn't call it automatically)
+	      a = obj.priorAlpha; b = obj.priorBeta
+	      if a==b && (a==0 || a==0.5 || a==1)
+		if a==0
+		  prior = 'Haldane Prior';
+		else if a==0.5
+		  prior = 'Jeffreys Prior';
+		else
+		  assert(a==1);
+		  prior = 'Uniform Prior';
+		end
+	      else
+	        prior = sprintf('Beta(%g, %g)', obj.priorAlpha, ...
+				obj.priorBeta);
+	      end
+	      str=sprintf('BinomialExperiment(Succ=%g, Fail=%g, %s)', ...
+			  obj.successes, obj.failures, prior); 
+	    end
+	    
+	    function display(obj)
+	    % Display this object to a console. (Called by Matlab
+            % whenever an object of this class is assigned to a
+            % variable without a semicolon to suppress the display).
+	      disp(obj.char);
+	    end
         end
         
 

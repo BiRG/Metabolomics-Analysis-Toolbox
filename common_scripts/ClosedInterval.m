@@ -63,6 +63,19 @@ classdef ClosedInterval
 	  does_contain = min <= val && val <= max;
 	end
 
+        function str=char(obj)
+        % Return a human-readable string representation of this
+        % object. (Matlab's version of toString, however, Matlab
+        % doesn't call it automatically)
+          str = sprintf('ClosedInterval(%g,%g)', obj.min, obj.max);
+	end
+	    
+        function display(obj)
+        % Display this object to a console. (Called by Matlab
+        % whenever an object of this class is assigned to a
+        % variable without a semicolon to suppress the display).
+	   disp(obj.char);
+	end
     end
     
 end
