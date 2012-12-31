@@ -147,7 +147,8 @@ while(should_continue)
     % Get the closest 10 points
     max_pts_to_get = 10;
     num_pts_to_get = min(max_pts_to_get, length(results));
-    dists = [abs([results.exp.prob] - target_probability); ...
+    experiments = [results.exp];
+    dists = [abs([experiments.prob] - target_probability); ...
              1:length(results)];
     dists = sortrows(dists',1);
     indices = dists(1:num_pts_to_get,2);
@@ -177,7 +178,8 @@ while(should_continue)
     add_reps_to_result_until_unambiguous(result_idx);
     
     % Find the closest index
-    unsorted_dists = [abs([results.exp.prob] - target_probability)];
+    experiments = [results.exp];
+    unsorted_dists = [abs([experiments.prob] - target_probability)];
     [~,closest_idx] = min(unsorted_dists);
     
     % Check for termination
