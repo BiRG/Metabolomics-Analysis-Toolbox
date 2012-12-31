@@ -256,7 +256,7 @@ classdef BinomialExperiment
             end
         end
         
-        function p = probThatParamInRange(min, max)
+        function p = probThatParamInRange(obj, min, max)
             % Return the probability that the true value of the parameter of the Bernoulli distribution sampled for this experiment lies in the interval [min,max].
             %
             % min - (scalar) minimum value in the range being queried. 
