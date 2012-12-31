@@ -2,7 +2,7 @@ function words = wordlist_32k
 % Returns a list of 32768 different American English words
 %
 % This list contains no capitalized words and no words ending with
-% "s", "ted", or "ing"
+% "s", "ted", or "ing" and no words containing appostrophes.
 
 persistent w;
 if isempty(w)
