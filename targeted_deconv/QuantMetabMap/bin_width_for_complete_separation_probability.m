@@ -35,10 +35,10 @@ function [width, exp] = bin_width_for_complete_separation_probability( target_pr
 % exp - the BinomialExperiment object detailing the experimental evidence
 %       at that width
 
-intensities_per_width = 25;
-acceptance_threshold = 0.95; % Accept a width if there is more than acceptance_threshold probability that it is within range
-rejection_threshold = 0.01;  % Reject (and stop intensively exploring) a width if there is less than a rejection_threshold probability that it is within range
-non_rejection_interval = 0.90; % Reject when the target probability is outside a credible interval of this confidence
+intensities_per_width   = 25;
+acceptance_threshold    = 0.95; % Accept a width if there is more than acceptance_threshold probability that it is within range
+bar_estimate_confidence = 0.05; % The confidence of the "bar estimate" of the location of the parameter. As long as the bar estimate contains the target point, we consider the width a candidate. The "bar estimate" is intended to be like a point estimate but have a width proportional to the uncertainty. It is a shortest interval that contains this much of the probability. I chose to contain the target point rather than overlap because it takes many more iterations to distinguish a point on the edge of the target interval from a point outside it than to distinguish a point in the center from one outside. Thus, I throw away some potential points on the edge in the interest of easier gain in confidence, since it is easier to generate a new point than to fully confirm an existing point.
+
 
 
 global results;
@@ -51,7 +51,7 @@ global results;
 
     function print_result(r)
         % Prints a result to a single line of standard output
-        interval = r.exp.shortestCredibleInterval(non_rejection_interval);
+        interval = r.exp.shortestCredibleInterval(bar_estimate_confidence);
         fprintf('%.18g\t%.6g\t%.3f %%\t[ %0.5g - %0.5g ] = %8d\t%8d\n', ...
             r.width, r.exp.prob, 100*r.exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance), interval.min, interval.max, r.exp.successes, r.exp.trials);
     end
@@ -90,19 +90,19 @@ global results;
         % that is, until it is 99% certain that the current width is not
         % within tolerance of the target probability. (And prints a comment 
         % line before staring ambiguity removal)
+
         is_first = true;
         add_reps_to_result(idx);
         chance_in_range = results(idx).exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance);
-        interval = results(idx).exp.shortestCredibleInterval(non_rejection_interval);
-        while acceptance_threshold > chance_in_range && chance_in_range > rejection_threshold ... % Consider it ambiguous if it is between the two thresholds and the interval contains the target
-                && interval.contains(target_probability)
+        bar_estimate = results(idx).exp.shortestCredibleInterval(bar_estimate_confidence);
+        while acceptance_threshold > chance_in_range && bar_estimate.contains(target_probability) % Consider it ambiguous if it has not reached the acceptance threshold and the "bar estimate" of the position overlaps the target interval
             if is_first
                 fprintf('# Starting deep search to remove ambiguity\n');
                 is_first = false;
             end
             add_reps_to_result(idx);
             chance_in_range = results(idx).exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance);
-            interval = results(idx).exp.shortestCredibleInterval(non_rejection_interval);
+            bar_estimate = results(idx).exp.shortestCredibleInterval(bar_estimate_confidence);
         end
         if ~is_first
             fprintf('# Ambiguity removed\n');
@@ -184,7 +184,7 @@ while(should_continue)
     
     % Find the closest index
     experiments = [results.exp];
-    unsorted_dists = [abs([experiments.prob] - target_probability)];
+    unsorted_dists = abs([experiments.prob] - target_probability);
     [~,closest_idx] = min(unsorted_dists);
     
     % Check for termination
