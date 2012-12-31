@@ -38,6 +38,7 @@ function [width, exp] = bin_width_for_complete_separation_probability( target_pr
 intensities_per_width = 25;
 acceptance_threshold = 0.95; % Accept a width if there is more than acceptance_threshold probability that it is within range
 rejection_threshold = 0.01;  % Reject (and stop intensively exploring) a width if there is less than a rejection_threshold probability that it is within range
+non_rejection_interval = 0.90; % Reject when the target probability is outside a credible interval of this confidence
 
 
 global results;
@@ -50,7 +51,7 @@ global results;
 
     function print_result(r)
         % Prints a result to a single line of standard output
-        interval = r.exp.shortestCredibleInterval(0.95);
+        interval = r.exp.shortestCredibleInterval(non_rejection_interval);
         fprintf('%.18g\t%.6g\t%.3f %%\t[ %0.5g - %0.5g ] = %8d\t%8d\n', ...
             r.width, r.exp.prob, 100*r.exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance), interval.min, interval.max, r.exp.successes, r.exp.trials);
     end
@@ -92,13 +93,16 @@ global results;
         is_first = true;
         add_reps_to_result(idx);
         chance_in_range = results(idx).exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance);
-        while acceptance_threshold > chance_in_range && chance_in_range > rejection_threshold % Consider it ambiguous if it is between the two thresholds
+        interval = results(idx).exp.shortestCredibleInterval(non_rejection_interval);
+        while acceptance_threshold > chance_in_range && chance_in_range > rejection_threshold ... % Consider it ambiguous if it is between the two thresholds and the interval contains the target
+                && interval.contains(target_probability)
             if is_first
                 fprintf('# Starting deep search to remove ambiguity\n');
                 is_first = false;
             end
             add_reps_to_result(idx);
             chance_in_range = results(idx).exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance);
+            interval = results(idx).exp.shortestCredibleInterval(non_rejection_interval);
         end
         if ~is_first
             fprintf('# Ambiguity removed\n');
