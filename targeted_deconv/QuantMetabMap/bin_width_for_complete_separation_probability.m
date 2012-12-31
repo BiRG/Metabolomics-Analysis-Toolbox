@@ -50,7 +50,7 @@ global results;
 
     function print_result(r)
         % Prints a result to a single line of standard output
-        interval = r.exp.smallestCredibleInterval(0.95);
+        interval = r.exp.shortestCredibleInterval(0.95);
         fprintf('%.18g\t%.6g\t%.3f %%\t[ %0.5g - %0.5g ] = %8d\t%8d\n', ...
             r.width, r.exp.prob, 100*r.exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance), interval.min, interval.max, r.exp.successes, r.exp.trials);
     end
@@ -184,7 +184,7 @@ while(should_continue)
     [~,closest_idx] = min(unsorted_dists);
     
     % Check for termination
-    if results(closest_idx).probThatParamInRange(target_probability-tolerance, target_probability+tolerance) > acceptance_threshold
+    if results(closest_idx).exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance) > acceptance_threshold
         width = results(closest_idx).width;
         exp = results(closest_idx).exp;
         return;
