@@ -255,6 +255,29 @@ classdef BinomialExperiment
                 return;
             end
         end
+        
+        function p = probThatParamInRange(min, max)
+            % Return the probability that the true value of the parameter of the Bernoulli distribution sampled for this experiment lies in the interval [min,max].
+            %
+            % min - (scalar) minimum value in the range being queried. 
+            %       0 <= min <= max <= 1
+            %
+            % max - (scalar) maximum value in the range being queried.
+            %       0 <= min <= max <= 1
+            %
+            % Output Value:
+            %
+            % p - (scalar) the probability that the parameter does lie in
+            %     the closed interval [min, max]
+            assert(max >= min);
+            assert(min >= 0);
+            assert(max <= 1);
+            
+            a = obj.successes + obj.priorAlpha;
+            b = obj.failures + obj.priorBeta;
+            
+            p = betacdf(max, a, b) - betacdf(min, a, b);
+        end
             
         function str=char(obj) 
             % Return a human-readable string representation of this
