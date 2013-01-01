@@ -275,11 +275,11 @@ classdef GLBIO2013Deconv
                 obj.peak_picker_name = peak_picker_name;
                 obj.starting_point_name = starting_point_name;
                 
+                mean_peak_width = 0.00453630122481774988; % Width of the mean peak in ppm
                 switch(peak_picker_name)
                     case GLBIO2013Deconv.pp_gold_standard
                         obj.picked_locations = [peaks.location];
                     case GLBIO2013Deconv.pp_noisy_gold_standard
-                        mean_peak_width = 0.00453630122481774988;
                         obj.picked_locations = [peaks.location];
                         obj.picked_locations = (mean_peak_width/16).*randn(size(obj.picked_locations));
                     case GLBIO2013Deconv.pp_smoothed_local_max
@@ -292,10 +292,40 @@ classdef GLBIO2013Deconv
                             peak_picker_name);
                 end
                 
+                switch(starting_point_name)
+                    case GLBIO2013Deconv.dsp_anderson
+                        x = spectrum.x;
+                        [obj.starting_point, obj.starting_point_lb, ...
+                            obj.starting_point_ub] = ...
+                            ...
+                            compute_initial_inputs(x,spectrum.Y, ...
+                            obj.picked_locations, ...
+                            1:length(x), obj.picked_locations);
+
+                    case GLBIO2013Deconv.dsp_smallest_peak_first
+                        x = spectrum.x;
+                        default_window_ppm = 0.0052; % From RegionalSpectrumModel
+                        default_max_peak_width = 0.004; %From RegionalSpectrumModel (actual maximum in the distribution is 0.0044955)
+                        samples_per_ppm = length(x)/max(x)-min(x);
+                        rough_peak_window_samples = ceil(samples_per_ppm*default_window_ppm);
+                        assert(rough_peak_window_samples >= 4);
+                        [obj.starting_point, obj.starting_point_lb, ...
+                            obj.starting_point_ub] = ...
+                            ...
+                            deconv_initial_vals_dirty ...
+                                (x, spectrum.Y, min(x), max(x), ...
+                                obj.picked_locations, ...
+                                default_max_peak_width, ...
+                                rough_window_samples);
+                    otherwise
+                        % Should be impossible to reach due to the assert
+                        % at the beginning - this is defensive programming
+                        error('GLBIO2013:unknown_dsp_method', ...
+                            'Unknown starting point method method "%s" specified.',...
+                            starting_point_name);
+                end
+                
                 %TODO: Properties unassigned
-                %starting_point
-                %starting_point_lb
-                %starting_point_ub
                 %peaks
                 %aligned_indices
             end
