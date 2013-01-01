@@ -287,7 +287,7 @@ classdef GLBIO2013Deconv
         % Display this object to a console. (Called by Matlab
         % whenever an object of this class is assigned to a
         % variable without a semicolon to suppress the display).
-            disp(obj.char);
+            disp([obj.char,'\n']);
         end
     end
     
