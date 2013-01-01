@@ -96,10 +96,14 @@ classdef GLBIO2013Datum
                     GLBIO2013Deconv.deconvolution_starting_point_method_names;
                 for p = 1:length(pickers)
                     for d = 1:length(deconvolvers)
-                        obj.deconvolutions(end+1) = ...
-                            GLBIO2013Deconv(obj.id, obj.spectrum, obj.spectrum_peaks, ...
-                                            1/obj.spectrum_snr, pickers(p), ...
-                                            deconvolvers(d));
+                        tmp = GLBIO2013Deconv(obj.id, obj.spectrum, ...
+                            obj.spectrum_peaks, 1/obj.spectrum_snr, ...
+                            pickers{p}, deconvolvers{d});
+                        if isempty(obj.deconvolutions)
+                            obj.deconvolutions = tmp;
+                        else
+                            obj.deconvolutions(end+1) = tmp;
+                        end
                     end
                 end
             end
@@ -110,18 +114,25 @@ classdef GLBIO2013Datum
 	
 
         
-        function str=char(obj)
+        function str=char(objs)
         % Return a human-readable string representation of this
         % object. (Matlab's version of toString, however, Matlab
-        % doesn't call it automatically)
-            str = sprintf('GLBIO2013Datum(%g, %s)', obj.spectrum_width, obj.id);
+        % doesn't call it automatically). Remember that it can be passed a
+        % matrix of objects.
+            strs = cell(length(objs),1);
+            separator = '';
+            for i = 1:length(objs)
+                strs{i} =sprintf([separator,'GLBIO2013Datum(%g, %s)'], objs(i).spectrum_width, objs(i).id);
+                separator = '\n';
+            end
+            str = sprintf('%s',strs{:});
         end
         
-        function display(obj)
+        function display(objs)
         % Display this object to a console. (Called by Matlab
         % whenever an object of this class is assigned to a
         % variable without a semicolon to suppress the display).
-            disp([obj.char,'\n']);
+            fprintf('%s\n',objs.char);
         end
     end
     
