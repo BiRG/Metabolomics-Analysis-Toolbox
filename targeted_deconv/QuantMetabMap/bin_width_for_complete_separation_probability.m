@@ -1,4 +1,4 @@
-function [width, exp] = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps)
+function [width, exper] = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps)
 % Return the bin width that will ensure (approximately) that there is the target probability of having num_peaks local maxima in a spectrum generated with num_peaks peaks from the nssd data.
 % 
 % Usage: width = bin_width_for_complete_separation_probability( target_probability, num_peaks, min_width, max_width, tolerance, num_reps)
@@ -32,12 +32,12 @@ function [width, exp] = bin_width_for_complete_separation_probability( target_pr
 %
 % width - the bin width that should give the chosen probability
 %
-% exp - the BinomialExperiment object detailing the experimental evidence
-%       at that width
+% exper - the BinomialExperiment object detailing the experimental evidence
+%         at that width
 
 intensities_per_width   = 25;
 acceptance_threshold    = 0.95; % Accept a width if there is more than acceptance_threshold probability that it is within range
-bar_estimate_confidence = 0.05; % The confidence of the "bar estimate" of the location of the parameter. As long as the bar estimate contains the target point, we consider the width a candidate. The "bar estimate" is intended to be like a point estimate but have a width proportional to the uncertainty. It is a shortest interval that contains this much of the probability. I chose to contain the target point rather than overlap because it takes many more iterations to distinguish a point on the edge of the target interval from a point outside it than to distinguish a point in the center from one outside. Thus, I throw away some potential points on the edge in the interest of easier gain in confidence, since it is easier to generate a new point than to fully confirm an existing point.
+bar_estimate_confidence = 0.50; % The confidence of the "bar estimate" of the location of the parameter. As long as the bar estimate contains the target point, we consider the width a candidate. The "bar estimate" is intended to be like a point estimate but have a width proportional to the uncertainty. It is a shortest interval that contains this much of the probability. I chose to contain the target point rather than overlap because it takes many more iterations to distinguish a point on the edge of the target interval from a point outside it than to distinguish a point in the center from one outside. Thus, I throw away some potential points on the edge in the interest of easier gain in confidence, since it is easier to generate a new point than to fully confirm an existing point.
 
 
 
@@ -168,12 +168,13 @@ while(should_continue)
     
     % Calculate the best fit line for the closest 10 points (note that the 
     % line fits the function from probabilities to widths) and the new 
-    % best width estimate based on that fit
+    % best width estimate based on that fit. I fit in log(width) space
+    % because the curve looks exponential.
     widths = [selected.width];
     probs = [selected_experiments.prob];
-    poly = polyfit(probs, widths, 1);
+    poly = polyfit(probs, log(widths), 1);
     new_width = polyval(poly, target_probability);
-    
+    new_width = exp(new_width);
     
     % Add the width to the results list (or just set the index variable if
     % it is already present)
@@ -190,7 +191,7 @@ while(should_continue)
     % Check for termination
     if results(closest_idx).exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance) > acceptance_threshold
         width = results(closest_idx).width;
-        exp = results(closest_idx).exp;
+        exper = results(closest_idx).exp;
         return;
     end
 end
