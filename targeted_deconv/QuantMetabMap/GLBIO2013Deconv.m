@@ -270,11 +270,12 @@ classdef GLBIO2013Deconv
                                   GLBIO2013Deconv ...
                                   .deconvolution_starting_point_method_names)));
                               
-                
+                % Set general values
                 obj.datum_id = datum_id;
                 obj.peak_picker_name = peak_picker_name;
                 obj.starting_point_name = starting_point_name;
                 
+                % Pick peaks
                 mean_peak_width = 0.00453630122481774988; % Width of the mean peak in ppm
                 switch(peak_picker_name)
                     case GLBIO2013Deconv.pp_gold_standard
@@ -292,9 +293,11 @@ classdef GLBIO2013Deconv
                             peak_picker_name);
                 end
                 
+                % Set starting point
+                x = spectrum.x;
+                model = RegionalSpectrumModel; % Use default model
                 switch(starting_point_name)
                     case GLBIO2013Deconv.dsp_anderson
-                        x = spectrum.x;
                         [obj.starting_point, obj.starting_point_lb, ...
                             obj.starting_point_ub] = ...
                             ...
@@ -303,11 +306,8 @@ classdef GLBIO2013Deconv
                             1:length(x), obj.picked_locations);
 
                     case GLBIO2013Deconv.dsp_smallest_peak_first
-                        x = spectrum.x;
-                        default_window_ppm = 0.0052; % From RegionalSpectrumModel
-                        default_max_peak_width = 0.004; %From RegionalSpectrumModel (actual maximum in the distribution is 0.0044955)
                         samples_per_ppm = length(x)/max(x)-min(x);
-                        rough_peak_window_samples = ceil(samples_per_ppm*default_window_ppm);
+                        rough_peak_window_samples = ceil(model.rough_peak_window_width * samples_per_ppm);
                         assert(rough_peak_window_samples >= 4);
                         [obj.starting_point, obj.starting_point_lb, ...
                             obj.starting_point_ub] = ...
@@ -315,7 +315,7 @@ classdef GLBIO2013Deconv
                             deconv_initial_vals_dirty ...
                                 (x, spectrum.Y, min(x), max(x), ...
                                 obj.picked_locations, ...
-                                default_max_peak_width, ...
+                                model.max_rough_peak_width, ...
                                 rough_window_samples);
                     otherwise
                         % Should be impossible to reach due to the assert
@@ -325,8 +325,16 @@ classdef GLBIO2013Deconv
                             starting_point_name);
                 end
                 
+                % Do deconvolution
+                [~, ~, ~, ~, ~,~, ~, peak_params] = ...
+                    region_deconvolution(x, spectrum.y, obj.starting_point, ...
+                        obj.starting_point_lb, obj.starting_point_ub, ...
+                        2*(max(x)-min(x)), ... % This baseline width is the value given in targeted_identify line 1794
+                        [min(x);max(x)], ...
+                        model); 
+                obj.peaks = GaussLorentzPeak(peak_params);
+                
                 %TODO: Properties unassigned
-                %peaks
                 %aligned_indices
             end
         end
