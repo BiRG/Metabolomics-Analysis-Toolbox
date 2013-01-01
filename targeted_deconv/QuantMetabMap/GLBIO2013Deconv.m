@@ -171,8 +171,9 @@ classdef GLBIO2013Deconv
         function strs = peak_picking_method_names
         % Lists the strings that can be used to identify a
         % peak-picking method applied preceeding the deconvolution
-            strs = {pp_gold_standard, pp_noisy_gold_standard, ...
-                    pp_smoothed_local_max};
+            strs = {GLBIO2013Deconv.pp_gold_standard, ...
+                    GLBIO2013Deconv.pp_noisy_gold_standard, ...
+                    GLBIO2013Deconv.pp_smoothed_local_max};
         end
 
         
@@ -194,15 +195,17 @@ classdef GLBIO2013Deconv
         % Lists the strings that can be used to identify a
         % method giving a starting point in the deconvolution
         % search space
-            strs = {dsp_anderson, dsp_smallest_peak_first}; 
+            strs = {...
+                GLBIO2013Deconv.dsp_anderson, ...
+                GLBIO2013Deconv.dsp_smallest_peak_first}; 
         end
     end
     
     methods
-        function obj=GLBIO2013Deconv(datum_id, spectrum, peaks, peak_picker_name, starting_point_name)
+        function obj=GLBIO2013Deconv(datum_id, spectrum, peaks, noise_std, peak_picker_name, starting_point_name)
         % Generate the deconvolution of a spectrum 
         %
-        % Usage: GLBIO2013Deconv(datum_id, spectrum, peaks, peak_picker_name, starting_point_name
+        % Usage: GLBIO2013Deconv(datum_id, spectrum, peaks, noise_std, peak_picker_name, starting_point_name
         %
         % datum_id - (string) the string id of the GLBIO2013Datum that
         %            is the parent of this object
@@ -216,6 +219,14 @@ classdef GLBIO2013Deconv
         %         used directly for the deconvolution, but used for
         %         generating the alignment with the original and
         %         for some peak-picking methods.
+        %
+        % noise_std - (scalar) the standard deviation of the noise added to
+        %             the generated peaks when generating the simulated
+        %             spectrum. Needed to properly simulate some
+        %             peak-picking methods since they depend on having a
+        %             clean area from which to estimate spectral noise.
+        %             When those methods are used, a such a clean area is
+        %             generated for their benefit.
         %
         % peak_picker_name - (string) one of the list returned from
         %                    peak_picking_method_names. Tells which
@@ -241,7 +252,7 @@ classdef GLBIO2013Deconv
         % that are then passed to the dsp_anderson method to generate
         % a starting point for the deconvolution search.
             if nargin > 0
-                assert(nargin == 5);
+                assert(nargin == 6);
                 % datum_id, spectrum, peaks, peak_picker_name, starting_point_name)
                 assert(ischar(datum_id));
                 assert(isstruct(spectrum));
@@ -264,8 +275,24 @@ classdef GLBIO2013Deconv
                 obj.peak_picker_name = peak_picker_name;
                 obj.starting_point_name = starting_point_name;
                 
+                switch(peak_picker_name)
+                    case GLBIO2013Deconv.pp_gold_standard
+                        obj.picked_locations = [peaks.location];
+                    case GLBIO2013Deconv.pp_noisy_gold_standard
+                        mean_peak_width = 0.00453630122481774988;
+                        obj.picked_locations = [peaks.location];
+                        obj.picked_locations = (mean_peak_width/16).*randn(size(obj.picked_locations));
+                    case GLBIO2013Deconv.pp_smoothed_local_max
+                        obj.picked_locations = peak_loc_estimate_for_random_spec(spectrum, noise_std);
+                    otherwise
+                        % Should be impossible to reach due to the assert
+                        % at the beginning - this is defensive programming
+                        error('GLBIO2013:unknown_pp_method', ...
+                            'Unknown peak picking method "%s" specified.',...
+                            peak_picker_name);
+                end
+                
                 %TODO: Properties unassigned
-                %picked_locations
                 %starting_point
                 %starting_point_lb
                 %starting_point_ub
