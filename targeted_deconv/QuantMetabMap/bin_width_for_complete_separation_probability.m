@@ -172,9 +172,8 @@ while(should_continue)
     % because the curve looks exponential.
     widths = [selected.width];
     probs = [selected_experiments.prob];
-    poly = polyfit(probs, log(widths), 1);
+    poly = polyfit(probs, widths, 1);
     new_width = polyval(poly, target_probability);
-    new_width = exp(new_width);
     
     % Add the width to the results list (or just set the index variable if
     % it is already present)
@@ -187,6 +186,9 @@ while(should_continue)
     experiments = [results.exp];
     unsorted_dists = abs([experiments.prob] - target_probability);
     [~,closest_idx] = min(unsorted_dists);
+    
+    % Add reps to the closest index
+    add_reps_to_result_until_unambiguous(closest_idx);
     
     % Check for termination
     if results(closest_idx).exp.probThatParamInRange(target_probability-tolerance, target_probability+tolerance) > acceptance_threshold
