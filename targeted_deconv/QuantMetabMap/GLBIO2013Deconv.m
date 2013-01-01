@@ -66,11 +66,11 @@ classdef GLBIO2013Deconv
                                              0);
                 best = [b; 1:length(peaks)];
             else
-                b = best_alignment_recursive(original_peaks, peaks ...
+                b = best_alignment_recursive(original_peaks, peaks, ...
                                              [], inf, [], 1: ...
                                              length(peaks), ...
                                              0);
-                best = [1:length(original_peaks); b]
+                best = [1:length(original_peaks); b];
             end
         end
         
@@ -279,7 +279,7 @@ classdef GLBIO2013Deconv
         % Return a human-readable string representation of this
         % object. (Matlab's version of toString, however, Matlab
         % doesn't call it automatically)
-            str = sprintf('GLBIO2013Deconv(%s, %s, %s)', obj.deconv_id, ...
+            str = sprintf('GLBIO2013Deconv(%s, %s, %s)', obj.datum_id, ...
                           obj.peak_picker_name, obj.starting_point_name);
         end
         
