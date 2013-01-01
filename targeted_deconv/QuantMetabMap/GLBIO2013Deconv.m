@@ -334,8 +334,7 @@ classdef GLBIO2013Deconv
                         model); 
                 obj.peaks = GaussLorentzPeak(peak_params);
                 
-                %TODO: Properties unassigned
-                %aligned_indices
+                obj.aligned_indices = GLBIO2013Deconv.best_alignment(peaks, original_peaks);
             end
         end
         
