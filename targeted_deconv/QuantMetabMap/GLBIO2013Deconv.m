@@ -59,97 +59,24 @@ classdef GLBIO2013Deconv
         %
         % best - a peak alignment matching the description of the
         %        aligned_indices member
-            if length(peaks) <= length(original_peaks)
-                b = GLBIO2013Deconv.best_alignment_recursive...
-                    (peaks, original_peaks, [], inf, [], ...
-                    1:length(original_peaks), 0);
-                best = [b; 1:length(peaks)];
-            else
-                b = GLBIO2013Deconv.best_alignment_recursive...
-                    (original_peaks, peaks, [], inf, [], ...
-                    1:length(peaks), 0);
-                best = [1:length(original_peaks); b];
-            end
-        end
-        
-        function best = best_alignment_recursive(peaks, original_peaks, ...
-                                                 current_best, ...
-                                                 current_best_sum_sq,...
-                                                 current_assigned, ...
-                                                 current_unassigned, ...
-                                                 current_assigned_sum_sq)
-            % Calculate the best alignment between two sets of
-            % peaks by brute force
-            %
-            % peaks - (row vector of GaussLorentzPeak objects) the
-            %         peaks from which the mapping is being
-            %         performed
-            %
-            % original_peaks - (row vector of GaussLorentzPeak objects)
-            %         the peaks to which the mapping is being
-            %         performed. There must be at least as many
-            %         peaks in original_peaks as there are in the
-            %         peaks vector.
-            %
-            % current_best - (row vector of integer doubles) the
-            %         current best known mapping. Will either be empty or have
-            %         length(peaks) entries. Should start empty
-            %
-            % current_best_sum_sq - (scalar) the sum of the squares of the
-            %         distances of the location parameters of peaks(i)
-            %         to the location parameters of
-            %         peaks(current_best(i)). Should start at inf
-            %
-            % current_assigned - (row vector of integer doubles) the
-            %         partial list of indices in original_peaks
-            %         representing a partial assignment of peaks to
-            %         original_peaks. Will have at most
-            %         length(peaks) entries. Should start empty
-            %
-            % current_unassigned - (row vector of integer doubles) the
-            %         list of indices in original_peaks that have not
-            %         been assigned to a member of peaks yet. Should
-            %         start as the list 1:length(original_peaks).
-            %
-            % current_assigned_sum_sq - (scalar) the sum of the squares of the
-            %         distances of the location parameters of peaks(i)
-            %         to the location parameters of
-            %         peaks(current_assigned(i)). Should start at 0
-            %
-            % Return:
-            %
-            % best - (row vector of integer doubles) the list of
-            %        indices such that peaks(i) maps to
-            %        original_peaks(best(i))
-            
-            assert(length(peaks) <= length(original_peaks));
-            
-            if length(peaks) == length(current_assigned)
-                if current_best_sum_sq >= current_assigned_sum_sq
-                    best = current_assigned;
-                else
-                    best = current_best;
+            costs = inf(length(peaks), length(original_peaks));
+            for i = 1:length(peaks)
+                i_loc = peaks(i).location;
+                for j = 1:length(original_peaks)
+                    j_loc = original_peaks(j).location;
+                    costs(i,j) = (j_loc - i_loc)^2;
                 end
-                return;
             end
-            
-            assert(length(peaks) > length(current_assigned));
-            for i = 1:length(current_unassigned)
-                new_assigned = [current_assigned, ...
-                                  current_unassigned(i)];
-                new_unassigned = current_unassigned;
-                new_unassigned(i) = [];
-                dist = peaks(length(new_assigned)).location - ...
-                       original_peaks(new_assigned(end)).location;
-                new_sum_sq = current_assigned_sum_sq + dist^2;
-                
-                current_best = GLBIO2013Deconv.best_alignment_recursive...
-                    (peaks, original_peaks, current_best, ...
-                     current_best_sum_sq, new_assigned, ...
-                     new_unassigned, new_sum_sq);
+            assignment = munkres(costs);
+            best = zeros(2,sum(assignment ~= 0));
+            dest_idx = 1;
+            for src_idx = 1:length(assignment)
+               if assignment(src_idx) ~= 0
+                   best(1, dest_idx) = assignment(src_idx);
+                   best(2, dest_idx) = src_idx;
+                   dest_idx = dest_idx + 1;
+               end
             end
-            
-            best = current_best;
         end
         
         function str = pp_gold_standard
