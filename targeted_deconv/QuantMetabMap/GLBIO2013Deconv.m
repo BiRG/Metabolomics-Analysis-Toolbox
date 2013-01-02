@@ -284,7 +284,7 @@ classdef GLBIO2013Deconv
         %        through each item and prints it on a new figure
         %
         % parent - the GLBIO2013Datum object that contains this
-        %        GLBIO2013Deconv object as one of its deconvolutions
+        %        GLBIO2013Deconv object as one of its deconvolutions            
             function s = escaped(str)
                 num_underscore = sum(bsxfun(@eq,str,'_'));
                 s = char(length(str)+num_underscore);
@@ -319,10 +319,13 @@ classdef GLBIO2013Deconv
                         % original peaks indices in 1st row of aligned
                         alignment_idx = objs.aligned_indices(2,:) == i;
                         parent_idx = objs.aligned_indices(1,alignment_idx);
-                        to_x = parent.spectrum_peaks(parent_idx).location;
-                        to_y = parent.spectrum_peaks(parent_idx).height;
-                        [figure_x, figure_y] = dsxy2figxy([from_x,to_x],[from_y,to_y]);
-                        annotation('arrow', figure_x, figure_y);
+                        if isscalar(parent_idx)
+                            to_x = parent.spectrum_peaks(parent_idx).location;
+                            to_y = parent.spectrum_peaks(parent_idx).height;
+                            old_warn_state = warning('off','arrow:axis_limits_changed');
+                                arrow([from_x, from_y], [to_x, to_y]);
+                            warning(old_warn_state);
+                        end
                     end
                 end
                 title(escaped(objs.char));
