@@ -235,7 +235,7 @@ classdef GLBIO2013Deconv
                                 1:length(x), obj.picked_locations);
 
                         case GLBIO2013Deconv.dsp_smallest_peak_first
-                            samples_per_ppm = length(x)/max(x)-min(x);
+                            samples_per_ppm = length(x)/(max(x)-min(x));
                             window_samples = ceil(model.rough_peak_window_width * samples_per_ppm);
                             assert(window_samples >= 4);
                             [obj.starting_point, obj.starting_point_lb, ...
