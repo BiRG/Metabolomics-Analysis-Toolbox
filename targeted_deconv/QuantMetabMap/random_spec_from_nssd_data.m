@@ -3,7 +3,9 @@ function [spec,peaks] = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, n
 %
 % Uses data derived from the NSSD deconvolution as the distribution from
 % which to draw parameters in the peaks in a random spectrum. The heights
-% will be scaled so that the highest peak has height 1.
+% will be scaled so that the highest point in the noiseless spectrum has 
+% height 1 - the only exception to this is when there are no peaks - at 
+% which point, all heights in the noiseless spectrum will be 0.
 % 
 % With params:
 %
@@ -107,9 +109,17 @@ if num_peaks > 0
     peak_params(3:4:end) = bin_approx_sample(lor_dist, num_peaks);
     peak_params(4:4:end) = bin_approx_sample(ppm_dist, num_peaks);
 
+    % Find out how much we need to scale by producing a spectrum
     peaks = GaussLorentzPeak(peak_params);
     spec.Y = sum(peaks.at(spec.x),1)';
-    spec.Y = spec.Y / max(spec.Y);
+    scale_factor = 1 / max(spec.Y);
+    
+    % Scale the peaks
+    peak_params(1:4:end) = peak_params(1:4:end) .* scale_factor;
+    peaks = GaussLorentzPeak(peak_params);
+    
+    % Produce the spectrum again with the scaled peaks
+    spec.Y = sum(peaks.at(spec.x),1)';
 else
     peaks = GaussLorentzPeak([]);
     spec.Y = zeros(num_intensities,1);
