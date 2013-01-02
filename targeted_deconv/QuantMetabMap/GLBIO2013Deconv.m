@@ -135,12 +135,12 @@ classdef GLBIO2013Deconv
             
             assert(length(peaks) > length(current_assigned));
             for i = 1:length(current_unassigned)
-                new_assignment = [current_assigned, ...
+                new_assigned = [current_assigned, ...
                                   current_unassigned(i)];
                 new_unassigned = current_unassigned;
                 new_unassigned(i) = [];
-                dist = peaks(length(new_assignment)) - ...
-                       original_peaks(new_assignment(end));
+                dist = peaks(length(new_assigned)).location - ...
+                       original_peaks(new_assigned(end)).location;
                 new_sum_sq = current_assigned_sum_sq + dist^2;
                 
                 current_best = GLBIO2013Deconv.best_alignment_recursive...
@@ -148,6 +148,8 @@ classdef GLBIO2013Deconv
                      current_best_sum_sq, new_assigned, ...
                      new_unassigned, new_sum_sq);
             end
+            
+            best = current_best;
         end
         
         function str = pp_gold_standard
@@ -290,6 +292,7 @@ classdef GLBIO2013Deconv
                             'Unknown peak picking method "%s" specified.',...
                             peak_picker_name);
                 end
+                obj.picked_locations = sort(obj.picked_locations);
                 
                 % Set starting point
                 x = spectrum.x;
@@ -335,7 +338,7 @@ classdef GLBIO2013Deconv
                         region_deconvolution(x, spectrum.Y, obj.starting_point, ...
                             obj.starting_point_lb, obj.starting_point_ub, ...
                             2*(max(x)-min(x)), ... % This baseline width is the value given in targeted_identify line 1794
-                            [min(x);max(x)], ...
+                            [max(x);min(x)], ...
                             model); 
                     obj.peaks = GaussLorentzPeak(peak_params);
                 else
@@ -343,6 +346,63 @@ classdef GLBIO2013Deconv
                 end
                 
                 obj.aligned_indices = GLBIO2013Deconv.best_alignment(obj.peaks, peaks);
+            end
+        end
+        
+        function plot(objs, parent)
+        % Plot this deconvolution along with its parent on the current
+        % figure
+        %
+        % objs - the GLBIO2013Deconv object to plot. If an array, loops
+        %        through each item and prints it on a new figure
+        %
+        % parent - the GLBIO2013Datum object that contains this
+        %        GLBIO2013Deconv object as one of its deconvolutions
+            function s = escaped(str)
+                num_underscore = sum(bsxfun(@eq,str,'_'));
+                s = char(length(str)+num_underscore);
+                j = 1;
+                for ii = 1:length(str)
+                    if str(ii) == '_'
+                        s(j) = '\'; j=j+1;
+                    end
+                    s(j) = str(ii);
+                    j = j+1;
+                end
+            end
+            
+            if length(objs) > 1
+                for i = 1:length(objs)
+                    figure;
+                    objs(i).plot(parent);
+                end
+            elseif length(objs) == 1
+                hold_was_on = ishold;
+                s = parent.spectrum;
+                x = s.x;
+                spectrum_h = plot(x, s.Y,'b--');
+                hold on;
+                if isempty(objs.peaks)
+                    peak_h = plot(x, zeros(size(x)),'m-');
+                else
+                    for i = 1:length(objs.peaks)
+                        peak_h = plot(x, objs.peaks(i).at(x),'m-');
+                        from_x = objs.peaks(i).location;
+                        from_y = objs.peaks(i).height;
+                        % original peaks indices in 1st row of aligned
+                        alignment_idx = objs.aligned_indices(2,:) == i;
+                        parent_idx = objs.aligned_indices(1,alignment_idx);
+                        to_x = parent.spectrum_peaks(parent_idx).location;
+                        to_y = parent.spectrum_peaks(parent_idx).height;
+                        [figure_x, figure_y] = dsxy2figxy([from_x,to_x],[from_y,to_y]);
+                        annotation('arrow', figure_x, figure_y);
+                    end
+                end
+                title(escaped(objs.char));
+                legend([spectrum_h, peak_h],'Spectrum','Peaks');
+                if ~hold_was_on
+                    hold off
+                end
             end
         end
         
