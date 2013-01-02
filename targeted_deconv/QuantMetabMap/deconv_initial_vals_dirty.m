@@ -60,7 +60,7 @@ end
 
 % Calculate initial peak parameters
 peak_xs = peak_xs(peak_xs <= region_max & peak_xs >= region_min);
-noise_std_pts = min(100, length(x)/10);
+noise_std_pts = min(100, floor(length(x)/10));
 if ~issorted(-x)
     [x, order] = sort(x,'descend');
     y = y(order);
