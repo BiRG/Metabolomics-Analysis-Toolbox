@@ -1,7 +1,7 @@
-function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, max_width, num_neighbors, noise_std, progress_func )
+function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, max_width, num_neighbors, progress_func )
 % Does a quick and dirty deconvolution of region given by x,y if the peaks have location parameters peak_x
 % 
-% Usage: peaks = dirty_deconvolve_pos_resid( x, y, peak_x, num_neighbors, noise_std, iter_func )
+% Usage: peaks = dirty_deconvolve_pos_resid( x, y, peak_x, max_width, num_neighbors, progress_func )
 %
 % Does a greedy fit, starting with the highest peak x's of 1 peak at a
 % time, looking only at the points near the x location of that peak. Now
@@ -24,8 +24,6 @@ function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, max_width, num_neighb
 % peak that will be looked at in doing the optimization. The closest
 % num_neighbors neighbors will be used (or if num_neighbors is greater than
 % the number of available points in the interval, all points will be used)
-%
-% noise_std - the standard deviation of the noise regions in the spectrum
 %
 % progress_func (optional) - A function handle called every iteration.
 % It is called with the parameters: 
@@ -51,8 +49,6 @@ end
 if ~exist('progress_func', 'var')
     progress_func = @do_nothing; 
 end
-
-assert(noise_std > 0);
 
 % Sort x (and put y in the same order)
 if all(size(x) ~= size(y))
