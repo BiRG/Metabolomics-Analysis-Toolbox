@@ -1,5 +1,6 @@
-function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, max_width, num_neighbors, progress_func)
+function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, max_width, num_neighbors, progress_func, noise_std)
 %Computes starting values for the deconvolution fitting routines using dirty_deconv
+% Usage: [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, max_width, num_neighbors, progress_func, noise_std)
 %
 % -------------------------------------------------------------------------
 % Input arguments
@@ -30,6 +31,12 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 %            A suggested use for progress_func is to update a waitbar. If 
 %            omitted, no function is called.
 %
+% noise_std  (optional scalar) An estimate of the standard deviation of the
+%            noise in the spectrum. If absent the hights of the several of 
+%            the lowest x-valued intensities in the spectrum are chosen to 
+%            estimate this. This is equivalent to the assumption that there
+%            is negligable signal in this region.
+%
 % -------------------------------------------------------------------------
 % Output parameters
 % -------------------------------------------------------------------------
@@ -53,20 +60,27 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 %                    -- used in constraining the optimization
 %
 
-% Deal with optional arguments
-if ~exist('progress_func', 'var')
-    progress_func = @do_nothing; 
-end
-
-% Calculate initial peak parameters
-peak_xs = peak_xs(peak_xs <= region_max & peak_xs >= region_min);
-noise_std_pts = min(100, floor(length(x)/10));
+% Make sure x is sorted and y values ordered according to the sorted x
+% values
 if ~issorted(-x)
     [x, order] = sort(x,'descend');
     y = y(order);
     clear('order');
 end
-noise_std = std(y(1:noise_std_pts));
+
+
+% Deal with optional arguments
+if ~exist('progress_func', 'var')
+    progress_func = @do_nothing; 
+end
+
+if ~exist('noise_std','var')
+    noise_std_pts = min(100, floor(length(x)/10));
+    noise_std = std(y(1:noise_std_pts));
+end
+
+% Calculate initial peak parameters
+peak_xs = peak_xs(peak_xs <= region_max & peak_xs >= region_min);
 x_in_region = x <= region_max & x >= region_min;
 bx = x(x_in_region); % x values in bin, thus bx
 by = y(x_in_region); % y values in bin
