@@ -114,12 +114,9 @@ assert(length(bounds) == length(locs)+1);
 trial_widths = [peaks.half_height_width];
 if length(trial_widths) > 1
     outlier_width = prctile(trial_widths, 75)+3*iqr(trial_widths);
-elseif length(trial_widths) == 1
-    outlier_width = 2*trial_widths(1); % If there is only one peak, let the main optimization routine grow it twice as wide, if necessary
 else
-    error('deconv_initial_vals_dirty:at_least_one_peak',['There must be '...
-        'at least one peak in the interval passed to ' ...
-        'deconv_initial_vals_dirty']);
+    assert(length(trial_widths) == 1); % This is ensured because there is at least 1 loc and there are the same number of trial widths as locs
+    outlier_width = 2*trial_widths(1); % If there is only one peak, let the main optimization routine grow it twice as wide, if necessary
 end
 
 
@@ -136,12 +133,16 @@ for i = 1:length(peaks)
         if  next_bound_idx + 1 <= length(bounds)
             next_bound_idx = next_bound_idx + 1;
             next_bound = bounds(next_bound_idx);
+        else
+            break;
         end
     end
     while next_bound == cur_bound
         if  b - 1 >= 1
             b = b - 1;
             cur_bound = bounds(b);
+        else
+            break;
         end
     end
     
