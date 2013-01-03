@@ -235,8 +235,6 @@ classdef GLBIO2013Deconv
                                 1:length(x), obj.picked_locations);
 
                         case GLBIO2013Deconv.dsp_smallest_peak_first
-                            noise_std_estimate_num_pts = min(100, floor(length(x)/10));
-                            noise_std_estimate = std(randn(noise_std_estimate_num_pts,1)); %estimate the noise as if the spectrum were 10% or 100 points (whichever is less) longer with a noise region at the beginning
                             samples_per_ppm = length(x)/(max(x)-min(x));
                             window_samples = ceil(model.rough_peak_window_width * samples_per_ppm);
                             assert(window_samples >= 4);
@@ -247,8 +245,7 @@ classdef GLBIO2013Deconv
                                     (x, spectrum.Y, min(x), max(x), ...
                                     obj.picked_locations, ...
                                     model.max_rough_peak_width, ...
-                                    window_samples, @do_nothing, ...
-                                    noise_std_estimate);
+                                    window_samples, @do_nothing);
                         otherwise
                             % Should be impossible to reach due to the assert
                             % at the beginning - this is defensive programming
