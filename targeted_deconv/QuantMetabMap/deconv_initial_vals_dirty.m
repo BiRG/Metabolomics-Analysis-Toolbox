@@ -163,8 +163,8 @@ for i = 1:length(peaks)
     
     % Minimum/Maximum height
     x_in_region = x >= cur_bound & x <= next_bound;
-    if isempty(x_in_region)
-        x_in_region = x;
+    if ~any(x_in_region)
+        x_in_region = true(size(x));
     end
     ub(i*4-3) = max(y(x_in_region)); 
     if length(trial_widths) > 1
