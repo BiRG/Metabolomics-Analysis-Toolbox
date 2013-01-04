@@ -151,7 +151,7 @@ for results_idx = 1:n
             % Initialize pe, the new param_error entry
             pe.collision_prob = collision_prob;
             pe.peak_picking_name = peak_picking_name;
-            pe.parameter_name = parameter_names(param_idx);
+            pe.parameter_name = parameter_names{param_idx};
             pe.datum_id = datum_id;
             pe.mean_error_anderson = mean(anderson_errors(param_idx:num_params:end));
             pe.mean_error_summit = mean(summit_errors(param_idx:num_params:end));
