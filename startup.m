@@ -1,5 +1,6 @@
 clc
 
+addpath([pwd,'/lib/bonf_holm']);    %Bonferroni-Holm correction for multiple comparisons
 addpath([pwd,'/lib/munkres']);      %Linear assignment problem
 addpath([pwd,'/lib/rand_org']);     %True random numbers
 addpath([pwd,'/lib/matlab_xunit/xunit']); %Unit testing framework
