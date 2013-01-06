@@ -18,6 +18,19 @@ ylabel('Number of (deconvolution,parameter) pairs');
 sig_box_handle = annotation('textbox',[0.5,0.5,0.2,0.2],'String', ...
     sprintf('mean difference is greater than 0: p=%.18g',p_value));
 
+%% Precalculate some values needed for plotting by parameter
+% On my home computer the large "unique" statements take a lot of time to
+% compute, so I've moved them to a separate cell so they only have to be
+% calculated once.
+param_names = unique({pe_list.parameter_name});
+assert(length(param_names) == 4,'Right number of param names');
+peak_pickers = unique({pe_list.peak_picking_name});
+picker_legend = {'Gold Standard','Noisy Gold Standard', 'Smoothed Local Max'};
+picker_formats = {'r+-','bd-','*k-'};
+assert(length(picker_legend) == length(peak_pickers),'Right # picker legend entries');
+assert(length(picker_formats) == length(peak_pickers),'Right # picker formats');
+collision_probs = unique([pe_list.collision_prob]);
+
 %% Plot by parameter
 % Now we break up the results into one graph for each parameter. Each
 % graph has 3 lines - one per peak-picking method and gives the improvement
@@ -34,14 +47,6 @@ sig_box_handle = annotation('textbox',[0.5,0.5,0.2,0.2],'String', ...
 % ordered by the properties of interest (parameter, picker, and
 % crowdedness).
 clf;
-param_names = unique({pe_list.parameter_name});
-assert(length(param_names) == 4,'Right number of param names');
-peak_pickers = unique({pe_list.peak_picking_name});
-picker_legend = {'Gold Standard','Noisy Gold Standard', 'Smoothed Local Max'};
-picker_formats = {'r+-','bd-','*k-'};
-assert(length(picker_legend) == length(peak_pickers),'Right # picker legend entries');
-assert(length(picker_formats) == length(peak_pickers),'Right # picker formats');
-collision_probs = unique([pe_list.collision_prob]);
 pe_values_per_triple = length(pe_list)/length(param_names)/length(peak_pickers)/length(collision_probs);
 improvements = zeros(length(param_names),length(peak_pickers),length(collision_probs),pe_values_per_triple);
 for param_idx = 1:length(param_names)
@@ -56,7 +61,8 @@ for param_idx = 1:length(param_names)
     for picker_idx = 1:length(peak_pickers)
         pe_has_picker = strcmp({pe_list.peak_picking_name},peak_pickers{picker_idx});
         mean_error_for_prob = zeros(1,length(collision_probs));
-        std_dev_error_for_prob = zeros(1,length(collision_probs));
+        std_dev_error_for_prob = mean_error_for_prob;
+        ci_half_width_95_pct = std_dev_error_for_prob;
         for prob_idx = 1:length(collision_probs)
             pe_has_prob = [pe_list.collision_prob] == collision_probs(prob_idx);
             selected_pes = pe_list(pe_has_prob & pe_has_picker & pe_has_param);
@@ -64,15 +70,22 @@ for param_idx = 1:length(param_names)
             improvements(param_idx, picker_idx, prob_idx,:) = selected_diffs;
             mean_error_for_prob(prob_idx) = mean(selected_diffs);
             std_dev_error_for_prob(prob_idx) = std(selected_diffs);
+            num_diffs = length(selected_diffs);
+            if num_diffs > 1
+                t_value = tinv(1-0.025, num_diffs - 1);
+            else
+                t_value = inf;
+            end
+            ci_half_width_95_pct(prob_idx) = t_value * std_dev_error_for_prob(prob_idx)/sqrt(num_diffs); % half the width of a 95% confidence interval for the mean
         end
-        handle_for_picker(picker_idx) = plot(collision_probs, ...
-            mean_error_for_prob, picker_formats{picker_idx});
-%         handle_for_picker(picker_idx) = errorbar(collision_probs, ...
-%             mean_error_for_prob, std_dev_error_for_prob, ...
-%             picker_formats{picker_idx});
+%         handle_for_picker(picker_idx) = plot(collision_probs, ...
+%             mean_error_for_prob, picker_formats{picker_idx});
+        handle_for_picker(picker_idx) = errorbar(collision_probs, ...
+            mean_error_for_prob, ci_half_width_95_pct, ...
+            picker_formats{picker_idx});
     end
     if param_idx == 3
-        legend(handle_for_picker, picker_legend, 'location','Best');
+        legend(handle_for_picker, picker_legend, 'location','NorthEast');
     end
 end
 
