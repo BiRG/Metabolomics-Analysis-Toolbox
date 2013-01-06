@@ -100,8 +100,9 @@ function loc_param_errs = GLBIO213_peak_loc_vs_param_errs(results)
         datum_locs = [datum_peaks.location];
         picked_locs = deconv.picked_locations;
         try
-        errs = abs(datum_locs - picked_locs);
-            catch ME
+            errs = abs(datum_locs - picked_locs);
+        catch ME
+            %the try catch is DEBUG code
             fprintf('%s\n',ME.message);
         end
 end
