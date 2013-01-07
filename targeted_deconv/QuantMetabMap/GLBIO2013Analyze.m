@@ -209,8 +209,13 @@ for param_idx = 1:length(param_names)
     xlabel('Error in initial location');
     ylabel(['Error in ', title_tmp]);
     hold on;
+    try
     anderson_h = scatter([loc_param_errs(:,param_idx, 1).peak_loc_error], ...
         [loc_param_errs(:,param_idx, 1).param_error]);
     summit_h = scatter([loc_param_errs(:,param_idx, 2).peak_loc_error], ...
         [loc_param_errs(:,param_idx, 2).param_error]);
+    catch ME
+        %TODO: the try catch block is DEBUG code
+        fprintf('HERE:%s\n',ME.message); throw(ME);
+    end    
 end

@@ -1,4 +1,4 @@
-function loc_param_errs = GLBIO213_peak_loc_vs_param_errs(results)
+function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
 % From pp_noisy_gold_standard extracts 
 %
 % results - an array of GLBIO2013Datum
@@ -82,7 +82,10 @@ function loc_param_errs = GLBIO213_peak_loc_vs_param_errs(results)
         %
         % Returns the differences in the peak-picked locations and the
         % actual locations in for each peak the same order as that returned
-        % by param_errors.
+        % by param_errors. If not all the picked peaks made it through the
+        % rest of the deconvolution process, only those matching peaks that
+        % did make it through are used to generate an error vector. The
+        % rest are ignored.
         %
         % deconv - a GLBIO2013Deconv object whose parent is datum and whose
         %          peak picking method is pp_noisy_gold_standard
@@ -98,11 +101,11 @@ function loc_param_errs = GLBIO213_peak_loc_vs_param_errs(results)
         
         datum_peaks  = datum.spectrum_peaks(deconv.aligned_indices(1,:));
         datum_locs = [datum_peaks.location];
-        picked_locs = deconv.picked_locations;
+        picked_locs = deconv.picked_locations(deconv.aligned_indices(1,:));
         try
             errs = abs(datum_locs - picked_locs);
         catch ME
-            %the try catch is DEBUG code
+            %TODO: the try catch block is DEBUG code
             fprintf('%s\n',ME.message);
         end
 end
@@ -163,8 +166,14 @@ for results_idx = 1:num_results
     % Calculate the errors for those two deconvolutions
     anderson_errors = param_errors(anderson, datum);
     anderson_picker_errors = picker_loc_errors(anderson, datum);
+    if length(anderson_errors) ~= 4*length(anderson_picker_errors)        
+        fprintf('Unequal anderson lengths.\n');
+    end
     summit_errors = param_errors(summit, datum);
     summit_picker_errors = picker_loc_errors(anderson,datum);
+    if length(summit_errors) ~= 4*length(summit_picker_errors)        
+        fprintf('Unequal summit lengths.\n');
+    end
     
     % For each parameter of the peaks in the deconvolution, add to the
     % lists of error pairs for the the appropriate entry for that 
