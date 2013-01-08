@@ -314,37 +314,39 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     if isempty(bin_width); return; end
     bin_width = str2double(bin_width);
     if isnan(bin_width); return; end
-    if bin_width ~= 0
+    if bin_width == 0
+        uiwait(msgbox('PQN without binning not implemented yet.','Not Implemented','Error'));
+    else
         binned = uniform_bin_collections(collections, bin_width, true);
-    end
     
-    regions = get_regions;
-    use_bin = ~bins_overlapping_regions(binned{1}.x, regions);
-    
-    % Interactively generate the normalization multipliers
-    retvals = prob_quotient_norm_dialog({binned, use_bin});
+        regions = get_regions;
+        use_bin = ~bins_overlapping_regions(binned{1}.x, regions);
 
-    % Parse return values (including aborting if cancel was clicked in the
-    % dialog box)
-    was_canceled = retvals{2};
-    if was_canceled; return; end
-    
-    multipliers = retvals{3};
-    proc_log = retvals{4};
-    
-    % perform the normalization
-    multiplied = multiply_collections(collections, multipliers);
-    multiplied = append_to_processing_log(multiplied, proc_log);
-    
-    % Set the y_fixed for proper display and enabling of finalization
-    collections = copy_y_to_y_fixed(multiplied, collections);
-    
-    % set the result as the current app data
-    setappdata(gcf, 'collections', collections);
-    setappdata(gcf, 'fixed_collections', multiplied);
-    setappdata(gcf, 'add_processing_log', 'Prob. quot. normalized'); % This is just the legend
-    setappdata(gcf,'temp_suffix', '_pq_normalized');
-    plot_all;
+        % Interactively generate the normalization multipliers
+        retvals = prob_quotient_norm_dialog({binned, use_bin});
+
+        % Parse return values (including aborting if cancel was clicked in the
+        % dialog box)
+        was_canceled = retvals{2};
+        if was_canceled; return; end
+
+        multipliers = retvals{3};
+        proc_log = retvals{4};
+
+        % perform the normalization
+        multiplied = multiply_collections(collections, multipliers);
+        multiplied = append_to_processing_log(multiplied, proc_log);
+
+        % Set the y_fixed for proper display and enabling of finalization
+        collections = copy_y_to_y_fixed(multiplied, collections);
+
+        % set the result as the current app data
+        setappdata(gcf, 'collections', collections);
+        setappdata(gcf, 'fixed_collections', multiplied);
+        setappdata(gcf, 'add_processing_log', 'Prob. quot. normalized'); % This is just the legend
+        setappdata(gcf,'temp_suffix', '_pq_normalized');
+        plot_all;
+    end
 elseif strcmp(str{s}, 'Hist Norm''n')
     collections = getappdata(gcf,'collections');
     
