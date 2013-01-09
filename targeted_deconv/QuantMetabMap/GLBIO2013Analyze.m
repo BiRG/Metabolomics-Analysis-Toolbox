@@ -3,6 +3,12 @@
 %% Load the combined results
 load('glbio2013_combined_raw_results.mat');
 
+%% Defend spectrum width choices
+% The spectral widths chosen give better than 99% probabilities that the
+% probabilities of being free of peak merging are within 0.4% of the target
+% probability.
+GLBIO2013_print_prob_counts_in_range_table(0.004);
+
 %% Calculate the parameters
 pe_list = GLBIO2013_calc_param_error_list(glbio_combined_results);
 
@@ -192,4 +198,19 @@ end
 % values.
 %
 % I then plot for each peak parameter, a scatter plot of initial location
-% error versus final difference for that peak parameter.
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(glbio_combined_results);
+clf;
+for param_idx = 1:length(param_names)
+    subplot(2,2,param_idx);
+    title_tmp = param_names{param_idx};
+    title([upper(title_tmp(1)),title_tmp(2:end)]);
+    xlabel('Error in initial location');
+    ylabel(['Error in ', title_tmp]);
+    hold on;
+    anderson_h = scatter([loc_param_errs(:,param_idx, 1).peak_loc_error], ...
+        [loc_param_errs(:,param_idx, 1).param_error]);
+    summit_h = scatter([loc_param_errs(:,param_idx, 2).peak_loc_error], ...
+        [loc_param_errs(:,param_idx, 2).param_error]);
+end
