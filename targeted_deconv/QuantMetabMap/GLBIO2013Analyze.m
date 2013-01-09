@@ -200,22 +200,26 @@ end
 % I then plot for each peak parameter, a scatter plot of initial location
 % error versus final difference for that peak parameter (ignoring the
 % crowdedness of the bin)
-loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(glbio_combined_results);
-clf;
-for param_idx = 1:length(param_names)
-    subplot(2,2,param_idx);
-    title_tmp = param_names{param_idx};
-    title([upper(title_tmp(1)),title_tmp(2:end)]);
-    xlabel('Error in initial location');
-    ylabel(['Error in ', title_tmp]);
-    hold on;
-    try
-    anderson_h = scatter([loc_param_errs(:,param_idx, 1).peak_loc_error], ...
-        [loc_param_errs(:,param_idx, 1).param_error]);
-    summit_h = scatter([loc_param_errs(:,param_idx, 2).peak_loc_error], ...
-        [loc_param_errs(:,param_idx, 2).param_error]);
-    catch ME
-        %TODO: the try catch block is DEBUG code
-        fprintf('HERE:%s\n',ME.message); throw(ME);
-    end    
-end
+%
+% This is commented out because I couldn't get it to work within a
+% reasonable time-frame
+
+% loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(glbio_combined_results);
+% clf;
+% for param_idx = 1:length(param_names)
+%     subplot(2,2,param_idx);
+%     title_tmp = param_names{param_idx};
+%     title([upper(title_tmp(1)),title_tmp(2:end)]);
+%     xlabel('Error in initial location');
+%     ylabel(['Error in ', title_tmp]);
+%     hold on;
+%     try
+%     anderson_h = scatter([loc_param_errs(:,param_idx, 1).peak_loc_error], ...
+%         [loc_param_errs(:,param_idx, 1).param_error]);
+%     summit_h = scatter([loc_param_errs(:,param_idx, 2).peak_loc_error], ...
+%         [loc_param_errs(:,param_idx, 2).param_error]);
+%     catch ME
+%         %TODO: the try catch block is DEBUG code
+%         fprintf('HERE:%s\n',ME.message); throw(ME);
+%     end    
+% end
