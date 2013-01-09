@@ -165,7 +165,7 @@ for i = 1:length(peaks)
         lb(i*4-3) = max(0, peaks(1).height);
     end
     
-    % Minimum/Maximum half-width
+    % Minimum/Maximum half-height width
     lb(i*4-2) = 0;
     ub(i*4-2) = outlier_width;
     assert(ub(i*4-2) >= 0);

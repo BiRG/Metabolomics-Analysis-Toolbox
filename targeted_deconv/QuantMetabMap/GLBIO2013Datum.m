@@ -56,7 +56,7 @@ classdef GLBIO2013Datum
         % with peaks drawn from the nssd-derived distribution. The spectrum
         % passed to the deconvolution will have a 1000:1 signal-to-noise
         % ratio. They have a resolution of 25 samples per
-        % 0.00453630122481774988 ppm (that is per mean half-width at
+        % 0.00453630122481774988 ppm (that is per mean width at
         % half-height of the nssd-derived peaks) or 5511.097866082 samples per
         % ppm. I chose that number because it was the number I used in doing
         % my resolution experiments. It turns out to be close to the normal

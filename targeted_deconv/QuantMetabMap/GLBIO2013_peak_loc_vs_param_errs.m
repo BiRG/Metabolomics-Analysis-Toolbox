@@ -9,7 +9,7 @@ function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
 %                  missing local maximum in a spectrum of this width) and
 %                  the j'th parameter (which are in the order from the peak
 %                  parameters array input to GaussLorentzPeak - {'height',...
-%                  'half-width-at-half-height','lorentzianness', and 
+%                  'width-at-half-height','lorentzianness', and 
 %                  'location'}) and the k'th starting point method. 1 if
 %                  the anderson starting point, 2 if the summit starting
 %                  point.
@@ -119,7 +119,7 @@ num_starting_pt = 2;
 
 % The names for the parameter at offset i in the peak parameters list
 % returned by GaussLorentzPeak>property_array
-parameter_names = {'height','half-width-at-half-height','lorentzianness','location'};
+parameter_names = {'height','width-at-half-height','lorentzianness','location'};
 assert(num_params == length(parameter_names));
 
 % Param error structure has 12 = 4*3 = #params*#peak_pickers per result.

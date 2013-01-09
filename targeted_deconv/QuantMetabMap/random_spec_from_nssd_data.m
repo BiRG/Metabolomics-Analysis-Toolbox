@@ -33,7 +33,7 @@ function [spec,peaks] = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, n
 %         used to generate the spectrum. There will be exactly num_peaks 
 %         entries in the vector.
 %
-% Note: the mean half height half-width is 0.00453630122481774988
+% Note: the mean half height width is 0.00453630122481774988
 
 
 % The distributions are described in terms of uniform bins. To sample from
@@ -41,7 +41,7 @@ function [spec,peaks] = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, n
 % uniformly within the interval. I have already introduced duplicate
 % bins to take care of duplicate values in the original data.
 %
-% width_dist is the distribution of half-width at half-height values for
+% width_dist is the distribution of width at half-height values for
 %            all the peaks for the spectra in which they were measured
 %
 % height_dist is the distribution of the peak heights that were not the

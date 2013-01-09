@@ -86,7 +86,7 @@ n = length(results);
 
 % The names for the parameter at offset i in the peak parameters list
 % returned by GaussLorentzPeak>property_array
-parameter_names = {'height','half-width-at-half-height','lorentzianness','location'};
+parameter_names = {'height','width-at-half-height','lorentzianness','location'};
 
 % Param error structure has 12 = 4*3 = #params*#peak_pickers per result.
 % Preallocate it.
