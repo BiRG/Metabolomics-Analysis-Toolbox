@@ -32,14 +32,14 @@ end
 
 % Print the table
 w = interval_half_width;
-fprintf('Target Prob Spectrum Width (ppm) Lower Bound Upper Bound Prob In Bounds\n');
+fprintf('Target Prob Spectrum Width (ppm) Lower Bound Upper Bound Prob In Bounds Est''d Merging Prob\n');
 for i = 1:10; 
     center=(i-1)/10; 
     lb=max(0,center-w); 
     ub=min(1,center+w); 
-    fprintf('%-11.1f %20.18f %11.9f %11.9f %12.2f %% \n', ...
+    fprintf('%-11.1f %20.18f %11.9f %11.9f %12.2f %% %16.3f %%\n', ...
         center, merging_probs_combined(i).width, lb, ub, ...
-        100*exps(i).probThatParamInRange(lb,ub)); 
+        100*exps(i).probThatParamInRange(lb,ub), 100*exps(i).prob); 
 end
 
 end
