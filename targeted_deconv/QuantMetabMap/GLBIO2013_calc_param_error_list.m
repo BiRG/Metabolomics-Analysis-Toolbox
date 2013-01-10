@@ -57,6 +57,19 @@ function param_error_list = GLBIO2013_calc_param_error_list(results)
         p = probs(matches);
     end
 
+    function vals = param_vals(peaks)
+        % Return a list of the values of the parameters for a given set of peaks.
+        %
+        % These parameters are, in order: 'height','width-at-half-height',
+        % 'lorentzianness','location', and area
+        pvtmp = peaks.property_array;
+        vals = zeros(1,round(length(pvtmp)*5/4)); 
+        for i = 1:4
+            vals(i:5:end) = pvtmp(i:4:end);
+        end
+        vals(5:5:end) = [peaks.area];
+    end
+
     function errs = param_errors(deconv, datum)
         % Return list of the parameter-wise errors between deconv and datum
         %
@@ -78,7 +91,7 @@ function param_error_list = GLBIO2013_calc_param_error_list(results)
         
         pdeconv = deconv.peaks(deconv.aligned_indices(2,:));
         pdatum  = datum.spectrum_peaks(deconv.aligned_indices(1,:));
-        errs = abs(pdeconv.property_array - pdatum.property_array);
+        errs = abs(param_vals(pdeconv) - param_vals(pdatum));
     end
 
 
@@ -86,17 +99,19 @@ n = length(results);
 
 % The names for the parameter at offset i in the peak parameters list
 % returned by GaussLorentzPeak>property_array
-parameter_names = {'height','width-at-half-height','lorentzianness','location'};
+parameter_names = {'height','width-at-half-height','lorentzianness','location','area'};
+num_params = length(parameter_names);
 
 % Param error structure has 12 = 4*3 = #params*#peak_pickers per result.
 % Preallocate it.
-param_error_list(12*n).collision_prob = 0;
-param_error_list(12*n).peak_picking_name = '';
-param_error_list(12*n).parameter_name = '';
-param_error_list(12*n).datum_id = '';
-param_error_list(12*n).mean_error_anderson = 0;
-param_error_list(12*n).mean_error_summit = 0;
-param_error_list(12*n).error_diff = 0;
+num_error_list = num_params * 3 * n;
+param_error_list(num_error_list).collision_prob = 0;
+param_error_list(num_error_list).peak_picking_name = '';
+param_error_list(num_error_list).parameter_name = '';
+param_error_list(num_error_list).datum_id = '';
+param_error_list(num_error_list).mean_error_anderson = 0;
+param_error_list(num_error_list).mean_error_summit = 0;
+param_error_list(num_error_list).error_diff = 0;
 param_error_list_idx = 1;
 
 % Shorter name for the list of possible peak-picking names
@@ -146,7 +161,6 @@ for results_idx = 1:n
 
         % For each parameter of the peaks in the deconvolution, fill a
         % param_error structure and add it to the list
-        num_params = length(parameter_names);
         for param_idx = 1:num_params
             % Initialize pe, the new param_error entry
             pe.collision_prob = collision_prob;

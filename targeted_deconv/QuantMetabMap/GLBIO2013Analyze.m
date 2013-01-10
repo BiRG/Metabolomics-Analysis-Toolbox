@@ -29,7 +29,7 @@ sig_box_handle = annotation('textbox',[0.5,0.5,0.2,0.2],'String', ...
 % compute, so I've moved them to a separate cell so they only have to be
 % calculated once.
 param_names = unique({pe_list.parameter_name});
-assert(length(param_names) == 4,'Right number of param names');
+assert(length(param_names) == 5,'Right number of param names');
 peak_pickers = unique({pe_list.peak_picking_name});
 picker_legend = {'Gold Standard','Noisy Gold Standard', 'Smoothed Local Max'};
 picker_formats = {'r+-','bd-','*k-'};
@@ -56,7 +56,7 @@ clf;
 pe_values_per_triple = length(pe_list)/length(param_names)/length(peak_pickers)/length(collision_probs);
 improvements = zeros(length(param_names),length(peak_pickers),length(collision_probs),pe_values_per_triple);
 for param_idx = 1:length(param_names)
-    subplot(2,2,param_idx);
+    subplot(2,3,param_idx);
     title_tmp = param_names{param_idx};
     title([upper(title_tmp(1)),title_tmp(2:end)]);
     xlabel('Probability of peak collision');
