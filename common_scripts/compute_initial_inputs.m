@@ -50,7 +50,8 @@ lb = [];
 ub = [];
 % For each peak ppm (or whatever unit) location, put the index of the 
 % value closest to it in the x array into the cooresponding slot in
-% max_inxs
+% max_inxs. In other words, max_inxs(i) contains the index of the sample
+% whose x value is closest to the i'th peak (that is, peak_x(i))
 max_inxs = zeros(size(peak_x));
 for mx_inx = 1:length(max_inxs)
     diff = abs(x - peak_x(mx_inx));
