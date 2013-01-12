@@ -223,3 +223,136 @@ end
 %         fprintf('HERE:%s\n',ME.message); throw(ME);
 %     end    
 % end
+
+%% Calculate the relative parameter errors
+pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
+
+%% Precalculate some values needed for plotting relative errors by parameter
+% On my home computer the large "unique" statements take a lot of time to
+% compute, so I've moved them to a separate cell so they only have to be
+% calculated once.
+param_names = unique({pe_rel_list.parameter_name});
+assert(length(param_names) == 5,'Right number of param names');
+peak_pickers = unique({pe_rel_list.peak_picking_name});
+picker_legend = {'Gold Standard','Noisy Gold Standard', 'Smoothed Local Max'};
+picker_formats = {'r+-','bd-','*k-'};
+assert(length(picker_legend) == length(peak_pickers),'Right # picker legend entries');
+assert(length(picker_formats) == length(peak_pickers),'Right # picker formats');
+collision_probs = unique([pe_rel_list.collision_prob]);
+
+%% Plot relative errors by parameter
+% Now we break up the results into one graph for each parameter. Each
+% graph has 3 lines - one per peak-picking method and gives the improvement
+% as a function of spectrum crowding.
+%
+% The graphs show that the improvement decreases as the crowding increases.
+% They also show that the smoothed local max peak picking algorithm has
+% lower improvement - probably because the algorithms are trying to fit an
+% incorrect model with too few peaks and the error due to the incorrect 
+% model is greater on average than the error due to the improper starting
+% point.
+%
+% _The code below also calculates an matrix of the improvement values
+% ordered by the properties of interest (parameter, picker, and
+% crowdedness).
+clf;
+pe_values_per_triple = length(pe_rel_list)/length(param_names)/length(peak_pickers)/length(collision_probs);
+improvements = zeros(length(param_names),length(peak_pickers),length(collision_probs),pe_values_per_triple);
+for param_idx = 1:length(param_names)
+    subplot(2,3,param_idx);
+    title_tmp = param_names{param_idx};
+    title([upper(title_tmp(1)),title_tmp(2:end)]);
+    xlabel('Probability of peak collision');
+    ylabel('Mean Relative Improvement %');
+    hold on;
+    pe_has_param = strcmp({pe_rel_list.parameter_name},param_names{param_idx});
+    handle_for_picker = zeros(1,length(peak_pickers));
+    for picker_idx = 1:length(peak_pickers)
+        pe_has_picker = strcmp({pe_rel_list.peak_picking_name},peak_pickers{picker_idx});
+        mean_error_for_prob = zeros(1,length(collision_probs));
+        std_dev_error_for_prob = mean_error_for_prob;
+        ci_half_width_95_pct = std_dev_error_for_prob;
+        for prob_idx = 1:length(collision_probs)
+            pe_has_prob = [pe_rel_list.collision_prob] == collision_probs(prob_idx);
+            selected_pes = pe_rel_list(pe_has_prob & pe_has_picker & pe_has_param);
+            selected_diffs = [selected_pes.error_diff];
+            improvements(param_idx, picker_idx, prob_idx,:) = selected_diffs;
+            mean_error_for_prob(prob_idx) = mean(selected_diffs);
+            std_dev_error_for_prob(prob_idx) = std(selected_diffs);
+            num_diffs = length(selected_diffs);
+            if num_diffs > 1
+                t_value = tinv(1-0.025, num_diffs - 1);
+            else
+                t_value = inf;
+            end
+            ci_half_width_95_pct(prob_idx) = t_value * std_dev_error_for_prob(prob_idx)/sqrt(num_diffs); % half the width of a 95% confidence interval for the mean
+        end
+%         handle_for_picker(picker_idx) = plot(collision_probs, ...
+%             mean_error_for_prob, picker_formats{picker_idx});
+        handle_for_picker(picker_idx) = errorbar(collision_probs, ...
+            mean_error_for_prob, ci_half_width_95_pct, ...
+            picker_formats{picker_idx});
+    end
+    if param_idx == 3
+        legend(handle_for_picker, picker_legend, 'location','NorthEast');
+    end
+end
+
+%% For which values is there a difference in the relative errors?
+% I do multiple t-tests using a holm-bonferroni correction to see which
+% values there is evidence of a significant improvement and a second set 
+% of tests to see where there is evidence of a significant detriment. I
+% use a 0.05 as a significance threshold.
+%
+% There was significant improvement in all cases except for some of the 
+% smoothed local maximum peak-picking. There was no significant worsening 
+% for any combination of parameters.
+%
+% For the smoothed local maximum peak picking, the test did not detect
+% improvement for all but the least crowded bin of the lorentzianness,
+% for all but the second most crowded of the location parameter, and for
+% 0.6,0.7, and 1.0 collision probabilities of the height parameter.
+
+improvement_p_vals = zeros(length(param_names),length(peak_pickers),length(collision_probs));
+detriment_p_vals = improvement_p_vals;
+for param_idx = 1:length(param_names)
+    for picker_idx = 1:length(peak_pickers)
+        for prob_idx = 1:length(collision_probs)
+            diffs = improvements(param_idx, picker_idx, prob_idx,:);
+            [~, improvement_p_vals(param_idx, picker_idx, prob_idx)] = ttest(diffs,0,0.05,'right');
+            [~, detriment_p_vals(param_idx, picker_idx, prob_idx)] = ttest(diffs,0,0.05,'left');
+        end
+    end
+end
+
+% Correct the p-values
+improvement_p_vals_corrected = improvement_p_vals;
+improvement_p_vals_corrected(:) = bonf_holm(improvement_p_vals(:),0.05);
+detriment_p_vals_corrected = detriment_p_vals;
+detriment_p_vals_corrected (:) = bonf_holm(detriment_p_vals(:),0.05);
+
+fprintf('Relative error improvement?\n');
+fprintf('Peak Property            |Peak Picking Method   |Prob. Collision|Rel. Improved?     |Rel. Worsened?     \n');
+for param_idx = 1:length(param_names)
+    for picker_idx = 1:length(peak_pickers)
+        for prob_idx = 1:length(collision_probs)
+            i = improvement_p_vals_corrected(param_idx, picker_idx, prob_idx);
+            if i >= 0.05
+                istr = '?  ??  ?';
+            else
+                istr = 'Improved';
+            end
+            d = detriment_p_vals_corrected(param_idx, picker_idx, prob_idx);
+            if d >= 0.05
+                dstr = '?  ??  ?';
+            else
+                dstr = 'Worsened';
+            end
+            
+            fprintf('%25s %22s %15.1f %8s p=%8.3g %8s p=%8.3g\n', ...
+                param_names{param_idx}, peak_pickers{picker_idx}, ...
+                collision_probs(prob_idx), istr, i, dstr, d);
+        end
+    end
+end
+
