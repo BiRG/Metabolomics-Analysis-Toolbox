@@ -1,5 +1,52 @@
 % Prints a summary of the analysis of the results from the GLBIO2013 experiments
 
+%% Draw starting point figures
+% These figures give two different simple spectra and show the different
+% starting points arrived at by Anderson's algorithm and the summit
+% algorithm.
+simple_peaks1 = GaussLorentzPeak([0.003,0.002,0,0.002,   0.004,0.002,0,0.006]);
+simple_peaks2 = GaussLorentzPeak([0.003,0.003,0,0.001,   0.004,0.003,0,0.004,  0.005,0.003,0,0.007]);
+
+clf;
+x = 0:0.00015:.008;
+extended_x = -0.014:0.00015:0.02; % Needed to make the plots look right because of the wide widths given by Anderson
+
+model = RegionalSpectrumModel; % Use default model
+samples_per_ppm = length(x)/(max(x)-min(x));
+window_samples = ceil(model.rough_peak_window_width * samples_per_ppm);
+assert(window_samples >= 4);
+
+
+subplot(2,2,1);
+[starting_params, lb, ub] = compute_initial_inputs(x, ...
+    sum(simple_peaks1.at(x),1), [simple_peaks1.location], ...
+    1:length(x), [simple_peaks1.location]);
+GLBIO2013_plot_peaks_and_starting_point('Anderson On Separated Peaks', ...
+    extended_x, simple_peaks1, 1, starting_params, lb, ub);
+
+subplot(2,2,2);
+[starting_params, lb, ub] = compute_initial_inputs(x, ...
+    sum(simple_peaks2.at(x),1), [simple_peaks2.location], ...
+    1:length(x), [simple_peaks2.location]);
+GLBIO2013_plot_peaks_and_starting_point('Anderson On Congested Peaks', ...
+    extended_x, simple_peaks2, 2, starting_params, lb, ub);
+
+subplot(2,2,3);
+[starting_params, lb, ub] = deconv_initial_vals_dirty ...
+    (x, sum(simple_peaks1.at(x),1), min(x), max(x), [simple_peaks1.location], ...
+    model.max_rough_peak_width, window_samples, @do_nothing);
+GLBIO2013_plot_peaks_and_starting_point('Summit On Separated Peaks', ...
+    extended_x, simple_peaks1, 1, starting_params, lb, ub);
+
+subplot(2,2,4);
+[starting_params, lb, ub] = deconv_initial_vals_dirty ...
+    (x, sum(simple_peaks2.at(x),1), min(x), max(x), [simple_peaks2.location], ...
+    model.max_rough_peak_width, window_samples, @do_nothing);
+[handles,element_names] = ...
+    GLBIO2013_plot_peaks_and_starting_point('Summit On Separated Peaks', ...
+    extended_x, simple_peaks2, 2, starting_params, lb, ub);
+legend(handles, element_names, 'Location', 'NorthEast');
+
 %% Load the combined results
 load('glbio2013_combined_raw_results.mat');
 
