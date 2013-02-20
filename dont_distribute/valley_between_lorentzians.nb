@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     30923,       1001]
-NotebookOptionsPosition[     28261,        910]
-NotebookOutlinePosition[     28599,        925]
-CellTagsIndexPosition[     28556,        922]
+NotebookDataLength[     37776,       1218]
+NotebookOptionsPosition[     34455,       1104]
+NotebookOutlinePosition[     34793,       1119]
+CellTagsIndexPosition[     34750,       1116]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -219,6 +219,11 @@ Cell[CellGroupData[{
 Cell["Derivation", "Section",
  CellChangeTimes->{{3.563488363627002*^9, 3.563488366322016*^9}}],
 
+Cell[CellGroupData[{
+
+Cell["Setup", "Subsection",
+ CellChangeTimes->{{3.563536177638194*^9, 3.5635361784851437`*^9}}],
+
 Cell["Sum of two Lorentzians, one of amplitude 1 and mode 0", "Text",
  CellChangeTimes->{{3.56348673518292*^9, 3.563486766402728*^9}, {
   3.563488251738544*^9, 3.563488253667149*^9}}],
@@ -382,7 +387,13 @@ Cell[BoxData[
        SuperscriptBox[
         RowBox[{"(", 
          RowBox[{"x", "-", "x1"}], ")"}], "2"]}], ")"}], "3"]]}]}]], "Input",
- CellChangeTimes->{{3.5634853594336452`*^9, 3.563485371773418*^9}}],
+ CellChangeTimes->{{3.5634853594336452`*^9, 3.563485371773418*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Possible Peak in Sum Between 2 Modes", "Subsection",
+ CellChangeTimes->{{3.563536191148219*^9, 3.563536210142046*^9}}],
 
 Cell[TextData[{
  "What are the conditions where there is a peak at a point lying between the \
@@ -585,7 +596,13 @@ Cell[BoxData[
  CellChangeTimes->{
   3.5634868821630697`*^9, 3.563487024211879*^9, {3.563487289621936*^9, 
    3.563487304353745*^9}, 3.5634874344512177`*^9, 3.563488094962637*^9}]
+}, Open  ]]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Find Sufficient Condition", "Subsection",
+ CellChangeTimes->{{3.5635362266922007`*^9, 3.563536231040625*^9}}],
 
 Cell["\<\
 Things simplify a bit in the original sum, but it is probably an inflection \
@@ -894,6 +911,183 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
+Cell["See if can extend to necessary condition", "Subsection",
+ CellChangeTimes->{{3.56353623917738*^9, 3.5635362455375023`*^9}}],
+
+Cell[TextData[{
+ "Now, check whether there is a condition on ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["r", "min"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " and ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["r", "max"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ "that ensures there will be no peak. "
+}], "Text",
+ CellChangeTimes->{{3.5635362503469973`*^9, 3.563536306728595*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{"Not", "[", 
+    RowBox[{"Exists", "[", 
+     RowBox[{"a", ",", 
+      RowBox[{
+       RowBox[{
+       "0", "<", "rmin", " ", "<", " ", "a", " ", "<", " ", "rmax", " ", "<", 
+        "x1"}], "&&", 
+       RowBox[{
+        RowBox[{"df", "[", "a", "]"}], "\[Equal]", "0"}], "&&", 
+       RowBox[{
+        RowBox[{"ddf", "[", "a", "]"}], "<", "0"}], "&&", 
+       RowBox[{"g1", ">", "0"}], " ", "&&", 
+       RowBox[{"m1", ">", "0"}], "&&", 
+       RowBox[{"m0", ">", "0"}]}]}], "]"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"rmin", ",", "rmax"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.563536341299246*^9, 3.563536518676072*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Reduce", "::", "\<\"nsmet\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"This system cannot be solved \
+with the methods available to Reduce.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/Reduce\\\", ButtonNote -> \
+\\\"Reduce::nsmet\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.56353652058997*^9}],
+
+Cell[BoxData[
+ RowBox[{"Reduce", "[", 
+  RowBox[{
+   RowBox[{
+    SubscriptBox["\[ForAll]", "a"], 
+    RowBox[{"!", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"0", "<", "rmin", "<", "a", "<", "rmax", "<", "x1"}], "&&", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{"2", " ", "a", " ", "m0"}], 
+           SuperscriptBox[
+            RowBox[{"(", 
+             RowBox[{"1", "+", 
+              SuperscriptBox["a", "2"]}], ")"}], "2"]]}], "+", 
+         FractionBox[
+          RowBox[{"2", " ", "g1", " ", "m1", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "a"}], "+", "x1"}], ")"}]}], 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{
+             SuperscriptBox["g1", "2"], "+", 
+             SuperscriptBox[
+              RowBox[{"(", 
+               RowBox[{"a", "-", "x1"}], ")"}], "2"]}], ")"}], "2"]]}], 
+        "\[Equal]", "0"}], "&&", 
+       RowBox[{
+        RowBox[{
+         FractionBox[
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "1"}], "+", 
+             RowBox[{"3", " ", 
+              SuperscriptBox["a", "2"]}]}], ")"}], " ", "m0"}], 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{"1", "+", 
+             SuperscriptBox["a", "2"]}], ")"}], "3"]], "-", 
+         FractionBox[
+          RowBox[{"2", " ", "g1", " ", "m1", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             SuperscriptBox["g1", "2"], "-", 
+             RowBox[{"3", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                RowBox[{"a", "-", "x1"}], ")"}], "2"]}]}], ")"}]}], 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{
+             SuperscriptBox["g1", "2"], "+", 
+             SuperscriptBox[
+              RowBox[{"(", 
+               RowBox[{"a", "-", "x1"}], ")"}], "2"]}], ")"}], "3"]]}], "<", 
+        "0"}], "&&", 
+       RowBox[{"g1", ">", "0"}], "&&", 
+       RowBox[{"m1", ">", "0"}], "&&", 
+       RowBox[{"m0", ">", "0"}]}], ")"}]}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"rmin", ",", "rmax"}], "}"}]}], "]"}]], "Output",
+ CellChangeTimes->{3.5635365205966587`*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "Try finding what ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["r", "min"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " and ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["r", "max"], TraditionalForm]],
+  FormatType->"TraditionalForm"],
+ " yield peaks - then invert that expression. ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " can't do the Not Exists version."
+}], "Text",
+ CellChangeTimes->{{3.563536836977634*^9, 3.5635368677584*^9}, {
+  3.563537378061633*^9, 3.563537395492585*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"Reduce", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"0", "<", "rmin", "<", "rmax", "<", "x1"}], " ", "&&", 
+     RowBox[{"g1", ">", "0"}], "&&", 
+     RowBox[{"m1", ">", "0"}], " ", "&&", 
+     RowBox[{"m0", ">", "0"}], "&&", 
+     RowBox[{"Exists", "[", 
+      RowBox[{"a", ",", 
+       RowBox[{
+        RowBox[{"rmin", "<", "a", "<", "rmax"}], "&&", 
+        RowBox[{
+         RowBox[{"df", "[", "a", "]"}], "==", "0"}], "&&", 
+        RowBox[{
+         RowBox[{"ddf", "[", "a", "]"}], "<", "0"}]}]}], "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"rmin", ",", "rmax"}], "}"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.563536580817226*^9, 3.563536725736496*^9}, {
+  3.563536872889091*^9, 3.563536885602757*^9}, {3.5635369495271263`*^9, 
+  3.563536963676467*^9}, {3.563537039745521*^9, 3.563537070344757*^9}, {
+  3.563537345018231*^9, 3.563537369310568*^9}}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{
+  3.563536704116338*^9, 3.563536740351466*^9, 3.5635368963193913`*^9, 
+   3.563536955570426*^9, 3.563537035706848*^9, {3.563537341125607*^9, 
+   3.563537351291819*^9}, 3.563589961216378*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["Minuti\[AE]", "Section",
  CellChangeTimes->{{3.563491603475691*^9, 3.563491609234871*^9}, 
    3.563491668363263*^9}],
@@ -909,7 +1103,7 @@ Cell[TextData[{
 }, Open  ]]
 },
 WindowSize->{961, 747},
-WindowMargins->{{134, Automatic}, {-7, Automatic}},
+WindowMargins->{{126, Automatic}, {-7, Automatic}},
 FrontEndVersion->"7.0 for Linux x86 (64-bit) (February 25, 2009)",
 StyleDefinitions->"Default.nb"
 ]
@@ -938,69 +1132,92 @@ Cell[4801, 148, 2201, 65, 112, "Text"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[7039, 218, 95, 1, 73, "Section"],
-Cell[7137, 221, 183, 2, 31, "Text"],
-Cell[7323, 225, 554, 18, 32, "Input"],
-Cell[7880, 245, 179, 2, 31, "Text"],
 Cell[CellGroupData[{
-Cell[8084, 251, 213, 5, 32, "Input"],
-Cell[8300, 258, 657, 22, 54, "Output"]
+Cell[7159, 223, 95, 1, 39, "Subsection"],
+Cell[7257, 226, 183, 2, 31, "Text"],
+Cell[7443, 230, 554, 18, 32, "Input"],
+Cell[8000, 250, 179, 2, 31, "Text"],
+Cell[CellGroupData[{
+Cell[8204, 256, 213, 5, 32, "Input"],
+Cell[8420, 263, 657, 22, 54, "Output"]
 }, Open  ]],
-Cell[8972, 283, 704, 23, 60, "Input"],
-Cell[9679, 308, 173, 2, 31, "Text"],
+Cell[9092, 288, 704, 23, 60, "Input"],
+Cell[9799, 313, 173, 2, 31, "Text"],
 Cell[CellGroupData[{
-Cell[9877, 314, 216, 5, 32, "Input"],
-Cell[10096, 321, 835, 29, 59, "Output"]
+Cell[9997, 319, 216, 5, 32, "Input"],
+Cell[10216, 326, 835, 29, 59, "Output"]
 }, Open  ]],
-Cell[10946, 353, 942, 31, 64, "Input"],
-Cell[11891, 386, 726, 15, 60, "Text"],
-Cell[CellGroupData[{
-Cell[12642, 405, 783, 16, 32, "Input"],
-Cell[13428, 423, 5633, 163, 367, "Output"]
+Cell[11066, 358, 942, 31, 64, "Input"]
 }, Open  ]],
-Cell[19076, 589, 192, 4, 31, "Text"],
 Cell[CellGroupData[{
-Cell[19293, 597, 220, 5, 32, "Input"],
-Cell[19516, 604, 652, 22, 75, "Output"]
-}, Open  ]],
-Cell[20183, 629, 113, 1, 31, "Text"],
-Cell[20299, 632, 246, 7, 32, "Input"],
-Cell[20548, 641, 121, 1, 31, "Text"],
+Cell[12045, 394, 124, 1, 39, "Subsection"],
+Cell[12172, 397, 726, 15, 60, "Text"],
 Cell[CellGroupData[{
-Cell[20694, 646, 276, 8, 32, "Input"],
-Cell[20973, 656, 371, 12, 59, "Output"]
-}, Open  ]],
-Cell[21359, 671, 438, 14, 64, "Input"],
-Cell[21800, 687, 166, 2, 31, "Text"],
-Cell[CellGroupData[{
-Cell[21991, 693, 179, 4, 32, "Input"],
-Cell[22173, 699, 70, 1, 31, "Output"]
-}, Open  ]],
-Cell[22258, 703, 393, 8, 91, "Text"],
-Cell[22654, 713, 302, 9, 32, "Input"],
-Cell[CellGroupData[{
-Cell[22981, 726, 308, 9, 32, "Input"],
-Cell[23292, 737, 436, 14, 59, "Output"]
-}, Open  ]],
-Cell[23743, 754, 532, 17, 64, "Input"],
-Cell[24278, 773, 280, 8, 40, "Text"],
-Cell[CellGroupData[{
-Cell[24583, 785, 245, 7, 32, "Input"],
-Cell[24831, 794, 328, 12, 52, "Output"]
-}, Open  ]],
-Cell[25174, 809, 209, 4, 31, "Text"],
-Cell[CellGroupData[{
-Cell[25408, 817, 846, 21, 32, "Input"],
-Cell[26257, 840, 123, 2, 31, "Output"]
-}, Open  ]],
-Cell[26395, 845, 113, 1, 31, "Text"],
-Cell[CellGroupData[{
-Cell[26533, 850, 833, 21, 32, "Input"],
-Cell[27369, 873, 483, 17, 52, "Output"]
+Cell[12923, 416, 783, 16, 32, "Input"],
+Cell[13709, 434, 5633, 163, 424, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[27901, 896, 122, 2, 73, "Section"],
-Cell[28026, 900, 207, 6, 31, "Text"]
+Cell[19391, 603, 115, 1, 39, "Subsection"],
+Cell[19509, 606, 192, 4, 31, "Text"],
+Cell[CellGroupData[{
+Cell[19726, 614, 220, 5, 32, "Input"],
+Cell[19949, 621, 652, 22, 75, "Output"]
+}, Open  ]],
+Cell[20616, 646, 113, 1, 31, "Text"],
+Cell[20732, 649, 246, 7, 32, "Input"],
+Cell[20981, 658, 121, 1, 31, "Text"],
+Cell[CellGroupData[{
+Cell[21127, 663, 276, 8, 32, "Input"],
+Cell[21406, 673, 371, 12, 59, "Output"]
+}, Open  ]],
+Cell[21792, 688, 438, 14, 64, "Input"],
+Cell[22233, 704, 166, 2, 31, "Text"],
+Cell[CellGroupData[{
+Cell[22424, 710, 179, 4, 32, "Input"],
+Cell[22606, 716, 70, 1, 31, "Output"]
+}, Open  ]],
+Cell[22691, 720, 393, 8, 91, "Text"],
+Cell[23087, 730, 302, 9, 32, "Input"],
+Cell[CellGroupData[{
+Cell[23414, 743, 308, 9, 32, "Input"],
+Cell[23725, 754, 436, 14, 59, "Output"]
+}, Open  ]],
+Cell[24176, 771, 532, 17, 64, "Input"],
+Cell[24711, 790, 280, 8, 40, "Text"],
+Cell[CellGroupData[{
+Cell[25016, 802, 245, 7, 32, "Input"],
+Cell[25264, 811, 328, 12, 52, "Output"]
+}, Open  ]],
+Cell[25607, 826, 209, 4, 31, "Text"],
+Cell[CellGroupData[{
+Cell[25841, 834, 846, 21, 32, "Input"],
+Cell[26690, 857, 123, 2, 31, "Output"]
+}, Open  ]],
+Cell[26828, 862, 113, 1, 31, "Text"],
+Cell[CellGroupData[{
+Cell[26966, 867, 833, 21, 55, "Input"],
+Cell[27802, 890, 483, 17, 52, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28334, 913, 129, 1, 39, "Subsection"],
+Cell[28466, 916, 409, 13, 31, "Text"],
+Cell[CellGroupData[{
+Cell[28900, 933, 700, 19, 55, "Input"],
+Cell[29603, 954, 470, 9, 24, "Message"],
+Cell[30076, 965, 2223, 66, 111, "Output"]
+}, Open  ]],
+Cell[32314, 1034, 523, 17, 31, "Text"],
+Cell[CellGroupData[{
+Cell[32862, 1055, 923, 22, 77, "Input"],
+Cell[33788, 1079, 246, 4, 31, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[34095, 1090, 122, 2, 73, "Section"],
+Cell[34220, 1094, 207, 6, 31, "Text"]
 }, Open  ]]
 }, Open  ]]
 }

@@ -6,35 +6,57 @@ function [assignment,cost] = munkres(costMat)
 % problem represented by the COSTMAT, where the (i,j)th element represents the cost to assign the jth
 % job to the ith worker.
 %
-
+% costmat - (i,j)th element represents the cost to assign the jth
+%           job to the ith worker.
+%
+% assign - (row vector) assign(i) is index of the column assigned to row i. 
+%          If no column is assigned to row i, then assign(i) is 0.
+%
+% cost - (scalar) the sum of the costs of the assignments for the minimum
+%        cost set of assignments
+%
 % This is vectorized implementation of the algorithm. It is the fastest
 % among all Matlab implementations of the algorithm.
-
+%
 % Examples
 % Example 1: a 5 x 5 example
-%{
-[assignment,cost] = munkres(magic(5));
-disp(assignment); % 3 2 1 5 4
-disp(cost); %15
-%}
+%
+% [assignment,cost] = munkres(magic(5));
+% disp(assignment); % 3 2 1 5 4
+% disp(cost); %15
+%
 % Example 2: 400 x 400 random data
-%{
-n=400;
-A=rand(n);
-tic
-[a,b]=munkres(A);
-toc                 % about 2 seconds 
-%}
+%
+% n=400;
+% A=rand(n);
+% tic
+% [a,b]=munkres(A);
+% toc                 % about 2 seconds 
+%
 % Example 3: rectangular assignment with inf costs
-%{
-A=rand(10,7);
-A(A>0.7)=Inf;
-[a,b]=munkres(A);
-%}
+%
+% A=rand(10,7);
+% A(A>0.7)=Inf;
+% [a,b]=munkres(A);
+%
+% Example 4: rectangular assignment with null assignments
+%
+% >> c=[1,2,3,4;10,5,10/3,2.5]'; [a,b] = munkres(c)
+% 
+% a =
+% 
+%      1     0     0     2
+% 
+% 
+% b =
+% 
+%     3.5000
+% 
+%
 % Reference:
 % "Munkres' Assignment Algorithm, Modified for Rectangular Matrices", 
 % http://csclab.murraystate.edu/bob.pilgrim/445/munkres.html
-
+%
 % version 2.2 by Yi Cao at Cranfield University on 1st March 2010
 
 assignment = zeros(1,size(costMat,1));

@@ -961,7 +961,8 @@ if (nargout<=1),
 		oldaxlims(mask,6:7) = lims(5:6,mask)';
 		ARROW_AXLIMITS = oldaxlims(find(any(oldaxlims(:,2:7)'~=lims)),:);
 		if ~isempty(ARROW_AXLIMITS),
-			warning(arrow_warnlimits(ARROW_AXLIMITS,narrows));
+            warnmsg = arrow_warnlimits(ARROW_AXLIMITS,narrows);
+			warning('arrow:axis_limits_changed', warnmsg);
 		end;
 	end;
 else,
