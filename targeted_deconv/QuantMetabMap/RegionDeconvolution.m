@@ -54,9 +54,9 @@ classdef RegionDeconvolution
         % -----------------------------------------------------------------
         % Input Arguments
         % -----------------------------------------------------------------
-        % x               The x values for the spectrum
+        % x               The x values for the spectrum (row vector)
         %
-        % y               The y values for the spectrum
+        % y               The y values for the spectrum (column vector)
         %
         % peak_xs         The x values of the peaks in the spectrum
         %
