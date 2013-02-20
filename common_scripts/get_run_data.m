@@ -93,6 +93,11 @@ if paired % Pair up the data
             inx_unpaired = model_by_inxs{g}(i);
             s = s + 1;
             % Now find matching subject ID
+            %
+            % The double loop just moves inx_paired through the flattened 
+            % contents of paired_by_inxs once. It is equivalent to saying: 
+            %
+            % foreach inx_paired in flatten(paired_by_inxs)
             found = false;
             for p = 1:length(paired_by_inxs)
                 for j = 1:length(paired_by_inxs{p})
@@ -115,7 +120,10 @@ if paired % Pair up the data
                 end
             end
             if ~found
-                fprintf('Could not match sample %d at time %d with classification %s\n',collection.subject_id(inx_unpaired),collection.time(inx_unpaired),collection.classification(inx_unpaired));
+                fprintf('Could not find a match for sample %d at time %d classified as "%s"\n', ...
+                    collection.subject_id(inx_unpaired), ...
+                    collection.time(inx_unpaired), ...
+                    collection.classification{inx_unpaired});
             end
         end
     end
