@@ -19,12 +19,12 @@ function results = GLBIO2013_run_experiment( num_spectra_per_width, instance_num
 %
 % use_waitbar - (logical scalar) if true, displays a waitbar. If not, 
 %               spams the terminal with status updates.
-original_default_stream = RandStream.getDefaultStream;
+original_default_stream = RandStream.getGlobalStream;
 seed = 925040534; % A 32 bit number from random.org
 my_stream = RandStream.create('mrg32k3a', ...
     'NumStreams', total_number_of_instances, ...
     'StreamIndices', instance_number, 'Seed', seed);
-RandStream.setDefaultStream(my_stream);
+RandStream.setGlobalStream(my_stream);
 
 
 
@@ -71,6 +71,6 @@ if use_waitbar
 end
 
 
-RandStream.setDefaultStream(original_default_stream);
+RandStream.setGlobalStream(original_default_stream);
 end
 
