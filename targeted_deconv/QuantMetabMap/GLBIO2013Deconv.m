@@ -54,8 +54,7 @@ classdef GLBIO2013Deconv
     
     methods (Static)
         function best = best_alignment(peaks, original_peaks)
-        % Calculate the best alignment between two sets of peaks by
-        % brute force.
+        % Calculate the best alignment between two sets of peaks using the hungarian algorithm for linear assignment problems (munkres)
         %
         % best - a peak alignment matching the description of the
         %        aligned_indices member
