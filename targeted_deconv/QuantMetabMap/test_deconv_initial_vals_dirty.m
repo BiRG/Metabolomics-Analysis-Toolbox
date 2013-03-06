@@ -136,7 +136,22 @@ spec.Y = sum(peaks.at(spec.x),1)';
 a=@() deconv_initial_vals_dirty(spec.x, spec.Y, 0,1,[], ...
     0.04, 12);
 assertExceptionThrown(a, 'deconv_initial_vals_dirty:at_least_one_peak');
-b=@() deconv_initial_vals_dirty(spec.x, spec.Y, 0.5,1,0.25, ...
-    0.04, 12);
-assertExceptionThrown(b, 'deconv_initial_vals_dirty:at_least_one_peak');
 
+function testNoXInputFiltering1Peak  %#ok<DEFNU>
+% Checks that initial peak x values out of the deconvolved range are still
+% included in the fitting (using 1 peak)
+peaks = GaussLorentzPeak([1,.005,1,-0.001]);
+spec.x = 0:0.0001:1;
+spec.Y = sum(peaks.at(spec.x),1)';
+
+[b,lb,ub] = deconv_initial_vals_dirty(spec.x, spec.Y, 0,1, ...
+    peaks(1).location, ...
+    0.04, 12);
+
+expected_b = [0.999999999996959543; 0.005000000000027322; 1; -0.00100000000000000002];
+expected_lb = [0.999999999996959543; 0; 0; 0];
+expected_ub = [0.862068965517241437; 0.010000000000054644; 1; 1];
+
+assertElementsAlmostEqual(b, expected_b, 'absolute', 1e-6);
+assertElementsAlmostEqual(lb, expected_lb, 'absolute', 1e-6);
+assertElementsAlmostEqual(ub, expected_ub, 'absolute', 1e-6);
