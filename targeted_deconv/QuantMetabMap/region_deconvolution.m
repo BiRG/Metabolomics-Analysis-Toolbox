@@ -101,6 +101,10 @@ y_region = y(fit_inxs);
 x_region = x(fit_inxs);
 
 % Construct region
+
+% First select all those peaks whose initial modes lie within the target
+% region and make BETA0_region, lb_region, and ub_region hold their initial
+% parameter values
 X = BETA0(4:4:end); %Later expl: X is x coordinates of the peaks - here initial
 inxs = find(region(1) >= X & X >= region(2));
 lb_region = [];
@@ -113,6 +117,7 @@ for i = 1:length(inxs)
     BETA0_region = [BETA0_region;BETA0(4*(ix-1)+(1:4))];
 end
 
+% Set up the lists of parameters and bounds for the baseline
 region_width = region(1)-region(2);
 switch model.baseline_type
     case 'spline'
@@ -152,6 +157,8 @@ switch model.baseline_type
             '" in model passed to region_deconvolution']);
 end
 
+% Attach the baseline parameters and their bounds to the end of the region
+% parameter/bound lists
 BETA0_region = [BETA0_region;baseline_BETA];
 lb_region = [lb_region;lb_baseline];
 ub_region = [ub_region;ub_baseline];
