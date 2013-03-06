@@ -100,22 +100,22 @@ fit_inxs = find(region(1) >= x & x >= region(2)); % To do: this should adapt to 
 y_region = y(fit_inxs);
 x_region = x(fit_inxs);
 
-% Construct region
+% TODO: remove all references to inxs by simplifying the code to just use all entries
+%
+% inxs is a hold-over from an earlier version in which not all input peaks
+% were used. If the peaks are given one spot each in an array, inxs is the
+% list of the indices of the used peaks. Since all peaks are now used, inxs
+% is just a list of 1:num_peaks. Eventually, this should be removed because
+% it adds extra complexity to the code. But I will not do it now.
+inxs = 1:(length(BETA0)/4);
+assert(length(inxs)*4 == length(BETA0)); % Make sure round-off error hasn't happened
 
-% First select all those peaks whose initial modes lie within the target
-% region and make BETA0_region, lb_region, and ub_region hold their initial
-% parameter values
-X = BETA0(4:4:end); %Later expl: X is x coordinates of the peaks - here initial
-inxs = find(region(1) >= X & X >= region(2));
-lb_region = [];
-ub_region = [];
-BETA0_region = [];
-for i = 1:length(inxs)
-    ix = inxs(i);
-    lb_region = [lb_region;lb(4*(ix-1)+(1:4))];
-    ub_region = [ub_region;ub(4*(ix-1)+(1:4))];
-    BETA0_region = [BETA0_region;BETA0(4*(ix-1)+(1:4))];
-end
+% Construct parameter values that include baseline parameters for fitting region
+
+% Start with the raw initial parameter values
+lb_region = lb;
+ub_region = ub;
+BETA0_region = BETA0;
 
 % Set up the lists of parameters and bounds for the baseline
 region_width = region(1)-region(2);
@@ -164,6 +164,7 @@ lb_region = [lb_region;lb_baseline];
 ub_region = [ub_region;ub_baseline];
 num_maxima = length(inxs);
 
+% Do the fit
 if num_maxima > 0
     if exist('progress_func', 'var')
         [BETA_region,EXITFLAG] = ...
@@ -182,6 +183,7 @@ else
     BETA_region=[];
 end
 
+% Calculate auxiliary output parameters
 [y_errs,y_baseline] = regularized_model(BETA_region,x_region',num_maxima,x_baseline_BETA, y_region, model);
 y_fit = y_errs(1:end-2) + y_region;
 
