@@ -104,7 +104,7 @@ for pass = 1:num_passes
         % Do the minimization
         p = peaks(peak_idx);
         if pass == 1
-            M = interp1(local_x, local_rem, p.x0); %Start the peak at the peak value for its remainder
+            M = interp1(local_x, local_rem, p.x0, 'linear','extrap'); %Start the peak at the peak value for its remainder
         else
             M = p.M; % After the first round, set the peak height to what it was in the last round
         end
