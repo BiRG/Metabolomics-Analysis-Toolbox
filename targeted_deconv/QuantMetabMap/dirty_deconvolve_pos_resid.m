@@ -13,7 +13,7 @@ function peaks = dirty_deconvolve_pos_resid( x, y, peak_x, max_width, num_neighb
 % x - the x coordinates of the spectrum segment to deconvolve 
 %
 % y - the y coordinates of the spectrum segment to deconvolve - correspond
-% to the xs
+%     to the xs
 %
 % peak_x - the x coordinates of the different peaks
 %
