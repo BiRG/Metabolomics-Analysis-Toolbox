@@ -139,19 +139,23 @@ obj.peaks = GaussLorentzPeak(peak_params);
 assertEqual(length(obj.peaks),length(obj.picked_locations));
 
 
-% This takes too long to run to include in the general set of test cases
-% and it tests something that should be static - the final data. I leave it
-% here to run on any data I will publish.
-%
+% % This takes too long to run to include in the general set of test cases
+% % and it tests something that should be static - the final data. I leave it
+% % here to run on any data I will publish.
+% % 
 % function testNoisyGoldStandardNumPeaks %#ok<DEFNU>
 % % Tests that in the combined results, noisy gold standard has the same number of peaks as originally generated
-% if ~exist('glbio2013_combined_raw_results.mat','file')
+% results_file = 'Mar_07_2013_test_experiment_results.mat';
+% if ~exist(results_file,'file')
 %     return
 % end
 % bad_indices = [];
-% load('glbio2013_combined_raw_results.mat');
-% for i = 1:length(glbio_combined_results)
-%     datum = glbio_combined_results(i);
+% raw = load(results_file);
+% fields = fieldnames(raw);
+% first_field = fields{1};
+% results = raw.(first_field);
+% for i = 1:length(results)
+%     datum = results(i);
 %     for j = 1:length(datum.deconvolutions)
 %         deconv = datum.deconvolutions(j);
 %         if strcmp(deconv.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard) || ...
@@ -165,6 +169,6 @@ assertEqual(length(obj.peaks),length(obj.picked_locations));
 % bad_indices = unique(bad_indices);
 % assertEqual(length(bad_indices), 0, sprintf(['Results have inconsistent '...
 %     'peak lengths for %d of %d entries: %s'], length(bad_indices), ...
-%     length(glbio_combined_results), to_str(bad_indices, false)) ...
+%     length(results), to_str(bad_indices, false)) ...
 %     );
 % 
