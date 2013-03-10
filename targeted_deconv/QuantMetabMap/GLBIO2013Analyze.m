@@ -299,6 +299,11 @@ collision_probs = unique([pe_rel_list.collision_prob]);
 % model is greater on average than the error due to the improper starting
 % point.
 %
+% Note: relative errors are (actual-correct)/abs(correct) modified to make
+% correct 1e-100 whenever it is smaller (and so avoid divide by 0 errors).
+% Mean relative improvement is the mean difference in mean relative error: 
+% anderson - summit.
+%
 % _The code below also calculates an matrix of the improvement values
 % ordered by the properties of interest (parameter, picker, and
 % crowdedness).
