@@ -1,0 +1,15 @@
+* The problem: extracting parameters in congested regions
+
+** Why is extracting parameters in congested spectra important
+
+*** Biofluid analysis is growing in importance
+
+**** Metabolomics
+
+**** Food analysis (for example, wine)
+
+*** Biofluids are usually complex mixtures
+
+*** Many complex mixtures have congested regions
+
+* 
