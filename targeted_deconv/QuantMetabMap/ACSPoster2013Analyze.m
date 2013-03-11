@@ -241,6 +241,139 @@ for param_idx = 1:length(param_names)
     end
 end
 
+
+%% Plot anderson error versus summit error for each parameter and collision probability
+% Now we break up the results into one graph for each parameter,
+% collision probability, and picker. We plot both a scatter plot and a
+% a density map. This gives information about the joint distribution of the
+% errors.
+%
+num_charts = length(param_names)*length(peak_pickers)*3;
+collision_prob_indices = [1,round(length(collision_probs)/2),length(collision_probs)];
+num_horiz_charts = 6; % Number of charts horizontally in the figure
+num_vert_charts = ceil(num_charts/6); %Number of charts vertically in the figure
+
+% The labeling assumes two peak-pickers and 3 collision prob indices so
+% each row contains 6 entries all for the same parameter
+assert(length(peak_pickers) == 2); 
+assert(length(collision_prob_indices) == 3);
+assert(num_horiz_charts == 6); 
+
+for plot_type_idx = 1:2
+    is_density_plot = plot_type_idx == 1;
+    figure;
+    screen_size = get(0,'Screensize');
+    set(gcf, 'Position', [screen_size(1:2),screen_size(3)/2, screen_size(4)]); % Maximize figure in a dual monitor unix environment - which will be a half-width, full height window in a single monitor environment.
+    plot_num = 0;
+    for param_idx = 1:length(param_names)
+        pe_has_param = strcmp({pe_list.parameter_name},param_names{param_idx});
+        pes_with_param = pe_list(pe_has_param);
+        andersons_in_row = [pes_with_param.mean_error_anderson];
+        summits_in_row = [pes_with_param.mean_error_summit];
+        anderson_limits = [0, max([andersons_in_row,summits_in_row])];
+        for picker_idx = 1:length(peak_pickers)
+            pe_has_picker = strcmp({pe_list.peak_picking_name},peak_pickers{picker_idx});
+            ci_half_width_95_pct = std_dev_error_for_prob;
+            for prob_idx_idx = 1:length(collision_prob_indices)
+                prob_idx = collision_prob_indices(prob_idx_idx);
+
+                plot_num = plot_num + 1;
+                subplot(num_vert_charts, num_horiz_charts, plot_num);
+
+                pe_has_prob = [pe_list.collision_prob] == collision_probs(prob_idx);
+                selected_pes = pe_list(pe_has_prob & pe_has_picker & pe_has_param);
+                selected_andersons = [selected_pes.mean_error_anderson]; 
+                selected_summits = [selected_pes.mean_error_summit]; 
+
+                plot_limits = [min([0,selected_andersons, selected_summits]), max([selected_andersons, selected_summits])];
+
+                if is_density_plot
+                    DataDensityPlot(selected_summits, selected_andersons, 256, [plot_limits, plot_limits],20,20);
+                else
+                    scatter(selected_summits, selected_andersons);
+                    xlim(plot_limits);
+                    ylim(plot_limits);
+                end
+
+                title(sprintf('Errors in %s\nusing %s\nin density %3.1f', ...
+                    param_names{param_idx}, picker_legend{picker_idx}, ...
+                    collision_probs(prob_idx)));
+
+                if  mod(plot_num, num_horiz_charts) == 1 
+                    ylabel('Anderson Error');
+                end
+                if plot_num >= num_charts - num_horiz_charts
+                    xlabel('Summit Error');
+                end
+
+            end
+        end
+    end
+end
+
+%% Plot histograms of the anderson and summit errors
+% Using the same break-up as before, we now plot histograms of the marginal
+% errors for each type of starting point: anderson and summit. This will
+% let us see how badly they deviate from being normally distributed.
+%
+num_charts = length(param_names)*length(peak_pickers)*3;
+collision_prob_indices = [1,round(length(collision_probs)/2),length(collision_probs)];
+num_horiz_charts = 6; % Number of charts horizontally in the figure
+num_vert_charts = ceil(num_charts/6); %Number of charts vertically in the figure
+
+% The labeling assumes two peak-pickers and 3 collision prob indices so
+% each row contains 6 entries all for the same parameter
+assert(length(peak_pickers) == 2); 
+assert(length(collision_prob_indices) == 3);
+assert(num_horiz_charts == 6); 
+
+for plot_type_idx = 1:2
+    is_anderson_plot = plot_type_idx == 1;
+    figure;
+    screen_size = get(0,'Screensize');
+    set(gcf, 'Position', [screen_size(1:2),screen_size(3)/2, screen_size(4)]); % Maximize figure in a dual monitor unix environment - which will be a half-width, full height window in a single monitor environment.
+    plot_num = 0;
+    for param_idx = 1:length(param_names)
+        pe_has_param = strcmp({pe_list.parameter_name},param_names{param_idx});
+        pes_with_param = pe_list(pe_has_param);
+        andersons_in_row = [pes_with_param.mean_error_anderson];
+        summits_in_row = [pes_with_param.mean_error_summit];
+        anderson_limits = [0, max([andersons_in_row,summits_in_row])];
+        for picker_idx = 1:length(peak_pickers)
+            pe_has_picker = strcmp({pe_list.peak_picking_name},peak_pickers{picker_idx});
+            ci_half_width_95_pct = std_dev_error_for_prob;
+            for prob_idx_idx = 1:length(collision_prob_indices)
+                prob_idx = collision_prob_indices(prob_idx_idx);
+
+                plot_num = plot_num + 1;
+                subplot(num_vert_charts, num_horiz_charts, plot_num);
+
+                pe_has_prob = [pe_list.collision_prob] == collision_probs(prob_idx);
+                selected_pes = pe_list(pe_has_prob & pe_has_picker & pe_has_param);
+                selected_andersons = [selected_pes.mean_error_anderson]; 
+                selected_summits = [selected_pes.mean_error_summit]; 
+
+                plot_limits = [min([0,selected_andersons, selected_summits]), max([selected_andersons, selected_summits])];
+
+                num_bins = 20;
+                if is_anderson_plot
+                    hist(selected_andersons, num_bins);
+                    xlabel('Anderson Error');
+                else
+                    hist(selected_summits, num_bins);
+                    xlabel('Summit Error');
+                end
+
+                title(sprintf('Errors in %s\nusing %s\nin density %3.1f', ...
+                    param_names{param_idx}, picker_legend{picker_idx}, ...
+                    collision_probs(prob_idx)));
+
+            end
+        end
+    end
+end
+
+
 %% How robust is each algorithm to location errors?
 % Here, I look at each peak in the noisy gold standard data, the
 % distance of that peak from its corresponding initial peak, and the
