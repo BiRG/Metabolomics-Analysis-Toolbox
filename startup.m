@@ -1,5 +1,6 @@
 clc
 
+addpath([pwd,'/lib/data_density_plot']); % Plot data density image rather than scatter plot
 addpath([pwd,'/lib/bonf_holm']);    %Bonferroni-Holm correction for multiple comparisons
 addpath([pwd,'/lib/munkres']);      %Linear assignment problem
 addpath([pwd,'/lib/rand_org']);     %True random numbers
