@@ -106,9 +106,34 @@ n = length(results);
 parameter_names = {'height','width-at-half-height','lorentzianness','location','area'};
 num_params = length(parameter_names);
 
+% Shorter name for the list of possible peak-picking names
+pp_names = GLBIO2013Deconv.peak_picking_method_names;
+
+% Remove the peak-picking method names that are not used in the data set
+name_used = false(size(pp_names));
+for peak_picking_name_idx = 1:length(pp_names)
+    for results_idx = 1:n
+        datum = results(results_idx);
+        deconvs = datum.deconvolutions;
+        peak_picking_name = pp_names{peak_picking_name_idx};
+        for deconv_idx = 1:length(deconvs)
+            d = deconvs(deconv_idx);
+            if strcmp(d.peak_picker_name, peak_picking_name)
+                name_used(peak_picking_name_idx) = true;
+                break;
+            end
+        end
+        if name_used(peak_picking_name_idx)
+            break;
+        end
+    end
+end
+pp_names = pp_names(name_used);
+
 % Param error structure has 12 = 4*3 = #params*#peak_pickers per result.
 % Preallocate it.
-num_error_list = num_params * 3 * n;
+num_peak_pickers = length(pp_names);
+num_error_list = num_params * num_peak_pickers * n;
 param_error_list(num_error_list).collision_prob = 0;
 param_error_list(num_error_list).peak_picking_name = '';
 param_error_list(num_error_list).parameter_name = '';
@@ -117,9 +142,6 @@ param_error_list(num_error_list).mean_error_anderson = 0;
 param_error_list(num_error_list).mean_error_summit = 0;
 param_error_list(num_error_list).error_diff = 0;
 param_error_list_idx = 1;
-
-% Shorter name for the list of possible peak-picking names
-pp_names = GLBIO2013Deconv.peak_picking_method_names;
 
 % Convert the list of results into a (larger) list of param_error
 % structures

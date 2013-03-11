@@ -51,7 +51,7 @@ screen_size = get(0,'Screensize');
 set(gcf, 'Position', [screen_size(1:2),screen_size(3)/2, screen_size(4)]); % Maximize figure in a dual monitor unix environment - which will be a half-width, full height window in a single monitor environment.
 
 %% Load the combined results
-load('Mar_07_2013_test_experiment_results.mat');
+load('Mar_07_2013_experiment_without_local_max.mat');
 
 %% Defend spectrum width choices
 % The spectral widths chosen give better than 99% probabilities that the
@@ -60,7 +60,7 @@ load('Mar_07_2013_test_experiment_results.mat');
 GLBIO2013_print_prob_counts_in_range_table(0.004);
 
 %% Calculate the parameters
-pe_list = GLBIO2013_calc_param_error_list(Mar_07_2013_test_experiment_results);
+pe_list = GLBIO2013_calc_param_error_list(Mar_07_2013_experiment_without_local_max);
 
 %% Does an improvement exist independent of where we look? 
 % The histogram suggests yes. And a paired t-test gives an unbelieveably
@@ -81,8 +81,8 @@ sig_box_handle = annotation('textbox',[0.5,0.5,0.2,0.2],'String', ...
 param_names = unique({pe_list.parameter_name});
 assert(length(param_names) == 5,'Right number of param names');
 peak_pickers = unique({pe_list.peak_picking_name});
-picker_legend = {'Gold Standard','Noisy Gold Standard', 'Smoothed Local Max'};
-picker_formats = {'r+-','bd-','*k-'};
+picker_legend = {'Gold Standard','Noisy Gold Standard'};
+picker_formats = {'r+-','bd-'};
 assert(length(picker_legend) == length(peak_pickers),'Right # picker legend entries');
 assert(length(picker_formats) == length(peak_pickers),'Right # picker formats');
 collision_probs = unique([pe_list.collision_prob]);
@@ -254,7 +254,7 @@ end
 % This is commented out because I couldn't get it to work within a
 % reasonable time-frame
 
-% loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(Mar_07_2013_test_experiment_results);
+% loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(Mar_07_2013_experiment_without_local_max);
 % clf;
 % for param_idx = 1:length(param_names)
 %     subplot(2,2,param_idx);
@@ -275,7 +275,7 @@ end
 % end
 
 %% Calculate the relative parameter errors
-pe_rel_list = GLBIO2013_calc_param_rel_error_list(Mar_07_2013_test_experiment_results);
+pe_rel_list = GLBIO2013_calc_param_rel_error_list(Mar_07_2013_experiment_without_local_max);
 
 %% Precalculate some values needed for plotting relative errors by parameter
 % On my home computer the large "unique" statements take a lot of time to
@@ -284,8 +284,8 @@ pe_rel_list = GLBIO2013_calc_param_rel_error_list(Mar_07_2013_test_experiment_re
 param_names = unique({pe_rel_list.parameter_name});
 assert(length(param_names) == 5,'Right number of param names');
 peak_pickers = unique({pe_rel_list.peak_picking_name});
-picker_legend = {'Gold Standard','Noisy Gold Standard', 'Smoothed Local Max'};
-picker_formats = {'r+-','bd-','*k-'};
+picker_legend = {'Gold Standard','Noisy Gold Standard'};
+picker_formats = {'r+-','bd-'};
 assert(length(picker_legend) == length(peak_pickers),'Right # picker legend entries');
 assert(length(picker_formats) == length(peak_pickers),'Right # picker formats');
 collision_probs = unique([pe_rel_list.collision_prob]);
