@@ -1,15 +1,151 @@
-* The problem: extracting parameters in congested regions
+* Overview
 
-** Why is extracting parameters in congested spectra important
+We improve an algorithm that extracts peak shapes from simulated
+congested spectra.
 
-*** Biofluid analysis is growing in importance
+** Contributions
 
-**** Metabolomics
+*** Improved optimization initialization with tighter bounds and better starting points to avoid local minima.
 
-**** Food analysis (for example, wine)
+*** Significantly better extraction of all fundamental and derived peak-shape parameters
 
-*** Biofluids are usually complex mixtures
+* The problem
 
-*** Many complex mixtures have congested regions
+** Each nucleus produces a lorentzian peak in the NMR spectrum whose parameters (location, width, and height) depend its chemical context and abundance.
 
-* 
+** Extracting these parameters tells experimenters about their sample.
+
+*** Area: proportional to compound concentration
+
+*** Width and location: give information about chemical characteristics (shape, number and type of bonds, symmetry, etc.)
+
+** The peaks from all nuclei in a sample are all added to produce the final spectrum.
+
+** Because there is little effect on the peak data from neighboring peaks when peaks are far apart, extraction is easy.
+
+Figure of widely separated interval.
+
+** Extraction is very difficult when peaks are close together and corrupted by noise. 
+
+Figure of congested interval with arrows to several interpretations
+
+* Solution
+
+** Anderson et. al. extend the theoretical Lorentzian curves to Gauss-Lorentz curves to take care of magnet shimming and other measurement artifacts.
+
+** They start with an initial estimate of peak locations from a peak-picking routine
+
+** Then using the data they calculate initial values and bounds for all 4 parameters for each peak.
+
+*** Location - initial value from peak picker. Bounded by minimum height on interval between this peak and next peak.
+
+*** Height - initial value is maximum on the interval between left and right location bounds. Bounded by 0 and the maximum of all y values.
+
+*** Width - initial value is 2 x distance of y value closest to half height from the initial peak location. Bounded by 0 and width of interval being fit.
+
+*** Lorentzianness - initial value is 0.5. Bounded by 0 and 1.
+
+** Then using that starting point and bounds they minimize the mean squared error between the model and the data.
+
+Equation (and definition of parameters) goes here
+
+* Our improvements
+
+** Intuition
+
+*** Humans naturally try to fit the peaks by looking at the top of each visible peak in turn and mentally subtracting it. We don't try to deal with all the interactions at once nor do we focus on the tails very much at all.
+
+    This is a good strategy because the signal for each peak is strongest near its summit. These points maximize SNR (signal-to-noise ratio) with respect to random noise and also distortions caused by nearby peaks.
+
+*** Fitting a single peak to a small number of peaks is fast.
+
+*** Peak widths in the same spectrum are similar and our width estimates are generally good, so we would not expect to see peaks with widths that would be extreme outliers with respect to our estimates.
+
+*** In congested areas, there is frequently no minimum between peaks, so it is better to choose the half-way point as a location bound. In non-congested areas, either works.
+
+*** Since the peaks are only positive, the height of a peak cannot be greater than the greatest point in it.
+
+** Calculation
+
+*** For each peak take a small number of samples around the initial maximum. 
+
+*** Fit only the model for that peak and only to those samples around the maximum
+
+*** After fitting a peak, subtract is contribution from the spectrum fitted by later peaks.
+
+*** Fit the peaks in order of increasing height - otherwise the tails from the larger peaks can overwhelm smaller peaks.
+
+*** After fitting all peaks, repeat 2 more times to stabilize the estimate.
+
+*** Finally set search bounds: 
+
+**** Location: midpoint between this peak and its neighbor on the appropriate side
+
+**** Height: 0 and the maximum within the location bounds
+
+**** Width: 0 and 75% ile of estimated widths + 3 * inter-quartile range. There is a hard maximum width of the largest width that can be expected in that type of spectrum (usually 0.4 or 0.45 for urine spectra, for example)
+
+**** Lorentzianness: 0 and 1.
+
+* Experiments 
+
+** Spectra
+
+We use simulated spectra because that lets us generate more spectra and gives us known peak parameters so we can calculate the errors of the extracted parameters.
+
+*** Location parameters uniformuly distributed over the interval.
+
+*** Non-location peak parameters derived from MetAssimulo's standards database
+
+*** 7 peaks per spectrum because this was the maximum with acceptable calculation times
+
+It also provides opportunity for significantly complicated behavior.
+
+*** 10 spectral widths give different levels of congestion. 
+
+**** Each has a probability that two peaks will be close enough so that no local mainimum will be between them. 10%, 20%, 30%, ..., 100%
+
+**** The probabilities were verified by simulation. Each interval has a 99.98% probabilty or better that the fraction of collisions is within +/-0.4% of the desired value.
+
+** Peak pickers
+
+The algorithm's performance is dependent on the quality of initially picked peak location
+
+*** Gold standard - test the algorithm with perfect information
+
+*** Noisy gold standard - simulate human expert picking the peaks - a small random error is added to the peak locations
+
+** Parameter extraction
+
+*** 1200 spectra were generated - 120 for each congestion level.
+
+*** Each generated spectrum was processed 4 times: once for each combination of peak-picker and optimization initialization method.
+
+*** This yielded 4 sets of extracted parameters. In a given set of parameters the extracted peaks were matched to the true peaks in a way that minimized the total sum of squares error in distance.
+
+* Results
+
+Include plot
+
+** T-tests with a Holm-Bonferroni multiple test correction to bring the family-wise error to 0.05 (95% significance). 
+
+** Two sets of test were done - one for improvement, the other for worsening. Because of dependence each set got its own test correction.
+
+** All 100 combinations of peak property, picking method and interval width except one had significant improvement with our initialization. The exception was lorentzianness for the gold standard and the most congested interval. 
+
+** No combination had a significant worsening.
+
+* Further Work
+
+** More peak-picking methods. 
+
+Besides humans, Anderson's original program used fully automatic
+peak-picking. However, the behavior is more complicated (and likely improves less than the methods we've presented so far) and requires additional data to fully evaluate.
+
+** Redo significance tests using non-parametric statistics
+
+The t-test assumes underlying normal distributions. Conventionally we
+can use it because our sample sizes are relatively large and we are
+dealing with means - so a normal approximation will not be too
+bad. However, it is best to check this assumption and use
+non-parametric statistics if necessary.
