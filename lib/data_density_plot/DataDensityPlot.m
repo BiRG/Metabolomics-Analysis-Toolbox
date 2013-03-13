@@ -1,4 +1,4 @@
-function DataDensityPlot( x, y, levels, limits, width, height )
+function DataDensityPlot( x, y, levels, width, height, limits)
 %DATADENSITYPLOT Plot the data density 
 %   Makes a contour map of data density
 %   x, y - data x and y coordinates

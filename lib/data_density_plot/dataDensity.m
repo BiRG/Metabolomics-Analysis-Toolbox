@@ -4,9 +4,9 @@ function [ dmap ] = dataDensity( x, y, width, height, limits)
 %   width, height - dimensions of the data density plot, in pixels
 %   limits - [xmin xmax ymin ymax] - defaults to data max/min
 %
-% By Malcolm McLean
+% Originally by Malcolm McLean
 %
-% Radically modified by Eric Moyer on 11 March 2013
+% Radically modified by Eric Moyer in March 2013
 %
     if(nargin == 4)
         limits(1) = min(x);
@@ -14,32 +14,31 @@ function [ dmap ] = dataDensity( x, y, width, height, limits)
         limits(3) = min(y);
         limits(4) = max(y);
     end
-    deltax = (limits(2) - limits(1)) / width;
-    deltay = (limits(4) - limits(3)) / height;
+    
+    % dmap(i,j) is the number of entries in bin i,j 
     dmap = zeros(height, width);
-    for ii = 0: height - 1
-        ymin = limits(3) + ii * deltay;
-        ymax = limits(3) + ii * deltay + deltay;
-        include_ymax = ii == height - 1;
-        for jj = 0 : width - 1
-            xmin = limits(1) + jj * deltax;
-            xmax = limits(1) + jj * deltax + deltax;
-            include_xmax = jj == width -1;
-            dd = 0;
-            for kk = 1: length(x)
-                curx = x(kk);
-                cury = y(kk);
-                if xmin <= curx && ...
-                   (curx < xmax || (include_xmax && curx == xmax)) && ...
-                   ymin <= cury && cury < ymax && ...
-                   (cury < ymax || (include_ymax && cury == ymax))
-                    dd = dd + 1; 
-                end
-            end
-            dmap(ii+1,jj+1) = dd;
+    
+    % Calculate the edges of the bins
+    x_edges = linspace(limits(1), limits(2), width+1);
+    y_edges = linspace(limits(3), limits(4), height+1);
+    
+    % Find out which bin each point will fall into
+    [~, xbin] = histc(x, x_edges);
+    [~, ybin] = histc(y, y_edges);
+    assert(length(xbin) == length(ybin));
+    
+    % Make the last bin include points equal to its upper bound
+    xbin(xbin > size(dmap,1)) = size(dmap,1);
+    ybin(ybin > size(dmap,2)) = size(dmap,2);
+    
+    % Count the values in each bin
+    for i = 1:length(xbin)
+        binx = xbin(i); biny = ybin(i); % Index of dest for current point
+        if binx > 0 && biny > 0
+            dmap(biny, binx) = dmap(biny, binx) + 1;
         end
     end
-            
+    
 
 end
 
