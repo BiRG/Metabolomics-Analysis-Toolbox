@@ -1,5 +1,10 @@
 % Prints a summary of the analysis of the results from experiments of March 7 2013 originally used to verify that a bug was no longer present.
 
+%% Set up path - add previous directory if can't find the GLBIO analysis routines
+if ~exist('GLBIO2013_plot_peaks_and_starting_point','file')
+    addpath([pwd,'/..']);
+end
+
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
 % starting points arrived at by Anderson's algorithm and the summit
