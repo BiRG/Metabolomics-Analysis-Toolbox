@@ -1,9 +1,12 @@
 %
 %
 %
-%  Test the data density plot
+% Run occupancy_2d_* finctions for human evaluation
 %
 %
+
+% Set the random number generator so we get reproducable results and save
+% the current rng state so we can restore it when we're done.
 old_rng = RandStream.getGlobalStream();
 rng(2048);
 
@@ -16,7 +19,9 @@ x((1537:2048)*mul) = x((1537:2048)*mul) + 2.75;
 y((1025:2048)*mul) = y((1025:2048)*mul) + 2.75;
 
 % Get densities as a matrix
-density_matrix = dataDensity(x, y, 10, 10, [-4, 6, -4, 4]);
+density_matrix = occupancy_2d(x, y, 10, 10, [-4, 6, -4, 4]);
+
+% Verify that densities have been generated correctly
 expected_density_matrix = [ ...
     0, 4, 32, 77, 72, 37, 31, 16, 7, 0; 
     3, 46, 298, 733, 822, 413, 306, 221, 75, 7; 
@@ -29,14 +34,17 @@ expected_density_matrix = [ ...
     2, 59, 264, 809, 838, 482, 379, 270, 93, 16; 
     0, 7, 38, 108, 128, 74, 72, 58, 15, 4];
 
-assertEqual(density_matrix, expected_density_matrix);
+if exist('assertEqual','file') % use matlab xunit if available
+    assertEqual(density_matrix, expected_density_matrix);
+else
+    assert(all(all(density_matrix == expected_density_matrix)), ...
+	   'occupancy_2d generates incorrect density matrix');
+end
 
-
-% On scatter plot you probably can't see the data density
-%figure;
-%scatter(x, y);
-% On data density plot the structure should be visible
+% Plot a nice graphic (which should be two adjacent blobs, with the one on
+% the right much less dense than the one on the right)
 figure;
-DataDensityPlot(x, y, 256, 80, 80,[-4,6,-4,4]);
+occupancy_2d_plot(x, y, 256, 80, 80,[-4,6,-4,4]);
 
+% Restore original random number generator
 RandStream.setGlobalStream(old_rng);
