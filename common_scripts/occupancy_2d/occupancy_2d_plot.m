@@ -1,5 +1,5 @@
-function DataDensityPlot( x, y, levels, width, height, limits)
-%DATADENSITYPLOT Plot the data density 
+function occupancy_2d_plot( x, y, levels, width, height, limits)
+%Plot the number of points in each square
 %   Makes a contour map of data density
 %   x, y - data x and y coordinates
 %   levels - number of contours to show
@@ -7,9 +7,9 @@ function DataDensityPlot( x, y, levels, width, height, limits)
 %   width  - width in pixels - number of horizontal bins - defaults to 256
 %   height - height in pixels - number of vertical bins - defaults to 256
 %
-% By Malcolm Mclean
+% By Eric Moyer
 %
-% Modified 11 Mar 2013 by Eric Moyer
+% Derived from DataDensityPlot by Malcolm Mclean
 %
 
     if ~exist('limits', 'var')
@@ -27,7 +27,7 @@ function DataDensityPlot( x, y, levels, width, height, limits)
         height = 256;
     end
     
-    map = dataDensity(x, y, width, height, limits);
+    map = occupancy_2d(x, y, width, height, limits);
     map = flipud(map);
 
     density_min = min(min(map));

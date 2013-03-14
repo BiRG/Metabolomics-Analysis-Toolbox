@@ -1,4 +1,4 @@
-function [ dmap ] = dataDensity( x, y, width, height, limits)
+function [ dmap ] = occupancy_2d( x, y, width, height, limits)
 %DATADENSITY Get a data density image of data 
 %   x, y - two vectors of equal length giving scatterplot x, y co-ords
 %   width, height - dimensions of the data density plot, in pixels
