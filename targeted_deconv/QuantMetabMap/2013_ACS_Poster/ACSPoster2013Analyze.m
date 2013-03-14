@@ -293,7 +293,7 @@ for plot_type_idx = 1:2
                 plot_limits = [min([0,selected_andersons, selected_summits]), max([selected_andersons, selected_summits])];
 
                 if is_density_plot
-                    DataDensityPlot(selected_summits, selected_andersons, 256, [plot_limits, plot_limits],20,20);
+                    occupancy_2d_plot(selected_summits, selected_andersons, 256, 20, 20, [plot_limits, plot_limits]);
                 else
                     scatter(selected_summits, selected_andersons);
                     xlim(plot_limits);
