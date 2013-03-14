@@ -8,19 +8,46 @@ function [ dmap ] = occupancy_2d( x, y, width, height, limits)
 %
 % Derived from dataDensity.m by Malcolm McLean
 %
-    if(nargin == 4)
+    % Throw exception if width or height are not positive integers
+    assert(width > 0, 'occupancy_2d:bad_num_bins', ...
+        'The width passed to occupancy_2d must be one or more.');
+    assert(width == round(width), 'occupancy_2d:bad_num_bins', ...
+        'The width passed to occupancy_2d must an integer.');
+    assert(height > 0, 'occupancy_2d:bad_num_bins', ...
+        'The height passed to occupancy_2d must be one or more.');
+    assert(height == round(height), 'occupancy_2d:bad_num_bins', ...
+        'The height passed to occupancy_2d must an integer.');
+    
+    % dmap(i,j) is the number of entries in bin i,j 
+    dmap = zeros(height, width);
+
+    % Ensure x and y are equal length
+    assert(length(x) == length(y), 'occupancy_2d:same_x_y_length', ...
+        'x and y inputs to occupancy_2d must have the same length');
+    
+    % If empty x or y matrix just return matrix of zeros
+    if isempty(x)
+        return;
+    end
+
+    % Fill in limits
+    if ~exist('limits','var')
         limits(1) = min(x);
         limits(2) = max(x);
         limits(3) = min(y);
         limits(4) = max(y);
     end
     
-    % dmap(i,j) is the number of entries in bin i,j 
-    dmap = zeros(height, width);
     
     % Calculate the edges of the bins
     x_edges = linspace(limits(1), limits(2), width+1);
+    if limits(1) == limits(2) % All x elements are identical 
+        x_edges = x_edges(1); % So: only one edge
+    end
     y_edges = linspace(limits(3), limits(4), height+1);
+    if limits(3) == limits(4) % All x elements are identical 
+        y_edges = y_edges(1); % So: only one edge
+    end
     
     % Find out which bin each point will fall into
     [~, xbin] = histc(x, x_edges);
