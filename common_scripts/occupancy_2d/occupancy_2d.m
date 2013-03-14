@@ -27,8 +27,7 @@ function [ dmap ] = occupancy_2d( x, y, width, height, limits)
     
     % If empty x or y matrix just return matrix of zeros
     if isempty(x)
-        return;
-    end
+        return; end % end is written on same line so code coverage catches the "execution" of the "end"
 
     % Fill in limits
     if ~exist('limits','var')
@@ -41,11 +40,11 @@ function [ dmap ] = occupancy_2d( x, y, width, height, limits)
     
     % Calculate the edges of the bins
     x_edges = linspace(limits(1), limits(2), width+1);
-    if limits(1) == limits(2) % All x elements are identical 
+    if limits(1) == limits(2) % Single point is the x bin
         x_edges = x_edges(1); % So: only one edge
     end
     y_edges = linspace(limits(3), limits(4), height+1);
-    if limits(3) == limits(4) % All x elements are identical 
+    if limits(3) == limits(4) % Single point is the y bin
         y_edges = y_edges(1); % So: only one edge
     end
     
