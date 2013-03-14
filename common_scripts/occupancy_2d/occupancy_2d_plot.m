@@ -9,7 +9,7 @@ function occupancy_2d_plot( x, y, levels, width, height, limits)
 %
 % By Eric Moyer
 %
-% Derived from DataDensityPlot by Malcolm Mclean
+% Derived from DataDensityPlot.m by Malcolm Mclean
 %
 
     if ~exist('limits', 'var')

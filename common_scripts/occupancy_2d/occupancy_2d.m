@@ -4,9 +4,9 @@ function [ dmap ] = occupancy_2d( x, y, width, height, limits)
 %   width, height - dimensions of the data density plot, in pixels
 %   limits - [xmin xmax ymin ymax] - defaults to data max/min
 %
-% Originally by Malcolm McLean
+% By Eric Moyer
 %
-% Radically modified by Eric Moyer in March 2013
+% Derived from dataDensity.m by Malcolm McLean
 %
     if(nargin == 4)
         limits(1) = min(x);
