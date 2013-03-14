@@ -1,6 +1,5 @@
 clc
 
-addpath([pwd,'/lib/data_density_plot']); % Plot data density image rather than scatter plot
 addpath([pwd,'/lib/bonf_holm']);    %Bonferroni-Holm correction for multiple comparisons
 addpath([pwd,'/lib/munkres']);      %Linear assignment problem
 addpath([pwd,'/lib/rand_org']);     %True random numbers
@@ -12,6 +11,7 @@ addpath([pwd,'/lib/mtit/']); % Code to add title to plot where subplots also hav
 addpath([pwd,'/common_scripts']);
 addpath([pwd,'/common_scripts/cursors']);
 addpath([pwd,'/common_scripts/dab']);
+addpath([pwd,'/common_scripts/occupancy_2d']); % Plot num points in rectangular subregions of parameter space
 
 fprintf('Metabolomics Analysis Toolbox\n\n');
 fprintf('Summary of functionality:\n');
