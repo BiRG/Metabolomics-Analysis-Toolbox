@@ -48,7 +48,7 @@ subplot(2,2,4);
 legend(handles, element_names, 'Location', 'NorthEast');
 
 %% Load the combined results
-load('glbio2013_combined_raw_results.mat');
+load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
 %% Defend spectrum width choices
 % The spectral widths chosen give better than 99% probabilities that the
