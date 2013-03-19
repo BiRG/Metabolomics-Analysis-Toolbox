@@ -238,7 +238,13 @@ for param_idx = 1:length(param_names)
     end
 end
 
-%% How robust is each algorithm to location errors?
+%% Precalculate loc_param_errors
+% This takes a while on my home computer so I put it in a separate cell
+loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(glbio_combined_results);
+starting_pt_names = {'Anderson','Summit'};
+pa_param_names = {'height', 'width','lorentzianness', 'location'}; % Param names for the successive elements returned by the GaussLorentzPeak.property_array function
+
+%% How robust is each starting point to location errors?
 % Here, I look at each peak in the noisy gold standard data, the
 % distance of that peak from its corresponding initial peak, and the
 % distance of the corresponding deconvolved peak parameters from the true
@@ -248,28 +254,84 @@ end
 % error versus final difference for that peak parameter (ignoring the
 % crowdedness of the bin)
 %
-% This is commented out because I couldn't get it to work within a
-% reasonable time-frame
+% These graphs seem to show that there is more error when the initial
+% location is lower. However, I suspect that the high density of low
+% initial location errors explains that: the distribution is more densely
+% sampled at those points - so it seems to be worse. I'll do a density plot
+% next
+clf;
+for param_idx = 1:length(pa_param_names)
+    for start_pt_idx = 1:2
+        subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+        title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+            starting_pt_names{start_pt_idx});
+        title(capitalize(title_tmp));
+        xlabel('Error in initial location');
+        ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
+        hold on;
+        loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+        par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+        scatter( loc_e , par_e );
+        ylim(prctile(par_e, [2,98]));
+    end
+end
 
-% loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(glbio_combined_results);
-% clf;
-% for param_idx = 1:length(param_names)
-%     subplot(2,2,param_idx);
-%     title_tmp = param_names{param_idx};
-%     title([upper(title_tmp(1)),title_tmp(2:end)]);
-%     xlabel('Error in initial location');
-%     ylabel(['Error in ', title_tmp]);
-%     hold on;
-%     try
-%     anderson_h = scatter([loc_param_errs(:,param_idx, 1).peak_loc_error], ...
-%         [loc_param_errs(:,param_idx, 1).param_error]);
-%     summit_h = scatter([loc_param_errs(:,param_idx, 2).peak_loc_error], ...
-%         [loc_param_errs(:,param_idx, 2).param_error]);
-%     catch ME
-%         %TODO: the try catch block is DEBUG code
-%         fprintf('HERE:%s\n',ME.message); throw(ME);
-%     end    
-% end
+%% How robust is each starting point to location errors (density plot)?
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% This time, I plot the histogram density rather than a scatter plot, to
+% see if things are more interpretable
+%
+% These plots support my assesment above - the super-high density of low
+% error peaks 
+clf;
+for param_idx = 1:length(pa_param_names)
+    for start_pt_idx = 1:2
+        subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+        loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+        par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+        occupancy_2d_plot( loc_e , par_e, 256, 32, 32, [0,max(loc_e), 0, prctile(par_e, 98)]);
+        title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+            starting_pt_names{start_pt_idx});
+        title(capitalize(title_tmp));
+        xlabel('Error in initial location');
+        ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
+        hold on;
+        ylim();
+    end
+end
+
+%% How robust is each starting point to location errors (scatter plot - by congenstion)?
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% This time, I plot one set of scatter plots for each of the 10 congestions
+%
+% These plots don't reveal any interesting patterns - except that it seems
+% that beyond a certain limit initial distance doesn't seem to matter much
+% and that that distance seems to grow with the congestion.
+clf
+for congestion_idx = 2:4:10
+    figure(congestion_idx)
+    for param_idx = 1:length(pa_param_names)
+        for start_pt_idx = 1:2
+            subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+            title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+                starting_pt_names{start_pt_idx});
+            title(capitalize(title_tmp));
+            xlabel('Error in initial location');
+            ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
+            hold on;
+            loc_e = [loc_param_errs(congestion_idx, param_idx, start_pt_idx).peak_loc_error];
+            par_e = [loc_param_errs(congestion_idx, param_idx, start_pt_idx).param_error];
+            scatter( loc_e , par_e );
+            ylim([0, prctile(par_e, 98)]);
+        end
+    end
+end
 
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
@@ -407,4 +469,3 @@ for param_idx = 1:length(param_names)
         end
     end
 end
-
