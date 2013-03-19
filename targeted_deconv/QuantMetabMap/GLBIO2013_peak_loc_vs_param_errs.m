@@ -99,14 +99,14 @@ function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
         assert(strcmp(deconv.datum_id,datum.id));
         assert(strcmp(deconv.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard));
         
-        datum_peaks  = datum.spectrum_peaks(deconv.aligned_indices(1,:));
+        datum_peaks = datum.spectrum_peaks(deconv.aligned_indices(1,:));
         datum_locs = [datum_peaks.location];
         picked_locs = deconv.picked_locations(deconv.aligned_indices(1,:));
         try
             errs = abs(datum_locs - picked_locs);
         catch ME
             %TODO: the try catch block is DEBUG code
-            fprintf('%s\n',ME.message);
+            fprintf('Error in picker_loc_errors %s\n',ME.message);
         end
 end
 
@@ -115,44 +115,45 @@ num_results = length(results);
 num_params = 4;
 num_probs = 10;
 num_starting_pt = 2;
-
+anderson_idx = 1;
+summit_idx = 2;
 
 % The names for the parameter at offset i in the peak parameters list
 % returned by GaussLorentzPeak>property_array
 parameter_names = {'height','width-at-half-height','lorentzianness','location'};
 assert(num_params == length(parameter_names));
 
-% Param error structure has 12 = 4*3 = #params*#peak_pickers per result.
-% Preallocate it with contents being empty arrays
+% Preallocate results with contents being empty arrays
 loc_param_errs(num_probs, num_params, num_starting_pt)=...
     struct('peak_loc_error',[],'param_error',[]);
 
 
-% Convert the list of results into a (larger) list of param_error
+% Convert the list of results into a (larger) list of loc_param_error
 % structures
 for results_idx = 1:num_results
-    % Set initial shortcut variables that are constant for all param_error
-    % structures generated from this result
+    % Set initial shortcut variables that are constant for all
+    % loc_param_error structures generated from this result
     datum = results(results_idx);
     deconvs = datum.deconvolutions;
     collision_prob = collision_prob_for_width(datum.spectrum_width);
     collision_prob_idx = round(collision_prob * 10);
 
-       
-    % Put the two deconvolutions with this type of peak-picking into
-    % the variables anderson and summit
-    assert(~exist('anderson','var')); % The variables should have been cleared last iteration
-    assert(~exist('summit','var')); % The variables should have been cleared last iteration
+
+    % Put the two deconvolutions with noisy gold standard peak picking into
+    % ngs. ngs(anderson_idx) holds the anderson deconvolution and
+    % ngs(summit_idx) holds the summit-focused deconvolution. ngs is
+    % cleared each iteration
+    ngs = cell(1, num_starting_pt); % Preallocate ngs
     for deconv_idx = 1:length(deconvs)
         d = deconvs(deconv_idx);
         if strcmp(d.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard)
             switch d.starting_point_name
                 case GLBIO2013Deconv.dsp_anderson
-                    assert(~exist('anderson','var')); % We shouldn't ever assign twice here
-                    anderson = d;
+                    assert(isempty(ngs{anderson_idx})); % We shouldn't ever assign twice here
+                    ngs{anderson_idx} = d;
                 case GLBIO2013Deconv.dsp_smallest_peak_first
-                    assert(~exist('summit','var')); % We shouldn't ever assign twice here
-                    summit = d;
+                    assert(isempty(ngs{summit_idx})); % We shouldn't ever assign twice here
+                    ngs{summit_idx} = d;
                 otherwise
                     error('GLBIO2013Analyze:unknown_starting_point', ...
                         'Unknown starting point "%s" found in GLBIO results at index %d', ...
@@ -160,37 +161,26 @@ for results_idx = 1:num_results
             end
         end
     end
-    assert(isa(anderson, 'GLBIO2013Deconv'));
-    assert(isa(summit, 'GLBIO2013Deconv'));
+    ngs = [ngs{:}];
 
     % Calculate the errors for those two deconvolutions
-    anderson_errors = param_errors(anderson, datum);
-    anderson_picker_errors = picker_loc_errors(anderson, datum);
-    if length(anderson_errors) ~= 4*length(anderson_picker_errors)        
-        fprintf('Unequal anderson lengths.\n');
-    end
-    summit_errors = param_errors(summit, datum);
-    summit_picker_errors = picker_loc_errors(anderson,datum);
-    if length(summit_errors) ~= 4*length(summit_picker_errors)        
-        fprintf('Unequal summit lengths.\n');
+    for start_pt_idx = 1:num_starting_pt
+        param_e = param_errors(ngs(1, start_pt_idx), datum);
+        picker_e = picker_loc_errors(ngs(1, start_pt_idx), datum);
+        assert(length(param_e) == 4*length(picker_e));
+
+        % For each parameter of the peaks in the deconvolution, add to the
+        % lists of error pairs 
+        for param_idx = 1:num_params
+            pe = loc_param_errs(collision_prob_idx, param_idx, start_pt_idx);
+            pe.peak_loc_error = [pe.peak_loc_error, picker_e];
+            pe.param_error = [pe.param_error, param_e(param_idx:4:end)];
+            loc_param_errs(collision_prob_idx, param_idx, start_pt_idx) = pe;
+        end
     end
     
-    % For each parameter of the peaks in the deconvolution, add to the
-    % lists of error pairs for the the appropriate entry for that 
-    num_params = length(parameter_names);
-    for param_idx = 1:num_params
-        pe = loc_param_errs(collision_prob_idx, param_idx, 1);
-        pe.peak_loc_error = [pe.peak_loc_error, anderson_picker_errors];
-        pe.param_error = [pe.param_error, anderson_errors(param_idx:4:end)];
-        loc_param_errs(collision_prob_idx, param_idx, 1) = pe;
 
-        pe = loc_param_errs(collision_prob_idx, param_idx, 2);
-        pe.peak_loc_error = [pe.peak_loc_error, summit_picker_errors];
-        pe.param_error = [pe.param_error, summit_errors(param_idx:4:end)];
-        loc_param_errs(collision_prob_idx, param_idx, 2) = pe;
-    end
-
-    clear('anderson','summit');
+    clear('ngs');
 
 end
 
