@@ -1,11 +1,14 @@
 function occupancy_2d_plot( x, y, levels, width, height, limits)
-%Plot the number of points in each square
-%   Makes a contour map of data density
+% Plot the number of points in each square
+%
+% Usage: occupancy_2d_plot( x, y, levels, width, height, limits)
+%
+% Makes a contour map of data density
 %   x, y - data x and y coordinates
 %   levels - number of contours to show
 %   limits - [xmin xmax ymin ymax] - defaults to data max/min
-%   width  - width in pixels - number of horizontal bins - defaults to 256
-%   height - height in pixels - number of vertical bins - defaults to 256
+%   width  - width in pixels - number of horizontal bins - defaults to 64
+%   height - height in pixels - number of vertical bins - defaults to 64
 %
 % By Eric Moyer
 %
@@ -20,11 +23,11 @@ function occupancy_2d_plot( x, y, levels, width, height, limits)
     end
     
     if ~exist('width','var')
-        width = 256;
+        width = 64;
     end
 
     if ~exist('height','var')
-        height = 256;
+        height = 64;
     end
     
     map = occupancy_2d(x, y, width, height, limits);

@@ -54,8 +54,8 @@ function [ dmap ] = occupancy_2d( x, y, width, height, limits)
     assert(length(xbin) == length(ybin));
     
     % Make the last bin include points equal to its upper bound
-    xbin(xbin > size(dmap,1)) = size(dmap,1);
-    ybin(ybin > size(dmap,2)) = size(dmap,2);
+    xbin(xbin > size(dmap,2)) = size(dmap,2);
+    ybin(ybin > size(dmap,1)) = size(dmap,1);
     
     % Count the values in each bin
     for i = 1:length(xbin)
