@@ -47,6 +47,7 @@ subplot(2,2,4);
     extended_x, simple_peaks2, 2, starting_params, lb, ub);
 legend(handles, element_names, 'Location', 'NorthEast');
 
+maximize_figure(gcf, 2);
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
@@ -314,7 +315,7 @@ end
 % and that that distance seems to grow with the congestion.
 clf
 for congestion_idx = 2:4:10
-    figure(congestion_idx)
+    figure(congestion_idx); clf; maximize_figure(congestion_idx,2);
     for param_idx = 1:length(pa_param_names)
         for start_pt_idx = 1:2
             subplot(4,2,(param_idx-1)*2 + start_pt_idx);
@@ -373,6 +374,72 @@ end
 % versus the mean parameter error for each parameter. The location errors
 % are width scaled. 
 %
+% I write my observations in the next one
+clf;
+samples_per_bin = 40;
+for param_idx = 1:length(pa_param_names)
+    for start_pt_idx = 1:2
+        subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+        title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+            starting_pt_names{start_pt_idx});
+        title(capitalize(title_tmp));
+        xlabel(sprintf('Mean (of %d) width-scaled error in initial location',samples_per_bin));
+        ylabel(['Mean error in ', capitalize(pa_param_names{param_idx})]);
+        hold on;
+        
+        % Get the error pairs
+        loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+        loc_e = loc_e ./ [loc_param_errs(:,param_idx, start_pt_idx).peak_width];
+        par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+        
+        % Sort them
+        [sorted_loc_e, loc_order] = sort(loc_e);
+        sorted_par_e = par_e(loc_order);
+        
+        % Calculate which bin each sample goes into
+        bin_idx = floor((0:length(loc_e)-1)/samples_per_bin)+1;
+        
+        % Calculate the binned values
+        num_bins = ceil(length(loc_e)/samples_per_bin);
+        bins = struct('num',zeros(1,num_bins),'loc_e',zeros(1,num_bins), ...
+            'par_e', zeros(1, num_bins));
+        for i=1:length(loc_e)
+            bi = bin_idx(i);
+            bins.num(bi) = bins.num(bi)+1;
+            bins.loc_e(bi) = bins.loc_e(bi) + sorted_loc_e(i);
+            bins.par_e(bi) = bins.par_e(bi) + sorted_par_e(i);
+        end
+        assert(all(bins.num > 0));
+        
+        % Plot
+        plot( bins.loc_e./bins.num, bins.par_e./bins.num,'+-' );
+        xlim(prctile(bins.loc_e./bins.num,[0,100]));
+    end
+end
+
+
+%% How robust is each starting point to location errors?  (lowest 20% mean plot bins with equal # samples - width scaled)
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% I only display the lowest 20% of the peak errors since they are the most
+% interesting.
+%
+% This time, I sort by location error and divide the data up into bins
+% containing equal numbers of samples. I plot the mean location error
+% versus the mean parameter error for each parameter. The location errors
+% are width scaled. 
+% 
+% These are hard to interpret. The general trend seems to be wildly varying
+% errors with a vaguely decreasing mean as the location error increases. I
+% now have a theory as to why we are seeing the decrease - once the initial
+% location is far enough from the desired peak, it fastens onto another
+% peak. I wonder if (for the summit focused) this is related to the width
+% of the summit examined. There may also be an effect of the alignment: as
+% the fitted peak location gets farther from the real one, it may not be
+% the closest anymore when the alignment is done - that is not the right
+% way to say it. 
 clf;
 samples_per_bin = 40;
 for param_idx = 1:length(pa_param_names)
@@ -416,16 +483,76 @@ for param_idx = 1:length(pa_param_names)
 end
 
 
-%% How robust is each starting point to location errors?  (mean plot bins with equal # samples - raw loc)
+%% How robust is each starting point to location errors?  (by congestion mean plot bins with equal # samples - width scaled)
 % Here, I again plot the the noisy gold standard data: initial location
-% error versus final difference for that peak parameter (ignoring the
-% crowdedness of the bin)
+% error versus final difference for that peak parameter. I look ar rhw
+%
+% I display the region that was the lowest 20% or the all-congenstions
+% error region (for easy comparison).
 %
 % This time, I sort by location error and divide the data up into bins
 % containing equal numbers of samples. I plot the mean location error
 % versus the mean parameter error for each parameter. The location errors
 % are width scaled. 
 %
+samples_per_bin = 40;
+for congestion_idx = [3:3:10,10]
+    figure(congestion_idx); clf; maximize_figure(congestion_idx, 2);
+    for param_idx = 1:length(pa_param_names)
+        for start_pt_idx = 1:2
+            subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+            title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+                starting_pt_names{start_pt_idx});
+            title(capitalize(title_tmp));
+            xlabel(sprintf('Mean (of %d) width-scaled error in initial location congestion %3.1f',samples_per_bin, congestion_idx/10));
+            ylabel(['Mean error in ', capitalize(pa_param_names{param_idx})]);
+            hold on;
+
+            % Get the error pairs
+            loc_e = [loc_param_errs(congestion_idx,param_idx, start_pt_idx).peak_loc_error];
+            loc_e = loc_e ./ [loc_param_errs(congestion_idx,param_idx, start_pt_idx).peak_width];
+            par_e = [loc_param_errs(congestion_idx,param_idx, start_pt_idx).param_error];
+
+            % Sort them
+            [sorted_loc_e, loc_order] = sort(loc_e);
+            sorted_par_e = par_e(loc_order);
+
+            % Calculate which bin each sample goes into
+            bin_idx = floor((0:length(loc_e)-1)/samples_per_bin)+1;
+
+            % Calculate the binned values
+            num_bins = ceil(length(loc_e)/samples_per_bin);
+            bins = struct('num',zeros(1,num_bins),'loc_e',zeros(1,num_bins), ...
+                'par_e', zeros(1, num_bins));
+            for i=1:length(loc_e)
+                bi = bin_idx(i);
+                bins.num(bi) = bins.num(bi)+1;
+                bins.loc_e(bi) = bins.loc_e(bi) + sorted_loc_e(i);
+                bins.par_e(bi) = bins.par_e(bi) + sorted_par_e(i);
+            end
+            assert(all(bins.num > 0));
+
+            % Plot
+            plot( bins.loc_e./bins.num, bins.par_e./bins.num,'+-' );
+            %xlim([0,8]);
+        end
+    end
+end
+
+%% How robust is each starting point to location errors?  (mean plot bins with equal # samples - raw loc)
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% I only display the lowest 20% of the peak errors since they are the most
+% interesting.
+%
+% This time, I sort by location error and divide the data up into bins
+% containing equal numbers of samples. I plot the mean location error
+% versus the mean parameter error for each parameter. 
+%
+% The raw results look similar to the scaled results - but maybe a bit
+% noisier.
 clf;
 samples_per_bin = 40;
 for param_idx = 1:length(pa_param_names)
