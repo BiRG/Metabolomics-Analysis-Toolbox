@@ -351,7 +351,7 @@ for param_idx = 1:length(pa_param_names)
         title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
             starting_pt_names{start_pt_idx});
         title(capitalize(title_tmp));
-        xlabel('Error in initial location');
+        xlabel('Width-scaled error in initial location');
         ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
         hold on;
         loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
@@ -359,6 +359,111 @@ for param_idx = 1:length(pa_param_names)
         par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
         scatter( loc_e , par_e );
         ylim(prctile(par_e, [2,98]));
+    end
+end
+
+
+%% How robust is each starting point to location errors?  (mean plot bins with equal # samples - width scaled)
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% This time, I sort by location error and divide the data up into bins
+% containing equal numbers of samples. I plot the mean location error
+% versus the mean parameter error for each parameter. The location errors
+% are width scaled. 
+%
+clf;
+samples_per_bin = 40;
+for param_idx = 1:length(pa_param_names)
+    for start_pt_idx = 1:2
+        subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+        title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+            starting_pt_names{start_pt_idx});
+        title(capitalize(title_tmp));
+        xlabel(sprintf('Mean (of %d) width-scaled error in initial location',samples_per_bin));
+        ylabel(['Mean error in ', capitalize(pa_param_names{param_idx})]);
+        hold on;
+        
+        % Get the error pairs
+        loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+        loc_e = loc_e ./ [loc_param_errs(:,param_idx, start_pt_idx).peak_width];
+        par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+        
+        % Sort them
+        [sorted_loc_e, loc_order] = sort(loc_e);
+        sorted_par_e = par_e(loc_order);
+        
+        % Calculate which bin each sample goes into
+        bin_idx = floor((0:length(loc_e)-1)/samples_per_bin)+1;
+        
+        % Calculate the binned values
+        num_bins = ceil(length(loc_e)/samples_per_bin);
+        bins = struct('num',zeros(1,num_bins),'loc_e',zeros(1,num_bins), ...
+            'par_e', zeros(1, num_bins));
+        for i=1:length(loc_e)
+            bi = bin_idx(i);
+            bins.num(bi) = bins.num(bi)+1;
+            bins.loc_e(bi) = bins.loc_e(bi) + sorted_loc_e(i);
+            bins.par_e(bi) = bins.par_e(bi) + sorted_par_e(i);
+        end
+        assert(all(bins.num > 0));
+        
+        % Plot
+        plot( bins.loc_e./bins.num, bins.par_e./bins.num,'+-' );
+        xlim(prctile(bins.loc_e./bins.num,[0,20]));
+    end
+end
+
+
+%% How robust is each starting point to location errors?  (mean plot bins with equal # samples - raw loc)
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% This time, I sort by location error and divide the data up into bins
+% containing equal numbers of samples. I plot the mean location error
+% versus the mean parameter error for each parameter. The location errors
+% are width scaled. 
+%
+clf;
+samples_per_bin = 40;
+for param_idx = 1:length(pa_param_names)
+    for start_pt_idx = 1:2
+        subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+        title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+            starting_pt_names{start_pt_idx});
+        title(capitalize(title_tmp));
+        xlabel(sprintf('Mean (of %d) raw error in initial location',samples_per_bin));
+        ylabel(['Mean error in ', capitalize(pa_param_names{param_idx})]);
+        hold on;
+        
+        % Get the error pairs
+        loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+        par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+        
+        % Sort them
+        [sorted_loc_e, loc_order] = sort(loc_e);
+        sorted_par_e = par_e(loc_order);
+        
+        % Calculate which bin each sample goes into
+        bin_idx = floor((0:length(loc_e)-1)/samples_per_bin)+1;
+        
+        % Calculate the binned values
+        num_bins = ceil(length(loc_e)/samples_per_bin);
+        bins = struct('num',zeros(1,num_bins),'loc_e',zeros(1,num_bins), ...
+            'par_e', zeros(1, num_bins));
+        for i=1:length(loc_e)
+            bi = bin_idx(i);
+            bins.num(bi) = bins.num(bi)+1;
+            bins.loc_e(bi) = bins.loc_e(bi) + sorted_loc_e(i);
+            bins.par_e(bi) = bins.par_e(bi) + sorted_par_e(i);
+        end
+        assert(all(bins.num > 0));
+        
+        % Plot
+        plot( bins.loc_e./bins.num, bins.par_e./bins.num,'+-' );
+        xlim(prctile(bins.loc_e./bins.num,[0,20]));
     end
 end
 
