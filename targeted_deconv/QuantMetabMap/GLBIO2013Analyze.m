@@ -305,8 +305,7 @@ end
 
 %% How robust is each starting point to location errors (scatter plot - by congenstion)?
 % Here, I again plot the the noisy gold standard data: initial location
-% error versus final difference for that peak parameter (ignoring the
-% crowdedness of the bin)
+% error versus final difference for that peak parameter
 %
 % This time, I plot one set of scatter plots for each of the 10 congestions
 %
@@ -332,6 +331,38 @@ for congestion_idx = 2:4:10
         end
     end
 end
+
+%% How robust is each starting point to location errors?  (scatter plot: width scaled)
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% For each peak parameter, I plot a scatter plot of initial location
+% error versus final difference for that peak parameter. In this plot, the
+% initial location errors are divided by the width of the peak.
+%
+% The scatter plots seem to get tighter when you divide by peak width, but
+% they still look weighted toward the lower peak error. Also the linear
+% structures visible in the anderson errors for location vanish.
+clf;
+for param_idx = 1:length(pa_param_names)
+    for start_pt_idx = 1:2
+        subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+        title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+            starting_pt_names{start_pt_idx});
+        title(capitalize(title_tmp));
+        xlabel('Error in initial location');
+        ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
+        hold on;
+        loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+        loc_e = loc_e ./ [loc_param_errs(:,param_idx, start_pt_idx).peak_width];
+        par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+        scatter( loc_e , par_e );
+        ylim(prctile(par_e, [2,98]));
+    end
+end
+
+
 
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);

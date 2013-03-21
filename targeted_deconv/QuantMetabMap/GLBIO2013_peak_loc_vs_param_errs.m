@@ -25,6 +25,10 @@ function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
 %                  each peak, parameter pair meeting the criteria of the
 %                  indices into the array.
 %
+% peak_width - (row vector) the list of the actual peak widths for each
+%              peak, parameter pair meeting the criteria of the indices
+%              into the array
+%
 % param_error - (row vector) the list of errors for each peak,parameter 
 %               pair meeting the criteria of the indices into the array
 
@@ -125,7 +129,7 @@ assert(num_params == length(parameter_names));
 
 % Preallocate results with contents being empty arrays
 loc_param_errs(num_probs, num_params, num_starting_pt)=...
-    struct('peak_loc_error',[],'param_error',[]);
+    struct('peak_loc_error',[],'peak_width',[],'param_error',[]);
 
 
 % Convert the list of results into a (larger) list of loc_param_error
@@ -167,6 +171,7 @@ for results_idx = 1:num_results
     for start_pt_idx = 1:num_starting_pt
         param_e = param_errors(ngs(1, start_pt_idx), datum);
         picker_e = picker_loc_errors(ngs(1, start_pt_idx), datum);
+        peak_widths = [datum.spectrum_peaks.half_height_width];
         assert(length(param_e) == 4*length(picker_e));
 
         % For each parameter of the peaks in the deconvolution, add to the
@@ -174,6 +179,7 @@ for results_idx = 1:num_results
         for param_idx = 1:num_params
             pe = loc_param_errs(collision_prob_idx, param_idx, start_pt_idx);
             pe.peak_loc_error = [pe.peak_loc_error, picker_e];
+            pe.peak_width = [pe.peak_width, peak_widths];
             pe.param_error = [pe.param_error, param_e(param_idx:4:end)];
             loc_param_errs(collision_prob_idx, param_idx, start_pt_idx) = pe;
         end
