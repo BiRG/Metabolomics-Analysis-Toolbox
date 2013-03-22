@@ -161,7 +161,7 @@ for results_idx = 1:num_results
                 otherwise
                     error('GLBIO2013Analyze:unknown_starting_point', ...
                         'Unknown starting point "%s" found in GLBIO results at index %d', ...
-                        d.starting_point, results_idx);
+                        d.starting_point_name, results_idx);
             end
         end
     end
