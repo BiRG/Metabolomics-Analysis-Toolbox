@@ -89,6 +89,28 @@ classdef GLBIO2013Deconv
             str = 'pp_noisy_gold_standard';
         end
         
+        function str = pp_noiseless_merge_two
+        % Constant used to signify the merge-two peak picking
+        % method (the two peaks with the highest minimum between them or if
+        % the maximum
+        
+        % Test code:
+         for d=0:0.1:1; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; figure(round(10*d+1)); plot(x,g(1).at(x),'m',x,g(2).at(x),'m',x,g(2).at(x)./g(1).at(x),'b'); end
+for d=0:0.1:1; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; figure(round(10*d+1)); plot(x,g(1).at(x),'m',x,g(2).at(x),'m',x,g(2).at(x)./g(1).at(x),'b'); ylim([0,3]); end
+for d=0:0.1:1; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; a=g(1).at(x); b=g(2).at(x); figure(round(10*d+1)); plot(x,a,'m',x,b,'m',x,a+b,'b',x,min(a,b)./max(a,b),'b'); ylim([0,3]); end
+for d=0:0.1:0.4; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; a=g(1).at(x); b=g(2).at(x); figure(round(10*d+1)); plot(x,a,'m',x,b,'m',x,a+b,'b',x,min(a,b)./max(a,b),'r'); ylim([0,3]); end
+for d=-0:0.1:0.4; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; a=g(1).at(x); b=g(2).at(x); mx=max(min(a,b)./max(a,b)); fprintf('%f'; end
+            str = 'pp_noiseless_merge_two';
+        end
+        
+        function str = pp_noisy_merge_two
+        % Constant used to signify the merge-two peak picking
+        % method with added noise on the ppm dimension (providing a way to distinguish between
+        % error due to missing peaks and error due to noisy starting
+        % points)
+            str = 'pp_noisy_merge_two';
+        end
+        
         function str = pp_smoothed_local_max
         % Constant used to signify the smoothed local maximum peak-picking method
             str = 'pp_smoothed_local_max';
