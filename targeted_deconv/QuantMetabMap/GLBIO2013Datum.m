@@ -42,6 +42,33 @@ classdef GLBIO2013Datum
 
     end
     
+    methods(Static)
+        function obj = dangerous_constructor(spectrum_peaks, ...
+            spectrum_width, deconvolutions, resolution, ...
+            spectrum_interval, spectrum, spectrum_snr, id)
+        % Return a GLBIO2013Datum with the properties set to the values passed in.
+        %
+        % NO ERROR CHECKING IS DONE. This method is intended for use in
+        % testing. Don't use it unless you are testing. 
+        %
+        % Example:
+        %
+        % >> g = GLBIO2013Datum.dangerous_constructor([],2,3,4,5,6,7,'my id')
+        %
+        % Produces a completely unusable GLBIO2013Datum object
+            obj = GLBIO2013Datum;
+            obj.spectrum_peaks = spectrum_peaks;
+            obj.spectrum_width = spectrum_width;
+            obj.deconvolutions = deconvolutions;
+            obj.resolution = resolution;
+            obj.spectrum_interval = spectrum_interval;
+            obj.spectrum = spectrum;
+            obj.spectrum_snr = spectrum_snr;
+            obj.id = id;
+        end
+
+    end
+    
     methods
         function obj=GLBIO2013Datum(spectrum_width)
         % Generate a random data point for the given spectrum width
@@ -108,9 +135,6 @@ classdef GLBIO2013Datum
                 end
             end
         end
-        
-
-        
 	
 
         
@@ -135,6 +159,5 @@ classdef GLBIO2013Datum
             fprintf('%s\n',objs.char);
         end
     end
-    
 end
 

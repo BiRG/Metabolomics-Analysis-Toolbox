@@ -125,6 +125,34 @@ classdef GLBIO2013Deconv
                 GLBIO2013Deconv.dsp_anderson(), ...
                 GLBIO2013Deconv.dsp_smallest_peak_first()}; 
         end
+        
+        function obj = dangerous_constructor(peak_picker_name, ...
+            picked_locations, starting_point_name, starting_point, ...
+            starting_point_lb, starting_point_ub, peaks, aligned_indices, ...
+            datum_id)
+        % Return a GLBIO2013Deconv with the properties set to the values passed in.
+        %
+        % NO ERROR CHECKING IS DONE. This method is intended for use in
+        % testing. Don't use it unless you are testing. 
+        %
+        % self should be a single object not an object array
+        %
+        % Example:
+        %
+        % >> g = GLBIO2013Deconv.dangerous_constructor([],2,3,4,5,6,7,8,'my id')
+        %
+        % Produces a completely unusable GLBIO2013Deconv object
+            obj = GLBIO2013Deconv;
+            obj.peak_picker_name = peak_picker_name;
+            obj.picked_locations = picked_locations;
+            obj.starting_point_name = starting_point_name;
+            obj.starting_point = starting_point;
+            obj.starting_point_lb = starting_point_lb;
+            obj.starting_point_ub = starting_point_ub;
+            obj.peaks = peaks;
+            obj.aligned_indices = aligned_indices;
+            obj.datum_id = datum_id;
+        end
     end
     
     methods
