@@ -93,13 +93,14 @@ classdef GLBIO2013Deconv
         % Constant used to signify the merge-two peak picking
         % method (the two peaks with the highest minimum between them or if
         % the maximum
-        
-        % Test code:
-         for d=0:0.1:1; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; figure(round(10*d+1)); plot(x,g(1).at(x),'m',x,g(2).at(x),'m',x,g(2).at(x)./g(1).at(x),'b'); end
-for d=0:0.1:1; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; figure(round(10*d+1)); plot(x,g(1).at(x),'m',x,g(2).at(x),'m',x,g(2).at(x)./g(1).at(x),'b'); ylim([0,3]); end
-for d=0:0.1:1; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; a=g(1).at(x); b=g(2).at(x); figure(round(10*d+1)); plot(x,a,'m',x,b,'m',x,a+b,'b',x,min(a,b)./max(a,b),'b'); ylim([0,3]); end
-for d=0:0.1:0.4; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; a=g(1).at(x); b=g(2).at(x); figure(round(10*d+1)); plot(x,a,'m',x,b,'m',x,a+b,'b',x,min(a,b)./max(a,b),'r'); ylim([0,3]); end
-for d=-0:0.1:0.4; g = GaussLorentzPeak([1,0.1,0,0,  2,0.1,0,d]); x=-1:0.01:2; a=g(1).at(x); b=g(2).at(x); mx=max(min(a,b)./max(a,b)); fprintf('%f'; end
+        %
+        % maximum of the ratio between the smaller and larger of the two
+        % functions does not reliably correspond to their heights. I'm 
+        % examining different methods of choosing which peaks to merge. I
+        % want something that is a monotonic function of distance and for
+        % which if two peaks haven't merged it is always lower/higher than
+        % for two peaks which have merged. Some evidence suggests, however,
+        % that there are multiple distances at which peaks may merge.
             str = 'pp_noiseless_merge_two';
         end
         
