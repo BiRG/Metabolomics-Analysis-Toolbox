@@ -118,8 +118,11 @@ classdef GLBIO2013Deconv
         end
         
         function strs = peak_picking_method_names
+        % Usage: strs = GLBIO2013Deconv.peak_picking_method_names
+        %
         % Lists the strings that can be used to identify a
-        % peak-picking method applied preceeding the deconvolution
+        % peak-picking method applied preceeding the deconvolution. Returns
+        % a cell array of strings.
             strs = {GLBIO2013Deconv.pp_gold_standard(), ...
                     GLBIO2013Deconv.pp_noisy_gold_standard(), ...
                     GLBIO2013Deconv.pp_smoothed_local_max()};
