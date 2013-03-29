@@ -103,9 +103,17 @@ function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
         assert(strcmp(deconv.datum_id,datum.id));
         assert(strcmp(deconv.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard));
         
+        % Take original peaks in their order aligned with the output
         datum_peaks = datum.spectrum_peaks(deconv.aligned_indices(1,:));
         datum_locs = [datum_peaks.location];
-        picked_locs = deconv.picked_locations(deconv.aligned_indices(1,:));
+        
+        % Take the peak picker output and align it to the reordered
+        % original peaks
+        picked_locs = deconv.picked_locations;
+        alignment = GLBIO2013Deconv.least_squares_assignment(datum_locs, picked_locs);
+        picked_locs = picked_locs(alignment(alignment > 0));
+        
+        % Subtract
         try
             errs = abs(datum_locs - picked_locs);
         catch ME
@@ -168,6 +176,9 @@ for results_idx = 1:num_results
     ngs = [ngs{:}];
 
     % Calculate the errors for those two deconvolutions
+    %
+    % ngs(1, start_pt_idx) is the current deconvolution - the
+    % noisy-gold-standard deconvolution for the current starting point.
     for start_pt_idx = 1:num_starting_pt
         param_e = param_errors(ngs(1, start_pt_idx), datum);
         picker_e = picker_loc_errors(ngs(1, start_pt_idx), datum);
