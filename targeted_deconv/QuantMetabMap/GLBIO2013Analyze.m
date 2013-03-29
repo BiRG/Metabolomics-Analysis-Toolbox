@@ -245,6 +245,188 @@ loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(glbio_combined_results);
 starting_pt_names = {'Anderson','Summit'};
 pa_param_names = {'height', 'width','lorentzianness', 'location'}; % Param names for the successive elements returned by the GaussLorentzPeak.property_array function
 
+%% What is the distribution of initial location errors
+% The initial location errors are not Gaussian anymore due to alignment
+% (and they weren't before I aligned because they are sorted before they
+% get out of the peak-picking routine - but I initially thought they were).
+% Histogram of initial location errors in all congestions.
+%
+% Note that I use starting point 1 and parameter 1 because the initial
+% error will be the same independent of those factors.
+%
+% Still looks like half a Gaussian (but with some distortion in the low 
+% values).
+%
+% My note from the commit: Explored distribution of initial location 
+% errors. It looks very similar to a reflected Gaussian (reflected at 0 
+% since negative values are not allowed) however, there seems to be a bit 
+% of a spike in the small peaks. However, I haven't been able to come up 
+% with something to show this departure clearly.
+clf;
+loc_e = [loc_param_errs(:, 1, 1).peak_loc_error];
+hist(loc_e, length(loc_e)/40);
+title('Initial location errors under noisy-gold-standard peak picker');
+xlabel('Error in initial location (in ppm)');
+ylabel('Number of peaks with that error');
+
+%% What is the distribution of width-scaled initial location errors
+% Histogram of initial location errors in all congestions scaling each 
+% error by the width of the peak for which it is a mis-estimate.
+%
+% Looks even more gaussian, but now definitely too high in the middle. - it
+% looks like there is a specific peak there.
+clf;
+loc_e = [loc_param_errs(:, 1, 1).peak_loc_error];
+widths = [loc_param_errs(:, 1, 1).peak_width];
+loc_e = loc_e ./ widths;
+hist(loc_e, length(loc_e)/40);
+title('Width-scaled initial location errors under noisy-gold-standard peak picker');
+xlabel('Error in initial location (in peak width)');
+ylabel('Number of peaks with that error');
+
+%% What is the distribution of width-scaled initial location errors at different congestions
+% Histogram of initial location errors in all congestions scaling each 
+% error by the width of the peak for which it is a mis-estimate, separating
+% plots by congestion.
+%
+% There does look to be a difference at each congestion. I've verified that
+% the numbers of peaks are the same in each case. So, the graphs become
+% much more slanted toward the lower initial errors as congestion
+% increases.
+%
+clf;
+for congestion_idx = 1:10
+    subplot(2,5,congestion_idx);
+    loc_e = [loc_param_errs(congestion_idx, 1, 1).peak_loc_error];
+    widths = [loc_param_errs(congestion_idx, 1, 1).peak_width];
+    loc_e = loc_e ./ widths;
+    hist(loc_e, length(loc_e)/25);
+    title(sprintf('Congestion=%3.1f', congestion_idx / 10));
+    xlabel('Error in initial location (in peak width)');
+    ylabel('Number of peaks with that error');
+    ylim([0,150]);
+    xlim([0,0.5]);
+    fprintf('Congestion %3.1f : %d peaks\n',congestion_idx /10, length(loc_e));
+end
+
+%% What is the distribution of ppm initial location errors at different congestions
+% Histogram of initial location errors in all congestions, separating
+% plots by congestion.
+%
+%
+% Here the distributions look much more similarly shaped, however, there is
+% a gradual increase of left-leaning-ness as you go from 0.1 to 0.6, but it
+% drops off suddenly at 0.7 and doesn't seem to change thereafter.
+clf;
+for congestion_idx = 1:10
+    subplot(2,5,congestion_idx);
+    loc_e = [loc_param_errs(congestion_idx, 1, 1).peak_loc_error];
+    hist(loc_e, length(loc_e)/25);
+    title(sprintf('Congestion=%3.1f', congestion_idx / 10));
+    xlabel('Error in initial location (in peak width)');
+    ylabel('Number of peaks with that error');
+    ylim([0,90]);
+    xlim([0,1.5e-3]);
+end
+
+%% What are the mean/median/skewness width-scaled initial location errors at different congestions
+% Plot of the mean, median, and skewness of the width-scaled initial 
+% location errors as congestion increases. I also print the Spearman 
+% correlations between these and error and whether they are significant.
+%
+% The correlations seem there to the eye, but by a conservative estimate
+% (Spearman) they are not significant. (Pearson finds a barely significant
+% correlation (p = 0.0487171) for the median)
+%
+% So, I'd say that there is no certain effect of congestion on the initial
+% location errors and that they are very nearly Gaussian
+clf;
+mean_e = zeros(1,10);
+median_e = zeros(1,10);
+skewness_e = zeros(1,10);
+for congestion_idx = 1:10
+    loc_e = [loc_param_errs(congestion_idx, 1, 1).peak_loc_error];
+    widths = [loc_param_errs(congestion_idx, 1, 1).peak_width];
+    loc_e = loc_e ./ widths;
+    mean_e(congestion_idx) = mean(loc_e);
+    median_e(congestion_idx) = median(loc_e);
+    skewness_e(congestion_idx) = skewness(loc_e);
+end
+
+% Main plot
+[ax, h1, h2] = plotyy([(1:10)./10;(1:10)./10]', [mean_e; median_e]', (1:10)./10, skewness_e,@plot);
+set(get(ax(2), 'YLabel'),'String', 'Skewness');
+legend([h1;h2], 'Mean of errors', 'Median of errors', 'Skewness of errors');
+title(sprintf('Congestion=%3.1f', congestion_idx / 10));
+xlabel('Congestion');
+ylabel('Error (in peak widths)');
+
+% Correlations
+[cor_mean, cor_mean_p_val] = corr((1:10)'./10, mean_e', 'type','spearman');
+if cor_mean_p_val <= 0.05
+    cor_mean_sig = sprintf('Signficant (p = %g) ', cor_mean_p_val);
+else
+    cor_mean_sig = sprintf('Not signficant (p = %g) ', cor_mean_p_val);
+end
+fprintf('%s Spearman correlation (%g) between width-scaled mean and congestion\n', cor_mean_sig, cor_mean);
+
+[cor_median, cor_median_p_val] = corr((1:10)'./10, median_e', 'type','spearman');
+if cor_median_p_val <= 0.05
+    cor_median_sig = sprintf('Signficant (p = %g) ', cor_median_p_val);
+else
+    cor_median_sig = sprintf('Not signficant (p = %g) ', cor_median_p_val);
+end
+fprintf('%s Spearman correlation (%g) between width-scaled median and congestion\n', cor_median_sig, cor_median);
+
+[cor_skewness, cor_skewness_p_val] = corr((1:10)'./10, skewness_e', 'type','spearman');
+if cor_skewness_p_val <= 0.05
+    cor_skewness_sig = sprintf('Signficant (p = %g) ', cor_skewness_p_val);
+else
+    cor_skewness_sig = sprintf('Not signficant (p = %g) ', cor_skewness_p_val);
+end
+fprintf('%s Spearman correlation (%g) between width-scaled skewness and congestion\n', cor_skewness_sig, cor_skewness);
+
+%% What are the mean/median initial location errors at different congestions
+% Plot of the mean and median of the initial location errors
+% as congestion increases. I also print the Spearman correlations between 
+% these and error and whether they are significant.
+%
+% No correlation visible to the eye, but I repeated correlation 
+% calculations just because it was a mere copy-and-paste
+clf;
+mean_e = zeros(1,10);
+median_e = zeros(1,10);
+for congestion_idx = 1:10
+    loc_e = [loc_param_errs(congestion_idx, 1, 1).peak_loc_error];
+    mean_e(congestion_idx) = mean(loc_e);
+    median_e(congestion_idx) = median(loc_e);
+end
+
+% Main plot
+legend(plot((1:10)./10, mean_e, (1:10)./10, median_e), 'Mean error', 'Median error');
+title(sprintf('Congestion=%3.1f', congestion_idx / 10));
+xlabel('Congestion');
+ylabel('Error (in ppm)');
+
+% Correlations
+[cor_mean, cor_mean_p_val] = corr((1:10)'./10, mean_e', 'type','spearman');
+if cor_mean_p_val <= 0.05
+    cor_mean_sig = sprintf('Signficant (p = %g) ', cor_mean_p_val);
+else
+    cor_mean_sig = sprintf('Not signficant (p = %g) ', cor_mean_p_val);
+end
+fprintf('%s Spearman correlation (%g) between ppm mean and congestion\n', cor_mean_sig, cor_mean);
+
+[cor_median, cor_median_p_val] = corr((1:10)'./10, median_e', 'type','spearman');
+if cor_median_p_val <= 0.05
+    cor_median_sig = sprintf('Signficant (p = %g) ', cor_median_p_val);
+else
+    cor_median_sig = sprintf('Not signficant (p = %g) ', cor_median_p_val);
+end
+fprintf('%s Spearman correlation (%g) between ppm median and congestion\n', cor_median_sig, cor_median);
+
+
+
 %% How robust is each starting point to location errors?
 % Here, I look at each peak in the noisy gold standard data, the
 % distance of that peak from its corresponding initial peak, and the
@@ -310,10 +492,9 @@ end
 %
 % This time, I plot one set of scatter plots for each of the 10 congestions
 %
-% These plots don't reveal any interesting patterns - except that it seems
+% Without aligned errors, these plots don't reveal any interesting patterns - except that it seems
 % that beyond a certain limit initial distance doesn't seem to matter much
 % and that that distance seems to grow with the congestion.
-clf
 for congestion_idx = 2:4:10
     figure(congestion_idx); clf; maximize_figure(congestion_idx,2);
     for param_idx = 1:length(pa_param_names)
