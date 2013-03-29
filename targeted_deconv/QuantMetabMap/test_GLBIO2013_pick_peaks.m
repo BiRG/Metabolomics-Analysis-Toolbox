@@ -17,7 +17,7 @@ noise_std = 0.00100000000000000002;
 
 picked = GLBIO2013_pick_peaks(spec, peaks, noise_std);
 
-assertEqual(GLBIO2013Deconv.peak_picking_method_names, {'pp_gold_standard', 'pp_noisy_gold_standard', 'pp_smoothed_local_max'}, 'The test will only work if the expected pickers are implemented');
+assertEqual(GLBIO2013Deconv.peak_picking_method_names, {'pp_gold_standard', 'pp_noisy_gold_standard', 'pp_smoothed_local_max','pp_gold_std_aligned_with_local_max'}, 'The test will only work if the expected pickers are implemented');
 
 % Gold standard
 assertEqual(picked{1}, sort([peaks.location]));
@@ -31,5 +31,9 @@ assertEqual(picked{2}, sort([peaks.location]+expected_noise));
 % Smoothed local max
 expected_local_max = [1.00220425904586219, 1.00606171237612085, 1.02296103172773067];
 assertEqual(picked{3}, sort(expected_local_max));
+
+% Gold-standard aligned with smoothed local max
+expected_gold_std_aligned_with_local_max = [1.00202999999999998, 1.0061199999999999, 1.02296000000000009];
+assertEqual(picked{4}, sort(expected_gold_std_aligned_with_local_max));
 
 RandStream.setGlobalStream(old_rng);
