@@ -58,15 +58,7 @@ classdef GLBIO2013Deconv
         %
         % best - a peak alignment matching the description of the
         %        aligned_indices member
-            costs = inf(length(peaks), length(original_peaks));
-            for i = 1:length(peaks)
-                i_loc = peaks(i).location;
-                for j = 1:length(original_peaks)
-                    j_loc = original_peaks(j).location;
-                    costs(i,j) = (j_loc - i_loc)^2;
-                end
-            end
-            assignment = munkres(costs);
+            assignment = GLBIO2013Deconv.least_squares_assignment([peaks.location], [original_peaks.location]);
             best = zeros(2,sum(assignment ~= 0));
             dest_idx = 1;
             for src_idx = 1:length(assignment)
@@ -76,6 +68,35 @@ classdef GLBIO2013Deconv
                    dest_idx = dest_idx + 1;
                end
             end
+        end
+        
+        function [assign, cost] = least_squares_assignment(locs1, locs2)
+        % Calculate the assignment from locs1 to locs2 that minimzes sum of squared distances between assigned elements
+        %
+        % locs1 - (vector of double) first list of locations
+        %
+        % locs2 - (vector of double) second list of locations
+        %
+        % Return values are the same as those returned by the munkres
+        % routine.
+        %
+        % assign - (row vector) assign(i) is index of the column in locs2 assigned to locs1(i). 
+        %    If no column is assigned to row i, then assign(i) is 0.
+        %    locs2(assign) gives the locations in the same positions as
+        %    their corresponding entries in locs(1)
+        %
+        % cost - (scalar) the sum of the costs of the assignments for the minimum
+        %    cost set of assignments: will be sum((locs1(assign > 0)-locs2(assign(assign > 0))).^2)
+            costs = inf(length(locs1), length(locs2));
+            for i = 1:length(locs1)
+                i_loc = locs1(i);
+                for j = 1:length(locs2)
+                    j_loc = locs2(j);
+                    costs(i,j) = (j_loc - i_loc)^2;
+                end
+            end
+        
+            [assign, cost] = munkres(costs);
         end
         
         function str = pp_gold_standard
