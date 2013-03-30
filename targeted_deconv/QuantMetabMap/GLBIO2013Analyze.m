@@ -1,5 +1,10 @@
 % Prints a summary of the analysis of the results from the GLBIO2013 experiments
 
+% Number of monitors being used for output. If more than 1, tries to
+% maximize the figures to fit on only one monitor under Linux - I have no
+% idea what happens under Windows or iOS.
+num_monitors = 2; 
+
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
 % starting points arrived at by Anderson's algorithm and the summit
@@ -47,7 +52,7 @@ subplot(2,2,4);
     extended_x, simple_peaks2, 2, starting_params, lb, ub);
 legend(handles, element_names, 'Location', 'NorthEast');
 
-maximize_figure(gcf, 2);
+maximize_figure(gcf, num_monitors);
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
@@ -496,7 +501,7 @@ end
 % that beyond a certain limit initial distance doesn't seem to matter much
 % and that that distance seems to grow with the congestion.
 for congestion_idx = 2:4:10
-    figure(congestion_idx); clf; maximize_figure(congestion_idx,2);
+    figure(congestion_idx); clf; maximize_figure(congestion_idx, num_monitors);
     for param_idx = 1:length(pa_param_names)
         for start_pt_idx = 1:2
             subplot(4,2,(param_idx-1)*2 + start_pt_idx);
@@ -678,7 +683,7 @@ end
 %
 samples_per_bin = 40;
 for congestion_idx = [3:3:10,10]
-    figure(congestion_idx); clf; maximize_figure(congestion_idx, 2);
+    figure(congestion_idx); clf; maximize_figure(congestion_idx, num_monitors);
     for param_idx = 1:length(pa_param_names)
         for start_pt_idx = 1:2
             subplot(4,2,(param_idx-1)*2 + start_pt_idx);
