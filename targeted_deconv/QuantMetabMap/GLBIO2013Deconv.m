@@ -110,32 +110,17 @@ classdef GLBIO2013Deconv
             str = 'pp_noisy_gold_standard';
         end
         
-        function str = pp_noiseless_merge_two
-        % Constant used to signify the merge-two peak picking
-        % method (the two peaks with the highest minimum between them or if
-        % the maximum
-        %
-        % maximum of the ratio between the smaller and larger of the two
-        % functions does not reliably correspond to their heights. I'm 
-        % examining different methods of choosing which peaks to merge. I
-        % want something that is a monotonic function of distance and for
-        % which if two peaks haven't merged it is always lower/higher than
-        % for two peaks which have merged. Some evidence suggests, however,
-        % that there are multiple distances at which peaks may merge.
-            str = 'pp_noiseless_merge_two';
-        end
-        
-        function str = pp_noisy_merge_two
-        % Constant used to signify the merge-two peak picking
-        % method with added noise on the ppm dimension (providing a way to distinguish between
-        % error due to missing peaks and error due to noisy starting
-        % points)
-            str = 'pp_noisy_merge_two';
-        end
-        
         function str = pp_smoothed_local_max
         % Constant used to signify the smoothed local maximum peak-picking method
             str = 'pp_smoothed_local_max';
+        end
+        
+        function str = pp_gold_std_aligned_with_local_max
+        % Constant used to signify the peak picking method that chooses the
+        % subset of gold-standard peaks that when placed in a 1-to-1
+        % correspondence with the local maxima minimize the sum of squared
+        % distances to their corresponding local maximum.
+            str = 'pp_gold_std_aligned_with_local_max';
         end
         
         function strs = peak_picking_method_names
@@ -144,9 +129,11 @@ classdef GLBIO2013Deconv
         % Lists the strings that can be used to identify a
         % peak-picking method applied preceeding the deconvolution. Returns
         % a cell array of strings.
-            strs = {GLBIO2013Deconv.pp_gold_standard(), ...
-                    GLBIO2013Deconv.pp_noisy_gold_standard(), ...
-                    GLBIO2013Deconv.pp_smoothed_local_max()};
+            strs = {GLBIO2013Deconv.pp_gold_standard() ...
+                    GLBIO2013Deconv.pp_noisy_gold_standard() ...
+                    GLBIO2013Deconv.pp_smoothed_local_max() ...
+                    GLBIO2013Deconv.pp_gold_std_aligned_with_local_max() ...
+                    };
         end
 
         

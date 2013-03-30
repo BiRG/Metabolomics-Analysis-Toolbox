@@ -50,6 +50,11 @@ for picker_idx = 1:length(picker_names)
             picked_locations = picked_locations + (mean_peak_width/16).*randn(size(picked_locations));
         case GLBIO2013Deconv.pp_smoothed_local_max
             picked_locations = peak_loc_estimate_for_random_spec(spectrum, noise_std);
+        case GLBIO2013Deconv.pp_gold_std_aligned_with_local_max
+            picked_locations = peak_loc_estimate_for_random_spec(spectrum, noise_std);
+            orig_locations = [peaks.location];
+            assignment = GLBIO2013Deconv.least_squares_assignment(picked_locations, orig_locations);
+            picked_locations = orig_locations(assignment(assignment > 0));
         otherwise
             % Detects additional methods having been added and no case
             % added to the switch statement
