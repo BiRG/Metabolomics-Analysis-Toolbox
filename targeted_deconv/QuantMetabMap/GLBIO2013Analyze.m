@@ -1065,6 +1065,7 @@ for input_scale_idx = 1:2
 end
 
 [adjusted_p, is_significant] = bonf_holm(p, 0.05);
+
 fprintf('Relationship between parameter and ppm input location error 5%%-ile bins.\n');
 fprintf('(p-values bonf-holm adjusted from chi-squared test, alpha=0.05)\n\n');
 fprintf('%14s%11s%15s%15s%13s%13s\n','Input scaling','Congestion','Param name', 'Start Pt Name','Significant?', 'P-value');
@@ -1089,6 +1090,56 @@ for input_scale_idx = 1:2
     end
 end
 
+
+%% Is there a relationship between input error rank and param error rank sep'd by congestion (plot 5%-ile bins as occupancy plot)
+% Here I plot the 5%-ile bins calculated above as occupancy maps. Colors
+% are set to the matlab hot colormap (black through shades of red, orange, 
+% and yellow, to white).
+%
+% I make separate plots for each congestion and input-scale type.
+%
+% Looking at the plots. It does not seem like congestion was hiding any
+% patterns. Any patterns I see in these smaller plots was also in the
+% original combined plot (and clearer there). More data may help this, but
+% for now, no evidence of different relationships.
+%
+% Having seen all these plots, I think the chances are slim that rank-rank
+% scatter-plots are going to be very informative. So, I won't be doing
+% them.
+for congestion_idx = 1:3:10
+    for input_scale_idx = 1:2
+        figure(congestion_idx+input_scale_idx); maximize_figure(congestion_idx+input_scale_idx, num_monitors);
+        for param_idx = 1:length(pa_param_names)
+            for start_pt_idx = 1:2
+                subplot(length(pa_param_names), 2, (param_idx-1) * 2 + start_pt_idx);
+
+                % Get the error pairs
+                loc_e = [loc_param_errs(congestion_idx,param_idx, start_pt_idx).peak_loc_error];
+                assert(length(input_scaling_name) == 2);
+                if input_scale_idx == 2 % Do width scaling
+                    loc_e = loc_e ./ [loc_param_errs(congestion_idx ,param_idx, start_pt_idx).peak_width];
+                end
+                par_e = [loc_param_errs(congestion_idx,param_idx, start_pt_idx).param_error];
+
+                % Bin the error pairs into percentile bins
+                percentile_bounds = 0:5:100;
+                [~, loc_e_bin] = histc(loc_e, prctile(loc_e, percentile_bounds));
+                loc_e_bin(loc_e_bin == max(loc_e_bin)) = loc_e_bin(loc_e_bin == max(loc_e_bin)) - 1; % Last bin includes its upper bound
+                [~, par_e_bin] = histc(par_e, prctile(par_e, percentile_bounds));
+                par_e_bin(par_e_bin == max(par_e_bin)) = par_e_bin(par_e_bin == max(par_e_bin)) - 1; % Last bin includes its upper bound
+
+                % Do the occupancy plot
+                occupancy_2d_plot( loc_e_bin, par_e_bin, 256, 20, 20, [], hot(256));
+
+                title_tmp = sprintf('%s: %s cong=%d',pa_param_names{param_idx}, ...
+                    starting_pt_names{start_pt_idx}, congestion_idx);
+                title(capitalize(title_tmp));
+                xlabel(sprintf('5%%-ile bin of %s-scaled error in initial location',input_scaling_name{input_scale_idx}));
+                ylabel(['5%-ile bin of ', capitalize(pa_param_names{param_idx}), ' error']);
+            end
+        end
+    end
+end
 
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
