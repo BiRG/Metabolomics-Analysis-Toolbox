@@ -40,7 +40,7 @@ switch model.baseline_type
     otherwise
         error('regularized_model:bad_baseline_type', ...
             'Unknown baseline type "%s" passed to regularized_model.m', ...
-            model.baseline);
+            model.baseline_type);
 end
 fitted_data = fitted_data + y_baseline;
 
