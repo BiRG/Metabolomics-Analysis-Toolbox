@@ -3,7 +3,7 @@
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
 % idea what happens under Windows or iOS.
-num_monitors = 2; 
+num_monitors = 1; 
 
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
@@ -442,6 +442,17 @@ fprintf('%s Spearman correlation (%g) between ppm median and congestion\n', cor_
 % error versus final difference for that peak parameter (ignoring the
 % crowdedness of the bin)
 %
+% The initial location errors are all quite small. By eye it is hard to
+% tell if there is a relationship between the initial location and the
+% final peak parameter errors. There may be a slight negative correlation,
+% but probably there is no relation. The differing density as you go from 
+% left to right comes from the initial location distribution explored 
+% above.
+%
+% I initially did this plot without aligning the initial errors. The result
+% was much wider and had a definite downward slope. Here is what I wrote
+% then:
+%
 % These graphs seem to show that there is more error when the initial
 % location is lower. However, I suspect that the high density of low
 % initial location errors explains that: the distribution is more densely
@@ -472,6 +483,20 @@ end
 % This time, I plot the histogram density rather than a scatter plot, to
 % see if things are more interpretable
 %
+% Almost all of the points fall into the low parameter error bins - the
+% first row of bins. The horizontal distribution for these bins seems very
+% close to the expected distribution shown by the error values alone. The
+% color distinctions above are not very helpful (it might be a better plot
+% if each column was scaled to have the same sum or each row was scaled to
+% have the same sum). However, even here, the first row seems to display no
+% relation between the two types of error.
+%
+% I initially did this plot without aligning the initial errors. For all
+% parameters, the result consisted of a single red dot in the 0,0 location 
+% surounded by a very hard to distinguish haze of dark blue. Essentially 
+% almost every pair fell into the very low error on both counts. Here is 
+% what I wrote then:
+%
 % These plots support my assesment above - the super-high density of low
 % error peaks 
 clf;
@@ -497,9 +522,15 @@ end
 %
 % This time, I plot one set of scatter plots for each of the 10 congestions
 %
-% Without aligned errors, these plots don't reveal any interesting patterns - except that it seems
-% that beyond a certain limit initial distance doesn't seem to matter much
-% and that that distance seems to grow with the congestion.
+% The variables seem unrelated. However, the Anderson location for
+% congestion = 1.0 has a clear linear relation. It is conceivable that the
+% others could have such a relation hiding in the data at low param errors.
+%
+% I initially did this plot without aligning the initial errors. Without 
+% aligned errors, these plots don't reveal any interesting patterns - 
+% except that it seems that beyond a certain limit initial distance doesn't 
+% seem to matter much and that that distance seems to grow with the 
+% congestion.
 for congestion_idx = 2:4:10
     figure(congestion_idx); clf; maximize_figure(congestion_idx, num_monitors);
     for param_idx = 1:length(pa_param_names)
@@ -514,7 +545,36 @@ for congestion_idx = 2:4:10
             loc_e = [loc_param_errs(congestion_idx, param_idx, start_pt_idx).peak_loc_error];
             par_e = [loc_param_errs(congestion_idx, param_idx, start_pt_idx).param_error];
             scatter( loc_e , par_e );
-            ylim([0, prctile(par_e, 98)]);
+        end
+    end
+end
+%% How robust is each starting point to location errors (scatter plot, low param errors - by congenstion)?
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter
+%
+% This time, I plot one set of scatter plots for each of the 10 congestions
+% I plot only the lower 75% of the parameter errors to see if there are
+% linear relationships hiding in the lower part of the graph.
+%
+% Except for the aforementioned Anderson relationship for location at the
+% highest congestion, I saw no relationship between the variables.
+%
+% I only did this graph after aligning the initial locations.
+for congestion_idx = 2:4:10
+    figure(congestion_idx); clf; maximize_figure(congestion_idx, num_monitors);
+    for param_idx = 1:length(pa_param_names)
+        for start_pt_idx = 1:2
+            subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+            title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+                starting_pt_names{start_pt_idx});
+            title(capitalize(title_tmp));
+            xlabel('Error in initial location');
+            ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
+            hold on;
+            loc_e = [loc_param_errs(congestion_idx, param_idx, start_pt_idx).peak_loc_error];
+            par_e = [loc_param_errs(congestion_idx, param_idx, start_pt_idx).param_error];
+            scatter( loc_e , par_e );
+            ylim([0, prctile(par_e, 75)]);
         end
     end
 end
@@ -527,6 +587,16 @@ end
 % For each peak parameter, I plot a scatter plot of initial location
 % error versus final difference for that peak parameter. In this plot, the
 % initial location errors are divided by the width of the peak.
+%
+% Width scaling makes the plots tighter on the x direction. However, this
+% change in tightness exactly reflects the change from the initial error
+% histograms. In fact, my imaginitive eye seems to see the shapes of the
+% histograms in the scatter plots. This plot provides no evidence for a
+% relationship between the two variables.
+% 
+% I initially did this plot without aligning the initial errors. The result
+% was much wider and had a definite downward slope. Here is what I wrote
+% then:
 %
 % The scatter plots seem to get tighter when you divide by peak width, but
 % they still look weighted toward the lower peak error. Also the linear
@@ -617,6 +687,14 @@ end
 % versus the mean parameter error for each parameter. The location errors
 % are width scaled. 
 % 
+% The previous result looks quite flat (with a few deviations at the high
+% end for some summit errors). When zoomed in to the lowest 20% of errors,
+% everything is completely flat modulo a bit of noise.
+%
+% I initially did this plot without aligning the initial errors. The result
+% was much wider and had a definite downward slope the previous result
+% quickly decayed to 0. Here is what I wrote then:
+%
 % These are hard to interpret. The general trend seems to be wildly varying
 % errors with a vaguely decreasing mean as the location error increases. I
 % now have a theory as to why we are seeing the decrease - once the initial
@@ -671,16 +749,15 @@ end
 
 %% How robust is each starting point to location errors?  (by congestion mean plot bins with equal # samples - width scaled)
 % Here, I again plot the the noisy gold standard data: initial location
-% error versus final difference for that peak parameter. I look ar rhw
+% error versus final difference for that peak parameter. I split by
+% congestion.
 %
-% I display the region that was the lowest 20% or the all-congenstions
-% error region (for easy comparison).
-%
-% This time, I sort by location error and divide the data up into bins
+% I sort by location error and divide the data up into bins
 % containing equal numbers of samples. I plot the mean location error
 % versus the mean parameter error for each parameter. The location errors
 % are width scaled. 
 %
+% No relation is apparent even separated by congestion.
 samples_per_bin = 40;
 for congestion_idx = [3:3:10,10]
     figure(congestion_idx); clf; maximize_figure(congestion_idx, num_monitors);
@@ -720,7 +797,6 @@ for congestion_idx = [3:3:10,10]
 
             % Plot
             plot( bins.loc_e./bins.num, bins.par_e./bins.num,'+-' );
-            %xlim([0,8]);
         end
     end
 end
@@ -738,7 +814,8 @@ end
 % versus the mean parameter error for each parameter. 
 %
 % The raw results look similar to the scaled results - but maybe a bit
-% noisier.
+% noisier. (This is the same in both the aligned initial location errors
+% and in the non-aligned.)
 clf;
 samples_per_bin = 40;
 for param_idx = 1:length(pa_param_names)
