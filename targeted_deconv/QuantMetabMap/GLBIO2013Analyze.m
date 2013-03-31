@@ -857,6 +857,164 @@ for param_idx = 1:length(pa_param_names)
     end
 end
 
+%% Is there a relationship between input error rank and param error rank
+% I divide the input errors and the param errors up into 5%-ile bins, then
+% use a chi-squared test to evaluate whether there is a relationship
+% between input error bins and param error bins - which would imply a
+% relationship between input error and percentile.
+% 
+% I do each test twice - once for width-scaled input errors and once for
+% ppm-scaled
+%
+% I use a bonferroni-holm correction since I am doing 8 hypothesis tests at
+% once.
+%
+% For the ppm inputs, amazingly, there is a relationship for anderson under 
+% all parameters and none for summit. Since I couldn't see it by eye, I 
+% need to replot in a way that may make it more obvious. A rank-rank 
+% plot will probably help. I can also just plot the %-ile table I 
+% calculated as an image.
+%
+% For the width-scaled inputs, estimated width and lorentzianness become 
+% related for summit and lorentzianness becomes unrelated for Anderson. My
+% first instinct is that estimated width and estimated lorentzianness are 
+% related to actual width and so dividing by the actual width introduces a
+% spurious relationship. However, if that is so, why does the
+% Lorentzianness lose its relationship?
+input_scaling_name = {'PPM','Width'};
+p=zeros(length(pa_param_names), 2, length(input_scaling_name)); % p(param_idx, start_pt_idx, input_scaling_idx) is the p value for relationship between param/starting point and the appropriately scaled input
+assert(length(input_scaling_name) == 2);
+for input_scale_idx = 1:2
+    for param_idx = 1:length(pa_param_names)
+        for start_pt_idx = 1:2
+            % Get the error pairs
+            loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+            assert(length(input_scaling_name) == 2);
+            if input_scale_idx == 2 % Do width scaling
+                loc_e = loc_e ./ [loc_param_errs(: ,param_idx, start_pt_idx).peak_width];
+            end
+            par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+
+            % Bin the error pairs into percentile bins
+            percentile_bounds = 0:5:100;
+            [~, loc_e_bin] = histc(loc_e, prctile(loc_e, percentile_bounds));
+            loc_e_bin(loc_e_bin == max(loc_e_bin)) = loc_e_bin(loc_e_bin == max(loc_e_bin)) - 1; % Last bin includes its upper bound
+            [~, par_e_bin] = histc(par_e, prctile(par_e, percentile_bounds));
+            par_e_bin(par_e_bin == max(par_e_bin)) = par_e_bin(par_e_bin == max(par_e_bin)) - 1; % Last bin includes its upper bound
+
+            % Calculate the prob of such a table if there was no relationship
+            [~,~,p(param_idx, start_pt_idx, input_scale_idx)] = crosstab(loc_e_bin, par_e_bin);
+
+        end
+    end
+end
+
+[adjusted_p, is_significant] = bonf_holm(p, 0.05);
+fprintf('Relationship between parameter and ppm input location error 5%%-ile bins.\n');
+fprintf('(p-values bonf-holm adjusted from chi-squared test, alpha=0.05)\n\n');
+fprintf('%14s%15s%15s%13s%13s\n','Input scaling','Param name', 'Start Pt Name','Significant?', 'P-value');
+for input_scale_idx = 1:2
+    for start_pt_idx = 1:2
+        for param_idx = 1:length(pa_param_names)
+
+            % Print significance
+            if is_significant(param_idx, start_pt_idx, input_scale_idx)
+                significant_str = 'Significant';
+            else                   
+                significant_str = '???????????';
+            end
+            fprintf('%14s%15s%15s%13s%13.5g\n', ...
+                input_scaling_name{input_scale_idx}, ...
+                pa_param_names{param_idx}, starting_pt_names{start_pt_idx}, ...
+                significant_str, adjusted_p(param_idx, start_pt_idx, input_scale_idx));
+        end
+    end
+end
+
+
+%% Is there a relationship between input error rank and param error rank (plot 5%-ile bins as occupancy plot)
+% Here I plot the 5%-ile bins calculated above as occupancy maps. Colors
+% are set to the matlab hot colormap (black through shades of red, orange, 
+% and yellow, to white).
+%
+% The relationships for Anderson height, width and location values all
+% clear. The Anderson location error is extremely well definied and both
+% the height and width show a bright linear up-sloping ridge with a dark
+% area in the lower right hand corner.
+%
+% However, Anderson Lorentzianness is not clear even when it has a
+% significant relation (though there, there seems to be a bit of a ridge in
+% the lower left-hand corner).
+%
+% For the width-scaled summit values, I cannot see the relationship (though
+% there seem to be a few of downward sloping ridges for the width parameter
+% and maybe a few upward sloping valleys for the lorentzianness parameter.
+%
+% The most interesting thing is a phase-transition at the 70th percentile
+% of location error for the Anderson location error. Above that, there is
+% no relation between input and output error.
+%
+% It is also interesting that width-scaling doesn't make the Anderson 
+% error tighter for any parameter. In fact, it seems to make it looser.
+%
+% The anderson location error could be interpreted as saying that you
+% either get into a specific error range or you end up far away.
+for input_scale_idx = 1:2
+    figure(input_scale_idx); maximize_figure(input_scale_idx, num_monitors);
+    for param_idx = 1:length(pa_param_names)
+        for start_pt_idx = 1:2
+            subplot(length(pa_param_names), 2, (param_idx-1) * 2 + start_pt_idx);
+            
+            % Get the error pairs
+            loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+            assert(length(input_scaling_name) == 2);
+            if input_scale_idx == 2 % Do width scaling
+                loc_e = loc_e ./ [loc_param_errs(: ,param_idx, start_pt_idx).peak_width];
+            end
+            par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+
+            % Bin the error pairs into percentile bins
+            percentile_bounds = 0:5:100;
+            [~, loc_e_bin] = histc(loc_e, prctile(loc_e, percentile_bounds));
+            loc_e_bin(loc_e_bin == max(loc_e_bin)) = loc_e_bin(loc_e_bin == max(loc_e_bin)) - 1; % Last bin includes its upper bound
+            [~, par_e_bin] = histc(par_e, prctile(par_e, percentile_bounds));
+            par_e_bin(par_e_bin == max(par_e_bin)) = par_e_bin(par_e_bin == max(par_e_bin)) - 1; % Last bin includes its upper bound
+
+            % Do the occupancy plot
+            occupancy_2d_plot( loc_e_bin, par_e_bin, 256, 20, 20, [], hot(256));
+
+            title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
+                starting_pt_names{start_pt_idx});
+            title(capitalize(title_tmp));
+            xlabel(sprintf('5%%-ile bin of %s-scaled error in initial location',input_scaling_name{input_scale_idx}));
+            ylabel(['5%-ile bin of ', capitalize(pa_param_names{param_idx}), ' error']);
+        end
+    end
+end
+
+%% What is anderson location error phase-transition
+% In the last, there was a phase transition at the 14th bin (70%-ile), so
+% what is that value? 0.00285805 ppm.
+%
+% A more detailed plot gives the value as 35 out of 100 bin. So 65th %ile
+% is supremum on that bin. I print that too. It is 0.000713798 ppm
+% but nothing about that number jumps out at me.
+figure(3); maximize_figure(3, num_monitors);
+par_e = [loc_param_errs(:,4, 1).param_error];
+fprintf('70%%-ile of Anderson location error is: %g ppm\n', prctile(par_e, 70));
+fprintf('65%%-ile of Anderson location error is: %g ppm\n', prctile(par_e, 65));
+loc_e = [loc_param_errs(:, 4, 1).peak_loc_error];
+percentile_bounds = 0:1:100;
+[~, loc_e_bin] = histc(loc_e, prctile(loc_e, percentile_bounds));
+loc_e_bin(loc_e_bin == max(loc_e_bin)) = loc_e_bin(loc_e_bin == max(loc_e_bin)) - 1; % Last bin includes its upper bound
+[~, par_e_bin] = histc(par_e, prctile(par_e, percentile_bounds));
+par_e_bin(par_e_bin == max(par_e_bin)) = par_e_bin(par_e_bin == max(par_e_bin)) - 1; % Last bin includes its upper bound
+
+% Do the occupancy plot
+occupancy_2d_plot( loc_e_bin, par_e_bin, 256, 100, 100, [], hot(256));
+title('Anderson location error vs ppm-scaled initial location error');
+xlabel('1%-ile bin of ppm-scaled initial location error');
+ylabel('1%-ile bin of Anderson location error');
 
 
 %% Calculate the relative parameter errors
