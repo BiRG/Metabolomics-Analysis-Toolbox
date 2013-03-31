@@ -228,7 +228,7 @@ classdef GLBIO2013Deconv
         % ---------------------------------------------------------------
         %
         % >> g = GLBIO2013Deconv('baby aardvark tree', my_spectrum,...
-        %        some_peaks, 'pp_gold_standard', [some_peaks.location], 'dsp_anderson')
+        %        some_peaks, 'pp_gold_standard', sort([some_peaks.location]), 'dsp_anderson')
         %
         % Creates a deconvolution with parent 'baby aardvark tree' by
         % deconvolving my_spectrum and aligning with some_peaks. the
