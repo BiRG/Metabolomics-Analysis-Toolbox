@@ -176,6 +176,11 @@ classdef RegionalSpectrumModel
                     error('RegionalSpectrumModel:bad_baseline', ...
                         ['Unknown baseline type: "' baseline_type '"']);
                 end
+                if ~strcmpi(rough_deconv_method, ...
+                        RegionalSpectrumModel.rough_deconv_methods) 
+                    error('RegionalSpectrumModel:bad_method', ...
+                        ['Unknown deconvolution method: "' rough_deconv_method '"']);
+                end                
                 obj.baseline_type = baseline_type;
                 obj.baseline_area_penalty = baseline_area_penalty;
                 obj.linewidth_variation_penalty = linewidth_variation_penalty;
