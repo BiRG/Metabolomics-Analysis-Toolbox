@@ -123,7 +123,9 @@ lb(to_swap)=tmp;
 
 if EXITFLAG < 0
     BETA = BETA0;
-    fprintf('EXITFLAG: %d',EXITFLAG);
+    fprintf(['lsqnonlin had problems doing curve fit to find best ' ...
+        'deconvolution. Using initial estimate as final fit. lsqnonlin '...
+        'exit flag was: %d'],EXITFLAG);
 end
 
 end
