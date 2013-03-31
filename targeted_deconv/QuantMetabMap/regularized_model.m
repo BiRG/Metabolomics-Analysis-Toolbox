@@ -56,7 +56,7 @@ areas = y_baseline .* dx;
 area = sum(abs(areas));
 
 % Calculate the peak width variation
-if length(x) > 1
+if num_maxima > 1
     line_widths = BETA(2:nRep:last_inx);
 %    min_width = min(line_widths);
 %    max_width = max(line_widths);
