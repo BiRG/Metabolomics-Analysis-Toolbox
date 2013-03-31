@@ -1017,6 +1017,79 @@ xlabel('1%-ile bin of ppm-scaled initial location error');
 ylabel('1%-ile bin of Anderson location error');
 
 
+%% Is there a relationship between input error rank and param error rank sep'd by congestion
+% I divide the input errors and the param errors up into 5%-ile bins, then
+% use a chi-squared test to evaluate whether there is a relationship
+% between input error bins and param error bins - which would imply a
+% relationship between input error and percentile.
+%
+% I only look at the input errors for a given congestion.
+% 
+% I do each test twice - once for width-scaled input errors and once for
+% ppm-scaled
+%
+% I use a bonferroni-holm correction since I am doing 160 hypothesis tests at
+% once.
+%
+% Most relationships come up as insignificant. More than likely, this is
+% due to insufficient data and too many simultaneous tests.
+input_scaling_name = {'PPM','Width'};
+num_congestions = size(loc_param_errs, 1);
+p=zeros(length(pa_param_names), 2, length(input_scaling_name), num_congestions); % p(param_idx, start_pt_idx, input_scaling_idx, congestion_idx) is the p value for relationship between param/starting point and the appropriately scaled input
+assert(length(input_scaling_name) == 2);
+for input_scale_idx = 1:2
+    for congestion_idx = 1:num_congestions
+        for param_idx = 1:length(pa_param_names)
+            for start_pt_idx = 1:2
+                % Get the error pairs
+                loc_e = [loc_param_errs(congestion_idx,param_idx, start_pt_idx).peak_loc_error];
+                assert(length(input_scaling_name) == 2);
+                if input_scale_idx == 2 % Do width scaling
+                    loc_e = loc_e ./ [loc_param_errs(congestion_idx ,param_idx, start_pt_idx).peak_width];
+                end
+                par_e = [loc_param_errs(congestion_idx, param_idx, start_pt_idx).param_error];
+
+                % Bin the error pairs into percentile bins
+                percentile_bounds = 0:5:100;
+                [~, loc_e_bin] = histc(loc_e, prctile(loc_e, percentile_bounds));
+                loc_e_bin(loc_e_bin == max(loc_e_bin)) = loc_e_bin(loc_e_bin == max(loc_e_bin)) - 1; % Last bin includes its upper bound
+                [~, par_e_bin] = histc(par_e, prctile(par_e, percentile_bounds));
+                par_e_bin(par_e_bin == max(par_e_bin)) = par_e_bin(par_e_bin == max(par_e_bin)) - 1; % Last bin includes its upper bound
+
+                % Calculate the prob of such a table if there was no relationship
+                [~,~,p(param_idx, start_pt_idx, input_scale_idx, congestion_idx)] = crosstab(loc_e_bin, par_e_bin);
+
+            end
+        end
+    end
+end
+
+[adjusted_p, is_significant] = bonf_holm(p, 0.05);
+fprintf('Relationship between parameter and ppm input location error 5%%-ile bins.\n');
+fprintf('(p-values bonf-holm adjusted from chi-squared test, alpha=0.05)\n\n');
+fprintf('%14s%11s%15s%15s%13s%13s\n','Input scaling','Congestion','Param name', 'Start Pt Name','Significant?', 'P-value');
+for input_scale_idx = 1:2
+    for congestion_idx = 1:num_congestions
+        for start_pt_idx = 1:2
+            for param_idx = 1:length(pa_param_names)
+
+                % Print significance
+                if is_significant(param_idx, start_pt_idx, input_scale_idx, congestion_idx)
+                    significant_str = 'Significant';
+                else                   
+                    significant_str = '???????????';
+                end
+                fprintf('%14s%11d%15s%15s%13s%13.5g\n', ...
+                    input_scaling_name{input_scale_idx}, ...
+                    congestion_idx, pa_param_names{param_idx}, ...
+                    starting_pt_names{start_pt_idx}, significant_str, ...
+                    adjusted_p(param_idx, start_pt_idx, input_scale_idx, congestion_idx));
+            end
+        end
+    end
+end
+
+
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
 
