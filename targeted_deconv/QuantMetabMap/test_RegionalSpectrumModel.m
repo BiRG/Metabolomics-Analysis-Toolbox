@@ -9,6 +9,10 @@ function test_baseline_types %#ok<DEFNU>
 % Ensure that baseline_types returns the correct list of acceptable baseline types
 assertEqual(RegionalSpectrumModel.baseline_types, {'spline','constant','line_up','line_down','v'});
 
+function test_rough_deconv_methods %#ok<DEFNU>
+% Ensure that rough_deconv_methods returns the correct list of acceptable baseline types
+assertEqual(RegionalSpectrumModel.rough_deconv_methods, {'Anderson','Short Peak 1st'});
+
 function test_constructor %#ok<DEFNU>
 % TODO: Stub
 peak_BETA = [];
