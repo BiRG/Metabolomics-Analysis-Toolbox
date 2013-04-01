@@ -114,12 +114,7 @@ function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
         picked_locs = picked_locs(alignment(alignment > 0));
         
         % Subtract
-        try
-            errs = abs(datum_locs - picked_locs);
-        catch ME
-            %TODO: the try catch block is DEBUG code
-            fprintf('Error in picker_loc_errors %s\n',ME.message);
-        end
+        errs = abs(datum_locs - picked_locs);
 end
 
 
