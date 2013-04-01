@@ -1,7 +1,10 @@
 function param_error_list = GLBIO2013_calc_param_error_list(results)
 % Takes the results (an array of GLBIO2013Datum objects) and
 % extracts more-easily analyzable statistics. Assumes that the
-% results from the first call are always the results.
+% results from the first call are always the results. Each result generates
+% one element of the param_error_list for each combination of parameter
+% (height, width, lorentzianness, location, and area) and peak-picking
+% method.
 %
 % Fields of the param_error_list structure: 
 %
@@ -12,7 +15,7 @@ function param_error_list = GLBIO2013_calc_param_error_list(results)
 %
 % parameter_name - (string) the name of the peak parameter for which 
 %                  the error is given - one of height, width,
-%                  lorentzianness, and location
+%                  lorentzianness, location, and area
 %
 % datum_id - (string) the name of the datum from which this pair of
 %            deconvolutions came
