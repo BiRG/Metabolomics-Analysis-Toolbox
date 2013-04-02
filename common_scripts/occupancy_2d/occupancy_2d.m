@@ -4,6 +4,9 @@ function [ dmap ] = occupancy_2d( x, y, width, height, limits)
 %   width, height - dimensions of the data density plot, in pixels
 %   limits - [xmin xmax ymin ymax] - defaults to data max/min
 %
+%   dmap - 2d matrix where columns are the x bins and rows are the y bins,
+%          each entry is the number of x,y elements that fell into the
+%          particular bin.
 % By Eric Moyer
 %
 % Derived from dataDensity.m by Malcolm McLean
