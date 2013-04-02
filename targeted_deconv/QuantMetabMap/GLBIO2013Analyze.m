@@ -3,7 +3,7 @@
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
 % idea what happens under Windows or iOS.
-num_monitors = 1; 
+num_monitors = 2; 
 
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
@@ -458,6 +458,9 @@ fprintf('%s Spearman correlation (%g) between ppm median and congestion\n', cor_
 % initial location errors explains that: the distribution is more densely
 % sampled at those points - so it seems to be worse. I'll do a density plot
 % next
+%
+% Note: upper bound on parameter error is the 98th percentile to exclude
+% some big outliers
 clf;
 for param_idx = 1:length(pa_param_names)
     for start_pt_idx = 1:2
@@ -465,13 +468,13 @@ for param_idx = 1:length(pa_param_names)
         title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
             starting_pt_names{start_pt_idx});
         title(capitalize(title_tmp));
-        xlabel('Error in initial location');
+        xlabel('PPM error in initial location');
         ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
         hold on;
         loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
         par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
         scatter( loc_e , par_e );
-        ylim(prctile(par_e, [2,98]));
+        ylim(prctile(par_e, [0,98]));
     end
 end
 
@@ -499,6 +502,9 @@ end
 %
 % These plots support my assesment above - the super-high density of low
 % error peaks 
+%
+% Note: upper bound on parameter error is the 98th percentile to exclude
+% some big outliers
 clf;
 for param_idx = 1:length(pa_param_names)
     for start_pt_idx = 1:2
@@ -509,10 +515,50 @@ for param_idx = 1:length(pa_param_names)
         title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
             starting_pt_names{start_pt_idx});
         title(capitalize(title_tmp));
-        xlabel('Error in initial location');
+        xlabel('PPM error in initial location');
         ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
-        hold on;
-        ylim();
+    end
+end
+
+%% How robust is each starting point to location errors (column-scaled density plot)?
+% Here, I again plot the the noisy gold standard data: initial location
+% error versus final difference for that peak parameter (ignoring the
+% crowdedness of the bin)
+%
+% This time, I plot the histogram density rather than a scatter plot, to
+% see if things are more interpretable and I scale each column in the
+% density to sum to 1.
+%
+% When scaled by column, there seems to be an increase in the height of the
+% lit-up area as ppm error increases. Is the variance increasing with
+% increasing error? If so, why don't the chi-squared plots show any
+% relationship?
+%
+% Note: upper bound on parameter error is the 98th percentile to exclude
+% some big outliers
+%
+% This plot was only ever done with the aligned initial errors.
+clf;
+for param_idx = 1:length(pa_param_names)
+    for start_pt_idx = 1:2
+        subplot(4,2,(param_idx-1)*2 + start_pt_idx);
+        loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
+        par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
+        
+        % Scale the occupancy matrix so all columns sum to 1
+        plot_limits = [0,max(loc_e), 0, prctile(par_e, 98)];
+        occ = occupancy_2d( loc_e , par_e, 32, 32, plot_limits);
+        col_sums = sum(occ,1);
+        scaled_occ = occ./repmat(col_sums, size(occ,2), 1);
+        
+        imagesc(plot_limits([1 2]), plot_limits([3 4]), scaled_occ, prctile(reshape(scaled_occ,1,[]),[0,100]));
+        set(gca,'YDir','normal');
+        
+        title_tmp = sprintf('%s: %s (column sums are equal)',pa_param_names{param_idx}, ...
+            starting_pt_names{start_pt_idx});
+        title(capitalize(title_tmp));
+        xlabel('PPM error in initial location');
+        ylabel(['Error in ', capitalize(pa_param_names{param_idx})]);
     end
 end
 
@@ -601,6 +647,9 @@ end
 % The scatter plots seem to get tighter when you divide by peak width, but
 % they still look weighted toward the lower peak error. Also the linear
 % structures visible in the anderson errors for location vanish.
+%
+% Note: upper bound on parameter error is the 98th percentile to exclude
+% some big outliers
 clf;
 for param_idx = 1:length(pa_param_names)
     for start_pt_idx = 1:2
@@ -615,7 +664,7 @@ for param_idx = 1:length(pa_param_names)
         loc_e = loc_e ./ [loc_param_errs(:,param_idx, start_pt_idx).peak_width];
         par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
         scatter( loc_e , par_e );
-        ylim(prctile(par_e, [2,98]));
+        ylim(prctile(par_e, [0,98]));
     end
 end
 
@@ -631,6 +680,9 @@ end
 % are width scaled. 
 %
 % I write my observations in the next one
+%
+% Note: upper bound on parameter error is the 98th percentile to exclude
+% some big outliers
 clf;
 samples_per_bin = 40;
 for param_idx = 1:length(pa_param_names)
