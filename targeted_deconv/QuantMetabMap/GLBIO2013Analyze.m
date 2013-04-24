@@ -511,7 +511,7 @@ for param_idx = 1:length(pa_param_names)
         subplot(4,2,(param_idx-1)*2 + start_pt_idx);
         loc_e = [loc_param_errs(:,param_idx, start_pt_idx).peak_loc_error];
         par_e = [loc_param_errs(:,param_idx, start_pt_idx).param_error];
-        occupancy_2d_plot( loc_e , par_e, 256, 32, 32, [0,max(loc_e), 0, prctile(par_e, 98)]);
+        occupancy_2d_plot( loc_e , par_e, 256, 32, 32, [0,max(loc_e), 0, prctile(par_e, 98)],hot(256));
         title_tmp = sprintf('%s: %s',pa_param_names{param_idx}, ...
             starting_pt_names{start_pt_idx});
         title(capitalize(title_tmp));
