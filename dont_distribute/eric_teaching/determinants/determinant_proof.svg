@@ -9,12 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="806.48016"
-   height="924.91095"
+   width="431.33496"
+   height="1040.911"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="determinant_proof.svg">
+   sodipodi:docname="determinant_proof.svg"
+   inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+   inkscape:export-xdpi="144"
+   inkscape:export-ydpi="144">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -22,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="185.031"
-     inkscape:cy="581.82954"
+     inkscape:zoom="1.4"
+     inkscape:cx="147.96675"
+     inkscape:cy="871.08226"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -42,10 +45,10 @@
      inkscape:snap-bbox-midpoints="false"
      inkscape:snap-bbox-edge-midpoints="true"
      inkscape:bbox-nodes="true"
-     fit-margin-left="72"
-     fit-margin-right="72"
-     fit-margin-bottom="72"
-     fit-margin-top="72">
+     fit-margin-left="25"
+     fit-margin-right="25"
+     fit-margin-bottom="25"
+     fit-margin-top="25">
     <inkscape:grid
        dotted="false"
        snapvisiblegridlinesonly="true"
@@ -54,8 +57,8 @@
        empspacing="5"
        id="grid4774"
        type="xygrid"
-       originx="32.780762px"
-       originy="-77.984628px" />
+       originx="-13.51123px"
+       originy="73.015348px" />
   </sodipodi:namedview>
   <defs
      id="defs4">
@@ -762,12 +765,12 @@
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Layer 1"
-     transform="translate(32.780762,-49.466568)">
+     transform="translate(-13.51123,-84.466568)">
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path3006-6-5-9"
-       d="m 309,777.86218 0,-38.49999"
+       d="m 309,975.86218 0,-38.49999"
        style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
@@ -776,7 +779,7 @@
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path3006-3-1"
-       d="m 309,776.86218 0,38.49999"
+       d="m 309,974.86218 0,38.50002"
        style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendE0)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
@@ -991,7 +994,7 @@
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="149.51172"
-       y="280.03098"
+       y="330.03098"
        id="text6425"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1000,12 +1003,12 @@
          sodipodi:role="line"
          id="tspan6427"
          x="149.51172"
-         y="280.03098">=</tspan></text>
+         y="330.03098">=</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
-       x="438.91129"
-       y="167.86707"
+       x="175.79636"
+       y="249.29564"
        id="text6924"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1013,21 +1016,22 @@
        inkscape:export-ydpi="144"><tspan
          sodipodi:role="line"
          id="tspan6926"
-         x="438.91129"
-         y="167.86707">Note the color of the overlapping vectors.</tspan><tspan
+         x="175.79636"
+         y="249.29564">Note the color of the overlapping vectors.</tspan><tspan
          sodipodi:role="line"
-         x="438.91129"
-         y="180.36707"
-         id="tspan6928">In normal geometry, this would not be considered as having</tspan><tspan
+         x="175.79636"
+         y="261.79565"
+         id="tspan6928">In normal geometry, this straight line would not be </tspan><tspan
          sodipodi:role="line"
-         x="438.91129"
-         y="192.86707"
-         id="tspan6930">two sides.</tspan></text>
+         x="175.79636"
+         y="274.29565"
+         id="tspan6930">considered as having four sides.</tspan></text>
     <g
        id="g7109"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
-       inkscape:export-ydpi="144">
+       inkscape:export-ydpi="144"
+       transform="translate(0,50)">
       <g
          transform="translate(-1.25,0)"
          id="g6932">
@@ -1105,26 +1109,30 @@
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
-       x="438.91129"
-       y="250.16624"
+       x="175.79636"
+       y="390.16626"
        id="text6924-7"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144"><tspan
          sodipodi:role="line"
-         x="438.91129"
-         y="250.16624"
-         id="tspan6930-5">Intuitively, you can see the volume has not been changed</tspan><tspan
+         x="175.79636"
+         y="390.16626"
+         id="tspan6930-5">Intuitively, you can see the volume has not been </tspan><tspan
          sodipodi:role="line"
-         x="438.91129"
-         y="262.66626"
-         id="tspan6981">there has just been a shearing transformation</tspan></text>
+         x="175.79636"
+         y="402.66626"
+         id="tspan6981">changed; there has just been a shearing</tspan><tspan
+         sodipodi:role="line"
+         x="175.79636"
+         y="415.16626"
+         id="tspan3325">transformation</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="149.51172"
-       y="369.65851"
+       y="459.65851"
        id="text6983"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1133,10 +1141,10 @@
          sodipodi:role="line"
          id="tspan6985"
          x="149.51172"
-         y="369.65851">=</tspan></text>
+         y="459.65851">=</tspan></text>
     <g
        id="g7056"
-       transform="translate(-1.5165658,0)"
+       transform="translate(-1.5165658,90)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1218,7 +1226,7 @@
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="333"
-       y="369.65851"
+       y="459.65851"
        id="text7072"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1227,10 +1235,10 @@
          sodipodi:role="line"
          id="tspan7074"
          x="333"
-         y="369.65851">-</tspan></text>
+         y="459.65851">-</tspan></text>
     <g
        id="g7221"
-       transform="translate(-16,0)"
+       transform="translate(-16,90)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1269,7 +1277,7 @@
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="148.96198"
-       y="476.08707"
+       y="566.08704"
        id="text6983-7"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1278,10 +1286,10 @@
          sodipodi:role="line"
          id="tspan6985-1"
          x="148.96198"
-         y="476.08707">=</tspan></text>
+         y="566.08704">=</tspan></text>
     <g
        id="g7056-9"
-       transform="translate(-2.066314,106.42856)"
+       transform="translate(-2.066314,196.42856)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1363,7 +1371,7 @@
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="332.45026"
-       y="476.08707"
+       y="566.08704"
        id="text7072-0"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1372,12 +1380,13 @@
          sodipodi:role="line"
          id="tspan7074-0"
          x="332.45026"
-         y="476.08707">+</tspan></text>
+         y="566.08704">+</tspan></text>
     <g
        id="g7381"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
-       inkscape:export-ydpi="144">
+       inkscape:export-ydpi="144"
+       transform="translate(0,90)">
       <path
          sodipodi:nodetypes="cc"
          inkscape:connector-curvature="0"
@@ -1409,42 +1418,46 @@
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
-       x="440.97232"
-       y="452.70764"
+       x="175.36378"
+       y="642.13623"
        id="text6924-7-6"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144"><tspan
          sodipodi:role="line"
-         x="440.97232"
-         y="452.70764"
+         x="175.36378"
+         y="642.13623"
          id="tspan6981-6">This step is not shown in the proof, but it follows from</tspan><tspan
          sodipodi:role="line"
-         x="440.97232"
-         y="465.20764"
-         id="tspan7392">property 2 (which is really a consequence of property 3)</tspan><tspan
+         x="175.36378"
+         y="654.63623"
+         id="tspan7392">property 2 (which is really a consequence of property</tspan><tspan
          sodipodi:role="line"
-         x="440.97232"
-         y="477.70764"
-         id="tspan7398">and is crucial to seeing where the labeling affects things </tspan><tspan
+         x="175.36378"
+         y="667.13623"
+         id="tspan7398">3) and is crucial to seeing where the labeling affects </tspan><tspan
          sodipodi:role="line"
-         x="440.97232"
-         y="490.20764"
-         id="tspan7404">in the intuitive understanding. Observe that only ONE </tspan><tspan
+         x="175.36378"
+         y="679.63623"
+         id="tspan7404">things in the intuitive understanding. Observe that only</tspan><tspan
          sodipodi:role="line"
-         x="440.97232"
-         y="502.70764"
-         id="tspan7408">vector is affected by the negation. You can look at this </tspan><tspan
+         x="175.36378"
+         y="692.13623"
+         id="tspan7408">ONE vector is affected by the negation. You can look at </tspan><tspan
          sodipodi:role="line"
-         x="440.97232"
-         y="515.20764"
-         id="tspan7410">as the source of the parity calculation in the determinant</tspan></text>
+         x="175.36378"
+         y="704.63623"
+         id="tspan7410">this as the source of the parity calculation in the</tspan><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="717.13623"
+         id="tspan3327">determinant.</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="148.99231"
-       y="588.81573"
+       y="786.81573"
        id="text6983-7-1"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1453,13 +1466,13 @@
          sodipodi:role="line"
          id="tspan6985-1-2"
          x="148.99231"
-         y="588.81573">=</tspan></text>
+         y="786.81573">=</tspan></text>
     <g
        id="g7656"
-       transform="translate(0,-4)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
-       inkscape:export-ydpi="144">
+       inkscape:export-ydpi="144"
+       transform="translate(0,194)">
       <g
          id="g7652">
         <text
@@ -1541,7 +1554,7 @@
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="272.58389"
-       y="588.81573"
+       y="786.81573"
        id="text6983-7-1-3"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1550,12 +1563,12 @@
          sodipodi:role="line"
          id="tspan6985-1-2-1"
          x="272.58389"
-         y="588.81573">=</tspan></text>
+         y="786.81573">=</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="304.28186"
-       y="588.81573"
+       y="786.81573"
        id="text6983-7-1-3-8"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1564,10 +1577,10 @@
          sodipodi:role="line"
          id="tspan6985-1-2-1-3"
          x="304.28186"
-         y="588.81573">-</tspan></text>
+         y="786.81573">-</tspan></text>
     <g
        id="g7652-2"
-       transform="translate(153.27671,-3.1533686)"
+       transform="translate(153.27671,194.84663)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1581,11 +1594,11 @@
            y="628.85828"
            x="191.37042"
            id="tspan6947-1-6-8-7"
-           sodipodi:role="line">-D(v2,v1+v2)</tspan></text>
+           sodipodi:role="line">D(v2,v1+v2)</tspan></text>
     </g>
     <g
        id="g7816"
-       transform="translate(2.1428571,29.217504)"
+       transform="translate(2.1428571,227.2175)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1652,7 +1665,8 @@
        id="g3401"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
-       inkscape:export-ydpi="144">
+       inkscape:export-ydpi="144"
+       transform="translate(0,198)">
       <text
          sodipodi:linespacing="125%"
          id="text6983-7-1-3-9"
@@ -1688,7 +1702,7 @@
              sodipodi:role="line"
              id="tspan6947-1-6-8-7-8"
              x="179.37042"
-             y="628.85828">-D(v2,v1+v2)</tspan></text>
+             y="628.85828">D(v2,v1+v2)</tspan></text>
       </g>
       <g
          transform="translate(-149.84234,123.65097)"
@@ -1799,7 +1813,7 @@
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="148.59869"
-       y="788.52087"
+       y="986.52087"
        id="text6983-7-1-3-9-6"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1808,12 +1822,12 @@
          sodipodi:role="line"
          id="tspan6985-1-2-1-1-4"
          x="148.59869"
-         y="788.52087">=</tspan></text>
+         y="986.52087">=</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="164.29668"
-       y="788.52087"
+       y="986.52087"
        id="text6983-7-1-3-8-7-4"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1822,10 +1836,10 @@
          sodipodi:role="line"
          id="tspan6985-1-2-1-3-5-31"
          x="164.29668"
-         y="788.52087">-</tspan></text>
+         y="986.52087">-</tspan></text>
     <g
        id="g7652-2-7-1"
-       transform="translate(13.291509,196.55177)"
+       transform="translate(13.291509,394.55177)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1839,11 +1853,11 @@
            y="628.85828"
            x="179.37042"
            id="tspan6947-1-6-8-7-8-8"
-           sodipodi:role="line">-D(v2,v1+v2)</tspan></text>
+           sodipodi:role="line">D(v2,v1+v2)</tspan></text>
     </g>
     <g
        id="g7816-5-0"
-       transform="translate(-149.84234,228.92264)"
+       transform="translate(-149.84234,426.92264)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1910,7 +1924,7 @@
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="276.64462"
-       y="788.52087"
+       y="986.52087"
        id="text6983-7-1-3-8-7-8-3"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -1919,10 +1933,10 @@
          sodipodi:role="line"
          id="tspan6985-1-2-1-3-5-3-3"
          x="276.64462"
-         y="788.52087">+</tspan></text>
+         y="986.52087">+</tspan></text>
     <g
        id="g7652-2-7-0-8"
-       transform="translate(110.64,196.55177)"
+       transform="translate(110.64,394.55177)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1940,7 +1954,7 @@
     </g>
     <g
        id="g3681"
-       transform="translate(8.18006,-6)"
+       transform="translate(8.18006,192)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -1999,7 +2013,7 @@
     </g>
     <g
        id="g3714"
-       transform="translate(0,-0.94726693)"
+       transform="translate(0,197.05273)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -2028,7 +2042,7 @@
     </g>
     <g
        id="g7652-2-7-1-7"
-       transform="translate(21.732001,271.44894)"
+       transform="translate(21.732001,469.44894)"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
        inkscape:export-xdpi="144"
        inkscape:export-ydpi="144">
@@ -2042,13 +2056,13 @@
            y="628.85828"
            x="179.37042"
            id="tspan6947-1-6-8-7-8-8-7"
-           sodipodi:role="line">-D(v2,v1)</tspan></text>
+           sodipodi:role="line">D(v2,v1)</tspan></text>
     </g>
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
        x="38.525879"
-       y="128.71266"
+       y="116.71266"
        id="text3744"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
@@ -2056,11 +2070,19 @@
        inkscape:export-ydpi="144"><tspan
          sodipodi:role="line"
          x="38.525879"
-         y="128.71266"
-         id="tspan3748">Realization of the proof that interchanging two vectors negates the determinant in two dimensions for two specific vectors. The proof is from </tspan><tspan
+         y="116.71266"
+         id="tspan3748">Realization of the proof that interchanging two vectors negates the determinant </tspan><tspan
          sodipodi:role="line"
          x="38.525879"
-         y="141.21266"
-         id="tspan3752">http://www.askamathematician.com/2013/05/q-why-are-determinants-defined-the-weird-way-they-are/ right after property 3.</tspan></text>
+         y="129.21266"
+         id="tspan3752">in two dimensions for two specific vectors. Each column is shown in its own color.</tspan><tspan
+         sodipodi:role="line"
+         x="38.525879"
+         y="141.71266"
+         id="tspan3315">The first column is blue, the second is red. The original proof is from </tspan><tspan
+         sodipodi:role="line"
+         x="38.525879"
+         y="154.21266"
+         id="tspan3318">www.askamathematician.com</tspan></text>
   </g>
 </svg>
