@@ -1,16 +1,73 @@
 function [ dmap ] = occupancy_2d( x, y, width, height, limits)
-%DATADENSITY Get a data density image of data 
-%   x, y - two vectors of equal length giving scatterplot x, y co-ords
-%   width, height - dimensions of the data density plot, in pixels
-%   limits - [xmin xmax ymin ymax] - defaults to data max/min
+% Counts points in an evenly spaced 2D rectanglular grid of bins
+% Usage: occupancy_2d( x, y, width, height, limits)
 %
-%   dmap - 2d matrix where columns are the x bins and rows are the y bins,
-%          each entry is the number of x,y elements that fell into the
-%          particular bin.
-% By Eric Moyer
+% Divides the 2D rectangle limits into width x height bins. Every bin has
+% the same dimensions. Then counts the number of points x(i),y(i) that fall
+% into each bin and returns the matrix giving those counts.
+%
+% -------------------------------------------------------------------------
+% Input arguments
+% -------------------------------------------------------------------------
+% 
+% x - (vector) horizontal coordinates of scatter plot points. Must be same 
+%     length as y
+%
+% y - (vector) vertical coordinates of scatter plot points. Must be same 
+%     length as x
+%
+% width - (integer >= 1) number of bins in occupancy plot horizontally
+%
+% height - (integer >= 1) number of bins in occupancy plot vertically
+%
+% limits - (optional 4x1 vector) - [xmin xmax ymin ymax]. All points that
+%          are outside of these closed intervals are not counted. Points
+%          are counted if xmin <= point.x <= xmax and 
+%          ymin <= point.y <= ymax
+%
+%          defaults to smallest rectangle that includes all points - the
+%          maxima and minima of the data in each dimension independently
+%
+% -------------------------------------------------------------------------
+% Output parameters
+% -------------------------------------------------------------------------
+% 
+% dmap - (2d matrix) columns are the x bins and rows are the y bins, each
+%        entry is the number of x,y elements that fell into the particular 
+%        bin.
+%
+% -------------------------------------------------------------------------
+% Examples
+% -------------------------------------------------------------------------
+%
+% >> occupancy_2d([1,3,5],[1,1,5],4,4)
+%
+% ans =
+%
+%     1     0     1     0
+%     0     0     0     0
+%     0     0     0     0
+%     0     0     0     1
+%
+% >> occupancy_2d([1,3,5],[1,1,5],4,4,[0,4,0,4])
+%
+% ans =
+%
+%     0     0     0     0
+%     0     1     0     1
+%     0     0     0     0
+%     0     0     0     0
+%
+% -------------------------------------------------------------------------
+% Authors
+% -------------------------------------------------------------------------
+%
+% Eric Moyer (March-April 2013) eric_moyer@yahoo.com
+%
 %
 % Derived from dataDensity.m by Malcolm McLean
 %
+
     % Throw exception if width or height are not positive integers
     assert(width > 0, 'occupancy_2d:bad_num_bins', ...
         'The width passed to occupancy_2d must be one or more.');
