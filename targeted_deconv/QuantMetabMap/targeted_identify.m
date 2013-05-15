@@ -1538,6 +1538,29 @@ else
                 fprintf(excel_fid,'\n');
             end
             
+
+            % Write individual spectrum-bin-peak-data
+            fprintf(excel_fid,['\n\n"Full parameters for the '...
+                'selected peaks in each bin"\n\n']);
+            fprintf(excel_fid,['"Bin #","Spectrum #","Peak #","Area",'...
+                '"PPM","Height","Width","Lorentzianness"\n']);
+            for bin_idx = 1:num_bins
+                for spec_idx = 1:num_spec
+                    p=identified_peaks{bin_idx,spec_idx};
+                    total=0;
+                    for i=1:length(p);
+                        fprintf(excel_fid, ...
+                            ['%d,%d,%d,%20.18g,%20.18g,%20.18g,'...
+                            '%20.18g,%20.18g\n'],bin_idx,spec_idx,i,...
+                            p(i).area, p(i).location,p(i).height,...
+                            p(i).half_height_width,p(i).lorentzianness);
+                        total=total+p(i).area;
+                    end;
+                    fprintf(excel_fid, '%d,%d,"Area Sum",%20.18g\n', ...
+                        bin_idx,spec_idx,total);
+                end
+            end
+
             % Done
             fclose(excel_fid);
         end
