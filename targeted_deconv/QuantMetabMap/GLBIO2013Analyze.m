@@ -3,7 +3,7 @@
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
 % idea what happens under Windows or iOS.
-num_monitors = 2; 
+num_monitors = 1; 
 
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
