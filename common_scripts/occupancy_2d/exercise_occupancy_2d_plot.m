@@ -1,8 +1,11 @@
-%
-%
-%
 % Run occupancy_2d_* finctions for human evaluation
 %
+% Does a quick & dirty test of occupancy_2d and then displays a plot. Read
+% the comments to understand what the output should be. 
+%
+% To run: 
+%
+% >> exercise_occupancy_2d_plot
 %
 
 % Set the random number generator so we get reproducable results and save
