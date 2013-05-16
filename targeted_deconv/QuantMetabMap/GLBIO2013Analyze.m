@@ -1196,68 +1196,74 @@ end
 %% What do the peaks/spectra with extreme error values look like
 % 
 % Is there any obvious characteristic of the peaks with extreme error
-% values?
+% values? I had to choose a small subset of the potential extreme value
+% plots because of limitations on the number of figures my home computer
+% has memory to display (and because I didn't want to manually examine 240
+% plots -- that would take too long). Changing the crowding and parameter
+% name fastest gives me the best opportunity to compare among starting
+% points should I want to, so I chose that reduction method. I chose 3
+% crowdings to represent low, medium, and high crowding.
 %
-% Figure 1: Top loc, min param Anderson width crowding: 1 ... Result 681 Deconv 3 Peak 3
-%
-%
-% Figure 2: Top loc, max param Anderson width crowding: 1 ... Result 691 Deconv 3 Peak 4
-%
-%
-% Figure 3: Bot loc, max param Anderson width crowding: 1 ... Result 1081 Deconv 3 Peak 7
-%
-%
-% Figure 4: Top loc, min param Summit lorentzianness crowding: 1 ... Result 1031 Deconv 4 Peak 7
+% Figure 1: Top loc, min param Anderson height crowding: 1 ... Result 691 Deconv 3 Peak 4
 %
 %
-% Figure 5: Top loc, max param Summit lorentzianness crowding: 1 ... Result 581 Deconv 4 Peak 3
+% Figure 2: Top loc, max param Anderson height crowding: 1 ... Result 861 Deconv 3 Peak 2
 %
 %
-% Figure 6: Bot loc, max param Summit lorentzianness crowding: 1 ... Result 1161 Deconv 4 Peak 7
+% Figure 3: Bot loc, max param Anderson height crowding: 1 ... Result 1081 Deconv 3 Peak 7
 %
 %
-% Figure 7: Top loc, min param Anderson location crowding: 5 ... Result 1015 Deconv 3 Peak 1
+% Figure 4: Top loc, min param Anderson width crowding: 5 ... Result 1015 Deconv 3 Peak 1
 %
 %
-% Figure 8: Top loc, max param Anderson location crowding: 5 ... Result 585 Deconv 3 Peak 5
+% Figure 5: Top loc, max param Anderson width crowding: 5 ... Result 415 Deconv 3 Peak 7
 %
 %
-% Figure 9: Bot loc, max param Anderson location crowding: 5 ... Result 95 Deconv 3 Peak 5
+% Figure 6: Bot loc, max param Anderson width crowding: 5 ... Result 35 Deconv 3 Peak 6
 %
 %
-% Figure 10: Top loc, min param Summit height crowding: 5 ... Result 585 Deconv 4 Peak 5
+% Figure 7: Top loc, min param Anderson lorentzianness crowding: 9 ... Result 249 Deconv 3 Peak 7
 %
 %
-% Figure 11: Top loc, max param Summit height crowding: 5 ... Result 425 Deconv 4 Peak 5
+% Figure 8: Top loc, max param Anderson lorentzianness crowding: 9 ... Result 1059 Deconv 3 Peak 2
 %
 %
-% Figure 12: Bot loc, max param Summit height crowding: 5 ... Result 185 Deconv 4 Peak 3
+% Figure 9: Bot loc, max param Anderson lorentzianness crowding: 9 ... Result 39 Deconv 3 Peak 3
 %
 %
-% Figure 13: Top loc, min param Anderson width crowding: 9 ... Result 249 Deconv 3 Peak 7
+% Figure 10: Top loc, min param Summit location crowding: 1 ... Result 641 Deconv 4 Peak 6
 %
 %
-% Figure 14: Top loc, max param Anderson width crowding: 9 ... Result 929 Deconv 3 Peak 2
+% Figure 11: Top loc, max param Summit location crowding: 1 ... Result 581 Deconv 4 Peak 3
 %
 %
-% Figure 15: Bot loc, max param Anderson width crowding: 9 ... Result 119 Deconv 3 Peak 5
+% Figure 12: Bot loc, max param Summit location crowding: 1 ... Result 951 Deconv 4 Peak 3
 %
 %
-% Figure 16: Top loc, min param Summit lorentzianness crowding: 9 ... Result 229 Deconv 4 Peak 7
+% Figure 13: Top loc, min param Summit height crowding: 5 ... Result 585 Deconv 4 Peak 5
 %
 %
-% Figure 17: Top loc, max param Summit lorentzianness crowding: 9 ... Result 509 Deconv 4 Peak 3
+% Figure 14: Top loc, max param Summit height crowding: 5 ... Result 425 Deconv 4 Peak 5
 %
 %
-% Figure 18: Bot loc, max param Summit lorentzianness crowding: 9 ... Result 489 Deconv 4 Peak 4
+% Figure 15: Bot loc, max param Summit height crowding: 5 ... Result 185 Deconv 4 Peak 3
+%
+%
+% Figure 16: Top loc, min param Summit width crowding: 9 ... Result 229 Deconv 4 Peak 7
+%
+%
+% Figure 17: Top loc, max param Summit width crowding: 9 ... Result 459 Deconv 4 Peak 1
+%
+%
+% Figure 18: Bot loc, max param Summit width crowding: 9 ... Result 489 Deconv 4 Peak 4
 %
 %
 
 figure_number = 1;
-param_idx = 1;
-for congestion_idx = [1,5,9]
-    assert(all(congestion_idx <= size(loc_param_errs,1)));
-    for starting_pt_idx = 1:length(starting_pt_names)
+param_idx = 0;
+for starting_pt_idx = 1:length(starting_pt_names)
+    for congestion_idx = [1,5,9]
+        assert(all(congestion_idx <= size(loc_param_errs,1)));
         param_idx = param_idx + 1; 
         if param_idx > length(pa_param_names); param_idx = 1; end
         extreme = GLBIO2013_extreme_loc_param_pairs(...
@@ -1284,10 +1290,10 @@ end
 % For the analysis in the previous section, I needed to print the title of
 % each plot with its corresponding figure number as a comment. This code did it.
 figure_number = 1;
-param_idx = 1;
-for congestion_idx = [1,5,9]
-    assert(all(congestion_idx <= size(loc_param_errs,1)));
-    for starting_pt_idx = 1:length(starting_pt_names)
+param_idx = 0;
+for starting_pt_idx = 1:length(starting_pt_names)
+    for congestion_idx = [1,5,9]
+        assert(all(congestion_idx <= size(loc_param_errs,1)));
         param_idx = param_idx + 1; 
         if param_idx > length(pa_param_names); param_idx = 1; end
         extreme = GLBIO2013_extreme_loc_param_pairs(...
