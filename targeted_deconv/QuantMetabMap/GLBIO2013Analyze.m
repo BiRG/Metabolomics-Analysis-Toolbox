@@ -1193,6 +1193,121 @@ for congestion_idx = 1:3:10
     end
 end
 
+%% What do the peaks/spectra with extreme error values look like
+% 
+% Is there any obvious characteristic of the peaks with extreme error
+% values?
+%
+% Figure 1: Top loc, min param Anderson width crowding: 1 ... Result 681 Deconv 3 Peak 3
+%
+%
+% Figure 2: Top loc, max param Anderson width crowding: 1 ... Result 691 Deconv 3 Peak 4
+%
+%
+% Figure 3: Bot loc, max param Anderson width crowding: 1 ... Result 1081 Deconv 3 Peak 7
+%
+%
+% Figure 4: Top loc, min param Summit lorentzianness crowding: 1 ... Result 1031 Deconv 4 Peak 7
+%
+%
+% Figure 5: Top loc, max param Summit lorentzianness crowding: 1 ... Result 581 Deconv 4 Peak 3
+%
+%
+% Figure 6: Bot loc, max param Summit lorentzianness crowding: 1 ... Result 1161 Deconv 4 Peak 7
+%
+%
+% Figure 7: Top loc, min param Anderson location crowding: 5 ... Result 1015 Deconv 3 Peak 1
+%
+%
+% Figure 8: Top loc, max param Anderson location crowding: 5 ... Result 585 Deconv 3 Peak 5
+%
+%
+% Figure 9: Bot loc, max param Anderson location crowding: 5 ... Result 95 Deconv 3 Peak 5
+%
+%
+% Figure 10: Top loc, min param Summit height crowding: 5 ... Result 585 Deconv 4 Peak 5
+%
+%
+% Figure 11: Top loc, max param Summit height crowding: 5 ... Result 425 Deconv 4 Peak 5
+%
+%
+% Figure 12: Bot loc, max param Summit height crowding: 5 ... Result 185 Deconv 4 Peak 3
+%
+%
+% Figure 13: Top loc, min param Anderson width crowding: 9 ... Result 249 Deconv 3 Peak 7
+%
+%
+% Figure 14: Top loc, max param Anderson width crowding: 9 ... Result 929 Deconv 3 Peak 2
+%
+%
+% Figure 15: Bot loc, max param Anderson width crowding: 9 ... Result 119 Deconv 3 Peak 5
+%
+%
+% Figure 16: Top loc, min param Summit lorentzianness crowding: 9 ... Result 229 Deconv 4 Peak 7
+%
+%
+% Figure 17: Top loc, max param Summit lorentzianness crowding: 9 ... Result 509 Deconv 4 Peak 3
+%
+%
+% Figure 18: Bot loc, max param Summit lorentzianness crowding: 9 ... Result 489 Deconv 4 Peak 4
+%
+%
+
+figure_number = 1;
+param_idx = 1;
+for congestion_idx = [1,5,9]
+    assert(all(congestion_idx <= size(loc_param_errs,1)));
+    for starting_pt_idx = 1:length(starting_pt_names)
+        param_idx = param_idx + 1; 
+        if param_idx > length(pa_param_names); param_idx = 1; end
+        extreme = GLBIO2013_extreme_loc_param_pairs(...
+            glbio_combined_results, ...
+            loc_param_errs(congestion_idx,param_idx,starting_pt_idx));
+        extreme_names = {'Top loc, min param','Top loc, max param','Bot loc, max param'};
+        for val=1:length(extreme)
+            e = extreme(val);
+            figure(figure_number);
+            maximize_figure(gcf, num_monitors);
+            GLBIO2013_plot_peak_estimate(e.datum, e.deconv_idx, ...
+                e.deconv_peak_idx, false);
+            title(sprintf('%s %s %s crowding: %d\nResult %d Deconv %d Peak %d', extreme_names{val}, ...
+                starting_pt_names{starting_pt_idx}, ...
+                pa_param_names{param_idx}, congestion_idx, ...
+                e.result_idx, e.deconv_idx, e.deconv_peak_idx ...
+                ));
+            figure_number = figure_number + 1;
+        end
+    end
+end
+
+%% Print the figure number - what was plotted key
+% For the analysis in the previous section, I needed to print the title of
+% each plot with its corresponding figure number as a comment. This code did it.
+figure_number = 1;
+param_idx = 1;
+for congestion_idx = [1,5,9]
+    assert(all(congestion_idx <= size(loc_param_errs,1)));
+    for starting_pt_idx = 1:length(starting_pt_names)
+        param_idx = param_idx + 1; 
+        if param_idx > length(pa_param_names); param_idx = 1; end
+        extreme = GLBIO2013_extreme_loc_param_pairs(...
+            glbio_combined_results, ...
+            loc_param_errs(congestion_idx,param_idx,starting_pt_idx));
+        extreme_names = {'Top loc, min param','Top loc, max param','Bot loc, max param'};
+        for val=1:length(extreme)
+            e = extreme(val);
+            fprintf('%% Figure %d: %s %s %s crowding: %d ... Result %d Deconv %d Peak %d\n%%\n%%\n', ...
+                figure_number, extreme_names{val}, ...
+                starting_pt_names{starting_pt_idx}, ...
+                pa_param_names{param_idx}, congestion_idx, ...
+                e.result_idx, e.deconv_idx, e.deconv_peak_idx ...
+                );
+            figure_number = figure_number + 1;
+        end
+    end
+end
+
+
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
 
