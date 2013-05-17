@@ -1339,6 +1339,86 @@ for starting_pt_idx = 1:length(starting_pt_names)
     end
 end
 
+%% Double-check figures 2 and 8
+% Figures 2 and 8 of the extreme values might be results of a misalignment.
+% Here I plot the corresponding peaks for those figures so I can visually
+% verify the alignment
+
+%% Double-check figure 2
+% Figure 2 was Result 861 Deconv 3 Peak 2
+%
+% This is just a case of a very bad peak location estimate the locations of
+% the deconvolved peaks are:
+%
+%  2.3204    2.2178    2.3205    3.4209    3.4669    3.4816    3.4914
+%
+% Their cooresponding original peaks are at:
+%
+%  2.2176    1.4974    2.3204    3.4209    3.4665    3.4814    3.4914
+%
+% You can see that the deconvolved spectrum has two peaks near 2.3204
+% whereas the original has one and no peaks near 1.4974. Thus the alignment
+% must make sacrifices and it chooses to sacrifice the peak at 2.2178.
+for i = 1:7
+    figure(i);
+    clf;
+    GLBIO2013_plot_peak_estimate(glbio_combined_results(861), 3, ...
+                i, false);
+end
+
+fprintf('Aligned indices: %s\n', to_str(glbio_combined_results(861).deconvolutions(3).aligned_indices));
+fprintf('Deconvolved locations: %s\n',to_str([glbio_combined_results(861).deconvolutions(3).peaks(1:7).location]));
+fprintf('Original locations   : %s\n',to_str([glbio_combined_results(861).spectrum_peaks([4 3 7 6 2 1 5]).location]));
+
+%% Double-check figure 8
+% Figure 8 was Result 1059 Deconv 3 Peak 2
+%
+% I didn't bother to plot things this time. The numbers are clearer.
+%
+% This is another case of a very bad peak location estimate.
+
+% The locations of the deconvolved peaks are:
+%
+%  1.0649    1.0259    1.0491    1.0649    1.0789    1.0909    1.1159
+%
+% Their cooresponding original peaks are at:
+%
+%  1.0490    1.0182    1.0259    1.0648    1.0785    1.0909    1.1159
+%
+% The same error happened here - the deconvolution put two peaks where the
+% original had one. Then one of those had to be mismatched and that
+% mismatching threw off other parts of the alignment - in particular peak
+% 2.
+%
+% The best alignment would have been
+% Deconv: 1.0649    1.0259    1.0491    nothing   1.0649    1.0789    1.0909    1.1159
+%
+% Orig:   nothing   1.0259    1.0490    1.0182    1.0648    1.0785    1.0909    1.1159
+%
+% But the algorithm I'm using can't detect this. The algorithm works
+% correctly, but the alignment comes out a bit screwy.
+%
+% An improved alignment that would give finite error etc is:
+% Deconv: 1.0649    1.0259    1.0491    1.0649    1.0789    1.0909    1.1159
+%
+% Orig:   1.0182    1.0259    1.0490    1.0648    1.0785    1.0909    1.1159
+%
+% A robustified error measure would generate this kind of alignment. (For
+% example, linear cost up to a distance of 0.01 ppm then charge everything
+% over that at 0.01 ppm.)
+%
+% From this brief survey it seems that the Anderson starting point makes
+% this kind of error more than the Summit starting point and will thus 
+% generate worse alignments.
+%
+% In an ideal world, I would use a robustified alignment algorithm (the
+% cut-off is easy to incorporate into my cost matrix calculations) but I
+% don't know how to choose the cut-off, and that might take some time.
+% Instead, I will just note this problem in the paper if size constraints 
+% permit it.
+fprintf('Aligned indices: %s\n', to_str(glbio_combined_results(1059).deconvolutions(3).aligned_indices));
+fprintf('Deconvolved locations: %s\n',to_str([glbio_combined_results(1059).deconvolutions(3).peaks(1:7).location]));
+fprintf('Original locations   : %s\n',to_str([glbio_combined_results(1059).spectrum_peaks([1, 7, 4, 2, 5, 6, 3]).location]));
 
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
