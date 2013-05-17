@@ -1420,6 +1420,47 @@ fprintf('Aligned indices: %s\n', to_str(glbio_combined_results(1059).deconvoluti
 fprintf('Deconvolved locations: %s\n',to_str([glbio_combined_results(1059).deconvolutions(3).peaks(1:7).location]));
 fprintf('Original locations   : %s\n',to_str([glbio_combined_results(1059).spectrum_peaks([1, 7, 4, 2, 5, 6, 3]).location]));
 
+%% Does abs vs squared cost function fix alignment problem for figures 2 and 8?
+%
+%
+% No, it doesn't. It fixes figure 8 but not 2.
+%
+% The new alignment for figure 2 is:
+%
+% Deconv: 3.4816    3.4669    2.2178    2.3204    3.4914    3.4209    2.3205
+% Orig:   3.4814    3.4665    1.4974    2.2176    3.4914    3.4209    2.3204
+%
+% And figure 8 is:
+%
+% Deconv: 1.0491    1.0649    1.1159    1.0259    1.0789    1.0909    1.0649
+% Orig:   1.0490    1.0648    1.1159    1.0259    1.0785    1.0909    1.0182
+%
+% As an experiment, I did a quick and dirty replacement of abs with
+% sqrt(abs
+%
+% The new alignment worked! The square root biases the result in favor of
+% packing all the error into a smaller number of big mistakes. I still need
+% to write the new routine and then re-run things.
+
+
+fig_2_deconv_loc = [glbio_combined_results(861).deconvolutions(3).peaks(1:7).location];
+fig_2_orig_loc = [glbio_combined_results(861).spectrum_peaks(1:7).location];
+[assignment,cost] = GLBIO2013Deconv.least_abs_assignment(fig_2_orig_loc, fig_2_deconv_loc);
+fprintf('Figure 2 alignment using abs\n');
+[fig_2_deconv_loc(assignment); fig_2_orig_loc] %#ok<NOPTS>
+fprintf('The cost of the original alignment is: %g\n', cost);
+fprintf('Figure 2 manual alignment\n');
+manual_alignment = assignment([1:2,4,3,5:7]);
+fig_2_man_matrix = [fig_2_deconv_loc(manual_alignment); fig_2_orig_loc] %#ok<NOPTS>
+manual_cost = sum(abs(fig_2_man_matrix(1,:) - fig_2_man_matrix(2,:)));
+fprintf('The abs cost of the manual alignment is: %g\n', manual_cost);
+
+fig_8_deconv_loc = [glbio_combined_results(1059).deconvolutions(3).peaks(1:7).location];
+fig_8_orig_loc = [glbio_combined_results(1059).spectrum_peaks(1:7).location];
+assignment = GLBIO2013Deconv.least_abs_assignment(fig_8_orig_loc, fig_8_deconv_loc);
+fprintf('Figure 8 alignment using abs');
+[fig_8_deconv_loc(assignment); fig_8_orig_loc] %#ok<NOPTS>
+
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
 
