@@ -99,6 +99,35 @@ classdef GLBIO2013Deconv
             [assign, cost] = munkres(costs);
         end
         
+        function [assign, cost] = least_abs_assignment(locs1, locs2)
+        % Calculate the assignment from locs1 to locs2 that minimzes sum of absolute values of distances between assigned elements
+        %
+        % locs1 - (vector of double) first list of locations
+        %
+        % locs2 - (vector of double) second list of locations
+        %
+        % Return values are the same as those returned by the munkres
+        % routine.
+        %
+        % assign - (row vector) assign(i) is index of the column in locs2 assigned to locs1(i). 
+        %    If no column is assigned to row i, then assign(i) is 0.
+        %    locs2(assign) gives the locations in the same positions as
+        %    their corresponding entries in locs(1)
+        %
+        % cost - (scalar) the sum of the costs of the assignments for the minimum
+        %    cost set of assignments: will be sum(abs(locs1(assign > 0)-locs2(assign(assign > 0))))
+            costs = inf(length(locs1), length(locs2));
+            for i = 1:length(locs1)
+                i_loc = locs1(i);
+                for j = 1:length(locs2)
+                    j_loc = locs2(j);
+                    costs(i,j) = abs(j_loc - i_loc);
+                end
+            end
+        
+            [assign, cost] = munkres(costs);
+        end
+        
         function str = pp_gold_standard
         % Constant used to signify the gold-standard peak picking method
             str = 'pp_gold_standard';
