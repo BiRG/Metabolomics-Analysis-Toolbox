@@ -1253,21 +1253,22 @@ end
 % standard deviations high)
 %
 % Figure 12: Bot loc, max param Summit location crowding: 1 ... Result 951 Deconv 4 Peak 3
-%
+% Try as I might, I can't find the mode of the deconvolved peak - it is
+% completely flat.
 %
 % Figure 13: Top loc, min param Summit height crowding: 5 ... Result 585 Deconv 4 Peak 5
 % Very slight error (as min param might suggest) even location error is 
 % only slight.
 %
 % Figure 14: Top loc, max param Summit height crowding: 5 ... Result 425 Deconv 4 Peak 5
-%
+% Underestimated a small peak overlapped by a much larger one.
 %
 % Figure 15: Bot loc, max param Summit height crowding: 5 ... Result 185 Deconv 4 Peak 3
 % Very slight overestimate. Since this is the maximum height error, heights
 % were very accurate at crowding 5 when the initial location was close
 %
 % Figure 16: Top loc, min param Summit width crowding: 9 ... Result 229 Deconv 4 Peak 7
-%
+% Decent fit of a very large peak on the edge of a spectrum.
 %
 % Figure 17: Top loc, max param Summit width crowding: 9 ... Result 459 Deconv 4 Peak 1
 % Summit underestimated width in large peak with several side-peaks -
