@@ -1205,59 +1205,81 @@ end
 % crowdings to represent low, medium, and high crowding.
 %
 % Figure 1: Top loc, min param Anderson height crowding: 1 ... Result 691 Deconv 3 Peak 4
-%
+% Not a good fit, but not the fault of the alignment. Too wide and a bit
+% too short, but on-the-money location-wise.
 %
 % Figure 2: Top loc, max param Anderson height crowding: 1 ... Result 861 Deconv 3 Peak 2
-%
+% Could be bad alignment. Anderson is fitting a completely different peak
+% from the original (and does a good job of it). I need to look at the
+% other peaks in the spectrum to see why the alignment was as it is.
 %
 % Figure 3: Bot loc, max param Anderson height crowding: 1 ... Result 1081 Deconv 3 Peak 7
-%
+% One of Anderson's famous fit something really wide and low local minima.
+% I have don't know why these happen except for badly set bounds. I'm sure
+% if I examined the path, I could see where the tradeoffs create a local
+% minimum.
 %
 % Figure 4: Top loc, min param Anderson width crowding: 5 ... Result 1015 Deconv 3 Peak 1
-%
+% Such a good fit, you can't tell there was any location error to begin
+% with.
 %
 % Figure 5: Top loc, max param Anderson width crowding: 5 ... Result 415 Deconv 3 Peak 7
-%
+% This peak is just a BAD fit. It is SO much larger than the maximum of the
+% spectrum in the area. Its size must be covering up for another mistake
+% elsewhere in the spectrum.
 %
 % Figure 6: Bot loc, max param Anderson width crowding: 5 ... Result 35 Deconv 3 Peak 6
-%
+% Very small peak under a much larger peak. Fitted an extremely wide peak.
+% I've seen anderson starting points do this before.
 %
 % Figure 7: Top loc, min param Anderson lorentzianness crowding: 9 ... Result 249 Deconv 3 Peak 7
-%
+% This is a peak on the edge. The correct lorentzianness is probably an
+% accident. The fitted peak doesn't line up very well with the original.
 %
 % Figure 8: Top loc, max param Anderson lorentzianness crowding: 9 ... Result 1059 Deconv 3 Peak 2
-%
+% Could be a bad alignment. We fitted the peak next door from the one we
+% were supposed to.
 %
 % Figure 9: Bot loc, max param Anderson lorentzianness crowding: 9 ... Result 39 Deconv 3 Peak 3
-%
+% Overestimated peak greatly overlapped by another larger peak
 %
 % Figure 10: Top loc, min param Summit location crowding: 1 ... Result 641 Deconv 4 Peak 6
-%
+% A pretty good fit. It looks like the main error is actually
+% lorentzianness and/or width. There is essentially no location error.
 %
 % Figure 11: Top loc, max param Summit location crowding: 1 ... Result 581 Deconv 4 Peak 3
-%
+% The initial location error caused summit to fit a component of a larger
+% peak rather than the actual peak (which is very small - only a few noise
+% standard deviations high)
 %
 % Figure 12: Bot loc, max param Summit location crowding: 1 ... Result 951 Deconv 4 Peak 3
 %
 %
 % Figure 13: Top loc, min param Summit height crowding: 5 ... Result 585 Deconv 4 Peak 5
-%
+% Very slight error (as min param might suggest) even location error is 
+% only slight.
 %
 % Figure 14: Top loc, max param Summit height crowding: 5 ... Result 425 Deconv 4 Peak 5
 %
 %
 % Figure 15: Bot loc, max param Summit height crowding: 5 ... Result 185 Deconv 4 Peak 3
-%
+% Very slight overestimate. Since this is the maximum height error, heights
+% were very accurate at crowding 5 when the initial location was close
 %
 % Figure 16: Top loc, min param Summit width crowding: 9 ... Result 229 Deconv 4 Peak 7
 %
 %
 % Figure 17: Top loc, max param Summit width crowding: 9 ... Result 459 Deconv 4 Peak 1
-%
+% Summit underestimated width in large peak with several side-peaks -
+% displacement of the main peak and the side peaks could account very
+% reasonably for this sinc the side peaks might be made larger to
+% compensate.
 %
 % Figure 18: Bot loc, max param Summit width crowding: 9 ... Result 489 Deconv 4 Peak 4
+% Summit slightly underestimated height and width for a very small peak
+% overshadowed by a much larger peak
 %
-%
+old_pause_state = pause('on'); % Pausing to allow all the figures to be created
 
 figure_number = 1;
 param_idx = 0;
@@ -1272,19 +1294,25 @@ for starting_pt_idx = 1:length(starting_pt_names)
         extreme_names = {'Top loc, min param','Top loc, max param','Bot loc, max param'};
         for val=1:length(extreme)
             e = extreme(val);
-            figure(figure_number);
-            maximize_figure(gcf, num_monitors);
-            GLBIO2013_plot_peak_estimate(e.datum, e.deconv_idx, ...
-                e.deconv_peak_idx, false);
-            title(sprintf('%s %s %s crowding: %d\nResult %d Deconv %d Peak %d', extreme_names{val}, ...
-                starting_pt_names{starting_pt_idx}, ...
-                pa_param_names{param_idx}, congestion_idx, ...
-                e.result_idx, e.deconv_idx, e.deconv_peak_idx ...
-                ));
+            if any(figure_number == [16, 14, 12])
+                pause(3);
+                figure(figure_number);
+                maximize_figure(gcf, num_monitors);
+
+                GLBIO2013_plot_peak_estimate(e.datum, e.deconv_idx, ...
+                    e.deconv_peak_idx, false);
+                title(sprintf('%s %s %s crowding: %d\nResult %d Deconv %d Peak %d', extreme_names{val}, ...
+                    starting_pt_names{starting_pt_idx}, ...
+                    pa_param_names{param_idx}, congestion_idx, ...
+                    e.result_idx, e.deconv_idx, e.deconv_peak_idx ...
+                    ));
+            end
             figure_number = figure_number + 1;
         end
     end
 end
+
+pause(old_pause_state);
 
 %% Print the figure number - what was plotted key
 % For the analysis in the previous section, I needed to print the title of
