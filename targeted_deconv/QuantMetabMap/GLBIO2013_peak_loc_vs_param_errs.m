@@ -132,7 +132,7 @@ function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
         % Take the peak picker output and align it to the reordered
         % original peaks
         picked_locs = deconv.picked_locations;
-        assignment = GLBIO2013Deconv.least_squares_assignment(datum_locs, picked_locs);
+        assignment = GLBIO2013Deconv.l_p_norm_assignment(datum_locs, picked_locs, 2);
         picked_locs = picked_locs(assignment(assignment > 0));
         
         % Subtract
