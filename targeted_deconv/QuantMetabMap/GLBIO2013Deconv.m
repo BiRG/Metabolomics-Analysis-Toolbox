@@ -357,7 +357,7 @@ classdef GLBIO2013Deconv
                     obj.peaks = GaussLorentzPeak([]);
                 end
                 
-                obj.aligned_indices = GLBIO2013Deconv.best_alignment(obj.peaks, peaks);
+                obj.aligned_indices = GLBIO2013Deconv.best_alignment(obj.peaks, peaks, 'l2');
                 
                 % Defensive programming checking for a bug that cropped up
                 % earlier where the number of peaks in deconvolved noisy
