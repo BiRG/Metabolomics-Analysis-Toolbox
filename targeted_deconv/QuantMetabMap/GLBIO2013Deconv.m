@@ -65,11 +65,14 @@ classdef GLBIO2013Deconv
         % criterion - (string) A string describing what criterion is used
         %      for creating the alignment. Can be one of:
         %
-        %      'l2' - minimizes the l2 norm of the distances (minimum sum
+        %      'l2' - minimizes the L_2 norm of the distances (minimum sum
         %           of squares)
         %
-        %      'l1' - minimizes the l1 norm of the distances (minimum sum
+        %      'l1' - minimizes the L_1 norm of the distances (minimum sum
         %           of absolute values)
+        %
+        %      'l0.5' - minimizes the L_0.5 norm of the distances (minimum
+        %           of square root of absolute values)
         %
         %      'unambiguous' - only aligns a pair a,b when a is the nearest
         %           neighbor of b and b is the nearest neighbor of a.
@@ -83,6 +86,8 @@ classdef GLBIO2013Deconv
                 assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 2);
             elseif strcmp(criterion,'l1')
                 assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 1);
+            elseif strcmp(criterion,'l0.5')
+                assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 0.5);
             elseif strcmp(criterion,'unambiguous')
                 error('best_alignment:not_implemented',...
                     'Unambiguous matching criterion not implemented yet');
