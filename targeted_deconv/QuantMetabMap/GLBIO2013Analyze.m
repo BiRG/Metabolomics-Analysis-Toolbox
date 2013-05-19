@@ -3,7 +3,7 @@
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
 % idea what happens under Windows or iOS.
-num_monitors = 2; 
+num_monitors = 1; 
 
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
@@ -53,6 +53,7 @@ subplot(2,2,4);
 legend(handles, element_names, 'Location', 'NorthEast');
 
 maximize_figure(gcf, num_monitors);
+
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
@@ -1445,7 +1446,7 @@ fprintf('Original locations   : %s\n',to_str([glbio_combined_results(1059).spect
 
 fig_2_deconv_loc = [glbio_combined_results(861).deconvolutions(3).peaks(1:7).location];
 fig_2_orig_loc = [glbio_combined_results(861).spectrum_peaks(1:7).location];
-[assignment,cost] = GLBIO2013Deconv.least_abs_assignment(fig_2_orig_loc, fig_2_deconv_loc);
+[assignment,cost] = GLBIO2013Deconv.l_p_norm_assignment(fig_2_orig_loc, fig_2_deconv_loc,1);
 fprintf('Figure 2 alignment using abs\n');
 [fig_2_deconv_loc(assignment); fig_2_orig_loc] %#ok<NOPTS>
 fprintf('The cost of the original alignment is: %g\n', cost);
@@ -1457,9 +1458,62 @@ fprintf('The abs cost of the manual alignment is: %g\n', manual_cost);
 
 fig_8_deconv_loc = [glbio_combined_results(1059).deconvolutions(3).peaks(1:7).location];
 fig_8_orig_loc = [glbio_combined_results(1059).spectrum_peaks(1:7).location];
-assignment = GLBIO2013Deconv.least_abs_assignment(fig_8_orig_loc, fig_8_deconv_loc);
+assignment = GLBIO2013Deconv.l_p_norm_assignment(fig_8_orig_loc, fig_8_deconv_loc,1);
 fprintf('Figure 8 alignment using abs');
 [fig_8_deconv_loc(assignment); fig_8_orig_loc] %#ok<NOPTS>
+
+%% How many alignments would change using L0.5 norm rather than L2 norm?
+% I have another alignment method (my "unambiguous" alignment) but I'd like
+% to look at how ambiguous the situation is so I can better motivate (or
+% not) the use of my other method.
+%
+% Changing the exponent affects 2450 out of 7200 deconvolutions in my
+% preliminary test set - 34%.
+%
+% The deconvolution methods produce ambiguous deconvolutions at different
+% rates. For my test set, I got the following table (there were 1200
+% instances of each deconvolution method)
+%
+% Deconv:             1     2     3     4     5     6
+% Times affected:   766     0   753    18   468   445
+%
+% The methods corresponding to each deconvolution number are:
+%
+% 1. gold_standard, Anderson
+% 2. gold_standard, Summit
+% 3. noisy_gold_standard, Anderson
+% 4. noisy_gold_standard, Summit
+% 5. smoothed_local_max, Anderson
+% 6. smoothed_local_max, Summit
+%
+% So, for gold standard and noisy gold standard, 63-64% of the Anderson
+% deconvolutions had an ambiguous alignment, whereas very few of the summit
+% deconvolutions did (0% and 1.5%). For smoothed local max, they were
+% equivalent, both producing around 40% ambiguous deconvolutions.
+
+affected_deconvs=struct('result_idx', [], 'deconv_idx', []);
+num_deconvs = 0;
+for result_idx=1:length(glbio_combined_results)
+    datum = glbio_combined_results(result_idx);
+    orig_peaks = datum.spectrum_peaks;
+    num_deconvs = num_deconvs + length(datum.deconvolutions);
+    for deconv_idx = 1:length(datum.deconvolutions)
+        deconv = datum.deconvolutions(deconv_idx);
+        l_2_align = deconv.aligned_indices;
+        l_half_align = GLBIO2013Deconv.best_alignment(deconv.peaks,orig_peaks,'l0.5');
+        if any(any(l_2_align ~= l_half_align))
+            affected_deconvs.result_idx(end+1)=result_idx;
+            affected_deconvs.deconv_idx(end+1)=deconv_idx;
+        end
+    end
+end
+
+fprintf('Num affected: %d out of %d \n', ...
+    length(affected_deconvs.result_idx), num_deconvs);
+deconv_affected = histc(affected_deconvs.deconv_idx, 1:max(affected_deconvs.deconv_idx));
+fprintf('\nDeconv:        '); fprintf(' %5d', 1:max(deconv_idx));
+fprintf('\nTimes affected:'); fprintf(' %5d', deconv_affected);
+fprintf('\n');
 
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
