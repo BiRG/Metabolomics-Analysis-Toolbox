@@ -53,12 +53,45 @@ classdef GLBIO2013Deconv
     end
     
     methods (Static)
-        function best = best_alignment(peaks, original_peaks)
+        function best = best_alignment(peaks, original_peaks, criterion)
         % Calculate the best alignment between two sets of peaks using the hungarian algorithm for linear assignment problems (munkres)
+        %
+        % peaks - (vector of GaussLorentzPeak objects) the peaks returned by
+        %      the deconvolution routine
+        %
+        % original_peaks - (vector of GaussLorentzPeak objects) the
+        %      spectrum_peaks from the parent GLBIO2013Datum object
+        %
+        % criterion - (string) A string describing what criterion is used
+        %      for creating the alignment. Can be one of:
+        %
+        %      'l2' - minimizes the l2 norm of the distances (minimum sum
+        %           of squares)
+        %
+        %      'l1' - minimizes the l1 norm of the distances (minimum sum
+        %           of absolute values)
+        %
+        %      'unambiguous' - only aligns a pair a,b when a is the nearest
+        %           neighbor of b and b is the nearest neighbor of a.
+        %           (Though it repeats the procedure after removing each
+        %           group of matches until there are no unambiguous matches
+        %           left.)
         %
         % best - a peak alignment matching the description of the
         %        aligned_indices member
-            assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 2);
+            if strcmp(criterion, 'l2')
+                assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 2);
+            elseif strcmp(criterion,'l1')
+                assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 1);
+            elseif strcmp(criterion,'unambiguous')
+                error('best_alignment:not_implemented',...
+                    'Unambiguous matching criterion not implemented yet');
+            else
+                error('best_alignment:unknown_criterion', ...
+                    ['"' criterion '"is not a known alignment criterion ' ...
+                    'string.']);
+            end
+            
             best = zeros(2,sum(assignment ~= 0));
             dest_idx = 1;
             for src_idx = 1:length(assignment)
