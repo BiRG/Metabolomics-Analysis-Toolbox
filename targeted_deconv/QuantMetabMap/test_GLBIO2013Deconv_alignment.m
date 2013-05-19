@@ -133,4 +133,27 @@ assertPeakAlignment([3,1,2], [1,2,3], 'l2', [3,1,2;1,2,3]);
 assertPeakAlignment([1,3,2], [1,2,3], 'l2', [1,3,2;1,2,3]);
 
 
+assertPeakAlignment([1,2,3], [3.8,2.3  ,2.1], 'l1', [3,2,1;1,2,3]); % 2,3,1 gives the same cost
+assertPeakAlignment([1,2,3], [3.2,0.2  ,3.1], 'l1', [2,1,3;1,2,3]);
+assertPeakAlignment([1,2,3], [3.1,2.8  ,1.8], 'l1', [3,2,1;1,2,3]);
+assertPeakAlignment([1,2,3], [3.1,2.99 ,1.8], 'l1', [3,2,1;1,2,3]);
+assertPeakAlignment([1,2,3], [3.1,3.101,1.8], 'l1', [3,1,2;1,2,3]);
+assertPeakAlignment([1,2,3,4],[3.1,3.101,1.8], 'l1', [3,1,2;2,3,4]);
+assertPeakAlignment([1,2,3,4],[1,2,3], 'l1', [1,2,3;1,2,3]);
+assertPeakAlignment([],[1,2,3], 'l1', zeros(2,0));
+assertPeakAlignment([1,2,3,4],[], 'l1', zeros(2,0));
+assertPeakAlignment([1,2,3,4],2, 'l1', [1;2]);
+assertPeakAlignment(3, 2, 'l1', [1;1]);
+assertPeakAlignment(3, [1,4,7], 'l1', [2;1]);
+assertPeakAlignment(3, [1,4], 'l1', [2;1]);
+assertPeakAlignment(2, [1,4], 'l1', [1;1]);
+assertPeakAlignment([1,2,3], [1,2,3], 'l1', [1,2,3;1,2,3]);
+assertPeakAlignment([2,1,3], [1,2,3], 'l1', [2,1,3;1,2,3]);
+assertPeakAlignment([2,3,1], [1,2,3], 'l1', [2,3,1;1,2,3]);
+assertPeakAlignment([3,2,1], [1,2,3], 'l1', [3,2,1;1,2,3]);
+assertPeakAlignment([3,1,2], [1,2,3], 'l1', [3,1,2;1,2,3]);
+assertPeakAlignment([1,3,2], [1,2,3], 'l1', [1,3,2;1,2,3]);
+
+
+
 RandStream.setGlobalStream(old_rng);
