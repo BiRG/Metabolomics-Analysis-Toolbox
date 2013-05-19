@@ -1515,6 +1515,89 @@ fprintf('\nDeconv:        '); fprintf(' %5d', 1:max(deconv_idx));
 fprintf('\nTimes affected:'); fprintf(' %5d', deconv_affected);
 fprintf('\n');
 
+%% Thinking about alignment
+%
+% Before I go and completely reform the way I do the alignment, I'd like to
+% write a bit to record my thoughts on the issue.
+%
+% Alignment issues come about because of an ill-posedness in speaking about
+% errors per peak. What we really have as gold-standard data is a set of
+% peaks and our deconvolution gives us another set of peaks. If they're
+% identical, then very good. However, they will seldom be identical. So,
+% the proper error measure is a function defined on peak-set pairs
+% (peak-set x peak-set -> R). 
+%
+% Once you've thought of this, the obvious idea is to use a set-set
+% distance metric for the error. There are a number of them. From Theodoris
+% and Koutroumbas p. 511, treat each peak as a 4 d point. We can use the
+% mahalanobis distance for the peak-peak distance.
+%
+% 1. Distance between closest pair of peaks one from each set
+%
+% 2. Mean distance between all pairs of peaks
+%
+% 3. Distance between centroids of each set (this is obvious nonsense in
+%    our domain)
+%
+% From wikipedia:
+%
+% 4. Hausdorff distance - the maximum distance from a point in 1 set to its
+%    closest neighbor in the other set
+%
+%
+% Since we are looking for error measures, method 1 would give the minimum
+% possible error - score the test on the best answer. This doesn't seem a
+% good evaluation method.
+%
+% Mean distance between all pairs (method 2) doesn't seem useful either.
+% [1,2] [1,2] (mean distance = 0+0+1+1/4 = 1/2) shouldn't be worse than
+% [1000,2000] [1000,2000] (mean distance = 0+0+1000+1000/4 = 500).
+% 
+% The Hausdorff distance (method 4) shows more promise. The nearest
+% neighbor seems a non-biased way of choosing an alignment and the maximum
+% error between a peak and its aligned neighbor seems an OK way of dealing
+% with misalignment or summarizing the error. It is conservative in that it
+% gives one species of the maximum peak alignment error for the spectrum.
+%
+% Eiter & Mannila (p. 112 or 4) mention that the Hausdorff distance is
+% sensitive to extreme points. In fact, Hausdorff throws out all
+% point-pairs but one. They want measures that reflect the rest of the
+% points in the set. They want the set where all matches are good but one 
+% is bad to degree b to have a lower error than a set where all matches
+% are bad to degree b.
+%
+% The distance functions they consider are:
+%
+% a. d_md - the sum of the minimum distances. For each peak in s1 find
+%      the distance to its nearest neighbor in s2. Sum these to sum1. Then
+%      for each peak in s2, find the distance to its nearest neighbor in
+%      s1. Sum these to sum2. Take the mean of sum1 and sum2.
+%
+% b. d_s  - the surjection distance. Without loss of generality, let s1
+%      be at least as large as s2. Then for each mapping from s1 onto s2,
+%      (each surjection) sum the distances to the corresponding points.
+%      Take the surjection distance to be the minimum of these sums. Note
+%      that in a surjection, each element of s1 must have an out-degree of
+%      exactly 1 and each element of s2 must have an in-degree of at least
+%      1.
+%
+% c. d_sf - the fair surjection distance. Like the surjection distance, but
+%      limit the surjections to those in which the number of peaks
+%      from s1 mapping onto a given peak in s2 differs by at most 1. So if
+%      s1 had peaks [a,b,c] and s2 had peaks [x,y] then
+%      [{a,b,c}->x,{}->y] would be an acceptable surjection for d_s but not
+%      for d_sf. [{a,b}->x,{c}->y] and [{b}->x,{a,c}->y] would be
+%      acceptable surjections under both measures.
+%
+% d. d_l - the minimum link distance. Like the surjection distance except
+%      instead of minimizing over surjections it minimizes over "linkings".
+%      A linking is an undirected bipartite graph where each peak has
+%      degree of at least 1. Each edge is assigned the distance for its two
+%      end points and the score of a linking is the sum of its edges'
+%      distance. Finally, the distance is the minimum score over all
+%      linkings.
+
+
 %% Calculate the relative parameter errors
 pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
 
