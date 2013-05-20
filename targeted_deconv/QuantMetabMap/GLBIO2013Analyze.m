@@ -1587,7 +1587,9 @@ fprintf('\n');
 %      s1 had peaks [a,b,c] and s2 had peaks [x,y] then
 %      [{a,b,c}->x,{}->y] would be an acceptable surjection for d_s but not
 %      for d_sf. [{a,b}->x,{c}->y] and [{b}->x,{a,c}->y] would be
-%      acceptable surjections under both measures.
+%      acceptable surjections under both measures. Note that
+%      [{a,b,c}->x,{a}->y] is not a surjection because a has an out-degree
+%      of 2.
 %
 % d. d_l - the minimum link distance. Like the surjection distance except
 %      instead of minimizing over surjections it minimizes over "linkings".
@@ -1596,6 +1598,223 @@ fprintf('\n');
 %      end points and the score of a linking is the sum of its edges'
 %      distance. Finally, the distance is the minimum score over all
 %      linkings.
+%
+% Before I evaluate Eiter & Mannila's distances, I want to consider some
+% criteria for a good distance taken from the assumptions underlying our
+% problem.
+%
+% Criteria for a good distance:
+%
+% I take these criteria from my experience matching peak sets by hand.
+%
+% A. Each peak in either set should map to at most 1 peak in the other set.
+%
+%    This criterion arises from our desired goal - one peak in the output
+%    for each peak in the input. It is true that a given input peak can
+%    produce multiple output peaks in the deconvolution due to bad
+%    deconvolution. However, this is not the ideal. It is reasonable to
+%    penalize this situation.
+%
+% B. An unmatched peak should be an error greater than any matched pair of
+%    peaks
+%
+%    This makes it always advantageous to produce peaks in the right area
+%    even if the match is not very good.
+%
+%    It also makes the following two situations assign an equal error to Y
+%
+%    A   B                     C
+%    X Y Z
+%
+%    and
+%
+%    A   B
+%    X Y Z
+%
+%    Y is not a match for C
+%
+% C. Each input peak can match only to adjacent peaks on the output (see
+%    after the ascii art for a revised statement C')
+%
+%    This keeps peaks from skipping undesirable peaks and matching others.
+%    This makes mismatches more local and makes sense in matching.
+%
+%    A      B     C    D
+%             X  Y  Z
+%
+%    This rule would mean Z can only match C & D, Y can only match C (X is
+%    in the way for B), and X can only match B.
+%
+%    This rule ensures that the matched peaks are in the same order as
+%    their original peaks.
+%
+%    One place I wonder about this rule is under a big "peak" that was
+%    really the result of two overlapping smaller peaks.
+%
+%    Another thing to consider is changing the above to
+%
+%    A      B     C    D
+%             X    YZ
+%
+%    Z hasn't changed, but because Y moved, Z is no longer a candidate for
+%    C? That doesn't completely sit with me. I can imagine the following
+%    situation:
+%      ____
+%     /    \
+%    /   C  \
+%
+%           ____
+%        _ /    \
+%       /Y\   Z  \
+%
+%    It would be reasonable to match Z with C since they are much more
+%    similar overall despite the fact that Y is closer on the ppm axis.
+%
+% C'.Probably this principle should be "Each deconvolved peak can only
+%    match adjacent original peaks" This allows Z to match C,D and X to
+%    match B,C and Y to match B,C.
+%
+% D. Matches are undirected. If A matches X then X matches A. 
+%
+%    This rule comes out of the model of a single peak producing at most 1
+%    peak in the output.
+%
+% E. The error should be a function of the matches and matched peaks
+%
+% F. Over all legal matchings, maximize the number of edges
+%
+%    If you can match two peaks, you should match them.
+%
+% G. If A is closest neighbor to B and B is closest to A then A and B
+%    should be matched
+%
+%    This says that a recipriocal closest neighbor relationship is a match.
+%
+% H. Only closest neighbors should be matched.
+%
+%    This is a slightly stronger version of C. Under this, D cannot match Z
+%    in the example under principle C because it is a farther away than C.
+%
+%    I think this is too strong. (B-X, C-Y, D-Z) and (B-X,C-Z) should both
+%    be permissable matchings in general. 
+%
+% I. If a peak more than 1 legal matching, it should be left unmatched.
+%
+%    This is a conservative principle.
+%
+%    Note, if using A, C', D, G, E, F, I in the first C example, once 
+%    (B-X, C-Y) are forced by G then D cannot match Y because of principle
+%    A, so D has only one legal matching and F comes into effect
+%
+% J. Let P be a deconvolved peak. Let uadj(P) be the zero, one or two 
+%    original peaks adjacent to P and still unmatched. Let unm(O) be the 
+%    set of unmatched peaks P' for which O (an original peak) is an 
+%    element of uadj(P'). If P is in unm(O) and O's nearest neighbor in
+%    unm(O) is P and P's nearest neighbor in uadj(P) is O, then match O and
+%    P. 
+%
+%    In other words if (when you consider only unmatched elligible peaks) 
+%    A's closest neighbor is B and B's is A, match A and B.
+%
+% K. Unless forced by J, peaks remain unmatched
+%
+%    This is another conservative principle.
+%
+% The rules that I feel the most sure about are A, D & E. Unfortunately A
+% is sufficient to eliminate all of Eiter & Mannila's distance functions.
+%
+% One issue to consider is what the error should be. I'd like to make the
+% matching error based on location error. Then, the distance error will be 
+% one of the other parameters (or some combination thereof to give an
+% overall error measure.)
+%
+% Are A, D, and E sufficient to create a matching measure?
+%
+% No, there are many possible undirected bipartite graphs with at most
+% degree 1 at each node.
+%
+% Adding F reduces the number of graphs but is still ambiguous. For example
+% there are 4*3! graphs satisfying these rules for the example under
+% principle C.
+%
+% Adding G reduces the number of graphs in the C example to 2 (A-Z,B-X,C-Y)
+% or (D-Z,B-X,C-Y)
+%
+% Adding C' makes the matching unique
+%
+% For a different example, we can consider:
+%
+% A       BC
+%  Q R  S  T
+%
+% (A,Q) and (C,T) are forced by G. B's closest neighbor is T, but the
+% relationship is not recipriocal. Since S and R can both match B, they are
+% left unmatched due to the conservative principle. 
+%
+% If we remove R then S is unambiguous and matches B.
+%
+% We can get slightly less conservative matching that does the reasonable
+% thing and matches S with B by replacing C' and G with J. This essentially
+% forces multiple rounds of matching.
+%
+% First round (A-Q, C-T)
+% Second round S's closest unmatched neighbor is B and B's is S. (R's
+% closest unmatched neighbor is also B, but the closeness is not
+% recipriocated). So, match (B-S). R has no potential matches, so left
+% unmatched.
+%
+% A, D, E, J, and K form a sufficient set of rules to match what I think of
+% as conservative intuitive matches. It would, however, match Y with C
+% rather than Z with C in the ascii art deconvolution example just before
+% C'. Any "recipriocal nearest neighbor" rule will match Y rather than Z
+% unless you also include other dimensions in the matching. Then
+% sufficiently good matches on the other dimensions become nearest
+% neighbors. However, this gets rid of the "between" concept I've been
+% relying on.
+%
+% We could deal with this problem by setting up the potential matches based
+% only on location and betweenness. Then we do the nearest neighbors (which
+% force matches) using the full set of attributes (probably a Mahalanobis
+% distance).
+%
+% Mahalanobis distances - figured using the peaks for a given
+% congestion since the range of locations available will be different for
+% different congestions. Since the covariance matrix is diagonal
+% (independently chosen parameters) this is just the scaled Euclidean
+% distance.
+%
+% Using the Mahalanobis distances is a bit of a problem because, on the
+% surface, it appears to make the alignment impossible to do during the 
+% data generation stage. You need to know the standard deviations for each
+% variable. Fortunately, we know the distributions from which the variables
+% are drawn, so we can calculate the standard deviations a-priori if we
+% know the congestion. However, it does require passing the congestion to
+% the alignment routine.
+%
+% I'll want to write a routine "scale_peaks" that takes a list of peaks and
+% congestions and scales them to the Mahalanobis distance. This will be
+% relatively easy to test since I can generate a lot of samples, scale
+% them, and their means and standard deviations should be 0 and 1
+% respectively.
+%
+% A final option is to do an L2 and an L0.5 alignment and any points which
+% differ are taken as ambiguous. I don't like this because observationally,
+% in the cases I hand examined above, some of the points which changed
+% weren't ambiguous in my opinion. They were clearly closest to a
+% particular original peak, but the tradeoffs involved in L2 forced them
+% into another alginment. Maybe an L1.01 vs an L0.99 might better show
+% which are genuinely ambiguous (examining alignments generated using the 
+% L1 norm I frequently found two equivalent optima that would have
+% varied depending on the exponent.)
+%
+% Yet one more option is to ignore the individual values entirely. If I
+% look at the deconvolved spectra, their distribution should match the
+% original spectra. The K-L divergence of the distributions will give me a
+% measure of the number of bits of information lost in using each
+% deconvolution method to approximate the original. Looking at the joint
+% distribution will find spurious correlations introduced by the
+% deconvolution methods. I'm not sure what to do about missing peaks, 
+% though. But this is a very promising approach.
 
 
 %% Calculate the relative parameter errors
