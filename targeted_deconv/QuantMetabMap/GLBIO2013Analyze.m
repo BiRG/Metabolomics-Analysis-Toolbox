@@ -1815,6 +1815,15 @@ fprintf('\n');
 % distribution will find spurious correlations introduced by the
 % deconvolution methods. I'm not sure what to do about missing peaks, 
 % though. But this is a very promising approach.
+%
+% A final peak-wise method is to: calculate the distribution of the
+% differences of the closest peak. (That is, for each original peak,
+% find the closest deconvolved peak and give the distribution of the
+% parameter differences contingent on method and/or congestion and/or
+% input peak picking error.) Using a better alignment would give a better
+% definition for "closest peak". One could do - for each peak with a match,
+% give the error distribution.
+
 
 
 %% Calculate the relative parameter errors
