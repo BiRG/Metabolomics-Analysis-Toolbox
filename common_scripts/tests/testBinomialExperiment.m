@@ -5,6 +5,15 @@ function test_suite = testBinomialExperiment %#ok<STOUT>
 %   runtests testBinomialExperiment
 initTestSuite;
 
+function id = assert_id
+% Return the identifier used for assertion failures - this is different
+% between different Matlab versions, so I calculate it here
+try
+    assert(false);
+catch ME
+    id = ME.identifier;
+end
+
 function testConstructor %#ok<DEFNU>
 % Tests the inputs of the constructor and if it fails appropriately
 
@@ -23,25 +32,25 @@ assertEqual(c.priorAlpha,0);
 assertEqual(c.priorBeta, 0);
 
 f=@() BinomialExperiment(10,1);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 
 f=@() BinomialExperiment(-1,1,1,1);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() BinomialExperiment(1,-0.1,1,1);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() BinomialExperiment(1,1,-10,1);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() BinomialExperiment(1,1,0,-2);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 
 f=@() BinomialExperiment([0,0],0,0,0);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() BinomialExperiment(0,[0;0],0,0);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() BinomialExperiment(0,0,[0,1],0);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() BinomialExperiment(0,0,0,[1,1]);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 
 function testProb %#ok<DEFNU>
 % Tests whether the correct probability estimates are calculated
@@ -81,16 +90,16 @@ assertEqual(i.min, 0.223606797749979019);
 assertEqual(i.max, 1);
 
 i = BinomialExperiment(1,9999,1,1).shortestCredibleInterval(0.95);
-assertEqual(i.min, 4.22436540261094561e-06);
-assertEqual(i.max, 0.000476367771384372612);
+assertElementsAlmostEqual(i.min, 4.22436540261094561e-06);
+assertElementsAlmostEqual(i.max, 0.000476367771384372612);
 
 i = BinomialExperiment(10,9990,1,1).shortestCredibleInterval(0.999);
-assertEqual(i.min, 0.000281246144933201803);
-assertEqual(i.max, 0.00244175761018746405);
+assertElementsAlmostEqual(i.min, 0.000281246144933201803);
+assertElementsAlmostEqual(i.max, 0.00244175761018746405);
 
 i = BinomialExperiment(100,100,1,1).shortestCredibleInterval(0.98);
-assertEqual(i.min, 0.418605372460687131);
-assertEqual(i.max, 0.581394627539312703);
+assertElementsAlmostEqual(i.min, 0.418605372460687131);
+assertElementsAlmostEqual(i.max, 0.581394627539312703);
 
 function testChar %#ok<DEFNU>
 % Tests whether the char function for producing human readable output

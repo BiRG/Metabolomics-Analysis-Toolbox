@@ -5,6 +5,15 @@ function test_suite = testClosedInterval %#ok<STOUT>
 %   runtests testClosedInterval
 initTestSuite;
 
+function id = assert_id
+% Return the identifier used for assertion failures - this is different
+% between different Matlab versions, so I calculate it here
+try
+    assert(false);
+catch ME
+    id = ME.identifier;
+end
+
 function testConstructor %#ok<DEFNU>
 % Tests the inputs of the constructor and if it fails appropriately
 
@@ -27,13 +36,13 @@ f=ClosedInterval(); %Ensure default constructor is implemented
 assertTrue(isa(f, 'ClosedInterval'));
 
 f=@() ClosedInterval(1,-1);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() ClosedInterval([-1,1],1);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() ClosedInterval(2,[-1,1]);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 f=@() ClosedInterval([-1,1]);
-assertExceptionThrown(f, 'MATLAB:assert:failed');
+assertExceptionThrown(f, assert_id);
 
 function testLength %#ok<DEFNU>
 % Tests that the length function operates as expected
