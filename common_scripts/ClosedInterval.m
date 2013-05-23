@@ -67,7 +67,19 @@ classdef ClosedInterval
         % Return a human-readable string representation of this
         % object. (Matlab's version of toString, however, Matlab
         % doesn't call it automatically)
-          str = sprintf('ClosedInterval(%g,%g)', obj.min, obj.max);
+          if length(obj) == 1
+            str = sprintf('ClosedInterval(%g,%g)', obj.min, obj.max);
+          else
+            first = obj(1);
+            rest = obj(2:end);
+            str = [ '[' ...
+                sprintf('ClosedInterval(%g,%g)', ...
+                   first.min, first.max) ...
+                sprintf(' ClosedInterval(%g,%g)', ...
+                   rest.min, rest.max) ...
+                ']'
+            ];
+          end
         end
 	    
         function display(obj)
