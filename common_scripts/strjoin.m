@@ -65,7 +65,7 @@ function str = strjoin( C, delimiter )
 % Error: 'strjoin:delimiter_type'
 %
 % >> strjoin({'Foo','Bar','Baz'},', ',': ')
-% Error: 'strjoin:wrong_num_arg'
+% Error: 'MATLAB:TooManyInputs'
 %
 %
 % -------------------------------------------------------------------------
@@ -84,7 +84,8 @@ end
 % Check arguments
 if nargin == 1
     delimiter = ' ';
-elseif nargin == 2
+else
+    assert(nargin == 2); % Two formal arguments should ensure the function never receives more inputs
     if iscell(delimiter)
         delimiter = reshape(delimiter, 1, []);
         if length(delimiter)+1 ~= length(C)
@@ -96,8 +97,6 @@ elseif nargin == 2
         error('strjoin:delimiter_type',['The delimiter must be either a '...
             'string or a cell array of strings.']);
     end
-else
-    error('strjoin:wrong_num_arg','Error: strjoin takes 1 or 2 arguments');
 end
 
 % Do the string concatenation
@@ -108,8 +107,6 @@ else
     with_spaces(1,2:2:end) = reshape(delimiter,1,[]);
 end
 with_spaces(1,1:2:end) = C;
-str = strcat(with_spaces);
-str = str{1};
-
+str = horzcat(with_spaces{:});
 end
 
