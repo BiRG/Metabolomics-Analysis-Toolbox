@@ -86,7 +86,7 @@ assertEqual(i.min, 0);
 assertEqual(i.max, 0.776393202250020953);
 
 i = BinomialExperiment(1,0,1,1).shortestCredibleInterval(0.95);
-assertEqual(i.min, 0.223606797749979019);
+assertElementsAlmostEqual(i.min, 0.223606797749979019);
 assertEqual(i.max, 1);
 
 i = BinomialExperiment(1,9999,1,1).shortestCredibleInterval(0.95);
@@ -139,10 +139,10 @@ assertEqual(b.priorBeta, 0.5);
 
 function testProbThatParamInRange %#ok<DEFNU>
 b=BinomialExperiment(100,10,1,1);
-assertEqual(b.probThatParamInRange(0.1,0.2), 1.43823367065437452e-58);
+assertElementsAlmostEqual(b.probThatParamInRange(0.1,0.2), 1.43823367065437452e-58);
                                               
-assertEqual(b.probThatParamInRange(0.88,0.98),0.791592556244451906);
+assertElementsAlmostEqual(b.probThatParamInRange(0.88,0.98),0.791592556244451906);
 
 b=BinomialExperiment(3,10,0,0.5);
-assertEqual(b.probThatParamInRange(0.1,0.2),0.34817007670689748);
-assertEqual(b.probThatParamInRange(0.88,0.98),1.22246170963791201e-08);
+assertElementsAlmostEqual(b.probThatParamInRange(0.1,0.2),0.34817007670689748);
+assertElementsAlmostEqual(b.probThatParamInRange(0.88,0.98),1.22246170963791201e-08);
