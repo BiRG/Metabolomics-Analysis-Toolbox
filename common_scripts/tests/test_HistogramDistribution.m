@@ -38,6 +38,14 @@ assertEqual(h.probs, [1,2,1,2,2]./8);
 assertEqual(h.border_is_in_upper_bin, [1,1,0,1,0,0]==1);
 assertEqual(h.cdf, [0.125, 0.375, 0.5, 0.75, 1]);
 
+% Good distribution with 3 params and 6 bins using logical for last
+h=HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8,[true,true,false,false,false,false]);
+assertEqual(h.bounds, [0,1,1,2,3,5]);
+assertEqual(h.probs, [1,2,1,2,2]./8);
+assertEqual(h.border_is_in_upper_bin, [1,1,0,0,0,0]==1);
+assertEqual(h.cdf, [0.125, 0.375, 0.5, 0.75, 1]);
+
+
 % Good distribution with 2 params and 6 bins
 h=HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8);
 assertEqual(h.bounds, [0,1,1,2,3,5]);
@@ -84,4 +92,25 @@ assertExceptionThrown(f, assert_id);
 % Error: must be at least 1 bin (two bin boundaries)
 f = @() HistogramDistribution(0,[]);
 assertExceptionThrown(f, assert_id);
+
+function testChar %#ok<DEFNU>
+% Test HistogramDistribution.char()
+
+% Single element arrays
+h=HistogramDistribution([0,1],1);
+i=HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8,[true,true,false,false,false,false]);
+j=HistogramDistribution([5,6,100],[0.1,0.9]);
+
+assertEqual(h.char(), 'HistogramDistribution([0, 1], [1], [1, 0])');
+assertEqual(i.char(), 'HistogramDistribution([0, 1, 1, 2, 3, 5], [0.125, 0.25, 0.125, 0.25, 0.25], [1, 1, 0, 0, 0, 0])');
+assertEqual(j.char(), 'HistogramDistribution([5, 6, 100], [0.1, 0.9], [1, 1, 0])');
+
+% Two element array
+two_element = [h,j];
+assertEqual(two_element.char(), '[ HistogramDistribution([0, 1], [1], [1, 0]), HistogramDistribution([5, 6, 100], [0.1, 0.9], [1, 1, 0]) ]');
+
+% Three element array
+three_element = [h, i, j];
+assertEqual(three_element.char(), '[ HistogramDistribution([0, 1], [1], [1, 0]), HistogramDistribution([0, 1, 1, 2, 3, 5], [0.125, 0.25, 0.125, 0.25, 0.25], [1, 1, 0, 0, 0, 0]), HistogramDistribution([5, 6, 100], [0.1, 0.9], [1, 1, 0]) ]');
+
 
