@@ -267,7 +267,7 @@ classdef HistogramDistribution
         bounds = sort([bounds, dirac_bounds]); %#ok<PROP>
         
         % Turn the original bins into intervals
-        orig_intervals = arrayfun(ClosedInterval, mins,maxes, 'UniformOutput',false);
+        orig_intervals = arrayfun(@ClosedInterval, mins,maxes, 'UniformOutput',false);
         orig_intervals = [orig_intervals{:}];
         
         % Calculate the probablility mass assigned to each original bin
