@@ -113,4 +113,8 @@ assertEqual(two_element.char(), '[ HistogramDistribution([0, 1], [1], [1, 0]), H
 three_element = [h, i, j];
 assertEqual(three_element.char(), '[ HistogramDistribution([0, 1], [1], [1, 0]), HistogramDistribution([0, 1, 1, 2, 3, 5], [0.125, 0.25, 0.125, 0.25, 0.25], [1, 1, 0, 0, 0, 0]), HistogramDistribution([5, 6, 100], [0.1, 0.9], [1, 1, 0]) ]');
 
+function testFromEqualProbBins %#ok<DEFNU>
+% Test creating a HistogramDistribution from equal probability bins
 
+% TODO implement
+assertTrue(false);

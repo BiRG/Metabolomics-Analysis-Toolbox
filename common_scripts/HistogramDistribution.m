@@ -59,10 +59,249 @@ classdef HistogramDistribution
     properties (Dependent)
     end
     
+    methods(Static)
+        function obj=fromEqualProbBins(mins, maxes)
+        % Usage: obj=HistogramDistribution.fromEqualProbBins(mins, maxes)
+        %
+        % Factory method that creates a HistogramDistribution from a set of
+        % bins each having an equal probability. The bins are treated as
+        % either uniform distribution or (for zero-width bins) Dirac delta
+        % functions. The end-point behavior of the bins is not kept except 
+        % for Dirac deltas (which must be a closed interval). Instead the
+        % function produces default end-point behavior of the constructor
+        % when no border_is_in_upper_bin parameter is passed
+        %
+        % The interval [ mins(i), maxes(i) ] represents one bin with a
+        % probability of 1/length(mins)
+        %
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % mins -  (row vector of double) mins(i) is the minimum value of
+        %      the i'th bin. Must be the same length as maxes. There must
+        %      be at least 1 bin. maxes(i) >= mins(i)
+        %
+        % maxes - (row vector of double) maxes(i) is the maximum value of
+        %      the i'th bin. Must be the same length as mins. There must be
+        %      at least 1 bin. maxes(i) >= mins(i)
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % obj - A HistogramDistribution having the same distribution as the
+        %      input bins (except possibly at endpoints).
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % Single bin non-dirac
+        % >> o = HistogramDistribution.fromEqualProbBins(0,1)
+        %
+        % o.bounds == [0 1]
+        %
+        % o.probs = 1
+        %
+        % o.cdf = 1
+        %
+        % o.border_is_in_upper_bin = [1 0]
+        %
+        % Single dirac bin
+        % >> o = HistogramDistribution.fromEqualProbBins(1,1)
+        %
+        % o.bounds == [1 1]
+        %
+        % o.probs = 1
+        %
+        % o.cdf = 1
+        %
+        % o.border_is_in_upper_bin = [1 0]
+        %
+        % Two identical bins non-dirac
+        % >> o = HistogramDistribution.fromEqualProbBins([1,1],[5,5])
+        %
+        % o.bounds == [1 5]
+        %
+        % o.probs = 1
+        %
+        % o.cdf = 1
+        %
+        % o.border_is_in_upper_bin = [1 0]
+        %
+        % Two identical dirac bins
+        % >> o = HistogramDistribution.fromEqualProbBins([0,0],[0,0])
+        %
+        % o.bounds == [0 0]
+        %
+        % o.probs = 1
+        %
+        % o.cdf = 1
+        %
+        % o.border_is_in_upper_bin = [1 0]
+        %
+        % Two different non-overlapping bins 
+        % >> o = HistogramDistribution.fromEqualProbBins([1,3],[2,5])
+        %
+        % o.bounds == [1 2 3 5]
+        %
+        % o.probs = [0.5 0 0.5]
+        %
+        % o.cdf = [0.5 0.5 1]
+        %
+        % o.border_is_in_upper_bin = [1 1 1 0]
+        %
+        % Two different overlapping bins 
+        % >> o = HistogramDistribution.fromEqualProbBins([1,2],[3,6])
+        % o.bounds == [1 2 3 6]
+        %
+        % o.probs = [0.25 0.375 0.375]
+        %
+        % o.cdf = [0.25 0.625 1]
+        %
+        % o.border_is_in_upper_bin = [1 1 1 0]
+        %
+        % Two different overlapping one fully contained
+        % >> o = HistogramDistribution.fromEqualProbBins([1,2],[9,3])
+        % o.bounds == [1 2 3 9]
+        % o.probs = [0.0625 0.5625 0.375]
+        %
+        % o.cdf = [0.0625 0.625 1]
+        %
+        % o.border_is_in_upper_bin = [1 1 1 0]
+        %
+        % Two different one dirac dirac fully contained
+        % >> o = HistogramDistribution.fromEqualProbBins([1,2],[9,2])
+        % o.bounds == [1 2 2 9]
+        % o.probs = [0.0625 0.5 0.4375]
+        %
+        % o.cdf = [0.0625 0.5625 1]
+        %
+        % o.border_is_in_upper_bin = [1 1 0 0]
+        %
+        % Two different one dirac dirac below lower
+        % >> o = HistogramDistribution.fromEqualProbBins([1,0],[9,0])
+        % o.bounds == [0 0 1 9]
+        % o.probs = [0.5 0 0.5]
+        %
+        % o.cdf = [0.5 0.5 1]
+        %
+        % o.border_is_in_upper_bin = [1 0 1 0]
+        %
+        % Two different one dirac dirac at lower
+        % >> o = HistogramDistribution.fromEqualProbBins([1,1],[9,1])
+        % o.bounds == [1 1 9]
+        % o.probs = [0.5 0.5]
+        %
+        % o.cdf = [0.5 1]
+        %
+        % o.border_is_in_upper_bin = [1 0 0]
+        %
+        % Two different one dirac dirac at upper
+        % >> o = HistogramDistribution.fromEqualProbBins([1,9],[9,9])
+        % o.bounds == [1 9 9]
+        % o.probs = [0.5 0.5]
+        %
+        % o.cdf = [0.5 1]
+        %
+        % o.border_is_in_upper_bin = [1 1 0]
+        %
+        % Two different one dirac dirac above upper
+        % >> o = HistogramDistribution.fromEqualProbBins([1,10],[9,10])
+        % o.bounds == [1 9 10 10]
+        % o.probs = [0.5 0 0.5]
+        %
+        % o.cdf = [0.5 0.5 1]
+        %
+        % o.border_is_in_upper_bin = [1 1 1 0]
+        %
+        % Two different both dirac
+        % >> o = HistogramDistribution.fromEqualProbBins([1,10],[1,10])
+        % o.bounds == [1 1 10 10]
+        % o.probs = [0.5 0 0.5]
+        %
+        % o.cdf = [0.5 0.5 1]
+        %
+        % o.border_is_in_upper_bin = [1 0 1 0]
+        %
+        % Four different bins first dirac
+        % >> o = HistogramDistribution.fromEqualProbBins([1,1,3,5],[1,3,5,9])
+        % o.bounds == [1 1 3 5 9]
+        % o.probs = [0.25 0.25 0.25 0.25]
+        %
+        % o.cdf = [0.25 0.5 0.75 1]
+        %
+        % o.border_is_in_upper_bin = [1 0 1 1 0]
+        %
+        % Four different bins first two identical dirac
+        % >> o = HistogramDistribution.fromEqualProbBins([1,1,1,5],[1,1,5,9])
+        % o.bounds == [1 1 5 9]
+        % o.probs = [0.5 0.25 0.25]
+        %
+        % o.cdf = [0.5 0.75 1]
+        %
+        % o.border_is_in_upper_bin = [1 0 1 0]
+        
+        if length(mins) ~= length(maxes)
+            error('HistogramDistribution:mins_maxes_same_length',['The '...
+                'mins and maxes parameters to fromEqualProbBins must '...
+                'be the same length']);
+        end
+        if isempty(mins)
+            error('HistogramDistribution:at_least_one_bin',['The '...
+                'distribution passed to HistogramDistribution must have '...
+                'at least one bin.']);
+        end
+        if ~all(maxes >= mins)
+            error('HistogramDistribution:maxes_greater',['Each '...
+                'bin minimum must be at least as small as its '...
+                'corresponding maximum.']);
+        end
+        
+        % Set up the bounds to be the list of all entries that were the
+        % upper or lower boundary of some bin plus all dirac entry bounds
+        % (to repeat them)
+        bounds = unique([maxes,mins],'R2012a'); %#ok<PROP>
+        dirac_bounds = unique(maxes(maxes == mins),'R2012a');
+        bounds = sort([bounds, dirac_bounds]); %#ok<PROP>
+        
+        % Turn the original bins into intervals
+        orig_intervals = arrayfun(ClosedInterval, mins,maxes, 'UniformOutput',false);
+        orig_intervals = [orig_intervals{:}];
+        
+        % Calculate the probablility mass assigned to each original bin
+        interval_mass = 1/length(mins);
+        
+        % For each new bin, calculate the contribution of each original
+        % bin to its probability
+        probs = zeros(length(bounds)-1); %#ok<PROP>
+        for bin_idx = 1:length(probs) %#ok<PROP>
+            bin = ClosedInterval(bounds(bin_idx), bounds(bin_idx+1)); %#ok<PROP>
+            
+            for orig_idx = 1:length(orig_intervals)
+                orig = orig_intervals(orig_idx);
+                if bin.intersects(orig)
+                    if orig.length > 0
+                        intersection = bin.intersection(orig);
+                        probs(bin_idx) = probs(bin_idx) + interval_mass*intersection.length()/orig.length(); %#ok<PROP>
+                    else
+                        probs(bin_idx) = probs(bin_idx) + interval_mass; %#ok<PROP>
+                    end
+                end
+            end
+        end
+        
+        % Create the object using the normal constructor
+        obj = HistogramDistribution(bounds, probs); %#ok<PROP>
+        
+        end
+    end
+    
     methods
         function objs=HistogramDistribution(bounds, probs, border_is_in_upper_bin)
-        % usage: objs=HistogramDistribution(bounds, probs, border_is_in_upper_bin)
-        % usage: objs=HistogramDistribution(bounds, probs)
+        % Usage: objs=HistogramDistribution(bounds, probs, border_is_in_upper_bin)
+        % Usage: objs=HistogramDistribution(bounds, probs)
         %
         % Creates a HistogramDistribution with the given bin boundaries and
         % probabilities. See bounds, probs, and border_is_in_upper_bin for 
