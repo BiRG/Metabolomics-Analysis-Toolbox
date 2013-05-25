@@ -122,102 +122,102 @@ o = HistogramDistribution.fromEqualProbBins(0,1);
 assertEqual(o.bounds, [0 1]);
 assertEqual(o.probs, 1);
 assertEqual(o.cdf, 1);
-assertEqual(o.border_is_in_upper_bin, [1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0]);
 
 % Single dirac bin
 o = HistogramDistribution.fromEqualProbBins(1,1);
 assertEqual(o.bounds, [1 1]);
 assertEqual(o.probs, 1);
 assertEqual(o.cdf, 1);
-assertEqual(o.border_is_in_upper_bin, [1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0]);
 
 % Two identical bins non-dirac
 o = HistogramDistribution.fromEqualProbBins([1,1],[5,5]);
 assertEqual(o.bounds, [1 5]);
 assertEqual(o.probs, 1);
 assertEqual(o.cdf, 1);
-assertEqual(o.border_is_in_upper_bin, [1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0]);
 
 % Two identical dirac bins
 o = HistogramDistribution.fromEqualProbBins([0,0],[0,0]);
 assertEqual(o.bounds, [0 0]);
 assertEqual(o.probs, 1);
 assertEqual(o.cdf, 1);
-assertEqual(o.border_is_in_upper_bin, [1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0]);
 
 % Two different non-overlapping bins 
 o = HistogramDistribution.fromEqualProbBins([1,3],[2,5]);
 assertEqual(o.bounds, [1 2 3 5]);
 assertEqual(o.probs, [0.5 0 0.5]);
 assertEqual(o.cdf, [0.5 0.5 1]);
-assertEqual(o.border_is_in_upper_bin, [1 1 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 1 1 0]);
 
 % Two different overlapping bins 
 o = HistogramDistribution.fromEqualProbBins([1,2],[3,6]);
 assertEqual(o.bounds, [1 2 3 6]);
 assertEqual(o.probs, [0.25 0.375 0.375]);
 assertEqual(o.cdf, [0.25 0.625 1]);
-assertEqual(o.border_is_in_upper_bin, [1 1 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 1 1 0]);
 
 % Two different overlapping one fully contained);
 o = HistogramDistribution.fromEqualProbBins([1,2],[9,3]);
 assertEqual(o.bounds, [1 2 3 9]);
 assertEqual(o.probs, [0.0625 0.5625 0.375]);
 assertEqual(o.cdf, [0.0625 0.625 1]);
-assertEqual(o.border_is_in_upper_bin, [1 1 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 1 1 0]);
 
 % Two different one dirac dirac fully contained
 o = HistogramDistribution.fromEqualProbBins([1,2],[9,2]);
 assertEqual(o.bounds, [1 2 2 9]);
 assertEqual(o.probs, [0.0625 0.5 0.4375]);
 assertEqual(o.cdf, [0.0625 0.5625 1]);
-assertEqual(o.border_is_in_upper_bin, [1 1 0 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 1 0 0]);
 
 % Two different one dirac dirac below lower
 o = HistogramDistribution.fromEqualProbBins([1,0],[9,0]);
 assertEqual(o.bounds, [0 0 1 9]);
 assertEqual(o.probs, [0.5 0 0.5]);
 assertEqual(o.cdf, [0.5 0.5 1]);
-assertEqual(o.border_is_in_upper_bin, [1 0 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0 1 0]);
 
 % Two different one dirac dirac at lower
 o = HistogramDistribution.fromEqualProbBins([1,1],[9,1]);
 assertEqual(o.bounds, [1 1 9]);
 assertEqual(o.probs, [0.5 0.5]);
 assertEqual(o.cdf, [0.5 1]);
-assertEqual(o.border_is_in_upper_bin, [1 0 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0 0]);
 
 % Two different one dirac dirac at upper
 o = HistogramDistribution.fromEqualProbBins([1,9],[9,9]);
 assertEqual(o.bounds, [1 9 9]);
 assertEqual(o.probs, [0.5 0.5]);
 assertEqual(o.cdf, [0.5 1]);
-assertEqual(o.border_is_in_upper_bin, [1 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 1 0]);
 
 % Two different one dirac dirac above upper
 o = HistogramDistribution.fromEqualProbBins([1,10],[9,10]);
 assertEqual(o.bounds, [1 9 10 10]);
 assertEqual(o.probs, [0.5 0 0.5]);
 assertEqual(o.cdf, [0.5 0.5 1]);
-assertEqual(o.border_is_in_upper_bin, [1 1 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 1 1 0]);
 
 % Two different both dirac
 o = HistogramDistribution.fromEqualProbBins([1,10],[1,10]);
 assertEqual(o.bounds, [1 1 10 10]);
 assertEqual(o.probs, [0.5 0 0.5]);
 assertEqual(o.cdf, [0.5 0.5 1]);
-assertEqual(o.border_is_in_upper_bin, [1 0 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0 1 0]);
 
 % Four different bins first dirac
 o = HistogramDistribution.fromEqualProbBins([1,1,3,5],[1,3,5,9]);
 assertEqual(o.bounds, [1 1 3 5 9]);
 assertEqual(o.probs, [0.25 0.25 0.25 0.25]);
 assertEqual(o.cdf, [0.25 0.5 0.75 1]);
-assertEqual(o.border_is_in_upper_bin, [1 0 1 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0 1 1 0]);
 
 % Four different bins first two identical dirac
 o = HistogramDistribution.fromEqualProbBins([1,1,1,5],[1,1,5,9]);
 assertEqual(o.bounds, [1 1 5 9]);
 assertEqual(o.probs, [0.5 0.25 0.25]);
 assertEqual(o.cdf, [0.5 0.75 1]);
-assertEqual(o.border_is_in_upper_bin, [1 0 1 0]);
+assertEqual(o.border_is_in_upper_bin, 1==[1 0 1 0]);

@@ -275,7 +275,7 @@ classdef HistogramDistribution
         
         % For each new bin, calculate the contribution of each original
         % bin to its probability
-        probs = zeros(length(bounds)-1); %#ok<PROP>
+        probs = zeros(1,length(bounds)-1); %#ok<PROP>
         for bin_idx = 1:length(probs) %#ok<PROP>
             bin = ClosedInterval(bounds(bin_idx), bounds(bin_idx+1)); %#ok<PROP>
             
