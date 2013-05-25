@@ -3,11 +3,6 @@ classdef HistogramDistribution
     % up into mutually-exclusive discrete bins each with a fixed probability
     % 
     % Parameters are the bin boundaries and the probabilities for each bin
-    %
-    % ---------------------------------------------------------------------
-    % Examples
-    % ---------------------------------------------------------------------
-    % 
     
     properties (SetAccess=private)
         % Along with border_is_in_upper_bin, represents a partition of a 1D
@@ -79,6 +74,10 @@ classdef HistogramDistribution
         % to assuming that for a bin not next to a dirac delta bin or an 
         % endpoint, the bin will be a half-open interval
         % [ bounds(i), bounds(i+1) )
+        %
+        % The border_is_in_upper_bin parameter can be specified as a vector
+        % of 1's (for true) and 0's (for false) rather than as a vector of
+        % logical variables.
         % 
         % ----------------------------------------------------------------
         % Examples
@@ -104,7 +103,7 @@ classdef HistogramDistribution
         % [2,3] - 1/4
         % (3,5] - 1/4
         %
-        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,1,1,1,1,1]./6)
+        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]/.8)
         %
         % Creates a HistogramDistribution with the members:
         %
@@ -138,20 +137,20 @@ classdef HistogramDistribution
         % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8,[0,1,0,1,0,0])
         % There is no bin below the first - HistogramDistribution:invalid_borders
         %
-        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,3]./8,[1,1,0,1,0,0])
+        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,3]./8)
         % The probabilities don't sum to 1. Assertion failure.
         %
-        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,1,1]./8,[1,1,0,1,0,0])
+        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,1,1]./8)
         % There are more probabilities than bins. Assertion failure.
         %
-        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,2]./8,[1,1,0,1,0,0])
+        % >> o = HistogramDistribution([0,1,1,2,3,5],[1,2,1,4]./8)
         % There are fewer probabilities than bins. Assertion failure.
         %
-        % >> o = HistogramDistribution([2,1,1,2,3,5],[1,2,1,2,2]./8,[1,1,0,1,0,0])
-        % The bin boundaries are not sorted. Assertion failure
-        %
-        % >> o = HistogramDistribution([0,1,1,2,3,5],[-1,3,1,2,2]./8,[1,1,0,1,0,0])
+        % >> o = HistogramDistribution([0,1,1,2,3,5],[-1,3,1,2,2]./8)
         % The probabilities must all be non-negative. Assertion failure.
+        %
+        % >> o = HistogramDistribution([2,1,1,2,3,5],[1,2,1,2,2]./8)
+        % The bin boundaries are not sorted. Assertion failure
         %
         % >> o = HistogramDistribution([0],[])
         % There must be at least 1 bin (two bin boundaries). Assertion falulre.
@@ -176,6 +175,9 @@ classdef HistogramDistribution
                 objs.border_is_in_upper_bin(end) = false;
                 objs.border_is_in_upper_bin(max_of_delta_bin) = false;
             else
+                if ~islogical(border_is_in_upper_bin)
+                    border_is_in_upper_bin = border_is_in_upper_bin ~= 0;
+                end
                 if ~border_is_in_upper_bin(1) || ...
                         border_is_in_upper_bin(end) ||...
                         ~all(border_is_in_upper_bin(min_of_delta_bin)) || ...
