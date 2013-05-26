@@ -190,7 +190,6 @@ classdef Interval
         % >> z = Interval(0,2,false,true);
         % >> aa= Interval(2,3,false,true);
         % >> ab= Interval(3,4,false,true);
-        % >> tot = [a b c d e f g h i j k l m n o p q r s t u v w x y z aa ab];
         %
         % >> a.intersects(a);
         % >> a.intersects(b);
@@ -225,19 +224,19 @@ classdef Interval
         % >> ~a.intersects(ab);
         %
         % Below is a tableau I used to help calculate the intersections for
-        % the test items
+        % the test/example items
         %
-        % min if exists         0  0 0 1 0  2 3 3 1  2 - - -  - - - -  - - 0 1  0 2 3 -  - - - - 
-        % infimum               0  0 0 1 0  2 3 3 1  2 0 0 1  1 0 2 2  3 3 0 1  0 2 3 0  1 0 2 3  
+        % min if exists            0 0 1 0  2 3 3 1  2 - - -  - - - -  - - 0 1  0 2 3 -  - - - - 
+        % infimum                  0 0 1 0  2 3 3 1  2 0 0 1  1 0 2 2  3 3 0 1  0 2 3 0  1 0 2 3  
         %
-        %             0            0 0   0             - -      -          0    0     -    -       
-        %             1              1 1 |        1      - -  - |          - 1  |     1  - | 
-        %             2                2 2  2        2        - - - -        -  - 2      2 2 - 
-        %             3         -           3 3 3                   -  - -        - 3        3 - 
+        %             0         -  0 0   0             - -      -          0    0     -    -       
+        %             1         |    1 1 |        1      - -  - |          - 1  |     1  - | 
+        %             2         2      2 2  2        2        - - - -        -  - 2      2 2 - 
+        %             3                     3 3 3                   -  - -        - 3        3 - 
         %             4                         4                        -          -          4  
         %
-        % supremum              2  0 1 2 2  3 3 4 1  2 0 1 1  2 2 2 3  3 4 1 2  2 3 4 1  2 2 3 4 
-        % max if exists         2  0 1 2 2  3 3 4 1  2 - - -  - - - -  - - - -  - - - 1  2 2 3 4 
+        % supremum                 0 1 2 2  3 3 4 1  2 0 1 1  2 2 2 3  3 4 1 2  2 3 4 1  2 2 3 4 
+        % max if exists            0 1 2 2  3 3 4 1  2 - - -  - - - -  - - - -  - - - 1  2 2 3 4 
         % >>                tot = [a b c d  e f g h  i j k l  m n o p  q r s t  u v w x  y z aa ab];
         % >> tot.intersects(a) == [1 1 0 1  0 0 0 0  0 0 0 0  0 0 0 0  0 0 1 0  1 0 0 0  0 0 0 0]~=0;
         % >> tot.intersects(b) == [1 1 1 1  0 0 0 1  0 0 1 0  0 1 0 0  0 0 1 1  1 0 0 1  0 1 0 0]~=0; 
@@ -260,133 +259,126 @@ classdef Interval
         % >> tot.intersects(p) == [0 0 0 0  1 0 0 0  0 0 0 0  0 0 0 1  0 0 0 0  0 1 0 0  0 0 1 0]~=0;
         %
         % >> tot.intersects(q) == [0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0]~=0;
-        % >> tot.intersects(r) == [0 0 0 0  0 0 1 0  0 0 0 0  0 0 0 0  0                             A
-        % >> tot.intersects(s) == [1 1 0 1  0 0 0 0  0 0 1 0  0 1 0 0  0                             A
-        % >> tot.intersects(t) == [0 1 1 1  0 0 0 1  0 0 0 0  1 1 0 0  0                             A
-        %                                                                                            A 
-        % >> tot.intersects(u) == [1 1 1 1  0 0 0 1  0 0 1 0  1 1 0 0  0                             A
-        % >> tot.intersects(v) == [0 0 1 1  1 0 0 0  1 0 0 0  0 0 0 1  0                             A
-        % >> tot.intersects(w) == [0 0 0 1  1 1 1 0  0 0 0 0  0 0 0 0  0                             A
-        % >> tot.intersects(x) == [0 1 1 1  0 0 0 1  0 0 1 0  0 1 0 0  0                             A
-        %                                                                                            A
-        % >> tot.intersects(y) == [0 0 1 1  1 0 0 0  1 0 0 0  1 1 0 0  0                             A
-        % >> tot.intersects(z) == [0 1 1 1  1 0 0 1  1 0 1 0  1 1 0 0  0                             A
-        % >> tot.intersects(aa)== [0 0 0 0  1 1 1 0  0 0 0 0  0 0 0 1  0                             A
-        % >> tot.intersects(ab)== [0 0 0 0  0 0 1 0  0 0 0 0  0 0 0 0  0                             A
-        % 
-        % >> a = Interval(0,0,true,true);
-        % >> b = Interval(0,1,true,true);
-        % >> c = Interval(1,2,true,true);
-        % >> d = Interval(0,2,true,true);
+        % >> tot.intersects(r) == [0 0 0 0  0 0 1 0  0 0 0 0  0 0 0 0  0 1 0 0  0 0 0 0  0 0 0 1]~=0;
+        % >> tot.intersects(s) == [1 1 0 1  0 0 0 0  0 0 1 0  0 1 0 0  0 0 1 0  1 0 0 1  0 1 0 0]~=0;
+        % >> tot.intersects(t) == [0 1 1 1  0 0 0 1  0 0 0 0  1 1 0 0  0 0 0 1  1 0 0 1  1 1 0 0]~=0;
         %
-        % >> e = Interval(2,3,true,true);
-        % >> f = Interval(3,3,true,true);
-        % >> g = Interval(3,4,true,true);
-        % >> h = Interval(1,1,true,true);
+        % >> tot.intersects(u) == [1 1 1 1  0 0 0 1  0 0 1 0  1 1 0 0  0 0 1 1  1 0 0 1  1 1 0 0]~=0;
+        % >> tot.intersects(v) == [0 0 1 1  1 0 0 0  1 0 0 0  0 0 0 1  0 0 0 0  0 1 0 0  1 1 1 0]~=0;
+        % >> tot.intersects(w) == [0 0 0 1  1 1 1 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 1 0  0 0 1 1]~=0;
+        % >> tot.intersects(x) == [0 1 1 1  0 0 0 1  0 0 1 0  0 1 0 0  0 0 1 1  1 0 0 1  0 1 0 0]~=0;
         %
-        % >> i = Interval(2,2,true,true);
-        % >> j = Interval(0,0,false,false);
-        % >> k = Interval(0,1,false,false);
-        % >> l = Interval(1,1,false,false);
-        %
-        % >> m = Interval(1,2,false,false);
-        % >> n = Interval(0,2,false,false);
-        % >> o = Interval(2,2,false,false);
-        % >> p = Interval(2,3,false,false);
-        %
-        % >> q = Interval(3,3,false,false);
-        % >> r = Interval(3,4,false,false);
-        % >> s = Interval(0,1,true,false);
-        % >> t = Interval(1,2,true,false);
-        %
-        % >> u = Interval(0,2,true,false);
-        % >> v = Interval(2,3,true,false);
-        % >> w = Interval(3,4,true,false);
-        % >> x = Interval(0,1,false,true);
-        %
-        % >> y = Interval(1,2,false,true);
-        % >> z = Interval(0,2,false,true);
-        % >> aa= Interval(2,3,false,true);
-        % >> ab= Interval(3,4,false,true);
-
-        % >> b.intersects(a);
-        % >> b.intersects(b);
-        % >> b.intersects(c);
-        % >> b.intersects(d);
-        % >> ~b.intersects(e);
-        % >> ~b.intersects(f);
-        % >> ~b.intersects(g);
-        %
-        % >> ~c.intersects(a);
-        % >> c.intersects(b);
-        % >> c.intersects(c);
-        % >> c.intersects(d);
-        % >> c.intersects(e);
-        % >> ~c.intersects(f);
-        % >> ~c.intersects(g);
-        %
-        % >> d.intersects(a);
-        % >> d.intersects(b);
-        % >> d.intersects(c);
-        % >> d.intersects(d);
-        % >> d.intersects(e);
-        % >> ~d.intersects(f);
-        % >> ~d.intersects(g);
-        % >> tot.intersects(d) == [true,true,true,true,true,false,false];
-        %
-        % >> ~e.intersects(a);
-        % >> ~e.intersects(b);
-        % >> e.intersects(c);
-        % >> e.intersects(d);
-        % >> e.intersects(e);
-        % >> e.intersects(f);
-        % >> e.intersects(g);
-        % >> tot.intersects(e) == [false,false,true,true,true,true,true];
-        %
-        % >> ~f.intersects(a);
-        % >> ~f.intersects(b);
-        % >> ~f.intersects(c);
-        % >> ~f.intersects(d);
-        % >> f.intersects(e);
-        % >> f.intersects(f);
-        % >> f.intersects(g);
-        % >> tot.intersects(f) == [false,false,false,false,true,true,true];
-        %
-        % >> ~g.intersects(a);
-        % >> ~g.intersects(b);
-        % >> ~g.intersects(c);
-        % >> ~g.intersects(d);
-        % >> g.intersects(e);
-        % >> g.intersects(f);
-        % >> g.intersects(g);
-        % >> tot.intersects(g) == [false,false,false,false,true,true,true];
-          assert(isa(interval, 'ClosedInterval'));
+        % >> tot.intersects(y) == [0 0 1 1  1 0 0 0  1 0 0 0  1 1 0 0  0 0 0 1  1 1 0 0  1 1 0 0]~=0;
+        % >> tot.intersects(z) == [0 1 1 1  1 0 0 1  1 0 1 0  1 1 0 0  0 0 1 1  1 1 0 1  1 1 0 0]~=0;
+        % >> tot.intersects(aa)== [0 0 0 0  1 1 1 0  0 0 0 0  0 0 0 1  0 0 0 0  0 1 1 0  0 0 1 0]~=0;
+        % >> tot.intersects(ab)== [0 0 0 0  0 0 1 0  0 0 0 0  0 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1]~=0;
+          assert(isa(interval, 'Interval'));
           assert(length(interval) == 1);
           assert(~isempty(objs)); % I assume that you can't call this on an empty vector, but I'm just making sure
-          % The two intervals [a,b] [x,y] don't intersect in only two 
-          % cases
-          % 1. b < x (the first interval comes before the second)
-          % 2. y < a (the second interval comes before the first)
+          % The two intervals <a,b> <x,y> (I use <> to indicate that 
+          % end-point behavior is not specified here) don't intersect in 
+          % only two cases: all elements of <a,b> come before all of
+          % the elements of <x,y> or all of the elements of <x,y>
+          % come before all of the elments of <a,b>.
           %
-          % Thus we can identify the intersection by 
-          % NOT(b < x OR y < a)
+          % Let q and r be intervals. The statement "all of the elements of
+          % q come before all of the elements of r" implies 4 different
+          % inequalities depending on whether q and r contain their
+          % supremum and infimum respectively. Let Q be the supremum of q
+          % and R be the infimum of r. Further let qq and rr be arbitrary
+          % elements of q and r for the sake of demonstration
+          % Q in q | R in r | Inequality
+          % -------+--------+-----------------
+          %    F   |    F   | Q <= R  (qq <  Q <= R <  rr so qq < rr)
+          %    F   |    T   | Q <= R  (qq <  Q <= R <= rr so qq < rr)
+          %    T   |    F   | Q <= R  (qq <= Q <= R <  rr so qq < rr)
+          %    T   |    T   | Q <  R  (qq <= Q <  R <= rr so qq < rr)
           %
-          % Distributing, intersection means
+          % So we see that unless both intervals contain their "adjacent"
+          % endpoints Q <= R is sufficient to ensure no intersection. 
           %
-          % x <= b AND a <= y
+          % Let C=<a,b> and W=<x,y>. No intersection means C before W OR W
+          % before C. Intersection is its opposite. NOT (C before W or W
+          % before C). 
           %
-          % This analysis is cribbed from: 
+          % Distributing, we get equation 1: 
+          % C intersects W == NOT(C before W) AND NOT(W before C).
+          % 
+          % Translating into supremum and infimum
+          %
+          % NOT(C before W) means:
+          %    if C contains supremum(C) and W contains infimum(W)
+          %       NOT(supremum(C) < infimum(W))
+          %    else 
+          %       NOT(supremum(C) <= infimum(W))
+          %    end
+          %
+          % If we remove the NOTs, we get:
+          %    if C contains supremum(C) and W contains infimum(W)
+          %       infimum(W) <= supremum(C)
+          %    else 
+          %       infimum(W) < supremum(C)
+          %    end
+          %
+          %
+          % When we swap the roles of C and W we get the second half of the
+          % AND in equation 1:
+          %
+          %    if W contains supremum(W) and C contains infimum(C)
+          %       infimum(C) <= supremum(W)
+          %    else 
+          %       infimum(C) < supremum(W)
+          %    end
+          %
+          % Now, we can combine the two conditions
+          % If we remove the NOTs, we get:
+          %    if C contains supremum(C) and W contains infimum(W)
+          %       if W contains supremum(W) and C contains infimum(C)
+          %          infimum(C) <= supremum(W) & infimum(W) <= supremum(C)
+          %       else 
+          %          infimum(C) <  supremum(W) & infimum(W) <= supremum(C)
+          %       end
+          %    else 
+          %       if W contains supremum(W) and C contains infimum(C)
+          %          infimum(C) <= supremum(W) & infimum(W) < supremum(C)
+          %       else 
+          %          infimum(C) <  supremum(W) & infimum(W) < supremum(C)
+          %       end
+          %    end
+          %
+          %
+          %    if O contains supremum(O) and I contains infimum(I)
+          %       if I contains supremum(I) and O contains infimum(O)
+          %          infimum(O) <= supremum(I) & infimum(I) <= supremum(O)
+          %       else 
+          %          infimum(O) <  supremum(I) & infimum(I) <= supremum(O)
+          %       end
+          %    else 
+          %       if I contains supremum(I) and O contains infimum(O)
+          %          infimum(O) <= supremum(I) & infimum(I) < supremum(O)
+          %       else 
+          %          infimum(O) <  supremum(I) & infimum(I) < supremum(O)
+          %       end
+          %    end
+          % This analysis is an expansion and generalization of: 
           % http://world.std.com/~swmcd/steven/tech/interval.html
-          does_intersect = [objs.min] <= [interval.max] & ...
-              [interval.min] <= [objs.max];
+          o_cn = [objs.contains_min]; % contains infimum
+          o_cs = [objs.contains_max]; % contains supremum
+          i_cn = [interval.contains_min];
+          i_cs = [interval.contains_max];
+          no = [objs.min]; % iNfimum  Obj
+          so = [objs.max]; % Supremum Obj
+          ni = [interval.min]; % iNfimum  Interval
+          si = [interval.max]; % Supremum Interval
+          does_intersect = ...
+             (   o_cs & i_cn  & i_cs & o_cn    & no <= si & ni <= so) | ... % first condition
+             (   o_cs & i_cn  & ~(i_cs & o_cn) & no <  si & ni <= so) | ... % second condition
+             ( ~(o_cs & i_cn) & i_cs & o_cn    & no <= si & ni <  so) | ... % third condition
+             ( ~(o_cs & i_cn) & ~(i_cs & o_cn) & no <  si & ni <  so);      % final condition
         end
         
-        function result = intersection(objs, closed_interval)
-        % result(i) is the intersection of objs(i) and closed_interval
-        %
-        % It is an error to use objs and closed_interval values that will
-        % generate an empty intersection. Use ClosedInterval.intersects to
-        % avoid this.
+        function result = intersection(objs, interval)
+        % result(i) is the intersection of objs(i) and interval
         %
         % ----------------------------------------------------------------
         % Examples
@@ -394,64 +386,92 @@ classdef Interval
         %
         % The following are all true
         %
-        % >> a = ClosedInterval(0,0);
-        % >> b = ClosedInterval(0,1);
-        % >> c = ClosedInterval(1,2);
-        % >> d = ClosedInterval(0,2);
-        % >> e = ClosedInterval(2,3);
-        % >> f = ClosedInterval(3,3);
-        % >> g = ClosedInterval(3,4);
-        % >> tot = [a b c d e f g];
-        % >> a.intersection(a) == a;
-        % >> a.intersection(b) == a;
-        % >> a.intersection(d) == a;
-        % >> a_intersectors = tot(tot.intersects(a));
-        % >> a_intersectors.intersection(a) == [a,a,a];
+        % % Before left end
+        %            -2 -1  0  1  2  3  4  5
+        % (-2 -1)      ++ 
+        % ( 0  3)            ++++++++ 
+        % (-2 -1)      ++ 
+        % ( 0  3]            +++++++++
+        % (-2 -1)      ++ 
+        % [ 0  3]           ++++++++++
+        % (-2 -1)      ++ 
+        % [ 0  3)           +++++++++ 
+        % (-2 -1]      +++
+        % ( 0  3)            ++++++++
+        % (-2 -1]      +++
+        % ( 0  3]            +++++++++
+        % (-2 -1]      +++
+        % [ 0  3]           ++++++++++
+        % (-2 -1]      +++
+        % [ 0  3)           +++++++++
+        % [-2 -1]     ++++
+        % ( 0  3)            ++++++++
+        % [-2 -1]     ++++
+        % ( 0  3]            +++++++++
+        % [-2 -1]     ++++
+        % [ 0  3]           ++++++++++
+        % [-2 -1]     ++++
+        % [ 0  3)           +++++++++
+        % [-2 -1)     +++ 
+        % ( 0  3)            ++++++++
+        % [-2 -1)     +++ 
+        % ( 0  3]            +++++++++
+        % [-2 -1)     +++ 
+        % ( 0  3]           ++++++++++
+        % [-2 -1)     +++ 
+        % [ 0  3)           +++++++++
+
+        % <-1 -1>        ?
+        % < 0  3>           ??????????
+        % <-1  0>        ????
+        % < 0  3>           ??????????
+        % <-1  1>        ???????
+        % < 0  3>           ??????????
+        % <-1  3>        ?????????????
+        % < 0  3>           ??????????
+        % <-1  3>        ?????????????
+        % < 0  3>           ??????????
+        % <-1  5>        ???????????????????
+        % < 0  3>           ??????????
+        % At left end
+        %            -2 -1  0  1  2  3  4  5
+        % < 0  0>           ?
+        % < 0  3>           ??????????
+        % < 0  1>           ????
+        % < 0  3>           ??????????
+        % < 0  3>           ??????????
+        % < 0  3>           ??????????
+        % < 0  5>           ????????????????
+        % < 0  3>           ??????????
+        % Middle
+        %            -2 -1  0  1  2  3  4  5
+        % < 1  1>              ?
+        % < 0  3>           ??????????
+        % < 1  2>              ????
+        % < 0  3>           ??????????
+        % < 1  3>              ???????
+        % < 0  3>           ??????????
+        % < 1  5>              ?????????????
+        % < 0  3>           ??????????
         %
-        % >> b.intersection(a) == a;
-        % >> b.intersection(b) == b;
-        % >> b.intersection(c) == ClosedInterval(1,1);
-        % >> b.intersection(d) == b;
-        % >> b_intersectors = tot(tot.intersects(b));
-        % >> b_intersectors.intersect(b) == [a, b, ClosedInterval(1,1), b];
+        % Right
+        %            -2 -1  0  1  2  3  4  5
+        % < 3  3>                    ?
+        % < 0  3>           ??????????
+        % < 3  5>                    ???????
+        % < 0  3>           ??????????
         %
-        % >> c.intersection(b) == ClosedInterval(1,1);
-        % >> c.intersection(c) == c;
-        % >> c.intersection(d) == c;
-        % >> c.intersection(e) == ClosedInterval(2,2);
-        % >> c_intersectors = tot(tot.intersects(c));
-        % >> c_intersectors.intersect(c) == [ClosedInterval(1,1),c,c,ClosedInterval(2,2)];
-        %
-        % >> d.intersection(a) == a;
-        % >> d.intersection(b) == b;
-        % >> d.intersection(c) == c;
-        % >> d.intersection(d) == d;
-        % >> d.intersection(e) == ClosedInterval(2,2);
-        % >> d_intersectors = tot(tot.intersects(d));
-        % >> d_intersectors.intersect(d) == [a,b,c,d,ClosedInterval(2,2)];
-        %
-        % >> e.intersection(c) == ClosedInterval(2,2);
-        % >> e.intersection(d) == ClosedInterval(2,2);
-        % >> e.intersection(e) == e;
-        % >> e.intersection(f) == f;
-        % >> e.intersection(g) == f;
-        % >> e_intersectors = tot(tot.intersects(e));
-        % >> e_intersectors.intersect(e) == [ClosedInterval(2,2),ClosedInterval(2,2),e,f,f];
-        %
-        % >> f.intersection(e) == f;
-        % >> f.intersection(f) == f;
-        % >> f.intersection(g) == f;
-        % >> f_intersectors = tot(tot.intersects(f));
-        % >> f_intersectors.intersect(f) == [f,f,f];
-        %
-        % >> g.intersection(e) == f;
-        % >> g.intersection(f) == f;
-        % >> g.intersection(g) == g;
-        % >> g_intersectors = tot(tot.intersects(g));
-        % >> g_intersectors.intersect(g) == [f,f,g];
-          assert(all(objs.intersects(closed_interval)));
-          mins = max([objs.min],[closed_interval.min]); %#ok<CPROP>
-          maxes = min([objs.max],[closed_interval.max]); %#ok<CPROP>
+        % After Right
+        %            -2 -1  0  1  2  3  4  5
+        % < 4  5>                       ????
+        % < 0  3>           ??????????
+        % < 5  5>                          ?
+        % < 0  3>           ??????????
+        
+        % Interval(-2,-1, false, false).intersect(Interval(0,3,false,false)) = something  
+          assert(all(objs.intersects(interval)));
+          mins = max([objs.min],[interval.min]); %#ok<CPROP>
+          maxes = min([objs.max],[interval.max]); %#ok<CPROP>
           result = arrayfun(@ClosedInterval, mins, maxes, 'UniformOutput',false);
           result = [result{:}];
         end
