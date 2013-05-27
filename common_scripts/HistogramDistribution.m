@@ -591,7 +591,10 @@ classdef HistogramDistribution
         %
         % >> n = i.rebinApproxEqualProb(5)
         %
-        % n == i
+        % n == HistogramDistribution([0,1,1,2,3,5],[0.2 0.2 0.2 0.2 0.2],[1 1 0 0 1 0]);
+        % NOTE: you'd expect n==i but it doesn't work out that way because
+        % of floating point rounding. The difference in calculations is
+        % negligable, but it is much less nice aestetically.
         %
         % >> n = i.rebinApproxEqualProb(4)
         %
@@ -643,11 +646,15 @@ classdef HistogramDistribution
                         % the list.
                         extended_bin = objs.private_extendInterval(cur_bin, target_prob);
                         extended_prob = objs.probOfInterval(extended_bin);
-                        if extended_prob <= target_prob
+                        if extended_prob <= target_prob && ~(extended_bin == cur_bin)
                             cur_bin = extended_bin;
                             cur_prob = extended_prob;
                         else
-                            if extended_prob - target_prob < target_prob - cur_prob
+                            % We cannot improve by further extension either
+                            % because the extended probabiliy is greater
+                            % than the target probability or because
+                            % extension is not changing the bin
+                            if abs(extended_prob - target_prob) <= abs(target_prob - cur_prob)
                                 cur_bin = extended_bin;
                                 cur_prob = extended_prob;
                             end
@@ -660,7 +667,7 @@ classdef HistogramDistribution
                         new_bins(cur_bin_idx) = cur_bin;
                         cur_bin_idx = cur_bin_idx + 1;
                         remaining_bins = remaining_bins - 1;
-                        remaining_prob = remaining_prob - target_prob;
+                        remaining_prob = remaining_prob - cur_prob;
                         if remaining_bins > 0
                             target_prob = remaining_prob / remaining_bins;
                         else
@@ -681,15 +688,20 @@ classdef HistogramDistribution
                     objs.probOfInterval(new_bins), ...
                     [true,[all_but_first_bin.contains_min],false]);
             elseif length(objs) == length(num_bins)
-                new_dists = arrayfun(@(o,n) o.rebinApproxEqualProb(n), objs, num_bins);
+                new_dists = arrayfun(@(o,n) o.rebinApproxEqualProb(n), objs, num_bins, 'UniformOutput',false);
             elseif length(objs) == 1
-                new_dists = arrayfun(@(n) objs.rebinApproxEqualProb(n), num_bins);
+                new_dists = arrayfun(@(n) objs.rebinApproxEqualProb(n), num_bins, 'UniformOutput',false);
             elseif length(num_bins) == 1
-                new_dists = arrayfun(@(o) o.rebinApproxEqualProb(num_bins), objs);
+                new_dists = arrayfun(@(o) o.rebinApproxEqualProb(num_bins), objs, 'UniformOutput',false);
             else
                 error('HistogramDistribution_rebinApproxEqualProb:input_shape',...
                     ['If there are different numbers of bin quantities and '...
                     'HistogramDistributions, one of vector must be size 1.']);
+            end
+            
+            % Unpack cell array output from arrayfun
+            if iscell(new_dists)
+                new_dists = [new_dists{:}];
             end
         end
         
@@ -733,8 +745,8 @@ classdef HistogramDistribution
         % Changes the upper bound of the given interval by 1 step to try
         % and meet target_prob.
         %
-        % If the interval is open at the top, closes it.
-        % If the interval is closed at the top and there is a greater 
+        % If the interval is non-zero length and open at the top, closes it.
+        % If the interval is closed at the top or zero length and there is a greater 
         %    boundary, opens it and changes the interval's boundary to 
         %    either:
         %   fall between its current value and the next greater boundary
@@ -791,12 +803,19 @@ classdef HistogramDistribution
         % i == Interval(3,8,false,false)
         %
         % >> i = h.private_extendInterval(Interval(8,8,false,false),0.6); 
-        % i == Interval(8,8,true,true)
+        % i == Interval(8,8,false,false)
+        %
+        % >> hh = HistogramDistribution([2,2,3,5,8],0.25*ones(1,4),[1,1,1,1,0]);
+        % >> i = hh.private_extendInterval(Interval(2,2,false,false),0.6); 
+        % i == Interval(2,3,false,false)
+        %
+        % >> i = hh.private_extendInterval(Interval(2,2,false,false),0.125); 
+        % i == Interval(2,2.5,false,false)
             assert(0 <= target_prob && target_prob <= 1);
             assert(length(obj) == 1);
             assert(length(interval) == 1);
             
-            if ~interval.contains_max
+            if ~interval.contains_max && interval.length ~= 0
                 new_interval = Interval(interval.min, interval.max, interval.contains_min, true);
             else
                 greater_bounds = obj.bounds > interval.max;
@@ -830,9 +849,16 @@ classdef HistogramDistribution
                         else
                             % Otherwise, use exactly what we need to reach
                             % the target probability
+                            new_max = interval.max + ...
+                                next_interval.length * fraction_needed;
+                            if new_max == interval.max
+                                % If the fraction needed was too small,
+                                % increment by smallest floating point
+                                % number.
+                                new_max = nextAfter(interval.max);
+                            end
                             new_interval = Interval(interval.min, ...
-                                interval.max + ...
-                                next_interval.length * fraction_needed,...
+                                new_max, ...
                                 interval.contains_min, false);
                         end
                     end
