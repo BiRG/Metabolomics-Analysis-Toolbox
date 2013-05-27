@@ -537,6 +537,90 @@ classdef HistogramDistribution
             end
         end
         
+        function new_dists = rebinApproxEqualProb(objs, num_bins)
+        % Return a HistogramDistribution where a given interval has the
+        % same probability as this one but the bins have approximately
+        % equal probabilities
+        %
+        % Usage: newDist = rebinApproxEqualProb(objs, num_bins)
+        %
+        % When there is exactly one object and number of bins, proceeds
+        % from the first bin making the probability of each bin as close as
+        % possible to prob_remaining/bins_remaining (the presence of Dirac
+        % delta bins can make having the exact probability impossible.)
+        %
+        % When there is one object or one num_bins, it is repeated to match
+        % the size of the other parameter.
+        %
+        % When there are an equal number of entries for objs and num_bins,
+        % bins each object according to its corresponding number of bins.
+        %
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % objs - (row vector of HistogramDistribution) There can either be
+        %      1 or the same number as num_bins
+        %
+        % num_bins - (row vector of integers) The number of bins in the new
+        %      HistogramDistribution There can either be 1 or the same
+        %      number as the number of objs.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % new_dists - (row vector of HistogramDistribution) new_dists(i) is
+        %      the rebinned version of objs(i)
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([0,1,1,2,3],[0.25 0.25 0.25 0.25]);
+        % >> i = HistogramDistribution([0,1,1,2,3,5],[0.2 0.2 0.2 0.2 0.2]);
+        % >> hi = [h,i];
+        %
+        % >> n = h.rebinApproxEqualProb(4)
+        %
+        % n == h
+        %
+        % >> n = h.rebinApproxEqualProb(5)
+        %
+        % n == HistogramDistribution([0, 0.8,1,5/3,7/3,3],[0.2 0.3 1/6 1/6 1/6],[1,1,0,1,1,0]);
+        %
+        % >> n = i.rebinApproxEqualProb(5)
+        %
+        % n == i
+        %
+        % >> n = i.rebinApproxEqualProb(4)
+        %
+        % n == HistogramDistribution([0,1,4/3,8/3,5],[3/15 4/15 4/15 4/15])
+        %
+        % >> n = hi.rebinApproxEqualProb(4)
+        %
+        % n == [h, HistogramDistribution([0,1,4/3,8/3,5],[3/15 4/15 4/15 4/15])]
+        %
+        % >> n = hi.rebinApproxEqualProb(4,5)
+        %
+        % n == hi
+        %
+            if length(objs) == 1 && length(num_bins) == 1
+                %TODO: stub
+                new_dists = objs;
+            elseif length(objs) == length(num_bins)
+                new_dists = arrayfun(@(o,n) o.rebinApproxEqualProb(n), objs, num_bins);
+            elseif length(objs) == 1
+                new_dists = arrayfun(@(n) objs.rebinApproxEqualProb(n), num_bins);
+            elseif length(num_bins) == 1
+                new_dists = arrayfun(@(o) o.rebinApproxEqualProb(num_bins), objs);
+            else
+                error('HistogramDistribution_rebinApproxEqualProb:input_shape',...
+                    ['If there are different numbers of bin quantities and '...
+                    'HistogramDistributions, one of vector must be size 1.']);
+            end
+        end
+        
         function str=char(obj)
         % Return a human-readable string representation of this
         % object. (Matlab's version of toString, however, Matlab
