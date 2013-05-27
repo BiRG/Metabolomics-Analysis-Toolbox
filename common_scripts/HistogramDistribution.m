@@ -789,6 +789,9 @@ classdef HistogramDistribution
         %
         % >> i = h.private_extendInterval(Interval(3,5,false,true),0.6); 
         % i == Interval(3,8,false,false)
+        %
+        % >> i = h.private_extendInterval(Interval(8,8,false,false),0.6); 
+        % i == Interval(8,8,true,true)
             assert(0 <= target_prob && target_prob <= 1);
             assert(length(obj) == 1);
             assert(length(interval) == 1);

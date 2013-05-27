@@ -279,6 +279,9 @@ assertEqual(i, Interval(3,5,false,true));
 %
 i = h.private_extendInterval(Interval(3,5,false,true),0.6); 
 assertEqual(i, Interval(3,8,false,false));
+%
+i = h.private_extendInterval(Interval(8,8,false,false),0.6); 
+assertEqual(i, Interval(8,8,true,true));
 
 
 function test_rebinApproxEqualProb %#ok<DEFNU>
