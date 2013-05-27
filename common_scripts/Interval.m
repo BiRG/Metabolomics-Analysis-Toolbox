@@ -6,10 +6,12 @@ classdef Interval
     %
     
     properties (SetAccess=private)
-        % The infimum of the interval. min <= max. (scalar)
+        % The infimum of the interval. min <= max. Note that it is only 
+        % the infimum if the interval is non-empty. (scalar)
         min
         
-        % The supremum of the interval. min <= max. (scalar)
+        % The supremum of the interval. min <= max. Note that it is only 
+        % the supremum if the interval is non-empty. (scalar)
         max
         
         % True iff the interval contains its infimum (logical)
@@ -31,7 +33,7 @@ classdef Interval
         function objs=Interval(min, max, contains_min, contains_max)
         % Usage: objs=Interval(min, max, contains_min, contains_max)
         %
-        % Creates a closed interval with the given miniumum and maximum and
+        % Creates an interval with the given miniumum and maximum and
         % end-point containment. See the properties for a description of
         % the parameters.
         %
@@ -119,16 +121,15 @@ classdef Interval
         
         function is_empty=get.is_empty(objs)
         % Getter method calculating whether the interval is empty
-            is_empty = ([objs.max] - [objs.min]) == 0 & ~[objs.contains_min] & ~[objs.contains_max];
+            x = [objs.max];
+            n = [objs.min];
+            is_empty = x == n & ~[objs.contains_min]; % No need to look at contains_max if max==min contains_max == contains_min
         end
         
 	
         function does_contain = contains(obj, val)
         % Returns true if this ClosedInterval contains val and
         % false otherwise. 
-        %
-        % val must be a scalar
-          assert(isscalar(val));
           does_contain = ...
               ([obj.min] < val & val < [obj.max]) | ...     % Fully in the interval
               ([obj.contains_min] & [obj.min] == val) | ... % Or at the infimum and the infimum is inside the interval
@@ -259,13 +260,13 @@ classdef Interval
         % >> tot.intersects(p) == [0 0 0 0  1 0 0 0  0 0 0 0  0 0 0 1  0 0 0 0  0 1 0 0  0 0 1 0]~=0;
         %
         % >> tot.intersects(q) == [0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0]~=0;
-        % >> tot.intersects(r) == [0 0 0 0  0 0 1 0  0 0 0 0  0 0 0 0  0 1 0 0  0 0 0 0  0 0 0 1]~=0;
+        % >> tot.intersects(r) == [0 0 0 0  0 0 1 0  0 0 0 0  0 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1]~=0;
         % >> tot.intersects(s) == [1 1 0 1  0 0 0 0  0 0 1 0  0 1 0 0  0 0 1 0  1 0 0 1  0 1 0 0]~=0;
         % >> tot.intersects(t) == [0 1 1 1  0 0 0 1  0 0 0 0  1 1 0 0  0 0 0 1  1 0 0 1  1 1 0 0]~=0;
         %
         % >> tot.intersects(u) == [1 1 1 1  0 0 0 1  0 0 1 0  1 1 0 0  0 0 1 1  1 0 0 1  1 1 0 0]~=0;
         % >> tot.intersects(v) == [0 0 1 1  1 0 0 0  1 0 0 0  0 0 0 1  0 0 0 0  0 1 0 0  1 1 1 0]~=0;
-        % >> tot.intersects(w) == [0 0 0 1  1 1 1 0  0 0 0 0  0 0 0 0  0 0 0 0  0 0 1 0  0 0 1 1]~=0;
+        % >> tot.intersects(w) == [0 0 0 1  1 1 1 0  0 0 0 0  0 0 0 0  0 1 0 0  0 0 1 0  0 0 1 1]~=0;
         % >> tot.intersects(x) == [0 1 1 1  0 0 0 1  0 0 1 0  0 1 0 0  0 0 1 1  1 0 0 1  0 1 0 0]~=0;
         %
         % >> tot.intersects(y) == [0 0 1 1  1 0 0 0  1 0 0 0  1 1 0 0  0 0 0 1  1 1 0 0  1 1 0 0]~=0;
@@ -275,7 +276,10 @@ classdef Interval
           assert(isa(interval, 'Interval'));
           assert(length(interval) == 1);
           assert(~isempty(objs)); % I assume that you can't call this on an empty vector, but I'm just making sure
-          % The two intervals <a,b> <x,y> (I use <> to indicate that 
+          %
+          % Empty intervals never have a non-empty intersection with another interval.
+          %
+          % Two non-empty intervals <a,b> <x,y> (I use <> to indicate that 
           % end-point behavior is not specified here) don't intersect in 
           % only two cases: all elements of <a,b> come before all of
           % the elements of <x,y> or all of the elements of <x,y>
@@ -370,13 +374,15 @@ classdef Interval
           so = [objs.max]; % Supremum Obj
           ni = [interval.min]; % iNfimum  Interval
           si = [interval.max]; % Supremum Interval
+
           does_intersect = ...
+              ~[objs.is_empty] & ~[interval.is_empty] & ( ...
              (   o_cs & i_cn  & i_cs & o_cn    & no <= si & ni <= so) | ... % first condition
              (   o_cs & i_cn  & ~(i_cs & o_cn) & no <  si & ni <= so) | ... % second condition
              ( ~(o_cs & i_cn) & i_cs & o_cn    & no <= si & ni <  so) | ... % third condition
-             ( ~(o_cs & i_cn) & ~(i_cs & o_cn) & no <  si & ni <  so);      % final condition
+             ( ~(o_cs & i_cn) & ~(i_cs & o_cn) & no <  si & ni <  so));     % final condition
         end
-        
+                
         function result = intersection(objs, interval)
         % result(i) is the intersection of objs(i) and interval
         %
@@ -384,95 +390,16 @@ classdef Interval
         % Examples
         % ----------------------------------------------------------------
         %
-        % The following are all true
+        % >> a = Interval(-2,-1, false, false).intersect(Interval(0,3,false,false))
         %
-        % % Before left end
-        %            -2 -1  0  1  2  3  4  5
-        % (-2 -1)      ++ 
-        % ( 0  3)            ++++++++ 
-        % (-2 -1)      ++ 
-        % ( 0  3]            +++++++++
-        % (-2 -1)      ++ 
-        % [ 0  3]           ++++++++++
-        % (-2 -1)      ++ 
-        % [ 0  3)           +++++++++ 
-        % (-2 -1]      +++
-        % ( 0  3)            ++++++++
-        % (-2 -1]      +++
-        % ( 0  3]            +++++++++
-        % (-2 -1]      +++
-        % [ 0  3]           ++++++++++
-        % (-2 -1]      +++
-        % [ 0  3)           +++++++++
-        % [-2 -1]     ++++
-        % ( 0  3)            ++++++++
-        % [-2 -1]     ++++
-        % ( 0  3]            +++++++++
-        % [-2 -1]     ++++
-        % [ 0  3]           ++++++++++
-        % [-2 -1]     ++++
-        % [ 0  3)           +++++++++
-        % [-2 -1)     +++ 
-        % ( 0  3)            ++++++++
-        % [-2 -1)     +++ 
-        % ( 0  3]            +++++++++
-        % [-2 -1)     +++ 
-        % ( 0  3]           ++++++++++
-        % [-2 -1)     +++ 
-        % [ 0  3)           +++++++++
-
-        % <-1 -1>        ?
-        % < 0  3>           ??????????
-        % <-1  0>        ????
-        % < 0  3>           ??????????
-        % <-1  1>        ???????
-        % < 0  3>           ??????????
-        % <-1  3>        ?????????????
-        % < 0  3>           ??????????
-        % <-1  3>        ?????????????
-        % < 0  3>           ??????????
-        % <-1  5>        ???????????????????
-        % < 0  3>           ??????????
-        % At left end
-        %            -2 -1  0  1  2  3  4  5
-        % < 0  0>           ?
-        % < 0  3>           ??????????
-        % < 0  1>           ????
-        % < 0  3>           ??????????
-        % < 0  3>           ??????????
-        % < 0  3>           ??????????
-        % < 0  5>           ????????????????
-        % < 0  3>           ??????????
-        % Middle
-        %            -2 -1  0  1  2  3  4  5
-        % < 1  1>              ?
-        % < 0  3>           ??????????
-        % < 1  2>              ????
-        % < 0  3>           ??????????
-        % < 1  3>              ???????
-        % < 0  3>           ??????????
-        % < 1  5>              ?????????????
-        % < 0  3>           ??????????
+        % a = Interval(0,0, false, false)
         %
-        % Right
-        %            -2 -1  0  1  2  3  4  5
-        % < 3  3>                    ?
-        % < 0  3>           ??????????
-        % < 3  5>                    ???????
-        % < 0  3>           ??????????
-        %
-        % After Right
-        %            -2 -1  0  1  2  3  4  5
-        % < 4  5>                       ????
-        % < 0  3>           ??????????
-        % < 5  5>                          ?
-        % < 0  3>           ??????????
-        
-        % Interval(-2,-1, false, false).intersect(Interval(0,3,false,false)) = something  
-          assert(all(objs.intersects(interval)));
           mins = max([objs.min],[interval.min]); %#ok<CPROP>
           maxes = min([objs.max],[interval.max]); %#ok<CPROP>
-          result = arrayfun(@ClosedInterval, mins, maxes, 'UniformOutput',false);
+          contains_mins  = objs.contains(mins) & interval.contains(mins);
+          contains_maxes = objs.contains(maxes) & interval.contains(maxes);
+          maxes(maxes < mins) = mins(maxes < mins);
+          result = arrayfun(@Interval, mins, maxes, contains_mins, contains_maxes, 'UniformOutput',false);
           result = [result{:}];
         end
 
@@ -481,17 +408,14 @@ classdef Interval
         % object. (Matlab's version of toString, however, Matlab
         % doesn't call it automatically)
           if length(obj) == 1
-            str = sprintf('ClosedInterval(%g,%g)', obj.min, obj.max);
+            str = sprintf('Interval(%g,%g,%d,%d)', obj.min, obj.max, ...
+                obj.contains_min, obj.contains_max);
           else
-            first = obj(1);
-            rest = obj(2:end);
-            str = [ '[' ...
-                sprintf('ClosedInterval(%g,%g)', ...
-                   first.min, first.max) ...
-                sprintf(' ClosedInterval(%g,%g)', ...
-                   rest.min, rest.max) ...
-                ']'
-            ];
+              str = ['[ ', strjoin(...
+                  arrayfun(@(x) x.char(), obj, ...
+                      'UniformOutput',false), ...
+                  ', '), ...
+                  ' ]'];
           end
         end
 	    
@@ -503,25 +427,19 @@ classdef Interval
         end
         
         function are_eq = eq(a, b)
-        % Implements the == operator for ClosedInterval objects
-        % are_eq(i) == a(i) has same min and max as b(i)
+        % Implements the == operator for Interval objects
+        % are_eq(i) == a(i) has same min and max and endpoints as b(i)
+        %
+        % NOTE: this means some empty intervals are not equal to one
+        % another - (0,0) is not the same as (1,1) under this equality.
         %
         % ----------------------------------------------------------------
         % Examples
         % ----------------------------------------------------------------
         %
-        % The following are all true statements
-        %
-        % >> ClosedInterval(1,1) == ClosedInterval(1,1)
-        % >> ~(ClosedInterval(0,1) == ClosedInterval(1,1))
-        % >> ~(ClosedInterval(1,2) == ClosedInterval(1,1))
-        % >> ~(ClosedInterval(2,2) == ClosedInterval(1,1))
-        % >> all([ClosedInterval(1,1),ClosedInterval(2,2)]==[ClosedInterval(1,1),ClosedInterval(2,2)])
-        % >> ~any([ClosedInterval(1,1),ClosedInterval(2,2)]==[ClosedInterval(2,1),ClosedInterval(2,1)])
-        % >> ~any([ClosedInterval(1,1),ClosedInterval(1,1)]==[ClosedInterval(1,2),ClosedInterval(2,2)])
-        % >> all([ClosedInterval(1,1),ClosedInterval(1,1)]==ClosedInterval(1,1))
-        % >> ([ClosedInterval(1,2),ClosedInterval(1,1)]==ClosedInterval(1,1)) == [false, true]
-          are_eq = [a.min] == [b.min] & [a.max] == [b.max];
+          are_eq = [a.min] == [b.min] & [a.max] == [b.max] & ...
+              [a.contains_min] == [b.contains_min] & ...
+              [a.contains_max] == [b.contains_max];
         end
     end
     
