@@ -1,5 +1,5 @@
 function y = nextAfter(x,d)
-%NEXTAFTER Increment last bit of a floating point number.
+% NEXTAFTER Increment last bit of a floating point number.
 % NEXTAFTER(X) adds one unit to the last place of X.
 % NEXTAFTER(X,D) for positive D does the same thing.
 % NEXTAFTER(X,D) for negative D subtracts one unit ("Next Before")
