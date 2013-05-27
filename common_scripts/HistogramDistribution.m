@@ -667,7 +667,7 @@ classdef HistogramDistribution
                             target_prob = 0;
                         end
                         cur_bin = Interval(cur_bin.max, cur_bin.max, ~cur_bin.contains_max, ~cur_bin.contains_max);
-                        cur_prob = objs.probForInterval(cur_bin);
+                        cur_prob = objs.probOfInterval(cur_bin);
                     end
                 end
                 
@@ -678,7 +678,7 @@ classdef HistogramDistribution
                 all_but_first_bin = new_bins(2:end);
                 new_dists = HistogramDistribution(...
                     [[new_bins.min], final_bin.max], ...
-                    objs.probForInterval(new_bins), ...
+                    objs.probOfInterval(new_bins), ...
                     [true,[all_but_first_bin.contains_min],false]);
             elseif length(objs) == length(num_bins)
                 new_dists = arrayfun(@(o,n) o.rebinApproxEqualProb(n), objs, num_bins);
@@ -749,7 +749,7 @@ classdef HistogramDistribution
         % Input arguments
         % -------------------------------------------------------------------------
         % 
-        % objs - (a HistogramDistribution object)
+        % obj - (a HistogramDistribution object)
         %
         % interval - (an Interval object) the interval to be extended
         %
@@ -789,9 +789,55 @@ classdef HistogramDistribution
         %
         % >> i = h.private_extendInterval(Interval(3,5,false,true),0.6); 
         % i == Interval(3,8,false,false)
-        
-            %TODO: stub
-            new_interval = interval;
+            assert(0 <= target_prob && target_prob <= 1);
+            assert(length(obj) == 1);
+            assert(length(interval) == 1);
+            
+            if ~interval.contains_max
+                new_interval = Interval(interval.min, interval.max, interval.contains_min, true);
+            else
+                greater_bounds = obj.bounds > interval.max;
+                if any(greater_bounds)
+                    % Calculate how much probability could be made up by
+                    % extending the interval (note that the next interval
+                    % can never have zero length because greater_bounds is
+                    % those bounds that are strictly greater than
+                    % interval.max)
+                    next_bound_idx = find(greater_bounds, 1,'first');
+                    remaining_prob = ...
+                        target_prob - obj.probOfInterval(interval);
+                    if remaining_prob <= 0
+                        % If no prob could be made up, just extend
+                        new_interval = Interval(interval.min, ...
+                            obj.bounds(next_bound_idx), ...
+                            interval.contains_min, false);
+                    else
+                        % If some probability could be made up, see how
+                        % much of the next interval is needed
+                        next_interval = Interval(interval.max, ...
+                        obj.bounds(next_bound_idx), false, false);
+                        next_interval_prob = obj.probOfInterval(next_interval);
+                        fraction_needed = remaining_prob / next_interval_prob;
+                        if fraction_needed >= 1
+                            % If more is needed than we have, extend by the
+                            % entire new interval
+                            new_interval = Interval(interval.min, ...
+                                obj.bounds(next_bound_idx), ...
+                                interval.contains_min, false);
+                        else
+                            % Otherwise, use exactly what we need to reach
+                            % the target probability
+                            new_interval = Interval(interval.min, ...
+                                interval.max + ...
+                                next_interval.length * fraction_needed,...
+                                interval.contains_min, false);
+                        end
+                    end
+                    
+                else % No way to extend the interval, so leave it alone
+                    new_interval = interval;
+                end
+            end
         end
     end
     

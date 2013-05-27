@@ -271,7 +271,8 @@ i = h.private_extendInterval(Interval(3,5,false,true),0.2);
 assertEqual(i, Interval(3,8,false,false)); 
 %
 i = h.private_extendInterval(Interval(3,5,false,true),0.375); 
-assertEqual(i, Interval(3,6.25,false,false));
+assertEqual(i, Interval(3,6.5,false,false));
+assertEqual(h.probOfInterval(i),0.375);
 %
 i = h.private_extendInterval(Interval(3,5,false,false),0.375); 
 assertEqual(i, Interval(3,5,false,true));
