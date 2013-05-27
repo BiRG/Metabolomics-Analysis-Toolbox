@@ -440,6 +440,103 @@ classdef HistogramDistribution
           end
         end
 
+        function p = probOfInterval(objs, intervals)
+        % Usage: p = probOfInterval(objs, intervals)
+        %
+        % Returns the probability of the given intervals in the given 
+        % histogram distributions.
+        %
+        % If there are the same number of intervals and histogram objects,
+        % each interval is measured under its corresponding histogram. If
+        % there is only one 
+        %
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % objs - (row vector of HistogramDistribution) the distributions
+        %      under which the probability is measured. There can either be
+        %      1 or the same number as the number of intervals.
+        %
+        % interval - (row vector of Interval objects) the intervals whose
+        %      probability is measured. There can either be 1 or the same
+        %      number as the number of objs.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % p - (row vector of double) p(i) is the probability of interval
+        %      under o(i)
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([0,1,1,2,3],[0.25 0.25 0.25 0.25]);
+        % >> i = HistogramDistribution([0,1,1,2,3,9],[0.2 0.2 0.2 0.2 0.2]);
+        % >> hi = [h,i];
+        %
+        % >> p = h.probOfInterval(Interval(0,1.5,false,false))
+        %
+        % p == 0.625
+        %
+        % >> p = h.probOfInterval(Interval(1,1.5,true,true))
+        % 
+        % p == 0.375
+        %
+        % >> p = h.probOfInterval(Interval(1,1.5,false,true))
+        %
+        % p == 0.125
+        %
+        % >> p = i.probOfInterval(Interval(1,1.5,false,true))
+        %
+        % p == 0.1
+        %
+        % >> p = hi.probOfInterval(Interval(1,1.5,false,true))
+        %
+        % p == [0.125, 0.1]
+        %
+        % >> p = hi.probOfInterval(Interval([0 1],[1 1.5],[false false],[true true]))
+        %
+        % p == [0.625, 0.1]
+        %
+        % >> p = h.probOfInterval(Interval([0 1],[1 1.5],[false false],[true true]))
+        %
+        % p == [0.625, 0.125]
+        %
+        % >> p = hi.probOfInterval(Interval([0 1 2],[1 1.5 3]))
+        %
+        % Error: 'HistogramDistribution_probOfInterval:input_shape'
+            if length(objs) == 1 && length(intervals) == 1
+                bins = Interval(objs.bounds(1:end-1),objs.bounds(2:end), ...
+                    objs.border_is_in_upper_bin(1:end-1), ...
+                    ~objs.border_is_in_upper_bin(2:end));
+                p = 0;
+                intersects = bins.intersects(intervals);
+                for bin_idx = find(intersects) % Loop only over those bins where there is an intersection
+                    b = bins(bin_idx);
+                    prob = objs.probs(bin_idx);
+                    if b.length == 0
+                        p = p+prob;
+                    else
+                        intersection = b.intersection(intervals);
+                        p = p+prob * intersection.length / b.length;
+                    end
+                end
+            elseif length(objs) == length(intervals)
+                p = arrayfun(@(o,i) o.probOfInterval(i), objs, intervals);
+            elseif length(objs) == 1
+                p = arrayfun(@(i) objs.probOfInterval(i), intervals);
+            elseif length(intervals) == 1
+                p = arrayfun(@(o) o.probOfInterval(intervals), objs);
+            else
+                error('HistogramDistribution_probOfInterval:input_shape',...
+                    ['If there are different numbers of Intervals and '...
+                    'HistogramDistributions, one of vector must be size 1.']);
+            end
+        end
+        
         function str=char(obj)
         % Return a human-readable string representation of this
         % object. (Matlab's version of toString, however, Matlab

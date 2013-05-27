@@ -221,3 +221,35 @@ assertEqual(o.bounds, [1 1 5 9]);
 assertEqual(o.probs, [0.5 0.25 0.25]);
 assertEqual(o.cdf, [0.5 0.75 1]);
 assertEqual(o.border_is_in_upper_bin, 1==[1 0 1 0]);
+
+
+function test_probOfInterval %#ok<DEFNU>
+% Test probOfInterval using examples from documentation
+
+h = HistogramDistribution([0,1,1,2,3],[0.25 0.25 0.25 0.25]);
+i = HistogramDistribution([0,1,1,2,3,9],[0.2 0.2 0.2 0.2 0.2]);
+hi = [h,i];
+%
+p = h.probOfInterval(Interval(0,1.5,false,false));
+assertEqual(p, 0.625);
+%
+p = h.probOfInterval(Interval(1,1.5,true,true));
+assertEqual(p, 0.375);
+%
+p = h.probOfInterval(Interval(1,1.5,false,true));
+assertEqual(p, 0.125);
+%
+p = i.probOfInterval(Interval(1,1.5,false,true));
+assertEqual(p, 0.1);
+%
+p = hi.probOfInterval(Interval(1,1.5,false,true));
+assertEqual(p, [0.125, 0.1]);
+%
+p = hi.probOfInterval(Interval([0 1],[1.5 1.5],[false false],[true true]));
+assertEqual(p, [0.625, 0.1]);
+%
+p = h.probOfInterval(Interval([0 1],[1.5 1.5],[false false],[true true]));
+assertEqual(p, [0.625, 0.125]);
+%
+f = @() hi.probOfInterval(Interval([0 1 2],[1 1.5 3],true(1,3),true(1,3)));
+assertExceptionThrown(f,'HistogramDistribution_probOfInterval:input_shape');
