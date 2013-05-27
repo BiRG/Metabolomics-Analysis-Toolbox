@@ -606,8 +606,80 @@ classdef HistogramDistribution
         % n == hi
         %
             if length(objs) == 1 && length(num_bins) == 1
-                %TODO: stub
-                new_dists = objs;
+                if num_bins < 1
+                    error('HistogramDistribution_rebin:at_least_one', ...
+                        ['A HistogramDistribution must have at least ' ...
+                        'one bin so num_bins passed to '...
+                        'rebinApproxEqualProb must be at least 1']);
+                end
+                if num_bins ~= round(num_bins)
+                    error('HistogramDistribution_rebin:integer_bins', ...
+                        'num_bins must be an integer.');
+                end
+                remaining_prob = 1;
+                remaining_bins = num_bins;
+                target_prob = remaining_prob / remaining_bins;
+                new_bins(num_bins) = Interval();
+                cur_bin_idx = 1;
+                cur_bound_idx = 1;
+                cur_bin = Interval(objs.bounds(cur_bound_idx),objs.bounds(cur_bound_idx),true,true);
+                cur_prob = objs.probOfInterval(cur_bin);
+                while(remaining_bins > 0)
+                    accept_cur_bin = false;
+                    if cur_prob >= target_prob
+                        % If we can't improve the probability by extending
+                        % the bin, add this bin to the list and start 
+                        % making a new one
+                        accept_cur_bin = true;
+                    else
+                        assert(cur_prob < target_prob);
+                        % If we are below the target probability, try to
+                        % extend the bin. If the expansion doesn't exceed
+                        % the target probability, continue. Otherwise, the
+                        % current bin is the closest you can get without
+                        % overshooting and the extended one is the closest
+                        % you can get above. Choose the one whose
+                        % probability is closer to the target and add it to
+                        % the list.
+                        extended_bin = objs.private_extendInterval(cur_bin, target_prob);
+                        extended_prob = objs.probOfInterval(extended_bin);
+                        if extended_prob <= target_prob
+                            cur_bin = extended_bin;
+                            cur_prob = extended_prob;
+                        else
+                            if extended_prob - target_prob < target_prob - cur_prob
+                                cur_bin = extended_bin;
+                                cur_prob = extended_prob;
+                            end
+                            accept_cur_bin = true;
+                        end
+                    end
+                    if accept_cur_bin
+                        % Add the bin to the list and update all the state
+                        % variables
+                        new_bins(cur_bin_idx) = cur_bin;
+                        cur_bin_idx = cur_bin_idx + 1;
+                        remaining_bins = remaining_bins - 1;
+                        remaining_prob = remaining_prob - target_prob;
+                        if remaining_bins > 0
+                            target_prob = remaining_prob / remaining_bins;
+                        else
+                            target_prob = 0;
+                        end
+                        cur_bin = Interval(cur_bin.max, cur_bin.max, ~cur_bin.contains_max, ~cur_bin.contains_max);
+                        cur_prob = objs.probForInterval(cur_bin);
+                    end
+                end
+                
+                % Turn the list of bins into a histogram distribution
+                final_bin = new_bins(end);
+                new_bins(end) = Interval(final_bin.min, final_bin.max, ...
+                    final_bin.contains_min, true);  % Ensure the last bin is contains its maximum to meet the requirements of HistogramDistribution objects
+                all_but_first_bin = new_bins(2:end);
+                new_dists = HistogramDistribution(...
+                    [[new_bins.min], final_bin.max], ...
+                    objs.probForInterval(new_bins), ...
+                    [true,[all_but_first_bin.contains_min],false]);
             elseif length(objs) == length(num_bins)
                 new_dists = arrayfun(@(o,n) o.rebinApproxEqualProb(n), objs, num_bins);
             elseif length(objs) == 1
@@ -649,6 +721,77 @@ classdef HistogramDistribution
         % whenever an object of this class is assigned to a
         % variable without a semicolon to suppress the display).
             disp(obj.char);
+        end
+        
+        function new_interval = private_extendInterval(obj, interval, target_prob)
+        % Usage: private_extendInterval(obj, interval, target_prob)
+        %
+        % Non-class members should not call this function. It is public so
+        % I can write test code to call it. But the private_ prefix should
+        % give a clue as to my intentions
+        %
+        % Changes the upper bound of the given interval by 1 step to try
+        % and meet target_prob.
+        %
+        % If the interval is open at the top, closes it.
+        % If the interval is closed at the top and there is a greater 
+        %    boundary, opens it and changes the interval's boundary to 
+        %    either:
+        %   fall between its current value and the next greater boundary
+        %      (if that would make its integral equal target probability)
+        %
+        %   fall on the next greater boundary
+        %      (if no intervening value would make its integral equal to
+        %      the target probability)
+        %
+        % Otherwise, does nothing
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % objs - (a HistogramDistribution object)
+        %
+        % interval - (an Interval object) the interval to be extended
+        %
+        % target_prob - (a double) The probability the extension is trying
+        %      to achieve. must be between 0 and 1 inclusive.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % new_interval - (an Interval object) the extended interval
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([2,3,5,8,8],0.25*ones(1,4),[1,1,1,1,0]);
+        % >> i = h.private_extendInterval(Interval(5,8,false,false),0.3);
+        % i == Interval(5,8,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(5,8,false,false),0.25);
+        % i == Interval(5,8,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(5,8,false,true),0.25);
+        % i == Interval(5,8,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,true),0.2); 
+        % i == Interval(3,8,false,false) % Note that the target probability
+        %                                % was ignored here since it could
+        %                                % not be met in the interval
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,true),0.375); 
+        % i == Interval(3,6.25,false,false)
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,false),0.375); 
+        % i == Interval(3,5,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,true),0.6); 
+        % i == Interval(3,8,false,false)
+        
+            %TODO: stub
+            new_interval = interval;
         end
     end
     

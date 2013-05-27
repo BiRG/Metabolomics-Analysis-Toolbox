@@ -254,6 +254,31 @@ assertEqual(p, [0.625, 0.125]);
 f = @() hi.probOfInterval(Interval([0 1 2],[1 1.5 3],true(1,3),true(1,3)));
 assertExceptionThrown(f,'HistogramDistribution_probOfInterval:input_shape');
 
+function test_private_extendInterval %#ok<DEFNU>
+% Uses the examples as test cases
+
+h = HistogramDistribution([2,3,5,8,8],0.25*ones(1,4),[1,1,1,1,0]);
+i = h.private_extendInterval(Interval(5,8,false,false),0.3);
+assertEqual(i, Interval(5,8,false,true));
+%
+i = h.private_extendInterval(Interval(5,8,false,false),0.25);
+assertEqual(i, Interval(5,8,false,true));
+%
+i = h.private_extendInterval(Interval(5,8,false,true),0.25);
+assertEqual(i, Interval(5,8,false,true));
+%
+i = h.private_extendInterval(Interval(3,5,false,true),0.2); 
+assertEqual(i, Interval(3,8,false,false)); 
+%
+i = h.private_extendInterval(Interval(3,5,false,true),0.375); 
+assertEqual(i, Interval(3,6.25,false,false));
+%
+i = h.private_extendInterval(Interval(3,5,false,false),0.375); 
+assertEqual(i, Interval(3,5,false,true));
+%
+i = h.private_extendInterval(Interval(3,5,false,true),0.6); 
+assertEqual(i, Interval(3,8,false,false));
+
 
 function test_rebinApproxEqualProb %#ok<DEFNU>
 % Uses the examples as test cases
