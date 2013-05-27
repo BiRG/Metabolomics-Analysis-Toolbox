@@ -267,18 +267,25 @@ classdef HistogramDistribution
         bounds = sort([bounds, dirac_bounds]); %#ok<PROP>
         
         % Turn the original bins into intervals
-        orig_intervals = arrayfun(@ClosedInterval, mins,maxes, 'UniformOutput',false);
+        orig_intervals = arrayfun(@Interval,mins, maxes, true(1,length(mins)), true(1,length(mins)), 'UniformOutput',false);
         orig_intervals = [orig_intervals{:}];
         
         % Calculate the probablility mass assigned to each original bin
         interval_mass = 1/length(mins);
         
+        % To get the actual bins of the new distribution, calculate a
+        % HistogramDistribution with the same bounds but equal
+        % probabilities
+        equal_prob_distr = HistogramDistribution(bounds, ones(1,length(bounds)-1)./(length(bounds)-1)); %#ok<PROP>
+        new_bins = Interval(bounds(1:end-1),bounds(2:end), ...
+            equal_prob_distr.border_is_in_upper_bin(1:end-1), ...
+            ~equal_prob_distr.border_is_in_upper_bin(2:end)); %#ok<PROP>
+        
         % For each new bin, calculate the contribution of each original
         % bin to its probability
         probs = zeros(1,length(bounds)-1); %#ok<PROP>
         for bin_idx = 1:length(probs) %#ok<PROP>
-            bin = ClosedInterval(bounds(bin_idx), bounds(bin_idx+1)); %#ok<PROP>
-            
+            bin = new_bins(bin_idx);
             for orig_idx = 1:length(orig_intervals)
                 orig = orig_intervals(orig_idx);
                 if bin.intersects(orig)
