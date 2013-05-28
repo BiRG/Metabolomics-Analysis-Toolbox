@@ -518,12 +518,21 @@ classdef HistogramDistribution
         %
         % Error: 'HistogramDistribution_probOfInterval:input_shape'
             if length(objs) == 1 && length(intervals) == 1
-                bins = objs.bins; %#ok<PROP>
                 p = 0;
                 
-                intersects = bins.intersects(intervals); %#ok<PROP>
-                for bin_idx = find(intersects) % Loop only over those bins where there is an intersection
-                    b = bins(bin_idx); %#ok<PROP>
+                % Get the indices of the bins bounding those that can
+                % overlap and force them into the actual range of bins
+                first_bin_idx = objs.binContaining(intervals.min);
+                first_bin_idx = min(length(objs.bins), max(1, first_bin_idx));
+                last_bin_idx = objs.binContaining(intervals.max);
+                last_bin_idx = max(1, min(length(objs.bins), last_bin_idx));
+                assert(first_bin_idx <= last_bin_idx); % this should be guaranteed by the ordering of interval max and min
+                
+                ibins_idxs = first_bin_idx:last_bin_idx;
+                ibins = objs.bins(ibins_idxs);
+                intersects = ibins.intersects(intervals);
+                for bin_idx = ibins_idxs(intersects) % Loop only over those bins where there is an intersection
+                    b = objs.bins(bin_idx);
                     prob = objs.probs(bin_idx);
                     if b.length == 0
                         p = p+prob;
