@@ -518,13 +518,11 @@ classdef HistogramDistribution
         %
         % Error: 'HistogramDistribution_probOfInterval:input_shape'
             if length(objs) == 1 && length(intervals) == 1
-                bins = Interval(objs.bounds(1:end-1),objs.bounds(2:end), ...
-                    objs.border_is_in_upper_bin(1:end-1), ...
-                    ~objs.border_is_in_upper_bin(2:end));
+                bins = objs.bins; %#ok<PROP>
                 p = 0;
-                intersects = bins.intersects(intervals);
+                intersects = bins.intersects(intervals); %#ok<PROP>
                 for bin_idx = find(intersects) % Loop only over those bins where there is an intersection
-                    b = bins(bin_idx);
+                    b = bins(bin_idx); %#ok<PROP>
                     prob = objs.probs(bin_idx);
                     if b.length == 0
                         p = p+prob;
