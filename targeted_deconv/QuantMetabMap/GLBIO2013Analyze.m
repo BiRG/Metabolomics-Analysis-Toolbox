@@ -57,6 +57,7 @@ maximize_figure(gcf, num_monitors);
 %% Calculate HistogramDistribution objects for the original parameter distributions
 % This takes a while, so I include it in a separate step from the
 % simplification.
+tic;
 raw_orig_width = nssd_data_dist('width');
 raw_orig_height = nssd_data_dist('height');
 raw_orig_lorentzianness = nssd_data_dist('lorentzianness');
@@ -75,6 +76,7 @@ orig_lorentzianness_dist = HistogramDistribution.fromEqualProbBins(...
 orig_width_7bin = orig_width_dist.rebinApproxEqualProb(7);
 orig_height_7bin = orig_height_dist.rebinApproxEqualProb(7);
 orig_lorentzianness_7bin = orig_lorentzianness_dist.rebinApproxEqualProb(7);
+toc
 
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
