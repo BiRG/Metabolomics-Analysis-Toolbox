@@ -96,19 +96,16 @@ classdef Interval
                 contains_max = contains_max ~= 0;
             end
             
-            if length(min) == 1
-                % Create a single interval
-                objs.min = min;
-                objs.max = max;
-                objs.contains_min = contains_min;
-                objs.contains_max = contains_max;
-                if min == max && contains_min ~= contains_max
-                    error('Interval:zero_length_end_points','If a zero-length Interval contains one endpoint, it must contain both');
-                end
-            else
-                % Fill an array of intervals
-                objs = arrayfun(@Interval, min, max, contains_min, contains_max, 'UniformOutput', false);
-                objs = [objs{:}];
+            % Fill an array of intervals
+            objs(1,length(min)) = Interval;
+            for i = 1:length(min)
+                objs(i).min = min(i);
+                objs(i).max = max(i);
+                objs(i).contains_min = contains_min(i);
+                objs(i).contains_max = contains_max(i);
+            end
+            if any(min == max & contains_min ~= contains_max)
+                error('Interval:zero_length_end_points','If a zero-length Interval contains one endpoint, it must contain both');
             end
             
           end
