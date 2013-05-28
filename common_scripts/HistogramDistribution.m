@@ -290,10 +290,11 @@ classdef HistogramDistribution
         % For each new bin, calculate the contribution of each original
         % bin to its probability
         probs = zeros(1,length(bounds)-1); %#ok<PROP>
-        for bin_idx = 1:length(probs) %#ok<PROP>
-            bin = new_bins(bin_idx);
-            for orig_idx = 1:length(orig_intervals)
-                orig = orig_intervals(orig_idx);
+        for orig_idx = 1:length(orig_intervals)
+            orig = orig_intervals(orig_idx);
+            possible_bins = equal_prob_distr.private_possiblyOverlappingBins(orig);
+            for bin_idx = possible_bins
+                bin = new_bins(bin_idx);
                 if bin.intersects(orig)
                     if orig.length > 0
                         intersection = bin.intersection(orig);
