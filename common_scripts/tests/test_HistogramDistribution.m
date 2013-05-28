@@ -363,3 +363,70 @@ assertElementsAlmostEqual(n.bounds, ex.bounds);
 assertElementsAlmostEqual(n.probs, ex.probs);
 assertElementsAlmostEqual(n.cdf, ex.cdf);
 assertEqual(n.border_is_in_upper_bin, ex.border_is_in_upper_bin);
+
+function test_binContaining %#ok<DEFNU>
+% Test using examples
+h = HistogramDistribution([1,2,2,4,6,10,16],ones(1,6)/6);
+
+b = h.binContaining(-1);
+assertEqual(b, 0);
+
+b = h.binContaining(1);
+assertEqual(b, 1);
+
+b = h.binContaining(2);
+assertEqual(b, 2);
+
+b = h.binContaining(3);
+assertEqual(b, 3);
+
+b = h.binContaining(4);
+assertEqual(b, 4);
+
+b = h.binContaining(5);
+assertEqual(b, 4);
+
+b = h.binContaining(6);
+assertEqual(b, 5);
+
+b = h.binContaining(7);
+assertEqual(b, 5);
+
+b = h.binContaining(9);
+assertEqual(b, 5);
+
+b = h.binContaining(10);
+assertEqual(b, 6);
+
+b = h.binContaining(11);
+assertEqual(b, 6);
+
+b = h.binContaining(16);
+assertEqual(b, 6);
+
+b = h.binContaining(17);
+assertEqual(b, 7);
+
+b = h.binContaining(10000);
+assertEqual(b, 7);
+
+
+h = HistogramDistribution([10,12],1);
+
+b = h.binContaining(1);
+assertEqual(b, 0);
+
+b = h.binContaining(10);
+assertEqual(b, 1);
+
+b = h.binContaining(11);
+assertEqual(b, 1);
+
+b = h.binContaining(12);
+assertEqual(b, 1);
+
+b = h.binContaining(12.5);
+assertEqual(b, 2);
+
+b = h.binContaining(10000);
+assertEqual(b, 2);

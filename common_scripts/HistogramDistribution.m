@@ -520,6 +520,7 @@ classdef HistogramDistribution
             if length(objs) == 1 && length(intervals) == 1
                 bins = objs.bins; %#ok<PROP>
                 p = 0;
+                
                 intersects = bins.intersects(intervals); %#ok<PROP>
                 for bin_idx = find(intersects) % Loop only over those bins where there is an intersection
                     b = bins(bin_idx); %#ok<PROP>
@@ -541,6 +542,141 @@ classdef HistogramDistribution
                 error('HistogramDistribution_probOfInterval:input_shape',...
                     ['If there are different numbers of Intervals and '...
                     'HistogramDistributions, one of vector must be size 1.']);
+            end
+        end
+        
+        function bin_idx = binContaining(obj, value)
+        % Usage: bin_idx = binContaining(obj, value)
+        %
+        % Returns the index of the bin containing value or 0 or 
+        % length(bins)+1 if the value lies below the lowest border or above
+        % the highest border respectively. There will be at most one bin 
+        % since the bins are a partition of an interval of the real line.
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % objs - (a single HistogramDistribution) the distribution
+        %      to be searched for appropriate bin.
+        %
+        % value - (a scalar) the value whose containing bin is searched for
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % bin_idx - (an integer) if one bin contains value, then the index of
+        %     that bin. If the bin is below the lowest boundary, 0.
+        %     length(bins)+1 if it is above the highest boundary.
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([1,2,2,4,6,10,16],0.2*ones(1,5))
+        %
+        % >> b = h.binContaining(-1);
+        % b == 0;
+        %
+        % >> b = h.binContaining(1);
+        % b == 1;
+        %
+        % >> b = h.binContaining(2);
+        % b == 2;
+        %
+        % >> b = h.binContaining(3);
+        % b == 3;
+        %
+        % >> b = h.binContaining(4);
+        % b == 4;
+        %
+        % >> b = h.binContaining(5);
+        % b == 4;
+        %
+        % >> b = h.binContaining(6);
+        % b == 5;
+        %
+        % >> b = h.binContaining(7);
+        % b == 5;
+        %
+        % >> b = h.binContaining(9);
+        % b == 5;
+        %
+        % >> b = h.binContaining(10);
+        % b == 6;
+        %
+        % >> b = h.binContaining(11);
+        % b == 6;
+        %
+        % >> b = h.binContaining(16);
+        % b == 6;
+        %
+        % >> b = h.binContaining(17);
+        % b == 7;
+        %
+        % >> b = h.binContaining(10000);
+        % b == 7;
+        %
+        % >> h = HistogramDistribution([10,12],1)
+        %
+        % >> b = h.binContaining(1);
+        % b == 0;
+        %
+        % >> b = h.binContaining(10);
+        % b == 1;
+        %
+        % >> b = h.binContaining(11);
+        % b == 1;
+        %
+        % >> b = h.binContaining(12);
+        % b == 1;
+        %
+        % >> b = h.binContaining(12.5);
+        % b == 2;
+        %
+        % >> b = h.binContaining(10000);
+        % b == 2;
+            assert(length(obj) == 1);
+            assert(length(value) == 1);
+            if value < obj.bounds(1)
+                bin_idx = 0;
+                return;
+            elseif value > obj.bounds(end)
+                bin_idx = length(obj.bounds);
+                return;
+            end
+            % Do a binary search
+            % Loop invariant obj.bounds(lower_bound) <= value <=
+            % obj.bounds(upper_bound)
+            lower_bound = 1;
+            upper_bound = length(obj.bounds);
+            while (upper_bound - lower_bound) >= 2
+                cur_bound_idx = floor((lower_bound + upper_bound) / 2);
+                cur_bound = obj.bounds(cur_bound_idx);
+                if cur_bound <= value
+                    lower_bound = cur_bound_idx;
+                else
+                    assert(value < cur_bound)
+                    upper_bound = cur_bound_idx;
+                end
+            end
+            
+            % Now find out exactly what bin the value falls in
+            if obj.bounds(upper_bound) == value
+                if obj.border_is_in_upper_bin(upper_bound)
+                    bin_idx = upper_bound;
+                else
+                    bin_idx = upper_bound-1;
+                end
+            elseif obj.bounds(lower_bound) == value
+                if obj.border_is_in_upper_bin(lower_bound)
+                    bin_idx = lower_bound;
+                else
+                    bin_idx = lower_bound-1;
+                end
+            else % value lies between lower and upper
+                assert(obj.bounds(lower_bound) < value && value < obj.bounds(upper_bound));
+                bin_idx = lower_bound;
             end
         end
         
