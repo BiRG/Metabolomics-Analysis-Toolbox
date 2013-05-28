@@ -944,8 +944,14 @@ classdef HistogramDistribution
             disp(obj.char);
         end
         
-        function new_interval = private_extendInterval(obj, interval, target_prob)
-        % Usage: private_extendInterval(obj, interval, target_prob)
+        % ---------------------------
+        % TODO: finish making extendInterval return the new probability so
+        % there won't be the need to keep calling prob of interval since
+        % extendInterval can calculate the probability stepwise
+        % ---------------------------
+        
+        function [new_interval,new_prob] = private_extendInterval(obj, interval, interval_prob, target_prob)
+        % Usage: [new_interval,new_prob] = private_extendInterval(obj, interval, target_prob)
         %
         % Non-class members should not call this function. It is public so
         % I can write test code to call it. But the private_ prefix should
@@ -974,8 +980,11 @@ classdef HistogramDistribution
         %
         % interval - (an Interval object) the interval to be extended
         %
+        % interval_prob - (a double) The probability of the interval to be
+        %      extended. Must be between 0 and 1 inclusive.
+        %
         % target_prob - (a double) The probability the extension is trying
-        %      to achieve. must be between 0 and 1 inclusive.
+        %      to achieve. Must be between 0 and 1 inclusive.
         %
         % -------------------------------------------------------------------------
         % Output parameters
@@ -988,8 +997,9 @@ classdef HistogramDistribution
         % -------------------------------------------------------------------------
         %
         % >> h = HistogramDistribution([2,3,5,8,8],0.25*ones(1,4),[1,1,1,1,0]);
-        % >> i = h.private_extendInterval(Interval(5,8,false,false),0.3);
+        % >> [i,p] = h.private_extendInterval(Interval(5,8,false,false),0.3);
         % i == Interval(5,8,false,true)
+        % p == 
         %
         % >> i = h.private_extendInterval(Interval(5,8,false,false),0.25);
         % i == Interval(5,8,false,true)
