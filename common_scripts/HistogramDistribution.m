@@ -449,6 +449,70 @@ classdef HistogramDistribution
           end
         end
 
+        function bin_idxs = private_possiblyOverlappingBins(obj,interval)
+        % Usage: bin_idxs = private_possiblyOverlappingBins(obj,interval)
+        %
+        % NOTE: this function is private. It should be used only by 
+        % functions in HistogramDistribution. It is not part of the public
+        % interface for the class. It is only technically public so I
+        % can call it from test routines. Don't call it from client code.
+        %
+        % Return a list of the indices of the bins in obj that may overlap
+        % interval. If a bin is not included in bin_idxs then it definitely
+        % does not overlap interval. If a bin is included and it is not the
+        % first and last index then it definitely does overlap. Otherwise
+        % the first and last included bins must be checked separately if
+        % necessary.
+        %
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % objs - (a HistogramDistribution object) the distribution
+        %      whose bins are checked for overlap.
+        %
+        % interval - (an Interval object) the intervals whose
+        %      probability is measured. There can either be 1 or the same
+        %      number as the number of objs.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % bin_idxs - (row vector of integer) an array of indexes into the
+        %      array of bins. The first and last elements of this list may
+        %      not overlap. The rest definitely overlap. All overlapping
+        %      bins are included in this list
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([1 3 6 12 24], ones(1,4)./4);
+        % >> b = h.private_possiblyOverlappingBins(Interval(4,13,1,1));
+        % b == [2,3,4]
+        % >> b = h.private_possiblyOverlappingBins(Interval(3,12,0,0));
+        % b == [2,3,4]
+        % >> b = h.private_possiblyOverlappingBins(Interval(3,11,0,0));
+        % b == [2,3]
+        % >> h = HistogramDistribution([3 24 48], ones(1,4)./4);
+        % >> b = h.private_possiblyOverlappingBins(Interval(4,13,1,1));
+        % b == 1
+        % >> b = h.private_possiblyOverlappingBins(Interval(0,1,0,0));
+        % b == 1
+        % >> b = h.private_possiblyOverlappingBins(Interval(56,72,0,0));
+        % b == 2
+            % Get the indices of the bins bounding those that can
+            % overlap and force them into the actual range of bins
+            first_bin_idx = obj.binContaining(interval.min);
+            first_bin_idx = min(length(obj.bins), max(1, first_bin_idx));
+            last_bin_idx = obj.binContaining(interval.max);
+            last_bin_idx = max(1, min(length(obj.bins), last_bin_idx));
+            assert(first_bin_idx <= last_bin_idx); % this should be guaranteed by the ordering of interval max and min
+
+            bin_idxs = first_bin_idx:last_bin_idx;
+        end
+        
         function p = probOfInterval(objs, intervals)
         % Usage: p = probOfInterval(objs, intervals)
         %
@@ -520,15 +584,7 @@ classdef HistogramDistribution
             if length(objs) == 1 && length(intervals) == 1
                 p = 0;
                 
-                % Get the indices of the bins bounding those that can
-                % overlap and force them into the actual range of bins
-                first_bin_idx = objs.binContaining(intervals.min);
-                first_bin_idx = min(length(objs.bins), max(1, first_bin_idx));
-                last_bin_idx = objs.binContaining(intervals.max);
-                last_bin_idx = max(1, min(length(objs.bins), last_bin_idx));
-                assert(first_bin_idx <= last_bin_idx); % this should be guaranteed by the ordering of interval max and min
-                
-                ibins_idxs = first_bin_idx:last_bin_idx;
+                ibins_idxs = objs.private_possiblyOverlappingBins(intervals);
                 ibins = objs.bins(ibins_idxs);
                 intersects = ibins.intersects(intervals);
                 for bin_idx = ibins_idxs(intersects) % Loop only over those bins where there is an intersection

@@ -430,3 +430,21 @@ assertEqual(b, 2);
 
 b = h.binContaining(10000);
 assertEqual(b, 2);
+
+function test_private_possiblyOverlappingBins %#ok<DEFNU>
+% Test using examples
+
+h = HistogramDistribution([1 3 6 12 24], ones(1,4)./4);
+b = h.private_possiblyOverlappingBins(Interval(4,13,1,1));
+assertEqual(b, [2,3,4]);
+b = h.private_possiblyOverlappingBins(Interval(3,12,0,0));
+assertEqual(b, [2,3,4]);
+b = h.private_possiblyOverlappingBins(Interval(3,11,0,0));
+assertEqual(b, [2,3]);
+h = HistogramDistribution([3 24 48], ones(1,2)./2);
+b = h.private_possiblyOverlappingBins(Interval(4,13,1,1));
+assertEqual(b, 1);
+b = h.private_possiblyOverlappingBins(Interval(0,1,0,0));
+assertEqual(b, 1);
+b = h.private_possiblyOverlappingBins(Interval(56,72,0,0));
+assertEqual(b, 2);
