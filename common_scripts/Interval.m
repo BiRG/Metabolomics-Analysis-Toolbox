@@ -37,6 +37,10 @@ classdef Interval
         % end-point containment. See the properties for a description of
         % the parameters.
         %
+        % All the parameters can be vectors. If they are, they must be the
+        % same length. Then the result is a vector of Intervals objects
+        % with mins(i) becoming the minimum of objs(i).
+        %
         % If contains_min or contains_max are not logicals, they are
         % converted to logicals by contains_min ~= 0
         %
@@ -396,8 +400,7 @@ classdef Interval
           contains_mins  = objs.contains(mins) & interval.contains(mins);
           contains_maxes = objs.contains(maxes) & interval.contains(maxes);
           maxes(maxes < mins) = mins(maxes < mins);
-          result = arrayfun(@Interval, mins, maxes, contains_mins, contains_maxes, 'UniformOutput',false);
-          result = [result{:}];
+          result = Interval(mins, maxes, contains_mins, contains_maxes);
         end
 
         function str=char(obj)
