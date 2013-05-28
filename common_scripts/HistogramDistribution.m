@@ -54,6 +54,12 @@ classdef HistogramDistribution
         %
         % (row vector of logical)
         border_is_in_upper_bin;
+        
+        % bounds and border_is_in_upper_bin combined into one Interval
+        % object per bin.
+        %
+        % (row vector of Interval)
+        bins
     end
     
     properties (Dependent)
@@ -437,6 +443,9 @@ classdef HistogramDistribution
                 end
                 objs.border_is_in_upper_bin = border_is_in_upper_bin;
             end
+            objs.bins = Interval(bounds(1:end-1),bounds(2:end), ... 
+                objs.border_is_in_upper_bin(1:end-1), ...
+                ~objs.border_is_in_upper_bin(2:end));
           end
         end
 

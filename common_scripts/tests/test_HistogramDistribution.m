@@ -23,6 +23,7 @@ assertEqual(h.bounds, [0,1]);
 assertEqual(h.probs, 1);
 assertEqual(h.border_is_in_upper_bin, [true, false]);
 assertEqual(h.cdf, 1);
+assertEqual(h.bins, Interval(0,1,1,1));
 
 % Good distribution with 3 params and 1 bin
 h=HistogramDistribution([0,1],1,[1,0]);
@@ -30,6 +31,7 @@ assertEqual(h.bounds, [0,1]);
 assertEqual(h.probs, 1);
 assertEqual(h.border_is_in_upper_bin, [true, false]);
 assertEqual(h.cdf, 1);
+assertEqual(h.bins, Interval(0,1,1,1));
 
 % Good distribution with 3 params and 6 bins
 h=HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8,[1,1,0,1,0,0]);
@@ -37,6 +39,7 @@ assertEqual(h.bounds, [0,1,1,2,3,5]);
 assertEqual(h.probs, [1,2,1,2,2]./8);
 assertEqual(h.border_is_in_upper_bin, [1,1,0,1,0,0]==1);
 assertEqual(h.cdf, [0.125, 0.375, 0.5, 0.75, 1]);
+assertEqual(h.bins, Interval([0,1,1,2,3],[1,1,2,3,5],[1,1,0,1,0],[0,1,0,1,1]));
 
 % Good distribution with 3 params and 6 bins using logical for last
 h=HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8,[true,true,false,false,false,false]);
@@ -44,7 +47,7 @@ assertEqual(h.bounds, [0,1,1,2,3,5]);
 assertEqual(h.probs, [1,2,1,2,2]./8);
 assertEqual(h.border_is_in_upper_bin, [1,1,0,0,0,0]==1);
 assertEqual(h.cdf, [0.125, 0.375, 0.5, 0.75, 1]);
-
+assertEqual(h.bins, Interval([0,1,1,2,3],[1,1,2,3,5],[1,1,0,0,0],[0,1,1,1,1]));
 
 % Good distribution with 2 params and 6 bins
 h=HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8);
@@ -52,6 +55,7 @@ assertEqual(h.bounds, [0,1,1,2,3,5]);
 assertEqual(h.probs, [1,2,1,2,2]./8);
 assertEqual(h.border_is_in_upper_bin, [1,1,0,1,1,0]==1);
 assertEqual(h.cdf, [0.125, 0.375, 0.5, 0.75, 1]);
+assertEqual(h.bins, Interval([0,1,1,2,3],[1,1,2,3,5],[1,1,0,1,1],[0,1,0,0,1]));
 
 % Error: Dirac interval without its upper bound
 f = @() HistogramDistribution([0,1,1,2,3,5],[1,2,1,2,2]./8,[1,1,1,1,0,0]);
