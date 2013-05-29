@@ -448,3 +448,11 @@ b = h.private_possiblyOverlappingBins(Interval(0,1,0,0));
 assertEqual(b, 1);
 b = h.private_possiblyOverlappingBins(Interval(56,72,0,0));
 assertEqual(b, 2);
+
+function test_binCounts %#ok<DEFNU>
+% Test with examples
+h = HistogramDistribution([-2,1,1,5,11,13,15],ones(1,6)/6);
+c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90]);
+assertEqual(c, [1,2,6,4,5,0]);
+c = h.binCounts([]);
+assertEqual(c,[0,0,0,0,0,0]);

@@ -1136,7 +1136,11 @@ classdef HistogramDistribution
         % -------------------------------------------------------------------------
         % Examples
         % -------------------------------------------------------------------------
-        %
+        % >> h = HistogramDistribution([-2,1,1,5,11,13,15],ones(1,6)/6)
+        % >> c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90])
+        % c == [1,2,6,4,5,0]
+        % >> c = h.binCounts([])
+        % c == [0,0,0,0,0,0]
             counts = zeros(size(obj.probs));
             for o = observations
                 bin_idx = obj.binContaining(o);
