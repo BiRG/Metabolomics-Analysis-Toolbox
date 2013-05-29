@@ -78,6 +78,28 @@ orig_height_7bin = orig_height_dist.rebinApproxEqualProb(7);
 orig_lorentzianness_7bin = orig_lorentzianness_dist.rebinApproxEqualProb(7);
 toc
 
+%% Plot simplified versus original parameter distributions
+subplot(2,2,1);
+hold off;
+raw_handle = orig_height_dist.plot('b');
+hold on;
+simp_handle = orig_height_7bin.plot('r--');
+legend([raw_handle,simp_handle],'Raw original','Simplified');
+ylim([0,100]);
+subplot(2,2,2);
+hold off;
+orig_width_dist.plot('b');
+hold on;
+orig_width_7bin.plot('r--');
+ylim([0,100]);
+subplot(2,2,3);
+hold off;
+orig_lorentzianness_dist.plot('b');
+hold on;
+orig_lorentzianness_7bin.plot('r--');
+ylim([0,100]);
+hold off;
+
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
