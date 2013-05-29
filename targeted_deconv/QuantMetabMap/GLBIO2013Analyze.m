@@ -109,6 +109,8 @@ load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 % probability.
 GLBIO2013_print_prob_counts_in_range_table(0.004);
 
+%% Calculate counts of different parameters in simplified distribution
+
 %% Calculate the parameters
 pe_list = GLBIO2013_calc_param_error_list(glbio_combined_results);
 

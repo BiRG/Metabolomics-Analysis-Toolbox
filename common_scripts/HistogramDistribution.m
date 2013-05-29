@@ -1113,6 +1113,38 @@ classdef HistogramDistribution
             end
             
         end
+        
+        function counts = binCounts(obj, observations)
+        % Usage counts = binCounts(obj, observations)
+        %
+        % Return the number of observations that fell into each bin.
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % obj - (a HistogramDistribution object)
+        %
+        % observations - (vector of double)
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % counts - (vector of double) counts(i) is the number of
+        %      observations that fell into bin(i)
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+            counts = zeros(size(obj.probs));
+            for o = observations
+                bin_idx = obj.binContaining(o);
+                if 1 <= bin_idx && bin_idx <= length(counts)
+                    counts(bin_idx) = counts(bin_idx) + 1;
+                end
+            end
+        end
     end
     
 end
