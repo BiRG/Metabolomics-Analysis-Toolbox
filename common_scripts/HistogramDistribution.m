@@ -1091,7 +1091,9 @@ classdef HistogramDistribution
             end
         end
         
-        function plot(obj, linespec)
+        function [handle] = plot(obj, linespec)
+        % Usage [handle] = plot(obj, linespec)
+        %
         % Plot this HistogramDistribution on the current axes
             frac_widths = (obj.bounds(2:end)-obj.bounds(1:end-1))/(obj.bounds(end)-obj.bounds(1));
             heights = obj.probs ./ frac_widths;
@@ -1100,12 +1102,16 @@ classdef HistogramDistribution
             heights(is_dirac) = max(heights);
             
             if ~exist('linespec','var')
-                stairs([obj.bounds(1), obj.bounds, obj.bounds(end)], ...
+                h = stairs([obj.bounds(1), obj.bounds, obj.bounds(end)], ...
                     [0, heights, heights(end),0]);
             else
-                stairs([obj.bounds(1), obj.bounds, obj.bounds(end)], ...
+                h = stairs([obj.bounds(1), obj.bounds, obj.bounds(end)], ...
                     [0, heights, heights(end),0], linespec);
             end
+            if nargout > 0
+                handle = h;
+            end
+            
         end
     end
     
