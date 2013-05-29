@@ -774,6 +774,9 @@ classdef HistogramDistribution
         % and then (0,1]. There will be no place to put the other
         % zero-probability segments.
         %
+        % To avoid this, the last bin must be a non-zero probability
+        % uniform bin.
+        %
         % -------------------------------------------------------------------------
         % Input arguments
         % -------------------------------------------------------------------------
@@ -828,8 +831,6 @@ classdef HistogramDistribution
         % n == hi
         %
             if length(objs) == 1 && length(num_bins) == 1
-                rounding_error = 1e-8; % I use this constant to add some slop to account for floating point rounding error
-                assert(num_bins < 10000); % More than 10k bins and rounding error of the magnitude above could become a problem
                 if num_bins < 1
                     error('HistogramDistribution_rebin:at_least_one', ...
                         ['A HistogramDistribution must have at least ' ...
@@ -843,140 +844,71 @@ classdef HistogramDistribution
                 remaining_prob = 1;
                 remaining_bins = num_bins;
                 target_prob = remaining_prob / remaining_bins;
-                new_bounds = nan(1,num_bins+1);
-                new_in_upper_bin = nan(size(new_bounds));
-                new_bounds(1) = objs.bounds(1);
-                new_in_upper_bin(1) = true;
-                new_bounds(end) = objs.bounds(end);
-                new_in_upper_bin(end) = true;
-                new_probs = nan(1,num_bins);
-                if num_bins == 1
-                    new_dists = HistogramDistribution(new_bounds, 1, new_in_upper_bin);
-                    return;
-                end
-                
-                % Start by adjusting the upper boundary of the first bin.
-                % Keep moving the boundary right until the probability
-                % exceeds the target probability. If the previous step had
-                % less error than the one that exceeded the target
-                % probability, use it. Otherwise, use the one that exceeded
-                % the target probability.
-                %
-                % The stops on the boundary's movement are:
-                % other bin boundaries - add entire probability of the bin
-                % bin midpoint- add the probability of part of the bin
-                % zero length bins - add the probability of the 
-
-                cur_bound_idx = 2; % current bin is the one bounded by new_bounds(cur_bound_idx-1) below and new_bounds(cur_bound_idx) on the top
-                cur_prospective_bin_idx = 1; % The index of the next bin in the original from which probability mass may be taken - if all bins' masses have been used, this will be num_bins + 1
-                cur_in_upper_bin = false; 
-                cur_bound = objs.bounds(1);
-                
-                % Set cur_prob - the probability of the current bin
-                % A zero-width bin has probability when you include the
-                % first point, others don't
-                if objs.bounds(cur_prospective_bin_idx)==objs.bounds(cur_prospective_bin_idx+1)
-                    cur_prob = objs.probs(1);
-                    cur_prospective_bin_idx = 2; % All the mass is used up from bin 1, so bin 2 is the first available
-                else
-                    cur_prob = 0;
-                end
-                
-                % Loop invariant: the interval defined by cur_bound,
-                % and new_bounds(cur_bound_idx - 1) contains at least 1
-                % point.
-                while cur_bound_idx < length(new_bounds)
-                    if target_prob <= cur_prob + rounding_error
-                        % If we have made or exceeded our target 
-                        % probability (to within rounding error), keep the
-                        % current bin and start working on a new one
-                        new_bounds(cur_bound_idx) = cur_bound;
-                        new_in_upper_bin(cur_bound_idx) = cur_in_upper_bin;
-                        new_probs(cur_bound_idx) = cur_prob;
-                        remaining_prob = remaining_prob - cur_prob;
-                        remaining_bins = remaining_bins - 1;
-                        target_prob = remaining_prob / remaining_bins;
-                        cur_bound_idx = cur_bound_idx + 1;
-                        
-                        if cur_bound_idx >= length(new_bounds)
-                            % If we are on the last bin, just set the
-                            % probability and be done
-                            new_probs(cur_bound_idx) = remaining_prob;
-                            continue;
-                        end
-                        
-                        if target_prob <= 0 % The less than is for rounding error
-                            % If there is no mass left but more bins to
-                            % make (imagine dividing a space with only
-                            % 2 Dirac bins into 5 pieces), divide the 
-                            % remaining space into equal length chunks
-                            break;
-                        end
-                        
-                        % Otherwise, initialize the new bin
-                        suck_idx = cur_prospective_bin_idx; % The index we're sucking mass from
-                        usuck = objs.bounds(suck_idx+1); % upper bound for suck bin
-                        lsuck = objs.bounds(suck_idx);   % lower bound for suck bin
-                        if cur_bound == objs.bounds(cur_prospective_bin_idx)
-                            % If we're at the beginning of the bin we can
-                            % take prob mass from
-                            
-                            if objs.bounds(cur_prospective_bin_idx) == objs.bounds(cur_prospective_bin_idx+1)
-                                % If that bin is zero-length, we that point
-                                % must not be included in the previous bin
-                                % - so we will include it to make our bin
-                                % non-empty
-                                assert(cur_
-                        else
-                            % We're in the middle of the bin we're taking
-                            % mass from. (We can't be at the end because
-                            % the only bins that have mass at their last
-                            % point are zero length - so we'd have to be at
-                            % their beginning. If we'd gotten to the end of
-                            % a non-zero length bin, we would have been 
-                            % advanced to the next one to take mass from.)
-                            assert(cur_bound < objs.bounds(cur_prospective_bin_idx+1));
-                            % Take as much as the bin can give toward
-                            % meeting our target
-                            remaining_mass = objs.probs(suck_idx)* ...
-                                (usuck - cur_bound)/(usuck - lsuck);
-                            cur_in_upper_bin = true; % don't include upper boundary unless we have to
-                            if remaining_mass <= target_prob + rounding_error
-                                cur_bound = usuck;
-                                cur_prob = remaining_mass;
-                                cur_prospective_bin_idx = cur_prospective_bin_idx + 1;
-                            else
-                                cur_bound = cur_bound + ...
-                                    (usuck - lsuck) * target_prob / objs.probs(suck_idx);
-                                cur_prob = target_prob;
-                            end
-                            
-                        end
+                new_bins(num_bins) = Interval();
+                cur_bin_idx = 1;
+                cur_bound_idx = 1;
+                cur_bin = Interval(objs.bounds(cur_bound_idx),objs.bounds(cur_bound_idx),true,true);
+                cur_prob = objs.probOfInterval(cur_bin);
+                while(remaining_bins > 0)
+                    accept_cur_bin = false;
+                    if cur_prob >= target_prob
+                        % If we can't improve the probability by extending
+                        % the bin, add this bin to the list and start 
+                        % making a new one
+                        accept_cur_bin = true;
                     else
-                        % We need to move the current bin boundary to the
-                        % right.
-                        
-                        % I assume that when all the mass is used up we
-                        % will have made our target probability (to within
-                        % rounding error) otherwise, we would have had to
-                        % have started with a target probability greater
-                        % than 1. I put this assert here just in case my
-                        % logic is faulty.
-                        assert(cur_prospective_bin_idx <= length(objs.bins));
-                        
-                        if objs.bounds(cur_prospective_bin_idx)==objs.bounds(cur_prospective_bin_idx+1)
-                            % If the prospective bin is zero length, we
-                            % haven't chosen it.
+                        assert(cur_prob < target_prob);
+                        % If we are below the target probability, try to
+                        % extend the bin. If the expansion doesn't exceed
+                        % the target probability, continue. Otherwise, the
+                        % current bin is the closest you can get without
+                        % overshooting and the extended one is the closest
+                        % you can get above. Choose the one whose
+                        % probability is closer to the target and add it to
+                        % the list.
+                        extended_bin = objs.private_extendInterval(cur_bin, target_prob);
+                        extended_prob = objs.probOfInterval(extended_bin);
+                        if extended_prob <= target_prob && ~(extended_bin == cur_bin)
+                            cur_bin = extended_bin;
+                            cur_prob = extended_prob;
                         else
-                            
+                            % We cannot improve by further extension either
+                            % because the extended probabiliy is greater
+                            % than the target probability or because
+                            % extension is not changing the bin
+                            if abs(extended_prob - target_prob) <= abs(target_prob - cur_prob)
+                                cur_bin = extended_bin;
+                                cur_prob = extended_prob;
+                            end
+                            accept_cur_bin = true;
                         end
+                    end
+                    if accept_cur_bin
+                        % Add the bin to the list and update all the state
+                        % variables
+                        new_bins(cur_bin_idx) = cur_bin;
+                        cur_bin_idx = cur_bin_idx + 1;
+                        remaining_bins = remaining_bins - 1;
+                        remaining_prob = remaining_prob - cur_prob;
+                        if remaining_bins > 0
+                            target_prob = remaining_prob / remaining_bins;
+                        else
+                            target_prob = 0;
+                        end
+                        cur_bin = Interval(cur_bin.max, cur_bin.max, ~cur_bin.contains_max, ~cur_bin.contains_max);
+                        cur_prob = objs.probOfInterval(cur_bin);
                     end
                 end
                 
-                
-            
-                
-                
+                % Turn the list of bins into a histogram distribution
+                final_bin = new_bins(end);
+                new_bins(end) = Interval(final_bin.min, final_bin.max, ...
+                    final_bin.contains_min, true);  % Ensure the last bin is contains its maximum to meet the requirements of HistogramDistribution objects
+                all_but_first_bin = new_bins(2:end);
+                new_dists = HistogramDistribution(...
+                    [[new_bins.min], final_bin.max], ...
+                    objs.probOfInterval(new_bins), ...
+                    [true,[all_but_first_bin.contains_min],false]);
             elseif length(objs) == length(num_bins)
                 new_dists = arrayfun(@(o,n) o.rebinApproxEqualProb(n), objs, num_bins, 'UniformOutput',false);
             elseif length(objs) == 1
@@ -1025,6 +957,167 @@ classdef HistogramDistribution
             disp(obj.char);
         end
         
+        function new_interval = private_extendInterval(obj, interval, target_prob)
+        % Usage: private_extendInterval(obj, interval, target_prob)
+        %
+        % Non-class members should not call this function. It is public so
+        % I can write test code to call it. But the private_ prefix should
+        % give a clue as to my intentions
+        %
+        % Changes the upper bound of the given interval by 1 step to try
+        % and meet target_prob.
+        %
+        % If the interval is non-zero length and open at the top, closes it.
+        % If the interval is closed at the top or zero length and there is a greater 
+        %    boundary, opens it and changes the interval's boundary to 
+        %    either:
+        %   fall between its current value and the next greater boundary
+        %      (if that would make its integral equal target probability)
+        %
+        %   fall on the next greater boundary
+        %      (if no intervening value would make its integral equal to
+        %      the target probability)
+        %
+        % Otherwise, does nothing
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % obj - (a HistogramDistribution object)
+        %
+        % interval - (an Interval object) the interval to be extended
+        %
+        % target_prob - (a double) The probability the extension is trying
+        %      to achieve. must be between 0 and 1 inclusive.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % new_interval - (an Interval object) the extended interval
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([2,3,5,8,8],0.25*ones(1,4),[1,1,1,1,0]);
+        % >> i = h.private_extendInterval(Interval(5,8,false,false),0.3);
+        % i == Interval(5,8,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(5,8,false,false),0.25);
+        % i == Interval(5,8,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(5,8,false,true),0.25);
+        % i == Interval(5,8,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,true),0.2); 
+        % i == Interval(3,8,false,false) % Note that the target probability
+        %                                % was ignored here since it could
+        %                                % not be met in the interval
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,true),0.375); 
+        % i == Interval(3,6.25,false,false)
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,false),0.375); 
+        % i == Interval(3,5,false,true)
+        %
+        % >> i = h.private_extendInterval(Interval(3,5,false,true),0.6); 
+        % i == Interval(3,8,false,false)
+        %
+        % >> i = h.private_extendInterval(Interval(8,8,false,false),0.6); 
+        % i == Interval(8,8,false,false)
+        %
+        % >> hh = HistogramDistribution([2,2,3,5,8],0.25*ones(1,4),[1,1,1,1,0]);
+        % >> i = hh.private_extendInterval(Interval(2,2,false,false),0.6); 
+        % i == Interval(2,3,false,false)
+        %
+        % >> i = hh.private_extendInterval(Interval(2,2,false,false),0.125); 
+        % i == Interval(2,2.5,false,false)
+            assert(0 <= target_prob && target_prob <= 1);
+            assert(length(obj) == 1);
+            assert(length(interval) == 1);
+            
+            if ~interval.contains_max && interval.length ~= 0
+                new_interval = Interval(interval.min, interval.max, interval.contains_min, true);
+            else
+                greater_bounds = obj.bounds > interval.max;
+                if any(greater_bounds)
+                    % Calculate how much probability could be made up by
+                    % extending the interval (note that the next interval
+                    % can never have zero length because greater_bounds is
+                    % those bounds that are strictly greater than
+                    % interval.max)
+                    next_bound_idx = find(greater_bounds, 1,'first');
+                    remaining_prob = ...
+                        target_prob - obj.probOfInterval(interval);
+                    if remaining_prob <= 0
+                        % If no prob could be made up, just extend
+                        new_interval = Interval(interval.min, ...
+                            obj.bounds(next_bound_idx), ...
+                            interval.contains_min, false);
+                    else
+                        % If some probability could be made up, see how
+                        % much of the next interval is needed
+                        next_interval = Interval(interval.max, ...
+                        obj.bounds(next_bound_idx), false, false);
+                        next_interval_prob = obj.probOfInterval(next_interval);
+                        fraction_needed = remaining_prob / next_interval_prob;
+                        if fraction_needed >= 1
+                            % If more is needed than we have, extend by the
+                            % entire new interval
+                            new_interval = Interval(interval.min, ...
+                                obj.bounds(next_bound_idx), ...
+                                interval.contains_min, false);
+                        else
+                            % Otherwise, use exactly what we need to reach
+                            % the target probability
+                            new_max = interval.max + ...
+                                next_interval.length * fraction_needed;
+                            if new_max == interval.max
+                                % If the fraction needed was too small,
+                                % increment by smallest floating point
+                                % number.
+                                new_max = nextAfter(interval.max);
+                            end
+                            new_interval = Interval(interval.min, ...
+                                new_max, ...
+                                interval.contains_min, false);
+                        end
+                    end
+                    
+                else % No way to extend the interval, so leave it alone
+                    new_interval = interval;
+                end
+            end
+        end
+        
+        function plot(obj, linespec)
+        % Plot this HistogramDistribution on the current axes
+            frac_widths = (obj.bounds(2:end)-obj.bounds(1:end-1))/(obj.bounds(end)-obj.bounds(1));
+            heights = obj.probs ./ frac_widths;
+            is_dirac = obj.bounds(2:end) == obj.bounds(1:end-1);
+            heights(is_dirac) = 0;
+            heights(is_dirac) = max(heights);
+            
+            if ~exist('linespec','var')
+                stairs([obj.bounds(1), obj.bounds, obj.bounds(end)], ...
+                    [0, heights, heights(end),0]);
+            else
+                stairs([obj.bounds(1), obj.bounds, obj.bounds(end)], ...
+                    [0, heights, heights(end),0], linespec);
+            end
+            old_hold_state = ishold;
+            hold on;
+            if ~exist('linespec','var')
+                stem(obj.bounds(is_dirac), obj.probs(is_dirac));
+            else
+                stem(obj.bounds(is_dirac), obj.probs(is_dirac), linespec);
+            end
+            if ~old_hold_state
+                hold off;
+            end
+        end
     end
+    
 end
 
