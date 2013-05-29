@@ -1106,16 +1106,6 @@ classdef HistogramDistribution
                 stairs([obj.bounds(1), obj.bounds, obj.bounds(end)], ...
                     [0, heights, heights(end),0], linespec);
             end
-            old_hold_state = ishold;
-            hold on;
-            if ~exist('linespec','var')
-                stem(obj.bounds(is_dirac), obj.probs(is_dirac));
-            else
-                stem(obj.bounds(is_dirac), obj.probs(is_dirac), linespec);
-            end
-            if ~old_hold_state
-                hold off;
-            end
         end
     end
     
