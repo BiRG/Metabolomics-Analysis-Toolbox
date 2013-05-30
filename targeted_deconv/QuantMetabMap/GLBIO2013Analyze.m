@@ -3,7 +3,7 @@
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
 % idea what happens under Windows or iOS.
-num_monitors = 1; 
+num_monitors = 2; 
 
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
@@ -86,6 +86,7 @@ end
 clear('dist_cache_filename');
 
 %% Plot simplified versus original parameter distributions
+clf;
 subplot(2,2,1);
 hold off;
 raw_handle = orig_height_dist.plot('b');
@@ -117,6 +118,93 @@ load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 GLBIO2013_print_prob_counts_in_range_table(0.004);
 
 %% Calculate counts of different parameters in simplified distribution
+% Summarize the distribution of the peak parameters by counting how many
+% peaks fall in each bin in the simplified original distribution
+pp_names = GLBIO2013Deconv.peak_picking_method_names();
+dsp_names = GLBIO2013Deconv.deconvolution_starting_point_method_names();
+param_names = {'width','height','lorentzianness'};
+num_congestions = 10;
+param_vals = cell(length(pp_names),length(dsp_names),num_congestions, length(param_names));
+for result = glbio_combined_results
+    cong_idx = 1+round(10*(1-GLBIO2013_collision_prob_for_width(result.spectrum_width)));
+    for deconv = result.deconvolutions
+        pp_idx = find(strcmp(deconv.peak_picker_name, pp_names));
+        dsp_idx = find(strcmp(deconv.starting_point_name, dsp_names));
+        peaks = deconv.peaks;
+        v = param_vals(pp_idx, dsp_idx, cong_idx,:);
+        v{1} = [v{1} [peaks.half_height_width]];
+        v{2} = [v{2} [peaks.height]];
+        v{3} = [v{3} [peaks.lorentzianness]];
+        param_vals(pp_idx, dsp_idx, cong_idx,:) = v;
+    end
+end
+
+param_counts = param_vals;
+for cong_idx = 1:num_congestions
+    for pp_idx = 1:length(pp_names)
+        for dsp_idx = 1:length(dsp_names)
+            v = param_vals(pp_idx, dsp_idx, cong_idx,:);
+            v{1} = orig_width_7bin.binCounts(v{1});
+            v{2} = orig_height_7bin.binCounts(v{2});
+            v{3} = orig_lorentzianness_7bin.binCounts(v{3});
+            param_counts(pp_idx, dsp_idx, cong_idx,:) = v;
+        end
+    end
+end
+
+%% Sample from KL distribution for each set of counts comparing it to the original
+% Each set of observed counts creates a posterior dirichlet distribution 
+% as to the actual probabilities of a peak parameter falling in a
+% particular bin. We sample from that posterior to and calculate the KL
+% divergence of each sample from the desired distribution of that
+% parameter. These are samples from the posterior distribution of errors
+% for a given method and congestion. I use 10,000 samples to give a good
+% approximation to the distribution.
+%
+% I use two different prior distributions. One is just the original
+% probabilities and reflects a weak (effective sample size = 1) belief that
+% a given method works and produces the same distribution as it was fed.
+% The other, more skeptical prior, represents an equally weak belief 
+% (effective sample size = 1) that we don't know what parameter values 
+% will come out of a particular method until we see it - this one is 
+% uniform over interval of possible input parameter values. Given actual 
+% sample sizes, both should be completely overwhelmed by the data.
+%
+% NOTE: what am I doing about output values that fall outside the range of
+% input parameter values. It could happen.
+tic;
+param_probs = {orig_width_7bin.probs, orig_height_7bin.probs, orig_lorentzianness_7bin.probs};
+method_works_prior = param_probs;
+skeptical_prior = {orig_width_7bin.bins, orig_height_7bin.bins, orig_lorentzianness_7bin.bins};
+for i = 1:3
+    b=skeptical_prior{i};
+    skeptical_prior{i} = [b.length]/(b(end).max - b(1).min);
+end
+num_samples = 100;
+kl_method_works = param_counts;
+kl_skeptical = param_counts;
+for cong_idx = 1:num_congestions
+    for pp_idx = 1:length(pp_names)
+        for dsp_idx = 1:length(dsp_names)
+            w = param_counts(pp_idx, dsp_idx, cong_idx,:);
+            s = param_counts(pp_idx, dsp_idx, cong_idx,:);
+            for param_idx = 1:3
+                w{param_idx} = GLBIO2013_sample_from_kl_divergence_of_dirichlet_belief( ...
+                    param_probs{param_idx}, ...
+                    method_works_prior{param_idx} + w{param_idx}, ...
+                    num_samples,'nothing');
+                s{param_idx} = GLBIO2013_sample_from_kl_divergence_of_dirichlet_belief( ...
+                    param_probs{param_idx}, ...
+                    skeptical_prior{param_idx} + s{param_idx}, ...
+                    num_samples,'zero=epsilon');
+            end
+        end
+    end
+end
+toc
+
+%% Clean up temp variables
+clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v');
 
 %% Calculate the parameters
 pe_list = GLBIO2013_calc_param_error_list(glbio_combined_results);
