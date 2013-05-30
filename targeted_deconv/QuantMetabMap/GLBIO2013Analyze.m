@@ -258,11 +258,8 @@ for param_idx = 1:length(param_names)
                 dn{1}(dn{1} == '_') = ' ';
                 dn{2}(dn{2} == '_') = ' ';
                 legend(h, dn);
-                paran = param_names{param_idx};
-                paran(paran == '_') = ' ';
-                pickn = pp_names{pp_idx};
-                pickn(pickn == '_') = ' ';
-                title([paran ' ' pickn]);
+                title([underscore_2_space(param_names{param_idx}) ...
+                    ' ' underscore_2_space(pp_names{pp_idx})]);
             else
                 title(sprintf('%d',cong_idx));
             end
@@ -291,11 +288,15 @@ for param_idx = 1:length(param_names)
 	end
 end
 
-%% Plot probability that summit is better
+%% Plot probability that summit is better - method works prior
+subplot_num = 0;
 for param_idx = 1:length(param_names)
 	for pp_idx = 1:length(pp_names)
+        subplot_num = subplot_num + 1;
+        subplot(length(param_names),length(pp_names),subplot_num);
         prob = zeros(1,num_congestions);
-        half_ci = zeros(1,num_contestions);
+        low_bar = zeros(1,num_congestions);
+        up_bar = zeros(1,num_congestions);
         for cong_idx = 1:num_congestions
             assert(length(dsp_names) == 2);
             assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
@@ -305,12 +306,120 @@ for param_idx = 1:length(param_names)
             num_worse = sum(w_summit > w_anderson);
             b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
             sci = b.shortestCredibleInterval(0.95);
-            fprintf('%3d%% [%3d %3d]   %14s %34s %2d   \n',...
-                round(b.prob*100), round(100*sci.min), round(100*sci.max), param_names{param_idx}, ...
-                pp_names{pp_idx}, cong_idx);
+            prob(cong_idx) = b.prob;
+            low_bar(cong_idx) = b.prob - sci.min;
+            up_bar(cong_idx) = sci.max - b.prob;
         end
+        errorbar(1:num_congestions, prob, low_bar, up_bar);
+        ylim([0,1]);
+        xlim([1,10]);
+        xlabel('Congestion');
+        ylabel('P(summit is better)');
+        title(sprintf('%s\n%s',...
+            underscore_2_space(param_names{param_idx}), ...
+            underscore_2_space(pp_names{pp_idx})));       
 	end
 end
+
+%% Plot probability that summit is better - skeptical prior
+% Almost the same as the method_works prior except in the case where we're
+% sampling from the prior in because the max-aligned data has not been
+% calculated. In that case (probably because of the zero behavior handling
+% and the high probability of getting a zero due to the shape of the lor
+% prob curve) they come out equal.
+subplot_num = 0;
+for param_idx = 1:length(param_names)
+	for pp_idx = 1:length(pp_names)
+        subplot_num = subplot_num + 1;
+        subplot(length(param_names),length(pp_names),subplot_num);
+        prob = zeros(1,num_congestions);
+        low_bar = zeros(1,num_congestions);
+        up_bar = zeros(1,num_congestions);
+        for cong_idx = 1:num_congestions
+            assert(length(dsp_names) == 2);
+            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            s_anderson = kl_skeptical{pp_idx, 1, cong_idx, param_idx};
+            s_summit = kl_skeptical{pp_idx, 2, cong_idx, param_idx};
+            num_as_good_or_better = sum(s_summit <= s_anderson);
+            num_worse = sum(s_summit > s_anderson);
+            b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
+            sci = b.shortestCredibleInterval(0.95);
+            prob(cong_idx) = b.prob;
+            low_bar(cong_idx) = b.prob - sci.min;
+            up_bar(cong_idx) = sci.max - b.prob;
+        end
+        errorbar(1:num_congestions, prob, low_bar, up_bar);
+        ylim([0,1]);
+        xlim([1,10]);
+        xlabel('Congestion');
+        ylabel('P(summit is better)');
+        title(sprintf('%s\n%s',...
+            underscore_2_space(param_names{param_idx}), ...
+            underscore_2_space(pp_names{pp_idx})));       
+	end
+end
+
+
+%% For which values is there a difference? - method works prior
+% I do multiple t-tests using a holm-bonferroni correction to see which
+% values there is evidence of a significant improvement and a second set 
+% of tests to see where there is evidence of a significant detriment. I
+% use a 0.05 as a significance threshold.
+%
+improvement_p_vals = zeros(length(param_names),length(pp_names),num_congestions);
+detriment_p_vals = improvement_p_vals;
+is_non_normal = improvement_p_vals;
+sample_sizes_vary_greatly = improvement_p_vals;
+for param_idx = 1:length(param_names)
+    for pp_idx = 1:length(pp_names)
+        for cong_idx = 1:num_congestions
+            assert(length(dsp_names) == 2);
+            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            w_anderson = kl_method_works{pp_idx, 1, cong_idx, param_idx};
+            w_summit = kl_method_works{pp_idx, 2, cong_idx, param_idx};
+            is_non_normal(param_idx, pp_idx, cong_idx) = ...
+                lillietest(w_anderson) || lillietest(w_summit);
+            sample_sizes_vary_greatly(param_idx, pp_idx, cong_idx) = ...
+                exp(abs(log(length(w_anderson)/length(w_summit)))) > 1.5;
+            [~, improvement_p_vals(param_idx, pp_idx, cong_idx)] = ttest2(w_summit, w_anderson,0.05,'left');
+            [~, detriment_p_vals(param_idx, pp_idx, cong_idx)] = ttest2(w_summit, w_anderson,0.05,'right');
+        end
+    end
+end
+
+% Correct the p-values
+improvement_p_vals_corrected = improvement_p_vals;
+improvement_p_vals_corrected(:) = bonf_holm(improvement_p_vals(:),0.05);
+detriment_p_vals_corrected = detriment_p_vals;
+detriment_p_vals_corrected (:) = bonf_holm(detriment_p_vals(:),0.05);
+
+%% Print table of values for which there was a difference
+fprintf('Peak Property            |Peak Picking Method   |Congestion     |Sig. Improved?     |Sig. Worsened?     \n');
+for param_idx = 1:length(param_names)
+    for pp_idx = 1:length(pp_names)
+        for cong_idx = 1:num_congestions
+            i = improvement_p_vals_corrected(param_idx, pp_idx, cong_idx);
+            if i >= 0.05
+                istr = '?  ??  ?';
+            else
+                istr = 'Improved';
+            end
+            d = detriment_p_vals_corrected(param_idx, pp_idx, cong_idx);
+            if d >= 0.05
+                dstr = '?  ??  ?';
+            else
+                dstr = 'Worsened';
+            end
+            
+            short_pp_name = pp_names{pp_idx};
+            short_pp_name = short_pp_name(1:min(22,length(short_pp_name)));
+            fprintf('%25s %22s %15.1f %8s p=%8.3g %8s p=%8.3g\n', ...
+                param_names{param_idx},short_pp_name, ...
+                cong_idx, istr, i, dstr, d);
+        end
+    end
+end
+
 
 %% Clean up temp variables
 clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v','w','s','figure_num','dsp_color','h');
