@@ -55,28 +55,35 @@ legend(handles, element_names, 'Location', 'NorthEast');
 maximize_figure(gcf, num_monitors);
 
 %% Calculate HistogramDistribution objects for the original parameter distributions
-% This takes a while, so I include it in a separate step from the
-% simplification.
-tic;
-raw_orig_width = nssd_data_dist('width');
-raw_orig_height = nssd_data_dist('height');
-raw_orig_lorentzianness = nssd_data_dist('lorentzianness');
-orig_width_dist = HistogramDistribution.fromEqualProbBins(...
-    [raw_orig_width.min],[raw_orig_width.max]);
-orig_height_dist = HistogramDistribution.fromEqualProbBins(...
-    [raw_orig_height.min],[raw_orig_height.max]);
-orig_lorentzianness_dist = HistogramDistribution.fromEqualProbBins(...
-    [raw_orig_lorentzianness.min],[raw_orig_lorentzianness.max]);
-
 %% Calculate simplified versions of the original parameter distributions with 7 bins
 % We don't have enough data to calculate a more detailed observed
 % distribution with good accuracy (though, if the variance on the 7 bins is
 % too large, I might see if increasing the number of bins will decrease the
 % variance on the K-L error distribution.)
-orig_width_7bin = orig_width_dist.rebinApproxEqualProb(7);
-orig_height_7bin = orig_height_dist.rebinApproxEqualProb(7);
-orig_lorentzianness_7bin = orig_lorentzianness_dist.rebinApproxEqualProb(7);
-toc
+dist_cache_filename = 'GLBIO2013Analyze_cached_distributions.mat';
+if exist(dist_cache_filename,'file')
+    load(dist_cache_filename,'-mat');
+else
+    tic;
+    raw_orig_width = nssd_data_dist('width');
+    raw_orig_height = nssd_data_dist('height');
+    raw_orig_lorentzianness = nssd_data_dist('lorentzianness');
+    orig_width_dist = HistogramDistribution.fromEqualProbBins(...
+        [raw_orig_width.min],[raw_orig_width.max]);
+    orig_height_dist = HistogramDistribution.fromEqualProbBins(...
+        [raw_orig_height.min],[raw_orig_height.max]);
+    orig_lorentzianness_dist = HistogramDistribution.fromEqualProbBins(...
+        [raw_orig_lorentzianness.min],[raw_orig_lorentzianness.max]);
+    orig_width_7bin = orig_width_dist.rebinApproxEqualProb(7);
+    orig_height_7bin = orig_height_dist.rebinApproxEqualProb(7);
+    orig_lorentzianness_7bin = orig_lorentzianness_dist.rebinApproxEqualProb(7);
+    toc
+    save(dist_cache_filename, 'orig_width_7bin', 'orig_height_7bin', ...
+        'orig_lorentzianness_7bin','orig_width_dist', ...
+        'orig_height_dist','orig_lorentzianness_dist')
+    clear('raw_orig_width','raw_orig_height','raw_orig_lorentzianness');
+end
+clear('dist_cache_filename');
 
 %% Plot simplified versus original parameter distributions
 subplot(2,2,1);
