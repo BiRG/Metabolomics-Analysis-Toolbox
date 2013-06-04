@@ -467,4 +467,54 @@ assertEqual(h, HistogramDistribution([1, 1], 1, [1, 0]));
 
 h = HistogramDistribution.fromPoints([1 1 2.5 3.5 4.5]);
 assertEqual(h, HistogramDistribution([1, 1.75, 3, 4, 4.5], [0.4, 0.2, 0.2, 0.2], [1, 1, 1, 1, 0]));
- 
+
+function assertHistsApproxEqual(b,c)
+% b and c are HistogramDistribution objects. This asserts that their
+% members are approximately equal
+assertEqual(length(b), length(c));
+if length(b) > 1
+    for i = 1:length(b)
+        assertHistsApproxEqual(b(i),c(i));
+    end
+else
+    assertElementsAlmostEqual(b.bounds, c.bounds);
+    assertElementsAlmostEqual(b.probs, c.probs);
+    assertElementsAlmostEqual(b.cdf, c.cdf);
+    assertEqual(b.border_is_in_upper_bin, c.border_is_in_upper_bin);
+    assertElementsAlmostEqual([b.bins.max], [c.bins.max]);
+    assertElementsAlmostEqual([b.bins.min], [c.bins.min]);
+end
+
+function test_rebinEqualWidth %#ok<DEFNU>
+% Test with examples
+
+h = HistogramDistribution([0,1,1,2,3],[0.25 0.25 0.25 0.25]);
+i = HistogramDistribution([0,1,1,2,3,5],[0.2 0.2 0.2 0.2 0.2]);
+hi = [h,i];
+
+b=h.rebinEqualWidth(2);
+assertEqual(b, HistogramDistribution([0,1.5,3],[0.625 0.375]));
+
+b=h.rebinEqualWidth(3);
+assertEqual(b, HistogramDistribution([0,1,2,3],[0.25 0.5 0.25]));
+
+b=h.rebinEqualWidth(4);
+assertEqual(b, HistogramDistribution([0,0.75,1.5,2.25,3],[3/16 7/16 3/16 3/16]));
+
+b=h.rebinEqualWidth(6);
+assertEqual(b, HistogramDistribution([0,0.5,1,1.5,2,2.5,3],[1,1,3,1,1,1]/8));
+
+b=i.rebinEqualWidth(2);
+assertHistsApproxEqual(b, HistogramDistribution([0,2.5,5],[0.7,0.3]));
+
+b=i.rebinEqualWidth(5);
+assertEqual(b, HistogramDistribution([0,1,2,3,4,5],[0.2,0.4,0.2,0.1,0.1]));
+
+b=i.rebinEqualWidth([2,5]);
+assertHistsApproxEqual(b, [ HistogramDistribution([0, 2.5, 5], [0.7, 0.3]) HistogramDistribution([0,1,2,3,4,5],[0.2,0.4,0.2,0.1,0.1])]);
+
+b=hi.rebinEqualWidth(2);
+assertHistsApproxEqual(b, [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), HistogramDistribution([0, 2.5, 5], [0.7, 0.3]) ]);
+
+b=hi.rebinEqualWidth([2,5]);
+assertHistsApproxEqual(b, [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), HistogramDistribution([0, 1, 2, 3, 4, 5], [0.2, 0.4, 0.2, 0.1, 0.1]) ]);

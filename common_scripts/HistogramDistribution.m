@@ -822,6 +822,41 @@ classdef HistogramDistribution
         % >> i = HistogramDistribution([0,1,1,2,3,5],[0.2 0.2 0.2 0.2 0.2]);
         % >> hi = [h,i];
         %
+        % >> b=h.rebinEqualWidth(2);
+        %
+        % b == HistogramDistribution([0,1.5,3],[0.625 0.375]);
+        %
+        % >> b=h.rebinEqualWidth(3);
+        %
+        % b == HistogramDistribution([0,1,2,3],[0.25 0.5 0.25]);
+        %
+        % >> b=h.rebinEqualWidth(4);
+        %
+        % b == HistogramDistribution([0,0.75,1.5,2.25,3],[3/16 7/16 3/16 3/16]);
+        %
+        % >> b=h.rebinEqualWidth(6);
+        %
+        % b == HistogramDistribution([0,0.5,1,1.5,2,2.5,3],[1,1,3,1,1,1]/8);
+        %
+        % >> b=i.rebinEqualWidth(2);
+        %
+        % b == HistogramDistribution([0,2.5,5],[0.7,0.3]);
+        %
+        % >> b=i.rebinEqualWidth(5);
+        %
+        % b == HistogramDistribution([0,1,2,3,4,5],[0.2,0.4,0.2,0.1,0.1]);
+        %
+        % >> b=i.rebinEqualWidth([2,5]);
+        %
+        % b == [ HistogramDistribution([0, 2.5, 5], [0.7, 0.3]) HistogramDistribution([0,1,2,3,4,5],[0.2,0.4,0.2,0.1,0.1])]
+        %
+        % >> b=hi.rebinEqualWidth(2);
+        %
+        % b == [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), HistogramDistribution([0, 2.5, 5], [0.7, 0.3]) ]
+        %
+        % >> b=hi.rebinEqualWidth([2,5]);
+        %
+        % b == [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), HistogramDistribution([0, 1, 2, 3, 4, 5], [0.2, 0.4, 0.2, 0.1, 0.1]) ]
             if length(objs) == 1 && length(num_bins) == 1
                 if num_bins < 1
                     error('HistogramDistribution_rebin:at_least_one', ...
@@ -833,9 +868,9 @@ classdef HistogramDistribution
                     error('HistogramDistribution_rebin:integer_bins', ...
                         'num_bins must be an integer.');
                 end
-                bnd = linspace(obj.bounds(1),obj.bounds(end),num_bins);
+                bnd = linspace(objs.bounds(1),objs.bounds(end),num_bins+1);
                 equal_prob = HistogramDistribution(bnd,ones(1,length(bnd)-1)/(length(bnd)-1));
-                p = obj.probOfInterval(equal_prob.bins);
+                p = objs.probOfInterval(equal_prob.bins);
                 new_dists = HistogramDistribution(bnd, p, equal_prob.border_is_in_upper_bin);
             elseif length(objs) == length(num_bins)
                 new_dists = arrayfun(@(o,n) o.rebinEqualWidth(n), objs, num_bins, 'UniformOutput',false);
