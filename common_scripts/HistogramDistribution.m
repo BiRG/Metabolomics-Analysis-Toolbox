@@ -791,6 +791,72 @@ classdef HistogramDistribution
             end
         end
         
+        
+        function new_dists = rebinEqualWidth(objs, num_bins)
+        % Return a HistogramDistribution with the same support but the bins are all the same size
+        %
+        % Usage: new_dists = rebinEqualWidth(objs, num_bins)
+        %
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % objs - (row vector of HistogramDistribution) There can either be
+        %      1 or the same number as num_bins
+        %
+        % num_bins - (row vector of integers) The number of bins in the new
+        %      HistogramDistribution There can either be 1 or the same
+        %      number as the number of objs.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % new_dists - (row vector of HistogramDistribution) new_dists(i) is
+        %      the rebinned version of objs(i)
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        % >> h = HistogramDistribution([0,1,1,2,3],[0.25 0.25 0.25 0.25]);
+        % >> i = HistogramDistribution([0,1,1,2,3,5],[0.2 0.2 0.2 0.2 0.2]);
+        % >> hi = [h,i];
+        %
+            if length(objs) == 1 && length(num_bins) == 1
+                if num_bins < 1
+                    error('HistogramDistribution_rebin:at_least_one', ...
+                        ['A HistogramDistribution must have at least ' ...
+                        'one bin so num_bins passed to '...
+                        'rebinEqualWidth must be at least 1']);
+                end
+                if num_bins ~= round(num_bins)
+                    error('HistogramDistribution_rebin:integer_bins', ...
+                        'num_bins must be an integer.');
+                end
+                bnd = linspace(obj.bounds(1),obj.bounds(end),num_bins);
+                equal_prob = HistogramDistribution(bnd,ones(1,length(bnd)-1)/(length(bnd)-1));
+                p = obj.probOfInterval(equal_prob.bins);
+                new_dists = HistogramDistribution(bnd, p, equal_prob.border_is_in_upper_bin);
+            elseif length(objs) == length(num_bins)
+                new_dists = arrayfun(@(o,n) o.rebinEqualWidth(n), objs, num_bins, 'UniformOutput',false);
+            elseif length(objs) == 1
+                new_dists = arrayfun(@(n) objs.rebinEqualWidth(n), num_bins, 'UniformOutput',false);
+            elseif length(num_bins) == 1
+                new_dists = arrayfun(@(o) o.rebinEqualWidth(num_bins), objs, 'UniformOutput',false);
+            else
+                error('HistogramDistribution_rebinEqualWidth:input_shape',...
+                    ['If there are different numbers of bin quantities and '...
+                    'HistogramDistributions, one of vector must be size 1.']);
+            end
+            
+            % Unpack cell array output from arrayfun
+            if iscell(new_dists)
+                new_dists = [new_dists{:}];
+            end
+        end
+
+        
+        
         function new_dists = rebinApproxEqualProb(objs, num_bins)
         % Return a HistogramDistribution where a given interval has the
         % same probability as this one but the bins have approximately
