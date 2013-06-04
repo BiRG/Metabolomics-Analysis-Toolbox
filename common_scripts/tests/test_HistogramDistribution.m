@@ -456,3 +456,15 @@ c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90]);
 assertEqual(c, [1,2,6,4,5,0]);
 c = h.binCounts([]);
 assertEqual(c,[0,0,0,0,0,0]);
+
+function test_fromPoints %#ok<DEFNU>
+% Test with examples
+h = HistogramDistribution.fromPoints(1);
+assertEqual(h, HistogramDistribution([1, 1], 1, [1, 0]));
+
+h = HistogramDistribution.fromPoints([1 1]);
+assertEqual(h, HistogramDistribution([1, 1], 1, [1, 0]));
+
+h = HistogramDistribution.fromPoints([1 1 2.5 3.5 4.5]);
+assertEqual(h, HistogramDistribution([1, 1.75, 3, 4, 4.5], [0.4, 0.2, 0.2, 0.2], [1, 1, 1, 1, 0]));
+ 

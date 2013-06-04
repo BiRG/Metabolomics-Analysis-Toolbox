@@ -3,7 +3,7 @@
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
 % idea what happens under Windows or iOS.
-num_monitors = 1; 
+num_monitors = 2; 
 
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
@@ -86,6 +86,7 @@ end
 clear('dist_cache_filename');
 
 %% Plot simplified versus original parameter distributions
+clf;
 subplot(2,2,1);
 hold off;
 raw_handle = orig_height_dist.plot('b');
@@ -117,6 +118,311 @@ load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 GLBIO2013_print_prob_counts_in_range_table(0.004);
 
 %% Calculate counts of different parameters in simplified distribution
+% Summarize the distribution of the peak parameters by counting how many
+% peaks fall in each bin in the simplified original distribution
+%
+% I also set up the location distributions since they are different for
+% each congestion due to the congestion being controled by the interval.
+pp_names = GLBIO2013Deconv.peak_picking_method_names();
+dsp_names = GLBIO2013Deconv.deconvolution_starting_point_method_names();
+param_names = {'width','height','lorentzianness','location'};
+num_congestions = 10;
+orig_location_dist(num_congestions) = HistogramDistribution; % preallocate array
+param_vals = cell(length(pp_names),length(dsp_names),num_congestions, length(param_names));
+for result = glbio_combined_results
+    cong_idx = round(10*GLBIO2013_collision_prob_for_width(result.spectrum_width));
+    orig_location_dist(cong_idx) = HistogramDistribution(...
+        [result.spectrum_interval.min,result.spectrum_interval.max],1);
+    for deconv = result.deconvolutions
+        pp_idx = find(strcmp(deconv.peak_picker_name, pp_names));
+        dsp_idx = find(strcmp(deconv.starting_point_name, dsp_names));
+        peaks = deconv.peaks;
+        v = param_vals(pp_idx, dsp_idx, cong_idx,:);
+        v{1} = [v{1} [peaks.half_height_width]];
+        v{2} = [v{2} [peaks.height]];
+        v{3} = [v{3} [peaks.lorentzianness]];
+        v{4} = [v{4} [peaks.location]];
+        param_vals(pp_idx, dsp_idx, cong_idx,:) = v;
+    end
+end
+
+orig_location_7bin = orig_location_dist;
+for cong_idx = 1:num_congestions
+    orig_location_7bin(cong_idx) = ...
+        orig_location_dist(cong_idx).rebinApproxEqualProb(7);
+end
+
+param_counts = param_vals;
+for cong_idx = 1:num_congestions
+    for pp_idx = 1:length(pp_names)
+        for dsp_idx = 1:length(dsp_names)
+            v = param_vals(pp_idx, dsp_idx, cong_idx,:);
+            v{1} = orig_width_7bin.binCounts(v{1});
+            v{2} = orig_height_7bin.binCounts(v{2});
+            v{3} = orig_lorentzianness_7bin.binCounts(v{3});
+            v{4} = orig_location_7bin(cong_idx).binCounts(v{4});
+            param_counts(pp_idx, dsp_idx, cong_idx,:) = v;
+        end
+    end
+end
+
+%% Sample from KL distribution for each set of counts comparing it to the original
+% Each set of observed counts creates a posterior dirichlet distribution 
+% as to the actual probabilities of a peak parameter falling in a
+% particular bin. We sample from that posterior to and calculate the KL
+% divergence of each sample from the desired distribution of that
+% parameter. These are samples from the posterior distribution of errors
+% for a given method and congestion. I use 1,000 samples to give a good
+% approximation to the distribution.
+%
+% I use two different prior distributions. One is just the original
+% probabilities and reflects a weak (effective sample size = 1) belief that
+% a given method works and produces the same distribution as it was fed.
+% The other, more skeptical prior, represents an equally weak belief 
+% (effective sample size = 1) that we don't know what parameter values 
+% will come out of a particular method until we see it - this one is 
+% uniform over interval of possible input parameter values. Given actual 
+% sample sizes, both should be completely overwhelmed by the data.
+%
+% NOTE: what am I doing about output values that fall outside the range of
+% input parameter values. It could happen.
+tic
+param_probs = cell(num_congestions, length(param_names));
+skeptical_prior = param_probs;
+for cong_idx = 1:num_congestions
+    param_probs(cong_idx,:) = {orig_width_7bin.probs, orig_height_7bin.probs, ...
+        orig_lorentzianness_7bin.probs, orig_location_7bin(cong_idx).probs};
+    skeptical_prior(cong_idx,:) = {orig_width_7bin.bins, orig_height_7bin.bins, ...
+        orig_lorentzianness_7bin.bins, orig_location_7bin(cong_idx).bins};
+end
+method_works_prior = param_probs;
+
+for cong_idx = 1:num_congestions
+    for i = 1:4
+        b=skeptical_prior{cong_idx, i};
+        skeptical_prior{cong_idx,i} = [b.length]/(b(end).max - b(1).min);
+    end
+end
+
+num_samples = 1000;
+kl_method_works = param_counts;
+kl_skeptical = param_counts;
+for cong_idx = 1:num_congestions
+    for pp_idx = 1:length(pp_names)
+        for dsp_idx = 1:length(dsp_names)
+            w = param_counts(pp_idx, dsp_idx, cong_idx,:);
+            s = param_counts(pp_idx, dsp_idx, cong_idx,:);
+            for param_idx = 1:length(param_names)
+                w{param_idx} = GLBIO2013_sample_from_kl_divergence_of_dirichlet_belief( ...
+                    param_probs{cong_idx, param_idx}, ...
+                    method_works_prior{cong_idx, param_idx} + w{param_idx}, ...
+                    num_samples,'nothing')';
+                s{param_idx} = GLBIO2013_sample_from_kl_divergence_of_dirichlet_belief( ...
+                    param_probs{cong_idx, param_idx}, ...
+                    skeptical_prior{cong_idx, param_idx} + s{param_idx}, ...
+                    num_samples,'zero=epsilon')';
+                kl_method_works(pp_idx, dsp_idx, cong_idx,:) = w;
+                kl_skeptical(pp_idx, dsp_idx, cong_idx,:) = s;
+            end
+        end
+    end
+end
+fprintf('In calculating the single-parameter KL samples: ');
+toc
+
+%% Plot the KL error distributions for the method works prior
+clear('w');
+figure_num = 0;
+dsp_color = {'b:','g-'};
+for param_idx = 1:length(param_names)
+	for pp_idx = 1:length(pp_names)
+        figure_num = figure_num + 1;
+        figure(figure_num);
+        clf;
+        for cong_idx = 1:num_congestions
+            assert(num_congestions == 10);
+            subplot(2,5,cong_idx);
+            h = zeros(1,2);
+            for dsp_idx = 1:length(dsp_names)
+                w = kl_method_works{pp_idx, dsp_idx, cong_idx, param_idx};
+                hist = HistogramDistribution.fromPoints(w);
+                if dsp_idx == 1
+                    hold off;
+                else
+                    hold on;
+                end
+                h(dsp_idx) = hist.plot(dsp_color{dsp_idx});
+            end
+            if cong_idx == 1
+                dn = dsp_names;
+                dn{1}(dn{1} == '_') = ' ';
+                dn{2}(dn{2} == '_') = ' ';
+                legend(h, dn);
+                title([underscore_2_space(param_names{param_idx}) ...
+                    ' ' underscore_2_space(pp_names{pp_idx})]);
+            else
+                title(sprintf('%d',cong_idx));
+            end
+        end
+	end
+end
+
+%% Prob that summit focused is has better KL error under method works prior
+fprintf('Under Method Works prior');
+fprintf('P(summit better) Parameter      Peak picker                        Congestion\n');
+for param_idx = 1:length(param_names)
+	for pp_idx = 1:length(pp_names)
+        for cong_idx = 1:num_congestions
+            assert(length(dsp_names) == 2);
+            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            w_anderson = kl_method_works{pp_idx, 1, cong_idx, param_idx};
+            w_summit = kl_method_works{pp_idx, 2, cong_idx, param_idx};
+            num_as_good_or_better = sum(w_summit <= w_anderson);
+            num_worse = sum(w_summit > w_anderson);
+            b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
+            sci = b.shortestCredibleInterval(0.95);
+            fprintf('%3d%% [%3d %3d]   %14s %34s %2d   \n',...
+                round(b.prob*100), round(100*sci.min), round(100*sci.max), param_names{param_idx}, ...
+                pp_names{pp_idx}, cong_idx);
+        end
+	end
+end
+
+%% Plot probability that summit is better - method works prior
+subplot_num = 0;
+for param_idx = 1:length(param_names)
+	for pp_idx = 1:length(pp_names)
+        subplot_num = subplot_num + 1;
+        subplot(length(param_names),length(pp_names),subplot_num);
+        prob = zeros(1,num_congestions);
+        low_bar = zeros(1,num_congestions);
+        up_bar = zeros(1,num_congestions);
+        for cong_idx = 1:num_congestions
+            assert(length(dsp_names) == 2);
+            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            w_anderson = kl_method_works{pp_idx, 1, cong_idx, param_idx};
+            w_summit = kl_method_works{pp_idx, 2, cong_idx, param_idx};
+            num_as_good_or_better = sum(w_summit <= w_anderson);
+            num_worse = sum(w_summit > w_anderson);
+            b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
+            sci = b.shortestCredibleInterval(0.95);
+            prob(cong_idx) = b.prob;
+            low_bar(cong_idx) = b.prob - sci.min;
+            up_bar(cong_idx) = sci.max - b.prob;
+        end
+        errorbar(1:num_congestions, prob, low_bar, up_bar);
+        ylim([0,1]);
+        xlim([1,10]);
+        xlabel('Congestion');
+        ylabel('P(summit is better)');
+        title(sprintf('%s\n%s',...
+            underscore_2_space(param_names{param_idx}), ...
+            underscore_2_space(pp_names{pp_idx})));       
+	end
+end
+
+%% Plot probability that summit is better - skeptical prior
+% Almost the same as the method_works prior except in the case where we're
+% sampling from the prior in because the max-aligned data has not been
+% calculated. In that case (probably because of the zero behavior handling
+% and the high probability of getting a zero due to the shape of the lor
+% prob curve) they come out equal.
+subplot_num = 0;
+for param_idx = 1:length(param_names)
+	for pp_idx = 1:length(pp_names)
+        subplot_num = subplot_num + 1;
+        subplot(length(param_names),length(pp_names),subplot_num);
+        prob = zeros(1,num_congestions);
+        low_bar = zeros(1,num_congestions);
+        up_bar = zeros(1,num_congestions);
+        for cong_idx = 1:num_congestions
+            assert(length(dsp_names) == 2);
+            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            s_anderson = kl_skeptical{pp_idx, 1, cong_idx, param_idx};
+            s_summit = kl_skeptical{pp_idx, 2, cong_idx, param_idx};
+            num_as_good_or_better = sum(s_summit <= s_anderson);
+            num_worse = sum(s_summit > s_anderson);
+            b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
+            sci = b.shortestCredibleInterval(0.95);
+            prob(cong_idx) = b.prob;
+            low_bar(cong_idx) = b.prob - sci.min;
+            up_bar(cong_idx) = sci.max - b.prob;
+        end
+        errorbar(1:num_congestions, prob, low_bar, up_bar);
+        ylim([0,1]);
+        xlim([1,10]);
+        xlabel('Congestion');
+        ylabel('P(summit is better)');
+        title(sprintf('%s\n%s',...
+            underscore_2_space(param_names{param_idx}), ...
+            underscore_2_space(pp_names{pp_idx})));       
+	end
+end
+
+
+%% For which values is there a difference? - method works prior
+% I do multiple t-tests using a holm-bonferroni correction to see which
+% values there is evidence of a significant improvement and a second set 
+% of tests to see where there is evidence of a significant detriment. I
+% use a 0.05 as a significance threshold.
+%
+improvement_p_vals = zeros(length(param_names),length(pp_names),num_congestions);
+detriment_p_vals = improvement_p_vals;
+is_non_normal = improvement_p_vals;
+sample_sizes_vary_greatly = improvement_p_vals;
+for param_idx = 1:length(param_names)
+    for pp_idx = 1:length(pp_names)
+        for cong_idx = 1:num_congestions
+            assert(length(dsp_names) == 2);
+            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            w_anderson = kl_method_works{pp_idx, 1, cong_idx, param_idx};
+            w_summit = kl_method_works{pp_idx, 2, cong_idx, param_idx};
+            is_non_normal(param_idx, pp_idx, cong_idx) = ...
+                lillietest(w_anderson) || lillietest(w_summit);
+            sample_sizes_vary_greatly(param_idx, pp_idx, cong_idx) = ...
+                exp(abs(log(length(w_anderson)/length(w_summit)))) > 1.5;
+            [~, improvement_p_vals(param_idx, pp_idx, cong_idx)] = ttest2(w_summit, w_anderson,0.05,'left');
+            [~, detriment_p_vals(param_idx, pp_idx, cong_idx)] = ttest2(w_summit, w_anderson,0.05,'right');
+        end
+    end
+end
+
+% Correct the p-values
+improvement_p_vals_corrected = improvement_p_vals;
+improvement_p_vals_corrected(:) = bonf_holm(improvement_p_vals(:),0.05);
+detriment_p_vals_corrected = detriment_p_vals;
+detriment_p_vals_corrected (:) = bonf_holm(detriment_p_vals(:),0.05);
+
+%% Print table of values for which there was a difference
+fprintf('Peak Property            |Peak Picking Method   |Congestion     |Sig. Improved?     |Sig. Worsened?     \n');
+for param_idx = 1:length(param_names)
+    for pp_idx = 1:length(pp_names)
+        for cong_idx = 1:num_congestions
+            i = improvement_p_vals_corrected(param_idx, pp_idx, cong_idx);
+            if i >= 0.05
+                istr = '?  ??  ?';
+            else
+                istr = 'Improved';
+            end
+            d = detriment_p_vals_corrected(param_idx, pp_idx, cong_idx);
+            if d >= 0.05
+                dstr = '?  ??  ?';
+            else
+                dstr = 'Worsened';
+            end
+            
+            short_pp_name = pp_names{pp_idx};
+            short_pp_name = short_pp_name(1:min(22,length(short_pp_name)));
+            fprintf('%25s %22s %15.1f %8s p=%8.3g %8s p=%8.3g\n', ...
+                param_names{param_idx},short_pp_name, ...
+                cong_idx, istr, i, dstr, d);
+        end
+    end
+end
+
+
+%% Clean up temp variables
+clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v','w','s','figure_num','dsp_color','h');
 
 %% Calculate the parameters
 pe_list = GLBIO2013_calc_param_error_list(glbio_combined_results);

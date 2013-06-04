@@ -310,6 +310,51 @@ classdef HistogramDistribution
         obj = HistogramDistribution(bounds, probs); %#ok<PROP>
         
         end
+        
+        function obj = fromPoints(points)
+        % Takes a list of points and puts bin boundaries halfway between then uses the ML estimate of the probabilities of each bin
+        %
+        % The maximum and minimum of the distribution are taken directly
+        % from the maximum and minimum of the points
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % points - (row vector of double) a list of finite double values
+        %      whose empirical distribution will be approximated by a set
+        %      of uniform distributions. Must have at least 1 point.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % obj - A HistogramDistribution with a uniform distribution around
+        %      each input point
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution.fromPoints(1)
+        % h == HistogramDistribution([1, 1], [1], [1, 0])
+        %
+        % >> h = HistogramDistribution.fromPoints([1 1])
+        % h == HistogramDistribution([1, 1], [1], [1, 0])
+        %
+        % >> h = HistogramDistribution.fromPoints([[1 1 2.5 3.5 4.5])
+        % h == HistogramDistribution([1, 1.75, 3, 4, 4.5], [0.4, 0.2, 0.2, 0.2], [1, 1, 1, 1, 0])
+            assert(~isempty(points));
+            
+            bnd = unique(points,'R2012a');
+            if length(bnd) > 1
+                bnd = unique([bnd(1), (bnd(1:end-1)+bnd(2:end))/2, bnd(end)]);
+            else
+                bnd = [bnd bnd];
+            end
+            equal_prob = HistogramDistribution(bnd,ones(1,length(bnd)-1)/(length(bnd)-1));
+            counts = equal_prob.binCounts(points);
+            obj = HistogramDistribution(bnd,counts/sum(counts));
+        end
     end
     
     methods
