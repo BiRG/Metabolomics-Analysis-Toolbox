@@ -3,7 +3,7 @@
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
 % idea what happens under Windows or iOS.
-num_monitors = 2; 
+num_monitors = 1; 
 
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
@@ -85,11 +85,23 @@ else
 end
 clear('dist_cache_filename');
 
+%% Calculate equal width versions of the original parameter distributions with 7 bins
+% The equal probability bins consider the two distributions to be equal if
+% the equivalent quantiles map to one another - if the largest 10% of the
+% widths map to the largest 10%. Thus, it bounds an error related to the
+% quantile-quantile mapping. Equal width binning is more related to the
+% absolute error. The smallest smallest 10% of widths must map to one
+% another - no matter how infrequent they are
+orig_width_7_hist_bin = orig_width_dist.rebinEqualWidth(7);
+orig_height_7_hist_bin = orig_height_dist.rebinEqualWidth(7);
+orig_lorentzianness_7_hist_bin = orig_lorentzianness_dist.rebinEqualWidth(7);
+
+
 %% Plot simplified versus original parameter distributions
 clf;
 subplot(2,2,1);
 hold off;
-raw_handle = orig_height_dist.plot('b');
+raw_handle = orig_lorentzianness_dist.plot('b');
 hold on;
 simp_handle = orig_height_7bin.plot('r--');
 legend([raw_handle,simp_handle],'Raw original','Simplified');
@@ -108,6 +120,29 @@ orig_lorentzianness_7bin.plot('r--');
 ylim([0,100]);
 hold off;
 
+%% Plot equal width versus original parameter distributions
+clf;
+subplot(2,2,1);
+hold off;
+raw_handle = orig_lorentzianness_dist.plot('b');
+hold on;
+simp_handle = orig_height_7_hist_bin.plot('r--');
+legend([raw_handle,simp_handle],'Raw original','Simplified');
+ylim([0,100]);
+subplot(2,2,2);
+hold off;
+orig_width_dist.plot('b');
+hold on;
+orig_width_7_hist_bin.plot('r--');
+ylim([0,100]);
+subplot(2,2,3);
+hold off;
+orig_lorentzianness_dist.plot('b');
+hold on;
+orig_lorentzianness_7_hist_bin.plot('r--');
+ylim([0,100]);
+hold off;
+
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
@@ -119,7 +154,8 @@ GLBIO2013_print_prob_counts_in_range_table(0.004);
 
 %% Calculate counts of different parameters in simplified distribution
 % Summarize the distribution of the peak parameters by counting how many
-% peaks fall in each bin in the simplified original distribution
+% peaks fall in each bin in the simplified original distribution. I do this
+% for the equal width and equal probability bins.
 %
 % I also set up the location distributions since they are different for
 % each congestion due to the congestion being controled by the interval.
@@ -147,12 +183,16 @@ for result = glbio_combined_results
 end
 
 orig_location_7bin = orig_location_dist;
+orig_location_7_hist_bin = orig_location_dist;
 for cong_idx = 1:num_congestions
     orig_location_7bin(cong_idx) = ...
         orig_location_dist(cong_idx).rebinApproxEqualProb(7);
+    orig_location_7_hist_bin(cong_idx) = ...
+        orig_location_dist(cong_idx).rebinEqualWidth(7);
 end
 
-param_counts = param_vals;
+param_counts_7bin = param_vals;
+param_counts_7_hist_bin = param_vals;
 for cong_idx = 1:num_congestions
     for pp_idx = 1:length(pp_names)
         for dsp_idx = 1:length(dsp_names)
@@ -161,7 +201,13 @@ for cong_idx = 1:num_congestions
             v{2} = orig_height_7bin.binCounts(v{2});
             v{3} = orig_lorentzianness_7bin.binCounts(v{3});
             v{4} = orig_location_7bin(cong_idx).binCounts(v{4});
-            param_counts(pp_idx, dsp_idx, cong_idx,:) = v;
+            param_counts_7bin(pp_idx, dsp_idx, cong_idx,:) = v;
+            v = param_vals(pp_idx, dsp_idx, cong_idx,:);
+            v{1} = orig_width_7_hist_bin.binCounts(v{1});
+            v{2} = orig_height_7_hist_bin.binCounts(v{2});
+            v{3} = orig_lorentzianness_7_hist_bin.binCounts(v{3});
+            v{4} = orig_location_7_hist_bin(cong_idx).binCounts(v{4});
+            param_counts_7_hist_bin(pp_idx, dsp_idx, cong_idx,:) = v;
         end
     end
 end
@@ -185,33 +231,44 @@ end
 % sample sizes, both should be completely overwhelmed by the data.
 %
 % NOTE: what am I doing about output values that fall outside the range of
-% input parameter values. It could happen.
+% input parameter values? It could happen.
 tic
 param_probs = cell(num_congestions, length(param_names));
 skeptical_prior = param_probs;
+param_probs_7hist = cell(num_congestions, length(param_names));
+skeptical_prior_7hist = param_probs;
 for cong_idx = 1:num_congestions
     param_probs(cong_idx,:) = {orig_width_7bin.probs, orig_height_7bin.probs, ...
         orig_lorentzianness_7bin.probs, orig_location_7bin(cong_idx).probs};
     skeptical_prior(cong_idx,:) = {orig_width_7bin.bins, orig_height_7bin.bins, ...
         orig_lorentzianness_7bin.bins, orig_location_7bin(cong_idx).bins};
+    param_probs_7hist(cong_idx,:) = {orig_width_7_hist_bin.probs, orig_height_7_hist_bin.probs, ...
+        orig_lorentzianness_7_hist_bin.probs, orig_location_7_hist_bin(cong_idx).probs};
+    skeptical_prior_7hist(cong_idx,:) = {orig_width_7_hist_bin.bins, orig_height_7_hist_bin.bins, ...
+        orig_lorentzianness_7_hist_bin.bins, orig_location_7_hist_bin(cong_idx).bins};
 end
 method_works_prior = param_probs;
+method_works_prior_7hist = param_probs_7hist;
 
 for cong_idx = 1:num_congestions
-    for i = 1:4
+    for i = 1:size(skeptical_prior,2)
         b=skeptical_prior{cong_idx, i};
         skeptical_prior{cong_idx,i} = [b.length]/(b(end).max - b(1).min);
+        b=skeptical_prior_7hist{cong_idx, i};
+        skeptical_prior_7hist{cong_idx,i} = [b.length]/(b(end).max - b(1).min);
     end
 end
 
 num_samples = 1000;
-kl_method_works = param_counts;
-kl_skeptical = param_counts;
+kl_method_works = param_counts_7bin;
+kl_skeptical = param_counts_7bin;
+kl_method_works_7hist = param_counts_7_hist_bin;
+kl_skeptical_7hist = param_counts_7_hist_bin;
 for cong_idx = 1:num_congestions
     for pp_idx = 1:length(pp_names)
         for dsp_idx = 1:length(dsp_names)
-            w = param_counts(pp_idx, dsp_idx, cong_idx,:);
-            s = param_counts(pp_idx, dsp_idx, cong_idx,:);
+            w = param_counts_7bin(pp_idx, dsp_idx, cong_idx,:);
+            s = param_counts_7bin(pp_idx, dsp_idx, cong_idx,:);
             for param_idx = 1:length(param_names)
                 w{param_idx} = GLBIO2013_sample_from_kl_divergence_of_dirichlet_belief( ...
                     param_probs{cong_idx, param_idx}, ...
@@ -223,6 +280,21 @@ for cong_idx = 1:num_congestions
                     num_samples,'zero=epsilon')';
                 kl_method_works(pp_idx, dsp_idx, cong_idx,:) = w;
                 kl_skeptical(pp_idx, dsp_idx, cong_idx,:) = s;
+            end
+            
+            w = param_counts_7_hist_bin(pp_idx, dsp_idx, cong_idx,:);
+            s = param_counts_7_hist_bin(pp_idx, dsp_idx, cong_idx,:);
+            for param_idx = 1:length(param_names)
+                w{param_idx} = GLBIO2013_sample_from_kl_divergence_of_dirichlet_belief( ...
+                    param_probs_7hist{cong_idx, param_idx}, ...
+                    method_works_prior_7hist{cong_idx, param_idx} + w{param_idx}, ...
+                    num_samples,'zero=epsilon')'; % Not choosing according to probability can leave very low prob bins. Call that prob epsilon
+                s{param_idx} = GLBIO2013_sample_from_kl_divergence_of_dirichlet_belief( ...
+                    param_probs_7hist{cong_idx, param_idx}, ...
+                    skeptical_prior_7hist{cong_idx, param_idx} + s{param_idx}, ...
+                    num_samples,'zero=epsilon')';
+                kl_method_works_7hist(pp_idx, dsp_idx, cong_idx,:) = w;
+                kl_skeptical_7hist(pp_idx, dsp_idx, cong_idx,:) = s;
             end
         end
     end
@@ -288,7 +360,7 @@ for param_idx = 1:length(param_names)
 	end
 end
 
-%% Plot probability that summit is better - method works prior
+%% Plot probability that summit is better - method works prior equal prob
 subplot_num = 0;
 for param_idx = 1:length(param_names)
 	for pp_idx = 1:length(pp_names)
@@ -302,6 +374,44 @@ for param_idx = 1:length(param_names)
             assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
             w_anderson = kl_method_works{pp_idx, 1, cong_idx, param_idx};
             w_summit = kl_method_works{pp_idx, 2, cong_idx, param_idx};
+            num_as_good_or_better = sum(w_summit <= w_anderson);
+            num_worse = sum(w_summit > w_anderson);
+            b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
+            sci = b.shortestCredibleInterval(0.95);
+            prob(cong_idx) = b.prob;
+            low_bar(cong_idx) = b.prob - sci.min;
+            up_bar(cong_idx) = sci.max - b.prob;
+        end
+        errorbar(1:num_congestions, prob, low_bar, up_bar);
+        ylim([0,1]);
+        xlim([1,10]);
+        xlabel('Congestion');
+        ylabel('P(summit is better)');
+        title(sprintf('%s\n%s',...
+            underscore_2_space(param_names{param_idx}), ...
+            underscore_2_space(pp_names{pp_idx})));       
+	end
+end
+
+%% Plot probability that summit is better - method works prior equal width
+% Surprisingly big difference here from the conclusions of the equal
+% probability distribution.
+%
+% Very strangely, the "sampling from the prior" version puts summit being
+% better. I don't know what is going on.
+subplot_num = 0;
+for param_idx = 1:length(param_names)
+	for pp_idx = 1:length(pp_names)
+        subplot_num = subplot_num + 1;
+        subplot(length(param_names),length(pp_names),subplot_num);
+        prob = zeros(1,num_congestions);
+        low_bar = zeros(1,num_congestions);
+        up_bar = zeros(1,num_congestions);
+        for cong_idx = 1:num_congestions
+            assert(length(dsp_names) == 2);
+            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            w_anderson = kl_method_works_7hist{pp_idx, 1, cong_idx, param_idx};
+            w_summit = kl_method_works_7hist{pp_idx, 2, cong_idx, param_idx};
             num_as_good_or_better = sum(w_summit <= w_anderson);
             num_worse = sum(w_summit > w_anderson);
             b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
