@@ -873,47 +873,62 @@ function save_bins_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to save_bins_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% TODO: change file format to row-dominant, comma-delimited
 [result,message] = validate_state(handles,get_version_string());
 if ~result
     msgbox(message);
     return;
 end
 
-[regions,deconvolve,names] = get_bins(handles);
-lefts = regions(:,1);
-rights = regions(:,2);
+
 [filename,pathname] = uiputfile('*.txt', 'Save regions');
-file = fopen([pathname,filename],'w');
-if file > 0
-    for b = 1:length(lefts)
-        if b > 1
-            fprintf(file,';');
-        end
-        fprintf(file,'%f,%f',lefts(b),rights(b));
+
+[regions,deconvolve,names] = get_bins(handles);
+op_strings = cell(length(lefts));
+for b = 1:length(lefts)
+    if deconvolve(b)
+        op_strings{b} = 'deconvolve';
+    else
+        op_strings{b} = 'sum';
     end
-    fprintf(file,'\n');
-    for b = 1:length(lefts)
-        if b > 1
-            fprintf(file,';');
-        end
-        if deconvolve(b)
-            fprintf(file,'deconvolve');
-        else
-            fprintf(file,'sum');
-        end
+    if ~isempty(names{b}) && ~strcmp(deblank(names{b}),'')
+        names{b} = deblank(names{b});
     end
-    fprintf(file,'\n');
-    for b = 1:length(lefts)
-        if b > 1
-            fprintf(file,';');
-        end
-        if isempty(names{b}) || strcmp(deblank(names{b}),'')
-            fprintf(file,'');
-        else
-            fprintf(file,deblank(names{b}));
-        end        
-    end
-    fclose(file);
+end
+final = [regions op_strings names];
+
+% file = fopen([pathname,filename],'w');
+% if file > 0
+%     for b = 1:length(lefts)
+%         if b > 1
+%             fprintf(file,';');
+%         end
+%         fprintf(file,'%f,%f',lefts(b),rights(b));
+%     end
+%     fprintf(file,'\n');
+%     for b = 1:length(lefts)
+%         if b > 1
+%             fprintf(file,';');
+%         end
+%         if deconvolve(b)
+%             fprintf(file,'deconvolve');
+%         else
+%             fprintf(file,'sum');
+%         end
+%     end
+%     fprintf(file,'\n');
+%     for b = 1:length(lefts)
+%         if b > 1
+%             fprintf(file,';');
+%         end
+%         if isempty(names{b}) || strcmp(deblank(names{b}),'')
+%             fprintf(file,'');
+%         else
+%             fprintf(file,deblank(names{b}));
+%         end        
+%     end
+%     fclose(file);
 end
 
 % --- Executes on button press in load_bins_pushbutton.
@@ -921,6 +936,8 @@ function load_bins_pushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to load_bins_pushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% TODO: change file format to row-dominant, comma-delimited
 [result,message] = validate_state(handles,get_version_string());
 if ~result
     msgbox(message);
