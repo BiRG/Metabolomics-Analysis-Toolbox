@@ -874,61 +874,41 @@ function save_bins_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% TODO: change file format to row-dominant, comma-delimited
 [result,message] = validate_state(handles,get_version_string());
 if ~result
     msgbox(message);
     return;
 end
 
+[filename,pathname] = uiputfile('*.csv', 'Save regions');
 
-[filename,pathname] = uiputfile('*.txt', 'Save regions');
-
-[regions,deconvolve,names] = get_bins(handles);
-op_strings = cell(length(lefts));
-for b = 1:length(lefts)
-    if deconvolve(b)
-        op_strings{b} = 'deconvolve';
-    else
-        op_strings{b} = 'sum';
-    end
-    if ~isempty(names{b}) && ~strcmp(deblank(names{b}),'')
-        names{b} = deblank(names{b});
-    end
+if (isnumeric(filename) && filename == 0)
+    return;
 end
-final = [regions op_strings names];
 
-% file = fopen([pathname,filename],'w');
-% if file > 0
-%     for b = 1:length(lefts)
-%         if b > 1
-%             fprintf(file,';');
-%         end
-%         fprintf(file,'%f,%f',lefts(b),rights(b));
-%     end
-%     fprintf(file,'\n');
-%     for b = 1:length(lefts)
-%         if b > 1
-%             fprintf(file,';');
-%         end
-%         if deconvolve(b)
-%             fprintf(file,'deconvolve');
-%         else
-%             fprintf(file,'sum');
-%         end
-%     end
-%     fprintf(file,'\n');
-%     for b = 1:length(lefts)
-%         if b > 1
-%             fprintf(file,';');
-%         end
-%         if isempty(names{b}) || strcmp(deblank(names{b}),'')
-%             fprintf(file,'');
-%         else
-%             fprintf(file,deblank(names{b}));
-%         end        
-%     end
-%     fclose(file);
+file_id = fopen([filename pathname],'w');
+if (file_id > 2)
+    [regions,deconvolve,names] = get_bins(handles);
+
+    op_strings = cell(length(lefts));
+    for b = 1:length(lefts)
+        if deconvolve(b)
+            op_strings{b} = 'deconvolve';
+        else
+            op_strings{b} = 'sum';
+        end
+        if ~isempty(names{b}) && ~strcmp(deblank(names{b}),'')
+            names{b} = deblank(names{b});
+        end
+    end
+
+    final = [num2cell(regions) op_strings names];
+    
+    for b = 1:length(final)
+        fprintf(file_id,'%.16f,%.16f,"%s","%s"\n',final{b,1},final{b,2},final{b,3},final{b,4});
+    end
+
+    fclose(file_id);
 end
 
 % --- Executes on button press in load_bins_pushbutton.
@@ -944,49 +924,56 @@ if ~result
     return;
 end
 
-[filename,pathname] = uigetfile('*.txt', 'Load regions');
-file = fopen([pathname,filename],'r');
-myline = fgetl(file);
-regions = split(myline,';');
-lefts = [];
-rights = [];
-for i = 1:length(regions)
-    region = regions{i};
-    fields = split(region,',');
-    lefts(end+1) = str2num(fields{1});
-    rights(end+1) = str2num(fields{2});
-end
-regions = zeros(length(lefts),2);
-regions(:,1) = lefts';
-regions(:,2) = rights';
+[filename,pathname] = uigetfile('*.csv', 'Load regions');
 
-% Try to read deconvolution line
-try
-    myline = fgetl(file);
-    entries = split(myline,';');    
-    deconvolve = [];
-    for i = 1:length(entries)
-        if strcmp(entries{i},'deconvolve')
-            deconvolve(i) = true;
-        else
-            deconvolve(i) = false;
-        end
-    end
-catch ME
-    deconvolve = zeros(1,size(regions,1));
+[file_id,msg] = fopen([pathname filename],'r');
+while (~feof(file_id))
+    thing = fgetl(file_id);
 end
+fclose(file_id);
 
-% Try to read name line
-try
-    myline = fgetl(file);
-    entries = split(myline,';');    
-    names = [];
-    for i = 1:length(entries)
-        names{i} = entries{i};
-    end
-catch ME
-    names = cell(1,size(regions,1));
-end
+% file_id = fopen([pathname,filename],'r');
+% myline = fgetl(file_id);
+% regions = split(myline,';');
+% lefts = [];
+% rights = [];
+% for i = 1:length(regions)
+%     region = regions{i};
+%     fields = split(region,',');
+%     lefts(end+1) = str2num(fields{1});
+%     rights(end+1) = str2num(fields{2});
+% end
+% regions = zeros(length(lefts),2);
+% regions(:,1) = lefts';
+% regions(:,2) = rights';
+% 
+% % Try to read deconvolution line
+% try
+%     myline = fgetl(file_id);
+%     entries = split(myline,';');    
+%     deconvolve = [];
+%     for i = 1:length(entries)
+%         if strcmp(entries{i},'deconvolve')
+%             deconvolve(i) = true;
+%         else
+%             deconvolve(i) = false;
+%         end
+%     end
+% catch ME
+%     deconvolve = zeros(1,size(regions,1));
+% end
+% 
+% % Try to read name line
+% try
+%     myline = fgetl(file_id);
+%     entries = split(myline,';');    
+%     names = [];
+%     for i = 1:length(entries)
+%         names{i} = entries{i};
+%     end
+% catch ME
+%     names = cell(1,size(regions,1));
+% end
 
 update_bin_list(handles,regions,deconvolve,names);
 
