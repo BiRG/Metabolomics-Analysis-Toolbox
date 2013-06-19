@@ -518,3 +518,47 @@ assertHistsApproxEqual(b, [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), 
 
 b=hi.rebinEqualWidth([2,5]);
 assertHistsApproxEqual(b, [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), HistogramDistribution([0, 1, 2, 3, 4, 5], [0.2, 0.4, 0.2, 0.1, 0.1]) ]);
+
+
+function test_rebinEqualProb %#ok<DEFNU>
+% Examples as test code again
+h = HistogramDistribution([0,1,3,6,10],[0.375 0.125 0.375 0.125]);
+i = HistogramDistribution([0,1,2,3,4,5],[0.2 0.2 0.2 0.2 0.2]);
+j = HistogramDistribution([0,1,2,3,4,5],[0.25 0 0.25 0.25 0.25]);
+k = HistogramDistribution([1,2,3,4,5],[0 0 1 0]);
+l = HistogramDistribution([1,1,2],[0.5,0.5]);
+hi = [h,i];
+
+x = h.rebinEqualProb(1);
+assertEqual(x, HistogramDistribution([0, 10], [1], [1, 0]));
+
+x = h.rebinEqualProb(2);
+assertEqual(x, HistogramDistribution([0, 3, 10], [0.5, 0.5], [1, 1, 0]));
+ 
+x = h.rebinEqualProb(4);
+assertEqual(x, HistogramDistribution([0, 2/3, 3, 5, 10], [0.25, 0.25, 0.25, 0.25], [1, 1, 1, 1, 0]));
+
+x = i.rebinEqualProb(5);
+assertEqual(x, HistogramDistribution([0,1,2,3,4,5],[0.2 0.2 0.2 0.2 0.2]));
+
+x = k.rebinEqualProb(4);
+assertEqual(x, HistogramDistribution([1, 3.25, 3.5, 3.75, 5], [0.25, 0.25, 0.25, 0.25], [1, 1, 1, 1, 0]));
+
+% The following are all errors:
+f = @() l.rebinEqualProb(3);
+assertExceptionThrown(f, 'HistogramDistribution_rebinEqualProb:no_dirac');
+
+f = @() h.rebinEqualProb([3,4]);
+assertExceptionThrown(f, 'HistogramDistribution_rebinEqualProb:too_many_num_bins');
+
+f = @() h.rebinEqualProb([]);
+assertExceptionThrown(f, 'HistogramDistribution_rebinEqualProb:too_many_num_bins');
+
+f = @() h.rebinEqualProb(0);
+assertExceptionThrown(f, 'HistogramDistribution_rebinEqualProb:at_least_1_bin');
+
+f = @() h.rebinEqualProb(1.5);
+assertExceptionThrown(f, 'HistogramDistribution_rebinEqualProb:at_least_1_bin');
+
+f = @() hi.rebinEqualProb(3);
+assertExceptionThrown(f, 'HistogramDistribution_rebinEqualProb:too_many_obj');

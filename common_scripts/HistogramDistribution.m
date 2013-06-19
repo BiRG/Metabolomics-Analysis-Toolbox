@@ -890,7 +890,163 @@ classdef HistogramDistribution
             end
         end
 
-        
+        function new_dists = rebinEqualProb(obj, num_bins)
+        % Return a HistogramDistribution where a given interval has the
+        % same probability as this one but the bins have 
+        % equal probabilities. Only works for distributions that lack dirac
+        % delta bins.
+        %
+        % The above description doesn't describe things correctly. See the
+        % examples.
+        % 
+        % Usage: new_dists = rebinEqualProb(objs, num_bins)
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % obj - (HistogramDistribution) Must be exactly 1 object. Cannot
+        %     contain any dirac delta bins.
+        %
+        % num_bins - (positive integer) The number of bins in the new
+        %     HistogramDistribution.
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % new_dists - (row vector of HistogramDistribution) new_dists(i) is
+        %      the rebinned version of objs(i)
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([0,1,3,6,10],[0.375 0.125 0.375 0.125]);
+        % >> i = HistogramDistribution([0,1,2,3,4,5],[0.2 0.2 0.2 0.2 0.2]);
+        % >> j = HistogramDistribution([0,1,2,3,4,5],[0.25 0 0.25 0.25 0.25]);
+        % >> k = HistogramDistribution([1,2,3,4,5],[0 0 1 0]);
+        % >> l = HistogramDistribution([1,1,2],[0.5,0.5]);
+        % >> hi = [h,i];
+        % >> x = h.rebinEqualProb(1);
+        %
+        %   x == HistogramDistribution([0, 10], [1], [1, 0]);
+        %
+        % >> x = h.rebinEqualProb(2);
+        %
+        %   x == HistogramDistribution([0, 3, 10], [0.5, 0.5], [1, 1, 0]);
+        % 
+        % >> x = h.rebinEqualProb(4);
+        %
+        %   x == HistogramDistribution([0, 2/3, 3, 5, 10], [0.25, 0.25, 0.25, 0.25], [1, 1, 1, 1, 0]);
+        %
+        % >> x = i.rebinEqualProb(5);
+        %
+        %   x == HistogramDistribution([0,1,2,3,4,5],[0.2 0.2 0.2 0.2 0.2]);
+        %
+        % >> x = k.rebinEqualProb(4);
+        %
+        %   x == HistogramDistribution([1, 3.25, 3.5, 3.75, 5], [0.25, 0.25, 0.25, 0.25], [1, 1, 1, 1, 0]);
+        %
+        % The following are all errors:
+        % >> x = l.rebinEqualProb(3);
+        % >> x = h.rebinEqualProb([3,4]);
+        % >> x = h.rebinEqualProb([]);
+        % >> x = h.rebinEqualProb(0);
+        % >> x = h.rebinEqualProb(1.5);
+        % >> x = hi.rebinEqualProb(3);
+            if length(obj) ~= 1
+                error('HistogramDistribution_rebinEqualProb:too_many_obj',...
+                    ['rebinEqualProb must be called '...
+                    'on a single HistogramDistribution object only. Use'...
+                    'rebinApproxEqualProb instead.']);
+            end
+            if length(num_bins) ~= 1
+                error('HistogramDistribution_rebinEqualProb:too_many_num_bins',...
+                    'rebinEqualProb can accept only a single number of bins');
+            end
+            if num_bins < 1 || num_bins ~= round(num_bins)
+                error('HistogramDistribution_rebinEqualProb:at_least_1_bin',...
+                    'num_bins for rebinEqualProb must be a positive integer.');
+            end
+            if any(obj.bounds(1:end-1)==obj.bounds(2:end))
+                error('HistogramDistribution_rebinEqualProb:no_dirac',...
+                    'rebinEqualProb can only work on HistogramDistributions with no dirac bins');
+            end
+
+            new_bounds = zeros(1,num_bins+1);
+            new_bounds(1)=obj.bounds(1);
+            new_bounds(end)=obj.bounds(end);
+            target_prob = 1/num_bins;
+            new_bnd_idx = 2; % Index of upper bound of the new bin which is being calculated
+            old_bnd_idx = 2; % Index of upper bound of the old bin from which probability is being taken for the new bin
+            unused_prob_from_prev_old_bins = 0;
+            old_bin_width = obj.bounds(old_bnd_idx) - ...
+                obj.bounds(old_bnd_idx-1);
+            old_bin_remaining = old_bin_width;
+            old_prob_per_unit = obj.probs(old_bnd_idx-1)/...
+                old_bin_width;
+            while new_bnd_idx <= num_bins
+                
+                % Each time through the loop, make a new bin, advance
+                % to the next old bin, or both
+                
+                needed_prob = target_prob - unused_prob_from_prev_old_bins;
+                if needed_prob <= old_bin_remaining * old_prob_per_unit
+                    % If there is enough probability mass in this bin to
+                    % finish the current new bin, add a new bin at that point.
+                    
+                    needed_width = needed_prob / old_prob_per_unit;
+                    if needed_prob < old_bin_remaining * old_prob_per_unit
+                        % If we don't have to use up the whole bin, set the
+                        % new bound in the middle of the bin
+                        new_bounds(new_bnd_idx) = obj.bounds(old_bnd_idx) - old_bin_remaining + needed_width;
+                        old_bin_remaining = old_bin_remaining - needed_width;
+                    else
+                        % Otherwise we had to use up the whole bin -
+                        % advance to the next old bin
+                        new_bounds(new_bnd_idx) = obj.bounds(old_bnd_idx);
+                        
+                        old_bnd_idx = old_bnd_idx + 1;
+                        old_bin_width = obj.bounds(old_bnd_idx) - ...
+                            obj.bounds(old_bnd_idx-1);
+                        old_bin_remaining = old_bin_width;
+                        old_prob_per_unit = obj.probs(old_bnd_idx-1)/...
+                            old_bin_width;
+                    end
+                    % Advance to the next new bin
+                    unused_prob_from_prev_old_bins = 0;
+                    new_bnd_idx = new_bnd_idx + 1;
+                else
+                    % Not enough mass remains in this bin. Add everything
+                    % in the bin to the total from previous bins and move
+                    % to the next old bin.
+                    
+                    % Add rest of bin to unused prob accumulator
+                    if old_bin_remaining < old_bin_width
+                        % If less than the entire bin is being used,
+                        % calculate how much probability is added from this
+                        % bin
+                        prob_remaining = old_bin_remaining * old_prob_per_unit;
+                    else
+                        % If we are using the entire bin, use the
+                        % probability for the bin rather than doing a
+                        % multiplication, which would introduce error
+                        prob_remaining = obj.probs(old_bnd_idx-1);
+                    end
+                    unused_prob_from_prev_old_bins = unused_prob_from_prev_old_bins + prob_remaining;
+                    
+                    % Move to the next old bin
+                    old_bnd_idx = old_bnd_idx + 1;
+                    old_bin_width = obj.bounds(old_bnd_idx) - ...
+                        obj.bounds(old_bnd_idx-1);
+                    old_bin_remaining = old_bin_width;
+                    old_prob_per_unit = obj.probs(old_bnd_idx-1)/...
+                        old_bin_width;
+                end
+            end
+            new_dists = HistogramDistribution(new_bounds, ...
+                target_prob*ones(1,num_bins));
+        end        
         
         function new_dists = rebinApproxEqualProb(objs, num_bins)
         % Return a HistogramDistribution where a given interval has the
@@ -898,6 +1054,8 @@ classdef HistogramDistribution
         % equal probabilities
         %
         % Usage: newDist = rebinApproxEqualProb(objs, num_bins)
+        %
+        % When there are no dirac bins, calls rebinEqualProb(num_bins).
         %
         % When there is exactly one object and number of bins, proceeds
         % from the first bin making the probability of each bin as close as
@@ -986,6 +1144,10 @@ classdef HistogramDistribution
                 if num_bins ~= round(num_bins)
                     error('HistogramDistribution_rebin:integer_bins', ...
                         'num_bins must be an integer.');
+                end
+                if ~any(objs.bounds(1:end-1)==objs.bounds(2:end))
+                    new_dists = objs.rebinEqualProb(num_bins);
+                    return;
                 end
                 remaining_prob = 1;
                 remaining_bins = num_bins;
