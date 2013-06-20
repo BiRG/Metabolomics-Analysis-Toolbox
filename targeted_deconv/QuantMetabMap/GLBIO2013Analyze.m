@@ -146,6 +146,77 @@ hold off;
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
+
+%% Calculate bins for area, width, and height
+%
+% The height distribution is not independently sampled from the raw heights
+% because the peaks are scaled within each spectrum so that the highest
+% point has height 1. The area distribution depends on the height
+% distribution (and is also a complicated function of the known
+% distributions). Both of these could, in principle be calculated exactly.
+% However, that would be a dissertation in itself. 
+%
+% To save time, I will sample: 
+% First, I will generate lots of spectra and record the values of width,
+% height, etc for the peaks in those spectra. From these, I will make
+% categorical bins. Then, I will again generate lots of spectra. These will
+% be the counts that go into the bins for a Dirichlet distribution giving 
+% my beliefs about the possible categorical distributions.
+%
+% I am including a width distribution so I can see how far things get from
+% the real distribution. I will use the second set of values to also create
+% a set of bins to see how much of the original data ends up in a different
+% bin with two different runs.
+%
+% On the machine at work, 10 congestions and 1000 spectra requires 240
+% seconds (that is, 4 minutes).
+num_congestions = 10;
+num_spectra_for_bins = 1000;
+num_sampd_params = 3;
+sampled_param_names = {'area','height','width'};
+
+samp_dist_cache_filename = 'GLBIO2013Analyze_cached_sampled_distributions.mat';
+if exist(samp_dist_cache_filename,'file')
+    load(samp_dist_cache_filename,'-mat');
+else
+    tic;
+    wait_h = waitbar(0,'Calculating bins');
+    orig_sampd_dist = cell(num_sampd_params,num_congestions);
+    orig_sampd_7bin = cell(num_sampd_params,num_congestions);
+    orig_sampd_7bin_pass_2 = cell(num_sampd_params,num_congestions);
+    orig_sampd_counts_7bin = cell(num_sampd_params,num_congestions);
+
+    for congestion = 1:num_congestions
+        waitbar((0+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Generating spectra for congestion %d',congestion));
+        param=cell(3); % area, height, width
+        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
+
+        for param_idx = 1:num_sampd_params
+            waitbar((param_idx+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Binning params for congestion %d',congestion));
+            orig_sampd_dist{param_idx, congestion} = HistogramDistribution.fromPoints(param{param_idx});
+            orig_sampd_7bin{param_idx, congestion} = orig_sampd_dist{param_idx, congestion}.rebinEqualWidth(7);
+        end
+
+        waitbar((4+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Generating count spectra for congestion %d',congestion));
+        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
+
+        for param_idx = 1:num_sampd_params
+            waitbar((5+param_idx+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Counting params for congestion %d',congestion));
+            temp_dist = HistogramDistribution.fromPoints(param{param_idx});
+            orig_sampd_7bin_pass_2{param_idx, congestion} = temp_dist.rebinEqualWidth(7);
+            orig_sampd_counts_7bin{param_idx, congestion} = orig_sampd_7bin{param_idx, congestion}.binCounts(param{param_idx});
+        end
+
+    end
+    fprintf('Done generating bins for area,height, and width. '); toc
+
+    delete(wait_h);
+
+    save(samp_dist_cache_filename, 'orig_sampd_dist','orig_sampd_7bin','orig_sampd_7bin_pass2','orig_sampd_counts_7bin');
+    clear('wait_h','congestion','param','param_idx','temp_dist');
+end
+clear('samp_dist_cache_filename');
+
 %% Defend spectrum width choices
 % The spectral widths chosen give better than 99% probabilities that the
 % probabilities of being free of peak merging are within 0.4% of the target
