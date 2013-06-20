@@ -168,8 +168,8 @@ load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 % a set of bins to see how much of the original data ends up in a different
 % bin with two different runs.
 %
-% On the machine at work, 10 congestions and 1000 spectra requires 240
-% seconds (that is, 4 minutes).
+% On the machine at work, 10 congestions and 1000 spectra requires 400
+% seconds (that is, a bit under 7 minutes).
 num_congestions = 10;
 num_spectra_for_bins = 1000;
 num_sampd_params = 3;
@@ -212,7 +212,7 @@ else
 
     delete(wait_h);
 
-    save(samp_dist_cache_filename, 'orig_sampd_dist','orig_sampd_7bin','orig_sampd_7bin_pass2','orig_sampd_counts_7bin');
+    save(samp_dist_cache_filename, 'orig_sampd_dist','orig_sampd_7bin','orig_sampd_7bin_pass_2','orig_sampd_counts_7bin');
     clear('wait_h','congestion','param','param_idx','temp_dist');
 end
 clear('samp_dist_cache_filename');
