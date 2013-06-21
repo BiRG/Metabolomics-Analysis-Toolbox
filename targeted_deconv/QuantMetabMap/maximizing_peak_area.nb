@@ -1,0 +1,288 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[      8116,        279]
+NotebookOptionsPosition[      7315,        247]
+NotebookOutlinePosition[      7653,        262]
+CellTagsIndexPosition[      7610,        259]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Maximizing Peak Area", "Title",
+ CellChangeTimes->{{3.580845497934316*^9, 3.580845501774011*^9}}],
+
+Cell["Introduction", "Section",
+ CellChangeTimes->{{3.580845504046333*^9, 3.580845507534482*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Work", "Section",
+ CellChangeTimes->{{3.580845512262078*^9, 3.580845515542012*^9}}],
+
+Cell["\<\
+Formula for the area of a peak with the given height (M) width at half height \
+(G) and Lorentzianness (P).\
+\>", "Text",
+ CellChangeTimes->{{3.580845464726285*^9, 3.580845488902121*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"area", "[", 
+   RowBox[{"M_", ",", "G_", ",", "P_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"1", "/", "2"}], ")"}], " ", "M", " ", "G", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"P", " ", "Pi"}], "+", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "-", "P"}], ")"}], " ", 
+      RowBox[{"Sqrt", "[", 
+       RowBox[{"Pi", "/", 
+        RowBox[{"Log", "[", "2", "]"}]}], "]"}]}]}], ")"}]}]}]], "Input",
+ CellChangeTimes->{{3.580844810743547*^9, 3.580844854766369*^9}}],
+
+Cell["\<\
+Take the first derivative with respect to each variable (glad I took Calc 3 :)\
+\>", "Text",
+ CellChangeTimes->{{3.580845556870246*^9, 3.580845583313327*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"D", "[", 
+   RowBox[{
+    RowBox[{"area", "[", 
+     RowBox[{"M", ",", "G", ",", "P"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{"M", ",", "G", ",", "P"}], "}"}], "}"}]}], "]"}], "\[Equal]", 
+  RowBox[{"{", 
+   RowBox[{"0", ",", "0", ",", "0"}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.580844869457729*^9, 3.580844909576855*^9}, {
+  3.580844940255346*^9, 3.580844942681806*^9}, {3.580844979415593*^9, 
+  3.580844983634641*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{
+     FractionBox["1", "2"], " ", "G", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"P", " ", "\[Pi]"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "P"}], ")"}], " ", 
+        SqrtBox[
+         FractionBox["\[Pi]", 
+          RowBox[{"Log", "[", "2", "]"}]]]}]}], ")"}]}], ",", 
+    RowBox[{
+     FractionBox["1", "2"], " ", "M", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"P", " ", "\[Pi]"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "P"}], ")"}], " ", 
+        SqrtBox[
+         FractionBox["\[Pi]", 
+          RowBox[{"Log", "[", "2", "]"}]]]}]}], ")"}]}], ",", 
+    RowBox[{
+     FractionBox["1", "2"], " ", "G", " ", "M", " ", 
+     RowBox[{"(", 
+      RowBox[{"\[Pi]", "-", 
+       SqrtBox[
+        FractionBox["\[Pi]", 
+         RowBox[{"Log", "[", "2", "]"}]]]}], ")"}]}]}], "}"}], "\[Equal]", 
+  RowBox[{"{", 
+   RowBox[{"0", ",", "0", ",", "0"}], "}"}]}]], "Output",
+ CellChangeTimes->{3.580844878310518*^9, 3.580844911865927*^9, 
+  3.580844943387511*^9, 3.58084498433572*^9}]
+}, Open  ]],
+
+Cell["Find the local maxima", "Text",
+ CellChangeTimes->{{3.580845594302148*^9, 3.580845602885962*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       FractionBox["1", "2"], " ", "G", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"P", " ", "\[Pi]"}], "+", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "-", "P"}], ")"}], " ", 
+          SqrtBox[
+           FractionBox["\[Pi]", 
+            RowBox[{"Log", "[", "2", "]"}]]]}]}], ")"}]}], "\[Equal]", "0"}], 
+     ",", 
+     RowBox[{
+      RowBox[{
+       FractionBox["1", "2"], " ", "M", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"P", " ", "\[Pi]"}], "+", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "-", "P"}], ")"}], " ", 
+          SqrtBox[
+           FractionBox["\[Pi]", 
+            RowBox[{"Log", "[", "2", "]"}]]]}]}], ")"}]}], "\[Equal]", "0"}], 
+     ",", 
+     RowBox[{
+      RowBox[{
+       FractionBox["1", "2"], " ", "G", " ", "M", " ", 
+       RowBox[{"(", 
+        RowBox[{"\[Pi]", "-", 
+         SqrtBox[
+          FractionBox["\[Pi]", 
+           RowBox[{"Log", "[", "2", "]"}]]]}], ")"}]}], "\[Equal]", "0"}]}], 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"M", ",", "G", ",", "P"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.580845016754465*^9, 3.580845078120783*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Solve", "::", "\<\"svars\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Equations may not give \
+solutions for all \\\\\\\\\\\\\\\"solve\\\\\\\\\\\\\\\" \
+variables.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/Solve/svars\\\", \
+ButtonNote -> \\\"Solve::svars\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{{3.58084506893471*^9, 3.580845078875253*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"G", "\[Rule]", "0"}], ",", 
+     RowBox[{"P", "\[Rule]", 
+      FractionBox[
+       SqrtBox[
+        FractionBox["\[Pi]", 
+         RowBox[{"Log", "[", "2", "]"}]]], 
+       RowBox[{
+        RowBox[{"-", "\[Pi]"}], "+", 
+        SqrtBox[
+         FractionBox["\[Pi]", 
+          RowBox[{"Log", "[", "2", "]"}]]]}]]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"G", "\[Rule]", "0"}], ",", 
+     RowBox[{"P", "\[Rule]", 
+      FractionBox[
+       SqrtBox[
+        FractionBox["\[Pi]", 
+         RowBox[{"Log", "[", "2", "]"}]]], 
+       RowBox[{
+        RowBox[{"-", "\[Pi]"}], "+", 
+        SqrtBox[
+         FractionBox["\[Pi]", 
+          RowBox[{"Log", "[", "2", "]"}]]]}]]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"M", "\[Rule]", "0"}], ",", 
+     RowBox[{"G", "\[Rule]", "0"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"M", "\[Rule]", "0"}], ",", 
+     RowBox[{"G", "\[Rule]", "0"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"M", "\[Rule]", "0"}], ",", 
+     RowBox[{"P", "\[Rule]", 
+      FractionBox[
+       SqrtBox[
+        FractionBox["\[Pi]", 
+         RowBox[{"Log", "[", "2", "]"}]]], 
+       RowBox[{
+        RowBox[{"-", "\[Pi]"}], "+", 
+        SqrtBox[
+         FractionBox["\[Pi]", 
+          RowBox[{"Log", "[", "2", "]"}]]]}]]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"M", "\[Rule]", "0"}], ",", 
+     RowBox[{"P", "\[Rule]", 
+      FractionBox[
+       SqrtBox[
+        FractionBox["\[Pi]", 
+         RowBox[{"Log", "[", "2", "]"}]]], 
+       RowBox[{
+        RowBox[{"-", "\[Pi]"}], "+", 
+        SqrtBox[
+         FractionBox["\[Pi]", 
+          RowBox[{"Log", "[", "2", "]"}]]]}]]}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.580845068940685*^9, 3.580845078885007*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{640, 750},
+WindowMargins->{{149, Automatic}, {Automatic, 24}},
+FrontEndVersion->"7.0 for Linux x86 (32-bit) (February 25, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 103, 1, 85, "Title"],
+Cell[673, 25, 97, 1, 73, "Section"],
+Cell[CellGroupData[{
+Cell[795, 30, 89, 1, 43, "Section"],
+Cell[887, 33, 197, 4, 51, "Text"],
+Cell[1087, 39, 533, 16, 32, "Input"],
+Cell[1623, 57, 168, 3, 31, "Text"],
+Cell[CellGroupData[{
+Cell[1816, 64, 486, 13, 32, "Input"],
+Cell[2305, 79, 1130, 36, 107, "Output"]
+}, Open  ]],
+Cell[3450, 118, 103, 1, 31, "Text"],
+Cell[CellGroupData[{
+Cell[3578, 123, 1288, 42, 173, "Input"],
+Cell[4869, 167, 530, 10, 24, "Message"],
+Cell[5402, 179, 1873, 63, 209, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
