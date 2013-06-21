@@ -170,10 +170,17 @@ load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 %
 % On the machine at work, 10 congestions and 1000 spectra requires 400
 % seconds (that is, a bit under 7 minutes).
+%
+% See the sampled-equal-width section below for a discussion of peak
+% parameters falling outside the range (which wasn't a problem for the
+% known probability distributons).
 num_congestions = 10;
 num_spectra_for_bins = 1000;
 num_sampd_params = 3;
 sampled_param_names = {'area','height','width'};
+sampd_area_idx = find(strcmp('area',sampled_param_names));
+sampd_height_idx = find(strcmp('height',sampled_param_names));
+sampd_width_idx = find(strcmp('width',sampled_param_names));
 
 samp_dist_cache_filename = 'GLBIO2013Analyze_cached_sampled_distributions.mat';
 if exist(samp_dist_cache_filename,'file')
@@ -217,6 +224,26 @@ else
 end
 clear('samp_dist_cache_filename');
 
+
+%% Calculate equal width versions of the sampled parameter distributions with 7 bins
+% These are just like the equal-width binning of the original distributions
+% except now I am working with the sampled distributions. Because of their
+% nature, the sampled distributions are not exact. This means that the
+% ranges they cover will not cover the entire range of the observations.
+% There will be a few entries that get lost and are not in any bin. If
+% the distribution was made with 1000 spectra then there were 7000 peaks.
+% Thus a quick estimate is that if a peak parameter falls outside the
+% range, its probability is less than 1/7000.
+%
+% After I bin the values in the experiment, I'll find out how many fell
+% into no bin in the calculated distribution.
+orig_width_7_hist_bin = orig_width_dist.rebinEqualWidth(7);
+orig_height_7_hist_bin = orig_height_dist.rebinEqualWidth(7);
+orig_lorentzianness_7_hist_bin = orig_lorentzianness_dist.rebinEqualWidth(7);
+
+
+
+
 %% Defend spectrum width choices
 % The spectral widths chosen give better than 99% probabilities that the
 % probabilities of being free of peak merging are within 0.4% of the target
@@ -230,9 +257,18 @@ GLBIO2013_print_prob_counts_in_range_table(0.004);
 %
 % I also set up the location distributions since they are different for
 % each congestion due to the congestion being controled by the interval.
+%
+% Originally, I did this for the basic parameters taking their original
+% independently sampled distributions. Now, I've added categories for the
+% bins generated from the first and second sample in the sampled
+% distribution.
+%
+% 
 pp_names = GLBIO2013Deconv.peak_picking_method_names();
 dsp_names = GLBIO2013Deconv.deconvolution_starting_point_method_names();
-param_names = {'width','height','lorentzianness','location'};
+%                        1       2                    3                4         5           6           7             8              9            10 
+param_names =          {'width','height-independent','lorentzianness','location','area-bin1','area-bin2','height-bin1','height-bin2','width-bin1','width-bin2'};
+param_has_known_orig = [   true,                true,            true,      true,      false,      false,        false,        false,       false,      false];
 num_congestions = 10;
 orig_location_dist(num_congestions) = HistogramDistribution; % preallocate array
 param_vals = cell(length(pp_names),length(dsp_names),num_congestions, length(param_names));
@@ -249,6 +285,12 @@ for result = glbio_combined_results
         v{2} = [v{2} [peaks.height]];
         v{3} = [v{3} [peaks.lorentzianness]];
         v{4} = [v{4} [peaks.location]];
+        v{5} = [v{5} [peaks.area]];
+        v{6} = v{5};
+        v{7} = v{2};
+        v{8} = v{2};
+        v{9} = v{1};
+        v{10}= v{1};
         param_vals(pp_idx, dsp_idx, cong_idx,:) = v;
     end
 end
@@ -272,12 +314,25 @@ for cong_idx = 1:num_congestions
             v{2} = orig_height_7bin.binCounts(v{2});
             v{3} = orig_lorentzianness_7bin.binCounts(v{3});
             v{4} = orig_location_7bin(cong_idx).binCounts(v{4});
+            v{5} = orig_sampd_7bin{sampd_area_idx, cong_idx}.binCouts(v{5});
+            v{6} = orig_sampd_7bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6});
+            v{7} = orig_sampd_7bin{sampd_height_idx, cong_idx}.binCounts(v{7});
+            v{8} = orig_sampd_7bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8});
+            v{9} = orig_sampd_7bin{sampd_width_idx, cong_idx}.binCounts(v{9});
+            v{10}= orig_sampd_7bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10});
             param_counts_7bin(pp_idx, dsp_idx, cong_idx,:) = v;
             v = param_vals(pp_idx, dsp_idx, cong_idx,:);
             v{1} = orig_width_7_hist_bin.binCounts(v{1});
             v{2} = orig_height_7_hist_bin.binCounts(v{2});
             v{3} = orig_lorentzianness_7_hist_bin.binCounts(v{3});
             v{4} = orig_location_7_hist_bin(cong_idx).binCounts(v{4});
+
+            v{5} = orig_sampd_7_hist_bin{sampd_area_idx, cong_idx}.binCouts(v{5});
+            v{6} = orig_sampd_7_hist_bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6});
+            v{7} = orig_sampd_7_hist_bin{sampd_height_idx, cong_idx}.binCounts(v{7});
+            v{8} = orig_sampd_7_hist_bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8});
+            v{9} = orig_sampd_7_hist_bin{sampd_width_idx, cong_idx}.binCounts(v{9});
+            v{10}= orig_sampd_7_hist_bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10});
             param_counts_7_hist_bin(pp_idx, dsp_idx, cong_idx,:) = v;
         end
     end
