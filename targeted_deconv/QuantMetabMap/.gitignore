@@ -45,3 +45,10 @@ dont_write_residuals.foobarbaz
 # HTML output from the cell-mode file publishing
 #######
 html
+
+#######
+# Files used for caching intermediate analysis results that take a
+# long time to calculate
+#######
+GLBIO2013Analyze_cached_distributions.mat
+GLBIO2013Analyze_cached_sampled_distributions.mat
