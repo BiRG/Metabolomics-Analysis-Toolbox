@@ -1,5 +1,5 @@
 function [spec,peaks] = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, num_intensities, noise_std)
-% Usage: spec = RANDOM_SPEC_FROM_NSSD_DATA(num_peaks,min_ppm, max_ppm, num_intensities, noise_std)
+% Usage: [spec,peaks] = random_spec_from_nssd_data(num_peaks,min_ppm, max_ppm, num_intensities, noise_std)
 %
 % Uses data derived from the NSSD deconvolution as the distribution from
 % which to draw parameters in the peaks in a random spectrum. The heights
