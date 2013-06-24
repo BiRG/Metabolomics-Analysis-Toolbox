@@ -146,6 +146,54 @@ hold off;
 %% Load the combined results
 load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 
+%% Calc distribution for scaled maximum height
+% If we were not sampling the spectrum, dividing all the heights by the
+% maximum spectrum intenstity would produce a number at most 1. However,
+% because we are sampling, the maximum sample can be substantially less
+% than the actual maximum of the spectrum.
+%
+% Here I plot the distributions of the maximum height parameter after
+% scaling.
+%
+% Each time this cell is run, it adds 1000 samples onto the cached set of
+% heights, so the histogram will continue to improve.
+max_scaled_heights_file = 'GLBIO2013Analyze_cached_max_scaled_heights.mat';
+if exist(max_scaled_heights_file ,'file')
+    load(max_scaled_heights_file ,'-mat');
+else
+    sampled_max_scaled_heights = [];
+end
+tic; 
+numsamp=20000; 
+maxh=nan(1,numsamp); 
+waith=waitbar(0,'sampling'); 
+for i=1:numsamp; 
+    waitbar((i-1)/numsamp,waith); 
+    [s,p]=random_spec_from_nssd_data(7,1, ...
+        1+GLBIO2013_width_for_collision_prob(0.1), ...
+        GLBIO2013_width_for_collision_prob(0.1)*...
+        25/0.00453630122481774988,0); 
+    pp=p.property_array; 
+    h=pp(1:4:end); 
+    maxh(i) = max(h); 
+end; 
+delete(waith); 
+fprintf('Added %d samples to max height distribution. ',numsamp);
+toc; 
+sampled_max_scaled_heights = [sampled_max_scaled_heights, maxh];
+save('GLBIO2013Analyze_cached_max_scaled_heights.mat','-mat','sampled_max_scaled_heights');
+
+clear('h','p','i','pp','s','waith','numsamp','maxh', ...
+    'max_scaled_heights_file');
+
+%% Show distribution for scaled maximum height
+hist(sampled_max_scaled_heights,40);
+title(sprintf(['Distribution of maximum height after scaling\n'...
+    'Max max height: %g in %d samples'],max(sampled_max_scaled_heights),...
+    length(sampled_max_scaled_heights)));
+xlabel('Maximum height in interval after scaling');
+ylabel('Count');
+
 
 %% Calculate bins for area, width, and height
 %
