@@ -303,22 +303,21 @@ clear('samp_dist_cache_filename');
 
 %% Calculate equal width versions of the sampled parameter distributions with 7 bins
 % These are just like the equal-width binning of the original distributions
-% except now I am working with the sampled distributions. Because of their
-% nature, the sampled distributions are not exact. This means that the
-% ranges they cover will not cover the entire range of the observations.
-% There will be a few entries that get lost and are not in any bin. If
-% the distribution was made with 1000 spectra then there were 7000 peaks.
-% Thus a quick estimate is that if a peak parameter falls outside the
-% range, its probability is less than 1/7000.
-%
-% After I bin the values in the experiment, I'll find out how many fell
-% into no bin in the calculated distribution.
-orig_width_7_hist_bin = orig_width_dist.rebinEqualWidth(7);
-orig_height_7_hist_bin = orig_height_dist.rebinEqualWidth(7);
-orig_lorentzianness_7_hist_bin = orig_lorentzianness_dist.rebinEqualWidth(7);
-
-
-
+% except now I am working with the sampled distributions.
+orig_sampd_7_hist_bin = orig_sampd_dist;
+orig_sampd_7_hist_bin_pass_2 = orig_sampd_7bin_pass_2;
+waith=waitbar(0,sprintf('Calculating equal width (cong: %d param:%d)',0, 0));
+for cong_idx = 1:num_congestions
+    for param_idx=1:size(orig_sampd_7bin,1)
+        waitbar((3*(cong_idx-1)+param_idx)/(size(orig_sampd_7bin,1)*num_congestions),...
+            waith,...
+            sprintf('Calculating equal width (cong: %d param:%d)',cong_idx, param_idx));
+        orig_sampd_7_hist_bin{param_idx, cong_idx} = orig_sampd_dist{param_idx, cong_idx}.rebinEqualWidth(7);
+        orig_sampd_7_hist_bin_pass_2{param_idx, cong_idx} = orig_sampd_7bin_pass_2{param_idx, cong_idx}.rebinEqualWidth(7);
+    end
+end
+delete(waith);
+clear('waith','cong_idx','param_idx');
 
 %% Defend spectrum width choices
 % The spectral widths chosen give better than 99% probabilities that the
@@ -403,7 +402,7 @@ for cong_idx = 1:num_congestions
             v{3} = orig_lorentzianness_7_hist_bin.binCounts(v{3});
             v{4} = orig_location_7_hist_bin(cong_idx).binCounts(v{4});
 
-            v{5} = orig_sampd_7_hist_bin{sampd_area_idx, cong_idx}.binCouts(v{5});
+            v{5} = orig_sampd_7_hist_bin{sampd_area_idx, cong_idx}.binCounts(v{5});
             v{6} = orig_sampd_7_hist_bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6});
             v{7} = orig_sampd_7_hist_bin{sampd_height_idx, cong_idx}.binCounts(v{7});
             v{8} = orig_sampd_7_hist_bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8});
