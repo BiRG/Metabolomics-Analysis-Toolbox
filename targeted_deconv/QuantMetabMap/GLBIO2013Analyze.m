@@ -219,9 +219,22 @@ ylabel('Count');
 % On the machine at work, 10 congestions and 1000 spectra requires 400
 % seconds (that is, a bit under 7 minutes).
 %
-% See the sampled-equal-width section below for a discussion of peak
-% parameters falling outside the range (which wasn't a problem for the
-% known probability distributons).
+% The sampled distributions only estimate the maximum and minimum using the
+% maximum and minimum of the sample - not the best estimator. Since I know
+% the original distributions and the method for calculating the height and
+% area, I can calculate the actual maximum and minimum for the
+% distributions. Here I replace the distributions with ones having the
+% correct maximum and minimum. This will keep peak parameters from falling
+% outside the range.
+%
+% The correct height range is: [ 0.00001604482555427710777509984241, 1.0445079319188184286 ]
+% The correct area range is:  
+% [2.93792276627387990798835084182e-8, 0.073758168890726301241]
+% The correct width range is just the original range of the known width
+% distribution.
+%
+% These come from the maximizing_peak_area.nb Mathematica notebook, where
+% there are many more details as to how they were derived.
 num_congestions = 10;
 num_spectra_for_bins = 1000;
 num_sampd_params = 3;
@@ -241,6 +254,17 @@ else
     orig_sampd_7bin_pass_2 = cell(num_sampd_params,num_congestions);
     orig_sampd_counts_7bin = cell(num_sampd_params,num_congestions);
 
+    % Put the correct bounds in an array to make it easy to access in a loop.
+    correct_bounds=nan(num_sampd_params,2); % correct_bounds(param_idx, :} is [minimum, maximum]
+    correct_bounds(sampd_area_idx,:)=[ 2.93792276627387990798835084182e-8, 0.073758168890726301241 ];
+    correct_bounds(sampd_height_idx,:)=[ 0.00001604482555427710777509984241, 1.0445079319188184286 ];
+    correct_bounds(sampd_width_idx,:)=[min(orig_width_dist.bounds),max(orig_width_dist.bounds)];
+    
+    % Define a shortcut function to use in replacing bounds
+    newBnds=@(orig,bnd) HistogramDistribution(...
+        [bnd(1),orig.bounds(2:end-1),bnd(2)],...
+        orig.probs, orig.border_is_in_upper_bin);
+
     for congestion = 1:num_congestions
         waitbar((0+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Generating spectra for congestion %d',congestion));
         param=cell(3); % area, height, width
@@ -249,6 +273,9 @@ else
         for param_idx = 1:num_sampd_params
             waitbar((param_idx+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Binning params for congestion %d',congestion));
             orig_sampd_dist{param_idx, congestion} = HistogramDistribution.fromPoints(param{param_idx});
+            orig_sampd_dist{param_idx, congestion} = newBnds( ...
+                orig_sampd_dist{param_idx, congestion}, ...
+                correct_bounds(param_idx,:));
             orig_sampd_7bin{param_idx, congestion} = orig_sampd_dist{param_idx, congestion}.rebinEqualWidth(7);
         end
 
@@ -258,8 +285,10 @@ else
         for param_idx = 1:num_sampd_params
             waitbar((5+param_idx+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Counting params for congestion %d',congestion));
             temp_dist = HistogramDistribution.fromPoints(param{param_idx});
+            temp_dist = newBnds( temp_dist, correct_bounds(param_idx,:) );
             orig_sampd_7bin_pass_2{param_idx, congestion} = temp_dist.rebinEqualWidth(7);
             orig_sampd_counts_7bin{param_idx, congestion} = orig_sampd_7bin{param_idx, congestion}.binCounts(param{param_idx});
+            assert(length(param{param_idx}) == sum(orig_sampd_counts_7bin{param_idx, congestion})); % No out-of-range parameters
         end
 
     end
@@ -268,66 +297,9 @@ else
     delete(wait_h);
 
     save(samp_dist_cache_filename, 'orig_sampd_dist','orig_sampd_7bin','orig_sampd_7bin_pass_2','orig_sampd_counts_7bin');
-    clear('wait_h','congestion','param','param_idx','temp_dist');
+    clear('wait_h','congestion','param','param_idx','temp_dist','correct_bounds','newBnds');
 end
 clear('samp_dist_cache_filename');
-
-%% Set maximum and minimum of the sampled distributions to correct values
-% The sampled distributions only estimate the maximum and minimum using the
-% maximum and minimum of the sample - not the best estimator. Since I know
-% the original distributions and the method for calculating the height and
-% area, I can calculate the actual maximum and minimum for the
-% distributions. Here I replace the distributions with ones having the
-% correct maximum and minimum.
-%
-% The correct height range is: [ 0.00001604482555427710777509984241, 1.0445079319188184286 ]
-% The correct area range is:  
-% [2.93792276627387990798835084182e-8, 0.073758168890726301241]
-% The correct width range is just the original range of the known width
-% distribution.
-%
-% These come from the maximizing_peak_area.nb Mathematica notebook, where
-% there are many more details as to how they were derived.
-
-% Put the correct bounds in an array to make it easy to access in a loop.
-correct_bounds=nan(num_sampd_params,2); % correct_bounds(param_idx, :} is [minimum, maximum]
-correct_bounds(sampd_area_idx,:)=[ 2.93792276627387990798835084182e-8, 0.073758168890726301241 ];
-correct_bounds(sampd_height_idx,:)=[ 0.00001604482555427710777509984241, 1.0445079319188184286 ];
-correct_bounds(sampd_width_idx,:)=[min(orig_width_dist.bounds),max(orig_width_dist.bounds)];
-
-newBnds=@(orig,bnd) HistogramDistribution(...
-    [bnd(1),orig.bounds(2:end-1),bnd(2)],...
-    orig.probs, orig.border_is_in_upper_bin);
-dnb=@(orig,bnd) fprintf(['HistogramDistribution('... %Display new bounds -- DEBUG
-    '[%s,%s,%s],'...
-    'orig.probs, orig.border_is_in_upper_bin)\n'],to_str(bnd(1)),...
-    to_str(orig.bounds(2:end-1)),to_str(bnd(2)));
-dnb=@(orig,bnd) [];
-for congestion = 1:num_congestions
-
-    for param_idx = 1:num_sampd_params
-        dnb( ...
-            orig_sampd_dist{param_idx, congestion}, ...
-            correct_bounds(param_idx,:));
-        orig_sampd_dist{param_idx, congestion} = newBnds( ...
-            orig_sampd_dist{param_idx, congestion}, ...
-            correct_bounds(param_idx,:));
-        dnb( ...
-            orig_sampd_7bin{param_idx, congestion}, ...
-            correct_bounds(param_idx,:));
-        orig_sampd_7bin{param_idx, congestion} = newBnds( ...
-            orig_sampd_7bin{param_idx, congestion}, ...
-            correct_bounds(param_idx,:));
-        dnb( ...
-            orig_sampd_7bin_pass_2{param_idx, congestion}, ...
-            correct_bounds(param_idx,:));
-        orig_sampd_7bin_pass_2{param_idx, congestion} = newBnds( ...
-            orig_sampd_7bin_pass_2{param_idx, congestion}, ...
-            correct_bounds(param_idx,:));
-    end
-
-end
-
 
 %% Calculate equal width versions of the sampled parameter distributions with 7 bins
 % These are just like the equal-width binning of the original distributions
