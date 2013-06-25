@@ -921,7 +921,6 @@ function load_bins_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% TODO: change file format to row-dominant, comma-delimited
 [result, message] = validate_state(handles,get_version_string());
 if ~result
     msgbox(message);
