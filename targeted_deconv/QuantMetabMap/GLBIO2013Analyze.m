@@ -164,7 +164,7 @@ else
     sampled_max_scaled_heights = [];
 end
 tic; 
-numsamp=20000; 
+numsamp=1000; 
 maxh=nan(1,numsamp); 
 waith=waitbar(0,'sampling'); 
 for i=1:numsamp; 
@@ -187,7 +187,7 @@ clear('h','p','i','pp','s','waith','numsamp','maxh', ...
     'max_scaled_heights_file');
 
 %% Show distribution for scaled maximum height
-hist(sampled_max_scaled_heights,40);
+hist(sampled_max_scaled_heights,200);
 title(sprintf(['Distribution of maximum height after scaling\n'...
     'Max max height: %g in %d samples'],max(sampled_max_scaled_heights),...
     length(sampled_max_scaled_heights)));
@@ -280,9 +280,9 @@ clear('samp_dist_cache_filename');
 % distributions. Here I replace the distributions with ones having the
 % correct maximum and minimum.
 %
-% The correct height range is: [ 0.00001604482555427710777509984241, 1 ]
+% The correct height range is: [ 0.00001604482555427710777509984241, 1.0445079319188184286 ]
 % The correct area range is:  
-% [2.93792276627387990798835084182e-8, 0.0706152309970767715152041586320]
+% [2.93792276627387990798835084182e-8, 0.073758168890726301241]
 % The correct width range is just the original range of the known width
 % distribution.
 %
@@ -291,8 +291,8 @@ clear('samp_dist_cache_filename');
 
 % Put the correct bounds in an array to make it easy to access in a loop.
 correct_bounds=nan(num_sampd_params,2); % correct_bounds(param_idx, :} is [minimum, maximum]
-correct_bounds(sampd_area_idx,:)=[2.93792276627387990798835084182e-8, 0.0706152309970767715152041586320];
-correct_bounds(sampd_height_idx,:)=[ 0.00001604482555427710777509984241, 1 ];
+correct_bounds(sampd_area_idx,:)=[ 2.93792276627387990798835084182e-8, 0.073758168890726301241 ];
+correct_bounds(sampd_height_idx,:)=[ 0.00001604482555427710777509984241, 1.0445079319188184286 ];
 correct_bounds(sampd_width_idx,:)=[min(orig_width_dist.bounds),max(orig_width_dist.bounds)];
 
 newBnds=@(orig,bnd) HistogramDistribution(...
@@ -302,7 +302,7 @@ dnb=@(orig,bnd) fprintf(['HistogramDistribution('... %Display new bounds -- DEBU
     '[%s,%s,%s],'...
     'orig.probs, orig.border_is_in_upper_bin)\n'],to_str(bnd(1)),...
     to_str(orig.bounds(2:end-1)),to_str(bnd(2)));
-
+dnb=@(orig,bnd) [];
 for congestion = 1:num_congestions
 
     for param_idx = 1:num_sampd_params
