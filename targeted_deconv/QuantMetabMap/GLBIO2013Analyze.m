@@ -422,6 +422,8 @@ end
 
 param_counts_7bin = param_vals;
 param_counts_7_hist_bin = param_vals;
+param_counts_orig_7bin = cell(num_congestions, length(param_names));
+param_counts_orig_7_hist_bin = cell(num_congestions, length(param_names));
 for cong_idx = 1:num_congestions
     for pp_idx = 1:length(pp_names)
         for dsp_idx = 1:length(dsp_names)
@@ -439,7 +441,6 @@ for cong_idx = 1:num_congestions
             v{10}= orig_sampd_7bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10});
             param_counts_7bin(pp_idx, dsp_idx, cong_idx,:) = v;
             
-            
             v = param_vals(pp_idx, dsp_idx, cong_idx,:);
             v{1} = orig_width_7_hist_bin.binCounts(v{1});
             v{2} = orig_height_7_hist_bin.binCounts(v{2});
@@ -455,6 +456,12 @@ for cong_idx = 1:num_congestions
             param_counts_7_hist_bin(pp_idx, dsp_idx, cong_idx,:) = v;
         end
     end
+    v = param_counts_orig_7bin(cong_idx,:);
+    % Leave 1-4 unset because there are no counts for the bins - they are
+    % not observed but known a-priori
+    
+    %TODO: finish copying the counts for the original distributions into
+    %the format used for the KL divergences
 end
 
 %% Sample from KL distribution for each set of counts comparing it to the original
