@@ -45,15 +45,15 @@ function [rmse, rmse_log] = normalization_error( d1, d2 )
 %
 % >> [a,b]=normalization_error([1,2,3,4,5],[11,29,31,49,51])
 %
-% a == 9.6352
+% a == 9.6352 % TODO: This output needs to be fixed
 % 
-% b == 0.2923
+% b == 0.2923 % TODO: This output needs to be fixed
 % 
 % -------------------------------------------------------------------------
 % Authors
 % -------------------------------------------------------------------------
 %
-% Eric Moyer (July 2012) eric_moyer@yahoo.com
+% Eric Moyer (July-August 2012) eric_moyer@yahoo.com
 %
 assert(size(d1,1) == 1 && size(d2,1) == 1,'normalization_error:row_vec', ...
     'The values passed to normalization_erro must be row vectors');
@@ -62,6 +62,8 @@ assert(size(d1,2) == size(d2,2), 'normalization_error:same_size', ...
     ['The two vectors passed to normalization_error must have the' ...
     'same size.']);
    
+% Make a variable for the number of spectra
+num_spec = size(d1,2);
 
 % Calculate minimum squared error coefficient for regression between d1 and
 % d2. (a' x = b'    =>   a a' x = a b'    =>    x = a b' / a a' )
@@ -69,7 +71,7 @@ coef = (d1*d1') \ (d1*d2');
 
 % Use the coefficient to calculate the error
 est = d1' * coef;
-rmse = sqrt(sum((est-d2').^2)); 
+rmse = sqrt(sum((est-d2').^2)/num_spec); 
 
 % Calculate the minimum squared error coefficient for regression between
 % log(d1) and log(d2):
@@ -77,7 +79,7 @@ rmse = sqrt(sum((est-d2').^2));
 % log(d1 x) = log d2   =>  log(d1) + log x = log(d2)  => log x = log(d2) - log(d1)
 pf=polyfit(log(d1),log(d2)-log(d1),0);
 est=log(d1)+polyval(pf, log(d1));
-rmse_log = sqrt(sum((est-log(d2)).^2)); 
+rmse_log = sqrt(sum((est-log(d2)).^2)/num_spec); 
 
 end
 

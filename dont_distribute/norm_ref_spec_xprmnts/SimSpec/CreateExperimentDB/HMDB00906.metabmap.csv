@@ -1,0 +1,3 @@
+"Bin ID","Deleted","Compound ID","Compound Name","Known Compound","Bin (Lt)","Bin (Rt)","Multiplicity","Peaks to Select","J (Hz)","Nucleus Assignment","HMDB ID","Sample-types that may contain compound","Chenomx","Literature","NMR Isotope","Notes"
+1000,"",1000,"trimethylamine","X",3.040530,2.659140,"t",3,"","",906,"urine","","None","1H",""
+1001,"",1001,"trimethylamine","X",0.128741,-0.157304,"t",3,"","",906,"urine","","None","1H",""
