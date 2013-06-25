@@ -236,7 +236,7 @@ ylabel('Count');
 % These come from the maximizing_peak_area.nb Mathematica notebook, where
 % there are many more details as to how they were derived.
 num_congestions = 10;
-num_spectra_for_bins = 1000;
+num_spectra_for_bins = 5000;
 num_sampd_params = 3;
 sampled_param_names = {'area','height','width'};
 sampd_area_idx = find(strcmp('area',sampled_param_names));
@@ -246,6 +246,7 @@ sampd_width_idx = find(strcmp('width',sampled_param_names));
 samp_dist_cache_filename = 'GLBIO2013Analyze_cached_sampled_distributions.mat';
 if exist(samp_dist_cache_filename,'file')
     load(samp_dist_cache_filename,'-mat');
+    assert(exist('orig_sampd_counts_7bin_pass_2','var'),'Delete %s, it is an old version',samp_dist_cache_filename);
 else
     tic;
     wait_h = waitbar(0,'Calculating bins');
@@ -253,6 +254,9 @@ else
     orig_sampd_7bin = cell(num_sampd_params,num_congestions);
     orig_sampd_7bin_pass_2 = cell(num_sampd_params,num_congestions);
     orig_sampd_counts_7bin = cell(num_sampd_params,num_congestions);
+    orig_sampd_counts_7bin_pass_2 = cell(num_sampd_params,num_congestions);
+    orig_sampd_7_hist_bin = cell(num_sampd_params,num_congestions);
+    orig_sampd_7_hist_bin_pass_2 = cell(num_sampd_params,num_congestions);
 
     % Put the correct bounds in an array to make it easy to access in a loop.
     correct_bounds=nan(num_sampd_params,2); % correct_bounds(param_idx, :} is [minimum, maximum]
@@ -260,64 +264,67 @@ else
     correct_bounds(sampd_height_idx,:)=[ 0.00001604482555427710777509984241, 1.0445079319188184286 ];
     correct_bounds(sampd_width_idx,:)=[min(orig_width_dist.bounds),max(orig_width_dist.bounds)];
     
-    % Define a shortcut function to use in replacing bounds
+    % Define shortcut functions to use in replacing bounds and replacing
+    % probabilities from counts
     newBnds=@(orig,bnd) HistogramDistribution(...
         [bnd(1),orig.bounds(2:end-1),bnd(2)],...
         orig.probs, orig.border_is_in_upper_bin);
-
+    newProbs=@(orig,cnts) HistogramDistribution(...
+        orig.bounds, cnts./sum(cnts), orig.border_is_in_upper_bin);
+    
+    stps = 11; % Number of steps to be done per congestion
     for congestion = 1:num_congestions
-        waitbar((0+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Generating spectra for congestion %d',congestion));
+        waitbar((0+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Generating spectra for congestion %d',congestion));
         param=cell(3); % area, height, width
         [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
 
         for param_idx = 1:num_sampd_params
-            waitbar((param_idx+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Binning params for congestion %d',congestion));
+            waitbar((param_idx+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Binning params for congestion %d',congestion));
             orig_sampd_dist{param_idx, congestion} = HistogramDistribution.fromPoints(param{param_idx});
             orig_sampd_dist{param_idx, congestion} = newBnds( ...
                 orig_sampd_dist{param_idx, congestion}, ...
                 correct_bounds(param_idx,:));
-            orig_sampd_7bin{param_idx, congestion} = orig_sampd_dist{param_idx, congestion}.rebinEqualWidth(7);
+            orig_sampd_7bin{param_idx, congestion} = orig_sampd_dist{param_idx, congestion}.rebinEqualProb(7);
+            orig_sampd_7_hist_bin{param_idx, congestion} = orig_sampd_dist{param_idx, congestion}.rebinEqualWidth(7);
         end
 
-        waitbar((4+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Generating count spectra for congestion %d',congestion));
+        waitbar((4+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Generating count spectra for congestion %d',congestion));
         [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
 
         for param_idx = 1:num_sampd_params
-            waitbar((5+param_idx+10*(congestion-1))/(10*num_congestions), wait_h, sprintf('Counting params for congestion %d',congestion));
+            waitbar((4+param_idx+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Binning pass 2 params for congestion %d',congestion));
             temp_dist = HistogramDistribution.fromPoints(param{param_idx});
             temp_dist = newBnds( temp_dist, correct_bounds(param_idx,:) );
-            orig_sampd_7bin_pass_2{param_idx, congestion} = temp_dist.rebinEqualWidth(7);
-            orig_sampd_counts_7bin{param_idx, congestion} = orig_sampd_7bin{param_idx, congestion}.binCounts(param{param_idx});
-            assert(length(param{param_idx}) == sum(orig_sampd_counts_7bin{param_idx, congestion})); % No out-of-range parameters
+            orig_sampd_7bin_pass_2{param_idx, congestion} = temp_dist.rebinEqualProb(7);
+            orig_sampd_7_hist_bin_pass_2{param_idx, congestion} = temp_dist.rebinEqualWidth(7);            
         end
 
+        waitbar((8+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Generating pass 2 count spectra for congestion %d',congestion));
+        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
+        
+        for param_idx = 1:num_sampd_params
+            waitbar((8+param_idx+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Counting pass 2 params for congestion %d',congestion));
+            orig_sampd_counts_7bin{param_idx, congestion} = orig_sampd_7bin{param_idx, congestion}.binCounts(param{param_idx});
+            assert(length(param{param_idx}) == sum(orig_sampd_counts_7bin{param_idx, congestion})); % No out-of-range parameters
+            orig_sampd_7bin{param_idx, congestion} = newProbs(...
+                orig_sampd_7bin{param_idx, congestion}, ...
+                orig_sampd_counts_7bin{param_idx, congestion});
+
+            orig_sampd_counts_7bin_pass_2{param_idx, congestion} = orig_sampd_7bin_pass_2{param_idx, congestion}.binCounts(param{param_idx});
+            assert(length(param{param_idx}) == sum(orig_sampd_counts_7bin_pass_2{param_idx, congestion})); % No out-of-range parameters
+            orig_sampd_7bin_pass_2{param_idx, congestion} = newProbs(...
+                orig_sampd_7bin_pass_2{param_idx, congestion}, ...
+                orig_sampd_counts_7bin_pass_2{param_idx, congestion});
+        end
     end
     fprintf('Done generating bins for area,height, and width. '); toc
 
     delete(wait_h);
 
-    save(samp_dist_cache_filename, 'orig_sampd_dist','orig_sampd_7bin','orig_sampd_7bin_pass_2','orig_sampd_counts_7bin');
-    clear('wait_h','congestion','param','param_idx','temp_dist','correct_bounds','newBnds');
+    save(samp_dist_cache_filename, 'orig_sampd_dist', 'orig_sampd_7bin', 'orig_sampd_7bin_pass_2', 'orig_sampd_counts_7bin', 'orig_sampd_counts_7bin_pass_2', 'orig_sampd_7_hist_bin', 'orig_sampd_7_hist_bin_pass_2');
+    clear('wait_h','congestion','param','param_idx','temp_dist','correct_bounds','newBnds','newProbs');
 end
 clear('samp_dist_cache_filename');
-
-%% Calculate equal width versions of the sampled parameter distributions with 7 bins
-% These are just like the equal-width binning of the original distributions
-% except now I am working with the sampled distributions.
-orig_sampd_7_hist_bin = orig_sampd_dist;
-orig_sampd_7_hist_bin_pass_2 = orig_sampd_7bin_pass_2;
-waith=waitbar(0,sprintf('Calculating equal width (cong: %d param:%d)',0, 0));
-for cong_idx = 1:num_congestions
-    for param_idx=1:size(orig_sampd_7bin,1)
-        waitbar((3*(cong_idx-1)+param_idx)/(size(orig_sampd_7bin,1)*num_congestions),...
-            waith,...
-            sprintf('Calculating equal width (cong: %d param:%d)',cong_idx, param_idx));
-        orig_sampd_7_hist_bin{param_idx, cong_idx} = orig_sampd_dist{param_idx, cong_idx}.rebinEqualWidth(7);
-        orig_sampd_7_hist_bin_pass_2{param_idx, cong_idx} = orig_sampd_7bin_pass_2{param_idx, cong_idx}.rebinEqualWidth(7);
-    end
-end
-delete(waith);
-clear('waith','cong_idx','param_idx');
 
 %% Defend spectrum width choices
 % The spectral widths chosen give better than 99% probabilities that the
