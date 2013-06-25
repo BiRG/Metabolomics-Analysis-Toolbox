@@ -430,13 +430,16 @@ for cong_idx = 1:num_congestions
             v{2} = orig_height_7bin.binCounts(v{2});
             v{3} = orig_lorentzianness_7bin.binCounts(v{3});
             v{4} = orig_location_7bin(cong_idx).binCounts(v{4});
-            v{5} = orig_sampd_7bin{sampd_area_idx, cong_idx}.binCouts(v{5});
+            
+            v{5} = orig_sampd_7bin{sampd_area_idx, cong_idx}.binCounts(v{5});
             v{6} = orig_sampd_7bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6});
             v{7} = orig_sampd_7bin{sampd_height_idx, cong_idx}.binCounts(v{7});
             v{8} = orig_sampd_7bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8});
             v{9} = orig_sampd_7bin{sampd_width_idx, cong_idx}.binCounts(v{9});
             v{10}= orig_sampd_7bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10});
             param_counts_7bin(pp_idx, dsp_idx, cong_idx,:) = v;
+            
+            
             v = param_vals(pp_idx, dsp_idx, cong_idx,:);
             v{1} = orig_width_7_hist_bin.binCounts(v{1});
             v{2} = orig_height_7_hist_bin.binCounts(v{2});
