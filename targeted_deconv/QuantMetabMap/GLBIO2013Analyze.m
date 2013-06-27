@@ -101,7 +101,7 @@ orig_lorentzianness_7_hist_bin = orig_lorentzianness_dist.rebinEqualWidth(7);
 clf;
 subplot(2,2,1);
 hold off;
-raw_handle = orig_lorentzianness_dist.plot('b');
+raw_handle = orig_height_dist.plot('b');
 hold on;
 simp_handle = orig_height_7bin.plot('r--');
 legend([raw_handle,simp_handle],'Raw original','Simplified');
@@ -124,7 +124,7 @@ hold off;
 clf;
 subplot(2,2,1);
 hold off;
-raw_handle = orig_lorentzianness_dist.plot('b');
+raw_handle = orig_height_dist.plot('b');
 hold on;
 simp_handle = orig_height_7_hist_bin.plot('r--');
 legend([raw_handle,simp_handle],'Raw original','Simplified');
@@ -511,7 +511,10 @@ tic
 % probabilities of those parameters. Otherwise, it contains the MLE
 % estimate of those probabilities. These are used as non-skeptical priors
 % for the distribution of the parameters produced by each algorithm. And
-% for the a-priori distributions, 
+% for the a-priori distributions, these are the distributions against which
+% the KL divergence is taken.
+%
+% NOTE: param_probs is used in other calculation cells in this file.
 param_probs = cell(num_congestions, length(param_names));
 skeptical_prior = param_probs;
 param_probs_7hist = cell(num_congestions, length(param_names));
@@ -689,6 +692,70 @@ for param_idx = 1:length(param_names)
 	end
 end
 
+%% Plot the distributions over the 7 bins for the different methods and the original
+% I use MLE distributions. Maybe I'll modifiy this in the future to give
+% some idea as to the uncertainty.
+parameters_to_plot = [1:4,5:2:10];
+assert(length(dsp_names) == 2);
+assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+anderson_idx = 1;
+summit_idx = 2;
+newProbs=@(orig,cnts) HistogramDistribution(...
+    orig.bounds, cnts./sum(cnts), orig.border_is_in_upper_bin);
+for pp_idx = 1:length(pp_names)
+    figure(pp_idx);
+    subplot_num = 0;
+    for param_idx = parameters_to_plot
+        for cong_idx = 1:num_congestions
+            subplot_num = subplot_num + 1;
+            subplot(length(parameters_to_plot),num_congestions,subplot_num);
+            
+            % Plot bin probabilities
+            po = param_probs{cong_idx, param_idx};
+            pa = param_counts_7bin{pp_idx, anderson_idx, cong_idx, param_idx};
+            if sum(pa) <= 0; continue; end;
+            pa = pa ./ sum(pa);
+            ps = param_counts_7bin{pp_idx, summit_idx, cong_idx, param_idx};
+            ps = ps ./ sum(ps);
+            
+            h = [HistogramDistribution((0:7)/7,po), ...
+                 HistogramDistribution((0:7)/7,pa), ...
+                 HistogramDistribution((0:7)/7,ps)];
+            linespecs = {'k','r--','g--'};
+            handle = zeros(3,1);
+            hold off;
+            for i = 1:3
+                handle(i) = h(i).plot(linespecs{i});
+                hold on;
+            end
+
+            % Calculate prob anderson or summit is better
+            w_anderson = kl_method_works{pp_idx, 1, cong_idx, param_idx};
+            w_summit = kl_method_works{pp_idx, 2, cong_idx, param_idx};
+            num_as_good_or_better = sum(w_summit <= w_anderson);
+            num_worse = sum(w_summit > w_anderson);
+            b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
+            sci = b.shortestCredibleInterval(0.95);
+            
+            % Compute suffix indicating which is better
+            if b.prob > 0.75
+                suffix = ' (s)';
+            elseif b.prob < 0.25
+                suffix = ' (a)';
+            else
+                suffix = ' (?)';
+            end
+            title([param_names{param_idx} suffix]);
+            
+            xlim([0,1]);
+            ylim([0,2.5]);
+            hold off;
+        end
+    end
+end
+clear('parameters_to_plot','anderson_idx','summit_idx', 'subplot_num','newProbs','h','handle');
+
+
 %% Plot probability that summit is better - method works prior equal prob
 % I only plot the first pass sampling results. When I plotted both, they
 % looked almost identical.
@@ -733,10 +800,11 @@ clear('parameters_to_plot');
 % Very strangely, the "sampling from the prior" version puts summit being
 % better. I don't know what is going on.
 subplot_num = 0;
-for param_idx = 1:length(param_names)
+parameters_to_plot = [1:4,5:2:10];
+for param_idx = parameters_to_plot
 	for pp_idx = 1:length(pp_names)
         subplot_num = subplot_num + 1;
-        subplot(length(param_names),length(pp_names),subplot_num);
+        subplot(length(parameters_to_plot),length(pp_names),subplot_num);
         prob = zeros(1,num_congestions);
         low_bar = zeros(1,num_congestions);
         up_bar = zeros(1,num_congestions);
@@ -763,6 +831,7 @@ for param_idx = 1:length(param_names)
             underscore_2_space(pp_names{pp_idx})));       
 	end
 end
+clear('parameters_to_plot');
 
 %% Plot probability that summit is better - skeptical prior
 % Almost the same as the method_works prior except in the case where we're
@@ -771,10 +840,11 @@ end
 % and the high probability of getting a zero due to the shape of the lor
 % prob curve) they come out equal.
 subplot_num = 0;
-for param_idx = 1:length(param_names)
+parameters_to_plot = [1:4,5:2:10];
+for param_idx = parameters_to_plot
 	for pp_idx = 1:length(pp_names)
         subplot_num = subplot_num + 1;
-        subplot(length(param_names),length(pp_names),subplot_num);
+        subplot(length(parameters_to_plot),length(pp_names),subplot_num);
         prob = zeros(1,num_congestions);
         low_bar = zeros(1,num_congestions);
         up_bar = zeros(1,num_congestions);
@@ -801,6 +871,7 @@ for param_idx = 1:length(param_names)
             underscore_2_space(pp_names{pp_idx})));       
 	end
 end
+clear('parameters_to_plot');
 
 
 %% For which values is there a difference? - method works prior
