@@ -1403,8 +1403,8 @@ classdef HistogramDistribution
         % Usage [handle] = plot(obj, linespec)
         %
         % Plot this HistogramDistribution on the current axes
-            frac_widths = (obj.bounds(2:end)-obj.bounds(1:end-1))/(obj.bounds(end)-obj.bounds(1));
-            heights = obj.probs ./ frac_widths;
+            widths = obj.bounds(2:end)-obj.bounds(1:end-1);
+            heights = obj.probs ./ widths;
             is_dirac = obj.bounds(2:end) == obj.bounds(1:end-1);
             heights(is_dirac) = 0;
             heights(is_dirac) = max(heights);
