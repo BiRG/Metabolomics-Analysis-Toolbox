@@ -690,11 +690,14 @@ for param_idx = 1:length(param_names)
 end
 
 %% Plot probability that summit is better - method works prior equal prob
+% I only plot the first pass sampling results. When I plotted both, they
+% looked almost identical.
 subplot_num = 0;
-for param_idx = 1:length(param_names)
+parameters_to_plot = [1:4,5:2:10];
+for param_idx = parameters_to_plot
 	for pp_idx = 1:length(pp_names)
         subplot_num = subplot_num + 1;
-        subplot(length(param_names),length(pp_names),subplot_num);
+        subplot(length(parameters_to_plot),length(pp_names),subplot_num);
         prob = zeros(1,num_congestions);
         low_bar = zeros(1,num_congestions);
         up_bar = zeros(1,num_congestions);
@@ -721,6 +724,7 @@ for param_idx = 1:length(param_names)
             underscore_2_space(pp_names{pp_idx})));       
 	end
 end
+clear('parameters_to_plot');
 
 %% Plot probability that summit is better - method works prior equal width
 % Surprisingly big difference here from the conclusions of the equal
