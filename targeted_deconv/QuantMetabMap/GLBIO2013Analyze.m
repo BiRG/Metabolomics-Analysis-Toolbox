@@ -501,6 +501,8 @@ end
 % prior for the original distribution and the MLE from that sample as my
 % (non-skeptical) prior for the algorithm's distribution.
 %
+% It takes 5 minutes: maybe it should be cached?
+%
 % NOTE: what am I doing about output values that fall outside the range of
 % input parameter values? It could happen.
 tic
