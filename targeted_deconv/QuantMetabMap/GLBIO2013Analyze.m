@@ -718,9 +718,9 @@ for pp_idx = 1:length(pp_names)
             ps = param_counts_7bin{pp_idx, summit_idx, cong_idx, param_idx};
             ps = ps ./ sum(ps);
             
-            h = [HistogramDistribution((0:7)/7,po), ...
-                 HistogramDistribution((0:7)/7,pa), ...
-                 HistogramDistribution((0:7)/7,ps)];
+            h = [HistogramDistribution((0:7)/1,po), ...
+                 HistogramDistribution((0:7)/1,pa), ...
+                 HistogramDistribution((0:7)/1,ps)];
             linespecs = {'k','r--','g--'};
             handle = zeros(3,1);
             hold off;
@@ -747,8 +747,8 @@ for pp_idx = 1:length(pp_names)
             end
             title([param_names{param_idx} suffix]);
             
-            xlim([0,1]);
-            ylim([0,2.5]);
+            xlim([0,7]);
+            ylim([0,0.45]);
             hold off;
         end
     end
