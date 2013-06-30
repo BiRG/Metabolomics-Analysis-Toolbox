@@ -139,6 +139,65 @@ classdef GLBIO2013Datum
         end
 	
 
+        function updated = updateDeconvolutions(obj)
+        % Return an updated datum containing all the deconvolutions that
+        % would be produced if the Datum had been generated using the
+        % current set of peak pickers and starting points. The new entries
+        % will be in the current order. 
+        %
+        % If there are no new peak pickers and the new deconvolutions
+        % don't involve random numbers, the results will be the same as if
+        % the new deconvolutions had been part of the Datum from the
+        % beginning.
+        %
+        % Usage: updated = updateDeconvolutions(obj)
+        %
+        % ----------------------------------------------------------------
+        % Input parameters
+        % ----------------------------------------------------------------
+        %
+        % obj - a single GLBIO2013Datum object. Must have id,
+        %     spectrum_width, spectrum_interval, spectrum_snr, spectrum,
+        %     and spectrum_peaks fields already initialized.
+            pickers = GLBIO2013Deconv.peak_picking_method_names;
+            deconvolvers = ...
+                GLBIO2013Deconv.deconvolution_starting_point_method_names;
+
+            % Fresh_picked_locs contains the locations that will be used if
+            % a particular peak picker is not present in the originals
+            fresh_picked_locs = GLBIO2013_pick_peaks(obj.spectrum, ...
+                obj.spectrum_peaks, 1/obj.spectrum_snr);
+            
+            old_deconvs = obj.deconvolutions;
+            
+            % Extract extant picked locations from the current list of
+            % deconvolutions (overwriting any that were generated in
+            % "fresh_picked_locs")
+            picked_locs = fresh_picked_locs;
+            for i = 1:length(old_deconvs)
+                picker_name = old_deconvs(i).peak_picker_name;
+                name_loc = strcmp(picker_name, pickers);
+                picked_locs{name_loc} = old_deconvs(i).picked_locations;
+            end
+        
+            
+            % TODO: the following is a copy from the constructor. Rewrite
+            % it do do updating.
+            for p = 1:length(pickers)
+                    for d = 1:length(deconvolvers)
+                        tmp = GLBIO2013Deconv(obj.id, obj.spectrum, ...
+                            obj.spectrum_peaks, pickers{p}, ...
+                            picked_locs{p}, deconvolvers{d});
+                        if isempty(obj.deconvolutions)
+                            obj.deconvolutions = tmp;
+                        else
+                            obj.deconvolutions(end+1) = tmp;
+                        end
+                    end
+            end
+                
+
+        end
         
         function str=char(objs)
         % Return a human-readable string representation of this
