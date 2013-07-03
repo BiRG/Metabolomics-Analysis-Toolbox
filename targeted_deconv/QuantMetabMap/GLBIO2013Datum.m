@@ -159,16 +159,17 @@ classdef GLBIO2013Datum
         % obj - a single GLBIO2013Datum object. Must have id,
         %     spectrum_width, spectrum_interval, spectrum_snr, spectrum,
         %     and spectrum_peaks fields already initialized.
+            updated = obj;
             pickers = GLBIO2013Deconv.peak_picking_method_names;
             deconvolvers = ...
                 GLBIO2013Deconv.deconvolution_starting_point_method_names;
 
             % Fresh_picked_locs contains the locations that will be used if
             % a particular peak picker is not present in the originals
-            fresh_picked_locs = GLBIO2013_pick_peaks(obj.spectrum, ...
-                obj.spectrum_peaks, 1/obj.spectrum_snr);
+            fresh_picked_locs = GLBIO2013_pick_peaks(updated.spectrum, ...
+                updated.spectrum_peaks, 1/updated.spectrum_snr);
             
-            old_deconvs = obj.deconvolutions;
+            old_deconvs = updated.deconvolutions;
             
             % Extract extant picked locations from the current list of
             % deconvolutions (overwriting any that were generated in
@@ -180,23 +181,43 @@ classdef GLBIO2013Datum
                 picked_locs{name_loc} = old_deconvs(i).picked_locations;
             end
         
-            
-            % TODO: the following is a copy from the constructor. Rewrite
-            % it do do updating.
-            for p = 1:length(pickers)
-                    for d = 1:length(deconvolvers)
-                        tmp = GLBIO2013Deconv(obj.id, obj.spectrum, ...
-                            obj.spectrum_peaks, pickers{p}, ...
-                            picked_locs{p}, deconvolvers{d});
-                        if isempty(obj.deconvolutions)
-                            obj.deconvolutions = tmp;
-                        else
-                            obj.deconvolutions(end+1) = tmp;
-                        end
-                    end
+            % Find out where each picker/starting point combination is in
+            % the original deconvolutions
+            index_of_deconv = nan(length(pickers), length(deconvolvers));
+            for orig_idx = 1:length(old_deconvs)
+                dec = old_deconvs(orig_idx);
+                p = find(strcmp(dec.peak_picker_name, pickers),1,'first');
+                sp = find(strcmp(dec.starting_point_name, deconvolvers),...
+                    1,'first');
+                index_of_deconv(p, sp) = orig_idx;
             end
-                
+            
+            % Merge existing deconvolutions with newly created
+            % deconvolutions
+            updated.deconvolutions = [];
+            for p = 1:length(pickers)
+                for d = 1:length(deconvolvers)
+                    % If we've already calculated the current
+                    % picker/deconvolver pair, use that, otherwise,
+                    % calculate the new one.
+                    idx = index_of_deconv(p, d);
+                    if isnan(idx)
+                        tmp = GLBIO2013Deconv(updated.id, ...
+                            updated.spectrum, updated.spectrum_peaks, ...
+                            pickers{p}, picked_locs{p}, deconvolvers{d});
+                    else
+                        tmp = old_deconvs(idx);
+                    end
 
+                    % Put the deconvolution for the picker/deconvolver 
+                    % pair in its proper place
+                    if isempty(updated.deconvolutions)
+                        updated.deconvolutions = tmp;
+                    else
+                        updated.deconvolutions(end+1) = tmp;
+                    end
+                end
+            end
         end
         
         function str=char(objs)
