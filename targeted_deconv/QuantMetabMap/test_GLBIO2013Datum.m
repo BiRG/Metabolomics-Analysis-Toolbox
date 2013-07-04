@@ -38,3 +38,36 @@ for i = 1:length(deconvolutions)
 end
 
 RandStream.setGlobalStream(old_rng);
+
+function test_deconv_with_same_picker_have_same_picked_peaks %#ok<DEFNU>
+% Check that deconvolutions in the same datum with the same picker have the
+% same picked peaks.
+old_rng = RandStream.getGlobalStream();
+RandStream.setGlobalStream(RandStream('mt19937ar','Seed',1288700689));
+
+cache_file = 'test_GLBIO2013Datum_cached_deconv1.mat';
+if exist(cache_file,'file')
+    load(cache_file,'-mat');
+else
+    datum = GLBIO2013Datum(1);
+    save(cache_file,'datum');
+end
+deconvolutions = datum.deconvolutions;
+
+% Picked peaks{i} holds a list in which each element is a cell containing 
+% either the name of the i'th peak picker or the first lists of peak 
+% locations picked by that picker.
+picked_peaks = GLBIO2013Deconv.peak_picking_method_names;
+for i = 1:length(deconvolutions)
+    deconv = deconvolutions(i);
+    idx = picker_idx(deconv.peak_picker_name);
+    if ischar(picked_peaks{idx})
+        picked_peaks{idx} = deconv.picked_locations;
+    else
+        assertEqual(picked_peaks{idx}, deconv.picked_locations, ...
+            sprintf('Picker "%s" had picked different peaks in same datum', ...
+            deconv.peak_picker_name));
+    end
+end
+
+RandStream.setGlobalStream(old_rng);
