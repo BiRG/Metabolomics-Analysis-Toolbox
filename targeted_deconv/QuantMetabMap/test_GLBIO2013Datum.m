@@ -16,11 +16,19 @@ function ensure_test_data_file_exists
 if ~exist(filename_for_test_data,'file')
     old_rng = RandStream.getGlobalStream();
     RandStream.setGlobalStream(RandStream('mt19937ar','Seed',1288700689));
-    datum1 = GLBIO2013Datum(1);
-    datum2 = GLBIO2013Datum(1.5);
-    two_data_points = [datum1, datum2]; %#ok<NASGU>
-    save(filename_for_test_data,'datum1','datum2','two_data_points');
+    datum1 = GLBIO2013Datum(1); %#ok<NASGU>
+    datum2 = GLBIO2013Datum(1.5); %#ok<NASGU>
+    save(filename_for_test_data,'datum1','datum2');
     RandStream.setGlobalStream(old_rng);
+end
+
+function assertDatumObjectsEqual(d1,d2)
+fields = {'spectrum_peaks','spectrum_width','deconvolutions' ...
+    'resolution','spectrum_interval', 'spectrum', ...
+    'spectrum_snr', 'id'};
+for i = 1:length(fields)
+    f = fields{i};
+    assertEqual(d1.(f),d2.(f),sprintf('Field %s should be equal',f));
 end
 
 function idx = picker_idx(str)
@@ -30,7 +38,7 @@ function idx = picker_idx(str)
 % is not in the list, returns [].
 idx = find(strcmp(str, GLBIO2013Deconv.peak_picking_method_names));
 
-function test_deconv_with_same_picker_have_same_picked_peaks %#ok<DEFNU>
+function disabled_test_deconv_with_same_picker_have_same_picked_peaks %#ok<DEFNU>
 % Check that deconvolutions in the same datum with the same picker have the
 % same picked peaks.
 old_rng = RandStream.getGlobalStream();
@@ -62,4 +70,21 @@ function test_update_correctly_reorders_deconvs %#ok<DEFNU>
 % the current order 
 ensure_test_data_file_exists;
 load(filename_for_test_data);
-assertFalse(true); % test not implemented yet
+
+reordered_deconvs = datum1.deconvolutions([6 3 7 8 5 1 2 4]);
+reordered1 = GLBIO2013Datum.dangerous_constructor(datum1.spectrum_peaks, ...
+    datum1.spectrum_width, reordered_deconvs, datum1.resolution, ...
+    datum1.spectrum_interval, datum1.spectrum, datum1.spectrum_snr, ...
+    datum1.id);
+updated_reordered1 = reordered1.updateDeconvolutions;
+
+assertDatumObjectsEqual(datum1, updated_reordered1);
+
+reordered_deconvs = datum2.deconvolutions([6 3 7 8 5 1 2 4]);
+reordered2 = GLBIO2013Datum.dangerous_constructor(datum2.spectrum_peaks, ...
+    datum2.spectrum_width, reordered_deconvs, datum2.resolution, ...
+    datum2.spectrum_interval, datum2.spectrum, datum2.spectrum_snr, ...
+    datum2.id);
+updated_reordered2 = reordered2.updateDeconvolutions;
+
+assertDatumObjectsEqual(datum2, updated_reordered2);

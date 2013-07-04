@@ -51,6 +51,10 @@ classdef GLBIO2013Datum
         % NO ERROR CHECKING IS DONE. This method is intended for use in
         % testing. Don't use it unless you are testing. 
         %
+        % Usage: obj = dangerous_constructor(spectrum_peaks, ...
+        %    spectrum_width, deconvolutions, resolution, ...
+        %    spectrum_interval, spectrum, spectrum_snr, id)
+        %
         % Example:
         %
         % >> g = GLBIO2013Datum.dangerous_constructor([],2,3,4,5,6,7,'my id')
@@ -163,22 +167,31 @@ classdef GLBIO2013Datum
             pickers = GLBIO2013Deconv.peak_picking_method_names;
             deconvolvers = ...
                 GLBIO2013Deconv.deconvolution_starting_point_method_names;
-
-            % Fresh_picked_locs contains the locations that will be used if
-            % a particular peak picker is not present in the originals
-            fresh_picked_locs = GLBIO2013_pick_peaks(updated.spectrum, ...
-                updated.spectrum_peaks, 1/updated.spectrum_snr);
             
             old_deconvs = updated.deconvolutions;
             
+            % Initialize list of picked locations to nan
+            picked_locs = cell(1,length(pickers));
+            for i = 1:length(picked_locs)
+                picked_locs{i} = nan;
+            end
+            
             % Extract extant picked locations from the current list of
-            % deconvolutions (overwriting any that were generated in
-            % "fresh_picked_locs")
-            picked_locs = fresh_picked_locs;
+            % deconvolutions (overwriting nans with valid values)
             for i = 1:length(old_deconvs)
                 picker_name = old_deconvs(i).peak_picker_name;
                 name_loc = strcmp(picker_name, pickers);
                 picked_locs{name_loc} = old_deconvs(i).picked_locations;
+            end
+            
+            % If any pickers need to be generated, generate 
+            is_new_picker = cellfun(@(x) isscalar(x) && isnan(x), picked_locs);
+            if any(is_new_picker)
+                % Fresh_picked_locs contains the locations that will be used if
+                % a particular peak picker is not present in the originals
+                fresh_picked_locs = GLBIO2013_pick_peaks(updated.spectrum, ...
+                    updated.spectrum_peaks, 1/updated.spectrum_snr);
+                picked_locs(is_new_picker) = fresh_picked_locs(is_new_picker);
             end
         
             % Find out where each picker/starting point combination is in
