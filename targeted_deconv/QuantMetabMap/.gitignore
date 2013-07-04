@@ -54,9 +54,3 @@ GLBIO2013Analyze_cached_distributions.mat
 GLBIO2013Analyze_cached_sampled_distributions.mat
 GLBIO2013Analyze_cached_max_scaled_heights.mat
 
-
-#######
-# Files used for caching intermediate test data that takes a
-# long time to calculate
-#######
-test_GLBIO2013Datum_cached_deconv1.mat
