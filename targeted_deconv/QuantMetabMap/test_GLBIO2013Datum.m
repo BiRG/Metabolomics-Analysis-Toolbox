@@ -80,7 +80,7 @@ updated_reordered1 = reordered1.updateDeconvolutions;
 
 assertDatumObjectsEqual(datum1, updated_reordered1);
 
-reordered_deconvs = datum2.deconvolutions([6 3 7 8 5 1 2 4]);
+reordered_deconvs = datum2.deconvolutions([5 4 1 8 3 2 6 7]);
 reordered2 = GLBIO2013Datum.dangerous_constructor(datum2.spectrum_peaks, ...
     datum2.spectrum_width, reordered_deconvs, datum2.resolution, ...
     datum2.spectrum_interval, datum2.spectrum, datum2.spectrum_snr, ...
@@ -88,3 +88,6 @@ reordered2 = GLBIO2013Datum.dangerous_constructor(datum2.spectrum_peaks, ...
 updated_reordered2 = reordered2.updateDeconvolutions;
 
 assertDatumObjectsEqual(datum2, updated_reordered2);
+
+function test_update_correctly_restores_missing_picked_peaks %#ok<DEFNU>
+assertFalse(true); % not written
