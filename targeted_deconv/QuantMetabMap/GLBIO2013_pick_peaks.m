@@ -3,6 +3,11 @@ function peaks_per_picker = GLBIO2013_pick_peaks(spectrum, peaks, noise_std)
 % 
 % Usage: peaks_per_picker = GLBIO2013_pick_peaks(spectrum, peaks, noise_std)
 %
+% NOTE: due to lack of "peak free" regions in the test spectra,
+% "pp_smoothed_local_max" and "pp_gold_std_aligned_with_local_max" use the
+% random number generator. See peak_loc_estimate_for_random_spec. They 
+% will, however, use the same random estimate.
+%
 % -----------------------------------------
 % Input Args
 % -----------------------------------------
@@ -39,6 +44,7 @@ function peaks_per_picker = GLBIO2013_pick_peaks(spectrum, peaks, noise_std)
 mean_peak_width = 0.00453630122481774988; % Width of the mean peak in ppm
 
 picker_names = GLBIO2013Deconv.peak_picking_method_names;
+smoothed_local_max_locs = peak_loc_estimate_for_random_spec(spectrum, noise_std);
 peaks_per_picker = picker_names;
 for picker_idx = 1:length(picker_names)
     peak_picker_name = picker_names{picker_idx};
@@ -49,9 +55,9 @@ for picker_idx = 1:length(picker_names)
             picked_locations = [peaks.location];
             picked_locations = picked_locations + (mean_peak_width/16).*randn(size(picked_locations));
         case GLBIO2013Deconv.pp_smoothed_local_max
-            picked_locations = peak_loc_estimate_for_random_spec(spectrum, noise_std);
+            picked_locations = smoothed_local_max_locs;
         case GLBIO2013Deconv.pp_gold_std_aligned_with_local_max
-            picked_locations = peak_loc_estimate_for_random_spec(spectrum, noise_std);
+            picked_locations = smoothed_local_max_locs;
             orig_locations = [peaks.location];
             assignment = GLBIO2013Deconv.l_p_norm_assignment(picked_locations, orig_locations, 2);
             picked_locations = orig_locations(assignment(assignment > 0));

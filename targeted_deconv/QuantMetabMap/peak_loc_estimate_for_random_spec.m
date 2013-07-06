@@ -1,7 +1,9 @@
 function [ peak_ppm, peak_idx ] = peak_loc_estimate_for_random_spec( spec, noise_std )
-% Return estimated peak locations for a randomly generated spectrum with a specific noise level
+% Return estimated peak locations for a randomly generated spectrum with a specific noise level 
 %
 % Usage: [peak_ppm, peak_idx] = PEAK_LOC_ESTIMATE_FOR_RANDOM_SPEC(spec, noise_std)
+%
+% NOTE: uses the random number generator
 %
 % All peak picking algorithms depend in some way on estimating the noise
 % content of the spectrum from the data. Paul's algorithm uses 30 points
