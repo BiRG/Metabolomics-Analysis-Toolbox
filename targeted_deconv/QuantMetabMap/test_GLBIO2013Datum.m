@@ -90,4 +90,26 @@ updated_reordered2 = reordered2.updateDeconvolutions;
 assertDatumObjectsEqual(datum2, updated_reordered2);
 
 function test_update_correctly_restores_missing_picked_peaks %#ok<DEFNU>
-assertFalse(true); % not written
+% Check that when all deconvolutions for a particular peak picker have been
+% removed, updateDeconvolutions creates the missing deconvolutions and
+% picked peaks
+ensure_test_data_file_exists;
+load(filename_for_test_data);
+
+censored_deconvs = datum1.deconvolutions(3:end);
+censored1 = GLBIO2013Datum.dangerous_constructor(datum1.spectrum_peaks, ...
+    datum1.spectrum_width, censored_deconvs, datum1.resolution, ...
+    datum1.spectrum_interval, datum1.spectrum, datum1.spectrum_snr, ...
+    datum1.id);
+updated_censored1 = censored1.updateDeconvolutions;
+
+assertDatumObjectsEqual(datum1, updated_censored1);
+
+censored_deconvs = datum2.deconvolutions([1:4,7:8]);
+censored2 = GLBIO2013Datum.dangerous_constructor(datum2.spectrum_peaks, ...
+    datum2.spectrum_width, censored_deconvs, datum2.resolution, ...
+    datum2.spectrum_interval, datum2.spectrum, datum2.spectrum_snr, ...
+    datum2.id);
+updated_censored2 = censored2.updateDeconvolutions;
+
+assertDatumObjectsEqual(datum2, updated_censored2);
