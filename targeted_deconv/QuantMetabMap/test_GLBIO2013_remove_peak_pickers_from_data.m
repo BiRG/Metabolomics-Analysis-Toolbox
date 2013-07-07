@@ -60,8 +60,8 @@ idxs = setdiff(all_idxs, excluded_idxs);
 
 
 function test_correctly_removes_deconvolutions %#ok<DEFNU>
-% Check that updateDeconvolutions correctly reorders deconvolutions into
-% the current order 
+% Check that requested deconvolutions are correctly removed from the given
+% data
 ensure_test_data_file_exists;
 load(filename_for_test_data);
 
@@ -98,3 +98,11 @@ for picker1 = 1:length(pickers)
     end
 end
 
+function test_has_error_on_bad_peak_picker %#ok<DEFNU>
+% Check that throws an exception when an unknown peak picker is passed as the
+% picker to remove
+ensure_test_data_file_exists;
+load(filename_for_test_data);
+
+f = @() GLBIO2013_remove_peak_pickers_from_data({'not a valid peak picker'}, datum1);
+assertExceptionThrown(f, 'GLBIO2013:unknown_pp_method');
