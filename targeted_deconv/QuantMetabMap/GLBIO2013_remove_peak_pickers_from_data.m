@@ -14,7 +14,8 @@ function edited_data = GLBIO2013_remove_peak_pickers_from_data( peak_pickers, da
 % peak_pickers - (cell array of string) The peak pickers to remove. 
 %     Contents are a subset of GLBIO2013Deconv.peak_picking_method_names
 %
-% data - (vector of GLBIO2013Datum) the datum objects to edit
+% data - (vector of GLBIO2013Datum) the datum objects to edit. Must 
+%     contain at least one object.
 %
 % -------------------------------------------------------------------------
 % Output parameters
