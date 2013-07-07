@@ -19,7 +19,7 @@ warning('off','MATLAB:RandStream:SetDefaultStream');
 in_name  = 'glbio2013_run_$1_results_without_local_max_pickers.mat';
 load(in_name);
 out_name = 'glbio2013_run_$1_results_updated_after_del_pickers.mat';
-tic; results_$1=GLBIO2013_update_all($1, results_$1); toc
+tic; results_$1=GLBIO2013_run_update_all($1, results_$1); toc
 save(out_name, 'results_$1');
 exit                      % don't forget to exit
 MATLAB_ENV
