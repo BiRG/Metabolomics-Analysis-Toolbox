@@ -11,7 +11,7 @@ fi
 #Usage: 
 unset DISPLAY
 # IMPORTANT: DONOT indent any of the below statements
-matlab -nodesktop -singleCompThread  > glbio2013_run_$1_max_picker_removal_terminal_output <<MATLAB_ENV
+matlab -nodesktop -singleCompThread  > glbio2013_run_$1_update_after_del_pickers_terminal_output <<MATLAB_ENV
 % The below works like a script m-file between MATLAB_ENVs
 cd('targeted_deconv/QuantMetabMap');
 warning('off','MATLAB:RandStream:GetDefaultStream');
