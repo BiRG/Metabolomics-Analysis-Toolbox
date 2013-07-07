@@ -32,7 +32,7 @@ function edited_data = GLBIO2013_remove_peak_pickers_from_data( peak_pickers, da
 % Authors
 % -------------------------------------------------------------------------
 %
-% Eric Moyer (eric_moyer@yahoo.com) June 2013
+% Eric Moyer (eric_moyer@yahoo.com) July 2013
 
 invalid_picker = cellfun(@(p) ~any(strcmp(p, GLBIO2013Deconv.peak_picking_method_names)), peak_pickers);
 if any(invalid_picker)
