@@ -31,13 +31,6 @@ for i = 1:length(fields)
     assertEqual(d1.(f),d2.(f),sprintf('Field %s should be equal',f));
 end
 
-function idx = picker_idx(str)
-% Usage: idx = picker_idx(str)
-%
-% Returns a unique index for str in the list of peak-picker names. If str
-% is not in the list, returns [].
-idx = find(strcmp(str, GLBIO2013Deconv.peak_picking_method_names));
-
 
 function idxs = indices_without_peak_pickers(picker_names)
 
