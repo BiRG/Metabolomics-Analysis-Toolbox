@@ -15,7 +15,7 @@ function ensure_test_data_file_exists
 % create the test data file
 if ~exist(filename_for_test_data,'file')
     old_rng = RandStream.getGlobalStream();
-    RandStream.setGlobalStream(RandStream('mt19937ar','Seed',1288700689));
+    RandStream.setGlobalStream(RandStream('mt19937ar','Seed',1288700692));
     datum1 = GLBIO2013Datum(1); %#ok<NASGU>
     datum2 = GLBIO2013Datum(1.5); %#ok<NASGU>
     save(filename_for_test_data,'datum1','datum2');
@@ -96,6 +96,9 @@ function test_update_correctly_restores_missing_picked_peaks %#ok<DEFNU>
 ensure_test_data_file_exists;
 load(filename_for_test_data);
 
+old_rng = RandStream.getGlobalStream();
+RandStream.setGlobalStream(RandStream('mt19937ar','Seed',128870068));
+
 censored_deconvs = datum1.deconvolutions(3:end);
 censored1 = GLBIO2013Datum.dangerous_constructor(datum1.spectrum_peaks, ...
     datum1.spectrum_width, censored_deconvs, datum1.resolution, ...
@@ -113,3 +116,5 @@ censored2 = GLBIO2013Datum.dangerous_constructor(datum2.spectrum_peaks, ...
 updated_censored2 = censored2.updateDeconvolutions;
 
 assertDatumObjectsEqual(datum2, updated_censored2);
+
+RandStream.setGlobalStream(old_rng);
