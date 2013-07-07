@@ -33,7 +33,15 @@ function edited_data = GLBIO2013_remove_peak_pickers_from_data( peak_pickers, da
 %
 % Eric Moyer (eric_moyer@yahoo.com) June 2013
 
-
-
+edited_data(length(data)) = data(length(data));
+for datum_idx = 1:length(data)
+    datum = data(datum_idx);
+    deconv = datum.deconvolutions;
+    doesnt_match = arrayfun(@(d) ~any(strcmp(d.peak_picker_name, peak_pickers)), deconv);
+    edited_data(datum_idx) = GLBIO2013Datum.dangerous_constructor( ...
+        datum.spectrum_peaks, datum.spectrum_width, ...
+        deconv(doesnt_match), datum.resolution, ...
+        datum.spectrum_interval, datum.spectrum, ...
+        datum.spectrum_snr, datum.id);
 end
 
