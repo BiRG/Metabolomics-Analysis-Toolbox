@@ -188,6 +188,19 @@ classdef GLBIO2013Deconv
             str = 'dsp_smallest_peak_first';
         end
         
+        function str = dsp_smallest_peak_first_correct_max_width
+        % Constant used to signify the smallest peak first deconvolution
+        % starting point (DSP) method using the correct maximum peak width
+            str = 'dsp_smallest_peak_first_first_correct_max_width';
+        end
+        
+        function str = dsp_smallest_peak_first_max_width_too_large
+        % Constant used to signify the smallest peak first deconvolution
+        % starting point (DSP) method using a maximum peak width that is
+        % slightly too large
+            str = 'dsp_smallest_peak_first_first_max_width_too_large';
+        end
+        
 
         function strs = deconvolution_starting_point_method_names
         % Lists the strings that can be used to identify a
@@ -195,7 +208,9 @@ classdef GLBIO2013Deconv
         % search space
             strs = {...
                 GLBIO2013Deconv.dsp_anderson(), ...
-                GLBIO2013Deconv.dsp_smallest_peak_first()}; 
+                GLBIO2013Deconv.dsp_smallest_peak_first(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first_correct_max_width(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large()}; 
         end
         
         function obj = dangerous_constructor(peak_picker_name, ...
