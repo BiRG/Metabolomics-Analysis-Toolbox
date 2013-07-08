@@ -315,6 +315,11 @@ classdef GLBIO2013Deconv
                 obj.picked_locations = picked_locations;
 
                 % Set starting point
+                summit_methods = {...
+                    GLBIO2013Deconv.dsp_smallest_peak_first(), ...
+                    GLBIO2013Deconv.dsp_smallest_peak_first_correct_max_width(), ...
+                    GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large()}; 
+
                 x = spectrum.x;
                 model = RegionalSpectrumModel; % Use default model
                 if ~isempty(obj.picked_locations)
@@ -327,7 +332,21 @@ classdef GLBIO2013Deconv
                                 obj.picked_locations, ...
                                 1:length(x), obj.picked_locations);
 
-                        case GLBIO2013Deconv.dsp_smallest_peak_first
+                        case summit_methods
+                            switch( starting_point_name )
+                                case GLBIO2013Deconv.dsp_smallest_peak_first
+                                    % Leave the default rough max peak
+                                    % width
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_correct_max_width
+                                    w = nssd_data_dist('width');
+                                    model.max_rough_peak_width = max([w.max]); 
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large
+                                    model.max_rough_peak_width = 0.05; 
+                                otherwise
+                                    error('GLBIO2013:unknown_dsp_method', ...
+                                        'Unknown ssmallest peak first starting point method method "%s" specified.',...
+                                        starting_point_name);
+                            end
                             samples_per_ppm = length(x)/(max(x)-min(x));
                             window_samples = ceil(model.rough_peak_window_width * samples_per_ppm);
                             assert(window_samples >= 4);
