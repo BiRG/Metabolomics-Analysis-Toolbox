@@ -1,6 +1,6 @@
-function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, max_width, num_neighbors, progress_func)
+function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, max_width, num_neighbors, min_width_outlier_percentile,progress_func)
 %Computes starting values for the deconvolution fitting routines using dirty_deconv
-% Usage: [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, max_width, num_neighbors, progress_func)
+% Usage: [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, peak_xs, max_width, num_neighbors, min_width_outlier_percentile,progress_func)
 %
 % -------------------------------------------------------------------------
 % Input arguments
@@ -24,6 +24,10 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 %
 % num_neighbors The number of neighbor samples used in the dirty
 %            deconvolution
+%
+% min_width_outlier_percentile The width boundary is calculated using a
+%            modification of a standard formula for extreme outliers. 
+%            Normally extreme outliers are 75th percentile + 3*IQR
 %
 % progress_func (optional) A function handle. It is called with parameters: 
 %            progres_func(frac_done, pass_num, peak_num). frac_done is the 
@@ -115,7 +119,8 @@ assert(length(bounds) == length(locs)+1);
 % initial estimates were surpassingly bad.
 trial_widths = [peaks.half_height_width];
 if length(trial_widths) > 1
-    outlier_width = prctile(trial_widths, 75)+3*iqr(trial_widths);
+    outlier_width = prctile(trial_widths, min_width_outlier_percentile)...
+        +3*iqr(trial_widths); %Remember to update main comment
 else
     assert(length(trial_widths) == 1); % This is ensured because there is at least 1 loc and there are the same number of trial widths as locs
     outlier_width = 2*trial_widths(1); % If there is only one peak, let the main optimization routine grow it twice as wide, if necessary
