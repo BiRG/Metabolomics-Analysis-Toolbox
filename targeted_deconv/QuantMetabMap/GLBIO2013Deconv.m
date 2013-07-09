@@ -184,21 +184,33 @@ classdef GLBIO2013Deconv
         end
         
         function str = dsp_smallest_peak_first
-        % Constant used to signify the smallest peak first deconvolution starting point (DSP) method
+        % Constant used to signify the smallest peak first deconvolution 
+        % starting point (DSP) method which bases final max width on 75th
+        % percentile of estimated widths
             str = 'dsp_smallest_peak_first';
         end
         
-        function str = dsp_smallest_peak_first_correct_max_width
-        % Constant used to signify the smallest peak first deconvolution
-        % starting point (DSP) method using the correct maximum peak width
-            str = 'dsp_smallest_peak_first_first_correct_max_width';
+        function str = dsp_smallest_peak_first_100_pctile
+        % Constant used to signify the smallest peak first deconvolution 
+        % starting point (DSP) method which bases final max width on the 
+        % maximum of estimated widths
+            str = 'dsp_smallest_peak_first_100_pctile';
         end
         
         function str = dsp_smallest_peak_first_max_width_too_large
         % Constant used to signify the smallest peak first deconvolution
         % starting point (DSP) method using a maximum peak width that is
-        % slightly too large
+        % slightly too large and bases final max width on 75th
+        % percentile of estimated widths
             str = 'dsp_smallest_peak_first_first_max_width_too_large';
+        end
+        
+        function str = dsp_smallest_peak_first_100_pctile_max_width_too_large
+        % Constant used to signify the smallest peak first deconvolution
+        % starting point (DSP) method using a maximum peak width that is
+        % slightly too large and bases final max width on the maximum of 
+        % estimated widths
+            str = 'dsp_smallest_peak_first_first_100_pctile_max_width_too_large';
         end
         
 
@@ -209,8 +221,9 @@ classdef GLBIO2013Deconv
             strs = {...
                 GLBIO2013Deconv.dsp_anderson(), ...
                 GLBIO2013Deconv.dsp_smallest_peak_first(), ...
-                GLBIO2013Deconv.dsp_smallest_peak_first_correct_max_width(), ...
-                GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large()}; 
+                GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()}; 
         end
         
         function obj = dangerous_constructor(peak_picker_name, ...
@@ -317,8 +330,9 @@ classdef GLBIO2013Deconv
                 % Set starting point
                 summit_methods = {...
                     GLBIO2013Deconv.dsp_smallest_peak_first(), ...
-                    GLBIO2013Deconv.dsp_smallest_peak_first_correct_max_width(), ...
-                    GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large()}; 
+                    GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile(), ...
+                    GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large(), ...
+                    GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()}; 
 
                 x = spectrum.x;
                 model = RegionalSpectrumModel; % Use default model
@@ -334,17 +348,19 @@ classdef GLBIO2013Deconv
 
                         case summit_methods
                             switch( starting_point_name )
-                                case GLBIO2013Deconv.dsp_smallest_peak_first
-                                    % Leave the default rough max peak
-                                    % width
-                                case GLBIO2013Deconv.dsp_smallest_peak_first_correct_max_width
-                                    w = nssd_data_dist('width');
-                                    model.max_rough_peak_width = max([w.max]); 
-                                case GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large
-                                    model.max_rough_peak_width = 0.05; 
+                                case GLBIO2013Deconv.dsp_smallest_peak_first()
+                                    final_max_width_pctile = 75;
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile()
+                                    final_max_width_pctile = 100;
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large()
+                                    final_max_width_pctile = 75;
+                                    model.max_rough_peak_width = 0.05;
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()
+                                    final_max_width_pctile = 100;
+                                    model.max_rough_peak_width = 0.05;
                                 otherwise
                                     error('GLBIO2013:unknown_dsp_method', ...
-                                        'Unknown ssmallest peak first starting point method method "%s" specified.',...
+                                        'Unknown smallest peak first starting point method method "%s" specified.',...
                                         starting_point_name);
                             end
                             samples_per_ppm = length(x)/(max(x)-min(x));
@@ -358,7 +374,8 @@ classdef GLBIO2013Deconv
                                     (x, spectrum.Y, min(x), ...
                                     max(x), picked_x, ...
                                     model.max_rough_peak_width, ...
-                                    window_samples, 75, @do_nothing);
+                                    window_samples, final_max_width_pctile,...
+                                    @do_nothing);
                             if length(obj.starting_point) ~= length(picked_x)*4
                                 save('tmp_exception.mat', ...
                                     'samples_per_ppm', 'x', 'model', ...
