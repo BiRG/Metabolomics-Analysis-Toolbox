@@ -27,7 +27,12 @@ function [BETA0,lb,ub] = deconv_initial_vals_dirty(x,y, region_min, region_max, 
 %
 % min_width_outlier_percentile The width boundary is calculated using a
 %            modification of a standard formula for extreme outliers. 
-%            Normally extreme outliers are 75th percentile + 3*IQR
+%            Normally extreme outliers are 75th percentile + 3*IQR. We
+%            replace 75th with min_width_outlier_percentile. If you are
+%            more confident in the initial estimates, you can set this
+%            higher. If you are less confident, set it lower. Initial
+%            experiments indicate that setting this to 100 (i.e. the max)
+%            will give good results.
 %
 % progress_func (optional) A function handle. It is called with parameters: 
 %            progres_func(frac_done, pass_num, peak_num). frac_done is the 
