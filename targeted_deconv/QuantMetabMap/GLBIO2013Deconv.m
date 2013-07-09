@@ -202,7 +202,7 @@ classdef GLBIO2013Deconv
         % starting point (DSP) method using a maximum peak width that is
         % slightly too large and bases final max width on 75th
         % percentile of estimated widths
-            str = 'dsp_smallest_peak_first_first_max_width_too_large';
+            str = 'dsp_smallest_peak_first_max_width_too_large';
         end
         
         function str = dsp_smallest_peak_first_100_pctile_max_width_too_large
@@ -210,7 +210,7 @@ classdef GLBIO2013Deconv
         % starting point (DSP) method using a maximum peak width that is
         % slightly too large and bases final max width on the maximum of 
         % estimated widths
-            str = 'dsp_smallest_peak_first_first_100_pctile_max_width_too_large';
+            str = 'dsp_smallest_peak_first_100_pctile_max_width_too_large';
         end
         
 
