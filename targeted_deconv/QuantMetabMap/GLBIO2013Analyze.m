@@ -706,6 +706,48 @@ end
 % 100%ile width bound setting. I need to modify it to display all the dsps
 %
 % Each figure is a different peak picker
+%
+% Analyzing the preliminary results for 100%ile and max_width too large:
+%
+% A later analysis sees width estimate on smoothed local max with
+% congestions 4,6,7, and 8 (and possibly 5) as being better in Anderson.
+% Examining the distributions, there seems to be nothing special about 4-8.
+% In all, there is a substantial overestimate of the widest peaks,
+% with the overestimate decreasing as congestion decreases. The only
+% difference is that in 4-8, the summit distribution produces even more
+% large peak estimates than the width distribution.
+%
+% This is a change from the 75%ile and max_width too small version where
+% the widest widths were under-represented in summit and overrepresented in
+% Anderson. In contrast summit had an overrepresentation of the middle
+% widths for 75/small.
+%
+% The story for heights is almost the opposite. 100/large and anderson both
+% overrepresent the small peaks. I am guessing that this is because many
+% smoothed local max frequently gives small noise peaks as starting points.
+% My opinion is confirmed by the fact that the fact that this
+% overrepresentation in the summit goes away for when the picked peaks are
+% aligned with actual peak locations. 
+%
+% This also explains the width problems. The noise peaks will be on the
+% baseline - which is flat. So a good algorithm will evaluate them as
+% being very wide. As the congestion increases, there are less noise peaks
+% on the baseline - and so less excess small height and large width peaks.
+%
+% Now, what about area:
+%
+% First, let's look at area for the gold-standard 100/large.
+%
+% At full congestion, there is a tendency to underestimate the ends and
+% overestimate the middle. Anderson's is less spiky. I see no obvious
+% reason for any of it. I'm going to look at the conditional distributions
+% or just the area-aligned peaks to see if I can make any sense of
+% things. 
+%
+% I note that the widths have a big peak in the widest category and
+% that the areas have an underrepresentation.  The areas are
+% overrepresented in the middle.
+
 parameters_to_plot = [1:4,5:2:10];
 %assert(length(dsp_names) == 2);
 assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
@@ -993,6 +1035,8 @@ end
 % probabilities of improvement. I shifted the y axis to be 0 for detriment,
 % 1 for unknown and 2 for improvement - this makes the area plot work out
 % right.
+%
+% Each figure corresponds to a particular dsp method
 parameters_to_plot = [1:4,5:2:10];
 anderson_idx = 1;
 assert(strcmp(dsp_names{anderson_idx},GLBIO2013Deconv.dsp_anderson));
@@ -1018,6 +1062,10 @@ for summit_idx = 2:length(dsp_names)
 end
 clear('parameters_to_plot');
 
+%% Find 
+% Areas in the middle bin are overestimated by my 100/large algorithm in 
+% the most congested spectra. So, I'll find a few highly congested spectra 
+% with areas in the middle bin and see what seems to be badly estimated.
 
 %% Clean up temp variables
 clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v','w','s','figure_num','dsp_color','h');
