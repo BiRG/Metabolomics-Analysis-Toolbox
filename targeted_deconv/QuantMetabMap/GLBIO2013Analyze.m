@@ -1243,6 +1243,202 @@ end
 
 clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corrected','datum','p','con','params');
 
+
+%% Calculate correlations on deconvolutions separated by congestion
+% Now, I will calculate the correlations within parameters for each
+% deconvolution method, separating them also by congestion (so that the
+% correlations actually in the original data don't show up)
+%
+% Note that for the Bonferroni-holm corrections in the p-values, I only do
+% the p-values in the particular deconvolution/congestion combination -
+% thus there is a 0.05 alpha in each combination, not over all correlations
+% calculated.
+%
+% This correction is reasonable because I can consider each deconvolution/
+% congestion combination a separate experiment in which I wish to know 
+% whether these things are correlated
+
+% Count the number of peaks in the all datum objects
+num_deconv = length(glbio_combined_results(1).deconvolutions);
+tot_peaks = zeros(num_deconv,num_congestions);
+for deconv_idx = 1:num_deconv
+    for res_idx = 1:length(glbio_combined_results)
+        datum = glbio_combined_results(res_idx);
+        con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+        tot_peaks(deconv_idx, con) = tot_peaks(deconv_idx, con) + length(datum.deconvolutions(deconv_idx).peaks);
+    end
+end
+
+% Make each row contain the parameters for 1 peak and each column the
+% values for a given parameter (in the order they are returned by the
+% GaussLorentzPeak.property_array function)
+params = arrayfun(@(tot) nan(tot, 4),tot_peaks,'uniformoutput',false);
+prev_row = zeros(num_deconv,num_congestions); % Used for storing the last valid row
+for res_idx = 1:length(glbio_combined_results)
+	datum = glbio_combined_results(res_idx);
+	con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+    for deconv_idx = 1:num_deconv
+        num_peaks = length(datum.deconvolutions(deconv_idx).peaks);
+        p = params{deconv_idx, con};
+        p(prev_row(deconv_idx, con)+1:prev_row(deconv_idx, con)+num_peaks,:) ...
+            = reshape( datum.deconvolutions(deconv_idx).peaks.property_array, ...
+            4, num_peaks)';
+        params{deconv_idx, con} = p;
+        prev_row(deconv_idx, con) = prev_row(deconv_idx, con) + num_peaks;
+    end
+end
+
+% Calculate the correlations
+deconv_param_cors = cell(num_deconv,num_congestions);
+deconv_param_cors_pval = deconv_param_cors;
+for deconv_idx = 1:num_deconv
+    for con=1:num_congestions
+        [cors, pval] = corr(params{deconv_idx, con},params{deconv_idx, con},'type','spearman');
+        % Do a bonferroni-holm correction on the values from the lower triangle of
+        % the p-value matrix (these are the only tests we are looking at - we know
+        % the diagonal is correlated and the upper triangle is redundant)
+        indices_to_correct = [2,3,4,7,8,12];
+        uncorrected = pval(indices_to_correct);
+        corrected = bonf_holm(uncorrected,0.05);
+        pval(indices_to_correct) = corrected;
+        pval = pval';
+        pval(indices_to_correct) = corrected;
+
+        deconv_param_cors{deconv_idx, con} = cors;
+        deconv_param_cors_pval{deconv_idx, con} = pval;
+    end
+end
+
+clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corrected','datum','p','con','deconv_idx','pval');
+
+%% Display which correlations are present in each deconvolution
+%
+% For each deconvolution, congestion combination, display which
+% correlations are present using M, G, L, and X for Height (magnitude),
+% Width at half-height (Gamma), Lorentzianness, and Mode location.
+%
+% Since I am looking with the purpose of fixing the area problems in the
+% gold-standard, I limit the printing to the gold standard. (I actually
+% printed out all of them earlier, but it was too long. Interestingly,
+% things become MUCH more correlated for the smoothed-local max)
+%
+% Note that this is not 5% alpha - alpha is actually something greater due
+% to uncorrected multiple testing bias. I left it like this because I'd
+% rather not miss an actual correlation than investigate a non-existent
+% correlation and because it was easier to just leave the code, so it saved
+% me time with respect to yanking all the p-values out of their matrices,
+% doing the correction, and then putting them back in.
+%
+% For summit 100/large, the only spurious correlations in the
+% mid-congestion area are a correlation between width and lorentzianness.
+% Then at the highest levels of congestion, you see a correlation between
+% height and width and height and lorentzianness. I can interpret the
+% highly congested height-width division as a failure to distinguish two
+% overlapped peaks correctly and one becomes much larger and wider leaving
+% the other smaller and narrower. Since lorentzianness makes peaks wider in
+% the middle, it may have a similar role. I don't know what is happening
+% with the width and lorentzianness or why it shows up only in the
+% mid-congestion (5-7) range
+%
+% This suggests that in looking at the joint distribution for the original
+% and deconvolved spectra, I should focus on Height-Width and
+% Width-Lorentzianness and maybe glance at Height-Lorentzianness
+names = {'MG','ML','MX','GL','GX','LX'};
+for deconv_idx = 1:num_deconv
+    d = glbio_combined_results(1).deconvolutions(deconv_idx);
+    dname = sprintf('%s %s', d.peak_picker_name, d.starting_point_name);
+    if strcmp(d.peak_picker_name, GLBIO2013Deconv.pp_gold_standard)
+        for con=1:num_congestions
+            p = deconv_param_cors_pval{deconv_idx, con};
+            selected_p = p([2,3,4,7,8,12]);
+            sig_names = names(selected_p < 0.05);
+            fprintf('%s (%d):', dname, con);
+            for i = 1:length(sig_names)
+                fprintf(' %s', sig_names{i});
+            end
+            fprintf('\n');
+        end
+    end
+end
+clear('names','p','i','sig_names','selected_p','dname','d','deconv_idx','con');
+
+%% Plot Width-Lorentzianness joint distribution
+% Plot width-lorentzianness joint distribution to see what might be going
+% wrong
+%
+% Result: no clear relationship
+
+% Set deconv_idx to be gold-standard with my 100/large starting point and
+% double check that that is the correct index
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+% Calculate the x limits to fit the widths confortably
+all_widths = [];
+for con=1:num_congestions
+    p=params{deconv_idx, con};
+    all_widths = [all_widths; p(:,2)]; %#ok<AGROW>
+end
+xmax = prctile(all_widths, 99);
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    scatter(p(:,2),p(:,3));
+    xlabel('Width');
+    ylabel('Lorentzianness');
+    ylim([0,1]);
+    xlim([0,xmax]);
+    title(sprintf('Width vs Lorentzianness for congestion %d',con));
+end
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax');
+
+%% Plot Width-Lorentzianness joint rank distribution
+% There is a lot of clustering at certain values. This may make it hard to
+% see where the correlation is actually hiding. So, I will replace
+% everything by its rank order.
+%
+% This was even more clearly uncorrelated - in fact, (except for congestion
+% 10) just about everything looks like nearly perfect random noise.
+
+% Set deconv_idx to be gold-standard with my 100/large starting point and
+% double check that that is the correct index
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    npeaks=size(p,1);
+    scatter(tiedrank(p(:,2))/npeaks,tiedrank(p(:,3))/npeaks);
+    xlabel('Width');
+    ylabel('Lorentzianness');
+    title(sprintf('Width vs Lorentzianness for congestion %d',con));
+end
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+%% Delete params variable
+% I kept the params variable around for plotting
+clear('params');
+
 %% Calculate the parameters
 % Start alignment-based analysis
 pe_list = GLBIO2013_calc_param_error_list(glbio_combined_results);
