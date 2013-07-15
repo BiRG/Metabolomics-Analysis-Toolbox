@@ -1070,6 +1070,174 @@ clear('parameters_to_plot');
 %% Clean up temp variables
 clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v','w','s','figure_num','dsp_color','h');
 
+%% Are the original peak parameters correlated?
+%
+% The 100/large algorithm calculates inferiorly distributed areas, but it
+% produces all of the components of those areas with improved distributions
+% over Anderson's method, so what is going on? It is obvious that the
+% distributional problem is in the joint distribution. (Or that the random
+% errors of the Anderson starting point are somehow getting the right 
+% distribution.)
+%
+% The easiest problem with the joint distribution to diagnose is spurious
+% correlations. This problem is also quite possible in my mind, so it is
+% reasonable to start working there.
+%
+% Doing raw spearman correlations on the May 7'th data, I get the following
+% matrix:
+%
+%    Height   Width    Lor         Loc
+%    1.0000   -0.0118   -0.0302    0.0642
+%   -0.0118    1.0000    0.0234    0.0050
+%   -0.0302    0.0234    1.0000    0.0006
+%    0.0642    0.0050    0.0006    1.0000
+%
+% With the following p-values for rejecting "no correlation":
+%
+%         0    0.2793    0.0056    0.0000
+%    0.2793         0    0.0321    0.6462
+%    0.0056    0.0321         0    0.9549
+%    0.0000    0.6462    0.9549         0
+%
+% After a holm bonferroni correction
+%
+%         0    0.8379    0.0278    0.0000
+%    0.8379         0    0.1282    1.2923
+%    0.0278    0.1282         0    1.2923
+%    0.0000    1.2923    1.2923         0
+%
+% This means that height is signficantly correlated with lorentzianness and
+% location. A correlation between width and lorentzianness loses
+% signficance after the multiple-test correction.
+%
+% The two height correlations can be explained by the method of chosing
+% height. Height is created by dividing the height of all the peaks by the
+% height of the largest sample. If spectra are less congested, then their
+% highest point will less likely be the result of overlap. Thus their final
+% height will be slightly higher (since an overlapped peak's highest point
+% is higher than either of its components). Since the highest locations are
+% only present in the broadest (least congested) spectra, there will be a
+% positive correlation between location and height.
+%
+% I can test this by redoing the correlation calculation separately on each 
+% congestion. If the correlation with location disappears, my explanation
+% is correct.
+%
+% The correlation with lorentzianness is harder to explain. See below for
+% my plot
+
+% Count the number of peaks in the all datum objects
+tot_peaks = 0;
+for res_idx = 1:length(glbio_combined_results)
+    datum = glbio_combined_results(res_idx);
+    tot_peaks = tot_peaks + length(datum.spectrum_peaks);
+end
+
+% Make each row contain the parameters for 1 peak and each column the
+% values for a given parameter (in the order they are returned by the
+% GaussLorentzPeak.property_array function)
+params = nan(tot_peaks, 4);
+prev_row = 0; % Used for storing the last valid row
+for res_idx = 1:length(glbio_combined_results)
+    datum = glbio_combined_results(res_idx);
+    num_peaks = length(datum.spectrum_peaks);
+    params(prev_row+1:prev_row+num_peaks,:) = reshape( ...
+        datum.spectrum_peaks.property_array, 4, num_peaks)';
+    prev_row = prev_row + num_peaks;
+end
+
+% Calculate the correlations
+[orig_param_cors, orig_param_cors_pval] = corr(params,params,'type','spearman');
+
+% Do a bonferroni-holm correction on the values from the lower triangle of
+% the p-value matrix (these are the only tests we are looking at - we know
+% the diagonal is correlated and the upper triangle is redundant)
+indices_to_correct = [2,3,4,7,8,12];
+uncorrected = orig_param_cors_pval(indices_to_correct);
+corrected = bonf_holm(uncorrected,0.05);
+orig_param_cors_pval(indices_to_correct) = corrected;
+orig_param_cors_pval = orig_param_cors_pval';
+orig_param_cors_pval(indices_to_correct) = corrected;
+
+
+clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corrected','datum');
+
+%% Plot original height versus location
+scatter(params(:,4),params(:,1)); ylabel('Height'); xlabel('Location');
+
+%% Plot original height versus lorentzianness
+% It is not clear why lorentzianness has a negative relation with height.
+% There seems to be a significant darkening of the lower half of the height
+% graph near 0.7 but I don't know what is happening. May be things will
+% be clearer in the congestion-separated results.
+scatter(params(:,3),params(:,1)); ylabel('Height'); xlabel('Lorentzianness');
+
+%% Clear params variable
+% I wanted to look at a few quick scatter plots, so I kept the params
+% variable around
+clear('params');
+
+%% Calculate correlations separated by congestion
+% To test my theory on the reason for a correlation between height and
+% location and to make explicit a variable that might make it clear why
+% lorentzianness is related to height but width is not, I calculate the
+% correlation matrix on a per congestion basis
+%
+% After doing the calculations, the correlation goes away for
+% lorentzianness as well as location. This is despite the fact that I
+% didn't fix the multiple-test correction to take into account all of the
+% tests I was doing (since there are now 10 times the tests). I don't think
+% I lost significance because of small sample size - since the number of
+% peaks in each congestion is still 840.
+%
+% Maybe lorentzianness at certain congestions affected overlap and thus
+% peak height?
+
+% Count the number of peaks in the all datum objects
+tot_peaks = zeros(1,num_congestions);
+for res_idx = 1:length(glbio_combined_results)
+    datum = glbio_combined_results(res_idx);
+    con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+    tot_peaks(con) = tot_peaks(con) + length(datum.spectrum_peaks);
+end
+
+% Make each row contain the parameters for 1 peak and each column the
+% values for a given parameter (in the order they are returned by the
+% GaussLorentzPeak.property_array function)
+params = arrayfun(@(tot) nan(tot, 4),tot_peaks,'uniformoutput',false);
+prev_row = zeros(1,num_congestions); % Used for storing the last valid row
+for res_idx = 1:length(glbio_combined_results)
+    datum = glbio_combined_results(res_idx);
+    num_peaks = length(datum.spectrum_peaks);
+    con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+    p = params{con};
+    p(prev_row(con)+1:prev_row(con)+num_peaks,:) = reshape( ...
+        datum.spectrum_peaks.property_array, 4, num_peaks)';
+    params{con} = p;
+    prev_row(con) = prev_row(con) + num_peaks;
+end
+
+% Calculate the correlations
+orig_param_cors = cell(1,num_congestions);
+orig_param_cors_pval = orig_param_cors;
+for con=1:num_congestions
+    [cors, pval] = corr(params{con},params{con},'type','spearman');
+    % Do a bonferroni-holm correction on the values from the lower triangle of
+    % the p-value matrix (these are the only tests we are looking at - we know
+    % the diagonal is correlated and the upper triangle is redundant)
+    indices_to_correct = [2,3,4,7,8,12];
+    uncorrected = pval(indices_to_correct);
+    corrected = bonf_holm(uncorrected,0.05);
+    pval(indices_to_correct) = corrected;
+    pval = pval';
+    pval(indices_to_correct) = corrected;
+    
+    orig_param_cors{con} = cors;
+    orig_param_cors_pval{con} = pval;
+end
+
+clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corrected','datum','p','con','params');
+
 %% Calculate the parameters
 % Start alignment-based analysis
 pe_list = GLBIO2013_calc_param_error_list(glbio_combined_results);
