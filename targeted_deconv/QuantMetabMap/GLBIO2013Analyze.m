@@ -196,6 +196,9 @@ title(sprintf(['Distribution of maximum height after scaling\n'...
 xlabel('Maximum height in interval after scaling');
 ylabel('Count');
 
+%% Clear the stored max scaled heights
+clear('sampled_max_scaled_heights');
+
 
 %% Calculate bins for area, width, and height
 %
