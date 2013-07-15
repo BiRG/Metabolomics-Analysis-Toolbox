@@ -54,6 +54,8 @@ legend(handles, element_names, 'Location', 'NorthEast');
 
 maximize_figure(gcf, num_monitors);
 
+clear('starting_params','lb','ub', 'handles','x','extended_x','simple_peaks1','simple_peaks2','model','samples_per_ppm','window_samples','element_names');
+
 %% Calculate HistogramDistribution objects for the original parameter distributions
 %% Calculate simplified versions of the original parameter distributions with 7 bins
 % We don't have enough data to calculate a more detailed observed
