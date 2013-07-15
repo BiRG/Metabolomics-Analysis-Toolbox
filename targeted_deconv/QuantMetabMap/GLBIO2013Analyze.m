@@ -251,7 +251,7 @@ sampd_width_idx = find(strcmp('width',sampled_param_names));
 samp_dist_cache_filename = 'GLBIO2013Analyze_cached_sampled_distributions.mat';
 if exist(samp_dist_cache_filename,'file')
     load(samp_dist_cache_filename,'-mat');
-    assert(exist('orig_sampd_counts_7bin_pass_2','var'),'Delete %s, it is an old version',samp_dist_cache_filename);
+    assert(exist('orig_sampd_counts_7bin_pass_2','var')~=0,'Delete %s, it is an old version',samp_dist_cache_filename);
 else
     tic;
     wait_h = waitbar(0,'Calculating bins');
@@ -1152,7 +1152,7 @@ for res_idx = 1:length(glbio_combined_results)
 end
 
 % Calculate the correlations
-[orig_param_cors, orig_param_cors_pval] = corr(params,params,'type','spearman');
+[orig_param_cors, orig_param_cors_pval] = corr(params,params,'type','spearman'); %#ok<ASGLU>
 
 % Do a bonferroni-holm correction on the values from the lower triangle of
 % the p-value matrix (these are the only tests we are looking at - we know
@@ -1162,7 +1162,7 @@ uncorrected = orig_param_cors_pval(indices_to_correct);
 corrected = bonf_holm(uncorrected,0.05);
 orig_param_cors_pval(indices_to_correct) = corrected;
 orig_param_cors_pval = orig_param_cors_pval';
-orig_param_cors_pval(indices_to_correct) = corrected;
+orig_param_cors_pval(indices_to_correct) = corrected; %#ok<NASGU>
 
 
 clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corrected','datum');
