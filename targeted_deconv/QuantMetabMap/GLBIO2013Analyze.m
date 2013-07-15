@@ -1408,7 +1408,10 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax');
 % everything by its rank order.
 %
 % This was even more clearly uncorrelated - in fact, (except for congestion
-% 10) just about everything looks like nearly perfect random noise.
+% 10) just about everything looks like nearly perfect random noise. And
+% even congestion 10 has nothing clear to look at - it does appear, however
+% that the high width and high lorentzianness area is more densely
+% populated than the rest.
 
 % Set deconv_idx to be gold-standard with my 100/large starting point and
 % double check that that is the correct index
@@ -1434,6 +1437,154 @@ for con=1:num_congestions
     title(sprintf('Width vs Lorentzianness for congestion %d',con));
 end
 clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+%% Plot Height-Width joint rank distribution
+% Here I will plot the height against the width - there was a reported
+% correlation in the 100/large code for congestions 9 and 10
+%
+% Result: no one would confuse these for independent variables. In most of
+% the congestions, there is an over-representation of the broadest peaks
+% among the shortest. And in the most congested, it seems that the shortest
+% peaks are either assigned the broadest widths or the narrowest, with few
+% between. The source of the correlation seems to be the additional absence
+% of the broadest peaks among the highest peaks in the most congested
+% spectra. I do not know the reason for this, but the plot is almost empty
+% in its upper right hand corner for congestion 10 and it is a bit sparse
+% for congestion 9. 
+%
+% Hypothesis, I am overestimating the widths of small peaks and thus taking
+% their areas from small to medium, giving me the bulge in medium areas
+% that is killing the area KL scores.
+
+% Set deconv_idx to be gold-standard with my 100/large starting point and
+% double check that that is the correct index
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    npeaks=size(p,1);
+    scatter(tiedrank(p(:,1))/npeaks,tiedrank(p(:,2))/npeaks);
+    xlabel('Height');
+    ylabel('Width');
+    title(sprintf('Height vs Width for congestion %d',con));
+end
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+%% Plot Height-Width-Lorentzianness joint rank distribution
+% Here I will plot the height against width and lorentzianness - I'm still
+% trying to see if there is something else to improve.
+%
+% Result: I didn't find any obvious 3-variable relations. 
+
+% Set deconv_idx to be gold-standard with my 100/large starting point and
+% double check that that is the correct index
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    npeaks=size(p,1);
+    scatter3(tiedrank(p(:,1))/npeaks,tiedrank(p(:,2))/npeaks,tiedrank(p(:,3))/npeaks);
+    xlabel('Height');
+    ylabel('Width');
+    zlabel('Lorentzianness');
+    title(sprintf('Height vs Width vs Lorentzianness for congestion %d',con));
+end
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+%% Plot Height-Width joint rank distribution for Anderson
+% Here I will plot the height against the width when deconvolved with
+% Anderson's starting point. I'd like to check whether he has the same
+% problem as my method
+%
+% Result: How is this method beating me. For the smallest heights, its
+% estimate is almost perfectly correlated with the width, a fault that 
+% gets worse and worse up to the most congested. The smallest congestions
+% display an underestimate of the heights of the widths of the tallest
+% peaks.
+
+% Set deconv_idx to be anderson with my 100/large starting point and
+% double check that that is the correct index
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_anderson)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_anderson));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    npeaks=size(p,1);
+    scatter(tiedrank(p(:,1))/npeaks,tiedrank(p(:,2))/npeaks);
+    xlabel('Height');
+    ylabel('Width');
+    title(sprintf('Height vs Width for congestion %d',con));
+end
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+
+%% Plot Height-Lorentzianness joint rank distribution
+% Here I will plot the height against the lorentzianness - there was a 
+% reported correlation in the 100/large code for congestion 10
+%
+% Result: nothing but congestion 10 has any significant relation.
+% Congestion 10 seems a bit sparse in the low lorentzianness and low height
+% as well as sparse in a smaller area of high lorentzianness and high
+% height. Thus there is a slight negative correlation.
+
+% Set deconv_idx to be gold-standard with my 100/large starting point and
+% double check that that is the correct index
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    npeaks=size(p,1);
+    scatter(tiedrank(p(:,1))/npeaks,tiedrank(p(:,3))/npeaks);
+    xlabel('Height');
+    ylabel('Lorentzianness');
+    title(sprintf('Height vs Lorentzianness for congestion %d',con));
+end
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+
 
 %% Delete params variable
 % I kept the params variable around for plotting
