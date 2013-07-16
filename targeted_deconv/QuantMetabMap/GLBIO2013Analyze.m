@@ -348,6 +348,11 @@ clear('samp_dist_cache_filename');
 %
 % Below is the code I used for displaying the bins that differed by 1% or
 % more.
+%
+% Later, (near 16 July) I was trying to make area behave better and it
+% seemed that the errors that the methods had in area calculation were near
+% the variance in the estimation. So, I upped the number of samples to
+% 10,000 to reduce the error in the area estimate.
 diffs = cell(num_sampd_params, num_congestions);
 for param_idx=1:num_sampd_params 
     for congestion=1:num_congestions
@@ -758,8 +763,6 @@ parameters_to_plot = [1:4,5:2:10];
 assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
 anderson_idx = 1;
 summit_idx = 5;
-newProbs=@(orig,cnts) HistogramDistribution(...
-    orig.bounds, cnts./sum(cnts), orig.border_is_in_upper_bin);
 for pp_idx = 1:length(pp_names)
     figure(pp_idx);
     subplot_num = 0;
@@ -812,6 +815,86 @@ for pp_idx = 1:length(pp_names)
     end
 end
 clear('parameters_to_plot','anderson_idx','summit_idx', 'subplot_num','newProbs','h','handle');
+
+%% Plot just the area distributions
+% Since area is the part that needs work as of 15 July (despite the fact
+% that everything it depends on is better), I wrote a short snippet to plot
+% just the areas for the gold-star.
+%
+% What I see is two-fold. For most of the congestions, the distribution
+% difference is within the sampling differences for the "true"
+% distribution. True to form, Bayes keeps silent on these (whereas the
+% frequentist technique boldly declares one or another the winner through
+% most of the lower regions - of course, it IS measuring something
+% different - whether the mean is larger or smaller).
+%
+% Secondly, there does seem to be an under-representation of the smallest
+% areas in almost all congestions and an under-representation in the
+% largest at the very top. The under-representation of the smallest areas 
+% is consistent with having small peaks being too wide. I should
+% scatter-plot peak height versus area for the true peaks and the
+% deconvolved peaks to get another picture of how the final story should
+% look.
+
+parameters_to_plot = 5;
+assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+anderson_idx = 1;
+summit_idx = 5;
+newProbs=@(orig,cnts) HistogramDistribution(...
+    orig.bounds, cnts./sum(cnts), orig.border_is_in_upper_bin);
+pp_idx = 1;
+figure(pp_idx);
+subplot_num = 0;
+for param_idx = parameters_to_plot
+    for cong_idx = 1:num_congestions
+        subplot_num = subplot_num + 1;
+        subplot(2,num_congestions/2,subplot_num);
+
+        % Plot bin probabilities
+        po = param_probs{cong_idx, param_idx};
+        pa = param_counts_7bin{pp_idx, anderson_idx, cong_idx, param_idx};
+        if sum(pa) <= 0; continue; end;
+        pa = pa ./ sum(pa);
+        ps = param_counts_7bin{pp_idx, summit_idx, cong_idx, param_idx};
+        ps = ps ./ sum(ps);
+
+        h = [HistogramDistribution((0:7)/1,po), ...
+             HistogramDistribution((0:7)/1,pa), ...
+             HistogramDistribution((0:7)/1,ps)];
+        linespecs = {'k','r--','g--'};
+        handle = zeros(3,1);
+        hold off;
+        for i = 1:3
+            handle(i) = h(i).plot(linespecs{i});
+            hold on;
+        end
+
+        % Calculate prob anderson or summit is better
+        w_anderson = kl_method_works{pp_idx, anderson_idx, cong_idx, param_idx};
+        w_summit = kl_method_works{pp_idx, summit_idx, cong_idx, param_idx};
+        num_as_good_or_better = sum(w_summit <= w_anderson);
+        num_worse = sum(w_summit > w_anderson);
+        b = BinomialExperiment(num_as_good_or_better, num_worse, 0.5, 0.5);
+        sci = b.shortestCredibleInterval(0.95);
+
+        % Compute suffix indicating which is better
+        if b.prob > 0.75
+            suffix = ' (s)';
+        elseif b.prob < 0.25
+            suffix = ' (a)';
+        else
+            suffix = ' (?)';
+        end
+        title([param_names{param_idx} suffix]);
+
+        xlim([0,7]);
+        ylim([0.075,0.225]);
+        hold off;
+    end
+end
+
+clear('parameters_to_plot','anderson_idx','summit_idx', 'subplot_num','newProbs','h','handle');
+
 
 
 %% Plot probability that summit is better - method works prior equal prob
