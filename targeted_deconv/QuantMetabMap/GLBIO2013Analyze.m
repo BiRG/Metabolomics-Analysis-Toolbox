@@ -244,7 +244,7 @@ clear('sampled_max_scaled_heights');
 % These come from the maximizing_peak_area.nb Mathematica notebook, where
 % there are many more details as to how they were derived.
 num_congestions = 10;
-num_spectra_for_bins = 10000;
+num_spectra_for_bins = 9000;
 num_sampd_params = 3;
 sampled_param_names = {'area','height','width'};
 sampd_area_idx = find(strcmp('area',sampled_param_names));
@@ -286,7 +286,7 @@ else
         matlabpool
         isparallel = true;
     catch ex
-        isparalell = false;
+        isparallel = false;
     end 
     
     % Get the list of worker ids - assume everything running on same host
@@ -300,9 +300,9 @@ else
     clear worker_id;
 
     % Do the actual sampling in parallel
-    max_iterations_per_worker = ceil(num_congestions/num_workers);
-    workers_to_use = ceil(num_congestions/max_iterations_per_worker);
-    parfor (congestion = 1:num_congestions,workers_to_use)
+    %max_iterations_per_worker = ceil(num_congestions/num_workers);
+    %workers_to_use = ceil(num_congestions/max_iterations_per_worker);
+    parfor (congestion = 1:num_congestions)
         worker_id = getCurrentWorker();
         worker_id = worker_id.ProcessId;
         worker_idx = find(worker_id == worker_ids,1,'first');
@@ -373,7 +373,9 @@ else
 
     save(samp_dist_cache_filename, 'orig_sampd_dist', 'orig_sampd_7bin', 'orig_sampd_7bin_pass_2', 'orig_sampd_counts_7bin', 'orig_sampd_counts_7bin_pass_2', 'orig_sampd_7_hist_bin', 'orig_sampd_7_hist_bin_pass_2');
     clear('wait_h','congestion','param','param_idx','temp_dist','correct_bounds','newBnds','newProbs');
-    clear('iif','lb','ub','delta','start_cong','end_cong');
+    clear('tmp_osd','tmp_osd_7b','tmp_osd_7hb','tmp_osd_7b2');
+    clear('tmp_osd_7hb2','tmp_osc_7b', 'tmp_osc_7b2');
+
 end
 clear('samp_dist_cache_filename');
 
