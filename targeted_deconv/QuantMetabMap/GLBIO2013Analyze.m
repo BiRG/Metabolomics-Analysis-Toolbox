@@ -224,6 +224,9 @@ clear('sampled_max_scaled_heights');
 % On the machine at work, 10 congestions and 1000 spectra requires 400
 % seconds (that is, a bit under 7 minutes).
 %
+% After parallelizing, that same machine (but all 4 cores) does the job in
+% 147 seconds (or 2.5 minutes).
+%
 % The sampled distributions only estimate the maximum and minimum using the
 % maximum and minimum of the sample - not the best estimator. Since I know
 % the original distributions and the method for calculating the height and
@@ -241,7 +244,7 @@ clear('sampled_max_scaled_heights');
 % These come from the maximizing_peak_area.nb Mathematica notebook, where
 % there are many more details as to how they were derived.
 num_congestions = 10;
-num_spectra_for_bins = 5000;
+num_spectra_for_bins = 10000;
 num_sampd_params = 3;
 sampled_param_names = {'area','height','width'};
 sampd_area_idx = find(strcmp('area',sampled_param_names));
@@ -253,8 +256,7 @@ if exist(samp_dist_cache_filename,'file')
     load(samp_dist_cache_filename,'-mat');
     assert(exist('orig_sampd_counts_7bin_pass_2','var')~=0,'Delete %s, it is an old version',samp_dist_cache_filename);
 else
-    tic;
-    wait_h = waitbar(0,'Calculating bins');
+    start_time=tic;
     orig_sampd_dist = cell(num_sampd_params,num_congestions);
     orig_sampd_7bin = cell(num_sampd_params,num_congestions);
     orig_sampd_7bin_pass_2 = cell(num_sampd_params,num_congestions);
@@ -278,56 +280,100 @@ else
         orig.bounds, cnts./sum(cnts), orig.border_is_in_upper_bin);
     
     stps = 11; % Number of steps to be done per congestion
-    for congestion = 1:num_congestions
-        waitbar((0+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Generating spectra for congestion %d',congestion));
+    
+    % Start the workers
+    try
+        matlabpool
+        isparallel = true;
+    catch ex
+        isparalell = false;
+    end 
+    
+    % Get the list of worker ids - assume everything running on same host
+    spmd
+        worker_id = getCurrentWorker(); 
+        worker_id = worker_id.ProcessId;
+    end
+    worker_ids = zeros(size(worker_id));
+    for i = 1:length(worker_id); worker_ids(i)=worker_id{i}; end
+    num_workers = length(worker_id);
+    clear worker_id;
+
+    % Do the actual sampling in parallel
+    max_iterations_per_worker = ceil(num_congestions/num_workers);
+    workers_to_use = ceil(num_congestions/max_iterations_per_worker);
+    parfor (congestion = 1:num_congestions,workers_to_use)
+        worker_id = getCurrentWorker();
+        worker_id = worker_id.ProcessId;
+        worker_idx = find(worker_id == worker_ids,1,'first');
+        
+        fprintf('%d: Generating spectra for congestion %d - %2.1f%% @ %4.1f minutes\n',worker_idx, congestion, 100*(0+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
         param=cell(3); % area, height, width
         [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
 
+        % Temporaries to be used so matlab doesn't get confused about
+        % indexing
+        tmp_osd = cell(1,num_sampd_params); % temp for orig_sampd_dist
+        tmp_osd_7b = cell(1,num_sampd_params); % temp for orig_sampd_7bin
+        tmp_osd_7hb = cell(1,num_sampd_params); % temp for orig_sampd_7_hist_bin
+        tmp_osd_7b2 = cell(1,num_sampd_params); % temp for orig_sampd_7bin_pass_2
+        tmp_osd_7hb2 = cell(1,num_sampd_params); % temp for orig_sampd_7_hist_bin_pass_2
+        tmp_osc_7b = cell(1, num_sampd_params); % temp for orig_sampd_counts_7bin
+        tmp_osc_7b2 = cell(1, num_sampd_params); % temp for orig_sampd_counts_7bin_pass_2
+        
+        % Bin parameters
         for param_idx = 1:num_sampd_params
-            waitbar((param_idx+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Binning params for congestion %d',congestion));
-            orig_sampd_dist{param_idx, congestion} = HistogramDistribution.fromPoints(param{param_idx});
-            orig_sampd_dist{param_idx, congestion} = newBnds( ...
-                orig_sampd_dist{param_idx, congestion}, ...
-                correct_bounds(param_idx,:));
-            orig_sampd_7bin{param_idx, congestion} = orig_sampd_dist{param_idx, congestion}.rebinEqualProb(7);
-            orig_sampd_7_hist_bin{param_idx, congestion} = orig_sampd_dist{param_idx, congestion}.rebinEqualWidth(7);
+            fprintf('%d: Binning params for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(param_idx+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
+            tmp_osd{param_idx} = HistogramDistribution.fromPoints(param{param_idx});
+            tmp_osd{param_idx} = newBnds( tmp_osd{param_idx}, ...
+                correct_bounds(param_idx,:)); %#ok<PFBNS>
+            tmp_osd_7b{param_idx} = tmp_osd{param_idx}.rebinEqualProb(7);
+            tmp_osd_7hb{param_idx} = tmp_osd{param_idx}.rebinEqualWidth(7);
         end
 
-        waitbar((4+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Generating count spectra for congestion %d',congestion));
-        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
+        fprintf('%d: Generating count spectra for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(4+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
+        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/num_congestions, num_spectra_for_bins);
 
         for param_idx = 1:num_sampd_params
-            waitbar((4+param_idx+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Binning pass 2 params for congestion %d',congestion));
+            fprintf('%d: Binning pass 2 params for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(4+param_idx+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60)
             temp_dist = HistogramDistribution.fromPoints(param{param_idx});
             temp_dist = newBnds( temp_dist, correct_bounds(param_idx,:) );
-            orig_sampd_7bin_pass_2{param_idx, congestion} = temp_dist.rebinEqualProb(7);
-            orig_sampd_7_hist_bin_pass_2{param_idx, congestion} = temp_dist.rebinEqualWidth(7);            
+            tmp_osd_7b2{param_idx} = temp_dist.rebinEqualProb(7);
+            tmp_osd_7hb2{param_idx} = temp_dist.rebinEqualWidth(7);            
         end
 
-        waitbar((8+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Generating pass 2 count spectra for congestion %d',congestion));
+        fprintf('%d: Generating pass 2 count spectra for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(4+param_idx+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
         [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
+
         
         for param_idx = 1:num_sampd_params
-            waitbar((8+param_idx+stps*(congestion-1))/(stps*num_congestions), wait_h, sprintf('Counting pass 2 params for congestion %d',congestion));
-            orig_sampd_counts_7bin{param_idx, congestion} = orig_sampd_7bin{param_idx, congestion}.binCounts(param{param_idx});
-            assert(length(param{param_idx}) == sum(orig_sampd_counts_7bin{param_idx, congestion})); % No out-of-range parameters
-            orig_sampd_7bin{param_idx, congestion} = newProbs(...
-                orig_sampd_7bin{param_idx, congestion}, ...
-                orig_sampd_counts_7bin{param_idx, congestion});
+            fprintf('%d: Counting pass 2 params for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(8+param_idx+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
+            
+            tmp_osc_7b{param_idx} = tmp_osd_7b{param_idx}.binCounts(param{param_idx});
+            assert(length(param{param_idx}) == sum(tmp_osc_7b{param_idx})); % No out-of-range parameters
+            tmp_osd_7b{param_idx} = newProbs(tmp_osd_7b{param_idx}, ...
+                tmp_osc_7b{param_idx});
 
-            orig_sampd_counts_7bin_pass_2{param_idx, congestion} = orig_sampd_7bin_pass_2{param_idx, congestion}.binCounts(param{param_idx});
-            assert(length(param{param_idx}) == sum(orig_sampd_counts_7bin_pass_2{param_idx, congestion})); % No out-of-range parameters
-            orig_sampd_7bin_pass_2{param_idx, congestion} = newProbs(...
-                orig_sampd_7bin_pass_2{param_idx, congestion}, ...
-                orig_sampd_counts_7bin_pass_2{param_idx, congestion});
+            tmp_osc_7b2{param_idx} = tmp_osd_7b2{param_idx}.binCounts(param{param_idx});
+            assert(length(param{param_idx}) == sum(tmp_osc_7b2{param_idx})); % No out-of-range parameters
+            tmp_osd_7b2{param_idx} = newProbs(...
+                tmp_osd_7b2{param_idx}, ...
+                tmp_osc_7b2{param_idx});
         end
+        
+        orig_sampd_7bin(:, congestion) = tmp_osd_7b;
+        orig_sampd_dist(:, congestion) = tmp_osd;
+        orig_sampd_7_hist_bin(:, congestion) = tmp_osd_7hb;
+        orig_sampd_7bin_pass_2(:, congestion) = tmp_osd_7b2;
+        orig_sampd_7_hist_bin_pass_2(:, congestion) = tmp_osd_7hb2;
+        orig_sampd_counts_7bin(:, congestion) = tmp_osc_7b;
+        orig_sampd_counts_7bin_pass_2(:, congestion) = tmp_osc_7b2;
     end
-    fprintf('Done generating bins for area,height, and width. '); toc
-
-    delete(wait_h);
+    fprintf('Done generating bins for area,height, and width. '); toc(start_time)
 
     save(samp_dist_cache_filename, 'orig_sampd_dist', 'orig_sampd_7bin', 'orig_sampd_7bin_pass_2', 'orig_sampd_counts_7bin', 'orig_sampd_counts_7bin_pass_2', 'orig_sampd_7_hist_bin', 'orig_sampd_7_hist_bin_pass_2');
     clear('wait_h','congestion','param','param_idx','temp_dist','correct_bounds','newBnds','newProbs');
+    clear('iif','lb','ub','delta','start_cong','end_cong');
 end
 clear('samp_dist_cache_filename');
 
@@ -2839,7 +2885,7 @@ end
 % This peak is just a BAD fit. It is SO much larger than the maximum of the
 % spectrum in the area. Its size must be covering up for another mistake
 % elsewhere in the spectrum.
-%
+%%%\n
 % Figure 6: Bot loc, max param Anderson width crowding: 5 ... Result 35 Deconv 3 Peak 6
 % Very small peak under a much larger peak. Fitted an extremely wide peak.
 % I've seen anderson starting points do this before.
