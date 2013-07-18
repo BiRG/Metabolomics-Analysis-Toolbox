@@ -1980,9 +1980,322 @@ for con=1:num_congestions
 end
 clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
+%% Plot histogram of normal and deconvolved area distributions
+% Look at 100/large's histogram compared to the original. Due to the
+% existence of outilers, I derive the histogram bin locations from the
+% original data and then fit everything else into it. The concentration of
+% peaks in the small section of the graph led me to use log area rather
+% than area.
+%
+% By eye, except possibly in the highest concentrations, it appars that 
+% 100/large is uniformly better with exponentially sized bins. I will do
+% another plot with bin boundaries chosen according to the quantiles of the
+% original peaks.
+
+% Find the appropriate deconvolution
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+for ander_deconv_idx = 1:length(deconvs)
+	d = deconvs(ander_deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_anderson)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_anderson));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    deconv_areas = log(p(:,5));
+    p=params{ander_deconv_idx, con};
+    ander_deconv_areas = log(p(:,5));
+    p=orig_params{con};
+    orig_areas = log(p(:,5));
+    
+    npeaks=size(p,1);
+    hold off;
+    [orig_n,orig_xout]=hist(orig_areas,7); 
+    [deconv_n,deconv_xout]=hist(deconv_areas,orig_xout); 
+    [ander_deconv_n,ander_deconv_xout]=hist(ander_deconv_areas,orig_xout); 
+    orig_bar = bar(orig_xout,orig_n,'FaceColor','b','EdgeColor','none');
+    set(orig_bar,'barwidth',1);
+    hold on;
+    deconv_bar = bar(deconv_xout,deconv_n,'FaceColor','r','EdgeColor','none');
+    set(deconv_bar,'barwidth',0.6);
+    ander_deconv_bar = bar(ander_deconv_xout,ander_deconv_n,'FaceColor','g','EdgeColor','none');
+    set(ander_deconv_bar,'barwidth',0.3);
+    hold off;
+    handles = [orig_bar, deconv_bar, ander_deconv_bar];
+    legend(handles,{'Original','100/large','Anderson'},'Location','NorthEast');
+    %handles = [orig_bar, ander_deconv_bar];
+    %legend(handles,{'Original','Anderson'},'Location','NorthEast');
+    xlabel('log(Area)');
+    ylabel('Count');
+    xlim([-16,-2]);
+    title(sprintf('Histograms of original and deconvolved areas for congestion %d',con));
+end
+clear('t','deconv_areas','orig_areas','orig_n','orig_xout','orig_bars','deconv_n','deconv_xout','deconv_bars');
+clear('ander_deconv_n','ander_deconv_xout','ander_deconv_bars');
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+
+
+%% Plot histogram of normal and deconvolved area distributions
+% Look at 100/large's and Anderson's histograms compared to the original.
+% Due to the existence of outilers, I derive the histogram bin locations
+% from the original data and then fit everything else into it. I choose bin
+% boundaries according to the quantiles of the original peak areas.
+%
+% I calculated the KL divergence for the Anderson and 100/large methods so
+% I could see how the KL divergence matched up with my eye's evaluation of
+% method closeness.
+%
+% I note that changing the number of bins can have a substantial effect on
+% the KL divergences of both deconvolution methods. (Change num_bins to see
+% this).
+%
+% If I write the KL divergence winner as S or A for each of the 10
+% congestions I get
+% 
+% Bins  1  2  3  4  5  6  7  8  9 10
+% 7     S  S  S  S  S  A  S  S  A  A
+% 14    S  S  S  S  S  S  S  S  A  A
+% 28    S  S  S  S  S  S  S  S  S  A
+% 56    S  S  S  S  S  S  S  S  S  A
+% 
+% I can't use any more bins than 56 because at 56 one of the bins has no
+% areas from 100/large in the most congested set of spectra - this will
+% give it an infinite KL divergence.
+%
+% Of course, this is just an approximation to what I do above where I
+% derive the distribution of kl divergences from my beliefs about the
+% different parameter distributions.
+%
+% However, that this approximation is affected by the number of bins
+% suggests that it might be affecting the metric. I'm not sure of a good
+% criterion for choosing an optimum number of bins. I wonder if the 
+% Kolmogorov-Smirnov statistic would be more robust to number of bins. I
+% had avoided it because I remembered that it was not as sensitive to
+% diffrerences in distribution tails.
+
+
+% Find the appropriate deconvolution
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+for ander_deconv_idx = 1:length(deconvs)
+	d = deconvs(ander_deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_anderson)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_anderson));
+
+% Find centers of each septile of the original peak areas
+all_orig_areas = [];
+for con=1:num_congestions
+    p=orig_params{con};
+    all_orig_areas = [all_orig_areas; p(:,5)]; %#ok<AGROW>
+end
+num_bins = 7;
+assert(num_bins >= 1); % Needed so that there will be an upper and lower bound for each bin
+quantile_bound_fractions = 100.*(0:num_bins)./num_bins;
+quantile_bounds = prctile(all_orig_areas, quantile_bound_fractions);
+quantile_bounds(end) = nextAfter(quantile_bounds(end)); % Make bound infinitessimally greater than the maximum original value
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    deconv_areas = p(:,5);
+    p=params{ander_deconv_idx, con};
+    ander_deconv_areas = p(:,5);
+    p=orig_params{con};
+    orig_areas = p(:,5);
+    
+    npeaks=size(p,1);
+    hold off;
+    orig_n=histc(orig_areas, quantile_bounds); orig_n(end-1) = orig_n(end)+orig_n(end-1); orig_n(end) = [];
+    deconv_n=histc(deconv_areas, quantile_bounds); deconv_n(end-1) = deconv_n(end)+deconv_n(end-1); deconv_n(end) = [];
+    ander_deconv_n=histc(ander_deconv_areas,quantile_bounds); ander_deconv_n(end-1) = ander_deconv_n(end)+ander_deconv_n(end-1); ander_deconv_n(end) = [];
+    orig_bar = bar(orig_n,'FaceColor','b','EdgeColor','none');
+    set(orig_bar,'barwidth',1);
+    hold on;
+    deconv_bar = bar(deconv_n,'FaceColor','r','EdgeColor','none');
+    set(deconv_bar,'barwidth',0.6);
+    ander_deconv_bar = bar(ander_deconv_n,'FaceColor','g','EdgeColor','none');
+    set(ander_deconv_bar,'barwidth',0.3);
+    hold off;
+    handles = [orig_bar, deconv_bar, ander_deconv_bar];
+    legend(handles,{'Original','100/large','Anderson'},'Location','SouthWest');
+    %handles = [orig_bar, ander_deconv_bar];
+    %legend(handles,{'Original','Anderson'},'Location','SouthWest');
+    xlabel('Area');
+    ylabel('Count');
+    
+    orig_frac = orig_n ./ sum(orig_n);
+    deconv_kl = deconv_n ./ sum(deconv_n);
+    ander_deconv_kl = ander_deconv_n ./ sum(ander_deconv_n);
+    
+    deconv_kl = sum(orig_frac.*log(orig_frac./deconv_kl));
+    ander_deconv_kl = sum(orig_frac.*log(orig_frac./ander_deconv_kl));
+    
+    if deconv_kl <= ander_deconv_kl
+        better_text = 'Summit is better';
+    else
+        better_text = 'Anderson is better';
+    end
+    
+    title(sprintf(['Histograms of original and deconvolved areas for ' ...
+        'congestion %d\n %s 100/large kl: %.3g Anderson kl: %.3g'],con, ...
+        better_text, deconv_kl, ander_deconv_kl));
+end
+clear('num_bins','quantile_bound_fractions','quantile_bounds','bin_centers','all_orig_areas');
+clear('orig_frac','deconv_kl','ander_deconv_kl','better_text');
+clear('t','deconv_areas','orig_areas','orig_n','orig_xout','orig_bars','deconv_n','deconv_xout','deconv_bars');
+clear('ander_deconv_n','ander_deconv_xout','ander_deconv_bars');
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+
+%% Plot histogram bin contribution to KL divergence
+% Look at 100/large and Anderson's histograms compared to the original.
+% Due to the existence of outilers, I derive the histogram bin locations
+% from the original data and then fit everything else into it. I choose bin
+% boundaries according to the quantiles of the original peak areas.
+%
+% Then, I calculate the KL divergence between the original and the
+% deconvolved histograms viewed as MLE estimates for probability
+% distributions. The KL is a sum of one term per histogram bin. I plot the
+% size of that term for both the Anderson and 100/large deconvolution
+% starting points.
+%
+% Result: I consistently have too few small ares and Anderson varies 
+% greatly for the smallest areas. 
+%
+% In the most congested peaks, I am just bad all over. I recognize too few
+% extreme peaks and too many medium peaks. The Anderson method wins just 
+% because it sucks less. 
+%
+% I never realized before that overestimating a probability gives you a
+% negative KL divergence, so gives a negative contribution. However, due to
+% the log scale, the overestimate bonus is always less than the penalty for
+% the underestimates you must make to get it.
+
+
+% Find the appropriate deconvolution
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+for ander_deconv_idx = 1:length(deconvs)
+	d = deconvs(ander_deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_anderson)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_anderson));
+
+% Find centers of each septile of the original peak areas
+all_orig_areas = [];
+for con=1:num_congestions
+    p=orig_params{con};
+    all_orig_areas = [all_orig_areas; p(:,5)]; %#ok<AGROW>
+end
+num_bins = 7;
+assert(num_bins >= 1); % Needed so that there will be an upper and lower bound for each bin
+quantile_bound_fractions = 100.*(0:num_bins)./num_bins;
+quantile_bounds = prctile(all_orig_areas, quantile_bound_fractions);
+quantile_bounds(end) = nextAfter(quantile_bounds(end)); % Make bound infinitessimally greater than the maximum original value
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    deconv_areas = p(:,5);
+    p=params{ander_deconv_idx, con};
+    ander_deconv_areas = p(:,5);
+    p=orig_params{con};
+    orig_areas = p(:,5);
+    
+    npeaks=size(p,1);
+    orig_n=histc(orig_areas, quantile_bounds); orig_n(end-1) = orig_n(end)+orig_n(end-1); orig_n(end) = [];
+    deconv_n=histc(deconv_areas, quantile_bounds); deconv_n(end-1) = deconv_n(end)+deconv_n(end-1); deconv_n(end) = [];
+    ander_deconv_n=histc(ander_deconv_areas,quantile_bounds); ander_deconv_n(end-1) = ander_deconv_n(end)+ander_deconv_n(end-1); ander_deconv_n(end) = [];
+
+
+    orig_frac = orig_n ./ sum(orig_n);
+    deconv_kl = deconv_n ./ sum(deconv_n);
+    ander_deconv_kl = ander_deconv_n ./ sum(ander_deconv_n);
+    
+    deconv_kl_contrib = orig_frac.*log(orig_frac./deconv_kl);
+    ander_deconv_kl_contrib = orig_frac.*log(orig_frac./ander_deconv_kl);
+    
+    
+    hold off;
+    deconv_bar = bar(deconv_kl_contrib,'FaceColor','r','EdgeColor','none');
+    set(deconv_bar,'barwidth',1.0);
+    hold on;
+    ander_deconv_bar = bar(ander_deconv_kl_contrib,'FaceColor','g','EdgeColor','none');
+    set(ander_deconv_bar,'barwidth',0.5);
+    hold off;
+    handles = [deconv_bar, ander_deconv_bar];
+    
+    legend(handles,{'100/large','Anderson'},'Location','SouthWest');
+    xlabel('Area Bin');
+    ylabel('KL Contribution');
+    ylim([-0.07,0.09]);
+    deconv_kl = sum(deconv_kl_contrib);
+    ander_deconv_kl = sum(ander_deconv_kl_contrib);
+    
+    title(sprintf(['KL contributions for ' ...
+        'congestion %d\n100/large kl: %.3g Anderson kl: %.3g'],con, ...
+        deconv_kl, ander_deconv_kl));
+end
+clear('num_bins','quantile_bound_fractions','quantile_bounds','bin_centers','all_orig_areas');
+clear('orig_frac','deconv_kl','ander_deconv_kl');
+clear('deconv_kl_contrib','ander_deconv_kl_contrib');
+clear('t','deconv_areas','orig_areas','orig_n','orig_xout','orig_bars','deconv_n','deconv_xout','deconv_bars');
+clear('ander_deconv_n','ander_deconv_xout','ander_deconv_bars');
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+
+
+
 %% Find spectra with outlier height-area points
 %
-% The height area plot 
+% The height-area plot showed my code generating extreme outliers in area.
+% I need to look 
 
 
 %% Delete params and orig_params variables
