@@ -1072,7 +1072,7 @@ end
 clear('parameters_to_plot');
 
 
-%% For which values is there a difference? - method works prior
+%% Calculate improvement p-values: for which values is there a difference? - method works prior
 % I do multiple t-tests using a holm-bonferroni correction to see which
 % values there is evidence of a significant improvement over anderson and
 % a second set of tests to see where there is evidence of a significant
@@ -1457,20 +1457,19 @@ params = arrayfun(@(tot) nan(tot, 5),tot_peaks,'uniformoutput',false);
 prev_row = zeros(num_deconv,num_congestions); % Used for storing the last valid row
 for res_idx = 1:length(glbio_combined_results)
 	datum = glbio_combined_results(res_idx);
-	con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+	con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*num_congestions);
     for deconv_idx = 1:num_deconv
         num_peaks = length(datum.deconvolutions(deconv_idx).peaks);
         p = params{deconv_idx, con};
-        p(prev_row(deconv_idx, con)+1:prev_row(deconv_idx, con)+num_peaks,:) ...
+        p(prev_row(deconv_idx, con)+1:prev_row(deconv_idx, con)+num_peaks,1:4) ...
             = reshape( datum.deconvolutions(deconv_idx).peaks.property_array, ...
             4, num_peaks)';
         p(prev_row(deconv_idx, con)+1:prev_row(deconv_idx, con)+num_peaks,5) = ...
-            [datum.spectrum_peaks.area]';
+            [datum.deconvolutions(deconv_idx).peaks.area]';
         params{deconv_idx, con} = p;
         prev_row(deconv_idx, con) = prev_row(deconv_idx, con) + num_peaks;
     end
 end
-
 % Calculate the correlations
 deconv_param_cors = cell(num_deconv,num_congestions);
 deconv_param_cors_pval = deconv_param_cors;
@@ -1500,8 +1499,10 @@ clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corre
 %% Display which correlations are present in each deconvolution
 %
 % For each deconvolution, congestion combination, display which
-% correlations are present using M, G, L, and X for Height (magnitude),
-% Width at half-height (Gamma), Lorentzianness, and Mode location.
+% correlations are present using M, G, L, X, and A for Height (magnitude),
+% Width at half-height (Gamma), Lorentzianness, Mode location, and Area. I 
+% ignore correlations with area except for location with area. (The other
+% parameters are expected a-priori to be correlated with area).
 %
 % Since I am looking with the purpose of fixing the area problems in the
 % gold-standard, I limit the printing to the gold standard. (I actually
@@ -1529,14 +1530,14 @@ clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corre
 % This suggests that in looking at the joint distribution for the original
 % and deconvolved spectra, I should focus on Height-Width and
 % Width-Lorentzianness and maybe glance at Height-Lorentzianness
-names = {'MG','ML','MX','GL','GX','LX'};
+names = {'MG','ML','MX','GL','GX','LX','XA'};
 for deconv_idx = 1:num_deconv
     d = glbio_combined_results(1).deconvolutions(deconv_idx);
     dname = sprintf('%s %s', d.peak_picker_name, d.starting_point_name);
     if strcmp(d.peak_picker_name, GLBIO2013Deconv.pp_gold_standard)
         for con=1:num_congestions
             p = deconv_param_cors_pval{deconv_idx, con};
-            selected_p = p([2,3,4,7,8,12]);
+            selected_p = p([2,3,4,8,9,14,20]);
             sig_names = names(selected_p < 0.05);
             fprintf('%s (%d):', dname, con);
             for i = 1:length(sig_names)
