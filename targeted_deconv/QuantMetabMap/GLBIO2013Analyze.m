@@ -1422,7 +1422,10 @@ for con = 1:num_congestions
 end
 hold off;
 
-%% I kept params along for plotting, now delete it
+%% Move params to orig_params
+% I kept params along for plotting, now delete it so the variable can be
+% reused, but save the data in orig_params
+orig_params = params;
 clear('params');
 
 %% Calculate correlations on deconvolutions separated by congestion
@@ -1668,6 +1671,91 @@ for con=1:num_congestions
 end
 clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
+%% Plot Height-Area joint rank distribution
+% Here I will plot the area against the height for 100/large and the 
+% original to see how 100/large differs in distribution.
+%
+% Result: my area distribution looks quite similar to the original
+% distribution for most congestions. As spectra become more congested, my
+% solution has a tendency to overestimate peak areas for a given height. In
+% the most congested spectra, there are also an appreciable number of
+% slight underestimates.
+
+% Find the appropriate deconvolution
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    npeaks=size(p,1);
+    h=zeros(1,2);
+    hold off;
+    h(1)=scatter(tiedrank(p(:,5))/npeaks,tiedrank(p(:,1))/npeaks, [],'r');
+    hold on;
+    p=orig_params{con};
+    npeaks=size(p,1);
+    h(2)=scatter(tiedrank(p(:,5))/npeaks,tiedrank(p(:,1))/npeaks, [], 'b');
+    legend(h,{'summit 100/large' 'original'});
+    xlabel('Area');
+    ylabel('Height');
+    title(sprintf('Height vs Area for congestion %d',con));
+    %xlim([0,0.3]);
+    %ylim([0,0.1]);
+end
+hold off;
+clear('h','p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+%% Plot Height-Area joint rank distribution for Anderson
+% Here I will plot the area against the height for Anderson to see how it
+% differs from the area-height distribution of the original and maybe have
+% some clue as to how it is beating my areas.
+%
+% Result: its areas are much more highly correlated to height for small
+% peaks - almost a functional relationship.
+%
+% There are also a lot more wild outliers.
+
+% Find the appropriate deconvolution
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_anderson)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_anderson));
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    npeaks=size(p,1);
+    h=zeros(1,2);
+    hold off;
+    h(1)=scatter(tiedrank(p(:,5))/npeaks,tiedrank(p(:,1))/npeaks,'r');
+    hold on;
+    p=orig_params{con};
+    npeaks=size(p,1);
+    h(2)=scatter(tiedrank(p(:,5))/npeaks,tiedrank(p(:,1))/npeaks,'g');
+    legend(h,{'Anderson' 'original'});
+    xlabel('Area');
+    ylabel('Height');
+    title(sprintf('Height vs Area for congestion %d',con));
+end
+clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
 %% Plot Height-Width-Lorentzianness joint rank distribution
 % Here I will plot the height against width and lorentzianness - I'm still
 % trying to see if there is something else to improve.
@@ -1773,9 +1861,10 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
 
 
-%% Delete params variable
+
+%% Delete params and orig_params variables
 % I kept the params variable around for plotting
-clear('params');
+clear('params','orig_params');
 
 %% Calculate the parameters
 % Start alignment-based analysis
