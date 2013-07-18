@@ -1756,6 +1756,127 @@ for con=1:num_congestions
 end
 clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
+%% Plot Height-Area joint raw distribution
+% Maybe the rank-rank plot is causing a distortion and the reason things
+% measure better with Anderson is hidden in the relationships of the
+% magnitude. I will now plot height area directly for 100/large. Due to the
+% extreme value of some deconvolved areas, I had to set a display limit on
+% the area. The graph ends at the largest area in the original
+% distribution and the title notes how many points are not plotted because
+% of this artificial boundary.
+%
+% Result: the rank hid the fact that several of the outliers are quite
+% extreme. Plotting the actual values gave a better feel for how extreme
+% some deconvolved areas can be (and also that some large values in the
+% original are also quite possible)
+
+% Find the appropriate deconvolution
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+
+% Find appropriate upper bound to exclude extreme area outliers
+all_orig_areas = [];
+all_deconv_areas = [];
+for con=1:num_congestions
+    p=params{deconv_idx, con};
+    all_deconv_areas = [all_deconv_areas; p(:,5)]; %#ok<AGROW>
+    p=orig_params{con};
+    all_orig_areas = [all_orig_areas; p(:,5)]; %#ok<AGROW>
+end
+max_displayed_area = max(all_orig_areas);
+
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    h=zeros(1,2);
+    hold off;
+    h(1)=scatter(p(:,5),p(:,1), [],'r');
+    num_excluded_areas = sum(p(:,5) > max_displayed_area);
+    hold on;
+    p=orig_params{con};
+    h(2)=scatter(p(:,5),p(:,1), [], 'b');
+    num_excluded_areas = num_excluded_areas + sum(p(:,5) > max_displayed_area);
+    legend(h,{'summit 100/large' 'original'});
+    xlabel('Area');
+    ylabel('Height');
+    
+    title(sprintf('Height vs Area for congestion %d\nExcluded %d points\n',con, num_excluded_areas));
+    xlim([0,max_displayed_area]);
+    ylim([0,1.1]);
+end
+hold off;
+clear('h','p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+%% Plot Height-Area joint raw distribution for Anderson
+% Since I already have the code, I am curious how anderson fares on the raw
+% area plot
+
+% Result: Anderson has many fewer of the most extreme outliers though he
+% has significantly more outliers in general. (Only 6 excluded points
+% for Anderson versus 14 for summit 100/large) Almost all of this excess is
+% in the most congested spectra. (9 extreme outliers in 100/large for
+% congestions 9 and 10 and only 1 for Anderson.
+
+% Find the appropriate deconvolution
+deconvs = glbio_combined_results(1).deconvolutions;
+for deconv_idx = 1:length(deconvs)
+	d = deconvs(deconv_idx);
+    if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
+            strcmp(d.starting_point_name, d.dsp_anderson)
+        break;
+    end
+end
+assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
+assert(strcmp(d.starting_point_name, d.dsp_anderson));
+
+
+% Find appropriate upper bound to exclude extreme area outliers
+all_orig_areas = [];
+all_deconv_areas = [];
+for con=1:num_congestions
+    p=params{deconv_idx, con};
+    all_deconv_areas = [all_deconv_areas; p(:,5)]; %#ok<AGROW>
+    p=orig_params{con};
+    all_orig_areas = [all_orig_areas; p(:,5)]; %#ok<AGROW>
+end
+max_displayed_area = max(all_orig_areas);
+
+
+% Plot 10 figures, 1 for each congestion
+for con=1:num_congestions
+    figure(con);
+    p=params{deconv_idx, con};
+    h=zeros(1,2);
+    hold off;
+    h(1)=scatter(p(:,5),p(:,1), [],'r');
+    num_excluded_areas = sum(p(:,5) > max_displayed_area);
+    hold on;
+    p=orig_params{con};
+    h(2)=scatter(p(:,5),p(:,1), [], 'g');
+    num_excluded_areas = num_excluded_areas + sum(p(:,5) > max_displayed_area);
+    legend(h,{'summit 100/large' 'original'});
+    xlabel('Area');
+    ylabel('Height');
+    
+    title(sprintf('Height vs Area for congestion %d\nExcluded %d points\n',con, num_excluded_areas));
+    xlim([0,max_displayed_area]);
+    ylim([0,1.1]);
+end
+hold off;
+clear('h','p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
+
+
+
 %% Plot Height-Width-Lorentzianness joint rank distribution
 % Here I will plot the height against width and lorentzianness - I'm still
 % trying to see if there is something else to improve.
@@ -1859,7 +1980,9 @@ for con=1:num_congestions
 end
 clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
-
+%% Find spectra with outlier height-area points
+%
+% The height area plot 
 
 
 %% Delete params and orig_params variables
