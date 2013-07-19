@@ -2068,9 +2068,15 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 %
 % If I write the KL divergence winner as S or A for each of the 10
 % congestions I get
-% 
-% Bins  1  2  3  4  5  6  7  8  9 10
+% #Bin  ------- Congestions --------
+%       1  2  3  4  5  6  7  8  9 10
+% 2     S  S  A  S  A  A  A  A  S  A
+% 3     S  S  S  A  S  A  S  A  A  A
+% 4     S  A  S  A  S  S  S  A  A  A
+% 5     S  S  S  S  A  A  S  S  A  A
+% 6     S  S  S  S  S  S  S  S  A  A
 % 7     S  S  S  S  S  A  S  S  A  A
+% 8     S  S  S  S  S  A  S  S  A  A
 % 14    S  S  S  S  S  S  S  S  A  A
 % 28    S  S  S  S  S  S  S  S  S  A
 % 56    S  S  S  S  S  S  S  S  S  A
