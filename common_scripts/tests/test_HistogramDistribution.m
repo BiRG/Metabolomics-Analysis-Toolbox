@@ -468,6 +468,21 @@ assertEqual(h, HistogramDistribution([1, 1], 1, [1, 0]));
 h = HistogramDistribution.fromPoints([1 1 2.5 3.5 4.5]);
 assertEqual(h, HistogramDistribution([1, 1.75, 3, 4, 4.5], [0.4, 0.2, 0.2, 0.2], [1, 1, 1, 1, 0]));
 
+function test_setExtremeBoundsToInfinity %#ok<DEFNU>
+% Test with examples
+h = HistogramDistribution([0,1,3,6,10],[0.375 0.125 0.375 0.125]);
+expectedExtremeH = HistogramDistribution([-inf,1,3,6,inf],[0.375 0.125 0.375 0.125]);
+i = HistogramDistribution([0,1,2,3,4,5],[0.2 0.2 0.2 0.2 0.2]);
+expectedExtremeI = HistogramDistribution([-inf,1,2,3,4,inf],[0.2 0.2 0.2 0.2 0.2]);
+
+assertEqual(h.setExtremeBoundsToInfinity,expectedExtremeH);
+
+k = [h i h; i h i];
+expectedExtremeK = [expectedExtremeH  expectedExtremeI  expectedExtremeH ; expectedExtremeI  expectedExtremeH expectedExtremeI ];
+assertEqual(k.setExtremeBoundsToInfinity, expectedExtremeK);
+
+
+
 function assertHistsApproxEqual(b,c)
 % b and c are HistogramDistribution objects. This asserts that their
 % members are approximately equal

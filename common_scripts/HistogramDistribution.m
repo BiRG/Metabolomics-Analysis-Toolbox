@@ -889,6 +889,51 @@ classdef HistogramDistribution
                 new_dists = [new_dists{:}];
             end
         end
+        
+        function new_dists = setExtremeBoundsToInfinity(objs)
+        % Return new HistogramDistributions which have bounds(1)=-inf and bounds(end) = inf
+        %
+        % Usage: new_dists = setExtremeBoundsToInfinity(objs)
+        % -------------------------------------------------------------------------
+        % Input arguments
+        % -------------------------------------------------------------------------
+        % 
+        % objs - (vector or matrix of HistogramDistribution) The 
+        %     distribution(s) whose maximum and minumum will be set to
+        %     -inf and inf respectively
+        %
+        % -------------------------------------------------------------------------
+        % Output parameters
+        % -------------------------------------------------------------------------
+        % 
+        % new_dists - (vector or matrix HistogramDistribution) new_dists(i)
+        %      is identical to obj(i) except that its boundaries are
+        %      different. new_dists has the same shape as obj
+        %
+        % -------------------------------------------------------------------------
+        % Examples
+        % -------------------------------------------------------------------------
+        %
+        % >> h = HistogramDistribution([0,1,3,6,10],[0.375 0.125 0.375 0.125]);
+        % >> i = HistogramDistribution([0,1,2,3,4,5],[0.2 0.2 0.2 0.2 0.2]);
+        % >> j = h.setExtremeBoundsToInfinity();
+        % 
+        % j.bounds == [-inf,1,3,6,inf]
+        %
+        % >> k = [h i h; i h i];
+        % >> l = k.setExtremeBoundsToInfinity();
+        %
+        % l(1,3).bounds == [inf,1,3,6,inf]
+        % l(1,2).bounds == [inf, 1,2,3,4, inf]
+        %
+            setinf = @(x) [-inf, x(2:end-1), inf];
+            new_dists = objs;
+            for i = 1:numel(objs)
+                h = objs(i);
+                new_dists(i) = HistogramDistribution(setinf(h.bounds), ...
+                    h.probs, h.border_is_in_upper_bin);
+            end
+        end
 
         function new_dists = rebinEqualProb(obj, num_bins)
         % Return a HistogramDistribution where a given interval has the
