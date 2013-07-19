@@ -98,6 +98,19 @@ orig_width_7_hist_bin = orig_width_dist.rebinEqualWidth(7);
 orig_height_7_hist_bin = orig_height_dist.rebinEqualWidth(7);
 orig_lorentzianness_7_hist_bin = orig_lorentzianness_dist.rebinEqualWidth(7);
 
+%% Set original well known distributions to have infinite boundaries
+% Note that rebin equal width doesn't work with infinite boundaries, so the
+% boundaries must be set AFTER any equal width binning is done
+
+orig_height_7_hist_bin=orig_height_7_hist_bin.setExtremeBoundsToInfinity;
+orig_height_7bin=orig_height_7bin.setExtremeBoundsToInfinity;
+orig_height_dist=orig_height_dist.setExtremeBoundsToInfinity;
+orig_lorentzianness_7_hist_bin=orig_lorentzianness_7_hist_bin.setExtremeBoundsToInfinity;
+orig_lorentzianness_7bin=orig_lorentzianness_7bin.setExtremeBoundsToInfinity;
+orig_lorentzianness_dist=orig_lorentzianness_dist.setExtremeBoundsToInfinity;
+orig_width_7_hist_bin=orig_width_7_hist_bin.setExtremeBoundsToInfinity;
+orig_width_7bin=orig_width_7bin.setExtremeBoundsToInfinity;
+orig_width_dist=orig_width_dist.setExtremeBoundsToInfinity;
 
 %% Plot simplified versus original parameter distributions
 clf;
@@ -379,6 +392,16 @@ else
 end
 clear('samp_dist_cache_filename');
 
+%% Set boundaries on sampled distributions to infinity
+for param_idx = 1:num_sampd_params
+    for con = 1:num_congestions
+        orig_sampd_7_hist_bin{param_idx, con}=orig_sampd_7_hist_bin{param_idx, con}.setExtremeBoundsToInfinity;
+        orig_sampd_7_hist_bin_pass_2{param_idx, con}=orig_sampd_7_hist_bin_pass_2{param_idx, con}.setExtremeBoundsToInfinity;
+        orig_sampd_7bin{param_idx, con}=orig_sampd_7bin{param_idx, con}.setExtremeBoundsToInfinity;
+        orig_sampd_7bin_pass_2{param_idx, con}=orig_sampd_7bin_pass_2{param_idx, con}.setExtremeBoundsToInfinity;
+    end
+end
+
 %% How many bins differ significantly between pass 1 and pass 2
 % I tried 100, 1000, and 5000 spectra for setting the bins of the sampled
 % distribution. As validation for whether that number of samples produced
@@ -478,6 +501,11 @@ for cong_idx = 1:num_congestions
         orig_location_dist(cong_idx).rebinApproxEqualProb(7);
     orig_location_7_hist_bin(cong_idx) = ...
         orig_location_dist(cong_idx).rebinEqualWidth(7);
+    
+    orig_location_7bin(cong_idx) = ...
+        orig_location_7bin(cong_idx).setExtremeBoundsToInfinity;
+    orig_location_7_hist_bin(cong_idx) = ...
+        orig_location_7_hist_bin(cong_idx).setExtremeBoundsToInfinity;
 end
 
 param_counts_7bin = param_vals;
