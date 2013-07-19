@@ -2062,26 +2062,29 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 % I could see how the KL divergence matched up with my eye's evaluation of
 % method closeness.
 %
-% I note that changing the number of bins can have a substantial effect on
+% I note that changing the number of bins can have an effect on
 % the KL divergences of both deconvolution methods. (Change num_bins to see
-% this).
+% this). I originally thought that the effect was more pronounced, but this
+% was before I fixed some bugs with bin boundaries that excluded some
+% of the samples. Now it appears to affect mainly congestions for which
+% both deconvs have similar KL divergences (like the highest congestion).
 %
 % If I write the KL divergence winner as S or A for each of the 10
 % congestions I get
 % #Bin  ------- Congestions --------
 %       1  2  3  4  5  6  7  8  9 10
 % 2     S  S  S  S  S  S  S  S  S  S
-% 3     S  S  S  S  S  S  S  S  S  A
+% 3     S  S  S  S  S  S  S  S  S  S
 % 4     S  S  S  S  S  S  S  S  S  A
 % 5     S  S  S  S  S  S  S  S  S  S
-% 6     S  S  S  S  S  S  S  S  S  A
-% 7     S  S  S  S  S  S  S  S  S  A
+% 6     S  S  S  S  S  S  S  S  S  S
+% 7     S  S  S  S  S  S  S  S  S  S
 % 8     S  S  S  S  S  S  S  S  S  S
 % 14    S  S  S  S  S  S  S  S  S  S
-% 20    S  S  S  S  S  S  S  S  S  A
+% 20    S  S  S  S  S  S  S  S  S  S
 % 21    S  S  S  S  S  S  S  S  S  A
 % 28    S  S  S  S  S  S  S  S  S  A
-% 49    S  S  S  S  S  S  S  S  S  A
+% 49    S  S  S  S  S  S  S  S  S  S
 % 56    S  S  S  S  S  S  S  S  S  A
 % 
 % I can't use any more bins than 56 because at 56 one of the bins has no
@@ -2133,7 +2136,7 @@ assert(num_bins >= 1); % Needed so that there will be an upper and lower bound f
 quantile_bound_fractions = 100.*(0:num_bins)./num_bins;
 quantile_bounds = prctile(all_orig_areas, quantile_bound_fractions);
 quantile_bounds(1) = 0; % Minimum possible area is 0, make this the lower bound on the smallest bin
-quantile_bounds(end) = nextAfter(quantile_bounds(end)); % Make bound infinitessimally greater than the maximum original value
+quantile_bounds(end) = inf; % Make largest bin contain all areas larger than its lower bound
 
 % Plot 10 figures, 1 for each congestion
 for con=1:num_congestions
@@ -2201,7 +2204,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 % size of that term for both the Anderson and 100/large deconvolution
 % starting points.
 %
-% Result: I consistently have too few small ares and Anderson varies 
+% Result: I consistently have too few small areas and Anderson varies 
 % greatly for the smallest areas. 
 %
 % In the most congested peaks, I am just bad all over. I recognize too few
@@ -2247,7 +2250,7 @@ assert(num_bins >= 1); % Needed so that there will be an upper and lower bound f
 quantile_bound_fractions = 100.*(0:num_bins)./num_bins;
 quantile_bounds = prctile(all_orig_areas, quantile_bound_fractions);
 quantile_bounds(1) = 0; % Minimum possible area is 0, make this the lower bound on the smallest bin
-quantile_bounds(end) = nextAfter(quantile_bounds(end)); % Make bound infinitessimally greater than the maximum original value
+quantile_bounds(end) = inf; % Make largest bin contain all areas larger than its lower bound
 
 % Plot 10 figures, 1 for each congestion
 for con=1:num_congestions
