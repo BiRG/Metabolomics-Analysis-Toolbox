@@ -2070,15 +2070,18 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 % congestions I get
 % #Bin  ------- Congestions --------
 %       1  2  3  4  5  6  7  8  9 10
-% 2     S  S  A  S  A  A  A  A  S  A
-% 3     S  S  S  A  S  A  S  A  A  A
-% 4     S  A  S  A  S  S  S  A  A  A
-% 5     S  S  S  S  A  A  S  S  A  A
-% 6     S  S  S  S  S  S  S  S  A  A
-% 7     S  S  S  S  S  A  S  S  A  A
-% 8     S  S  S  S  S  A  S  S  A  A
-% 14    S  S  S  S  S  S  S  S  A  A
+% 2     S  S  S  S  S  S  S  S  S  S
+% 3     S  S  S  S  S  S  S  S  S  A
+% 4     S  S  S  S  S  S  S  S  S  A
+% 5     S  S  S  S  S  S  S  S  S  S
+% 6     S  S  S  S  S  S  S  S  S  A
+% 7     S  S  S  S  S  S  S  S  S  A
+% 8     S  S  S  S  S  S  S  S  S  S
+% 14    S  S  S  S  S  S  S  S  S  S
+% 20    S  S  S  S  S  S  S  S  S  A
+% 21    S  S  S  S  S  S  S  S  S  A
 % 28    S  S  S  S  S  S  S  S  S  A
+% 49    S  S  S  S  S  S  S  S  S  A
 % 56    S  S  S  S  S  S  S  S  S  A
 % 
 % I can't use any more bins than 56 because at 56 one of the bins has no
@@ -2129,6 +2132,7 @@ num_bins = 7;
 assert(num_bins >= 1); % Needed so that there will be an upper and lower bound for each bin
 quantile_bound_fractions = 100.*(0:num_bins)./num_bins;
 quantile_bounds = prctile(all_orig_areas, quantile_bound_fractions);
+quantile_bounds(1) = 0; % Minimum possible area is 0, make this the lower bound on the smallest bin
 quantile_bounds(end) = nextAfter(quantile_bounds(end)); % Make bound infinitessimally greater than the maximum original value
 
 % Plot 10 figures, 1 for each congestion
@@ -2242,6 +2246,7 @@ num_bins = 7;
 assert(num_bins >= 1); % Needed so that there will be an upper and lower bound for each bin
 quantile_bound_fractions = 100.*(0:num_bins)./num_bins;
 quantile_bounds = prctile(all_orig_areas, quantile_bound_fractions);
+quantile_bounds(1) = 0; % Minimum possible area is 0, make this the lower bound on the smallest bin
 quantile_bounds(end) = nextAfter(quantile_bounds(end)); % Make bound infinitessimally greater than the maximum original value
 
 % Plot 10 figures, 1 for each congestion
@@ -2277,10 +2282,10 @@ for con=1:num_congestions
     hold off;
     handles = [deconv_bar, ander_deconv_bar];
     
-    legend(handles,{'100/large','Anderson'},'Location','SouthWest');
+    legend(handles,{'100/large','Anderson'},'Location','SouthEast');
     xlabel('Area Bin');
     ylabel('KL Contribution');
-    ylim([-0.07,0.09]);
+    ylim([-0.09,0.09]);
     deconv_kl = sum(deconv_kl_contrib);
     ander_deconv_kl = sum(ander_deconv_kl_contrib);
     
