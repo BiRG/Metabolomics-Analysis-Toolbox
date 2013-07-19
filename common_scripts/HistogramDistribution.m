@@ -802,7 +802,8 @@ classdef HistogramDistribution
         % -------------------------------------------------------------------------
         % 
         % objs - (row vector of HistogramDistribution) There can either be
-        %      1 or the same number as num_bins
+        %      1 or the same number as num_bins. NOTE: all elements of the
+        %      bounds array must be finite.
         %
         % num_bins - (row vector of integers) The number of bins in the new
         %      HistogramDistribution There can either be 1 or the same
@@ -868,6 +869,12 @@ classdef HistogramDistribution
                     error('HistogramDistribution_rebin:integer_bins', ...
                         'num_bins must be an integer.');
                 end
+                if any(isinf(objs.bounds))
+                    error('HistogramDistribution_rebin:finite_bounds',...
+                        ['All bin boundaries must be finite to rebin ' ...
+                        'equal width.']);
+                end
+                
                 bnd = linspace(objs.bounds(1),objs.bounds(end),num_bins+1);
                 equal_prob = HistogramDistribution(bnd,ones(1,length(bnd)-1)/(length(bnd)-1));
                 p = objs.probOfInterval(equal_prob.bins);

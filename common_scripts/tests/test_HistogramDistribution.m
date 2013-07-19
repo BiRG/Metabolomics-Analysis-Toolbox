@@ -505,6 +505,7 @@ function test_rebinEqualWidth %#ok<DEFNU>
 
 h = HistogramDistribution([0,1,1,2,3],[0.25 0.25 0.25 0.25]);
 i = HistogramDistribution([0,1,1,2,3,5],[0.2 0.2 0.2 0.2 0.2]);
+j = HistogramDistribution([-inf,1,1,2,3,inf],[0.2 0.2 0.2 0.2 0.2]);
 hi = [h,i];
 
 b=h.rebinEqualWidth(2);
@@ -533,6 +534,9 @@ assertHistsApproxEqual(b, [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), 
 
 b=hi.rebinEqualWidth([2,5]);
 assertHistsApproxEqual(b, [ HistogramDistribution([0, 1.5, 3], [0.625, 0.375]), HistogramDistribution([0, 1, 2, 3, 4, 5], [0.2, 0.4, 0.2, 0.1, 0.1]) ]);
+
+f = @() j.rebinEqualWidth(3);
+assertExceptionThrown(f, 'HistogramDistribution_rebin:finite_bounds');
 
 
 function test_rebinEqualProb %#ok<DEFNU>
