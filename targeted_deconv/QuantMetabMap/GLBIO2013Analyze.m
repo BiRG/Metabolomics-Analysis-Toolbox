@@ -1219,11 +1219,6 @@ for summit_idx = 2:length(dsp_names)
 end
 clear('parameters_to_plot');
 
-%% Find 
-% Areas in the middle bin are overestimated by my 100/large algorithm in 
-% the most congested spectra. So, I'll find a few highly congested spectra 
-% with areas in the middle bin and see what seems to be badly estimated.
-
 %% Clean up temp variables
 clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v','w','s','figure_num','dsp_color','h');
 
