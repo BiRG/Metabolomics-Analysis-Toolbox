@@ -1474,8 +1474,8 @@ classdef HistogramDistribution
             
         end
         
-        function counts = binCounts(obj, observations)
-        % Usage counts = binCounts(obj, observations)
+        function counts = binCounts(obj, observations, put_extreme_vals_in_end_bins)
+        % Usage counts = binCounts(obj, observations, put_extreme_vals_in_end_bins)
         %
         % Return the number of observations that fell into each bin.
         % -------------------------------------------------------------------------
@@ -1485,6 +1485,11 @@ classdef HistogramDistribution
         % obj - (a HistogramDistribution object)
         %
         % observations - (vector of double)
+        %
+        % put_extreme_vals_in_end_bins - (scalar logical) if false, values
+        %      that do not fall into any bin are ignored. If true, values
+        %      below the lowest bin are placed in the lowest bin and values
+        %      above the highest bin are placed in the highest bin
         %
         % -------------------------------------------------------------------------
         % Output parameters
@@ -1497,15 +1502,30 @@ classdef HistogramDistribution
         % Examples
         % -------------------------------------------------------------------------
         % >> h = HistogramDistribution([-2,1,1,5,11,13,15],ones(1,6)/6)
-        % >> c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90])
+        % >> c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90], false)
         % c == [1,2,6,4,5,0]
-        % >> c = h.binCounts([])
+        % >> c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90], true)
+        % c == [2,2,6,4,5,1]
+        % >> c = h.binCounts([], false)
         % c == [0,0,0,0,0,0]
             counts = zeros(size(obj.probs));
-            for o = observations
-                bin_idx = obj.binContaining(o);
-                if 1 <= bin_idx && bin_idx <= length(counts)
-                    counts(bin_idx) = counts(bin_idx) + 1;
+            if put_extreme_vals_in_end_bins
+                for o = observations
+                    bin_idx = obj.binContaining(o);
+                    if 1 <= bin_idx && bin_idx <= length(counts)
+                        counts(bin_idx) = counts(bin_idx) + 1;
+                    end
+                end
+            else
+                for o = observations
+                    bin_idx = obj.binContaining(o);
+                    if bin_idx < 1
+                        counts(1) = counts(1) + 1;
+                    elseif bin_idx > length(counts)
+                        counts(end) = counts(end) + 1;
+                    else
+                        counts(bin_idx) = counts(bin_idx) + 1;
+                    end
                 end
             end
         end
