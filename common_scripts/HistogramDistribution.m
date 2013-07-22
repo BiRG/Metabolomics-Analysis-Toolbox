@@ -352,7 +352,7 @@ classdef HistogramDistribution
                 bnd = [bnd bnd];
             end
             equal_prob = HistogramDistribution(bnd,ones(1,length(bnd)-1)/(length(bnd)-1));
-            counts = equal_prob.binCounts(points);
+            counts = equal_prob.binCounts(points, false);
             obj = HistogramDistribution(bnd,counts/sum(counts));
         end
     end
