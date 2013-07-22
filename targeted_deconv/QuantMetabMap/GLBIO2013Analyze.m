@@ -244,7 +244,7 @@ clear('sampled_max_scaled_heights');
 % These come from the maximizing_peak_area.nb Mathematica notebook, where
 % there are many more details as to how they were derived.
 num_congestions = 10;
-num_spectra_for_bins = 9000;
+num_spectra_for_bins = 5000;
 num_sampd_params = 3;
 sampled_param_names = {'area','height','width'};
 sampd_area_idx = find(strcmp('area',sampled_param_names));
@@ -375,7 +375,7 @@ else
     clear('wait_h','congestion','param','param_idx','temp_dist','correct_bounds','newBnds','newProbs');
     clear('tmp_osd','tmp_osd_7b','tmp_osd_7hb','tmp_osd_7b2');
     clear('tmp_osd_7hb2','tmp_osc_7b', 'tmp_osc_7b2');
-
+    clear('isparallel','num_workers','start_time','stps','worker_ids');
 end
 clear('samp_dist_cache_filename');
 
