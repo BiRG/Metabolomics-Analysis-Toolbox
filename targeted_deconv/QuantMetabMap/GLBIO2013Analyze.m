@@ -349,12 +349,12 @@ else
         for param_idx = 1:num_sampd_params
             fprintf('%d: Counting pass 2 params for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(8+param_idx+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
             
-            tmp_osc_7b{param_idx} = tmp_osd_7b{param_idx}.binCounts(param{param_idx});
+            tmp_osc_7b{param_idx} = tmp_osd_7b{param_idx}.binCounts(param{param_idx}, false);
             assert(length(param{param_idx}) == sum(tmp_osc_7b{param_idx})); % No out-of-range parameters
             tmp_osd_7b{param_idx} = newProbs(tmp_osd_7b{param_idx}, ...
                 tmp_osc_7b{param_idx});
 
-            tmp_osc_7b2{param_idx} = tmp_osd_7b2{param_idx}.binCounts(param{param_idx});
+            tmp_osc_7b2{param_idx} = tmp_osd_7b2{param_idx}.binCounts(param{param_idx}, false);
             assert(length(param{param_idx}) == sum(tmp_osc_7b2{param_idx})); % No out-of-range parameters
             tmp_osd_7b2{param_idx} = newProbs(...
                 tmp_osd_7b2{param_idx}, ...
@@ -439,6 +439,13 @@ GLBIO2013_print_prob_counts_in_range_table(0.004);
 % bins generated from the first and second sample in the sampled
 % distribution.
 %
+% In earlier work, this code did not count parameter values that fell
+% outside the range covered by the simplified distribution. I am now
+% including such extreme values in the count because excluding them gave an
+% unfair advantage to methods which produced extreme values - anything too
+% extreme was not counted, thus concentrating the probability mass in the
+% area of correct answers. If a method produces extreme values 
+%
 % 
 pp_names = GLBIO2013Deconv.peak_picking_method_names();
 dsp_names = GLBIO2013Deconv.deconvolution_starting_point_method_names();
@@ -488,31 +495,31 @@ for cong_idx = 1:num_congestions
     for pp_idx = 1:length(pp_names)
         for dsp_idx = 1:length(dsp_names)
             v = param_vals(pp_idx, dsp_idx, cong_idx,:);
-            v{1} = orig_width_7bin.binCounts(v{1});
-            v{2} = orig_height_7bin.binCounts(v{2});
-            v{3} = orig_lorentzianness_7bin.binCounts(v{3});
-            v{4} = orig_location_7bin(cong_idx).binCounts(v{4});
+            v{1} = orig_width_7bin.binCounts(v{1}, true);
+            v{2} = orig_height_7bin.binCounts(v{2}, true);
+            v{3} = orig_lorentzianness_7bin.binCounts(v{3}, true);
+            v{4} = orig_location_7bin(cong_idx).binCounts(v{4}, true);
             
-            v{5} = orig_sampd_7bin{sampd_area_idx, cong_idx}.binCounts(v{5});
-            v{6} = orig_sampd_7bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6});
-            v{7} = orig_sampd_7bin{sampd_height_idx, cong_idx}.binCounts(v{7});
-            v{8} = orig_sampd_7bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8});
-            v{9} = orig_sampd_7bin{sampd_width_idx, cong_idx}.binCounts(v{9});
-            v{10}= orig_sampd_7bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10});
+            v{5} = orig_sampd_7bin{sampd_area_idx, cong_idx}.binCounts(v{5}, true);
+            v{6} = orig_sampd_7bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6}, true);
+            v{7} = orig_sampd_7bin{sampd_height_idx, cong_idx}.binCounts(v{7}, true);
+            v{8} = orig_sampd_7bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8}, true);
+            v{9} = orig_sampd_7bin{sampd_width_idx, cong_idx}.binCounts(v{9}, true);
+            v{10}= orig_sampd_7bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10}, true);
             param_counts_7bin(pp_idx, dsp_idx, cong_idx,:) = v;
             
             v = param_vals(pp_idx, dsp_idx, cong_idx,:);
-            v{1} = orig_width_7_hist_bin.binCounts(v{1});
-            v{2} = orig_height_7_hist_bin.binCounts(v{2});
-            v{3} = orig_lorentzianness_7_hist_bin.binCounts(v{3});
-            v{4} = orig_location_7_hist_bin(cong_idx).binCounts(v{4});
+            v{1} = orig_width_7_hist_bin.binCounts(v{1}, true);
+            v{2} = orig_height_7_hist_bin.binCounts(v{2}, true);
+            v{3} = orig_lorentzianness_7_hist_bin.binCounts(v{3}, true);
+            v{4} = orig_location_7_hist_bin(cong_idx).binCounts(v{4}, true);
 
-            v{5} = orig_sampd_7_hist_bin{sampd_area_idx, cong_idx}.binCounts(v{5});
-            v{6} = orig_sampd_7_hist_bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6});
-            v{7} = orig_sampd_7_hist_bin{sampd_height_idx, cong_idx}.binCounts(v{7});
-            v{8} = orig_sampd_7_hist_bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8});
-            v{9} = orig_sampd_7_hist_bin{sampd_width_idx, cong_idx}.binCounts(v{9});
-            v{10}= orig_sampd_7_hist_bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10});
+            v{5} = orig_sampd_7_hist_bin{sampd_area_idx, cong_idx}.binCounts(v{5}, true);
+            v{6} = orig_sampd_7_hist_bin_pass_2{sampd_area_idx, cong_idx}.binCounts(v{6}, true);
+            v{7} = orig_sampd_7_hist_bin{sampd_height_idx, cong_idx}.binCounts(v{7}, true);
+            v{8} = orig_sampd_7_hist_bin_pass_2{sampd_height_idx, cong_idx}.binCounts(v{8}, true);
+            v{9} = orig_sampd_7_hist_bin{sampd_width_idx, cong_idx}.binCounts(v{9}, true);
+            v{10}= orig_sampd_7_hist_bin_pass_2{sampd_width_idx, cong_idx}.binCounts(v{10}, true);
             param_counts_7_hist_bin(pp_idx, dsp_idx, cong_idx,:) = v;
         end
     end
