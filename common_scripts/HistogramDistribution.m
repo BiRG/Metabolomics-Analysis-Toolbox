@@ -1512,18 +1512,18 @@ classdef HistogramDistribution
             if put_extreme_vals_in_end_bins
                 for o = observations
                     bin_idx = obj.binContaining(o);
-                    if 1 <= bin_idx && bin_idx <= length(counts)
+                    if bin_idx < 1
+                        counts(1) = counts(1) + 1;
+                    elseif bin_idx > length(counts)
+                        counts(end) = counts(end) + 1;
+                    else
                         counts(bin_idx) = counts(bin_idx) + 1;
                     end
                 end
             else
                 for o = observations
                     bin_idx = obj.binContaining(o);
-                    if bin_idx < 1
-                        counts(1) = counts(1) + 1;
-                    elseif bin_idx > length(counts)
-                        counts(end) = counts(end) + 1;
-                    else
+                    if 1 <= bin_idx && bin_idx <= length(counts)
                         counts(bin_idx) = counts(bin_idx) + 1;
                     end
                 end
