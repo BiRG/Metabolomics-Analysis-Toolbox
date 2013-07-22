@@ -452,9 +452,13 @@ assertEqual(b, 2);
 function test_binCounts %#ok<DEFNU>
 % Test with examples
 h = HistogramDistribution([-2,1,1,5,11,13,15],ones(1,6)/6);
-c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90]);
+c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90],false);
 assertEqual(c, [1,2,6,4,5,0]);
-c = h.binCounts([]);
+c = h.binCounts([-5,0,1,1,2,2,2,3,3,3,5,5,5,6,11,11,11,11,11,90],true);
+assertEqual(c, [2,2,6,4,5,1]);
+c = h.binCounts([],false);
+assertEqual(c,[0,0,0,0,0,0]);
+c = h.binCounts([],true);
 assertEqual(c,[0,0,0,0,0,0]);
 
 function test_fromPoints %#ok<DEFNU>
