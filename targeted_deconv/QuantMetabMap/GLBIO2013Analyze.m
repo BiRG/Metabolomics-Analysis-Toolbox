@@ -1219,6 +1219,99 @@ for summit_idx = 2:length(dsp_names)
 end
 clear('parameters_to_plot');
 
+%% Plot mean KL error for each starting point and parameter - uniform Y scale
+% Now, I will plot the mean and standard deviation of the KL error for each
+% starting point. I don't bother with the incorrect independent height
+% measurement in this plot because we know it is garbage.
+%
+% In this plot, I scaled all the Y axes to the same range - it allows
+% comparing the magnitudes of the different errors across different
+% picker-parameter-dsp combinations.
+%
+% Results: An observation that leaps out at me is that the 75/small dsp has
+% a significantly lower lorentzianness error than the 100/large or the
+% 75/large dsps, but that they have low width distribution errors. 
+%
+% Each figure corresponds to a particular dsp method
+parameters_to_plot = [1,3:4,5:2:10];
+for dsp_idx = 1:length(dsp_names)
+    figure(dsp_idx);
+    subplot_num = 0;
+    for param_idx = parameters_to_plot
+        for pp_idx = 1:length(pp_names)
+            subplot_num = subplot_num + 1;
+            subplot(length(parameters_to_plot),length(pp_names),subplot_num);
+            errs = zeros(1,num_congestions);
+            devs = zeros(1,num_congestions);
+            for con = 1:num_congestions
+                e = kl_method_works{pp_idx, dsp_idx, con, param_idx};
+                errs(con) = mean(e);
+                devs(con) = std(e);
+            end
+            hold off;
+            area(1:num_congestions, errs,'FaceColor','b');
+            hold on;
+            errorbar(1:num_congestions, errs, min(devs,errs), devs,'r');
+            xlabel('Congestion');
+            ylabel(sprintf('KL div for dsp(%d)',dsp_idx));
+            ylim([0,0.4]);
+            xlim([1,10]);
+            title(sprintf('%s\n%s',...
+                underscore_2_space(param_names{param_idx}), ...
+                underscore_2_space(pp_names{pp_idx})));       
+        end
+    end
+end
+
+%% Plot mean KL error for each starting point and parameter - non-uniform Y scale
+% Now, I will plot the mean and standard deviation of the KL error for each
+% starting point. I don't bother with the incorrect independent height
+% measurement in this plot because we know it is garbage.
+%
+% In this plot, I left in the automatic Y-axis scaling
+%
+% Results: for many parameters (width, location, area, and height) error 
+% in 100/large is pretty constant across the all congestions up until 9 or 
+% 10, at which point it takes a big jump.
+%
+% Strangely, Anderson dsp height errors seem to slightly negatively
+% correlated with congestion. The others seem to have a slight postive
+% slope or jump greatly at the end.
+%
+% Each figure corresponds to a particular dsp method
+parameters_to_plot = [1,3:4,5:2:10];
+for dsp_idx = 1:length(dsp_names)
+    figure(dsp_idx);
+    subplot_num = 0;
+    for param_idx = parameters_to_plot
+        for pp_idx = 1:length(pp_names)
+            subplot_num = subplot_num + 1;
+            subplot(length(parameters_to_plot),length(pp_names),subplot_num);
+            errs = zeros(1,num_congestions);
+            devs = zeros(1,num_congestions);
+            for con = 1:num_congestions
+                e = kl_method_works{pp_idx, dsp_idx, con, param_idx};
+                errs(con) = mean(e);
+                devs(con) = std(e);
+            end
+            hold off;
+            area(1:num_congestions, errs,'FaceColor','b');
+            hold on;
+            errorbar(1:num_congestions, errs, min(devs,errs), devs,'r');
+            xlabel('Congestion');
+            ylabel(sprintf('KL div for dsp(%d)',dsp_idx));
+            xlim([1,10]);
+            title(sprintf('%s\n%s',...
+                underscore_2_space(param_names{param_idx}), ...
+                underscore_2_space(pp_names{pp_idx})));       
+        end
+    end
+end
+
+clear('parameters_to_plot','e','errs','devs');
+
+
+
 %% Clean up temp variables
 clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','peaks','v','w','s','figure_num','dsp_color','h');
 
