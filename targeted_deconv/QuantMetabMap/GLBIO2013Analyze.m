@@ -973,7 +973,7 @@ clear('parameters_to_plot','anderson_idx','summit_idx', 'subplot_num','newProbs'
 % Right now it is using the summit version with a too large max width and
 % 100%ile width bound setting. I need to modify it to display all the dsps
 %
-parameters_to_plot = [1:4,5:2:10];
+parameters_to_plot = [1,3:4,5:2:10];
 anderson_idx = 1;
 assert(strcmp(dsp_names{anderson_idx},GLBIO2013Deconv.dsp_anderson));
 for summit_idx = 2:length(dsp_names)
