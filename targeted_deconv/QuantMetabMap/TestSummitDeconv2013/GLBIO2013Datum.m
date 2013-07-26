@@ -125,7 +125,7 @@ classdef GLBIO2013Datum
                 pickers = GLBIO2013Deconv.peak_picking_method_names;
                 deconvolvers = ...
                     GLBIO2013Deconv.deconvolution_starting_point_method_names;
-                picked_locs = GLBIO2013_pick_peaks(obj.spectrum, ...
+                picked_locs = pick_peaks(obj.spectrum, ...
                     obj.spectrum_peaks, 1/obj.spectrum_snr);
                 for p = 1:length(pickers)
                     for d = 1:length(deconvolvers)
@@ -189,7 +189,7 @@ classdef GLBIO2013Datum
             if any(is_new_picker)
                 % Fresh_picked_locs contains the locations that will be used if
                 % a particular peak picker is not present in the originals
-                fresh_picked_locs = GLBIO2013_pick_peaks(updated.spectrum, ...
+                fresh_picked_locs = pick_peaks(updated.spectrum, ...
                     updated.spectrum_peaks, 1/updated.spectrum_snr);
                 picked_locs(is_new_picker) = fresh_picked_locs(is_new_picker);
             end

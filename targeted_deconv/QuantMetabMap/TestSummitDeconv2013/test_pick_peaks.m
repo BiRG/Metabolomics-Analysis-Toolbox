@@ -1,8 +1,8 @@
-function test_suite = test_GLBIO2013_pick_peaks %#ok<STOUT>
-% matlab_xUnit tests excercising GLBIO2013_pick_peaks
+function test_suite = test_pick_peaks %#ok<STOUT>
+% matlab_xUnit tests excercising pick_peaks
 %
 % Usage:
-%   runtests test_GLBIO2013_pick_peaks 
+%   runtests test_pick_peaks 
 initTestSuite;
 
 function test_result_2 %#ok<DEFNU>
@@ -15,7 +15,7 @@ spec = cell2struct({[1.02608373204270209, 1.02590004378888033, 1.025716355535058
 peaks = GaussLorentzPeak([0.0383993, 0.00553981, 2.3099e-14, 1.02131, 0.115648, 0.00398805, 0.0942914, 1.00612, 0.00511459, 0.00248777, 0.355497, 1.0136, 0.866691, 0.00219883, 0.92097, 1.02296, 0.349603, 0.00390749, 0.857857, 1.00662, 0.0248744, 0.0053008, 0.0915811, 1.02119, 0.943138, 0.00395569, 0.460361, 1.00203]);
 noise_std = 0.00100000000000000002;
 
-picked = GLBIO2013_pick_peaks(spec, peaks, noise_std);
+picked = pick_peaks(spec, peaks, noise_std);
 
 assertEqual(GLBIO2013Deconv.peak_picking_method_names, {'pp_gold_standard', 'pp_noisy_gold_standard', 'pp_smoothed_local_max','pp_gold_std_aligned_with_local_max'}, 'The test will only work if the expected pickers are implemented');
 

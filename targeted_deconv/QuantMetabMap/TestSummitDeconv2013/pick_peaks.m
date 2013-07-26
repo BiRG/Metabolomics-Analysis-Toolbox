@@ -1,7 +1,7 @@
-function peaks_per_picker = GLBIO2013_pick_peaks(spectrum, peaks, noise_std)
+function peaks_per_picker = pick_peaks(spectrum, peaks, noise_std)
 % Returns the peaks picked by all peak pickers on the given spectrum generated from peaks with noise_std white gaussian noise added 
 % 
-% Usage: peaks_per_picker = GLBIO2013_pick_peaks(spectrum, peaks, noise_std)
+% Usage: peaks_per_picker = pick_peaks(spectrum, peaks, noise_std)
 %
 % NOTE: due to lack of "peak free" regions in the test spectra,
 % "pp_smoothed_local_max" and "pp_gold_std_aligned_with_local_max" use the
