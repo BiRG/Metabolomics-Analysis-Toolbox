@@ -2609,7 +2609,7 @@ end
 
 %% Precalculate loc_param_errors
 % This takes a while on my home computer so I put it in a separate cell
-loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(glbio_combined_results);
+loc_param_errs = peak_loc_vs_param_errs(glbio_combined_results);
 starting_pt_names = {'Anderson','Summit'};
 pa_param_names = {'height', 'width','lorentzianness', 'location'}; % Param names for the successive elements returned by the GaussLorentzPeak.property_array function
 

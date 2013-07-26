@@ -12,7 +12,7 @@ function extreme = extreme_loc_param_pairs(results, loc_param_errs)
 %     loc_param_errs objects were made.
 %
 % loc_param_errs - (array of struct) A subset of the result of running
-%     GLBIO2013_peak_loc_vs_param_errs on results
+%     peak_loc_vs_param_errs on results
 %
 % -------------------------------------------------------------------------
 % Output parameters

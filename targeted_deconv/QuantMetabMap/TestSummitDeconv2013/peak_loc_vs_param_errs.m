@@ -1,4 +1,4 @@
-function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
+function loc_param_errs = peak_loc_vs_param_errs(results)
 % From pp_noisy_gold_standard extracts 
 %
 % results - an array of GLBIO2013Datum

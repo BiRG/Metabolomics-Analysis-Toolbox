@@ -1,8 +1,8 @@
-function test_suite = test_GLBIO2013_peak_loc_vs_param_errs %#ok<STOUT>
-% matlab_xUnit tests excercising GLBIO2013_peak_loc_vs_param_errs
+function test_suite = test_peak_loc_vs_param_errs %#ok<STOUT>
+% matlab_xUnit tests excercising peak_loc_vs_param_errs
 %
 % Usage:
-%   runtests test_GLBIO2013_peak_loc_vs_param_errs 
+%   runtests test_peak_loc_vs_param_errs 
 initTestSuite;
 
 % Fields used of the GLBIO2013Datum
@@ -32,7 +32,7 @@ initTestSuite;
 function out = lpe(peak_loc_error, peak_width, param_error, ...
     result_idx, deconv_idx, orig_pk_idx, deconv_pk_idx, picked_loc)
 % Shorthand for creating an loc_param_errs structure (see
-% GLBIO2013_peak_loc_vs_param_errs docs for details) - used to save typing
+% peak_loc_vs_param_errs docs for details) - used to save typing
 % on creating the output
 out = struct('peak_loc_error', peak_loc_error, 'peak_width', peak_width, ...
     'param_error', param_error, 'result_idx', result_idx, ...
@@ -141,7 +141,7 @@ expected(9, 4, 2) = lpe(abs(picked_locs_err), orig_peak_widths, ...
 
 % Get actual output
 
-actual = GLBIO2013_peak_loc_vs_param_errs(datum);
+actual = peak_loc_vs_param_errs(datum);
 
 % Compare actual and expected
 assertEqual(size(actual),size(expected));
