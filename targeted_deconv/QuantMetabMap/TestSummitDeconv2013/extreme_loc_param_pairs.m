@@ -8,7 +8,7 @@ function extreme = extreme_loc_param_pairs(results, loc_param_errs)
 % Input parameters
 % -------------------------------------------------------------------------
 %
-% results - (array of GLBIO2013Datum) The array from which the 
+% results - (array of ExpDatum) The array from which the 
 %     loc_param_errs objects were made.
 %
 % loc_param_errs - (array of struct) A subset of the result of running
@@ -34,7 +34,7 @@ function extreme = extreme_loc_param_pairs(results, loc_param_errs)
 %        
 %     The fields of extreme(i) are:
 %
-%          datum - the GLBIO2013Datum object where the peak resides
+%          datum - the ExpDatum object where the peak resides
 %
 %          result_idx - the index of that datum object in the original
 %               experimental results array passed to this function

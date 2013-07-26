@@ -8,7 +8,7 @@ function GLBIO2013_plot_peak_estimate( datum, deconv_idx, deconv_peak_idx, show_
 % Input parameters
 % -------------------------------------------------------------------------
 %
-% datum - a GLBIO2013Datum object
+% datum - a ExpDatum object
 %
 % deconv_idx - (array index) the index of the deconvolution object whose 
 %      peak will be compared to its aligned original.  That is

@@ -1,5 +1,5 @@
 function param_error_list = calc_param_error_list(results)
-% Takes the results (an array of GLBIO2013Datum objects) and
+% Takes the results (an array of ExpDatum objects) and
 % extracts more-easily analyzable statistics. Assumes that the
 % results from the first call are always the results. Each result generates
 % one element of the param_error_list for each combination of parameter
@@ -80,16 +80,16 @@ function param_error_list = calc_param_error_list(results)
         % list of those aligned peaks. Returns the absolute value of the
         % difference between the two parameter lists.
         %
-        % deconv - a GLBIO2013Deconv object whose parent is datum
+        % deconv - a ExpDeconv object whose parent is datum
         %
-        % datum - a GLBIO2013Datum object
+        % datum - a ExpDatum object
         %
         % errs - errs is an array in the same order as that returned by
         %        GaussLorentzPeak.property_array. It is the absolute value
         %        of the difference between the properties of the peaks in
         %        deconv and the corresponding peaks in datum.
-        assert(isa(deconv,'GLBIO2013Deconv'));
-        assert(isa(datum,'GLBIO2013Datum'));
+        assert(isa(deconv,'ExpDeconv'));
+        assert(isa(datum,'ExpDatum'));
         assert(strcmp(deconv.datum_id,datum.id));
         
         pdeconv = deconv.peaks(deconv.aligned_indices(2,:));
@@ -106,7 +106,7 @@ parameter_names = {'height','width-at-half-height','lorentzianness','location','
 num_params = length(parameter_names);
 
 % Shorter name for the list of possible peak-picking names
-pp_names = GLBIO2013Deconv.peak_picking_method_names;
+pp_names = ExpDeconv.peak_picking_method_names;
 
 % Remove the peak-picking method names that are not used in the data set
 name_used = false(size(pp_names));
@@ -165,10 +165,10 @@ for results_idx = 1:n
             d = deconvs(deconv_idx);
             if strcmp(d.peak_picker_name, peak_picking_name)
                 switch d.starting_point_name
-                    case GLBIO2013Deconv.dsp_anderson
+                    case ExpDeconv.dsp_anderson
                         assert(~exist('anderson','var')); % We shouldn't ever assign twice here
                         anderson = d;
-                    case GLBIO2013Deconv.dsp_smallest_peak_first
+                    case ExpDeconv.dsp_smallest_peak_first
                         assert(~exist('summit','var')); % We shouldn't ever assign twice here
                         summit = d;
                     otherwise
@@ -178,8 +178,8 @@ for results_idx = 1:n
                 end
             end
         end
-        assert(isa(anderson, 'GLBIO2013Deconv'));
-        assert(isa(summit, 'GLBIO2013Deconv'));
+        assert(isa(anderson, 'ExpDeconv'));
+        assert(isa(summit, 'ExpDeconv'));
 
         % Calculate the errors for those two deconvolutions
         anderson_errors = param_errors(anderson, datum);

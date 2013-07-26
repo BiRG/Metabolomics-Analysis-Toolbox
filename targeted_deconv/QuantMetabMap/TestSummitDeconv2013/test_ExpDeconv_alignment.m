@@ -1,19 +1,19 @@
-function test_suite = test_GLBIO2013Deconv_alignment %#ok<STOUT>
-% matlab_xUnit tests excercising the alignment functions in GLBIO2013Deconv 
+function test_suite = test_ExpDeconv_alignment %#ok<STOUT>
+% matlab_xUnit tests excercising the alignment functions in ExpDeconv 
 %
 % Usage:
-%   runtests test_GLBIO2013Deconv_alignment 
+%   runtests test_ExpDeconv_alignment 
 initTestSuite;
 
 function assertSingleLPAssignment(l1, l2, exponent, correct)
 % Assert that l2(correct) is the calculated minimum assignment from l1 to l2 with the given lp norm exponent
-[a,c]=GLBIO2013Deconv.l_p_norm_assignment(l1,l2, exponent);
+[a,c]=ExpDeconv.l_p_norm_assignment(l1,l2, exponent);
 assertEqual(a, correct);
 assertEqual(c, sum(abs(l1(a > 0)-l2(a(a > 0))).^exponent));
 
 function assertUnambiguousAssignment(l1, l2, correct)
 % Assert that l2(correct) is the calculated unambiguous assignment from l1 to l2 
-a=GLBIO2013Deconv.unambiguous_assignment(l1,l2);
+a=ExpDeconv.unambiguous_assignment(l1,l2);
 assertEqual(a, correct);
 
 
@@ -101,7 +101,7 @@ function assertPeakAlignment(l1, l2, criterion, correct)
 % parameters
 p1 = randomPeaksAtLocations(l1);
 p2 = randomPeaksAtLocations(l2);
-a = GLBIO2013Deconv.best_alignment(p1,p2,criterion);
+a = ExpDeconv.best_alignment(p1,p2,criterion);
 assertEqual(a, correct);
 
 

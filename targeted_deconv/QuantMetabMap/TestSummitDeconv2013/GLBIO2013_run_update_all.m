@@ -16,7 +16,7 @@ function updated_data = GLBIO2013_run_update_all( instance_number, data )
 % instance_number - (scalar) an id number printed with the status so that
 %     different processes running on the same machine can be identified.
 %
-% data - (vector of GLBIO2013Datum) the datum objects to edit. Must 
+% data - (vector of ExpDatum) the datum objects to edit. Must 
 %     contain at least one object.
 %
 % -------------------------------------------------------------------------

@@ -17,7 +17,7 @@ noise_std = 0.00100000000000000002;
 
 picked = pick_peaks(spec, peaks, noise_std);
 
-assertEqual(GLBIO2013Deconv.peak_picking_method_names, {'pp_gold_standard', 'pp_noisy_gold_standard', 'pp_smoothed_local_max','pp_gold_std_aligned_with_local_max'}, 'The test will only work if the expected pickers are implemented');
+assertEqual(ExpDeconv.peak_picking_method_names, {'pp_gold_standard', 'pp_noisy_gold_standard', 'pp_smoothed_local_max','pp_gold_std_aligned_with_local_max'}, 'The test will only work if the expected pickers are implemented');
 
 % Gold standard
 assertEqual(picked{1}, sort([peaks.location]));

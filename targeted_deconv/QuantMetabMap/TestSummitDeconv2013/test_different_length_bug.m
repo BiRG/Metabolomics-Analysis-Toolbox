@@ -158,8 +158,8 @@ assertEqual(length(obj.peaks),length(obj.picked_locations));
 %     datum = results(i);
 %     for j = 1:length(datum.deconvolutions)
 %         deconv = datum.deconvolutions(j);
-%         if strcmp(deconv.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard) || ...
-%             strcmp(deconv.peak_picker_name, GLBIO2013Deconv.pp_gold_standard)
+%         if strcmp(deconv.peak_picker_name, ExpDeconv.pp_noisy_gold_standard) || ...
+%             strcmp(deconv.peak_picker_name, ExpDeconv.pp_gold_standard)
 %             if length(deconv.peaks) ~= length(datum.spectrum_peaks)
 %                 bad_indices(end+1)=i; %#ok<AGROW>
 %             end

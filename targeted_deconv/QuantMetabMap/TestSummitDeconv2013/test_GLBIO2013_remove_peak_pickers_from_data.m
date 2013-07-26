@@ -16,8 +16,8 @@ function ensure_test_data_file_exists
 if ~exist(filename_for_test_data,'file')
     old_rng = RandStream.getGlobalStream();
     RandStream.setGlobalStream(RandStream('mt19937ar','Seed',1288700692));
-    datum1 = GLBIO2013Datum(1); %#ok<NASGU>
-    datum2 = GLBIO2013Datum(1.5); %#ok<NASGU>
+    datum1 = ExpDatum(1); %#ok<NASGU>
+    datum2 = ExpDatum(1.5); %#ok<NASGU>
     save(filename_for_test_data,'datum1','datum2');
     RandStream.setGlobalStream(old_rng);
 end
@@ -39,13 +39,13 @@ excluded_idxs = [];
 for picker_idx = 1:length(picker_names)
     peak_picker_name = picker_names{picker_idx};
     switch(peak_picker_name)
-        case GLBIO2013Deconv.pp_gold_standard
+        case ExpDeconv.pp_gold_standard
             excluded_idxs = [excluded_idxs 1 2]; %#ok<AGROW>
-        case GLBIO2013Deconv.pp_noisy_gold_standard
+        case ExpDeconv.pp_noisy_gold_standard
             excluded_idxs = [excluded_idxs 3 4]; %#ok<AGROW>
-        case GLBIO2013Deconv.pp_smoothed_local_max
+        case ExpDeconv.pp_smoothed_local_max
             excluded_idxs = [excluded_idxs 5 6]; %#ok<AGROW>
-        case GLBIO2013Deconv.pp_gold_std_aligned_with_local_max
+        case ExpDeconv.pp_gold_std_aligned_with_local_max
             excluded_idxs = [excluded_idxs 7 8]; %#ok<AGROW>
         otherwise
             % Detects additional methods having been added and no case
@@ -66,7 +66,7 @@ ensure_test_data_file_exists;
 load(filename_for_test_data);
 
 
-pickers = GLBIO2013Deconv.peak_picking_method_names;
+pickers = ExpDeconv.peak_picking_method_names;
 orig_data = {datum1, datum2, [datum1 datum2]};
 for picker1 = 1:length(pickers)
     for picker2 = 1:(picker1)
@@ -81,7 +81,7 @@ for picker1 = 1:length(pickers)
             expected = data;
             for i = 1:length(data)
                 edited_deconvs = data(i).deconvolutions(included_idxs);
-                expected(i) = GLBIO2013Datum.dangerous_constructor( ...
+                expected(i) = ExpDatum.dangerous_constructor( ...
                     data(i).spectrum_peaks, data(i).spectrum_width, ...
                     edited_deconvs, data(i).resolution, ...
                     data(i).spectrum_interval, data(i).spectrum, data(i).spectrum_snr, ...

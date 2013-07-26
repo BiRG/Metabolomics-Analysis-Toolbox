@@ -1,7 +1,7 @@
 function loc_param_errs = peak_loc_vs_param_errs(results)
 % From pp_noisy_gold_standard extracts 
 %
-% results - an array of GLBIO2013Datum
+% results - an array of ExpDatum
 %
 %
 % loc_param_errs - (3d struct array) loc_param_errs(i,j,k) holds
@@ -70,16 +70,16 @@ function loc_param_errs = peak_loc_vs_param_errs(results)
         % list of those aligned peaks. Returns the absolute value of the
         % difference between the two parameter lists.
         %
-        % deconv - a GLBIO2013Deconv object whose parent is datum
+        % deconv - a ExpDeconv object whose parent is datum
         %
-        % datum - a GLBIO2013Datum object
+        % datum - a ExpDatum object
         %
         % errs - errs is an array in the same order as that returned by
         %        GaussLorentzPeak.property_array. It is the absolute value
         %        of the difference between the properties of the peaks in
         %        deconv and the corresponding peaks in datum.
-        assert(isa(deconv,'GLBIO2013Deconv'));
-        assert(isa(datum,'GLBIO2013Datum'));
+        assert(isa(deconv,'ExpDeconv'));
+        assert(isa(datum,'ExpDatum'));
         assert(strcmp(deconv.datum_id,datum.id));
         
         pdeconv = deconv.peaks(deconv.aligned_indices(2,:));
@@ -97,20 +97,20 @@ function loc_param_errs = peak_loc_vs_param_errs(results)
         % did make it through are used to generate an error vector. The
         % rest are ignored.
         %
-        % deconv - a GLBIO2013Deconv object whose parent is datum and whose
+        % deconv - a ExpDeconv object whose parent is datum and whose
         %     peak picking method is pp_noisy_gold_standard
         %
-        % datum - a GLBIO2013Datum object
+        % datum - a ExpDatum object
         %
         % errs - Absolute value of the difference between the value picked
         %     for the peak and the actual location for the peak.
         %
         % picked_locs - the original location picked by the peak picker 
         %     from which the error was measured.
-        assert(isa(deconv,'GLBIO2013Deconv'));
-        assert(isa(datum,'GLBIO2013Datum'));
+        assert(isa(deconv,'ExpDeconv'));
+        assert(isa(datum,'ExpDatum'));
         assert(strcmp(deconv.datum_id,datum.id));
-        assert(strcmp(deconv.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard));
+        assert(strcmp(deconv.peak_picker_name, ExpDeconv.pp_noisy_gold_standard));
         
         % Take original peaks in their order aligned with the output
         datum_peaks = datum.spectrum_peaks(deconv.aligned_indices(1,:));
@@ -119,7 +119,7 @@ function loc_param_errs = peak_loc_vs_param_errs(results)
         % Take the peak picker output and align it to the reordered
         % original peaks
         picked_locs = deconv.picked_locations;
-        assignment = GLBIO2013Deconv.l_p_norm_assignment(datum_locs, picked_locs, 2);
+        assignment = ExpDeconv.l_p_norm_assignment(datum_locs, picked_locs, 2);
         picked_locs = picked_locs(assignment(assignment > 0));
         
         % Subtract
@@ -164,13 +164,13 @@ for results_idx = 1:num_results
     ngs_deconv_idx = zeros(1, num_starting_pt);
     for deconv_idx = 1:length(deconvs)
         d = deconvs(deconv_idx);
-        if strcmp(d.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard)
+        if strcmp(d.peak_picker_name, ExpDeconv.pp_noisy_gold_standard)
             switch d.starting_point_name
-                case GLBIO2013Deconv.dsp_anderson
+                case ExpDeconv.dsp_anderson
                     assert(isempty(ngs{anderson_idx})); % We shouldn't ever assign twice here
                     ngs{anderson_idx} = d;
                     ngs_deconv_idx(anderson_idx) = deconv_idx;
-                case GLBIO2013Deconv.dsp_smallest_peak_first
+                case ExpDeconv.dsp_smallest_peak_first
                     assert(isempty(ngs{summit_idx})); % We shouldn't ever assign twice here
                     ngs{summit_idx} = d;
                     ngs_deconv_idx(summit_idx) = deconv_idx;

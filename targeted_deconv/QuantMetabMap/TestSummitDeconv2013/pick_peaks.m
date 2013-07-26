@@ -28,7 +28,7 @@ function peaks_per_picker = pick_peaks(spectrum, peaks, noise_std)
 %
 % peaks_per_picker - (cell array) peaks_per_picker{i} contains the list of
 %    peaks picked by the peak picker named
-%    GLBIO2013Deconv.peak_picker_names{i}
+%    ExpDeconv.peak_picker_names{i}
 %
 % -----------------------------------------
 % Examples
@@ -43,23 +43,23 @@ function peaks_per_picker = pick_peaks(spectrum, peaks, noise_std)
 
 mean_peak_width = 0.00453630122481774988; % Width of the mean peak in ppm
 
-picker_names = GLBIO2013Deconv.peak_picking_method_names;
+picker_names = ExpDeconv.peak_picking_method_names;
 smoothed_local_max_locs = peak_loc_estimate_for_random_spec(spectrum, noise_std);
 peaks_per_picker = picker_names;
 for picker_idx = 1:length(picker_names)
     peak_picker_name = picker_names{picker_idx};
     switch(peak_picker_name)
-        case GLBIO2013Deconv.pp_gold_standard
+        case ExpDeconv.pp_gold_standard
             picked_locations = [peaks.location];
-        case GLBIO2013Deconv.pp_noisy_gold_standard
+        case ExpDeconv.pp_noisy_gold_standard
             picked_locations = [peaks.location];
             picked_locations = picked_locations + (mean_peak_width/16).*randn(size(picked_locations));
-        case GLBIO2013Deconv.pp_smoothed_local_max
+        case ExpDeconv.pp_smoothed_local_max
             picked_locations = smoothed_local_max_locs;
-        case GLBIO2013Deconv.pp_gold_std_aligned_with_local_max
+        case ExpDeconv.pp_gold_std_aligned_with_local_max
             picked_locations = smoothed_local_max_locs;
             orig_locations = [peaks.location];
-            assignment = GLBIO2013Deconv.l_p_norm_assignment(picked_locations, orig_locations, 2);
+            assignment = ExpDeconv.l_p_norm_assignment(picked_locations, orig_locations, 2);
             picked_locations = orig_locations(assignment(assignment > 0));
         otherwise
             % Detects additional methods having been added and no case

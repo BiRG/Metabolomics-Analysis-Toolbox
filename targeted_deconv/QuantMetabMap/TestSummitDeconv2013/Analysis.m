@@ -448,8 +448,8 @@ GLBIO2013_print_prob_counts_in_range_table(0.004);
 % area of correct answers. If a method produces extreme values 
 %
 % 
-pp_names = GLBIO2013Deconv.peak_picking_method_names();
-dsp_names = GLBIO2013Deconv.deconvolution_starting_point_method_names();
+pp_names = ExpDeconv.peak_picking_method_names();
+dsp_names = ExpDeconv.deconvolution_starting_point_method_names();
 %                        1       2                    3                4         5           6           7             8              9            10 
 param_names =          {'width','height-independent','lorentzianness','location','area-bin1','area-bin2','height-bin1','height-bin2','width-bin1','width-bin2'};
 param_has_known_orig = [   true,                true,            true,      true,      false,      false,        false,        false,       false,      false];
@@ -757,7 +757,7 @@ end
 %% Prob that summit focused is has better KL error under method works prior
 fprintf('Under Method Works prior');
 fprintf('P(summit better) Parameter      Peak picker                        Congestion\n');
-assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+assert(strcmp(dsp_names{1},ExpDeconv.dsp_anderson));
 for dsp_idx = 2:length(dsp_names)
     fprintf('\nP(%s is better than anderson)\n', dsp_names{dsp_idx});
     for param_idx = 1:length(param_names)
@@ -830,7 +830,7 @@ end
 
 parameters_to_plot = [1:4,5:2:10];
 %assert(length(dsp_names) == 2);
-assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+assert(strcmp(dsp_names{1},ExpDeconv.dsp_anderson));
 anderson_idx = 1;
 summit_idx = 5;
 for pp_idx = 1:length(pp_names)
@@ -907,7 +907,7 @@ clear('parameters_to_plot','anderson_idx','summit_idx', 'subplot_num','newProbs'
 % look.
 
 parameters_to_plot = 5;
-assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+assert(strcmp(dsp_names{1},ExpDeconv.dsp_anderson));
 anderson_idx = 1;
 summit_idx = 5;
 newProbs=@(orig,cnts) HistogramDistribution(...
@@ -976,7 +976,7 @@ clear('parameters_to_plot','anderson_idx','summit_idx', 'subplot_num','newProbs'
 %
 parameters_to_plot = [1,3:4,5:2:10];
 anderson_idx = 1;
-assert(strcmp(dsp_names{anderson_idx},GLBIO2013Deconv.dsp_anderson));
+assert(strcmp(dsp_names{anderson_idx},ExpDeconv.dsp_anderson));
 for summit_idx = 2:length(dsp_names)
     figure(summit_idx);
     subplot_num = 0;
@@ -1028,7 +1028,7 @@ for param_idx = parameters_to_plot
         up_bar = zeros(1,num_congestions);
         for cong_idx = 1:num_congestions
             assert(length(dsp_names) == 2);
-            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            assert(strcmp(dsp_names{1},ExpDeconv.dsp_anderson));
             w_anderson = kl_method_works_7hist{pp_idx, 1, cong_idx, param_idx};
             w_summit = kl_method_works_7hist{pp_idx, 2, cong_idx, param_idx};
             num_as_good_or_better = sum(w_summit <= w_anderson);
@@ -1068,7 +1068,7 @@ for param_idx = parameters_to_plot
         up_bar = zeros(1,num_congestions);
         for cong_idx = 1:num_congestions
             assert(length(dsp_names) == 2);
-            assert(strcmp(dsp_names{1},GLBIO2013Deconv.dsp_anderson));
+            assert(strcmp(dsp_names{1},ExpDeconv.dsp_anderson));
             s_anderson = kl_skeptical{pp_idx, 1, cong_idx, param_idx};
             s_summit = kl_skeptical{pp_idx, 2, cong_idx, param_idx};
             num_as_good_or_better = sum(s_summit <= s_anderson);
@@ -1103,7 +1103,7 @@ detriment_p_vals = improvement_p_vals;
 is_non_normal = improvement_p_vals;
 sample_sizes_vary_greatly = improvement_p_vals;
 anderson_idx = 1;
-assert(strcmp(dsp_names{anderson_idx},GLBIO2013Deconv.dsp_anderson));
+assert(strcmp(dsp_names{anderson_idx},ExpDeconv.dsp_anderson));
 for dsp_idx = 2:length(dsp_names)
     for param_idx = 1:length(param_names)
         for pp_idx = 1:length(pp_names)
@@ -1163,7 +1163,7 @@ end
 % 0.05, a -1 if the p value for detriment was less than 0.05, a 0 if both
 % were greater and an assertion will fail if both were less
 anderson_idx = 1;
-assert(strcmp(dsp_names{anderson_idx},GLBIO2013Deconv.dsp_anderson));
+assert(strcmp(dsp_names{anderson_idx},ExpDeconv.dsp_anderson));
 improvement_single_array = improvement_p_vals_corrected;
 for dsp_idx = 2:length(dsp_names)
     for param_idx = 1:length(param_names)
@@ -1197,7 +1197,7 @@ end
 % Each figure corresponds to a particular dsp method
 parameters_to_plot = [1:4,5:2:10];
 anderson_idx = 1;
-assert(strcmp(dsp_names{anderson_idx},GLBIO2013Deconv.dsp_anderson));
+assert(strcmp(dsp_names{anderson_idx},ExpDeconv.dsp_anderson));
 for summit_idx = 2:length(dsp_names)
     figure(summit_idx);
     subplot_num = 0;
@@ -1645,7 +1645,7 @@ names = {'MG','ML','MX','GL','GX','LX','XA'};
 for deconv_idx = 1:num_deconv
     d = glbio_combined_results(1).deconvolutions(deconv_idx);
     dname = sprintf('%s %s', d.peak_picker_name, d.starting_point_name);
-    if strcmp(d.peak_picker_name, GLBIO2013Deconv.pp_gold_standard)
+    if strcmp(d.peak_picker_name, ExpDeconv.pp_gold_standard)
         for con=1:num_congestions
             p = deconv_param_cors_pval{deconv_idx, con};
             selected_p = p([2,3,4,8,9,14,20]);
@@ -3808,7 +3808,7 @@ fprintf('Original locations   : %s\n',to_str([glbio_combined_results(1059).spect
 
 fig_2_deconv_loc = [glbio_combined_results(861).deconvolutions(3).peaks(1:7).location];
 fig_2_orig_loc = [glbio_combined_results(861).spectrum_peaks(1:7).location];
-[assignment,cost] = GLBIO2013Deconv.l_p_norm_assignment(fig_2_orig_loc, fig_2_deconv_loc,1);
+[assignment,cost] = ExpDeconv.l_p_norm_assignment(fig_2_orig_loc, fig_2_deconv_loc,1);
 fprintf('Figure 2 alignment using abs\n');
 [fig_2_deconv_loc(assignment); fig_2_orig_loc] %#ok<NOPTS>
 fprintf('The cost of the original alignment is: %g\n', cost);
@@ -3820,7 +3820,7 @@ fprintf('The abs cost of the manual alignment is: %g\n', manual_cost);
 
 fig_8_deconv_loc = [glbio_combined_results(1059).deconvolutions(3).peaks(1:7).location];
 fig_8_orig_loc = [glbio_combined_results(1059).spectrum_peaks(1:7).location];
-assignment = GLBIO2013Deconv.l_p_norm_assignment(fig_8_orig_loc, fig_8_deconv_loc,1);
+assignment = ExpDeconv.l_p_norm_assignment(fig_8_orig_loc, fig_8_deconv_loc,1);
 fprintf('Figure 8 alignment using abs');
 [fig_8_deconv_loc(assignment); fig_8_orig_loc] %#ok<NOPTS>
 
@@ -3861,8 +3861,8 @@ for result_idx=1:length(glbio_combined_results)
     num_deconvs = num_deconvs + length(datum.deconvolutions);
     for deconv_idx = 1:length(datum.deconvolutions)
         deconv = datum.deconvolutions(deconv_idx);
-        l_2_align = GLBIO2013Deconv.best_alignment(deconv.peaks,orig_peaks,'l2');
-        l_half_align = GLBIO2013Deconv.best_alignment(deconv.peaks,orig_peaks,'l0.5');
+        l_2_align = ExpDeconv.best_alignment(deconv.peaks,orig_peaks,'l2');
+        l_half_align = ExpDeconv.best_alignment(deconv.peaks,orig_peaks,'l0.5');
         if any(any(l_2_align ~= l_half_align))
             affected_deconvs.result_idx(end+1)=result_idx;
             affected_deconvs.deconv_idx(end+1)=deconv_idx;

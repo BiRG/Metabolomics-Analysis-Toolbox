@@ -1,10 +1,10 @@
-function test_suite = test_GLBIO2013Deconv %#ok<STOUT>
-% matlab_xUnit tests excercising some of the non-alignment functions in GLBIO2013Deconv
+function test_suite = test_ExpDeconv %#ok<STOUT>
+% matlab_xUnit tests excercising some of the non-alignment functions in ExpDeconv
 %
-% See test_GLBIO2013Deconv_alignment.m for the alignment functions.
+% See test_ExpDeconv_alignment.m for the alignment functions.
 %
 % Usage:
-%   runtests test_GLBIO2013Deconv 
+%   runtests test_ExpDeconv 
 initTestSuite;
 
 function id = assert_id
@@ -17,8 +17,8 @@ catch ME
 end
 
 function test_no_arg_constructor %#ok<DEFNU>
-% Tests the GLBIO2013Deconv no argument constructor
-g = GLBIO2013Deconv;
+% Tests the ExpDeconv no argument constructor
+g = ExpDeconv;
 assertEqual(sort(fields(g)), sort({'peak_picker_name'; 'picked_locations'; 'starting_point_name'; 'starting_point'; 'starting_point_lb'; 'starting_point_ub'; 'peaks'; 'aligned_indices'; 'datum_id'}));
 all_fields = fields(g);
 for f_idx = 1:length(all_fields)
@@ -34,7 +34,7 @@ RandStream.setGlobalStream(RandStream('mt19937ar','Seed',1288700689));
 
 [spec, peaks] = random_spec_from_nssd_data(7,-1,1,100,1);
 
-fails = @() GLBIO2013Deconv('baby aardvark tree', spec,...
+fails = @() ExpDeconv('baby aardvark tree', spec,...
             peaks, 'pp_gold_standard', sort([peaks.location]), 'dsp_not_a_starting_point');
     
 assertExceptionThrown(fails, assert_id);        

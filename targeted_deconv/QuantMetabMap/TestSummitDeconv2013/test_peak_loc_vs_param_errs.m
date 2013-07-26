@@ -5,10 +5,10 @@ function test_suite = test_peak_loc_vs_param_errs %#ok<STOUT>
 %   runtests test_peak_loc_vs_param_errs 
 initTestSuite;
 
-% Fields used of the GLBIO2013Datum
+% Fields used of the ExpDatum
 % spectrum_peaks, spectrum_width, deconvolutions, id
 %
-% Fields used of the GLBIO2013Deconv
+% Fields used of the ExpDeconv
 % peak_picker_name, picked_locations, starting_point_name,
 % peaks, aligned_indices, datum_id 
 
@@ -82,18 +82,18 @@ picked_locs_err = [-0.03, 0.05, 0.05, 0.00, 0.03, -0.04, -0.01];
 picked_locs = [orig_peaks.location]+picked_locs_err;
 
 test_datum_id = 'test datum id';
-anderson_deconv = GLBIO2013Deconv.dangerous_constructor( ...
-    GLBIO2013Deconv.pp_noisy_gold_standard, ...
-    picked_locs, GLBIO2013Deconv.dsp_anderson, [], [], [], ... % I don't set the 3 fields passed a [] because they are unused
+anderson_deconv = ExpDeconv.dangerous_constructor( ...
+    ExpDeconv.pp_noisy_gold_standard, ...
+    picked_locs, ExpDeconv.dsp_anderson, [], [], [], ... % I don't set the 3 fields passed a [] because they are unused
     anderson_deconv_peaks, anderson_aligned_indices, test_datum_id);
 
-summit_deconv = GLBIO2013Deconv.dangerous_constructor( ...
-    GLBIO2013Deconv.pp_noisy_gold_standard, ...
-    picked_locs, GLBIO2013Deconv.dsp_smallest_peak_first, [], [], [], ... % I don't set the 3 fields passed a [] because they are unused
+summit_deconv = ExpDeconv.dangerous_constructor( ...
+    ExpDeconv.pp_noisy_gold_standard, ...
+    picked_locs, ExpDeconv.dsp_smallest_peak_first, [], [], [], ... % I don't set the 3 fields passed a [] because they are unused
     summit_deconv_peaks, summit_aligned_indices, test_datum_id);
 
 
-datum = GLBIO2013Datum.dangerous_constructor(orig_peaks, ... % I don't set the 4 fields passed a [] because they are unused
+datum = ExpDatum.dangerous_constructor(orig_peaks, ... % I don't set the 4 fields passed a [] because they are unused
             0.121507450820750054, [summit_deconv,anderson_deconv], [], ...
             [], [], [], test_datum_id);
 

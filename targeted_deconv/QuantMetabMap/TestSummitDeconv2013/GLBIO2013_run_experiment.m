@@ -1,5 +1,5 @@
 function results = GLBIO2013_run_experiment( num_spectra_per_width, instance_number, total_number_of_instances, use_waitbar )
-% Return an array of GLBIO2013Datum objects from processing num_spectra_per_width spectra for each of the desired widths
+% Return an array of ExpDatum objects from processing num_spectra_per_width spectra for each of the desired widths
 % 
 % Usage: GLBIO2013_run_experiment( num_spectra_per_width, instance_number, total_number_of_instances, use_waitbar )
 %
@@ -38,7 +38,7 @@ widths_in_ppm = widths_in_mean_peak_width .* 0.00453630122481774988;
 final_num_spectra = num_spectra_per_width .* length(widths_in_ppm);
 spectrum_times = [];
 num_completed_spectra = 0;
-results(final_num_spectra) = GLBIO2013Datum;
+results(final_num_spectra) = ExpDatum;
 for rep = 1:num_spectra_per_width
     for width_idx = 1:length(widths_in_ppm)
         width = widths_in_ppm(width_idx);
@@ -61,7 +61,7 @@ for rep = 1:num_spectra_per_width
 	      round(sum(spectrum_times)));
 	end
         cur_spectrum_time = tic;
-        results(num_completed_spectra+1) = GLBIO2013Datum(width);
+        results(num_completed_spectra+1) = ExpDatum(width);
         num_completed_spectra = num_completed_spectra + 1;
         spectrum_times = [spectrum_times, toc(cur_spectrum_time)/60]; %#ok<AGROW>
     end
