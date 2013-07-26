@@ -7,8 +7,8 @@ html
 # Files used for caching intermediate analysis results that take a
 # long time to calculate
 #######
-GLBIO2013Analyze_cached_distributions.mat
-GLBIO2013Analyze_cached_sampled_distributions.mat
-GLBIO2013Analyze_cached_max_scaled_heights.mat
-GLBIO2013Analyze_cached_KL_probs.mat
+Analysis_cached_distributions.mat
+Analysis_cached_sampled_distributions.mat
+Analysis_cached_max_scaled_heights.mat
+Analysis_cached_KL_probs.mat
 
