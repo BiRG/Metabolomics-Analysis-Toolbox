@@ -60,7 +60,7 @@ function loc_param_errs = GLBIO2013_peak_loc_vs_param_errs(results)
         % width - the width of the spectrum
         %
         % p - the approximate probability of a collision
-        p = GLBIO2013_collision_prob_for_width(width);
+        p = collision_prob_for_width(width);
     end
 
     function errs = param_errors(deconv, datum)

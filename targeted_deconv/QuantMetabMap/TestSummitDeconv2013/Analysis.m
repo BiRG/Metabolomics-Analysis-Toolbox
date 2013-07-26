@@ -457,7 +457,7 @@ num_congestions = 10;
 orig_location_dist(num_congestions) = HistogramDistribution; % preallocate array
 param_vals = cell(length(pp_names),length(dsp_names),num_congestions, length(param_names));
 for result = glbio_combined_results
-    cong_idx = round(10*GLBIO2013_collision_prob_for_width(result.spectrum_width));
+    cong_idx = round(10*collision_prob_for_width(result.spectrum_width));
     orig_location_dist(cong_idx) = HistogramDistribution(...
         [result.spectrum_interval.min,result.spectrum_interval.max],1);
     for deconv = result.deconvolutions
@@ -1463,7 +1463,7 @@ clear('params');
 tot_peaks = zeros(1,num_congestions);
 for res_idx = 1:length(glbio_combined_results)
     datum = glbio_combined_results(res_idx);
-    con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+    con = round(collision_prob_for_width(datum.spectrum_width)*10);
     tot_peaks(con) = tot_peaks(con) + length(datum.spectrum_peaks);
 end
 
@@ -1474,7 +1474,7 @@ params = arrayfun(@(tot) nan(tot, 5),tot_peaks,'uniformoutput',false);
 prev_row = zeros(1,num_congestions); % Used for storing the last valid row
 for res_idx = 1:length(glbio_combined_results)
     datum = glbio_combined_results(res_idx);
-    con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+    con = round(collision_prob_for_width(datum.spectrum_width)*10);
     num_peaks = length(datum.spectrum_peaks);
     p = params{con};
     p(prev_row(con)+1:prev_row(con)+num_peaks,1:4) = reshape( ...
@@ -1556,7 +1556,7 @@ tot_peaks = zeros(num_deconv,num_congestions);
 for deconv_idx = 1:num_deconv
     for res_idx = 1:length(glbio_combined_results)
         datum = glbio_combined_results(res_idx);
-        con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*10);
+        con = round(collision_prob_for_width(datum.spectrum_width)*10);
         tot_peaks(deconv_idx, con) = tot_peaks(deconv_idx, con) + length(datum.deconvolutions(deconv_idx).peaks);
     end
 end
@@ -1568,7 +1568,7 @@ params = arrayfun(@(tot) nan(tot, 5),tot_peaks,'uniformoutput',false);
 prev_row = zeros(num_deconv,num_congestions); % Used for storing the last valid row
 for res_idx = 1:length(glbio_combined_results)
 	datum = glbio_combined_results(res_idx);
-	con = round(GLBIO2013_collision_prob_for_width(datum.spectrum_width)*num_congestions);
+	con = round(collision_prob_for_width(datum.spectrum_width)*num_congestions);
     for deconv_idx = 1:num_deconv
         num_peaks = length(datum.deconvolutions(deconv_idx).peaks);
         p = params{deconv_idx, con};

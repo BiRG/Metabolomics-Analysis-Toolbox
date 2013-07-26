@@ -1,4 +1,4 @@
-function p = GLBIO2013_collision_prob_for_width(width)
+function p = collision_prob_for_width(width)
 % Given a spectrum width from the list of widths I used for the 
 % GLBIO2013 experiment, gives the approximate probability that a
 % spectrum with seven peaks in a bin of that width will be missing
