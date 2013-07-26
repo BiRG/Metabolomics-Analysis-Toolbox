@@ -62,7 +62,7 @@ clear('starting_params','lb','ub', 'handles','x','extended_x','simple_peaks1','s
 % distribution with good accuracy (though, if the variance on the 7 bins is
 % too large, I might see if increasing the number of bins will decrease the
 % variance on the K-L error distribution.)
-dist_cache_filename = 'GLBIO2013Analyze_cached_distributions.mat';
+dist_cache_filename = 'Analysis_cached_distributions.mat';
 if exist(dist_cache_filename,'file')
     load(dist_cache_filename,'-mat');
 else
@@ -146,7 +146,7 @@ ylim([0,100]);
 hold off;
 
 %% Load the combined results
-load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
+load('Mar_07_2013_experiment_for_Analysis');
 
 %% Calc distribution for scaled maximum height
 % If we were not sampling the spectrum, dividing all the heights by the
@@ -159,7 +159,7 @@ load('Mar_07_2013_experiment_for_GLBIO2013Analyze');
 %
 % Each time this cell is run, it adds 1000 samples onto the cached set of
 % heights, so the histogram will continue to improve.
-max_scaled_heights_file = 'GLBIO2013Analyze_cached_max_scaled_heights.mat';
+max_scaled_heights_file = 'Analysis_cached_max_scaled_heights.mat';
 if exist(max_scaled_heights_file ,'file')
     load(max_scaled_heights_file ,'-mat');
 else
@@ -183,7 +183,7 @@ delete(waith);
 fprintf('Added %d samples to max height distribution. ',numsamp);
 toc; 
 sampled_max_scaled_heights = [sampled_max_scaled_heights, maxh];
-save('GLBIO2013Analyze_cached_max_scaled_heights.mat','-mat','sampled_max_scaled_heights');
+save('Analysis_cached_max_scaled_heights.mat','-mat','sampled_max_scaled_heights');
 
 clear('h','p','i','pp','s','waith','numsamp','maxh', ...
     'max_scaled_heights_file');
@@ -252,7 +252,7 @@ sampd_area_idx = find(strcmp('area',sampled_param_names));
 sampd_height_idx = find(strcmp('height',sampled_param_names));
 sampd_width_idx = find(strcmp('width',sampled_param_names));
 
-samp_dist_cache_filename = 'GLBIO2013Analyze_cached_sampled_distributions.mat';
+samp_dist_cache_filename = 'Analysis_cached_sampled_distributions.mat';
 if exist(samp_dist_cache_filename,'file')
     load(samp_dist_cache_filename,'-mat');
     assert(exist('orig_sampd_counts_7bin_pass_2','var')~=0,'Delete %s, it is an old version',samp_dist_cache_filename);
@@ -582,7 +582,7 @@ end
 % the KL divergence is taken.
 %
 % NOTE: param_probs is used in other calculation cells in this file.
-dist_cache_filename = 'GLBIO2013Analyze_cached_KL_probs.mat';
+dist_cache_filename = 'Analysis_cached_KL_probs.mat';
 if exist(dist_cache_filename,'file')
     load(dist_cache_filename,'-mat');
 else
