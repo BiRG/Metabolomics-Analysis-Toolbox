@@ -2426,7 +2426,7 @@ clear('params','orig_params');
 
 %% Calculate the parameters
 % Start alignment-based analysis
-pe_list = GLBIO2013_calc_param_error_list(glbio_combined_results);
+pe_list = calc_param_error_list(glbio_combined_results);
 
 %% Does an improvement exist independent of where we look? 
 % The histogram suggests yes. And a paired t-test gives an unbelieveably
@@ -4189,7 +4189,7 @@ fprintf('\n');
 
 
 %% Calculate the relative parameter errors
-pe_rel_list = GLBIO2013_calc_param_rel_error_list(glbio_combined_results);
+pe_rel_list = calc_param_rel_error_list(glbio_combined_results);
 
 %% Precalculate some values needed for plotting relative errors by parameter
 % On my home computer the large "unique" statements take a lot of time to

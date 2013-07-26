@@ -1,10 +1,5 @@
-function param_error_list = GLBIO2013_calc_param_error_list(results)
-% Takes the results (an array of GLBIO2013Datum objects) and
-% extracts more-easily analyzable statistics. Assumes that the
-% results from the first call are always the results. Each result generates
-% one element of the param_error_list for each combination of parameter
-% (height, width, lorentzianness, location, and area) and peak-picking
-% method.
+function param_error_list = calc_param_rel_error_list(results)
+% Takes the results (an array of GLBIO2013Datum objects) and extracts more-easily analyzable statistics. This version extracts relative errors.
 %
 % Fields of the param_error_list structure: 
 %
@@ -15,21 +10,25 @@ function param_error_list = GLBIO2013_calc_param_error_list(results)
 %
 % parameter_name - (string) the name of the peak parameter for which 
 %                  the error is given - one of height, width,
-%                  lorentzianness, location, and area
+%                  lorentzianness, and location
 %
 % datum_id - (string) the name of the datum from which this pair of
 %            deconvolutions came
 %
-% mean_error_anderson - (scalar) the mean absolute difference in values
+% mean_error_anderson - (scalar) the mean relative error
 %                       between the values for this parameter and the
 %                       values for their corresponding peak using the
-%                       anderson starting point
-% mean_error_summit - (scalar) the mean absolute difference in values
+%                       anderson starting point. Relative error is modified
+%                       to avoid division by 0 by replacing any denominator
+%                       less than 1e-100 by 1e-100.
+% mean_error_summit - (scalar) the mean relative error
 %                       between the values for this parameter and the
 %                       values for their corresponding peak using the
 %                       summit-based starting point (called
 %                       shortest-peak-first and dirty deconvolution in
-%                       other places in my work)
+%                       other places in my work). Relative error is modified
+%                       to avoid division by 0 by replacing any denominator
+%                       less than 1e-100 by 1e-100.
 % error_diff - (scalar) mean_error_anderson - mean_error_summit
 %              a positive value indicates an improvement (that the anderson
 %              error is greater than the summit error so summit is an
@@ -94,7 +93,9 @@ function param_error_list = GLBIO2013_calc_param_error_list(results)
         
         pdeconv = deconv.peaks(deconv.aligned_indices(2,:));
         pdatum  = datum.spectrum_peaks(deconv.aligned_indices(1,:));
-        errs = abs(param_vals(pdeconv) - param_vals(pdatum));
+        pdatum_denom = abs(param_vals(pdatum));
+        pdatum_denom(pdatum_denom < 1e-100) = 1e-100; % Avoid dividing by 0 or any very small value
+        errs = abs(param_vals(pdeconv) - param_vals(pdatum))./pdatum_denom;
     end
 
 
@@ -141,7 +142,6 @@ param_error_list(num_error_list).mean_error_anderson = 0;
 param_error_list(num_error_list).mean_error_summit = 0;
 param_error_list(num_error_list).error_diff = 0;
 param_error_list_idx = 1;
-
 
 % Convert the list of results into a (larger) list of param_error
 % structures
