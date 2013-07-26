@@ -1,6 +1,6 @@
-function extreme = GLBIO2013_extreme_loc_param_pairs(results, loc_param_errs)
+function extreme = extreme_loc_param_pairs(results, loc_param_errs)
 % Return set of 3 deconvolutions with extreme values of location and/or parameter error values ready for plotting
-% Usage: extreme = GLBIO2013_extreme_param_vals(results, loc_param_errs)
+% Usage: extreme = extreme_param_vals(results, loc_param_errs)
 %
 % The plot is made on the current axes.
 %
