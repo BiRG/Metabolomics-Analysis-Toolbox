@@ -24,7 +24,7 @@ assertEqual(picked{1}, sort([peaks.location]));
 
 % Noisy gold standard
 mean_peak_width = 0.00453630122481774988; % Width of the mean peak in ppm
-expected_vals_from_randn = [1.36556131320763297, -2.98515413955462838, -1.08285682953608475, -0.966852558541249296, -0.572809259587081177, 0.0235933842178434154, 1.11547660751602895];
+expected_vals_from_randn = [0.210866196880793222, -0.811500736799620315, 2.35281322681626071, -0.626337006787028083, 2.06603082267447213, -0.723183874313484854, -0.583281226233196115];
 expected_noise = (mean_peak_width/16).*expected_vals_from_randn;
 assertEqual(picked{2}, sort([peaks.location]+expected_noise));
 
