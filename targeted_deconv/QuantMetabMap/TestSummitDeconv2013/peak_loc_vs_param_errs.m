@@ -51,18 +51,6 @@ function loc_param_errs = peak_loc_vs_param_errs(results)
 %     this peak,parameter pair
 
 
-    function p = collision_prob_for_width(width)
-        % Given a spectrum width from the list of widths I used for the 
-        % GLBIO2013 experiment, gives the approximate probability that a
-        % spectrum with seven peaks in a bin of that width will be missing
-        % at least one local maximum 
-        %
-        % width - the width of the spectrum
-        %
-        % p - the approximate probability of a collision
-        p = collision_prob_for_width(width);
-    end
-
     function errs = param_errors(deconv, datum)
         % Return list of the parameter-wise errors between deconv and datum
         %
