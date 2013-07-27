@@ -1,8 +1,8 @@
-classdef ExpDeconv
+classdef GLBIO2013Deconv
 % Represents a deconvolution of a particular spectrum from my experiment for the GLBIO 2013 paper
 % 
 
-    properties (SetAccess=public)
+    properties (SetAccess=private)
         % The name of the method used for generating the peaks -
         % one of the values returned from peak_picking_method_names (string)
         peak_picker_name
@@ -36,14 +36,14 @@ classdef ExpDeconv
         % Aligned indices is a 2xn matrix where n is the smaller of
         % length(peaks) and length(original_peaks) where
         % original_peaks is the list of peaks in the parent
-        % ExpDatum object. original_peaks(aligned_indices(1,i)
+        % GLBIO2013Datum object. original_peaks(aligned_indices(1,i)
         % is the best match to peaks(aligned_indices(2,i) in the sense
         % that the matches in aligned indices minimize the sum of the
         % squared distances of each peak's mode location to its
         % corresponding peak's mode location.
         aligned_indices
         
-        % The ID string of the ExpDatum object of which this
+        % The ID string of the GLBIO2013Datum object of which this
         % is a part.
         datum_id
     end
@@ -53,19 +53,6 @@ classdef ExpDeconv
     end
     
     methods (Static)
-        function obj = from_GLBIO2013Deconv(d)
-            obj = ExpDeconv;
-            obj.peak_picker_name = d.peak_picker_name;
-            obj.picked_locations = d.picked_locations;
-            obj.starting_point_name = d.starting_point_name;
-            obj.starting_point = d.starting_point;
-            obj.starting_point_lb = d.starting_point_lb;
-            obj.starting_point_ub = d.starting_point_ub;
-            obj.peaks = d.peaks;
-            obj.aligned_indices = d.aligned_indices;
-            obj.datum_id = d.datum_id;
-        end
-        
         function best = best_alignment(peaks, original_peaks, criterion)
         % Calculate the best alignment between two sets of peaks using the hungarian algorithm for linear assignment problems (munkres)
         %
@@ -73,7 +60,7 @@ classdef ExpDeconv
         %      the deconvolution routine
         %
         % original_peaks - (vector of GaussLorentzPeak objects) the
-        %      spectrum_peaks from the parent ExpDatum object
+        %      spectrum_peaks from the parent GLBIO2013Datum object
         %
         % criterion - (string) A string describing what criterion is used
         %      for creating the alignment. Can be one of:
@@ -96,11 +83,11 @@ classdef ExpDeconv
         % best - a peak alignment matching the description of the
         %        aligned_indices member
             if strcmp(criterion, 'l2')
-                assignment = ExpDeconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 2);
+                assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 2);
             elseif strcmp(criterion,'l1')
-                assignment = ExpDeconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 1);
+                assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 1);
             elseif strcmp(criterion,'l0.5')
-                assignment = ExpDeconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 0.5);
+                assignment = GLBIO2013Deconv.l_p_norm_assignment([peaks.location], [original_peaks.location], 0.5);
             elseif strcmp(criterion,'unambiguous')
                 error('best_alignment:not_implemented',...
                     'Unambiguous matching criterion not implemented yet');
@@ -175,15 +162,15 @@ classdef ExpDeconv
         end
         
         function strs = peak_picking_method_names
-        % Usage: strs = ExpDeconv.peak_picking_method_names
+        % Usage: strs = GLBIO2013Deconv.peak_picking_method_names
         %
         % Lists the strings that can be used to identify a
         % peak-picking method applied preceeding the deconvolution. Returns
         % a cell array of strings.
-            strs = {ExpDeconv.pp_gold_standard() ...
-                    ExpDeconv.pp_noisy_gold_standard() ...
-                    ExpDeconv.pp_smoothed_local_max() ...
-                    ExpDeconv.pp_gold_std_aligned_with_local_max() ...
+            strs = {GLBIO2013Deconv.pp_gold_standard() ...
+                    GLBIO2013Deconv.pp_noisy_gold_standard() ...
+                    GLBIO2013Deconv.pp_smoothed_local_max() ...
+                    GLBIO2013Deconv.pp_gold_std_aligned_with_local_max() ...
                     };
         end
 
@@ -232,18 +219,18 @@ classdef ExpDeconv
         % method giving a starting point in the deconvolution
         % search space
             strs = {...
-                ExpDeconv.dsp_anderson(), ...
-                ExpDeconv.dsp_smallest_peak_first(), ...
-                ExpDeconv.dsp_smallest_peak_first_100_pctile(), ...
-                ExpDeconv.dsp_smallest_peak_first_max_width_too_large(), ...
-                ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()}; 
+                GLBIO2013Deconv.dsp_anderson(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large(), ...
+                GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()}; 
         end
         
         function obj = dangerous_constructor(peak_picker_name, ...
             picked_locations, starting_point_name, starting_point, ...
             starting_point_lb, starting_point_ub, peaks, aligned_indices, ...
             datum_id)
-        % Return a ExpDeconv with the properties set to the values passed in.
+        % Return a GLBIO2013Deconv with the properties set to the values passed in.
         %
         % NO ERROR CHECKING IS DONE. This method is intended for use in
         % testing. Don't use it unless you are testing. 
@@ -252,10 +239,10 @@ classdef ExpDeconv
         %
         % Example:
         %
-        % >> g = ExpDeconv.dangerous_constructor([],2,3,4,5,6,7,8,'my id')
+        % >> g = GLBIO2013Deconv.dangerous_constructor([],2,3,4,5,6,7,8,'my id')
         %
-        % Produces a completely unusable ExpDeconv object
-            obj = ExpDeconv;
+        % Produces a completely unusable GLBIO2013Deconv object
+            obj = GLBIO2013Deconv;
             obj.peak_picker_name = peak_picker_name;
             obj.picked_locations = picked_locations;
             obj.starting_point_name = starting_point_name;
@@ -269,12 +256,12 @@ classdef ExpDeconv
     end
     
     methods
-        function obj=ExpDeconv(datum_id, spectrum, peaks, peak_picker_name, picked_locations, starting_point_name)
+        function obj=GLBIO2013Deconv(datum_id, spectrum, peaks, peak_picker_name, picked_locations, starting_point_name)
         % Generate the deconvolution of a spectrum 
         %
-        % Usage: obj=ExpDeconv(datum_id, spectrum, peaks, peak_picker_name, picked_locations, starting_point_name)
+        % Usage: obj=GLBIO2013Deconv(datum_id, spectrum, peaks, peak_picker_name, picked_locations, starting_point_name)
         %
-        % datum_id - (string) the string id of the ExpDatum that
+        % datum_id - (string) the string id of the GLBIO2013Datum that
         %            is the parent of this object
         %
         % spectrum - (struct) the spectrum which the deconvolution
@@ -306,7 +293,7 @@ classdef ExpDeconv
         % Examples 
         % ---------------------------------------------------------------
         %
-        % >> g = ExpDeconv('baby aardvark tree', my_spectrum,...
+        % >> g = GLBIO2013Deconv('baby aardvark tree', my_spectrum,...
         %        some_peaks, 'pp_gold_standard', sort([some_peaks.location]), 'dsp_anderson')
         %
         % Creates a deconvolution with parent 'baby aardvark tree' by
@@ -327,11 +314,11 @@ classdef ExpDeconv
                 assert(ischar(peak_picker_name));
                 assert(ischar(starting_point_name));
                 assert(any(strcmp(peak_picker_name, ...
-                                  ExpDeconv ...
+                                  GLBIO2013Deconv ...
                                   .peak_picking_method_names)));
                 assert(issorted(picked_locations));
                 assert(any(strcmp(starting_point_name, ...
-                                  ExpDeconv ...
+                                  GLBIO2013Deconv ...
                                   .deconvolution_starting_point_method_names)));
                               
                 % Set general values
@@ -342,16 +329,16 @@ classdef ExpDeconv
 
                 % Set starting point
                 summit_methods = {...
-                    ExpDeconv.dsp_smallest_peak_first(), ...
-                    ExpDeconv.dsp_smallest_peak_first_100_pctile(), ...
-                    ExpDeconv.dsp_smallest_peak_first_max_width_too_large(), ...
-                    ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()}; 
+                    GLBIO2013Deconv.dsp_smallest_peak_first(), ...
+                    GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile(), ...
+                    GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large(), ...
+                    GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()}; 
 
                 x = spectrum.x;
                 model = RegionalSpectrumModel; % Use default model
                 if ~isempty(obj.picked_locations)
                     switch(starting_point_name)
-                        case ExpDeconv.dsp_anderson
+                        case GLBIO2013Deconv.dsp_anderson
                             [obj.starting_point, obj.starting_point_lb, ...
                                 obj.starting_point_ub] = ...
                                 ...
@@ -361,14 +348,14 @@ classdef ExpDeconv
 
                         case summit_methods
                             switch( starting_point_name )
-                                case ExpDeconv.dsp_smallest_peak_first()
+                                case GLBIO2013Deconv.dsp_smallest_peak_first()
                                     final_max_width_pctile = 75;
-                                case ExpDeconv.dsp_smallest_peak_first_100_pctile()
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile()
                                     final_max_width_pctile = 100;
-                                case ExpDeconv.dsp_smallest_peak_first_max_width_too_large()
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_max_width_too_large()
                                     final_max_width_pctile = 75;
                                     model.max_rough_peak_width = 0.05;
-                                case ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()
+                                case GLBIO2013Deconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()
                                     final_max_width_pctile = 100;
                                     model.max_rough_peak_width = 0.05;
                                 otherwise
@@ -426,15 +413,15 @@ classdef ExpDeconv
                     obj.peaks = GaussLorentzPeak([]);
                 end
                 
-                obj.aligned_indices = ExpDeconv.best_alignment(obj.peaks, peaks, 'l2');
+                obj.aligned_indices = GLBIO2013Deconv.best_alignment(obj.peaks, peaks, 'l2');
                 
                 % Defensive programming checking for a bug that cropped up
                 % earlier where the number of peaks in deconvolved noisy
                 % gold standard was different than the input number of
                 % peaks
                 mismatched_num_peaks = false;
-                if strcmp(obj.peak_picker_name, ExpDeconv.pp_noisy_gold_standard) || ...
-                        strcmp(obj.peak_picker_name, ExpDeconv.pp_gold_standard)
+                if strcmp(obj.peak_picker_name, GLBIO2013Deconv.pp_noisy_gold_standard) || ...
+                        strcmp(obj.peak_picker_name, GLBIO2013Deconv.pp_gold_standard)
                     mismatched_num_peaks = mismatched_num_peaks | ...
                         length(peaks) ~= length(obj.peaks) | ...
                         length(peaks) ~= size(obj.aligned_indices,2) | ...
@@ -464,11 +451,11 @@ classdef ExpDeconv
         % Plot this deconvolution along with its parent on the current
         % figure
         %
-        % objs - the ExpDeconv object to plot. If an array, loops
+        % objs - the GLBIO2013Deconv object to plot. If an array, loops
         %        through each item and prints it on a new figure
         %
-        % parent - the ExpDatum object that contains this
-        %        ExpDeconv object as one of its deconvolutions            
+        % parent - the GLBIO2013Datum object that contains this
+        %        GLBIO2013Deconv object as one of its deconvolutions            
             function s = escaped(str)
                 num_underscore = sum(bsxfun(@eq,str,'_'));
                 s = char(length(str)+num_underscore);
@@ -528,7 +515,7 @@ classdef ExpDeconv
             strs = cell(length(objs),1);
             separator = '';
             for i = 1:length(objs)
-                strs{i} =sprintf([separator,'ExpDeconv(%s, %s, %s)'],...
+                strs{i} =sprintf([separator,'GLBIO2013Deconv(%s, %s, %s)'],...
                     objs(i).datum_id, objs(i).peak_picker_name, ...
                     objs(i).starting_point_name);
                 separator = '\n';
