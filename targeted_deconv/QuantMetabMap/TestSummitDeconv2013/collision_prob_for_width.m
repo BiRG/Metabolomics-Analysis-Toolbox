@@ -1,6 +1,6 @@
 function p = collision_prob_for_width(width)
 % Given a spectrum width from the list of widths I used for the 
-% GLBIO2013 experiment, gives the approximate probability that a
+% TestSummitDeconv2013 experiment, gives the approximate probability that a
 % spectrum with seven peaks in a bin of that width will be missing
 % at least one local maximum 
 %
@@ -13,11 +13,11 @@ widths =    [5.75, 26.785578117253827, 37.81403585728431, 50.275739222321697, 65
 probs = 1 - [0,    0.1,                0.2,               0.3,                0.4,               0.5,               0.6,                0.7,                0.8,                0.9];
 matches = abs(widths-width) < 1e-4;
 if ~any(matches)
-    error('GLBIO2013Analyze:collison_prob_for_width:unknown_width', ...
+    error('TestSummitDeconv2013:collison_prob_for_width:unknown_width', ...
         'The width %.18g is not in the list known from the experiments. You likely forgot to update the list after doing a new experiment.', width);
 end
 if sum(matches) > 1
-    error('GLBIO2013Analyze:collison_prob_for_width:more_than_one_match', ...
+    error('TestSummitDeconv2013:collison_prob_for_width:more_than_one_match', ...
         'Some of the widths in the list of experimental widths are too close together leading %.18g to match more than one', width);
 end
 p = probs(matches);

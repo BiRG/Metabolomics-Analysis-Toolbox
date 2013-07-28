@@ -36,7 +36,7 @@ function param_error_list = calc_param_rel_error_list(results)
 
     function p = collision_prob_for_width(width)
         % Given a spectrum width from the list of widths I used for the 
-        % GLBIO2013 experiment, gives the approximate probability that a
+        % TestSummitDeconv2013 experiment, gives the approximate probability that a
         % spectrum with seven peaks in a bin of that width will be missing
         % at least one local maximum 
         %
@@ -49,11 +49,11 @@ function param_error_list = calc_param_rel_error_list(results)
         probs = 1 - [0,    0.1,                0.2,               0.3,                0.4,               0.5,               0.6,                0.7,                0.8,                0.9];
         matches = abs(widths-width) < 1e-4;
         if ~any(matches)
-            error('GLBIO2013Analyze:collison_prob_for_width:unknown_width', ...
+            error('TestSummitDeconv2013:collison_prob_for_width:unknown_width', ...
                 'The width %.18g is not in the list known from the experiments. You likely forgot to update the list after doing a new experiment.', width);
         end
         if sum(matches) > 1
-            error('GLBIO2013Analyze:collison_prob_for_width:more_than_one_match', ...
+            error('TestSummitDeconv2013:collison_prob_for_width:more_than_one_match', ...
                 'Some of the widths in the list of experimental widths are too close together leading %.18g to match more than one', width);
         end
         p = probs(matches);
@@ -172,8 +172,8 @@ for results_idx = 1:n
                         assert(~exist('summit','var')); % We shouldn't ever assign twice here
                         summit = d;
                     otherwise
-                        error('GLBIO2013Analyze:unknown_starting_point', ...
-                            'Unknown starting point "%s" found in GLBIO results at index %d', ...
+                        error('TestSummitDeconv2013:unknown_starting_point', ...
+                            'Unknown starting point "%s" found in TestSummitDeconv2013 results at index %d', ...
                             d.starting_point, results_idx);
                 end
             end

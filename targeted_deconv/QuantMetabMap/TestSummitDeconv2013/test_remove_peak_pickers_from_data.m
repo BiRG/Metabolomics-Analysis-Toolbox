@@ -54,7 +54,7 @@ for picker_idx = 1:length(picker_names)
         otherwise
             % Detects additional methods having been added and no case
             % added to the switch statement
-            error('GLBIO2013:unknown_pp_method', ...
+            error('TestSummitDeconv2013:unknown_pp_method', ...
                 'Unknown peak picking method "%s" specified.',...
                 peak_picker_name);
     end
@@ -109,4 +109,4 @@ ensure_test_data_file_exists;
 load(filename_for_test_data);
 
 f = @() remove_peak_pickers_from_data({'not a valid peak picker'}, datum1);
-assertExceptionThrown(f, 'GLBIO2013:unknown_pp_method');
+assertExceptionThrown(f, 'TestSummitDeconv2013:unknown_pp_method');

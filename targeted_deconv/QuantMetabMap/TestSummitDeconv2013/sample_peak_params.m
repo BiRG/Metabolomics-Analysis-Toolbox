@@ -1,5 +1,5 @@
 function [area, height, width, lorentzianness, location] = sample_peak_params( collision_prob, num_spectra )
-% Sample the peak parameters in the original spectra generated as in the GLBIO2013 experiment
+% Sample the peak parameters in the original spectra generated as in the TestSummitDeconv2013 experiment
 %
 % Usage: [area, height, width, lorentzianness, location] = sample_peak_params( collision_prob, num_spectra )
 %

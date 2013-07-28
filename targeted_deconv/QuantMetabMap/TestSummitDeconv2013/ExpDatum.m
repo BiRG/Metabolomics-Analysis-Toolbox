@@ -1,5 +1,5 @@
 classdef ExpDatum
-% Represents a raw data point from my experiment for the GLBIO 2013 paper
+% Represents a raw data point from my experiment for the TestSummitDeconv2013 paper
 % 
 
     

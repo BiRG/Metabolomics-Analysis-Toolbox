@@ -21,7 +21,7 @@ function edited_data = remove_peak_pickers_from_data( peak_pickers, data )
 % Output parameters
 % -------------------------------------------------------------------------
 %
-% edited_data - the GLBIODatum objects in data without any deconvolutions
+% edited_data - the ExpDatum objects in data without any deconvolutions
 %     that involved peak picking methods listed in peak_pickers
 %
 % -------------------------------------------------------------------------
@@ -36,7 +36,7 @@ function edited_data = remove_peak_pickers_from_data( peak_pickers, data )
 
 invalid_picker = cellfun(@(p) ~any(strcmp(p, ExpDeconv.peak_picking_method_names)), peak_pickers);
 if any(invalid_picker)
-    error('GLBIO2013:unknown_pp_method', ...
+    error('TestSummitDeconv2013:unknown_pp_method', ...
         'Unknown peak picking method "%s" specified.',...
         peak_pickers{find(invalid_picker,1,'first')});
 end

@@ -1,4 +1,4 @@
-% Prints a summary of the analysis of the results from the GLBIO2013 experiments
+% Prints a summary of the analysis of the results from the TestSummitDeconv2013 experiments
 
 % Number of monitors being used for output. If more than 1, tries to
 % maximize the figures to fit on only one monitor under Linux - I have no
@@ -456,7 +456,7 @@ param_has_known_orig = [   true,                true,            true,      true
 num_congestions = 10;
 orig_location_dist(num_congestions) = HistogramDistribution; % preallocate array
 param_vals = cell(length(pp_names),length(dsp_names),num_congestions, length(param_names));
-for result = glbio_combined_results
+for result = combined_results
     cong_idx = round(10*collision_prob_for_width(result.spectrum_width));
     orig_location_dist(cong_idx) = HistogramDistribution(...
         [result.spectrum_interval.min,result.spectrum_interval.max],1);
@@ -1379,8 +1379,8 @@ clear('result','cont_idx','deconv','pp_idx','dsp_idx','cong_idx','param_idx','pe
 
 % Count the number of peaks in the all datum objects
 tot_peaks = 0;
-for res_idx = 1:length(glbio_combined_results)
-    datum = glbio_combined_results(res_idx);
+for res_idx = 1:length(combined_results)
+    datum = combined_results(res_idx);
     tot_peaks = tot_peaks + length(datum.spectrum_peaks);
 end
 
@@ -1389,8 +1389,8 @@ end
 % GaussLorentzPeak.property_array function)
 params = nan(tot_peaks, 5);
 prev_row = 0; % Used for storing the last valid row
-for res_idx = 1:length(glbio_combined_results)
-    datum = glbio_combined_results(res_idx);
+for res_idx = 1:length(combined_results)
+    datum = combined_results(res_idx);
     num_peaks = length(datum.spectrum_peaks);
     params(prev_row+1:prev_row+num_peaks,1:4) = reshape( ...
         datum.spectrum_peaks.property_array, 4, num_peaks)';
@@ -1461,8 +1461,8 @@ clear('params');
 
 % Count the number of peaks in the all datum objects
 tot_peaks = zeros(1,num_congestions);
-for res_idx = 1:length(glbio_combined_results)
-    datum = glbio_combined_results(res_idx);
+for res_idx = 1:length(combined_results)
+    datum = combined_results(res_idx);
     con = round(collision_prob_for_width(datum.spectrum_width)*10);
     tot_peaks(con) = tot_peaks(con) + length(datum.spectrum_peaks);
 end
@@ -1472,8 +1472,8 @@ end
 % GaussLorentzPeak.property_array function)
 params = arrayfun(@(tot) nan(tot, 5),tot_peaks,'uniformoutput',false);
 prev_row = zeros(1,num_congestions); % Used for storing the last valid row
-for res_idx = 1:length(glbio_combined_results)
-    datum = glbio_combined_results(res_idx);
+for res_idx = 1:length(combined_results)
+    datum = combined_results(res_idx);
     con = round(collision_prob_for_width(datum.spectrum_width)*10);
     num_peaks = length(datum.spectrum_peaks);
     p = params{con};
@@ -1551,11 +1551,11 @@ clear('params');
 % whether these things are correlated
 
 % Count the number of peaks in the all datum objects
-num_deconv = length(glbio_combined_results(1).deconvolutions);
+num_deconv = length(combined_results(1).deconvolutions);
 tot_peaks = zeros(num_deconv,num_congestions);
 for deconv_idx = 1:num_deconv
-    for res_idx = 1:length(glbio_combined_results)
-        datum = glbio_combined_results(res_idx);
+    for res_idx = 1:length(combined_results)
+        datum = combined_results(res_idx);
         con = round(collision_prob_for_width(datum.spectrum_width)*10);
         tot_peaks(deconv_idx, con) = tot_peaks(deconv_idx, con) + length(datum.deconvolutions(deconv_idx).peaks);
     end
@@ -1566,8 +1566,8 @@ end
 % GaussLorentzPeak.property_array function) (with area appended)
 params = arrayfun(@(tot) nan(tot, 5),tot_peaks,'uniformoutput',false);
 prev_row = zeros(num_deconv,num_congestions); % Used for storing the last valid row
-for res_idx = 1:length(glbio_combined_results)
-	datum = glbio_combined_results(res_idx);
+for res_idx = 1:length(combined_results)
+	datum = combined_results(res_idx);
 	con = round(collision_prob_for_width(datum.spectrum_width)*num_congestions);
     for deconv_idx = 1:num_deconv
         num_peaks = length(datum.deconvolutions(deconv_idx).peaks);
@@ -1643,7 +1643,7 @@ clear('tot_peaks','prev_row','res_idx','indices_to_correct','uncorrected','corre
 % Width-Lorentzianness and maybe glance at Height-Lorentzianness
 names = {'MG','ML','MX','GL','GX','LX','XA'};
 for deconv_idx = 1:num_deconv
-    d = glbio_combined_results(1).deconvolutions(deconv_idx);
+    d = combined_results(1).deconvolutions(deconv_idx);
     dname = sprintf('%s %s', d.peak_picker_name, d.starting_point_name);
     if strcmp(d.peak_picker_name, ExpDeconv.pp_gold_standard)
         for con=1:num_congestions
@@ -1668,7 +1668,7 @@ clear('names','p','i','sig_names','selected_p','dname','d','deconv_idx','con');
 
 % Set deconv_idx to be gold-standard with my 100/large starting point and
 % double check that that is the correct index
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -1713,7 +1713,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax');
 
 % Set deconv_idx to be gold-standard with my 100/large starting point and
 % double check that that is the correct index
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -1756,7 +1756,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
 % Set deconv_idx to be gold-standard with my 100/large starting point and
 % double check that that is the correct index
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -1790,7 +1790,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 % slight underestimates.
 
 % Find the appropriate deconvolution
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -1834,7 +1834,7 @@ clear('h','p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks'
 % There are also a lot more wild outliers.
 
 % Find the appropriate deconvolution
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -1879,7 +1879,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 % original are also quite possible)
 
 % Find the appropriate deconvolution
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -1936,7 +1936,7 @@ clear('h','p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks'
 % congestions 9 and 10 and only 1 for Anderson.
 
 % Find the appropriate deconvolution
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -1993,7 +1993,7 @@ clear('h','p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks'
 
 % Set deconv_idx to be gold-standard with my 100/large starting point and
 % double check that that is the correct index
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -2030,7 +2030,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
 % Set deconv_idx to be anderson with my 100/large starting point and
 % double check that that is the correct index
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -2065,7 +2065,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
 % Set deconv_idx to be gold-standard with my 100/large starting point and
 % double check that that is the correct index
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -2101,7 +2101,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 % original peaks.
 
 % Find the appropriate deconvolution
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -2212,7 +2212,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
 
 % Find the appropriate deconvolution
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -2326,7 +2326,7 @@ clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
 
 % Find the appropriate deconvolution
-deconvs = glbio_combined_results(1).deconvolutions;
+deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
@@ -2426,7 +2426,7 @@ clear('params','orig_params');
 
 %% Calculate the parameters
 % Start alignment-based analysis
-pe_list = calc_param_error_list(glbio_combined_results);
+pe_list = calc_param_error_list(combined_results);
 
 %% Does an improvement exist independent of where we look? 
 % The histogram suggests yes. And a paired t-test gives an unbelieveably
@@ -2609,7 +2609,7 @@ end
 
 %% Precalculate loc_param_errors
 % This takes a while on my home computer so I put it in a separate cell
-loc_param_errs = peak_loc_vs_param_errs(glbio_combined_results);
+loc_param_errs = peak_loc_vs_param_errs(combined_results);
 starting_pt_names = {'Anderson','Summit'};
 pa_param_names = {'height', 'width','lorentzianness', 'location'}; % Param names for the successive elements returned by the GaussLorentzPeak.property_array function
 
@@ -3653,7 +3653,7 @@ for starting_pt_idx = 1:length(starting_pt_names)
         param_idx = param_idx + 1; 
         if param_idx > length(pa_param_names); param_idx = 1; end
         extreme = extreme_loc_param_pairs(...
-            glbio_combined_results, ...
+            combined_results, ...
             loc_param_errs(congestion_idx,param_idx,starting_pt_idx));
         extreme_names = {'Top loc, min param','Top loc, max param','Bot loc, max param'};
         for val=1:length(extreme)
@@ -3686,7 +3686,7 @@ for starting_pt_idx = 1:length(starting_pt_names)
         param_idx = param_idx + 1; 
         if param_idx > length(pa_param_names); param_idx = 1; end
         extreme = extreme_loc_param_pairs(...
-            glbio_combined_results, ...
+            combined_results, ...
             loc_param_errs(congestion_idx,param_idx,starting_pt_idx));
         extreme_names = {'Top loc, min param','Top loc, max param','Bot loc, max param'};
         for val=1:length(extreme)
@@ -3725,13 +3725,13 @@ end
 for i = 1:7
     figure(i);
     clf;
-    plot_peak_estimate(glbio_combined_results(861), 3, ...
+    plot_peak_estimate(combined_results(861), 3, ...
                 i, false);
 end
 
-fprintf('Aligned indices: %s\n', to_str(glbio_combined_results(861).deconvolutions(3).aligned_indices));
-fprintf('Deconvolved locations: %s\n',to_str([glbio_combined_results(861).deconvolutions(3).peaks(1:7).location]));
-fprintf('Original locations   : %s\n',to_str([glbio_combined_results(861).spectrum_peaks([4 3 7 6 2 1 5]).location]));
+fprintf('Aligned indices: %s\n', to_str(combined_results(861).deconvolutions(3).aligned_indices));
+fprintf('Deconvolved locations: %s\n',to_str([combined_results(861).deconvolutions(3).peaks(1:7).location]));
+fprintf('Original locations   : %s\n',to_str([combined_results(861).spectrum_peaks([4 3 7 6 2 1 5]).location]));
 
 %% Double-check figure 8
 % Figure 8 was Result 1059 Deconv 3 Peak 2
@@ -3779,9 +3779,9 @@ fprintf('Original locations   : %s\n',to_str([glbio_combined_results(861).spectr
 % don't know how to choose the cut-off, and that might take some time.
 % Instead, I will just note this problem in the paper if size constraints 
 % permit it.
-fprintf('Aligned indices: %s\n', to_str(glbio_combined_results(1059).deconvolutions(3).aligned_indices));
-fprintf('Deconvolved locations: %s\n',to_str([glbio_combined_results(1059).deconvolutions(3).peaks(1:7).location]));
-fprintf('Original locations   : %s\n',to_str([glbio_combined_results(1059).spectrum_peaks([1, 7, 4, 2, 5, 6, 3]).location]));
+fprintf('Aligned indices: %s\n', to_str(combined_results(1059).deconvolutions(3).aligned_indices));
+fprintf('Deconvolved locations: %s\n',to_str([combined_results(1059).deconvolutions(3).peaks(1:7).location]));
+fprintf('Original locations   : %s\n',to_str([combined_results(1059).spectrum_peaks([1, 7, 4, 2, 5, 6, 3]).location]));
 
 %% Does abs vs squared cost function fix alignment problem for figures 2 and 8?
 %
@@ -3806,8 +3806,8 @@ fprintf('Original locations   : %s\n',to_str([glbio_combined_results(1059).spect
 % to write the new routine and then re-run things.
 
 
-fig_2_deconv_loc = [glbio_combined_results(861).deconvolutions(3).peaks(1:7).location];
-fig_2_orig_loc = [glbio_combined_results(861).spectrum_peaks(1:7).location];
+fig_2_deconv_loc = [combined_results(861).deconvolutions(3).peaks(1:7).location];
+fig_2_orig_loc = [combined_results(861).spectrum_peaks(1:7).location];
 [assignment,cost] = ExpDeconv.l_p_norm_assignment(fig_2_orig_loc, fig_2_deconv_loc,1);
 fprintf('Figure 2 alignment using abs\n');
 [fig_2_deconv_loc(assignment); fig_2_orig_loc] %#ok<NOPTS>
@@ -3818,8 +3818,8 @@ fig_2_man_matrix = [fig_2_deconv_loc(manual_alignment); fig_2_orig_loc] %#ok<NOP
 manual_cost = sum(abs(fig_2_man_matrix(1,:) - fig_2_man_matrix(2,:)));
 fprintf('The abs cost of the manual alignment is: %g\n', manual_cost);
 
-fig_8_deconv_loc = [glbio_combined_results(1059).deconvolutions(3).peaks(1:7).location];
-fig_8_orig_loc = [glbio_combined_results(1059).spectrum_peaks(1:7).location];
+fig_8_deconv_loc = [combined_results(1059).deconvolutions(3).peaks(1:7).location];
+fig_8_orig_loc = [combined_results(1059).spectrum_peaks(1:7).location];
 assignment = ExpDeconv.l_p_norm_assignment(fig_8_orig_loc, fig_8_deconv_loc,1);
 fprintf('Figure 8 alignment using abs');
 [fig_8_deconv_loc(assignment); fig_8_orig_loc] %#ok<NOPTS>
@@ -3855,8 +3855,8 @@ fprintf('Figure 8 alignment using abs');
 
 affected_deconvs=struct('result_idx', [], 'deconv_idx', []);
 num_deconvs = 0;
-for result_idx=1:length(glbio_combined_results)
-    datum = glbio_combined_results(result_idx);
+for result_idx=1:length(combined_results)
+    datum = combined_results(result_idx);
     orig_peaks = datum.spectrum_peaks;
     num_deconvs = num_deconvs + length(datum.deconvolutions);
     for deconv_idx = 1:length(datum.deconvolutions)
@@ -4189,7 +4189,7 @@ fprintf('\n');
 
 
 %% Calculate the relative parameter errors
-pe_rel_list = calc_param_rel_error_list(glbio_combined_results);
+pe_rel_list = calc_param_rel_error_list(combined_results);
 
 %% Precalculate some values needed for plotting relative errors by parameter
 % On my home computer the large "unique" statements take a lot of time to

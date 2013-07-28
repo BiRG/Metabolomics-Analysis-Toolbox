@@ -23,7 +23,7 @@ function updated_data = run_update_all( instance_number, data )
 % Output parameters
 % -------------------------------------------------------------------------
 %
-% updated_data - the GLBIODatum objects in data after updating
+% updated_data - the ExpDatum objects in data after updating
 %
 % -------------------------------------------------------------------------
 % Examples

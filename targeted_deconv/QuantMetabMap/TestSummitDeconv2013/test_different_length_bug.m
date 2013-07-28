@@ -1,6 +1,6 @@
 function test_suite = test_different_length_bug %#ok<STOUT>
 % matlab_xUnit tests excercising bugs that produced different numbers of
-% peaks output than input during the GLBIO2013 experiment
+% peaks output than input during the TestSummitDeconv2013 experiment
 %
 % Usage:
 %   runtests test_different_length_bug 

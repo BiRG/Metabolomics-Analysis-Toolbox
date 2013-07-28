@@ -1,7 +1,7 @@
 function mins=investigate_functions_to_determine_which_peaks_to_merge( )
 % My work investigating which peaks I should in the noiseless_merged peak picker
 %
-% This will eventually be merged with GLBIO2013Analyze.m
+% This will eventually be merged with Analysis.m
 %
 % I have this as a separate function so that I can run it and set
 % breakpoints.

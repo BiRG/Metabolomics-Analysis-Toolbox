@@ -10,4 +10,4 @@ mean_peak_width = 0.00453630122481774988;
 assertEqual(width_for_collision_prob(1),5.75*mean_peak_width);
 assertEqual(width_for_collision_prob(0.5),86.66187912294609*mean_peak_width);
 f=@() width_for_collision_prob(0.01);
-assertExceptionThrown(f, 'GLBIO2013Analyze:width_for_collision_prob:unknown_prob');
+assertExceptionThrown(f, 'width_for_collision_prob:unknown_prob');
