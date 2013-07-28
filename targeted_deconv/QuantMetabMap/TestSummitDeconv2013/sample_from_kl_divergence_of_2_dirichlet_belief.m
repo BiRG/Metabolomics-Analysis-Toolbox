@@ -1,7 +1,7 @@
-function samples = GLBIO2013_sample_from_kl_divergence_of_2_dirichlet_belief( dirichlet_1, dirichlet_2, num_samples, zero_behavior )
+function samples = sample_from_kl_divergence_of_2_dirichlet_belief( dirichlet_1, dirichlet_2, num_samples, zero_behavior )
 % Transforms pairs of samples from dirichlet_belief_* into their divergences from one another
 %
-% Usage: samples = GLBIO2013_sample_from_kl_divergence_of_2_dirichlet_belief( dirichlet_1, dirichlet_2, num_samples, zero_behavior )
+% Usage: samples = sample_from_kl_divergence_of_2_dirichlet_belief( dirichlet_1, dirichlet_2, num_samples, zero_behavior )
 %
 % Someone's uncertainties beliefs about the parameters of a categorical
 % distribution are frequently modeled as a Dirichlet distribution. We can
