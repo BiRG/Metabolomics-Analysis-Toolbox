@@ -1,8 +1,8 @@
-function test_suite = test_GLBIO2013_sample_peak_params %#ok<STOUT>
-%matlab_xUnit tests excercising GLBIO2013_sample_peak_params
+function test_suite = test_sample_peak_params %#ok<STOUT>
+%matlab_xUnit tests excercising sample_peak_params
 %
 % Usage:
-%   runtests test_GLBIO2013_sample_peak_params
+%   runtests test_sample_peak_params
 initTestSuite;
 
 function testFirstSeed %#ok<DEFNU>
@@ -14,7 +14,7 @@ expected_height = [0.138002254598869417, 0.140076854286452612, 0.000731192045598
 expected_width = [0.00232335448925882152, 0.0164649545566358177, 0.00553825322897061496, 0.00245546253300162531, 0.00232786101318629719, 0.00220721516668261931, 0.00529804291421557844];
 expected_lorentzianness = [0.70324413966156929, 0.324276186983734616, 0.572595170451478341, 0.70630302568384451, 0.505182127439105733, 0.999999683466445188, 0.612413251855141061];
 expected_location = [1.55151569412105061, 1.85126888730743611, 1.29222246215581227, 1.93611885990057631, 1.22403291280391935, 2.39955488161231933, 3.09333650687846351];
-[actual_area, actual_height, actual_width, actual_lorentzianness, actual_location]=GLBIO2013_sample_peak_params(0.1,1);
+[actual_area, actual_height, actual_width, actual_lorentzianness, actual_location]=sample_peak_params(0.1,1);
 assertEqual(expected_area, actual_area);
 assertEqual(expected_height, actual_height);
 assertEqual(expected_width, actual_width);
@@ -22,7 +22,7 @@ assertEqual(expected_lorentzianness, actual_lorentzianness);
 assertEqual(expected_location, actual_location);
 
 
-[actual_area, ~, ~, ~, ~]=GLBIO2013_sample_peak_params(0.1,2);
+[actual_area, ~, ~, ~, ~]=sample_peak_params(0.1,2);
 assertEqual(length(actual_area),14);
 assertEqual(actual_area(14), 0.00135283134532436316);
 

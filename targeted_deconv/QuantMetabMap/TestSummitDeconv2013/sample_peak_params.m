@@ -1,7 +1,7 @@
-function [area, height, width, lorentzianness, location] = GLBIO2013_sample_peak_params( collision_prob, num_spectra )
+function [area, height, width, lorentzianness, location] = sample_peak_params( collision_prob, num_spectra )
 % Sample the peak parameters in the original spectra generated as in the GLBIO2013 experiment
 %
-% Usage: [area, height, width, lorentzianness, location] = GLBIO2013_sample_peak_params( collision_prob, num_spectra )
+% Usage: [area, height, width, lorentzianness, location] = sample_peak_params( collision_prob, num_spectra )
 %
 % Generates num_spectra spectra with 7 peaks and a width that gives the
 % given collision probability. Calculates the area for each peak, height,

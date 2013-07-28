@@ -310,7 +310,7 @@ else
         
         fprintf('%d: Generating spectra for congestion %d - %2.1f%% @ %4.1f minutes\n',worker_idx, congestion, 100*(0+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
         param=cell(3); % area, height, width
-        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
+        [param{1},param{2},param{3}]=sample_peak_params(congestion/10, num_spectra_for_bins);
 
         % Temporaries to be used so matlab doesn't get confused about
         % indexing
@@ -333,7 +333,7 @@ else
         end
 
         fprintf('%d: Generating count spectra for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(4+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
-        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/num_congestions, num_spectra_for_bins);
+        [param{1},param{2},param{3}]=sample_peak_params(congestion/num_congestions, num_spectra_for_bins);
 
         for param_idx = 1:num_sampd_params
             fprintf('%d: Binning pass 2 params for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(4+param_idx+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60)
@@ -344,7 +344,7 @@ else
         end
 
         fprintf('%d: Generating pass 2 count spectra for congestion %d - %02.1f%% @ %4.1f minutes\n', worker_idx, congestion, 100*(4+param_idx+stps*(congestion-1))/(stps*num_congestions), toc(start_time)/60);
-        [param{1},param{2},param{3}]=GLBIO2013_sample_peak_params(congestion/10, num_spectra_for_bins);
+        [param{1},param{2},param{3}]=sample_peak_params(congestion/10, num_spectra_for_bins);
 
         
         for param_idx = 1:num_sampd_params
