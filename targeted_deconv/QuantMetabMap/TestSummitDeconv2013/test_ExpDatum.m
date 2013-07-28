@@ -23,13 +23,72 @@ if ~exist(filename_for_test_data,'file')
 end
 
 function assertDatumObjectsEqual(d1,d2)
-fields = {'spectrum_peaks','spectrum_width','deconvolutions' ...
+fields = {'spectrum_peaks','spectrum_width', ...
     'resolution','spectrum_interval', 'spectrum', ...
     'spectrum_snr', 'id'};
 for i = 1:length(fields)
     f = fields{i};
     assertEqual(d1.(f),d2.(f),sprintf('Field %s should be equal',f));
 end
+
+decs1 = d1.deconvolutions;
+decs2 = d2.deconvolutions;
+assertEqual(length(decs1), length(decs2));
+for i = 1:length(decs1)
+    dec1 = decs1(i);
+    dec2 = decs2(i);
+    fields = fieldnames(dec1);
+    for j = 1:length(fields)
+        f = fields{j};
+        if strcmp(f,'peaks')
+            f1 = dec1.peaks.property_array; % Comparing the peak property array will produce better error messages
+            f2 = dec2.peaks.property_array;
+        else
+            f1 = dec1.(f);
+            f2 = dec2.(f);
+        end
+        assertEqual(f1,f2,...
+            sprintf('Field %s should be equal in deconvolution %d',f,i));
+    end
+end
+
+
+function assertDatumObjectsApproxEqual(d1,d2)
+fields = {'spectrum_peaks','spectrum_width',...
+    'resolution','spectrum_interval', 'spectrum', ...
+    'spectrum_snr', 'id'};
+for i = 1:length(fields)
+    f = fields{i};
+    assertEqual(d1.(f),d2.(f),sprintf('Field %s should be equal',f));
+end
+
+decs1 = d1.deconvolutions;
+decs2 = d2.deconvolutions;
+assertEqual(length(decs1), length(decs2));
+for i = 1:length(decs1)
+    dec1 = decs1(i);
+    dec2 = decs2(i);
+    approx_eq_fields = {'starting_point','starting_point_lb','starting_point_ub','peaks'};
+    fields = fieldnames(dec1);
+    for j = 1:length(fields)
+        f = fields{j};
+        if strcmp(f,'peaks')
+            f1 = dec1.peaks.property_array; % Comparing the peak property array will produce better error messages
+            f2 = dec2.peaks.property_array;
+        else
+            f1 = dec1.(f);
+            f2 = dec2.(f);
+        end
+        if any(strcmp(f,approx_eq_fields))
+            assertElementsAlmostEqual(f1,f2,sprintf(...
+                'Field %s should be almost equal in deconvolution %d',f,i));
+        else
+            assertEqual(f1,f2,...
+                sprintf('Field %s should be equal in deconvolution %d',f,i));
+        end
+    end
+end
+
 
 function idx = picker_idx(str)
 % Usage: idx = picker_idx(str)
@@ -94,22 +153,29 @@ function test_update_correctly_restores_missing_picked_peaks %#ok<DEFNU>
 % Check that when all deconvolutions for a particular peak picker have been
 % removed, updateDeconvolutions creates the missing deconvolutions and
 % picked peaks
+%
+% NOTE: the datum objects generated are different on 32 bit and 64 bit
+% platforms (or more precisely on my home and work computers, so you need
+% to delete the test data file and regenerate it when switching computers)
 ensure_test_data_file_exists;
 load(filename_for_test_data);
 
 old_rng = RandStream.getGlobalStream();
 RandStream.setGlobalStream(RandStream('mt19937ar','Seed',128870068));
 
-censored_deconvs = datum1.deconvolutions(3:end);
+gold_standard_deconvs = arrayfun(@(dec) strcmp(dec.peak_picker_name,ExpDeconv.pp_gold_standard), datum1.deconvolutions);
+censored_deconvs = datum1.deconvolutions(~gold_standard_deconvs);
 censored1 = ExpDatum.dangerous_constructor(datum1.spectrum_peaks, ...
     datum1.spectrum_width, censored_deconvs, datum1.resolution, ...
     datum1.spectrum_interval, datum1.spectrum, datum1.spectrum_snr, ...
     datum1.id);
 updated_censored1 = censored1.updateDeconvolutions;
 
+% If this is failing, check the note in the test description above
 assertDatumObjectsEqual(datum1, updated_censored1);
 
-censored_deconvs = datum2.deconvolutions([1:4,7:8]);
+smoothed_max_deconvs = arrayfun(@(dec) strcmp(dec.peak_picker_name,ExpDeconv.pp_smoothed_local_max), datum2.deconvolutions);
+censored_deconvs = datum2.deconvolutions(~smoothed_max_deconvs);
 censored2 = ExpDatum.dangerous_constructor(datum2.spectrum_peaks, ...
     datum2.spectrum_width, censored_deconvs, datum2.resolution, ...
     datum2.spectrum_interval, datum2.spectrum, datum2.spectrum_snr, ...
