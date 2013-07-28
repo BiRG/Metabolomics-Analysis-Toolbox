@@ -12,3 +12,7 @@ Analysis_cached_sampled_distributions.mat
 Analysis_cached_max_scaled_heights.mat
 Analysis_cached_KL_probs.mat
 
+#######
+# Test files that need to be regenerated on each platform
+#######
+test_ExpDatum_test_data_1.mat
