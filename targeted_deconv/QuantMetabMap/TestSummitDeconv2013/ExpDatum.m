@@ -43,22 +43,6 @@ classdef ExpDatum
     end
     
     methods(Static)
-        function obj = from_GLBIO2013Datum(datums)
-        % Convert GLBIO object to Exp object
-            obj(numel(datums)) = ExpDatum;
-            for datum_idx = 1:numel(datums)
-                d = datums(datum_idx);
-                decs(1,length(d.deconvolutions)) =  ExpDeconv; %#ok<AGROW>
-                for i=1:numel(d.deconvolutions)
-                    dec = d.deconvolutions(i);
-                    decs(i) = ExpDeconv.from_GLBIO2013Deconv(dec); %#ok<AGROW>
-                end
-                obj(datum_idx) = ExpDatum.dangerous_constructor(d.spectrum_peaks, ...
-                    d.spectrum_width, decs, d.resolution, ...
-                    d.spectrum_interval, d.spectrum, d.spectrum_snr, d.id);
-            end
-        end
-        
         function obj = dangerous_constructor(spectrum_peaks, ...
             spectrum_width, deconvolutions, resolution, ...
             spectrum_interval, spectrum, spectrum_snr, id)

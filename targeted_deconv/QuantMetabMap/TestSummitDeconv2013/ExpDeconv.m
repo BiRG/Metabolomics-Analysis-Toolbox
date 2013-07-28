@@ -53,19 +53,6 @@ classdef ExpDeconv
     end
     
     methods (Static)
-        function obj = from_GLBIO2013Deconv(d)
-            obj = ExpDeconv;
-            obj.peak_picker_name = d.peak_picker_name;
-            obj.picked_locations = d.picked_locations;
-            obj.starting_point_name = d.starting_point_name;
-            obj.starting_point = d.starting_point;
-            obj.starting_point_lb = d.starting_point_lb;
-            obj.starting_point_ub = d.starting_point_ub;
-            obj.peaks = d.peaks;
-            obj.aligned_indices = d.aligned_indices;
-            obj.datum_id = d.datum_id;
-        end
-        
         function best = best_alignment(peaks, original_peaks, criterion)
         % Calculate the best alignment between two sets of peaks using the hungarian algorithm for linear assignment problems (munkres)
         %
