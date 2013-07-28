@@ -425,7 +425,7 @@ clear('diffs','congestion','param_idx');
 % The spectral widths chosen give better than 99% probabilities that the
 % probabilities of being free of peak merging are within 0.4% of the target
 % probability.
-GLBIO2013_print_prob_counts_in_range_table(0.004);
+print_prob_counts_in_range_table(0.004);
 
 %% Calculate counts of different parameters in simplified distribution
 % Summarize the distribution of the peak parameters by counting how many

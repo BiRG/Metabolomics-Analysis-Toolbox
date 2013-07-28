@@ -1,7 +1,7 @@
-function GLBIO2013_print_prob_counts_in_range_table( interval_half_width )
+function print_prob_counts_in_range_table( interval_half_width )
 % Prints the table of probabilities that the spectrum widths give the correct peak merging probabilities
 %
-% Usage: GLBIO2013_print_prob_counts_in_range_table( interval_half_width )
+% Usage: print_prob_counts_in_range_table( interval_half_width )
 %
 % interval_half_width - half of the width of the acceptable interval around
 %                       the center
