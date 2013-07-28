@@ -16,7 +16,7 @@ in_name  = 'Mar_07_2013_test_experiment_results_after_picker_removal_and_update.
 out_name = 'Mar_07_2013_test_experiment_results_with_new_dsps.mat';
 load(in_name);
 tic; 
-Mar_07_2013_test_experiment_results_with_new_dsps=GLBIO2013_run_update_all(1, Mar_07_2013_results_after_picker_removal_and_update); toc
+Mar_07_2013_test_experiment_results_with_new_dsps=run_update_all(1, Mar_07_2013_results_after_picker_removal_and_update); toc
 save(out_name, 'Mar_07_2013_test_experiment_results_with_new_dsps');
 exit                      % don't forget to exit
 MATLAB_ENV

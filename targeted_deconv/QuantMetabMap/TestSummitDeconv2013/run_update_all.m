@@ -1,7 +1,7 @@
-function updated_data = GLBIO2013_run_update_all( instance_number, data )
+function updated_data = run_update_all( instance_number, data )
 % Return the effect of running update on every element of data (and print status while doing it)
 %
-% Usage: updated_data = GLBIO2013_run_update_all( data )
+% Usage: updated_data = run_update_all( data )
 %
 % For each element in data (data(i)), returns an updated version in
 % updated_data(i) that is the result of running update on data(i)
