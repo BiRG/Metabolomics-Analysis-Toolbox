@@ -1,7 +1,7 @@
-function peaks = auto_dirty_deconvolve_pos_resid( x, y, num_neighbors, smallest_peak_height, noise_std, progress_func )
-% Does a quick and dirty deconvolution of region given by x,y
+function peaks = auto_summit_deconvolve_pos_resid( x, y, num_neighbors, smallest_peak_height, noise_std, progress_func )
+% Does a summit-focused deconvolution of region given by x,y
 %
-% Usage: peaks = auto_dirty_deconvolve_pos_resid( x, y, num_neighbors, smallest_peak_height, noise_std, progress_func )
+% Usage: peaks = auto_summit_deconvolve_pos_resid( x, y, num_neighbors, smallest_peak_height, noise_std, progress_func )
 % 
 % Does a greedy fit, starting with the highest peak x's of 1 peak at a
 % time, looking only at the points near the x location of that peak. Stops
