@@ -157,6 +157,10 @@ function test_update_correctly_restores_missing_picked_peaks %#ok<DEFNU>
 % NOTE: the datum objects generated are different on 32 bit and 64 bit
 % platforms (or more precisely on my home and work computers, so you need
 % to delete the test data file and regenerate it when switching computers)
+%
+% Also note: you can't speed this up by removing some of the deconvolutions
+% - if any with the same peak picker are there, the peak picker will not be
+% regenerated and so the regeneration will not be properly tested
 ensure_test_data_file_exists;
 load(filename_for_test_data);
 
