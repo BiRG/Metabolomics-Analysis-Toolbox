@@ -1,13 +1,13 @@
-function test_suite = test_GLBIO2013_remove_peak_pickers_from_data %#ok<STOUT>
-% matlab_xUnit tests excercising GLBIO2013_remove_peak_pickers_from_data
+function test_suite = test_remove_peak_pickers_from_data %#ok<STOUT>
+% matlab_xUnit tests excercising remove_peak_pickers_from_data
 %
 % Usage:
-%   runtests test_GLBIO2013_remove_peak_pickers_from_data 
+%   runtests test_remove_peak_pickers_from_data 
 initTestSuite;
 
 function str=filename_for_test_data
 % Return the name of the file in which the test data is stored
-str = 'test_GLBIO2013_remove_peak_pickers_from_data_test_data_1.mat';
+str = 'test_remove_peak_pickers_from_data_test_data_1.mat';
 
 function ensure_test_data_file_exists
 % This function is here to regenerate the test data if necessary. Does
@@ -91,7 +91,7 @@ for picker1 = 1:length(pickers)
                     data(i).spectrum_interval, data(i).spectrum, data(i).spectrum_snr, ...
                     data(i).id);
             end
-            actual = GLBIO2013_remove_peak_pickers_from_data(to_exclude, data);
+            actual = remove_peak_pickers_from_data(to_exclude, data);
             
             
             assertEqual(length(expected), length(actual));
@@ -108,5 +108,5 @@ function test_has_error_on_bad_peak_picker %#ok<DEFNU>
 ensure_test_data_file_exists;
 load(filename_for_test_data);
 
-f = @() GLBIO2013_remove_peak_pickers_from_data({'not a valid peak picker'}, datum1);
+f = @() remove_peak_pickers_from_data({'not a valid peak picker'}, datum1);
 assertExceptionThrown(f, 'GLBIO2013:unknown_pp_method');

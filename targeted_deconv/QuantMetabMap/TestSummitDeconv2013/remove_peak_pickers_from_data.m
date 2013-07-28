@@ -1,7 +1,7 @@
-function edited_data = GLBIO2013_remove_peak_pickers_from_data( peak_pickers, data )
+function edited_data = remove_peak_pickers_from_data( peak_pickers, data )
 % Return data without any deconvolutions that involved the peak pickers in peak_pickers
 %
-% Usage: edited_data = GLBIO2013_remove_peak_pickers_from_data( peak_pickers, data )
+% Usage: edited_data = remove_peak_pickers_from_data( peak_pickers, data )
 %
 % For each element in data (data(i)), returns an edited version in
 % edited_data(i) that is identical except that it does not contain any 
