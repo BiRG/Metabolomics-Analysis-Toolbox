@@ -15,13 +15,14 @@ fi
 #Usage: 
 unset DISPLAY
 # IMPORTANT: DONOT indent any of the below statements
-matlab -nodesktop -singleCompThread  > glbio2013_run_$2_terminal_output <<MATLAB_ENV
+matlab -nodesktop -singleCompThread  > test_summit_2013_run_$2_terminal_output <<MATLAB_ENV
 % The below works like a script m-file between MATLAB_ENVs
-cd('targeted_deconv/QuantMetabMap');
+cd('targeted_deconv/QuantMetabMap/TestSummitDeconv2013');
 warning('off','MATLAB:RandStream:GetDefaultStream');
 warning('off','MATLAB:RandStream:SetDefaultStream');
+setup_path;
 tic; results_$2=run_experiment($1,$2,64,false); toc
-save('glbio2013_run_$2_results.mat', 'results_$2');
+save('test_summit_2013_run_$2_results.mat', 'results_$2');
 exit                      % don't forget to exit
 MATLAB_ENV
 # keep this line to ensure newline
