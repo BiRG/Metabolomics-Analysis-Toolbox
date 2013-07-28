@@ -1,8 +1,8 @@
-function test_suite = test_deconv_initial_vals_dirty %#ok<STOUT>
-%matlab_xUnit tests excercising deconv_initial_vals_dirty
+function test_suite = test_deconv_initial_vals_summit %#ok<STOUT>
+%matlab_xUnit tests excercising deconv_initial_vals_summit
 %
 % Usage:
-%   runtests test_deconv_initial_vals_dirty 
+%   runtests test_deconv_initial_vals_summit 
 initTestSuite;
 
 function testTwoClosePeaks %#ok<DEFNU>
@@ -12,7 +12,7 @@ function testTwoClosePeaks %#ok<DEFNU>
 peaks = GaussLorentzPeak([1,.02,1,0.5,   1,.02,1,0.500000001]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
-[b,lb,ub]=deconv_initial_vals_dirty(spec.x, spec.Y, 0,1,[0.5, 0.500000001], ...
+[b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.5, 0.500000001], ...
     0.04, 12, @do_nothing);
 
 expected_b  = [7.446009559292229e-15; 0.011741640299113645; 3.499735503745569e-05; 0.5; 2.0000000013449766; 0.019999990356467118; 1; 0.50000000099999997];
@@ -29,7 +29,7 @@ function testOnePeak %#ok<DEFNU>
 peaks = GaussLorentzPeak([1,.02,1,0.5]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
-[b,lb,ub]=deconv_initial_vals_dirty(spec.x, spec.Y, 0,1,0.5, ...
+[b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,0.5, ...
     0.04, 12, @do_nothing);
 
 expected_b  = [1; 0.02; 1; 0.5];
@@ -47,7 +47,7 @@ function testThreePeaks %#ok<DEFNU>
 peaks = GaussLorentzPeak([1,.005,1,0.25, 1,.005,1,0.5, 1,.005,1,0.75]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
-[b,lb,ub]=deconv_initial_vals_dirty(spec.x, spec.Y, 0,1,[0.25,0.5,0.75], ...
+[b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.25,0.5,0.75], ...
     0.04, 12);
 
 expected_b  = [1;.005;1;0.25;    1;.005;1;0.5;     1;.005;1;0.75];
@@ -67,7 +67,7 @@ function testSixPeaksTwoLoc %#ok<DEFNU>
 peaks = GaussLorentzPeak([1,.005,1,0.5, 1,.005,1,0.5, 1,.005,1,0.5, 1,.005,1,0.75,   1,.005,1,0.75,   1,.005,1,0.75]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
-[b,lb,ub]=deconv_initial_vals_dirty(spec.x, spec.Y, 0,1,[0.5, 0.5, 0.5, 0.75, 0.75, 0.75], ...
+[b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.5, 0.5, 0.5, 0.75, 0.75, 0.75], ...
     0.04, 12);
 
 expected_b  = [3; 0.00499996;  1; 0.5; 
@@ -104,7 +104,7 @@ function testThreePeaksOneLoc %#ok<DEFNU>
 peaks = GaussLorentzPeak([1,.005,1,0.5, 1,.005,1,0.5, 1,.005,1,0.5]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
-[b,lb,ub]=deconv_initial_vals_dirty(spec.x, spec.Y, 0,1,[0.5, 0.5, 0.5], ...
+[b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.5, 0.5, 0.5], ...
     0.04, 12);
 
 expected_b  = [3; 0.00499996;  0.9997; 0.5; 
@@ -133,9 +133,9 @@ peaks = GaussLorentzPeak([1,.005,1,0.25]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 
-a=@() deconv_initial_vals_dirty(spec.x, spec.Y, 0,1,[], ...
+a=@() deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[], ...
     0.04, 12);
-assertExceptionThrown(a, 'deconv_initial_vals_dirty:at_least_one_peak');
+assertExceptionThrown(a, 'deconv_initial_vals_summit:at_least_one_peak');
 
 function testNoXInputFiltering1Peak  %#ok<DEFNU>
 % Checks that initial peak x values out of the deconvolved range are still
@@ -144,7 +144,7 @@ peaks = GaussLorentzPeak([1,.005,1,-0.001]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 
-[b,lb,ub] = deconv_initial_vals_dirty(spec.x, spec.Y, 0,1, ...
+[b,lb,ub] = deconv_initial_vals_summit(spec.x, spec.Y, 0,1, ...
     peaks(1).location, ...
     0.04, 12);
 

@@ -1,5 +1,5 @@
-function peaks = dirty_deconvolve( x, y, peak_x, num_neighbors )
-% Does a quick and dirty deconvolution of region given by x,y if the peaks have location parameters peak_x
+function peaks = summit_deconvolve( x, y, peak_x, num_neighbors )
+% Does a summit deconvolution of region given by x,y if the peaks have location parameters peak_x
 % 
 % Does a greedy fit, starting with the highest peak x's of 1 peak at a
 % time, looking only at the points near the x location of that peak.
