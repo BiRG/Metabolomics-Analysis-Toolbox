@@ -1,6 +1,6 @@
-function GLBIO2013_plot_peak_estimate( datum, deconv_idx, deconv_peak_idx, show_others )
+function plot_peak_estimate( datum, deconv_idx, deconv_peak_idx, show_others )
 % Generates a plot showing the relationship between a deconvolved peak and its aligned original
-% Usage: GLBIO2013_plot_peak_estimate( datum, deconv_idx, deconv_peak_idx, show_others )
+% Usage: plot_peak_estimate( datum, deconv_idx, deconv_peak_idx, show_others )
 %
 % The plot is made on the current axes.
 %
@@ -30,7 +30,7 @@ function GLBIO2013_plot_peak_estimate( datum, deconv_idx, deconv_peak_idx, show_
 % Examples
 % -------------------------------------------------------------------------
 %
-% >> GLBIO2013_plot_peak_estimate( datum, 1, 2)
+% >> plot_peak_estimate( datum, 1, 2)
 %
 % Generates a plot for comparing datum.deconvolutions(1).peaks(2) with its
 % aligned original in context.
