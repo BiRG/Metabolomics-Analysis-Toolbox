@@ -42,7 +42,7 @@ lorentzianness = nan(1,n);
 location = nan(1,n);
 
 resolution = 25/0.00453630122481774988; % copied from ExpDatum
-spec_width = GLBIO2013_width_for_collision_prob(collision_prob);
+spec_width = width_for_collision_prob(collision_prob);
 spec_max = 1+spec_width;
 num_pts = spec_width*resolution;
 

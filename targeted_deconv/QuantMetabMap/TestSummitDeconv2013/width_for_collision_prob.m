@@ -1,4 +1,4 @@
-function width = GLBIO2013_width_for_collision_prob(prob)
+function width = width_for_collision_prob(prob)
 % Given the approximate probability that a spectrum with seven peaks in a 
 % bin of that width will be missing at least one local maxima, gives the
 % width of used to produce that probability in the GLBIO2013 experiment.
