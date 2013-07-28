@@ -1,7 +1,7 @@
-function results = GLBIO2013_run_experiment( num_spectra_per_width, instance_number, total_number_of_instances, use_waitbar )
+function results = run_experiment( num_spectra_per_width, instance_number, total_number_of_instances, use_waitbar )
 % Return an array of ExpDatum objects from processing num_spectra_per_width spectra for each of the desired widths
 % 
-% Usage: GLBIO2013_run_experiment( num_spectra_per_width, instance_number, total_number_of_instances, use_waitbar )
+% Usage: run_experiment( num_spectra_per_width, instance_number, total_number_of_instances, use_waitbar )
 %
 % num_spectra_per_width - the number of spectra to generate for each 
 %        spectral width used in the experiment.

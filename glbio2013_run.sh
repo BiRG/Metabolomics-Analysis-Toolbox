@@ -20,7 +20,7 @@ matlab -nodesktop -singleCompThread  > glbio2013_run_$2_terminal_output <<MATLAB
 cd('targeted_deconv/QuantMetabMap');
 warning('off','MATLAB:RandStream:GetDefaultStream');
 warning('off','MATLAB:RandStream:SetDefaultStream');
-tic; results_$2=GLBIO2013_run_experiment($1,$2,64,false); toc
+tic; results_$2=run_experiment($1,$2,64,false); toc
 save('glbio2013_run_$2_results.mat', 'results_$2');
 exit                      % don't forget to exit
 MATLAB_ENV
