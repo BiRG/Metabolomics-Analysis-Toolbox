@@ -1,7 +1,7 @@
-function [handles, element_names]=GLBIO2013_plot_peaks_and_starting_point( title_text, x, peaks, peak_num, starting_params, lower_bounds, upper_bounds )
+function [handles, element_names]=plot_peaks_and_starting_point( title_text, x, peaks, peak_num, starting_params, lower_bounds, upper_bounds )
 % Plots the given peaks on the current axes and plots the starting point for the peak at index peak_num
 %
-% Usage: GLBIO2013_plot_peaks_and_starting_point( title_text, x, peaks, peak_num, beta0, lb, ub )
+% Usage: plot_peaks_and_starting_point( title_text, x, peaks, peak_num, beta0, lb, ub )
 %
 % -------------------------------------------------------------------------
 % Input parameters
