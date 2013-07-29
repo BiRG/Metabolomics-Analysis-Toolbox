@@ -84,7 +84,7 @@ end
 x_in_region = x <= region_max & x >= region_min;
 bx = x(x_in_region); % x values in bin, thus bx
 by = y(x_in_region); % y values in bin
-peaks = summit_deconvolve_pos_resid(bx, by, peak_xs, max_width, ...
+peaks = summit_deconvolve(bx, by, peak_xs, max_width, ...
     num_neighbors, progress_func);
 
 BETA0 = peaks.property_array';

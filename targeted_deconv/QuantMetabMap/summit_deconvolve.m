@@ -1,7 +1,7 @@
-function peaks = summit_deconvolve_pos_resid( x, y, peak_x, max_width, num_neighbors, progress_func )
+function peaks = summit_deconvolve( x, y, peak_x, max_width, num_neighbors, progress_func )
 % Does a summit deconvolution of region given by x,y if the peaks have location parameters peak_x
 % 
-% Usage: peaks = summit_deconvolve_pos_resid( x, y, peak_x, max_width, num_neighbors, progress_func )
+% Usage: peaks = summit_deconvolve( x, y, peak_x, max_width, num_neighbors, progress_func )
 %
 % Does a greedy fit, starting with the highest peak x's of 1 peak at a
 % time, looking only at the points near the x location of that peak. Now
