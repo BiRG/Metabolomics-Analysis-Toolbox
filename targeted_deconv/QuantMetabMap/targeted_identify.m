@@ -812,6 +812,20 @@ switch model.baseline_type
 end
 set(handles.baseline_menu, 'Value', value_idx);
 
+% Set the rough deconvolution dropdown to the correct entry (based on the
+% model earlier
+switch model.rough_deconv_method
+    case 'Summit-Focused'
+        deconv_idx = 1;
+    case 'Anderson'
+        deconv_idx = 2;
+    otherwise
+        error('targeted_identify:bad_rough_deconv_method_name', ...
+            'Unknown deconvolution method (%s) found when setting menu index', ...
+            model.rough_deconv_method);
+end
+set(handles.rough_deconv_method_popup, 'Value', deconv_idx);
+
 % Set the regularization boxes
 set(handles.baseline_area_penalty_edit_box, 'String', ...
     num2str(model.baseline_area_penalty,5));
@@ -2135,17 +2149,30 @@ update_display(handles);
 
 
 % --- Executes on selection change in rough_deconv_method_popup.
-function rough_deconv_method_popup_Callback(hObject, eventdata, handles)
+function rough_deconv_method_popup_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 % hObject    handle to rough_deconv_method_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns rough_deconv_method_popup contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from rough_deconv_method_popup
+idx = get(hObject,'Value');
+m = handles.models(handles.bin_idx, handles.spectrum_idx);
+switch idx
+    case 1
+        m.rough_deconv_method = 'Summit-Focused';
+    case 2
+        m.rough_deconv_method = 'Anderson';
+    otherwise
+        error('targeted_identify:bad_rough_deconv_method', ...
+            'Unknown value (%d) for rough deconvolution menu index', idx);
+end
+handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+guidata(handles.figure1, handles);
 
 
 % --- Executes during object creation, after setting all properties.
-function rough_deconv_method_popup_CreateFcn(hObject, eventdata, handles)
+function rough_deconv_method_popup_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
 % hObject    handle to rough_deconv_method_popup (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
