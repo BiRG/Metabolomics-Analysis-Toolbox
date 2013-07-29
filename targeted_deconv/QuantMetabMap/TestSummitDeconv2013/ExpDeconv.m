@@ -350,8 +350,10 @@ classdef ExpDeconv
                             switch( starting_point_name )
                                 case ExpDeconv.dsp_smallest_peak_first()
                                     final_max_width_pctile = 75;
+                                    model.max_rough_peak_width = 0.04;
                                 case ExpDeconv.dsp_smallest_peak_first_100_pctile()
                                     final_max_width_pctile = 100;
+                                    model.max_rough_peak_width = 0.04;
                                 case ExpDeconv.dsp_smallest_peak_first_max_width_too_large()
                                     final_max_width_pctile = 75;
                                     model.max_rough_peak_width = 0.05;
