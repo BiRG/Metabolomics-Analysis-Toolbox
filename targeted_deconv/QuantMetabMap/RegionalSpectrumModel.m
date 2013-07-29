@@ -54,7 +54,7 @@ classdef RegionalSpectrumModel
         %
         % One of
         %   'Anderson'        - Paul Anderson's original method
-        %   'Short Peak 1st'  - Deconvolves one peak at a time, starting
+        %   'Summit-Focused'  - Deconvolves one peak at a time, starting
         %                       with the shortest peaks
         rough_deconv_method
 
@@ -110,7 +110,7 @@ classdef RegionalSpectrumModel
         %
         %
         
-            cellarray={'Anderson','Short Peak 1st'};
+            cellarray={'Anderson','Summit-Focused'};
         end
     end
     methods
@@ -165,7 +165,7 @@ classdef RegionalSpectrumModel
         % Examples:
         % -----------------------------------------------------------------
         %
-        % m=RegionalSpectrumModel('line_up', 10, 1, 0.007, 0.006, false, 'Short Peak 1st');
+        % m=RegionalSpectrumModel('line_up', 10, 1, 0.007, 0.006, false, 'Summit-Focused');
         %
         % or
         %
@@ -195,7 +195,7 @@ classdef RegionalSpectrumModel
                 obj.rough_peak_window_width = 0.0052; % 12 samples in 64k sample spectra
                 obj.max_rough_peak_width = 0.05; % 1 conventional bin + a little default (one conventional bin may be better, I'll know from my next experiment)
                 obj.only_do_rough_deconv = false; % Do the fine deconv steps by default
-                obj.rough_deconv_method = 'Short Peak 1st'; % New short peak 1st method is default
+                obj.rough_deconv_method = 'Summit-Focused'; % New short peak 1st method is default
             end
         end
     end

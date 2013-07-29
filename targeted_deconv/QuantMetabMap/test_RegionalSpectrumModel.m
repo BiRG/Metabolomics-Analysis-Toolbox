@@ -11,7 +11,7 @@ assertEqual(RegionalSpectrumModel.baseline_types, {'spline','constant','line_up'
 
 function test_rough_deconv_methods %#ok<DEFNU>
 % Ensure that rough_deconv_methods returns the correct list of acceptable baseline types
-assertEqual(RegionalSpectrumModel.rough_deconv_methods, {'Anderson','Short Peak 1st'});
+assertEqual(RegionalSpectrumModel.rough_deconv_methods, {'Anderson','Summit-Focused'});
 
 function test_constructor_default %#ok<DEFNU>
 % Ensure that default constructor creates the expected object
@@ -22,7 +22,7 @@ assertEqual(model.linewidth_variation_penalty, 0);
 assertEqual(model.rough_peak_window_width, 0.0052);
 assertEqual(model.max_rough_peak_width, 0.05);
 assertEqual(model.only_do_rough_deconv, false);
-assertEqual(model.rough_deconv_method, 'Short Peak 1st');
+assertEqual(model.rough_deconv_method, 'Summit-Focused');
 
 function test_constructor_normal %#ok<DEFNU>
 % Ensure a valid call to the normal constructor creates the expected object

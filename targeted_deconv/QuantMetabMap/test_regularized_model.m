@@ -16,7 +16,7 @@ x=(0:0.01:0.1)';
 
 % V baseline
 baseline_BETA=[0.5 0.5 4];
-model = RegionalSpectrumModel('v', 0, 0, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('v', 0, 0, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_v_baseline = [0.5000    0.4500    0.4000    0.3500    0.3000    0.2500    0.4000    0.5500    0.7000    0.8500    1.0000]'; % just a v
 
 % Eval V baseline
@@ -27,7 +27,7 @@ assertElementsAlmostEqual(y_baseline, expected_v_baseline);
 
 % Line up baseline
 baseline_BETA=[1 2];
-model = RegionalSpectrumModel('line_up', 0, 0, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('line_up', 0, 0, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_line_up_baseline = 2*x+1; % a line with positive slope
 
 % Eval line_up baseline
@@ -38,7 +38,7 @@ assertElementsAlmostEqual(y_baseline, expected_line_up_baseline);
 
 % Line down baseline
 baseline_BETA=[1 -2];
-model = RegionalSpectrumModel('line_down', 0, 0, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('line_down', 0, 0, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_line_down_baseline = -2*x+1; % a line with positive slope
 
 % Eval line_down baseline
@@ -49,7 +49,7 @@ assertElementsAlmostEqual(y_baseline, expected_line_down_baseline);
 
 % Constant baseline
 baseline_BETA=6;
-model = RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_constant_baseline = 6*ones(size(x)); % a constant
 
 % Eval constant baseline
@@ -61,7 +61,7 @@ assertElementsAlmostEqual(y_baseline, expected_constant_baseline);
 
 % spline baseline
 baseline_BETA=[10 0 5];
-model = RegionalSpectrumModel('spline', 0, 0, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('spline', 0, 0, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_spline_baseline = interp1(x_baseline_BETA, baseline_BETA, x, 'pchip'); % a cubic spline
 
 % Eval spline baseline
@@ -72,7 +72,7 @@ assertElementsAlmostEqual(y_baseline, expected_spline_baseline);
 
 % bad baseline type
 baseline_BETA=[10 0 5];
-model = RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.04, false, 'Summit-Focused'); 
 model.baseline_type = 'not_a_baseline_type';
 expected_spline_baseline = interp1(x_baseline_BETA, baseline_BETA, x, 'pchip'); % a cubic spline
 
@@ -91,7 +91,7 @@ x=1;
 
 % Constant baseline with 0 peaks ane 1 x
 baseline_BETA=6;
-model = RegionalSpectrumModel('constant', 1, 0, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('constant', 1, 0, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_constant_baseline = 6*ones(size(x)); % a constant
 
 % Eval constant baseline
@@ -111,7 +111,7 @@ expected_peak_values = [0.0198019801980197988, 0.0307692307692307675, 0.05405405
 
 % Constant baseline with 0 peaks ane 1 x
 baseline_BETA=6;
-model = RegionalSpectrumModel('constant', 0, 1, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('constant', 0, 1, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_constant_baseline = 6*ones(size(x)); % a constant
 
 % Eval constant baseline
@@ -131,7 +131,7 @@ expected_peak_values = [0.400030863244961621, 2.00003906097418049, 0.40005101780
 
 % Constant baseline with 0 peaks ane 1 x
 baseline_BETA=6;
-model = RegionalSpectrumModel('constant', 0, 1, 0.0052, 0.04, false, 'Short Peak 1st'); 
+model = RegionalSpectrumModel('constant', 0, 1, 0.0052, 0.04, false, 'Summit-Focused'); 
 expected_constant_baseline = 6*ones(size(x)); % a constant
 
 % Eval constant baseline
