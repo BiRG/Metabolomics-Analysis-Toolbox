@@ -716,7 +716,7 @@ if ~ (oldlims(1) == 0 && oldlims(2) == 1)
     xlim(oldlims)
 end
 
-%Draw deconvolution
+%Draw deconvolution and quality metric
 if get(handles.should_show_deconv_box,'Value')
     hold on;
     cv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
@@ -734,6 +734,12 @@ if get(handles.should_show_deconv_box,'Value')
         orig_y = handles.collection.Y(deconv.fit_indices, handles.spectrum_idx);
         resid_y = orig_y - deconv.y_fitted;
         plot(fit_x, resid_y,'Color','k','Linestyle',':');
+        
+        % Display quality metric
+        set(handles.quality_text,'String', sprintf('Quality: %6.2f', deconvolution_quality(resid_y)));
+    else
+        % No quality to display (since no deconvolution has been done)
+        set(handles.quality_text,'String', 'Quality: Not calculated');
     end
 end
 
