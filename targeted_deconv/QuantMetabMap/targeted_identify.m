@@ -812,12 +812,6 @@ switch model.baseline_type
 end
 set(handles.baseline_menu, 'Value', value_idx);
 
-% Set the regularization boxes
-set(handles.baseline_area_penalty_edit_box, 'String', ...
-    num2str(model.baseline_area_penalty,5));
-set(handles.width_variance_penalty_edit_box, 'String', ...
-    num2str(model.linewidth_variation_penalty,5));
-
 % Set the rough deconvolution boxes
 set(handles.rough_peak_window_ppm_edit, 'String', ...
     num2str(model.rough_peak_window_width,6));
@@ -1904,64 +1898,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-
-function baseline_area_penalty_edit_box_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
-% hObject    handle to baseline_area_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of baseline_area_penalty_edit_box as text
-%        str2double(get(hObject,'String')) returns contents of baseline_area_penalty_edit_box as a double
-v = str2double(get(hObject,'String'));
-if ~isnan(v)
-    m=handles.models(handles.bin_idx, handles.spectrum_idx);
-    m.baseline_area_penalty = v;
-    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
-    guidata(handles.figure1, handles);
-end
-
-% --- Executes during object creation, after setting all properties.
-function baseline_area_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#ok<INUSD,DEFNU>
-% hObject    handle to baseline_area_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function width_variance_penalty_edit_box_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
-% hObject    handle to width_variance_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of width_variance_penalty_edit_box as text
-%        str2double(get(hObject,'String')) returns contents of width_variance_penalty_edit_box as a double
-v = str2double(get(hObject,'String'));
-if ~isnan(v)
-    m=handles.models(handles.bin_idx, handles.spectrum_idx);
-    m.linewidth_variation_penalty = v;
-    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
-    guidata(handles.figure1, handles);
-end
-
-
-% --- Executes during object creation, after setting all properties.
-function width_variance_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#ok<INUSD,DEFNU>
-% hObject    handle to width_variance_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 % --- Executes on button press in sync_peaks_with_deconv_button.
