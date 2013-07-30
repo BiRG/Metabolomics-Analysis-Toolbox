@@ -1,7 +1,10 @@
-function peaks = summit_deconvolve( x, y, peak_x, max_width, num_neighbors, progress_func )
-% Does a summit deconvolution of region given by x,y if the peaks have location parameters peak_x
+function peaks = summit_deconvolve_baseline( x, y, peak_x, max_width, num_neighbors, progress_func )
+% Does a summit & baseline deconvolution of region given by x,y if the peaks have location parameters peak_x
 % 
-% Usage: peaks = summit_deconvolve( x, y, peak_x, max_width, num_neighbors, progress_func )
+% Usage: peaks = summit_deconvolve_baseline( x, y, peak_x, max_width, num_neighbors, progress_func )
+%
+% First subtracts the lowest value in the spectrum unless that value is
+% negative to remove contributions from outside the fitted region.
 %
 % Does a greedy fit, starting with the highest peak x's of 1 peak at a
 % time, looking only at the points near the x location of that peak. Now
@@ -61,6 +64,10 @@ y = y(order);
 
 % Also sort peak_x
 peak_x = sort(peak_x);
+
+% Ensure that the smallest y value is 0 or lower (get rid of spurious 
+% external contributions)
+y = y - max(0, min(y));
 
 % Calculate the nearest neighbors each peak
 peak_neighborhood_x=cell(length(peak_x),1);
