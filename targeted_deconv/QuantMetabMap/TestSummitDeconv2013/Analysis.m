@@ -13,8 +13,8 @@ simple_peaks1 = GaussLorentzPeak([0.003,0.002,0,0.002,   0.004,0.002,0,0.006]);
 simple_peaks2 = GaussLorentzPeak([0.003,0.003,0,0.001,   0.004,0.003,0,0.004,  0.005,0.003,0,0.007]);
 
 clf;
-x = 0:0.00015:.008;
-extended_x = -0.014:0.00015:0.02; % Needed to make the plots look right because of the wide widths given by Anderson
+x = -0.002:0.00015:0.008;
+extended_x = -0.03:0.00015:0.03; % Needed to make the plots look right because of the wide widths given by Anderson
 
 model = RegionalSpectrumModel; % Use default model
 samples_per_ppm = length(x)/(max(x)-min(x));
@@ -48,7 +48,7 @@ subplot(2,2,4);
     (x, sum(simple_peaks2.at(x),1), min(x), max(x), [simple_peaks2.location], ...
     model.max_rough_peak_width, window_samples, 100, @do_nothing);
 [handles,element_names] = ...
-    plot_peaks_and_starting_point('Summit On Separated Peaks', ...
+    plot_peaks_and_starting_point('Summit On Congested Peaks', ...
     extended_x, simple_peaks2, 2, starting_params, lb, ub);
 legend(handles, element_names, 'Location', 'NorthEast');
 
