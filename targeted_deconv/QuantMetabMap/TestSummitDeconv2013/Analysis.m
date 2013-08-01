@@ -2412,17 +2412,318 @@ clear('ander_deconv_n','ander_deconv_xout','ander_deconv_bars');
 clear('p','c','con','deconv_idx','deconvs','d', 'all_widths','xmax','npeaks');
 
 
-
-
-%% Find spectra with outlier height-area points
-%
-% The height-area plot showed my code generating extreme outliers in area.
-% I need to look 
-
-
 %% Delete params and orig_params variables
 % I kept the params variable around for plotting
 clear('params','orig_params');
+
+%% Calculate area correlations and quality scores for each spectrum and deconvolution method
+% Without aligning peaks, I can still sort values from the deconvolved and
+% the original, (paded with zeros to equal lengths) and calculate the 
+% correlation between the two lists as a measure of the error in a
+% particular parameter. Area is the parameter of most interest and I'd like
+% to see how my quality score relates to it.
+
+% Allocate the deconv_quality and area_correlation arrays
+num_deconvs = 0;
+for result_idx = 1:length(combined_results)
+    num_deconvs = num_deconvs + length(combined_results(result_idx).deconvolutions);
+end
+
+deconv_quality = nan(1,num_deconvs);
+area_correlation = nan(1,num_deconvs);
+area_corr_padded = false(1,num_deconvs);
+
+dec_num = 0;
+for result_idx = 1:length(combined_results)
+    res = combined_results(result_idx);
+    x = res.spectrum.x;
+    y = res.spectrum.Y';
+    decs = res.deconvolutions;
+    orig_areas = sort([res.spectrum_peaks.area]);
+    for dec_idx = 1:length(decs)
+    	dec = decs(dec_idx);
+        dec_num = dec_num + 1;
+        
+        predicted = sum(dec.peaks.at(x),1);
+        deconv_quality(dec_num) = deconvolution_quality(y-predicted);
+        
+        dec_areas = sort([dec.peaks.area]);
+        if(length(dec_areas) < length(orig_areas))
+            dec_areas(length(dec_areas)+1:length(orig_areas)) = zeros(1,length(orig_areas)-length(dec_areas));
+            area_corr_padded(dec_num) = true;
+        elseif (length(dec_areas) > length(orig_areas))
+            orig_areas(length(orig_areas)+1:length(dec_areas)) = zeros(1,length(dec_areas)-length(orig_areas));
+            area_corr_padded(dec_num) = true;
+        end
+        assert(isrow(dec_areas),'dec_areas must be a row vector')
+        area_correlation(dec_num) = corr(dec_areas',orig_areas');
+    end
+end
+
+
+clear('num_deconvs','result_idx','dec_idx','dec_num','dec','res','x','y','pks','orig_areas','dec_areas');
+
+%% Plot relationship between area correlation and my deconvolution quality metric
+%
+% Result: no nice relationship between the two. However, they are
+% certainly correlated. Spearman correlation was 0.56 (p-value was 0)
+scatter(area_correlation, deconv_quality);
+[c,p]=corr(area_correlation', deconv_quality','type','spearman');
+title(sprintf('Area Correlation vs. Deconvolution Quality Metric\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Area Correlation');
+ylabel('Deconvolution Quality Metric');
+xlim([-1,1]);
+ylim([0,100]);
+
+%% Plot relationship between area correlation and my deconvolution quality metric in unpadded deconvolutions
+% To deal with differing numbers of peaks, I padded results when the
+% original and the deconvolved had different numbers of peaks. It is
+% possible that the unpadded results might look better. What if I ignored
+% the padded deconvolutions.
+%
+% Result: only slightly more correlated - indicating that this was not the
+% feature causing the bad relationship. New cor: 0.58, p-value is still 0.
+%
+% Removing the padded relationships removed many of the worse correlations.
+scatter(area_correlation(~area_corr_padded), deconv_quality(~area_corr_padded));
+[c,p]=corr(area_correlation(~area_corr_padded)', deconv_quality(~area_corr_padded)','type','spearman');
+title(sprintf('Area Correlation vs. Deconvolution Quality Metric (unpadded only)\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Area Correlation');
+ylabel('Deconvolution Quality Metric');
+xlim([-1,1]);
+ylim([0,100]);
+
+%% Check what a density plot reveals about the area_correlation/quality  relationship
+% Scatter plots with very dense areas can sometimes be hard to interpret, I
+% use a density plot (occupancy plot) to see the relative distribution.
+%
+% Result, almost everything is in the last column
+occupancy_2d_plot(area_correlation(~area_corr_padded), deconv_quality(~area_corr_padded), 512, 100,100);
+
+%% Check what a density plot of ranks reveals about the unpadded area_correlation/quality  relationship
+% The density plot showed that just about everything was near the end, I
+% will replace each element by its rank to compress the great variation in
+% values (which is mostly composed of large points with high quality)
+%
+% Result: for the worst deconvolutions, there is no relationship between my
+% quality metric and rank, however, as the deconvolutions improve, there is
+% a significant (though noisy) relationship.
+occupancy_2d_plot(tiedrank(area_correlation(~area_corr_padded)), tiedrank(deconv_quality(~area_corr_padded)), 512, 100,100);
+xlabel('Area Correlation Rank');
+ylabel('Deconvolution Quality Metric Rank');
+[c,p]=corr(area_correlation(~area_corr_padded)', deconv_quality(~area_corr_padded)','type','spearman');
+title(sprintf('Area Correlation vs. Deconvolution Quality Metric (unpadded only)\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+
+%% Check what a density plot of ranks reveals about the area_correlation/quality relationship
+% Since the rank-density plot of the unpadded deconvolutions worked ok,
+% what does it look like when the padded ones are included
+%
+% Result, a larger rank before the cut-off but can see a weak relationship
+% among the worst and then a stronger relationship among the best.
+occupancy_2d_plot(tiedrank(area_correlation), tiedrank(deconv_quality), 512, 100,100);
+xlabel('Area Correlation Rank Rank');
+ylabel('Deconvolution Quality Metric Rank');
+[c,p]=corr(area_correlation', deconv_quality','type','spearman');
+title(sprintf('Area Correlation vs. Deconvolution Quality Metric\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+
+%% Scatter plot of the ranks for the area_correlation/quality relationship
+% Since the density plot of the areas is not so congested, it seems
+% reasonable that a scatter plot would work well too.
+%
+% Result: this makes it obvious that quality metric works poorly for the 
+% worst 30% of the deconvolutions. It would be good if I could come up with
+% a way to distinguish those. My estimate from the graph is 29.22. I would
+% be safe saying 28% and under is definitely in the "non-working" group and
+% 30% and over is in the "working" group.
+scatter(100*tiedrank(area_correlation)/length(area_correlation), 100*tiedrank(deconv_quality)/length(area_correlation));
+xlabel('Area Correlation Percentile');
+ylabel('Deconvolution Quality Metric Percentile');
+[c,p]=corr(area_correlation', deconv_quality','type','spearman');
+title(sprintf('Area Correlation vs. Deconvolution Quality Metric\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+
+clear('b','c','d','p','i');
+
+%% Calculate where the quality metric works
+% If I can find something that works to distinguish the worst correlations
+% from the best, I can use that to make a better quality metric.
+%
+% Here I make two boolean variables for whether the metric works or not
+quality_metric_doesnt_work = 100*tiedrank(area_correlation)/length(area_correlation) < 29;
+quality_metric_works = 100*tiedrank(area_correlation)/length(area_correlation) > 30;
+
+%% What is the actual value for the working and non-working division
+% The first thing is to see what values of area correlation separate the
+% three classes (working, not working, and unknown)
+fprintf('Non-working correlation: 0..%6.4f Working correlation: %6.4f..1\n', ...
+    max(area_correlation(quality_metric_doesnt_work)), ...
+    min(area_correlation(quality_metric_works)));
+
+%% Calculate the absolute value of the residual
+% The absolute value of the residual may be large in the worst deconvs.
+% Calculate the mean absolute value of the residual (also calculate some
+% auxiliary variables about which deconvolution method was used for each
+% deconvolution)
+num_deconvs = 0;
+for result_idx = 1:length(combined_results)
+    num_deconvs = num_deconvs + length(combined_results(result_idx).deconvolutions);
+end
+
+deconv_resid_mean = nan(1,num_deconvs);
+deconv_resid_mean_sq = nan(1,num_deconvs);
+deconv_was_anderson = false(1, num_deconvs);
+deconv_was_100long = false(1, num_deconvs);
+
+dec_num = 0;
+for result_idx = 1:length(combined_results)
+    res = combined_results(result_idx);
+    x = res.spectrum.x;
+    y = res.spectrum.Y';
+    decs = res.deconvolutions;
+    for dec_idx = 1:length(decs)
+    	dec = decs(dec_idx);
+        dec_num = dec_num + 1;
+        
+        predicted = sum(dec.peaks.at(x),1);
+        resid = abs(y-predicted);
+        deconv_resid_mean(dec_num) = mean(resid);
+        deconv_resid_mean_sq(dec_num) = mean(resid.^2);
+        deconv_was_anderson(dec_num) = strcmp(dec.starting_point_name, ExpDeconv.dsp_anderson);
+        deconv_was_100long(dec_num) = strcmp(dec.starting_point_name,ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large);
+    end
+end
+clear('num_deconvs','result_idx','dec_idx','dec_num','dec','res','x','y','pks','orig_areas','dec_areas','predicted','resid');
+
+%% Scatterplot the rank residual mean versus area correlation
+% I look at ranks immediately since I know a-priori that things iwll be
+% badly scaled
+%
+% Result: About the same relationship as for the residual correlation. The
+% correlation is a bit stronger (-0.59) and strongly significant. The
+% correlation looks better for the worst spectra.
+scatter(100*tiedrank(area_correlation)/length(area_correlation), 100*tiedrank(deconv_resid_mean)/length(deconv_resid_mean));
+[c,p]=corr(area_correlation', deconv_resid_mean','type','spearman');
+title(sprintf('Area Correlation vs. Mean residual abs value\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Area Correlation Percentile');
+ylabel('Residual Mean Abs Percentile');
+
+%% Scatterplot the rank residual mean squares versus area correlation
+% Does using the mean of the squares make a difference (it might work
+% better due to the Gaussian noise)
+%
+% Result: Slightly lower, but about the same correlation as the abs mean 
+% (-0.59) The distribution has a very similar appearance.
+scatter(100*tiedrank(area_correlation)/length(area_correlation), 100*tiedrank(deconv_resid_mean_sq)/length(deconv_resid_mean_sq));
+[c,p]=corr(area_correlation', deconv_resid_mean_sq','type','spearman');
+title(sprintf('Area Correlation vs. Mean residual squared value\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Area Correlation Percentile');
+ylabel('Residual Mean Square Percentile');
+
+
+%% Scatterplot the rank residual mean versus area correlation for places where the distance quality metric doesn't work
+% Lets look at only those deconvolutions where the quality metric doesn't 
+% work. This is similar to just zooming in the graph, but I also wanted to
+% display the correlation
+%
+% Result: The correlation is only -0.35 and seems mainly due to an absence
+% in the bottom 20% of the non-working spectra of low mean error points and
+% a reflected absence in the top 20% of the residual errors where there are
+% no high correlation percentile 
+scatter(100*tiedrank(area_correlation(quality_metric_doesnt_work))/length(area_correlation(quality_metric_doesnt_work)), 100*tiedrank(deconv_resid_mean(quality_metric_doesnt_work))/length(deconv_resid_mean(quality_metric_doesnt_work)));
+[c,p]=corr(area_correlation(quality_metric_doesnt_work)', deconv_resid_mean(quality_metric_doesnt_work)','type','spearman');
+title(sprintf('Area Correlation vs. Mean residual abs value where quality metric worked poorly\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working Area Correlation Percentile');
+ylabel('Non-working Residual Sum of Abs Percentile');
+
+%% Scatterplot residual mean versus area correlation when there is no padding and the distance metric doesn't work
+% What happens if we remove the deconvolutions that had to be padded - that
+% is, were missing peaks.
+%
+% Result: The correlation is still there and significant but MUCH weaker:
+% -0.07 -- it is not at all visible to the naked eye and the p-value
+% doesn't have to use scientific notation any more.
+scatter(100*tiedrank(area_correlation(quality_metric_doesnt_work & ~area_corr_padded))/length(area_correlation(quality_metric_doesnt_work & ~area_corr_padded)), 100*tiedrank(deconv_resid_mean(quality_metric_doesnt_work & ~area_corr_padded))/length(deconv_resid_mean(quality_metric_doesnt_work & ~area_corr_padded)));
+[c,p]=corr(area_correlation(quality_metric_doesnt_work & ~area_corr_padded)', deconv_resid_mean(quality_metric_doesnt_work & ~area_corr_padded)','type','spearman');
+title(sprintf('Area Correlation vs. Mean residual abs value (~quality & ~padding)\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working No-padding Area Correlation Percentile');
+ylabel('Non-working No-padding Residual Sum of Abs Percentile');
+
+%% Scatterplot residual mean versus area correlation when there is padding and the distance metric doesn't work
+% Is the correlation better on the padded deconvolutions?
+%
+% Result: Correlation jumps to -0.48
+scatter(100*tiedrank(area_correlation(quality_metric_doesnt_work & area_corr_padded))/length(area_correlation(quality_metric_doesnt_work & area_corr_padded)), 100*tiedrank(deconv_resid_mean(quality_metric_doesnt_work & area_corr_padded))/length(deconv_resid_mean(quality_metric_doesnt_work & area_corr_padded)));
+[c,p]=corr(area_correlation(quality_metric_doesnt_work & area_corr_padded)', deconv_resid_mean(quality_metric_doesnt_work & area_corr_padded)','type','spearman');
+title(sprintf('Area Correlation vs. Mean residual abs value (~quality & padding)\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working No-padding Area Correlation Percentile');
+ylabel('Non-working No-padding Residual Sum of Abs Percentile');
+
+%% Scatterplot residual mean versus area correlation when there is padding 
+% What happens to the whole picture when there is padding?
+%
+% Result: Correlation jumps to -0.64 A much higher percentage of the padded
+% deconvolutions are in the "doesn't work" section. But this doesn't tell
+% me what distinguishes the two groups.
+scatter(100*tiedrank(area_correlation(area_corr_padded))/length(area_correlation(area_corr_padded)), 100*tiedrank(deconv_resid_mean(area_corr_padded))/length(deconv_resid_mean(area_corr_padded)));
+[c,p]=corr(area_correlation(area_corr_padded)', deconv_resid_mean(area_corr_padded)','type','spearman');
+title(sprintf('Area Correlation vs. Mean residual abs value (padding)\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working padding Area Correlation Percentile');
+ylabel('Non-working padding Residual Sum of Abs Percentile');
+
+
+
+%% Scatterplot quality metric versus area correlation when the distance metric doesn't work
+% When the padded distributions were removed from the deconvolutions where
+% the quality metric didn't work, the correlation went away. Does that
+% happen for the quality metric too?  First, plot the quality metric for
+% the "non-working" set
+%
+% Result: Quality metric on the non-working set has a weaker correlation
+% (0.28) than the residual mean (-0.35). But it is present.
+scatter(100*tiedrank(area_correlation(quality_metric_doesnt_work))/length(area_correlation(quality_metric_doesnt_work)), 100*tiedrank(deconv_quality(quality_metric_doesnt_work))/length(deconv_quality(quality_metric_doesnt_work)));
+[c,p]=corr(area_correlation(quality_metric_doesnt_work)', deconv_quality(quality_metric_doesnt_work)','type','spearman');
+title(sprintf('Area Correlation vs. Mean residual abs value where quality metric worked poorly\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working Area Correlation Percentile');
+ylabel('Non-working No-padding Quality Percentile');
+
+%% Scatterplot quality metric versus area correlation when there is no padding and the distance metric doesn't work
+% Now, having looked at the quality metric with padded deconvolutions
+% included, look when there is no padding
+%
+% Result: Correlation drops to 0.06 - essentially gives no information if
+% there wasn't a missed or extra peak.
+scatter(100*tiedrank(area_correlation(quality_metric_doesnt_work & ~area_corr_padded))/length(area_correlation(quality_metric_doesnt_work & ~area_corr_padded)), 100*tiedrank(deconv_quality(quality_metric_doesnt_work & ~area_corr_padded))/length(deconv_quality(quality_metric_doesnt_work & ~area_corr_padded)));
+[c,p]=corr(area_correlation(quality_metric_doesnt_work & ~area_corr_padded)', deconv_quality(quality_metric_doesnt_work & ~area_corr_padded)','type','spearman');
+title(sprintf('Area Correlation vs. Quality metric where no padding it worked poorly\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working No-padding Area Correlation Percentile');
+ylabel('Non-working No-padding Quality Percentile');
+
+%% Scatterplot quality metric versus area correlation when non-Anderson
+% What happens when use only the non-anderson deconvolutions - does the
+% quality metric get better?
+%
+% Result: Correlation rises a bit to 0.61 but there is still that odd
+% artifact at 30'th percentile of correlation
+subset = ~deconv_was_anderson;
+scatter(100*tiedrank(area_correlation(subset))/length(area_correlation(subset)), 100*tiedrank(deconv_quality(subset))/length(deconv_quality(subset)));
+[c,p]=corr(area_correlation(subset)', deconv_quality(subset)','type','spearman');
+title(sprintf('Area Correlation vs. Quality when non-anderson\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working Area Correlation Percentile');
+ylabel('Non-working Quality Metric Percentile');
+
+%% Scatterplot quality metric versus area correlation when 100/large
+% The non-anderson deconvolutions improved a bit. Does the 100/large
+% deconvolution work even better?
+%
+% Result: Correlation falls to 0.53 artifact remains unchanged in the same
+% place
+subset = ~deconv_was_100long;
+scatter(100*tiedrank(area_correlation(subset))/length(area_correlation(subset)), 100*tiedrank(deconv_quality(subset))/length(deconv_quality(subset)));
+[c,p]=corr(area_correlation(subset)', deconv_quality(subset)','type','spearman');
+title(sprintf('Area Correlation vs. Quality when method=100/large\n Spearman Correlation: %8.6f p=%8.6g',c,p));
+xlabel('Non-working Area Correlation Percentile');
+ylabel('Non-working Quality Metric Percentile');
+
+
 
 %% Calculate the parameters
 % Start alignment-based analysis
