@@ -13,7 +13,7 @@ peaks = GaussLorentzPeak([1,.02,1,0.5,   1,.02,1,0.500000001]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 [b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.5, 0.500000001], ...
-    0.04, 12, 75, @do_nothing);
+    0.04, 12, 75, false, @do_nothing);
 
 expected_b  = [7.446009559292229e-15; 0.011741640299113645; 3.499735503745569e-05; 0.5; 2.0000000013449766; 0.019999990356467118; 1; 0.50000000099999997];
 expected_lb = [0; 0; 0; 0.49999999950000001; 0; 0; 0; 0.50000000050000004];
@@ -30,7 +30,7 @@ peaks = GaussLorentzPeak([1,.02,1,0.5]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 [b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,0.5, ...
-    0.04, 12, 75, @do_nothing);
+    0.04, 12, 75, false, @do_nothing);
 
 expected_b  = [1; 0.02; 1; 0.5];
 expected_lb = [1; 0; 0; 0];
@@ -48,7 +48,7 @@ peaks = GaussLorentzPeak([1,.005,1,0.25, 1,.005,1,0.5, 1,.005,1,0.75]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 [b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.25,0.5,0.75], ...
-    0.04, 12, 75);
+    0.04, 12, 75, false);
 
 expected_b  = [1;.005;1;0.25;    1;.005;1;0.5;     1;.005;1;0.75];
 expected_lb = [0; 0; 0; 0.125;   0; 0; 0; 0.375;   0; 0; 0; 0.625];
@@ -68,7 +68,7 @@ peaks = GaussLorentzPeak([1,.005,1,0.5, 1,.005,1,0.5, 1,.005,1,0.5, 1,.005,1,0.7
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 [b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.5, 0.5, 0.5, 0.75, 0.75, 0.75], ...
-    0.04, 12, 75);
+    0.04, 12, 75, false);
 
 expected_b  = [3; 0.00499996;  1; 0.5; 
                0; 0.000238014; 1; 0.5; 
@@ -105,7 +105,7 @@ peaks = GaussLorentzPeak([1,.005,1,0.5, 1,.005,1,0.5, 1,.005,1,0.5]);
 spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 [b,lb,ub]=deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[0.5, 0.5, 0.5], ...
-    0.04, 12, 75);
+    0.04, 12, 75, false);
 
 expected_b  = [3; 0.00499996;  0.9997; 0.5; 
                0; 0.04; 0; 0.5; 
@@ -134,7 +134,7 @@ spec.x = 0:0.0001:1;
 spec.Y = sum(peaks.at(spec.x),1)';
 
 a=@() deconv_initial_vals_summit(spec.x, spec.Y, 0,1,[], ...
-    0.04, 12, 75);
+    0.04, 12, 75, false);
 assertExceptionThrown(a, 'deconv_initial_vals_summit:at_least_one_peak');
 
 function testNoXInputFiltering1Peak  %#ok<DEFNU>
@@ -146,7 +146,7 @@ spec.Y = sum(peaks.at(spec.x),1)';
 
 [b,lb,ub] = deconv_initial_vals_summit(spec.x, spec.Y, 0,1, ...
     peaks(1).location, ...
-    0.04, 12, 75);
+    0.04, 12, 75, false);
 
 expected_b = [0.999999999996959543; 0.005000000000027322; 1; -0.00100000000000000002];
 expected_lb = [0.999999999996959543; 0; 0; 0];
