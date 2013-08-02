@@ -205,6 +205,14 @@ classdef ExpDeconv
             str = 'dsp_smallest_peak_first_max_width_too_large';
         end
         
+        function str = dsp_smallest_peak_first_max_width_one_bin
+        % Constant used to signify the smallest peak first deconvolution
+        % starting point (DSP) method using a maximum peak width that is
+        % one standard bin and bases final max width on 75th
+        % percentile of estimated widths
+            str = 'dsp_smallest_peak_first_max_width_one_bin';
+        end
+        
         function str = dsp_smallest_peak_first_100_pctile_max_width_too_large
         % Constant used to signify the smallest peak first deconvolution
         % starting point (DSP) method using a maximum peak width that is
@@ -213,7 +221,22 @@ classdef ExpDeconv
             str = 'dsp_smallest_peak_first_100_pctile_max_width_too_large';
         end
         
-
+        function str = dsp_smallest_peak_first_100_pctile_max_width_one_bin
+        % Constant used to signify the smallest peak first deconvolution
+        % starting point (DSP) method using a maximum peak width that is
+        % slightly too large and bases final max width on the maximum of 
+        % estimated widths
+            str = 'dsp_smallest_peak_first_100_pctile_max_width_one_bin';
+        end
+        
+        function str = dsp_smallest_peak_first_100_pctile_baseline
+        % Constant used to signify the smallest peak first deconvolution
+        % starting point (DSP) that bases final max width on the maximum of 
+        % estimated widths and corrects for a constant baseline variation
+        % while creating the starting point.
+            str = 'dsp_smallest_peak_first_100_pctile_baseline';
+        end
+        
         function strs = deconvolution_starting_point_method_names
         % Lists the strings that can be used to identify a
         % method giving a starting point in the deconvolution
@@ -221,9 +244,13 @@ classdef ExpDeconv
             strs = {...
                 ExpDeconv.dsp_anderson(), ...
                 ExpDeconv.dsp_smallest_peak_first(), ...
+                ExpDeconv.dsp_smallest_peak_first_max_width_one_bin(), ...
                 ExpDeconv.dsp_smallest_peak_first_100_pctile(), ...
                 ExpDeconv.dsp_smallest_peak_first_max_width_too_large(), ...
-                ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()}; 
+                ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_one_bin(), ...
+                ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large(), ...
+                ExpDeconv.dsp_smallest_peak_first_100_pctile_baseline() ...
+                }; 
         end
         
         function obj = dangerous_constructor(peak_picker_name, ...
@@ -350,16 +377,25 @@ classdef ExpDeconv
                             switch( starting_point_name )
                                 case ExpDeconv.dsp_smallest_peak_first()
                                     final_max_width_pctile = 75;
-                                    model.max_rough_peak_width = 0.04;
+                                    model.max_rough_peak_width = 0.00842666594274386373;
+                                    fit_baseline = false;
                                 case ExpDeconv.dsp_smallest_peak_first_100_pctile()
                                     final_max_width_pctile = 100;
-                                    model.max_rough_peak_width = 0.04;
+                                    model.max_rough_peak_width = 0.00842666594274386373;
+                                    fit_baseline = false;
                                 case ExpDeconv.dsp_smallest_peak_first_max_width_too_large()
                                     final_max_width_pctile = 75;
                                     model.max_rough_peak_width = 0.05;
+                                    fit_baseline = false;
                                 case ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large()
                                     final_max_width_pctile = 100;
                                     model.max_rough_peak_width = 0.05;
+                                    fit_baseline = false;
+                                case ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large_baseline()
+                                case ExpDeconv.dsp_smallest_peak_first_100_pctile
+                                    final_max_width_pctile = 100;
+                                    model.max_rough_peak_width = 0.00842666594274386373;
+                                    fit_baseline = true;
                                 otherwise
                                     error('TestSummitDeconv2013:unknown_dsp_method', ...
                                         'Unknown smallest peak first starting point method method "%s" specified.',...
@@ -377,7 +413,7 @@ classdef ExpDeconv
                                     max(x), picked_x, ...
                                     model.max_rough_peak_width, ...
                                     window_samples, final_max_width_pctile,...
-				    false, @do_nothing);
+                                    fit_baseline, @do_nothing);
                             if length(obj.starting_point) ~= length(picked_x)*4
                                 save('tmp_exception.mat', ...
                                     'samples_per_ppm', 'x', 'model', ...
