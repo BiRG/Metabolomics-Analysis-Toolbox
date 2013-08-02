@@ -27,7 +27,9 @@ num_monitors = 2;
 %
 % If I round the actual 95th %-ile to 0.008, I get the 94th %-ile.
 %
-% I'll compare the 95th %ile against 0.05 (100.2 %-ile).
+% I'll compare the 95th %ile against 0.05 (100.2 %-ile). I'll include 0.04
+% also. Its being a traditional bin gives it an automatic rationalle for
+% inclusion.
 w_dist = nssd_data_dist('width');
 w=unique([w_dist.min, w_dist.max]);
 w_prctile = 100*tiedrank(w)/length(w);
