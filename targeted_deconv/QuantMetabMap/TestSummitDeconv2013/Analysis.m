@@ -5,6 +5,38 @@
 % idea what happens under Windows or iOS.
 num_monitors = 2; 
 
+%% Decide on max width parameters to test
+% Before writing this (1 Aug 2013), I have used different values for the
+% summit max width parameters. I originally used my default (that I thought
+% was 0.04, one standard bin but later discovered that it was really 0.004)
+% When (what I thought was 0.04) didn't work because it left peaks too
+% small, I tried using 0.05. It worked better. Then I found that 0.04
+% wasn't the number I was comparing it against. Now I need a number that is
+% too small (smaller than the actual distribution maximum peak width) and
+% another that is too large.
+%
+% However, 0.04 is quite big because 99.85% of all values are less. It
+% might be a better choice to choose the 95% value which is 0.00843. (I am
+% getting these percentiles by using a linear interpolation of the
+% percentiles of the width distribution in the NSSD data). 
+%
+% I originally chose my "too big" value by rounding up the true maximum
+% width. If I choose the 105%-ile instead (using the extrapolation function
+% of Matlab's interpolation routine, I get: 0.2 - which is rediculously
+% big. Really, 0.05 seems much more reasonable as an absolute maximum.
+%
+% If I round the actual 95th %-ile to 0.008, I get the 94th %-ile.
+%
+% I'll compare the 95th %ile against 0.05 (100.2 %-ile).
+w_dist = nssd_data_dist('width');
+w=unique([w_dist.min, w_dist.max]);
+w_prctile = 100*tiedrank(w)/length(w);
+fprintf('Width 0.04 is greater than %5.4f%% of widths\n',interp1(w,w_prctile,0.04));
+fprintf('%7.18g is the width at the 95%%-ile\n', interp1(w_prctile,w,95));
+fprintf('%7.18g is the width at the 105%%-ile\n', interp1(w_prctile,w,105,'pchip'));
+fprintf('Width 0.008 is greater than %5.4f%% of widths\n',interp1(w,w_prctile,0.008));
+fprintf('Width 0.05 is greater than %5.4f%% of widths\n',interp1(w,w_prctile,0.05,'pchip'));
+
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
 % starting points arrived at by Anderson's algorithm and the summit
