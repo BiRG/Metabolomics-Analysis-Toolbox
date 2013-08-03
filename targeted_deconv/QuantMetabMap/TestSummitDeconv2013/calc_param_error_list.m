@@ -142,6 +142,16 @@ param_error_list(num_error_list).mean_error_summit = 0;
 param_error_list(num_error_list).error_diff = 0;
 param_error_list_idx = 1;
 
+% Ignore some deconvolution starting points in the analysis (they weren't
+% there when I originally wrote this code)
+ignored_dsps = {ExpDeconv.dsp_summit_100_pctile, ...
+    ExpDeconv.dsp_summit_100_pctile_baseline, ...
+    ExpDeconv.dsp_summit_100_pctile_max_width_one_bin, ...
+    ExpDeconv.dsp_summit_100_pctile_max_width_too_large, ...
+    ExpDeconv.dsp_summit_max_width_one_bin, ...
+    ExpDeconv.dsp_summit_max_width_too_large ...
+    };
+
 
 % Convert the list of results into a (larger) list of param_error
 % structures
@@ -171,10 +181,12 @@ for results_idx = 1:n
                     case ExpDeconv.dsp_summit
                         assert(~exist('summit','var')); % We shouldn't ever assign twice here
                         summit = d;
+                    case ignored_dsps
+                        % Do nothing
                     otherwise
                         error('TestSummitDeconv2013:unknown_starting_point', ...
                             'Unknown starting point "%s" found in TestSummitDeconv2013 results at index %d', ...
-                            d.starting_point, results_idx);
+                            d.starting_point_name, results_idx);
                 end
             end
         end

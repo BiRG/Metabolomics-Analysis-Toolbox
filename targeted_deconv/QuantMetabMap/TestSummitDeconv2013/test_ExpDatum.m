@@ -130,8 +130,8 @@ function test_update_correctly_reorders_deconvs %#ok<DEFNU>
 ensure_test_data_file_exists;
 load(filename_for_test_data);
 
-assertEqual(length(datum1.deconvolutions),20,'The permutations for reordering the deconvolutions need to be the same size for the test to work. Use randperm(length(datum1.deconvolutions)) to fix and do the same for datum2, then set this line to have the correct expected number of deconvolutions');
-reordered_deconvs = datum1.deconvolutions([10 20 8 3 2 1 16 17 12 18 9 14 15 5 4 6 11 13 19 7]);
+assertEqual(length(datum1.deconvolutions),32,'The permutations for reordering the deconvolutions need to be the same size for the test to work. Use randperm(length(datum1.deconvolutions)) to fix and do the same for datum2, then set this line to have the correct expected number of deconvolutions');
+reordered_deconvs = datum1.deconvolutions([13 25 19 32 9 20 3 8 11 12 29 28 1 17 7 16 5 6 21 31 15 4 18 10 24 2 22 26 27 30 14 23]);
 reordered1 = ExpDatum.dangerous_constructor(datum1.spectrum_peaks, ...
     datum1.spectrum_width, reordered_deconvs, datum1.resolution, ...
     datum1.spectrum_interval, datum1.spectrum, datum1.spectrum_snr, ...
@@ -140,7 +140,7 @@ updated_reordered1 = reordered1.updateDeconvolutions;
 
 assertDatumObjectsEqual(datum1, updated_reordered1);
 
-reordered_deconvs = datum2.deconvolutions([14 1 17 11 12 4 10 8 20 5 3 13 16 18 9 7 2 6 15 19]);
+reordered_deconvs = datum2.deconvolutions([6 30 24 12 14 32 18 23 19 8 17 7 9 31 15 2 5 29 26 20 13 11 3 4 22 1 28 21 25 16 10 27]);
 reordered2 = ExpDatum.dangerous_constructor(datum2.spectrum_peaks, ...
     datum2.spectrum_width, reordered_deconvs, datum2.resolution, ...
     datum2.spectrum_interval, datum2.spectrum, datum2.spectrum_snr, ...
