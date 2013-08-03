@@ -20,7 +20,7 @@ assertEqual(model.baseline_type, 'spline');
 assertEqual(model.baseline_area_penalty, 0);
 assertEqual(model.linewidth_variation_penalty, 0);
 assertEqual(model.rough_peak_window_width, 0.0052);
-assertEqual(model.max_rough_peak_width, 0.05);
+assertEqual(model.max_rough_peak_width, 0.00842666594274386373);
 assertEqual(model.only_do_rough_deconv, false);
 assertEqual(model.rough_deconv_method, 'Summit-Focused');
 
