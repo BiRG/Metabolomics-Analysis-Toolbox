@@ -193,7 +193,7 @@ classdef RegionalSpectrumModel
                 obj.baseline_area_penalty = 0;
                 obj.linewidth_variation_penalty = 0; 
                 obj.rough_peak_window_width = 0.0052; % 12 samples in 64k sample spectra
-                obj.max_rough_peak_width = 0.05; % 1 conventional bin + a little default (one conventional bin may be better, I'll know from my next experiment)
+                obj.max_rough_peak_width = 0.00842666594274386373; % 95%-ile of peak widths in NSSD sample (one conventional bin may be better, I'll know from my next experiment)
                 obj.only_do_rough_deconv = false; % Do the fine deconv steps by default
                 obj.rough_deconv_method = 'Summit-Focused'; % New short peak 1st method is default
             end
