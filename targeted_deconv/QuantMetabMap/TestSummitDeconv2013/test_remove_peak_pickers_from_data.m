@@ -37,20 +37,20 @@ function idxs = indices_without_peak_pickers(picker_names)
 expected_max_indices = ...
     length(ExpDeconv.deconvolution_starting_point_method_names) * ...
     length(ExpDeconv.peak_picking_method_names);
-assertEqual(expected_max_indices, 20, 'Wrong number of deconvolutions. Need to revise test for remove_peak_pickers_From_data to use correct indices.');
-all_idxs = 1:20;
+assertEqual(expected_max_indices, 32, 'Wrong number of deconvolutions. Need to revise test for remove_peak_pickers_From_data to use correct indices. Change all_idxs initialization and the indices in the case statement below.');
+all_idxs = 1:32;
 excluded_idxs = [];
 for picker_idx = 1:length(picker_names)
     peak_picker_name = picker_names{picker_idx};
     switch(peak_picker_name)
         case ExpDeconv.pp_gold_standard
-            excluded_idxs = [excluded_idxs 1:5]; %#ok<AGROW>
+            excluded_idxs = [excluded_idxs 1:8]; %#ok<AGROW>
         case ExpDeconv.pp_noisy_gold_standard
-            excluded_idxs = [excluded_idxs 6:10]; %#ok<AGROW>
+            excluded_idxs = [excluded_idxs 9:16]; %#ok<AGROW>
         case ExpDeconv.pp_smoothed_local_max
-            excluded_idxs = [excluded_idxs 11:15]; %#ok<AGROW>
+            excluded_idxs = [excluded_idxs 17:24]; %#ok<AGROW>
         case ExpDeconv.pp_gold_std_aligned_with_local_max
-            excluded_idxs = [excluded_idxs 16:20]; %#ok<AGROW>
+            excluded_idxs = [excluded_idxs 25:32]; %#ok<AGROW>
         otherwise
             % Detects additional methods having been added and no case
             % added to the switch statement
