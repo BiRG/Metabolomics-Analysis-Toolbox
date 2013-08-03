@@ -168,7 +168,7 @@ for results_idx = 1:n
                     case ExpDeconv.dsp_anderson
                         assert(~exist('anderson','var')); % We shouldn't ever assign twice here
                         anderson = d;
-                    case ExpDeconv.dsp_smallest_peak_first
+                    case ExpDeconv.dsp_summit
                         assert(~exist('summit','var')); % We shouldn't ever assign twice here
                         summit = d;
                     otherwise

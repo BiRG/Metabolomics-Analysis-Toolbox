@@ -1706,12 +1706,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 % Calculate the x limits to fit the widths confortably
 all_widths = [];
@@ -1751,12 +1751,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 % Plot 10 figures, 1 for each congestion
 for con=1:num_congestions
@@ -1794,12 +1794,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 % Plot 10 figures, 1 for each congestion
 for con=1:num_congestions
@@ -1828,12 +1828,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 % Plot 10 figures, 1 for each congestion
 for con=1:num_congestions
@@ -1917,12 +1917,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 % Find appropriate upper bound to exclude extreme area outliers
 all_orig_areas = [];
@@ -2031,12 +2031,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 % Plot 10 figures, 1 for each congestion
 for con=1:num_congestions
@@ -2103,12 +2103,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 % Plot 10 figures, 1 for each congestion
 for con=1:num_congestions
@@ -2139,12 +2139,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 for ander_deconv_idx = 1:length(deconvs)
 	d = deconvs(ander_deconv_idx);
@@ -2250,12 +2250,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 for ander_deconv_idx = 1:length(deconvs)
 	d = deconvs(ander_deconv_idx);
@@ -2364,12 +2364,12 @@ deconvs = combined_results(1).deconvolutions;
 for deconv_idx = 1:length(deconvs)
 	d = deconvs(deconv_idx);
     if strcmp(d.peak_picker_name, d.pp_gold_standard) && ...
-            strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large)
+            strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large)
         break;
     end
 end
 assert(strcmp(d.peak_picker_name, d.pp_gold_standard));
-assert(strcmp(d.starting_point_name, d.dsp_smallest_peak_first_100_pctile_max_width_too_large));
+assert(strcmp(d.starting_point_name, d.dsp_summit_100_pctile_max_width_too_large));
 
 for ander_deconv_idx = 1:length(deconvs)
 	d = deconvs(ander_deconv_idx);
@@ -2622,7 +2622,7 @@ for result_idx = 1:length(combined_results)
         deconv_resid_mean(dec_num) = mean(resid);
         deconv_resid_mean_sq(dec_num) = mean(resid.^2);
         deconv_was_anderson(dec_num) = strcmp(dec.starting_point_name, ExpDeconv.dsp_anderson);
-        deconv_was_100long(dec_num) = strcmp(dec.starting_point_name,ExpDeconv.dsp_smallest_peak_first_100_pctile_max_width_too_large);
+        deconv_was_100long(dec_num) = strcmp(dec.starting_point_name,ExpDeconv.dsp_summit_100_pctile_max_width_too_large);
     end
 end
 clear('num_deconvs','result_idx','dec_idx','dec_num','dec','res','x','y','pks','orig_areas','dec_areas','predicted','resid');

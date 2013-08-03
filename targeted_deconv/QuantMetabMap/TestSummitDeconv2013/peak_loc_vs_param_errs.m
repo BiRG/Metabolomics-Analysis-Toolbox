@@ -158,7 +158,7 @@ for results_idx = 1:num_results
                     assert(isempty(ngs{anderson_idx})); % We shouldn't ever assign twice here
                     ngs{anderson_idx} = d;
                     ngs_deconv_idx(anderson_idx) = deconv_idx;
-                case ExpDeconv.dsp_smallest_peak_first
+                case ExpDeconv.dsp_summit
                     assert(isempty(ngs{summit_idx})); % We shouldn't ever assign twice here
                     ngs{summit_idx} = d;
                     ngs_deconv_idx(summit_idx) = deconv_idx;
