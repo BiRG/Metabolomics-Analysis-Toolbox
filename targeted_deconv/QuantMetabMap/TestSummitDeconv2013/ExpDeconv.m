@@ -2,7 +2,7 @@ classdef ExpDeconv
 % Represents a deconvolution of a particular spectrum from my experiment for the TestSummitDeconv2013 paper
 % 
 
-    properties (SetAccess=public)
+    properties (SetAccess=private)
         % The name of the method used for generating the peaks -
         % one of the values returned from peak_picking_method_names (string)
         peak_picker_name
