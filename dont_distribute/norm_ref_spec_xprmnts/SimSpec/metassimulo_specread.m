@@ -26,10 +26,10 @@ function [spec,ppm1,ppm2,bytordp] = metassimulo_specread(expname,expno,procno,di
 
 % construct input file names
 ignore = 0;
-if (~ischar(expno)) expno = num2str(expno); end
-if (~ischar(procno)) procno = num2str(procno); end
+if (~ischar(expno)); expno = num2str(expno); end
+if (~ischar(procno)); procno = num2str(procno); end
 if (nargin==5)
-    if (~isempty(disk) & ~isempty(user))
+    if (~isempty(disk) && ~isempty(user))
         expname = fullfile(disk,user,'nmr',expname);
     end
 end
@@ -40,20 +40,20 @@ spec = [];
 rfile = fullfile(expname,expno,'pdata',procno,'1r');
 ifile = fullfile(expname,expno,'pdata',procno,'1i');
 dim=[];
-if (exist(rfile)==2) 
+if (exist(rfile,'file')==2) 
     dim = 1;
-    if ~(exist(ifile)==2) warning(sprintf('Imaginary file %s does not exist',ifile)); 
+    if ~(exist(ifile,'file')==2); warning(sprintf('Imaginary file %s does not exist',ifile));  %#ok<WNTAG,SPWRN>
     ignore=1; end
 else
     rrfile = fullfile(expname,expno,'pdata',procno,'2rr');
-    if (exist(rrfile)==2) 
+	if (exist(rrfile,'file')==2) 
         dim = 2;
     else
-        warning(sprintf('Cannot find %s or 2rr files',rfile));
+        warning(sprintf('Cannot find %s or 2rr files',rfile)); %#ok<WNTAG,SPWRN>
         ignore =1;
-         end
+	end
 end
-if (isempty(dim)) dim = 1; end
+if (isempty(dim)); dim = 1; end
 
 % read the acquisition and processing parameters,
 % extracting the offset and spectral width

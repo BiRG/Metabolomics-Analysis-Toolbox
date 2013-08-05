@@ -1,4 +1,4 @@
-function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA, model)
+function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA, model, progress_func)
 %Helper function doing the curve fitting for region_deconvolution.
 %
 % Returns the best fit model starting at BETA0 given x_baseline_BETA, the
@@ -43,6 +43,11 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 % model                  RegionalSpectrumModel giving the assumptions
 %                        governing this deconvolution
 %
+% progress_func          (optional) Called every iteration of the
+%                        optimization engine with a single parameter.
+%                        progress_func(frac) where frac is the estimated
+%                        fraction of completion.
+%
 % -------------------------------------------------------------------------
 % Output parameters
 % -------------------------------------------------------------------------
@@ -82,12 +87,29 @@ function [BETA,EXITFLAG] = perform_deconvolution(x,y,BETA0,lb,ub,x_baseline_BETA
 %           -4 Line search could not sufficiently decrease the residual 
 %              along the current search direction.
 
+% Deal with optional arguments
+if ~exist('progress_func', 'var')
+    progress_func = @do_nothing;
+end
+
+% Set up optimization
+
 model_func = @(PARAMS) (regularized_model(PARAMS,x,(length(BETA0)-length(x_baseline_BETA))/4,x_baseline_BETA, y, model));
 
 options = optimset('lsqnonlin');
 %options = optimset(options,'MaxIter',10);
 options = optimset(options,'Display','off');
 %options = optimset(options,'MaxFunEvals',100);
+
+% Wire up progress function to be called appropriately within the
+% optimization
+maxiter = optimget(options, 'MaxIter');
+function stop = output_function(~, optimValues, ~)
+    progress_func(optimValues.iteration/maxiter);
+    stop = false;
+end
+options = optimset(options,'OutputFcn', @output_function);
+    
 
 % Swap bounds if they are inconsistent with their labels
 to_swap = ub < lb;
@@ -96,9 +118,14 @@ ub(to_swap)=lb(to_swap);
 lb(to_swap)=tmp;
 
 % Do the fit
+
 [BETA,R,RESIDUAL,EXITFLAG] = lsqnonlin(model_func,BETA0,lb,ub,options); %#ok<ASGLU>
 
 if EXITFLAG < 0
     BETA = BETA0;
-    fprintf('EXITFLAG: %d',EXITFLAG);
+    fprintf(['lsqnonlin had problems doing curve fit to find best ' ...
+        'deconvolution. Using initial estimate as final fit. lsqnonlin '...
+        'exit flag was: %d'],EXITFLAG);
+end
+
 end

@@ -40,7 +40,7 @@ switch model.baseline_type
     otherwise
         error('regularized_model:bad_baseline_type', ...
             'Unknown baseline type "%s" passed to regularized_model.m', ...
-            model.baseline);
+            model.baseline_type);
 end
 fitted_data = fitted_data + y_baseline;
 
@@ -56,7 +56,7 @@ areas = y_baseline .* dx;
 area = sum(abs(areas));
 
 % Calculate the peak width variation
-if length(x) > 1
+if num_maxima > 1
     line_widths = BETA(2:nRep:last_inx);
 %    min_width = min(line_widths);
 %    max_width = max(line_widths);

@@ -22,7 +22,7 @@ function varargout = targeted_identify(varargin)
 
 % Edit the above text to modify the response to help targeted_identify
 
-% Last Modified by GUIDE v2.5 10-Nov-2011 23:54:56
+% Last Modified by GUIDE v2.5 06-Dec-2012 17:21:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -85,6 +85,7 @@ function out_handles = init_handles_and_gui_from_session_data(handles, session_d
 %
 % Note that display components are not initialized 
 if(session_data.version ~= 0.3)
+    % TODO: handle session data for version 0.4
     uiwait(msgbox(['This session data was generated from a ', ...
         'different version of the targeted deconvolution program (#', ...
         sprintf('%0.2f',session_data.version), ...
@@ -157,8 +158,14 @@ if ~isfield(handles, 'peaks')
     end
 end
 
-% Start with default model for each bin/spectrum combination
-handles.models(num_bins, num_samples)=RegionalSpectrumModel;
+% Start with constant model with no pentalties as the default for each 
+% bin/spectrum combination
+handles.models(num_bins, num_samples)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.05, false, 'Summit-Focused');
+for b=1:num_bins
+    for s=1:num_samples
+        handles.models(b, s)=RegionalSpectrumModel('constant', 0, 0, 0.0052, 0.05, false, 'Summit-Focused');
+    end
+end
 
 % Start with deconvolutions as a matrix of empty CachedValue
 % objects
@@ -318,7 +325,7 @@ function ret=am_connected_to_internet
 [unused, success] = urlread('http://www.google.com/'); %#ok<ASGLU>
 ret = success;
 
-function draw_circle(center, radius_inches, color)
+function draw_circle(center, radius_inches, color) %#ok<DEFNU>
 % Draws a circle on the current axes at the center location (in data 
 % coordinates).  The radius of the circle drawn is in inches.
 %
@@ -326,6 +333,9 @@ function draw_circle(center, radius_inches, color)
 %               Pass as [x y]
 % radius_inches The radius of the circle as plotted on the screen in inches
 % color         The color of the circle to plot
+%
+% It is OK that this function is unused - it is a useful utility function
+% that I don't want to forget having written.
 center_x = center(1);
 center_y = center(2);
 oldunits = get(gca, 'Units');
@@ -376,7 +386,7 @@ function new_val=substitute(old_val, from, to)
 % new_val    old_val after the replacements have been made
 
 if length(from) ~= length(to)
-    error('"From" and "to" arrays must be the same size in substitue');
+    error('targeted_identify__substitute:not_same_size','"From" and "to" arrays must be the same size in substitue');
 end
 new_val = old_val;
 for i=1:length(from)
@@ -410,6 +420,13 @@ end
 pks = handles.peaks{spectrum_idx};
 %Calculate the peaks
 if ischar(pks) && strcmp(pks,'Uninitialized')
+    % I've tried to put a waitbar in here, but something about the way
+    % matlab allocates handles and the use of global variables elsewhere
+    % (gca in the plotting routines) causes problems - the guidata doesn't
+    % get set properly, and, if I don't close the waitbar, the plot gets
+    % drawn on the waitbar. I decided adding the waitbar wasn't worth the 
+    % but that I should add this note to outline the problems I found for
+    % future maintainers who might want to add a waitbar.
     col = handles.collection;
     noise_points = 30; % use 1st 30 pts to estimate noise standard deviation
     %If there are too few points, use them all as noise
@@ -475,7 +492,7 @@ function handles=set_spectrum_peaks_no_gui(spectrum_idx, new_val, handles)
 % Just like set_spectrum_peaks but does not update the gui (note that you
 % will need to update both the plot and display after calling this routine)
 changed_indices = bins_invalidated_by_peak_change(handles.metab_map, ...
-    handles.peaks{spectrum_idx}, new_val);
+    get_spectrum_peaks(handles, spectrum_idx), new_val);
 if ~isempty(changed_indices)
     for bin_idx = changed_indices
         handles.deconvolutions(bin_idx, spectrum_idx).invalidate;
@@ -595,16 +612,6 @@ function num=cur_num_identified(handles)
 % Return the number of identified peaks for current metabolite and spectrum
 num = length(cur_peak_identifications(handles));
 
-function draw_identification(peak_id_obj, collection)
-% DRAW_IDENTIFICATION Draws the selected peak identification on the current plot
-%
-% peak_id_obj The PeakIdentification object to draw
-% collection  The collection referenced by that object
-pid = peak_id_obj;
-spectrum = collection.Y(:,pid.spectrum_index);
-center = [pid.ppm, spectrum(pid.height_index)];
-draw_circle(center, 0.0625, 'r');
-
 function remove_identification(ppm, handles)
 % Removes the identification at the given ppm - if there is no
 % identification there, does nothing
@@ -714,6 +721,7 @@ if get(handles.should_show_deconv_box,'Value')
     hold on;
     cv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
     if cv.exists
+        % Plot baseline, fitted value, and peaks
         deconv = cv.value;
         fit_x = handles.collection.x(deconv.fit_indices);
         plot(fit_x, deconv.y_baseline, 'Color', 'y');    %Yellow baseline
@@ -721,16 +729,31 @@ if get(handles.should_show_deconv_box,'Value')
         for pk = deconv.peaks
             plot(fit_x, pk.at(fit_x),'Color','m'); %Magenta peaks
         end
+        
+        % Plot residual
+        orig_y = handles.collection.Y(deconv.fit_indices, handles.spectrum_idx);
+        resid_y = orig_y - deconv.y_fitted;
+        plot(fit_x, resid_y,'Color','k','Linestyle',':');
     end
 end
 
-%Draw peak identification circles
-ids = cur_peak_identifications(handles);
-for id=ids
-    draw_identification(id, handles.collection);
+% Display quality metric
+
+cv = handles.deconvolutions(handles.bin_idx, handles.spectrum_idx);
+if cv.exists
+    deconv = cv.value;
+    orig_y = handles.collection.Y(deconv.fit_indices, handles.spectrum_idx);
+    resid_y = orig_y - deconv.y_fitted;
+
+    % Display quality metric
+    set(handles.quality_text,'String', sprintf('Quality: %6.2f', deconvolution_quality(resid_y)));
+else
+    % No quality to display (since no deconvolution has been done)
+    set(handles.quality_text,'String', 'Quality: No deconvolution');
 end
 
 %Draw peak location lines
+ids = cur_peak_identifications(handles);
 cur_y = y_values_in_cur_bin(handles);
 y_bounds = [min(cur_y), max(cur_y)];
 if isempty(ids)
@@ -804,11 +827,13 @@ switch model.baseline_type
 end
 set(handles.baseline_menu, 'Value', value_idx);
 
-% Set the regularization boxes
-set(handles.baseline_area_penalty_edit_box, 'String', ...
-    num2str(model.baseline_area_penalty,5));
-set(handles.width_variance_penalty_edit_box, 'String', ...
-    num2str(model.linewidth_variation_penalty,5));
+% Set the rough deconvolution boxes
+set(handles.rough_peak_window_ppm_edit, 'String', ...
+    num2str(model.rough_peak_window_width,6));
+set(handles.rough_peak_max_width_edit, 'String', ...
+    num2str(model.max_rough_peak_width,6));
+set(handles.only_do_rough_deconv_checkbox, 'Value', ...
+    model.only_do_rough_deconv);
 
 % Show or hide update deconvolution button depending on whether the current
 % deconvolution is updated
@@ -1435,6 +1460,18 @@ else
             save_collection(fullfile(resid_path, resid_name), res);
         end
         
+        % Write the full deconvolution to a file in the current directory
+        fraction_done = 0.92;
+        waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
+            'Saving full deconvolution']);
+        all_peaks=cell(num_spec,1);
+        for spec_idx = 1:num_spec
+            for bin_idx = 1:num_bins
+                all_peaks{spec_idx}=[all_peaks{spec_idx},handles.deconvolutions(bin_idx, spec_idx).value.peaks];
+            end
+        end
+        save('saved_full_deconvolution.mat','all_peaks');
+        
         %Save the deconvolved peaks in a nice csv format
 
         fraction_done = 0.99;
@@ -1739,7 +1776,7 @@ end
 
 %Save
 fullname = fullfile(pathname, filename);
-session_data.version = 0.3;
+session_data.version = 0.4;
 session_data.metabolite_menu_string = get(handles.metabolite_menu,'String');
 session_data.collection = handles.collection;
 session_data.metab_map = handles.metab_map;
@@ -1878,64 +1915,6 @@ end
 
 
 
-function baseline_area_penalty_edit_box_Callback(hObject, unused, handles) %#ok<DEFNU,INUSL>
-% hObject    handle to baseline_area_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of baseline_area_penalty_edit_box as text
-%        str2double(get(hObject,'String')) returns contents of baseline_area_penalty_edit_box as a double
-v = str2double(get(hObject,'String'));
-if ~isnan(v)
-    m=handles.models(handles.bin_idx, handles.spectrum_idx);
-    m.baseline_area_penalty = v;
-    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
-    guidata(handles.figure1, handles);
-end
-
-% --- Executes during object creation, after setting all properties.
-function baseline_area_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#ok<INUSD,DEFNU>
-% hObject    handle to baseline_area_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function width_variance_penalty_edit_box_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
-% hObject    handle to width_variance_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of width_variance_penalty_edit_box as text
-%        str2double(get(hObject,'String')) returns contents of width_variance_penalty_edit_box as a double
-v = str2double(get(hObject,'String'));
-if ~isnan(v)
-    m=handles.models(handles.bin_idx, handles.spectrum_idx);
-    m.linewidth_variation_penalty = v;
-    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
-    guidata(handles.figure1, handles);
-end
-
-
-% --- Executes during object creation, after setting all properties.
-function width_variance_penalty_edit_box_CreateFcn(hObject, unused, unused2) %#ok<INUSD,DEFNU>
-% hObject    handle to width_variance_penalty_edit_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 % --- Executes on button press in sync_peaks_with_deconv_button.
 function sync_peaks_with_deconv_button_Callback(unused, unused2, handles) %#ok<INUSL,DEFNU>
 % (unused)  hObject    handle to sync_peaks_with_deconv_button (see GCBO)
@@ -1979,3 +1958,128 @@ function vertical_zoom_out_tool_ClickedCallback(hObject, eventdata, handles) %#o
 handles.auto_y_zoom = false;
 zoom_plot(5/3, false, handles);
 guidata(handles.figure1, handles);
+
+
+% --------------------------------------------------------------------
+function vertical_zoom_all_tool_ClickedCallback(hObject, eventdata, handles) %#ok<DEFNU,INUSL>
+% hObject    handle to vertical_zoom_all_tool (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.auto_y_zoom = true;
+
+xlims=xlim;
+x = handles.collection.x;
+in_lims = xlims(1) <= x & x <= xlims(2);
+y = handles.collection.Y(in_lims, handles.spectrum_idx);
+yrange = max(y)-min(y);
+zoom_to_box(xlims(1),xlims(2),min(y)-yrange/20,max(y)+yrange/20);
+handles.auto_y_zoom = false;
+guidata(handles.figure1, handles);
+%update_plot(handles);
+
+
+
+function rough_peak_window_ppm_edit_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to rough_peak_window_ppm_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rough_peak_window_ppm_edit as text
+%        str2double(get(hObject,'String')) returns contents of rough_peak_window_ppm_edit as a double
+
+% Calculate the minimum allowable ppm
+collection = handles.collection;
+x = collection.x;
+num_samp = length(x);
+if num_samp >= 2
+    ppm_between_samples = (max(x)-min(x))/(num_samp-1);
+elseif num_samp == 1
+    ppm_between_samples = 0;
+else
+    msgbox(['To do operations on the spectra they must have at least '...
+        'one sample point.'],'Not enough samples','Error');
+    ppm_between_samples = 0;
+end
+assert(ppm_between_samples >= 0);
+min_window_width_samples = 5; % 5 samples wide will contain 4 intervals between samples, and at least 4 samples total
+min_window_width_ppm = (min_window_width_samples - 1)*ppm_between_samples;
+
+% Check the entry typed in and set the value if it is valid
+entry  = str2double(get(hObject,'String'));
+if ~isnan(entry) %If the user typed a number
+    if entry >= min_window_width_ppm
+        m=handles.models(handles.bin_idx, handles.spectrum_idx);
+        m.rough_peak_window_width = entry;
+        handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+        guidata(handles.figure1, handles);
+    else
+        msgbox(sprintf(['The window must be at least %d samples '...
+            'wide (%g ppm)'], min_window_width_samples, ...
+            min_window_width_ppm),'Window too small','Error');
+    end
+end
+
+update_display(handles);
+
+% --- Executes during object creation, after setting all properties.
+function rough_peak_window_ppm_edit_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+% hObject    handle to rough_peak_window_ppm_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function rough_peak_max_width_edit_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to rough_peak_max_width_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rough_peak_max_width_edit as text
+%        str2double(get(hObject,'String')) returns contents of rough_peak_max_width_edit as a double
+
+% Check the entry typed in and set the value if it is valid, reset the edit
+% box to the current value if the value typed is invalid
+entry  = str2double(get(hObject,'String'));
+
+if ~isnan(entry) ... % If the user typed a number
+   && entry > 0      % And the peak width is non-negative
+    m=handles.models(handles.bin_idx, handles.spectrum_idx);
+    m.max_rough_peak_width = entry;
+    handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+    guidata(handles.figure1, handles);
+end
+
+update_display(handles);
+
+% --- Executes during object creation, after setting all properties.
+function rough_peak_max_width_edit_CreateFcn(hObject, eventdata, handles) %#ok<INUSD,DEFNU>
+% hObject    handle to rough_peak_max_width_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in only_do_rough_deconv_checkbox.
+function only_do_rough_deconv_checkbox_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+% hObject    handle to only_do_rough_deconv_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of only_do_rough_deconv_checkbox
+m=handles.models(handles.bin_idx, handles.spectrum_idx);
+m.only_do_rough_deconv = get(hObject,'Value');
+handles.models(handles.bin_idx, handles.spectrum_idx) = m;
+guidata(handles.figure1, handles);
+update_display(handles);

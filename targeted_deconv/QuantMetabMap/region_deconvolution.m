@@ -1,5 +1,7 @@
-function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,model)
+function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,model,progress_func)
 % Deconvolves a region of a spectrum
+%
+% Usage: [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] = region_deconvolution(x,y,BETA0,lb,ub,x_baseline_width,region,model,progress_func)
 %
 % This is code modified from Paul Anderson.  These comments 
 % were first added as part of exploring the code.
@@ -36,6 +38,11 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 %
 % model              A RegionalSpectrumModel giving the assumptions for
 %                    this deconvolution
+%
+% progress_func      (optional) Called every iteration of the optimization 
+%                    engine with a single parameter. progress_func(frac) 
+%                    where frac is the estimated fraction of completion.
+%
 % ------------------------------------------------------------------------
 % Output Parameters
 % ------------------------------------------------------------------------
@@ -67,8 +74,7 @@ function [BETA,baseline_BETA,fit_inxs,y_fit,y_baseline,R2,peak_inxs,peak_BETA] =
 %                    slice of that sub-variable for all the peaks in the
 %                    region.  (M is -3, G is -2, etc)
 %
-% peak_BETA          The values of the deconvolved peaks (only those in the
-%                    region)
+% peak_BETA          The values of the deconvolved peaks
 %
 % ------------------------------------------------------------------------
 % Example Code:
@@ -93,19 +99,24 @@ fit_inxs = find(region(1) >= x & x >= region(2)); % To do: this should adapt to 
 y_region = y(fit_inxs);
 x_region = x(fit_inxs);
 
-% Construct region
-X = BETA0(4:4:end); %Later expl: X is x coordinates of the peaks - here initial
-inxs = find(region(1) >= X & X >= region(2));
-lb_region = [];
-ub_region = [];
-BETA0_region = [];
-for i = 1:length(inxs)
-    ix = inxs(i);
-    lb_region = [lb_region;lb(4*(ix-1)+(1:4))];
-    ub_region = [ub_region;ub(4*(ix-1)+(1:4))];
-    BETA0_region = [BETA0_region;BETA0(4*(ix-1)+(1:4))];
-end
+% TODO: remove all references to inxs by simplifying the code to just use all entries
+%
+% inxs is a hold-over from an earlier version in which not all input peaks
+% were used. If the peaks are given one spot each in an array, inxs is the
+% list of the indices of the used peaks. Since all peaks are now used, inxs
+% is just a list of 1:num_peaks. Eventually, this should be removed because
+% it adds extra complexity to the code. But I will not do it now.
+inxs = 1:(length(BETA0)/4);
+assert(length(inxs)*4 == length(BETA0)); % Make sure round-off error hasn't happened
 
+% Construct parameter values that include baseline parameters for fitting region
+
+% Start with the raw initial parameter values
+lb_region = lb;
+ub_region = ub;
+BETA0_region = BETA0;
+
+% Set up the lists of parameters and bounds for the baseline
 region_width = region(1)-region(2);
 switch model.baseline_type
     case 'spline'
@@ -145,14 +156,24 @@ switch model.baseline_type
             '" in model passed to region_deconvolution']);
 end
 
+% Attach the baseline parameters and their bounds to the end of the region
+% parameter/bound lists
 BETA0_region = [BETA0_region;baseline_BETA];
 lb_region = [lb_region;lb_baseline];
 ub_region = [ub_region;ub_baseline];
 num_maxima = length(inxs);
 
+% Do the fit
 if num_maxima > 0
-    [BETA_region,EXITFLAG] = ...
-        perform_deconvolution(x_region',y_region,BETA0_region,lb_region,ub_region,x_baseline_BETA, model);
+    if exist('progress_func', 'var')
+        [BETA_region,EXITFLAG] = ...
+            perform_deconvolution(x_region',y_region,BETA0_region, ...
+            lb_region,ub_region,x_baseline_BETA, model, progress_func);
+    else
+        [BETA_region,EXITFLAG] = ...
+            perform_deconvolution(x_region',y_region,BETA0_region, ...
+            lb_region,ub_region,x_baseline_BETA, model);
+    end
     BETA(4*(inxs-1)+1) = BETA_region(1:4:4*num_maxima);
     BETA(4*(inxs-1)+2) = BETA_region(2:4:4*num_maxima);
     BETA(4*(inxs-1)+3) = BETA_region(3:4:4*num_maxima);
@@ -161,6 +182,7 @@ else
     BETA_region=[];
 end
 
+% Calculate auxiliary output parameters
 [y_errs,y_baseline] = regularized_model(BETA_region,x_region',num_maxima,x_baseline_BETA, y_region, model);
 y_fit = y_errs(1:end-2) + y_region;
 

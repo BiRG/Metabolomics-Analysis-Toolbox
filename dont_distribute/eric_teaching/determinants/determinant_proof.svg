@@ -1,0 +1,2088 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="431.33496"
+   height="1040.911"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="determinant_proof.svg"
+   inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+   inkscape:export-xdpi="144"
+   inkscape:export-ydpi="144">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="147.96675"
+     inkscape:cy="871.08226"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="1000"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:snap-global="false"
+     inkscape:snap-nodes="true"
+     inkscape:snap-grids="true"
+     objecttolerance="22"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-bbox="true"
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:bbox-nodes="true"
+     fit-margin-left="25"
+     fit-margin-right="25"
+     fit-margin-bottom="25"
+     fit-margin-top="25">
+    <inkscape:grid
+       dotted="false"
+       snapvisiblegridlinesonly="true"
+       enabled="true"
+       visible="true"
+       empspacing="5"
+       id="grid4774"
+       type="xygrid"
+       originx="-13.51123px"
+       originy="73.015348px" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path3969"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Send"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path3975"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Lend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path3963"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendT"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendT">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path4987"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path4990"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path3969-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path4990-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendT-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendT">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path4987-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend8"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend8">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5978"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE0">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5984"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTH"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTH">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5987"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendEV"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5990"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE0-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE0">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5984-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh-8"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE0-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE0">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5984-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981-7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTH-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTH">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5987-7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE0-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE0">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5984-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-70"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-3"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend8-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend8">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5978-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend8-12"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend8">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5978-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh-27"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981-1" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker7245"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path7247" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTh-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTh">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5981-94" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-38"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendEV-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5990-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-48" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendEV-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5990-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-28"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-56" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendEV-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5990-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE0-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE0">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5984-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendEV-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5990-04" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendN-1"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendN">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5975-84" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendEV-67"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5990-57" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker3444"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path3446" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendE0-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendE0">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5984-1" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend8-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend8">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5978-61" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendEV-10"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendEV">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5990-56" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1MendTH-3"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1MendTH">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5987-8" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1"
+     transform="translate(-13.51123,-84.466568)">
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path3006-6-5-9"
+       d="m 309,975.86218 0,-38.49999"
+       style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path3006-3-1"
+       d="m 309,974.86218 0,38.50002"
+       style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendE0)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="149.51172"
+       y="197.80017"
+       id="text6148"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6150"
+         x="149.51172"
+         y="197.80017">=</tspan></text>
+    <g
+       id="g6136-0"
+       transform="translate(178.19772,2.7500026)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <path
+         sodipodi:nodetypes="cc"
+         style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTh)"
+         d="m -0.5,207.36218 80.5,0"
+         id="path3004-9-7"
+         inkscape:connector-curvature="0" />
+      <path
+         style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendE0)"
+         d="m 0,207.86218 0,-38.5"
+         id="path3006-9-3"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g5786-3-4"
+         transform="translate(-40,90.000001)">
+        <path
+           style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 40,77.362183 83,0"
+           id="path5776-62-7"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="78.719238"
+           y="74.853394"
+           id="text5778-3-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="78.719238"
+             y="74.853394"
+             id="tspan5782-5-0">2</tspan></text>
+      </g>
+      <g
+         id="g5797-6-9"
+         transform="translate(-40,90.000001)">
+        <path
+           style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 122.5,77.362184 0,39.999996"
+           id="path5791-7-1"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="124.23828"
+           y="100.80212"
+           id="text5793-4-7"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5795-8-3"
+             x="124.23828"
+             y="100.80212">1</tspan></text>
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="296.98486"
+       y="197.80017"
+       id="text6212"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6214"
+         x="296.98486"
+         y="197.80017">+</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path3004-1"
+       d="m 321.43347,210.11218 80.5,0"
+       style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTh)"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3004-6-0"
+       d="m 321.43347,210.11218 80.5,0"
+       style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTH)"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144" />
+    <g
+       id="g7076"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <g
+         transform="translate(41.469238,2.7500026)"
+         id="g6136">
+        <path
+           inkscape:connector-curvature="0"
+           id="path3004-9"
+           d="m -0.5,207.36218 80.5,0"
+           style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTh)"
+           sodipodi:nodetypes="cc" />
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path3006-9"
+           d="m 0,207.86218 0,-38.5"
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendE0)" />
+        <g
+           transform="translate(-40,90.000001)"
+           id="g5786-3">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5776-62"
+             d="m 40,77.362183 83,0"
+             style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5778-3"
+             y="74.853394"
+             x="78.719238"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               id="tspan5782-5"
+               y="74.853394"
+               x="78.719238"
+               sodipodi:role="line">2</tspan></text>
+        </g>
+        <g
+           transform="translate(-40,90.000001)"
+           id="g5797-6">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5791-7"
+             d="m 122.5,77.362184 0,39.999996"
+             style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5793-4"
+             y="100.80212"
+             x="124.23828"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               y="100.80212"
+               x="124.23828"
+               id="tspan5795-8"
+               sodipodi:role="line">1</tspan></text>
+        </g>
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6264"
+         y="219.60828"
+         x="62.592773"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="219.60828"
+           x="62.592773"
+           id="tspan6266"
+           sodipodi:role="line">D(v1,v2)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="199.32126"
+       y="219.60828"
+       id="text6268"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6270"
+         x="199.32126"
+         y="219.60828">D(v1,v2)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="343.05701"
+       y="219.60828"
+       id="text6272"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6274"
+         x="343.05701"
+         y="219.60828">D(v1,v1)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="149.51172"
+       y="330.03098"
+       id="text6425"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6427"
+         x="149.51172"
+         y="330.03098">=</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="175.79636"
+       y="249.29564"
+       id="text6924"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6926"
+         x="175.79636"
+         y="249.29564">Note the color of the overlapping vectors.</tspan><tspan
+         sodipodi:role="line"
+         x="175.79636"
+         y="261.79565"
+         id="tspan6928">In normal geometry, this straight line would not be </tspan><tspan
+         sodipodi:role="line"
+         x="175.79636"
+         y="274.29565"
+         id="tspan6930">considered as having four sides.</tspan></text>
+    <g
+       id="g7109"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"
+       transform="translate(0,50)">
+      <g
+         transform="translate(-1.25,0)"
+         id="g6932">
+        <path
+           inkscape:connector-curvature="0"
+           id="path3004-7"
+           d="m 177.69772,292.41136 80.5,0"
+           style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTh)"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)"
+           d="m 178.19772,292.41136 81,-39"
+           id="path5014-1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <g
+           transform="translate(220.19772,175.04918)"
+           id="g5786-6">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5776-5"
+             d="m 40,77.362183 83,0"
+             style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5778-22"
+             y="74.853394"
+             x="78.719238"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               id="tspan5782-1"
+               y="74.853394"
+               x="78.719238"
+               sodipodi:role="line">2</tspan></text>
+        </g>
+        <g
+           transform="translate(138.19772,175.04918)"
+           id="g5797-2">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5791-9"
+             d="m 122.5,77.362184 0,39.999996"
+             style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5793-6"
+             y="100.80212"
+             x="124.23828"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               y="100.80212"
+               x="124.23828"
+               id="tspan5795-89"
+               sodipodi:role="line">1</tspan></text>
+        </g>
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:none"
+           d="m 259.94772,291.91136 81,-39"
+           id="path5014-1-9"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6945"
+         y="301.90744"
+         x="231.99313"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="301.90744"
+           x="231.99313"
+           id="tspan6947"
+           sodipodi:role="line">D(v1,v1+v2)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="175.79636"
+       y="390.16626"
+       id="text6924-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         x="175.79636"
+         y="390.16626"
+         id="tspan6930-5">Intuitively, you can see the volume has not been </tspan><tspan
+         sodipodi:role="line"
+         x="175.79636"
+         y="402.66626"
+         id="tspan6981">changed; there has just been a shearing</tspan><tspan
+         sodipodi:role="line"
+         x="175.79636"
+         y="415.16626"
+         id="tspan3325">transformation</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="149.51172"
+       y="459.65851"
+       id="text6983"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985"
+         x="149.51172"
+         y="459.65851">=</tspan></text>
+    <g
+       id="g7056"
+       transform="translate(-1.5165658,90)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <g
+         transform="translate(0.26656577,89.627516)"
+         id="g6932-2">
+        <path
+           inkscape:connector-curvature="0"
+           id="path3004-7-8"
+           d="m 177.69772,292.41136 80.5,0"
+           style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTh)"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)"
+           d="m 178.19772,292.41136 81,-39"
+           id="path5014-1-5"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <g
+           transform="translate(220.19772,175.04918)"
+           id="g5786-6-1">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5776-5-8"
+             d="m 40,77.362183 83,0"
+             style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5778-22-4"
+             y="74.853394"
+             x="78.719238"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               id="tspan5782-1-1"
+               y="74.853394"
+               x="78.719238"
+               sodipodi:role="line">2</tspan></text>
+        </g>
+        <g
+           transform="translate(138.19772,175.04918)"
+           id="g5797-2-3">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5791-9-5"
+             d="m 122.5,77.362184 0,39.999996"
+             style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5793-6-7"
+             y="100.80212"
+             x="124.23828"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               y="100.80212"
+               x="124.23828"
+               id="tspan5795-89-8"
+               sodipodi:role="line">1</tspan></text>
+        </g>
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:none"
+           d="m 259.94772,291.91136 81,-39"
+           id="path5014-1-9-9"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6945-1"
+         y="391.53497"
+         x="233.50969"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="391.53497"
+           x="233.50969"
+           id="tspan6947-1"
+           sodipodi:role="line">D(v1,v1+v2)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="333"
+       y="459.65851"
+       id="text7072"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan7074"
+         x="333"
+         y="459.65851">-</tspan></text>
+    <g
+       id="g7221"
+       transform="translate(-16,90)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <g
+         id="g7216">
+        <g
+           id="g7173"
+           transform="translate(-80,2.5490723)">
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="path5014-9-7"
+             d="m 431.31735,381.23981 81,-39"
+             style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1Mend8)" />
+        </g>
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)"
+           d="m 351.31736,383.78888 80.99999,-39.00001"
+           id="path5014-8"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text7195"
+         y="391.53497"
+         x="356.73514"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="391.53497"
+           x="356.73514"
+           id="tspan7197"
+           sodipodi:role="line">D(v1+v2,v1+v2)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="148.96198"
+       y="566.08704"
+       id="text6983-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985-1"
+         x="148.96198"
+         y="566.08704">=</tspan></text>
+    <g
+       id="g7056-9"
+       transform="translate(-2.066314,196.42856)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <g
+         transform="translate(0.26656577,89.627516)"
+         id="g6932-2-0">
+        <path
+           inkscape:connector-curvature="0"
+           id="path3004-7-8-2"
+           d="m 177.69772,292.41136 80.5,0"
+           style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTh)"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)"
+           d="m 178.19772,292.41136 81,-39"
+           id="path5014-1-5-7"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <g
+           transform="translate(220.19772,175.04918)"
+           id="g5786-6-1-3">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5776-5-8-0"
+             d="m 40,77.362183 83,0"
+             style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5778-22-4-1"
+             y="74.853394"
+             x="78.719238"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               id="tspan5782-1-1-4"
+               y="74.853394"
+               x="78.719238"
+               sodipodi:role="line">2</tspan></text>
+        </g>
+        <g
+           transform="translate(138.19772,175.04918)"
+           id="g5797-2-3-5">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5791-9-5-8"
+             d="m 122.5,77.362184 0,39.999996"
+             style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5793-6-7-3"
+             y="100.80212"
+             x="124.23828"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               y="100.80212"
+               x="124.23828"
+               id="tspan5795-89-8-3"
+               sodipodi:role="line">1</tspan></text>
+        </g>
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:none"
+           d="m 259.94772,291.91136 81,-39"
+           id="path5014-1-9-9-7"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6945-1-7"
+         y="391.53497"
+         x="233.50969"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="391.53497"
+           x="233.50969"
+           id="tspan6947-1-6"
+           sodipodi:role="line">D(v1,v1+v2)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="332.45026"
+       y="566.08704"
+       id="text7072-0"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan7074-0"
+         x="332.45026"
+         y="566.08704">+</tspan></text>
+    <g
+       id="g7381"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"
+       transform="translate(0,90)">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5014-8-4"
+         d="m 334.76762,490.21744 80.99999,-39.00001"
+         style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)" />
+      <g
+         transform="matrix(-1,0,0,-1,765.08497,872.45725)"
+         id="g7173-4">
+        <path
+           style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1Mend8)"
+           d="m 431.31735,381.23981 81,-39"
+           id="path5014-9-7-4"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text7195-8"
+         y="497.96353"
+         x="340.18539"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="497.96353"
+           x="340.18539"
+           id="tspan7197-2"
+           sodipodi:role="line">D(-v1-v2,v1+v2)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="175.36378"
+       y="642.13623"
+       id="text6924-7-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="642.13623"
+         id="tspan6981-6">This step is not shown in the proof, but it follows from</tspan><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="654.63623"
+         id="tspan7392">property 2 (which is really a consequence of property</tspan><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="667.13623"
+         id="tspan7398">3) and is crucial to seeing where the labeling affects </tspan><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="679.63623"
+         id="tspan7404">things in the intuitive understanding. Observe that only</tspan><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="692.13623"
+         id="tspan7408">ONE vector is affected by the negation. You can look at </tspan><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="704.63623"
+         id="tspan7410">this as the source of the parity calculation in the</tspan><tspan
+         sodipodi:role="line"
+         x="175.36378"
+         y="717.13623"
+         id="tspan3327">determinant.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="148.99231"
+       y="786.81573"
+       id="text6983-7-1"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985-1-2"
+         x="148.99231"
+         y="786.81573">=</tspan></text>
+    <g
+       id="g7656"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"
+       transform="translate(0,194)">
+      <g
+         id="g7652">
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="191.37042"
+           y="628.85828"
+           id="text6945-1-7-6"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan6947-1-6-8"
+             x="191.37042"
+             y="628.85828">D(-v2,v1+v2)</tspan></text>
+      </g>
+      <g
+         transform="translate(0,-24)"
+         id="g7639">
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)"
+           d="m 176.42833,606.03887 81,-39"
+           id="path5014-1-5-7-5"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <g
+           transform="translate(136.28547,529.03383)"
+           id="g5786-6-1-3-3">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5776-5-8-0-1"
+             d="m 40,77.362183 83,0"
+             style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5778-22-4-1-9"
+             y="74.853394"
+             x="78.719238"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               id="tspan5782-1-1-4-5"
+               y="74.853394"
+               x="78.719238"
+               sodipodi:role="line">2</tspan></text>
+        </g>
+        <g
+           transform="translate(136.42833,488.67669)"
+           id="g5797-2-3-5-0">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5791-9-5-8-5"
+             d="m 122.5,77.362184 0,39.999996"
+             style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5793-6-7-3-3"
+             y="100.80212"
+             x="124.23828"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               y="100.80212"
+               x="124.23828"
+               id="tspan5795-89-8-3-7"
+               sodipodi:role="line">1</tspan></text>
+        </g>
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:none"
+           d="m 178.5216,645.02872 81,-39"
+           id="path5014-1-9-9-7-0"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path3006-6-1"
+           d="m 177,605.86218 0,38.49999"
+           style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)" />
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="272.58389"
+       y="786.81573"
+       id="text6983-7-1-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985-1-2-1"
+         x="272.58389"
+         y="786.81573">=</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="304.28186"
+       y="786.81573"
+       id="text6983-7-1-3-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985-1-2-1-3"
+         x="304.28186"
+         y="786.81573">-</tspan></text>
+    <g
+       id="g7652-2"
+       transform="translate(153.27671,194.84663)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <text
+         sodipodi:linespacing="125%"
+         id="text6945-1-7-6-5"
+         y="628.85828"
+         x="191.37042"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="628.85828"
+           x="191.37042"
+           id="tspan6947-1-6-8-7"
+           sodipodi:role="line">D(v2,v1+v2)</tspan></text>
+    </g>
+    <g
+       id="g7816"
+       transform="translate(2.1428571,227.2175)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5014-1-5-7-5-2"
+         d="m 327.54895,588.5073 81,-39"
+         style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)" />
+      <g
+         id="g5786-6-1-3-3-3"
+         transform="translate(287.40609,471.22243)">
+        <path
+           style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 40,77.362183 83,0"
+           id="path5776-5-8-0-1-5"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="78.719238"
+           y="74.853394"
+           id="text5778-22-4-1-9-2"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="78.719238"
+             y="74.853394"
+             id="tspan5782-1-1-4-5-8">2</tspan></text>
+      </g>
+      <g
+         id="g5797-2-3-5-0-7"
+         transform="translate(287.42268,432.75932)">
+        <path
+           style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 122.5,77.362184 0,39.999996"
+           id="path5791-9-5-8-5-9"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="124.23828"
+           y="100.80212"
+           id="text5793-6-7-3-3-3"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5795-89-8-3-7-4"
+             x="124.23828"
+             y="100.80212">1</tspan></text>
+      </g>
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5014-1-9-9-7-0-1"
+         d="m 328.37953,547.82137 81,-39"
+         style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:none" />
+      <path
+         style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)"
+         d="m 327.8974,588.74131 0,-38.49999"
+         id="path3006-6-1-9"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g3401"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"
+       transform="translate(0,198)">
+      <text
+         sodipodi:linespacing="125%"
+         id="text6983-7-1-3-9"
+         y="683.24921"
+         x="148.59869"
+         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="683.24921"
+           x="148.59869"
+           id="tspan6985-1-2-1-1"
+           sodipodi:role="line">=</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6983-7-1-3-8-7"
+         y="683.24921"
+         x="164.29668"
+         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="683.24921"
+           x="164.29668"
+           id="tspan6985-1-2-1-3-5"
+           sodipodi:role="line">-</tspan></text>
+      <g
+         transform="translate(13.291509,91.280096)"
+         id="g7652-2-7">
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="179.37042"
+           y="628.85828"
+           id="text6945-1-7-6-5-8"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan6947-1-6-8-7-8"
+             x="179.37042"
+             y="628.85828">D(v2,v1+v2)</tspan></text>
+      </g>
+      <g
+         transform="translate(-149.84234,123.65097)"
+         id="g7816-5">
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)"
+           d="m 327.54895,588.5073 81,-39"
+           id="path5014-1-5-7-5-2-4"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <g
+           transform="translate(287.40609,471.22243)"
+           id="g5786-6-1-3-3-3-1">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5776-5-8-0-1-5-4"
+             d="m 40,77.362183 83,0"
+             style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5778-22-4-1-9-2-2"
+             y="74.853394"
+             x="78.719238"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               id="tspan5782-1-1-4-5-8-4"
+               y="74.853394"
+               x="78.719238"
+               sodipodi:role="line">2</tspan></text>
+        </g>
+        <g
+           transform="translate(287.42268,432.75932)"
+           id="g5797-2-3-5-0-7-6">
+          <path
+             inkscape:connector-curvature="0"
+             id="path5791-9-5-8-5-9-7"
+             d="m 122.5,77.362184 0,39.999996"
+             style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5793-6-7-3-3-3-4"
+             y="100.80212"
+             x="124.23828"
+             style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+             xml:space="preserve"><tspan
+               y="100.80212"
+               x="124.23828"
+               id="tspan5795-89-8-3-7-4-8"
+               sodipodi:role="line">1</tspan></text>
+        </g>
+        <path
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:none"
+           d="m 328.37953,547.82137 81,-39"
+           id="path5014-1-9-9-7-0-1-5"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path3006-6-1-9-9"
+           d="m 327.8974,588.74131 0,-38.49999"
+           style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6983-7-1-3-8-7-8"
+         y="683.24921"
+         x="276.64462"
+         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="683.24921"
+           x="276.64462"
+           id="tspan6985-1-2-1-3-5-3"
+           sodipodi:role="line">-</tspan></text>
+      <g
+         transform="translate(12.142857,2.02031)"
+         id="g3373">
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path3006-6-5"
+           d="m 296.86903,669.70202 0,-38.49999"
+           style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)" />
+        <path
+           sodipodi:nodetypes="cc"
+           inkscape:connector-curvature="0"
+           id="path3006-3"
+           d="m 296.86903,669.70202 0,-38.49999"
+           style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendE0)" />
+      </g>
+      <g
+         transform="translate(110.64,91.280096)"
+         id="g7652-2-7-0">
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="179.37042"
+           y="628.85828"
+           id="text6945-1-7-6-5-8-6"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan6947-1-6-8-7-8-7"
+             x="179.37042"
+             y="628.85828">D(v2,v2)</tspan></text>
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="148.59869"
+       y="986.52087"
+       id="text6983-7-1-3-9-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985-1-2-1-1-4"
+         x="148.59869"
+         y="986.52087">=</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="164.29668"
+       y="986.52087"
+       id="text6983-7-1-3-8-7-4"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985-1-2-1-3-5-31"
+         x="164.29668"
+         y="986.52087">-</tspan></text>
+    <g
+       id="g7652-2-7-1"
+       transform="translate(13.291509,394.55177)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <text
+         sodipodi:linespacing="125%"
+         id="text6945-1-7-6-5-8-3"
+         y="628.85828"
+         x="179.37042"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="628.85828"
+           x="179.37042"
+           id="tspan6947-1-6-8-7-8-8"
+           sodipodi:role="line">D(v2,v1+v2)</tspan></text>
+    </g>
+    <g
+       id="g7816-5-0"
+       transform="translate(-149.84234,426.92264)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5014-1-5-7-5-2-4-2"
+         d="m 327.54895,588.5073 81,-39"
+         style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1MendN)" />
+      <g
+         id="g5786-6-1-3-3-3-1-4"
+         transform="translate(287.40609,471.22243)">
+        <path
+           style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 40,77.362183 83,0"
+           id="path5776-5-8-0-1-5-4-7"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="78.719238"
+           y="74.853394"
+           id="text5778-22-4-1-9-2-2-4"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="78.719238"
+             y="74.853394"
+             id="tspan5782-1-1-4-5-8-4-9">2</tspan></text>
+      </g>
+      <g
+         id="g5797-2-3-5-0-7-6-8"
+         transform="translate(287.42268,432.75932)">
+        <path
+           style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 122.5,77.362184 0,39.999996"
+           id="path5791-9-5-8-5-9-7-1"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="124.23828"
+           y="100.80212"
+           id="text5793-6-7-3-3-3-4-4"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5795-89-8-3-7-4-8-5"
+             x="124.23828"
+             y="100.80212">1</tspan></text>
+      </g>
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path5014-1-9-9-7-0-1-5-1"
+         d="m 328.37953,547.82137 81,-39"
+         style="opacity:0.5;fill:none;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0;marker-start:none;marker-end:none" />
+      <path
+         style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)"
+         d="m 327.8974,588.74131 0,-38.49999"
+         id="path3006-6-1-9-9-0"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="276.64462"
+       y="986.52087"
+       id="text6983-7-1-3-8-7-8-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         id="tspan6985-1-2-1-3-5-3-3"
+         x="276.64462"
+         y="986.52087">+</tspan></text>
+    <g
+       id="g7652-2-7-0-8"
+       transform="translate(110.64,394.55177)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <text
+         sodipodi:linespacing="125%"
+         id="text6945-1-7-6-5-8-6-4"
+         y="628.85828"
+         x="179.37042"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="628.85828"
+           x="179.37042"
+           id="tspan6947-1-6-8-7-8-7-0"
+           sodipodi:role="line">D(v2,-v2)</tspan></text>
+    </g>
+    <g
+       id="g3681"
+       transform="translate(8.18006,192)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <path
+         sodipodi:nodetypes="cc"
+         style="opacity:0.5;fill:#0000ff;fill-opacity:1;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendTH)"
+         d="m 169.375,894.61218 80.5,0"
+         id="path3004-6-9"
+         inkscape:connector-curvature="0" />
+      <path
+         style="opacity:0.5;fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1MendEV)"
+         d="m 169.875,895.11218 0,-38.5"
+         id="path3006-6-3"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g5786-0-1"
+         transform="translate(129.875,777.25)">
+        <path
+           style="opacity:0.47999998;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 40,77.362183 83,0"
+           id="path5776-6-9"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="78.719238"
+           y="74.853394"
+           id="text5778-2-8"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="78.719238"
+             y="74.853394"
+             id="tspan5782-8-8">2</tspan></text>
+      </g>
+      <g
+         id="g5797-4-8"
+         transform="translate(129.875,777.25)">
+        <path
+           style="opacity:0.5;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1, 1;stroke-dashoffset:0"
+           d="m 122.5,77.362184 0,39.999996"
+           id="path5791-6-8"
+           inkscape:connector-curvature="0" />
+        <text
+           xml:space="preserve"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+           x="124.23828"
+           y="100.80212"
+           id="text5793-9-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5795-0-4"
+             x="124.23828"
+             y="100.80212">1</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g3714"
+       transform="translate(0,197.05273)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <text
+         sodipodi:linespacing="125%"
+         id="text3611"
+         y="872.52087"
+         x="148.59869"
+         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="872.52087"
+           x="148.59869"
+           id="tspan3613"
+           sodipodi:role="line">=</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6983-7-1-3-8-7-4-5"
+         y="872.52087"
+         x="164.29668"
+         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="872.52087"
+           x="164.29668"
+           id="tspan6985-1-2-1-3-5-31-2"
+           sodipodi:role="line">-</tspan></text>
+    </g>
+    <g
+       id="g7652-2-7-1-7"
+       transform="translate(21.732001,469.44894)"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144">
+      <text
+         sodipodi:linespacing="125%"
+         id="text6945-1-7-6-5-8-3-8"
+         y="628.85828"
+         x="179.37042"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+         xml:space="preserve"><tspan
+           y="628.85828"
+           x="179.37042"
+           id="tspan6947-1-6-8-7-8-8-7"
+           sodipodi:role="line">D(v2,v1)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans"
+       x="38.525879"
+       y="116.71266"
+       id="text3744"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/eric/omics_dev/dont_distribute/eric_teaching/determinants/determinant_proof.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144"><tspan
+         sodipodi:role="line"
+         x="38.525879"
+         y="116.71266"
+         id="tspan3748">Realization of the proof that interchanging two vectors negates the determinant </tspan><tspan
+         sodipodi:role="line"
+         x="38.525879"
+         y="129.21266"
+         id="tspan3752">in two dimensions for two specific vectors. Each column is shown in its own color.</tspan><tspan
+         sodipodi:role="line"
+         x="38.525879"
+         y="141.71266"
+         id="tspan3315">The first column is blue, the second is red. The original proof is from </tspan><tspan
+         sodipodi:role="line"
+         x="38.525879"
+         y="154.21266"
+         id="tspan3318">www.askamathematician.com</tspan></text>
+  </g>
+</svg>

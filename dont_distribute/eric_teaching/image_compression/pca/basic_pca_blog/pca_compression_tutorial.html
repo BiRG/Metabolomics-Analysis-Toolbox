@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style type="text/css">
+
+a.hovernote {
+	text-decoration: none;
+	border-bottom-style: dotted;
+	border-bottom-width: thin;
+	border-bottom-color: darkgray;
+}
+
+.hovernote:not(a) {
+	border-bottom-style: dotted;
+	border-bottom-width: thin;
+	border-bottom-color: darkgray;
+	color: darkgray;
+}
+
+</style>
+<title>Basic PCA Image Compression</title>
+</head>
+<body>
+<h1>Basic <abbr title="Principal Component Analysis">PCA</abbr> Image Compression Tutorial<br/>
+Part 1: Block-Based Compression
+</h1>
+<h2>Introduction</h2>
+<p>Images take up a lot of space. In one Android software project I have, 
+the images take up more than 99% of the space. Thus, everyone is happy when we can
+make them take up less space.</p> 
+
+<p>There are two main ways we can reduce the space. We can either represent the images
+in a more efficient way (lossless compression) or we can remove some of the data 
+(lossy compression). For most images, lossless compression has a limit of about 2:1 compression,
+that is, every compressed byte will give us 2 original bytes. Lossy compression, however, can give
+us much higher ratios because most of the information in most pictures is not important to the viewer. 
+Most people don't care whether two adjacent pixels representing fuzz on a hat differ by 1/2% or 1%. By
+throwing out this type of information, 10:1 compression ratios are quite common. 
+</p>
+
+<p>Block-based <abbr class="hovernote" title="Principal Component Analysis">PCA</abbr> is a method of lossy compression that uses
+rudimentary forms of many of the
+same techniques and processes used by algorithms like the <abbr class="hovernote" title="Joint Photographic Experts Group">JPEG</abbr> 
+coding algorithm. Unlike the discrete-cosine transform used in <abbr title="Joint Photographic Experts Group">JPEG</abbr>, 
+however, <abbr title="Principal Component Analysis">PCA</abbr> generates components that are easy to
+understand and visualize. Thus, it serves as a good introduction to lossy image compression. As I was developing this
+material, I used Matlab, so I will include Matlab code for the various sections.</p>
+
+<h2>Lossy compression overview</h2>
+<p>Many lossy compression methods can be summarized by the following steps:
+<ol>
+<li>Break the target down into things that are likely to have similarities</li>
+<li>Find a description language which makes it easy to encode the similarities</li>
+<li>Determine which differences between the pieces are unimportant compared to the cost of encoding them 
+in the new language</li>
+<li>Use the description to encode the similarities and the important differences</li>
+</ol></p>
+
+<h2>Block-based compression</h2>
+<p>The first step in our algorithm is to break the image up into pieces that are likely be similar in some way. Because adjacent
+pixels are usually from the same object, breaking the image into contiguous regions is a useful heuristic. For the same
+reason, it is good to make pixels in a region as close as possible to one another, 
+<a class="hovernote" href="http://www.vision.jhu.edu/gpca/CVPR08-Tutorial-GPCA-Representation-Segmentation.pdf" 
+title="Although other regions are also possible. See, for example this paper on Generalized PCA which groups the convex blocks into non-convex, non-adjacent regions.">
+so convex regions are usually chosen</a>. Because it takes
+information to transmit the shapes of the regions, usually the regions chosen are fixed in shape and 
+<span class="hovernote" 
+title="Fixed size also makes the number of pixels the same, so the regions are then vectors in the same vector space">
+size</span>. Because we 
+are trying to reduce redundancy we don't want to represent pixels twice, we choose regions that do not overlap. For 
+computational simplicity and potential hardware implementations, squares that have 2<sup>2n</sup> pixels inside
+are usually selected. Of such squares, 8x8 has become traditional - it provides a good trade-off between maximum 
+compression ratio and computational complexity.</p>
+
+<p>If we break the famous lena image into 8x8 squares, it looks like this:</p> 
+<img src="../lena_blocks.png" width="575" height="575" alt="Lena broken into 8x8 blocks" 
+longdesc="The lena standard image broken up into 8x8 blocks" />
+
+<h2><abbr title="Principal Component Analysis">PCA</abbr></h2>
+<p>There are many, many tutorials on <abbr title="Principal Component Analysis">PCA</abbr>, so I will not 
+get into the mathematical details. For our purposes, <abbr title="Principal Component Analysis">PCA</abbr> 
+is a method of finding a good block description language among a set of simple languages having the following 
+characteristics.
+<ul>
+<li>A block description is a fixed-size list of numbers (a vector) of which, the first is always 1.</li>
+<li>The language has a fixed block for each number in the list. The first of these blocks is the mean of all blocks.</li>
+<li>The descriptions are translated back into blocks by multiplying 
+each number in the list by its corresponding fixed block and summing the result.</li>
+</ul>
+</p>
+
+<p>The fixed blocks found by <abbr title="Principal Component Analysis">PCA</abbr> 
+(except for the mean) are called the principal components. They are usually given in a matrix with the most important
+components first. The description of a block in terms of the principal components is the scores of that block. 
+If you take each 8x8 block and flatten it, making it a row in a matrix of all blocks, the 
+<code><a href="http://www.mathworks.com/help/stats/princomp.html" title="The matlab command for doing PCA">princomp</a>
+</code> 
+routine in Matlab will return the principal components and the scores.</p>
+
+<p>I have written code to flatten an image (which has a width and height that are both multiples of 8) into a matrix
+suitable for input to <code>princomp</code>. It is available as a <a href="../break_up_image.m" 
+title="Matlab code for breaking up an image into a matrix for PCA">downloadable file.</a> You use it by writing:</p>
+<pre><code>
+lena = imread('lena512.png');
+broken = break_up_image(lena);
+mean_block = mean(broken);
+[comp,score,eigen]=princomp(broken);
+</code></pre>
+
+<h2>The blocks returned by PCA</h2>
+<p>When lena is processed by <abbr title="Principal Component Analysis">PCA</abbr>, the mean block is:</p>
+<img src="../lena_mean_block_900pct.png" width="72" height="72" alt="Mean of all blocks in lena" />
+
+<p>The principal component blocks are:</p>
+<img src="../lena_prin_comp_blocks_900pct.png" width="639" height="639" alt="Principal components of 8x8 blocks from lena" longdesc="The principal components from the standard lena image broken up into 8x8 blocks. The values of the principal components were translated and scaled to lie between 0 and 255 and black lines were introduced between each component for visibility." />
+
+<p>In the displayed blocks, the green parts are positive, the red parts are negative. The most important component is the block in the upper left and the least important is in the lower right. 
+A component is always more important than the component to its right and always more important than the component below it.
+You can generate this data using the following code after downloading 
+<code>
+<a href="../reconstruct_image.m" title="Code for reconstructing an image from its flattened 8x8 block representation.">
+reconstruct_image.m</a></code> and <code>
+<a href="../block_broken_image.m" title="Code to visually break up an image by putting black lines between every 8x8 block">
+block_broken_image.m</a>
+</code> and <code><a href="../green_red_image.m" title="Code for turning a matrix of real numbers into an image with red and green parts representing negative and positive numbers respectively.">green_red_image.m</a></code>:</p>
+<pre><code>comp_blocks_raw_im=reconstruct_image(comp&apos;,64,false);
+comp_blocks_im = green_red_image(comp_blocks_raw_im);
+comp_blocks_with_lines = block_broken_image(comp_blocks_im);
+imwrite(comp_blocks_with_lines,&apos;lena_prin_comp_blocks.png&apos;,&apos;png&apos;);
+</code></pre>
+
+<p>A brief view of the components reveals that the most important component is a flat color. The second is a vertical edge.
+The third is a horizontal edge. The 4<sup>th</sup> and 5<sup>th</sup> are diagonal lines. The 6<sup>th</sup> is a derivative of the 4<sup>th</sup>. The 7<sup>th</sup> holds vertical 
+lines and the 8<sup>th</sup> holds horizontal lines. The patterns get finer and more complex as they account for less of the remaining reproduction error.</p>
+
+<h2>Using the principal components to reconstruct blocks</h2>
+
+</body>
+</html>
