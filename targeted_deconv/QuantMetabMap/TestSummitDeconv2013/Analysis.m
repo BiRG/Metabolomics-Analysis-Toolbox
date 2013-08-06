@@ -750,18 +750,51 @@ else
 end
 clear('dist_cache_filename','w','s');
 
+
 %% Plot the KL error distributions for the method works prior
+%
+% It is good to get an idea what the distributions for the errors look
+% like. I take the error distribution for each method and bin it into 10
+% width intervals, then I plot them on the same graph.
+%
+% If you do this plot for all parameters it takes up lots of figures (4
+% figires for each parameter) and lots of time. I have it set for just one
+% paramter - area. 
+% 
+% Result: The area-error distributions are a bit left-leaning and have
+% different variances (see, for example, gold-standard congestion 6 where
+% the half-height width of the Anderson error is 0.03 wide whereas the
+% half-height width of the rest of the methods is around 0.015 wide).
+%
+% For the gold-standard and noisy gold standard peak-pickers, the summit 
+% methods are about the same except in the most congested bin. There, the 
+% winners seem to be the 75/large and 100/large methods. With 75/one bin
+% and 100/one bin coming in 3rd place. Of the top two, 75/large is better
+% with the gold standard peak picker but 100/large is better with the noisy
+% gold standard (which is strange, I would have expected the opposite).
+%
+% For the smoothed-local max picker, Anderson does better in the lower
+% congestions (probably because of the picker picking noise peaks), is
+% about the same in mid-congestion and then pulls a bit ahead in the
+% highest congestion.
+%
+% For the local-max aligned with gold-standard, the summit methds are
+% grouped together almost the entire time. Anderson starts off worse but
+% has relatively consistent performance. The summit methods degrade
+% steadily until, by 9 and 10, they are clearly worse than Anderson.
+% At a first glance, missing peaks seem to affect the summit methods more
+% than they do the Anderson method in highly congested spectra.
 clear('w');
 figure_num = 0;
-dsp_color = {'b:','g-','r:','c:','m:'};
-assert(length(dsp_color) >= length(dsp_names));
-for param_idx = 1:length(param_names)
+dsp_color = {'b-','g-','r:','c:','m:','y:','k:','b:'};
+assert(length(dsp_color) >= length(dsp_names),'Not enough colors for starting points');
+for param_idx = 5%1:length(param_names)
 	for pp_idx = 1:length(pp_names)
         figure_num = figure_num + 1;
         figure(figure_num);
         clf;
         for cong_idx = 1:num_congestions
-            assert(num_congestions == 10);
+            assert(num_congestions == 10,'Not 10 congestions');
             subplot(2,5,cong_idx);
             h = zeros(1,length(dsp_names));
             for dsp_idx = 1:length(dsp_names)
@@ -772,7 +805,7 @@ for param_idx = 1:length(param_names)
                 else
                     hold on;
                 end
-                h(dsp_idx) = hist.plot(dsp_color{dsp_idx});
+                h(dsp_idx) = hist.rebinEqualWidth(10).plot(dsp_color{dsp_idx});
             end
             if cong_idx == 1
                 dn = dsp_names;
@@ -784,11 +817,13 @@ for param_idx = 1:length(param_names)
                 title([underscore_2_space(param_names{param_idx}) ...
                     ' ' underscore_2_space(pp_names{pp_idx})]);
             else
-                title(sprintf('%d',cong_idx));
+                title(sprintf('Cong: %d',cong_idx));
             end
         end
 	end
 end
+
+clear('hist','h','dsp_idx','dn_idx','cong_idx','dn','param_idx','pp_idx');
 
 %% Prob that summit focused is has better KL error under method works prior
 fprintf('Under Method Works prior');
