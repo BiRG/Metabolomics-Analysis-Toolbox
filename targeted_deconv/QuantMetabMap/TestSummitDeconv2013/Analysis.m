@@ -39,6 +39,8 @@ fprintf('%7.18g is the width at the 105%%-ile\n', interp1(w_prctile,w,105,'pchip
 fprintf('Width 0.008 is greater than %5.4f%% of widths\n',interp1(w,w_prctile,0.008));
 fprintf('Width 0.05 is greater than %5.4f%% of widths\n',interp1(w,w_prctile,0.05,'pchip'));
 
+clear('w_dist','w','w_prctile');
+
 %% Draw starting point figures
 % These figures give two different simple spectra and show the different
 % starting points arrived at by Anderson's algorithm and the summit
@@ -180,7 +182,7 @@ ylim([0,100]);
 hold off;
 
 %% Load the combined results
-load('Mar_07_2013_experiment_for_Analysis');
+load('2013_08Aug_4_exp_combined.mat');
 
 %% Calc distribution for scaled maximum height
 % If we were not sampling the spectrum, dividing all the heights by the
