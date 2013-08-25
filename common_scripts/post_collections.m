@@ -1,6 +1,8 @@
 function post_collections(main_h,collections,suffix,analysis_id,username,password)
 % Ask for user information then post the given collections to the BIRG server
 %
+% Usage: post_collections(main_h,collections,suffix,analysis_id,username,password)
+%
 % The given collections are first saved to a temporary directory and then
 % uploaded to BIRG.
 %
