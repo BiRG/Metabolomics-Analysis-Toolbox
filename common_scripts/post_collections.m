@@ -69,7 +69,7 @@ for i = 1:length(collections)
     fclose(fid);
     collection_xml = xml2struct(file);
     id = collection_xml.Children.Data;
-    fprintf('Successfully posted collection %s-%s as collection %d: %s\n',collection.collection_id, suffix, i,id);
+    fprintf('Successfully posted collection %s-%s as collection %s\n',collection.collection_id, suffix, id);
     delete(file);
 end
 rmdir(tmpdir);
