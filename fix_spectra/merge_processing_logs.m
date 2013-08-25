@@ -15,8 +15,8 @@ if isempty(username) || isempty(password)
 end
     
 % Read which collections to get - do nothing if no collections
-prompt={'Collection ID(s) [comma separated]:'};
-name='Enter the collection ID from the website';
+prompt={'Collection ID(s) to merge (will not be loaded into fix_spectra) [comma separated]:'};
+name='Enter the collection IDs from the website';
 numlines=1;
 defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
@@ -69,7 +69,7 @@ xml = '';
         end
         collection.processing_log = new_log;
         
-        post_collections(gcf,{collection},'combine_collections',analysis_id);
+        post_collections(gcf,{collection},'combine_collections',analysis_id,username,password);
     end
     close(wait_h);
 % catch ME
