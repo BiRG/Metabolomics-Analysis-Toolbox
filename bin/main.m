@@ -895,21 +895,20 @@ end
 [regions,deconvolve,names] = get_bins(handles);
 num_bins = size(regions,1);
 
-op_strings = cell(num_bins,1);
 for b = 1:num_bins
-    if deconvolve(b)
-        op_strings{b} = 'deconvolve';
-    else
-        op_strings{b} = 'sum';
-    end
     if ~isempty(names{b}) && ~strcmp(deblank(names{b}),'')
         names{b} = deblank(names{b});
     end
 end
 
 for b = 1:num_bins
-    fprintf(file_id,'%.16f,%.16f,"%s","%s"\n',...
-        regions(b,1),regions(b,2),op_strings{b},names{b});
+    if deconvolve(b)
+        fprintf(file_id,'%.16f,%.16f,"deconvolve","%s"\n',...
+            regions(b,1),regions(b,2),names{b});
+    else
+        fprintf(file_id,'%.16f,%.16f,"sum","%s"\n',...
+            regions(b,1),regions(b,2),names{b});
+    end
 end
 
 fclose(file_id);
