@@ -874,8 +874,8 @@ function save_bins_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[result,message] = validate_state(handles,get_version_string());
-if ~result
+[is_valid_state,message] = validate_state(handles,get_version_string());
+if ~is_valid_state
     msgbox(message);
     return;
 end
@@ -919,8 +919,8 @@ function load_bins_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[result, message] = validate_state(handles,get_version_string());
-if ~result
+[is_valid_state, message] = validate_state(handles,get_version_string());
+if ~is_valid_state
     msgbox(message);
     return;
 end
