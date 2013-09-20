@@ -874,8 +874,8 @@ function save_bins_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[result,message] = validate_state(handles,get_version_string());
-if ~result
+[is_valid_state,message] = validate_state(handles,get_version_string());
+if ~is_valid_state
     msgbox(message);
     return;
 end
@@ -886,31 +886,29 @@ if (isnumeric(filename) && filename == 0)
     return;
 end
 
-[file_id, message] = fopen([filename pathname],'w');
+[file_id, message] = fopen([pathname filename],'w');
 if (file_id <= 2)
     msgbox(message);
     return;
 end
 
 [regions,deconvolve,names] = get_bins(handles);
+num_bins = size(regions,1);
 
-op_strings = cell(length(lefts));
-for b = 1:length(lefts)
-    if deconvolve(b)
-        op_strings{b} = 'deconvolve';
-    else
-        op_strings{b} = 'sum';
-    end
+for b = 1:num_bins
     if ~isempty(names{b}) && ~strcmp(deblank(names{b}),'')
         names{b} = deblank(names{b});
     end
 end
 
-final = [num2cell(regions) op_strings names];
-
-for b = 1:length(final)
-    fprintf(file_id,'%.16f,%.16f,"%s","%s"\n',...
-        final{b,1},final{b,2},final{b,3},final{b,4});
+for b = 1:num_bins
+    if deconvolve(b)
+        fprintf(file_id,'%.16f,%.16f,"deconvolve","%s"\n',...
+            regions(b,1),regions(b,2),names{b});
+    else
+        fprintf(file_id,'%.16f,%.16f,"sum","%s"\n',...
+            regions(b,1),regions(b,2),names{b});
+    end
 end
 
 fclose(file_id);
@@ -921,8 +919,8 @@ function load_bins_pushbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[result, message] = validate_state(handles,get_version_string());
-if ~result
+[is_valid_state, message] = validate_state(handles,get_version_string());
+if ~is_valid_state
     msgbox(message);
     return;
 end
