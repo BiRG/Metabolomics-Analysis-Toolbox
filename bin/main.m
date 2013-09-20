@@ -886,7 +886,7 @@ if (isnumeric(filename) && filename == 0)
     return;
 end
 
-[file_id, message] = fopen([filename pathname],'w');
+[file_id, message] = fopen([pathname filename],'w');
 if (file_id <= 2)
     msgbox(message);
     return;
