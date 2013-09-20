@@ -893,9 +893,10 @@ if (file_id <= 2)
 end
 
 [regions,deconvolve,names] = get_bins(handles);
+num_bins = size(regions,1);
 
-op_strings = cell(length(lefts));
-for b = 1:length(lefts)
+op_strings = cell(num_bins,1);
+for b = 1:num_bins
     if deconvolve(b)
         op_strings{b} = 'deconvolve';
     else
@@ -906,11 +907,9 @@ for b = 1:length(lefts)
     end
 end
 
-final = [num2cell(regions) op_strings names];
-
-for b = 1:length(final)
+for b = 1:num_bins
     fprintf(file_id,'%.16f,%.16f,"%s","%s"\n',...
-        final{b,1},final{b,2},final{b,3},final{b,4});
+        regions(b,1),regions(b,2),op_strings{b},names{b});
 end
 
 fclose(file_id);
