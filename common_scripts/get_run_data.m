@@ -93,9 +93,12 @@ available_G = NaN*ones(1,total_num_samples);
 G = [];
 
 s = 0;
+
 if paired % Pair up the data
+    % For each sample used for modeling, find its paired companion and
+    % subtract it from the value in the model
     fprintf('Starting pairing...\n');
-    % Grap only those selected
+    % Grab only those selected. g is the current group number
     for g = 1:length(model_by_inxs)    
         for i = 1:length(model_by_inxs{g})
             inx_unpaired = model_by_inxs{g}(i);
@@ -141,9 +144,17 @@ if paired % Pair up the data
                 end
             end
             if ~found
-                fprintf('Could not find a match for sample with subject id %d at time %d classified as "%s"\n', ...
-                    collection.subject_id(inx_unpaired), ...
-                    collection.time(inx_unpaired), ...
+                % Print error message. The "if" deals with the subject ids being either strings or scalars
+                if iscell(collection.subject_id)
+                    format_string = ['Could not find a match for sample with subject id %s at ' ...
+                             'time %d classified as "%s"\n'];
+                    sid = collection.subject_id{inx_unpaired};
+                else
+                    format_string = ['Could not find a match for sample with subject id %d at ' ...
+                             'time %d classified as "%s"\n'];
+                    sid = collection.subject_id(inx_unpaired);
+                end
+                fprintf(format_string, sid, collection.time(inx_unpaired), ...
                     collection.classification{inx_unpaired});
             end
         end
@@ -157,7 +168,20 @@ if paired % Pair up the data
             for p = 1:length(paired_by_inxs)
                 for j = 1:length(paired_by_inxs{p})
                     inx_paired = paired_by_inxs{p}(j);
-                    if collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && inx_paired ~= inx_unpaired
+
+                    % Check for match - special casing the situation where the ids are strings and
+                    % where they are not
+                    if iscell(collection.subject_id)
+                        is_matching_id = strcmp(collection.subject_id{inx_paired}, ...
+                            collection.subject_id{inx_unpaired}) && ...
+                            inx_paired ~= inx_unpaired;
+                    else
+                        is_matching_id = ...
+                            collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && ...
+                            inx_paired ~= inx_unpaired;
+                    end
+
+                    if is_matching_id
                         if ~iscell(X)                        
                             available_X(:,inx_unpaired) = collection.Y(:,inx_unpaired) - collection.Y(:,inx_paired);
                         else
