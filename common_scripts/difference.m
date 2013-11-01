@@ -1,3 +1,6 @@
+% Looks like this is only used by code in the Old-Files-and-Folders
+% directory. Maybe we should move it out?
+
 % Compute the difference between samples in a collection
 collection = get_collection;
 
@@ -30,14 +33,30 @@ for i = 1:length(inxs_unpaired1)
     found = false;
     for j = 1:length(inxs_paired1)
         inx_paired = inxs_paired1(j);
-        if collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && inx_paired ~= inx_unpaired
+        % Check for match - special casing the situation where the ids are strings and
+        % where they are not
+        if iscell(collection.subject_id)
+           is_matching_id = strcmp(collection.subject_id{inx_paired}, ...
+                collection.subject_id{inx_unpaired}) && ...
+                inx_paired ~= inx_unpaired;
+        else
+            is_matching_id = ...
+                collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && ...
+                inx_paired ~= inx_unpaired;
+        end
+
+        if is_matching_id
             inxs_pairing1(end+1,:) = [inx_unpaired,inx_paired];
             data_pairing1(:,end+1) = collection.Y(:,inx_unpaired) - collection.Y(:,inx_paired);
             found = true;
         end
     end
     if ~found
-        fprintf('Could not match sample %d for classification: %s\n',collection.subject_id(inx_unpaired),classification1);
+        if iscell(collection.subject_id)
+            fprintf('Could not match sample %s for classification: %s\n',collection.subject_id{inx_unpaired},classification1);
+        else
+            fprintf('Could not match sample %d for classification: %s\n',collection.subject_id(inx_unpaired),classification1);
+        end
     end
 end
 inxs_pairing2 = [];
@@ -48,14 +67,30 @@ for i = 1:length(inxs_unpaired2)
     found = false;
     for j = 1:length(inxs_paired2)
         inx_paired = inxs_paired2(j);
-        if collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && inx_paired ~= inx_unpaired
+        % Check for match - special casing the situation where the ids are strings and
+        % where they are not
+        if iscell(collection.subject_id)
+           is_matching_id = strcmp(collection.subject_id{inx_paired}, ...
+                collection.subject_id{inx_unpaired}) && ...
+                inx_paired ~= inx_unpaired;
+        else
+            is_matching_id = ...
+                collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && ...
+                inx_paired ~= inx_unpaired;
+        end
+
+        if is_matching_id
             inxs_pairing2(end+1,:) = [inx_unpaired,inx_paired];
             data_pairing2(:,end+1) = collection.Y(:,inx_unpaired) - collection.Y(:,inx_paired);
             found = true;
         end
     end
     if ~found
-        fprintf('Could not match sample %d for classification: %s\n',collection.subject_id(inx_unpaired),classification2);
+        if iscell(collection.subject_id)
+            fprintf('Could not match sample %s for classification: %s\n',collection.subject_id{inx_unpaired},classification1);
+        else
+            fprintf('Could not match sample %d for classification: %s\n',collection.subject_id(inx_unpaired),classification1);
+        end
     end
 end
 
