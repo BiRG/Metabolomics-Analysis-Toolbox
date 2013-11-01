@@ -1,42 +1,42 @@
-function [X,Y,available_X,available_Y,G,available_G] = get_run_data(hObject,handles)
+function [X,Y,available_X,available_Y,G,available_G] = get_run_data(hObject,handles) %#ok<INUSL>
 try
     collection = handles.collection;
-catch ME
+catch ME %#ok<NASGU>
     msgbox('Load a collection');
     return;
 end
 
 try
     are_groups = get(handles.groups_checkbox,'Value');
-catch ME
+catch ME %#ok<NASGU>
     are_groups = true;
 end
 
 try
     group_by_inxs = handles.group_by_inxs;
-catch ME
+catch ME %#ok<NASGU>
     group_by_inxs = [];
 end
 
 try
     model_by_inxs = handles.model_by_inxs;
     selected = get(handles.model_by_listbox,'Value');
-    model_by_inxs = {model_by_inxs{selected}};
-catch ME
+    model_by_inxs = model_by_inxs(selected);
+catch ME %#ok<NASGU>
     model_by_inxs = [];
 end
 
 try
     ignore_by_inxs = handles.ignore_by_inxs;
     selected = get(handles.ignore_by_listbox,'Value');
-    ignore_by_inxs = {ignore_by_inxs{selected}};
-catch ME
+    ignore_by_inxs = ignore_by_inxs(selected);
+catch ME %#ok<NASGU>
     ignore_by_inxs = [];
 end
 
 new_model_by_inxs = {};
 for g = 1:length(model_by_inxs)    
-    new_model_by_inxs{g} = [];
+    new_model_by_inxs{g} = []; %#ok<AGROW>
     for i = 1:length(model_by_inxs{g})
         ignore = false;
         inx_unpaired = model_by_inxs{g}(i);
@@ -50,7 +50,7 @@ for g = 1:length(model_by_inxs)
             end
         end
         if ~ignore
-            new_model_by_inxs{g}(end+1) = inx_unpaired;
+            new_model_by_inxs{g}(end+1) = inx_unpaired; %#ok<AGROW>
         end
     end
 end
@@ -62,15 +62,15 @@ model_by_inxs = new_model_by_inxs;
 %
 % The next code chooses only those indices that were selected. So that
 % hereafter paired_by_inxs contains the list of samples which have one of
-% the values selected in the paired_by listbox when considering only the
+% values selected in the paired_by listbox when considering only the
 % fields in the paired_by_fields listbox.
 paired = false;
 try
     paired_by_inxs = handles.paired_by_inxs;
     selected = get(handles.paired_by_listbox,'Value');
-    paired_by_inxs = {paired_by_inxs{selected}};
+    paired_by_inxs = paired_by_inxs(selected); 
     paired = true;
-catch ME
+catch ME %#ok<NASGU>
 end
 
 num_samples = 0;
@@ -110,17 +110,30 @@ if paired % Pair up the data
             for p = 1:length(paired_by_inxs)
                 for j = 1:length(paired_by_inxs{p})
                     inx_paired = paired_by_inxs{p}(j);
-                    if collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && inx_paired ~= inx_unpaired
+
+                    % Check for match - special-casing the situation where the ids are strings and
+                    % where they are not
+                    if iscell(collection.subject_id)
+                        is_matching_id = strcmp(collection.subject_id{inx_paired}, ...
+                            collection.subject_id{inx_unpaired}) && ...
+                            inx_paired ~= inx_unpaired;
+                    else
+                        is_matching_id = ...
+                            collection.subject_id(inx_paired) == collection.subject_id(inx_unpaired) && ...
+                            inx_paired ~= inx_unpaired;
+                    end
+
+                    if is_matching_id
                         if ~iscell(X)
-                            X(:,end+1) = collection.Y(:,inx_unpaired) - collection.Y(:,inx_paired);
+                            X(:,end+1) = collection.Y(:,inx_unpaired) - collection.Y(:,inx_paired); %#ok<AGROW>
                         else
-                            X{end+1} = collection.Y{inx_unpaired} - collection.Y{inx_paired};
+                            X{end+1} = collection.Y{inx_unpaired} - collection.Y{inx_paired}; %#ok<AGROW>
                         end
-                        G(end+1) = g;                            
+                        G(end+1) = g;                             %#ok<AGROW>
                         if are_groups
-                            Y(end+1) = g;
+                            Y(end+1) = g; %#ok<AGROW>
                         else
-                            Y(end+1) = str2num(collection.value{inx_unpaired}) - str2num(collection.value{inx_paired});
+                            Y(end+1) = str2double(collection.value{inx_unpaired}) - str2double(collection.value{inx_paired}); %#ok<AGROW>
                         end
                         found = true;
                         break;
@@ -154,7 +167,7 @@ if paired % Pair up the data
                         if are_groups
                             available_Y(inx_unpaired) = g;
                         else
-                            available_Y(inx_unpaired) = str2num(collection.value{inx_unpaired}) - str2num(collection.value{inx_paired});
+                            available_Y(inx_unpaired) = str2double(collection.value{inx_unpaired}) - str2double(collection.value{inx_paired});
                         end
                         found = true;
                         break;
@@ -171,16 +184,16 @@ else
         for i = 1:length(model_by_inxs{g})
             inx_unpaired = model_by_inxs{g}(i);
             s = s + 1;
-            if ~iscell(X)                        
-                X(:,s) = collection.Y(:,inx_unpaired);
+            if iscell(X)                        
+                X{s} = collection.Y{inx_unpaired}; %#ok<AGROW>
             else
-                X{s} = collection.Y{inx_unpaired};
+                X(:,s) = collection.Y(:,inx_unpaired); %#ok<AGROW>
             end
-            G(s) = g;
+            G(s) = g; %#ok<AGROW>
             if are_groups
-                Y(s) = g;
+                Y(s) = g; %#ok<AGROW>
             else
-                Y(s) = str2num(collection.value{inx_unpaired});
+                Y(s) = str2double(collection.value{inx_unpaired}); %#ok<AGROW>
             end
         end
     end
@@ -198,7 +211,7 @@ else
             if are_groups
                 available_Y(inx_unpaired) = g;
             else
-                available_Y(inx_unpaired) = str2num(collection.value{inx_unpaired});
+                available_Y(inx_unpaired) = str2double(collection.value{inx_unpaired});
             end
         end
     end
