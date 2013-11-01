@@ -202,10 +202,10 @@ else
         for i = 1:length(group_by_inxs{g})
             inx_unpaired = group_by_inxs{g}(i);
             s = s + 1;            
-            if ~iscell(X)                        
-                available_X(:,inx_unpaired) = collection.Y(:,inx_unpaired);
+            if iscell(X)                        
+                available_X{inx_unpaired} = collection.Y{inx_unpaired};                
             else
-                available_X{inx_unpaired} = collection.Y{inx_unpaired};
+                available_X(:,inx_unpaired) = collection.Y(:,inx_unpaired);
             end
             available_G(inx_unpaired) = g;
             if are_groups
