@@ -122,21 +122,23 @@ function get_collection_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles = get_collection_pushbutton(handles);
-handles.collection = init_collection(handles.collection);
-set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
-
-ymax = max(handles.collection.Y(:,1));
-ymin = min(handles.collection.Y(:,1));
-handles.ymax = ymax;
-handles.ymin = ymin;
-set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
-
-populate_listboxes(handles);
-
-msgbox('Finished loading collection');
-
-% Update handles structure
-guidata(hObject, handles);
+if (~isempty(handles.collection))
+    handles.collection = init_collection(handles.collection);
+    set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
+    
+    ymax = max(handles.collection.Y(:,1));
+    ymin = min(handles.collection.Y(:,1));
+    handles.ymax = ymax;
+    handles.ymin = ymin;
+    set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
+    
+    populate_listboxes(handles);
+    
+    msgbox('Finished loading collection');
+    
+    % Update handles structure
+    guidata(hObject, handles);
+end
 
 % --- Executes on selection change in group_by_listbox.
 function group_by_listbox_Callback(hObject, eventdata, handles)
@@ -623,21 +625,23 @@ function load_collection_pushbutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 handles = load_collection_pushbutton(handles);
-handles.collection = init_collection(handles.collection);
-set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
-
-ymax = max(handles.collection.Y(:,1));
-ymin = min(handles.collection.Y(:,1));
-handles.ymax = ymax;
-handles.ymin = ymin;
-set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
-
-populate_listboxes(handles);
-
-msgbox('Finished loading collection');
-
-% Update handles structure
-guidata(hObject, handles);
+if (isfield(handles,'collection') && ~isempty(handles.collection))
+    handles.collection = init_collection(handles.collection);
+    set(handles.noise_region_edit,'String',sprintf('%.3f,%.3f',handles.collection.x(1),handles.collection.x(30)));
+    
+    ymax = max(handles.collection.Y(:,1));
+    ymin = min(handles.collection.Y(:,1));
+    handles.ymax = ymax;
+    handles.ymin = ymin;
+    set(handles.y_zoom_edit,'String',sprintf('%f',(ymax-ymin)*.005));
+    
+    populate_listboxes(handles);
+    
+    msgbox('Finished loading collection');
+    
+    % Update handles structure
+    guidata(hObject, handles);
+end
 
 % --- Executes on selection change in model_by_listbox.
 function model_by_listbox_Callback(hObject, eventdata, handles)
