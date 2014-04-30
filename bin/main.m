@@ -884,38 +884,10 @@ if ~is_valid_state
     return;
 end
 
-[filename,pathname] = uiputfile({'*.csv','Row-dominant comma-delimited (*.csv)'}, 'Save regions');
-
-if (isnumeric(filename) && filename == 0)
-    return;
-end
-
-[file_id, message] = fopen([pathname filename],'w');
-if (file_id <= 2)
-    msgbox(message);
-    return;
-end
-
 [regions,deconvolve,names] = get_bins(handles);
-num_bins = size(regions,1);
-
-for b = 1:num_bins
-    if ~isempty(names{b}) && ~strcmp(deblank(names{b}),'')
-        names{b} = deblank(names{b});
-    end
+if (write_metabolite_bin_metadata(regions,deconvolve,names) ~= 0)
+    msgbox('An error occurred writing the bin metadata file.');
 end
-
-for b = 1:num_bins
-    if deconvolve(b)
-        fprintf(file_id,'%.16f,%.16f,"deconvolve","%s"\n',...
-            regions(b,1),regions(b,2),names{b});
-    else
-        fprintf(file_id,'%.16f,%.16f,"sum","%s"\n',...
-            regions(b,1),regions(b,2),names{b});
-    end
-end
-
-fclose(file_id);
 
 % --- Executes on button press in load_bins_pushbutton.
 function load_bins_pushbutton_Callback(hObject, eventdata, handles)
@@ -929,104 +901,31 @@ if ~is_valid_state
     return;
 end
 
-[filename, pathname] = uigetfile({'*.csv','Row-dominant comma-delimited (*.csv)';'*.txt','Old column-dominant (*.txt)'}, 'Load regions');
-if (isnumeric(filename) && filename == 0)
-    return;
-end
+[regions, deconvolve, names] = read_metabolite_bin_metadata();
 
-% TODO: Take this file opening block out & put it into its own lib.
-[file_id, message] = fopen([pathname filename],'r');
-if (file_id <= 2)
-    msgbox(message);
-    return;
-end
-
-binFileData = textscan(file_id,'%f,%f,%s','Delimiter','\n');
-fclose(file_id);
-
-% Check for old file format.
-if (isempty(binFileData{3}))
-    % It's the old format. Reread file and fit it to the structure.
+if regions ~= -1
+    update_bin_list(handles,regions,deconvolve,names);
     
-    % TODO: Take this file opening block out & put it into its own lib.
-    [file_id, message] = fopen([pathname filename],'r');
-    % Error-check again, just to be paranoid.
-    if (file_id <= 2)
-        msgbox(message);
-        return;
+    if sum(deconvolve) > 0
+        handles = get_peaks(handles);
     end
     
-    % Pull the comma'd pairs, delimited by semicolons.
-    binFileData = textscan(file_id,'%f,%f','Delimiter',';\n');
-    
-    % Pull the operation strings ("sum" vs. "deconvolve") and name
-    % strings associated with each bin, delimited by semicolons. We
-    % bastardize the stringFields variable here as it will all need to end
-    % up there anyways.
-    stringFields = textscan(file_id,'%s','EndOfLine','\n');
-    fclose(file_id);
-    
-    % Have to dereference the wrapping 1x1 cell before splitting.
-    tempStringFields = split(stringFields{1},';');
-    stringFields = cell(length(tempStringFields{1}),1);
-    
-    if (length(tempStringFields) == 1)
-        % There were no names. Append a cell array of blanks.
-        tempStringFields = {tempStringFields{1} ; cell(1, length(tempStringFields{1}))};
-    end
-    
-    % Merge stringFields & nameFields into the nx1 cell array structure 
-    % with each element referencing a 1x2 cell of strings.
-    for index = 1:length(stringFields)
-        stringFields{index} = { tempStringFields{1}{index} tempStringFields{2}{index} };
-    end
-    
-else
-    % It's the current format!
-    
-    % Parse out the operation strings ("sum" vs. "deconvolve")
-    % from the name strings.
-    stringFields = regexp(binFileData{3},'"(.*)","(.*)"$','tokens');
-    
-    % Flatten the structure
-    stringFields = stringFields(:);
-    stringFields = [ stringFields{:} ]';
-end
-
-regions = [ binFileData{1} binFileData{2} ];
-binCount = length(stringFields);
-
-% Due to the cell array structure, have to iterate through
-deconvolve = false(binCount,1);
-for i = 1:binCount
-    deconvolve(i) = strcmp(stringFields{i}(1),'deconvolve');
-end
-names = cell(binCount,1);
-for i = 1:binCount
-    names(i) = stringFields{i}(2);
-end
-
-update_bin_list(handles,regions,deconvolve,names);
-
-if sum(deconvolve) > 0
-    handles = get_peaks(handles);
-end
-
-for s = 1:size(handles.collection.Y,2)
-    for b = 1:size(regions,1)
-        handles.collection.regions{s}{b} = {};
-        if isfield(handles.collection,'maxs')
-            handles.collection.regions{s}{b}.include_mask = 0*handles.collection.maxs{s} + 1;
+    for s = 1:size(handles.collection.Y,2)
+        for b = 1:size(regions,1)
+            handles.collection.regions{s}{b} = {};
+            if isfield(handles.collection,'maxs')
+                handles.collection.regions{s}{b}.include_mask = 0*handles.collection.maxs{s} + 1;
+            end
         end
     end
+    
+    set(handles.bins_listbox,'Value',1);
+    
+    xlim auto;
+    ylim auto;
+    
+    guidata(handles.figure1, handles);
 end
-
-set(handles.bins_listbox,'Value',1);
-
-xlim auto;
-ylim auto;
-
-guidata(handles.figure1, handles);
 
 % --- Executes on button press in save_collection_pushbutton.
 function save_collection_pushbutton_Callback(hObject, eventdata, handles)
