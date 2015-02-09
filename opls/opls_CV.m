@@ -1,10 +1,11 @@
-function [Q2,Q2s,press,accuracy] = opls_CV(X,Y,num_OPLS_fact,CV_array)
+function [Q2,Q2s,press,accuracy,AUC] = opls_CV(X,Y,num_OPLS_fact,CV_array)
 
 press = 0;
 y_sum = 0;
 errors = 0;
 Q2s = NaN*ones(1,length(CV_array));
-    
+Ys_predicted = [];
+Ys_actual = [];
 for CV_count=1:length(CV_array)
     %%%%
     % set up CV data
@@ -40,6 +41,8 @@ for CV_count=1:length(CV_array)
         end
         %predict
         Y_pred = z*B_pls;
+        Ys_predicted(end+1) = Y_pred;
+        Ys_actual(end+1) = Y_leftOut(cpp);
         temp_press = temp_press + (Y_pred - Y_leftOut(cpp))^2;
         temp_y_sum = temp_y_sum + (Y_leftOut(cpp))^2;
         correct_Y = Y_pred - (Y_leftOut(cpp));
@@ -47,9 +50,9 @@ for CV_count=1:length(CV_array)
             if (abs(Y_pred - (Y(k))) < abs(correct_Y))
                 errors = errors+1;
                 break;
-            end;
-        end;
-    end;
+            end
+        end
+    end
     Q2s(CV_count) = 1 - temp_press/temp_y_sum;
     press = press + temp_press;
     y_sum = y_sum + temp_y_sum;
@@ -57,3 +60,5 @@ end
 
 Q2 = 1 - press/y_sum;
 accuracy = (length(Y)-errors) / length(Y);
+
+[X,Y,T,AUC] = perfcurve(Ys_actual,Ys_predicted,max(Ys_actual));

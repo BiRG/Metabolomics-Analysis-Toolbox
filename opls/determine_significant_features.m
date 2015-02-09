@@ -1,4 +1,4 @@
-function [sig_inxs,not_sig_inxs,significant,p_permuted] = determine_significant_features(X,Y,orig_model,num_permutations,talpha,inside_num_permutations,inside_talpha)
+function [sig_inxs,not_sig_inxs,significant,p_permuted,pvalues] = determine_significant_features(X,Y,orig_model,num_permutations,talpha,inside_num_permutations,inside_talpha)
 [num_samples,num_variables] = size(X);
 p_permuted = cell(num_variables,1);
 % if ~exist('variables')
@@ -22,23 +22,23 @@ inner_P_permuted = run(X,Y,orig_model,N,variables);
 significant = ones(1,num_variables)*NaN;
 sig_inxs = [];
 not_sig_inxs = [];
+pvalues = ones(1,num_variables)*NaN;
 for v = 1:num_variables
     sorted = sort(inner_P_permuted(v,:),'descend');
     inside_ix = max([1,round(N*inside_talpha/2)]); % Two tailed
     inside_thres1 = sorted(inside_ix);
     inside_thres2 = sorted(end-inside_ix+1);
-%     if P_original(v) < sorted(end) % Greatest observed
-%         p_permuted{v} = inner_P_permuted(v,:);
-%         significant(v) = true;
-%         sig_inxs(end+1) = v;
-%     elseif P_original(v) > sorted(1) % Greatest negative observed
-%         p_permuted{v} = inner_P_permuted(v,:);
-%         significant(v) = true;
-%         sig_inxs(end+1) = v;
+    % Needed for p-value
+    ix = max([1,round(N*talpha/2)]); % Two tailed
+    thres1 = sorted(ix);
+    thres2 = sorted(end-ix+1);    
     if inside_thres1 >= P_original(v) && P_original(v) >= inside_thres2 % Not close to the boundary
         p_permuted{v} = inner_P_permuted(v,:);
         not_sig_inxs(end+1) = v;
         significant(v) = false;
+        pL = length(find(sorted <= min(P_original(v),-P_original(v))))/N;
+        pR = length(find(sorted >= max(P_original(v),-P_original(v))))/N;
+        pvalues(v) = pL + pR;
     end
 end
 
@@ -68,6 +68,9 @@ for v = variables
         not_sig_inxs(end+1) = v;
         significant(v) = false;
     end
+    pL = length(find(sorted <= min(P_original(v),-P_original(v))))/N;
+    pR = length(find(sorted >= max(P_original(v),-P_original(v))))/N;
+    pvalues(v) = pL + pR;
 end
 
 % p_permuted = P_permuted;

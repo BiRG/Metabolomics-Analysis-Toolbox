@@ -40,15 +40,16 @@ end
 
 
 num_OPLS_fact = 0;
-[Q2,Q2s,press,accuracy] = opls_CV(X,Y,num_OPLS_fact,CV_array);
+[Q2,Q2s,press,accuracy,AUC] = opls_CV(X,Y,num_OPLS_fact,CV_array);
 while num_OPLS_fact < length(X(1,:))
-    [next_Q2,next_Q2s,next_press,next_accuracy] = opls_CV(X,Y,num_OPLS_fact+1,CV_array);
+    [next_Q2,next_Q2s,next_press,next_accuracy,next_AUC] = opls_CV(X,Y,num_OPLS_fact+1,CV_array);
     R = next_press/press;
     if R >= 1        
         break;
     else
         Q2 = next_Q2;
         Q2s = next_Q2s;
+        AUC = next_AUC;
         press = next_press;
         accuracy = next_accuracy;
         num_OPLS_fact = num_OPLS_fact + 1;
@@ -58,6 +59,7 @@ end
 [model,stats] = opls(X,Y,num_OPLS_fact);
 stats.Q2 = Q2;
 stats.Q2s = Q2s;
+stats.AUC = AUC;
 stats.accuracy = accuracy;
 
-stats.permutation_Q2s = permutation_test(X,Y,model.num_OPLS_fact,num_permutations,CV_array);
+[stats.permutation_Q2s,stats.permutation_AUCs] = permutation_test(X,Y,model.num_OPLS_fact,num_permutations,CV_array);

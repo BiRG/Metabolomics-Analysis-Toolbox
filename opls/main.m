@@ -315,14 +315,28 @@ add_line_to_summary_text(handles.summary_text,sprintf('Q^2 Sig. Threshold: %.4f'
 if get(handles.groups_checkbox,'Value')
     add_line_to_summary_text(handles.summary_text,sprintf('Accuracy: %.4f%',100*handles.stats.accuracy));
 end
+% New code for the AUC
+add_line_to_summary_text(handles.summary_text,sprintf('AUC: %.4f',handles.stats.AUC));
+sorted = sort(handles.stats.permutation_AUCs,'descend');
+ix = max([1,round(length(handles.stats.permutation_AUCs)*test_alpha)]); % One tailed
+thres = sorted(ix);
+add_line_to_summary_text(handles.summary_text,sprintf('AUC Sig. Threshold: %.4f',thres));
+
 
 %% Now determine the sig. variables
 sig_vars_num_permutations = str2num(get(handles.sig_vars_num_permutations_edit,'String'));
 sig_vars_talpha = str2num(get(handles.sig_vars_talpha_edit,'String'));
 sig_vars_inner_num_permutations = str2num(get(handles.sig_vars_inner_num_permutations_edit,'String'));
 sig_vars_inner_talpha = str2num(get(handles.sig_vars_inner_talpha_edit,'String'));
-[handles.sig_inxs,handles.not_sig_inxs,handles.significant,handles.p_permuted] = determine_significant_features(X',Y',handles.model,...
+[handles.sig_inxs,handles.not_sig_inxs,handles.significant,handles.p_permuted,handles.det_sig_pvalues] = determine_significant_features(X',Y',handles.model,...
     sig_vars_num_permutations,sig_vars_talpha,sig_vars_inner_num_permutations,sig_vars_inner_talpha);
+
+% Change is to now use the multiple test correction and the p-values for sig features.
+[fdr,handles.det_sig_qvalues] = mafdr(handles.det_sig_pvalues);
+handles.sig_inxs = find(handles.det_sig_pvalues <= sig_vars_talpha);
+handles.not_sig_inxs = find(handles.det_sig_pvalues > sig_vars_talpha);
+handles.significant = double(handles.det_sig_pvalues <= sig_vars_talpha);
+
 set(handles.sig_vars_listbox,'String',{'',handles.collection.x(handles.sig_inxs)});
 set(handles.sig_vars_listbox,'Value',1);
 set(handles.not_sig_vars_listbox,'String',{'',handles.collection.x(handles.not_sig_inxs)});
@@ -918,7 +932,7 @@ plot(xi,f,'k-');
 % bar(xi,n/sum(n));
 yl = ylim;
 arrow([handles.model.p(v),yl(2)/4],[handles.model.p(v),0]);
-xlabel(['Loading ',contents{inx+1}]);
+xlabel(['Loading ',contents{inx+1},', q-value ',num2str(handles.det_sig_qvalues(v))]);
 ylabel('Probability Density Estimate');
 
 
@@ -967,7 +981,7 @@ plot(xi,f,'k-');
 % bar(xi,n/sum(n));
 yl = ylim;
 arrow([handles.model.p(v),yl(2)/4],[handles.model.p(v),0]);
-xlabel(['Loading ',contents{inx+1}]);
+xlabel(['Loading ',contents{inx+1},', q-value ',num2str(handles.det_sig_qvalues(v))]);
 ylabel('Probability Density Estimate');
 
 % --- Executes during object creation, after setting all properties.
