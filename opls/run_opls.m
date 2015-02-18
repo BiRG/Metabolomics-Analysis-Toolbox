@@ -63,3 +63,5 @@ stats.AUC = AUC;
 stats.accuracy = accuracy;
 
 [stats.permutation_Q2s,stats.permutation_AUCs] = permutation_test(X,Y,model.num_OPLS_fact,num_permutations,CV_array);
+stats.Q2_pvalue = max([1/num_permutations,length(find(stats.permutation_Q2s >= Q2))/num_permutations]);
+stats.AUC_pvalue = max([1/num_permutations,length(find(stats.permutation_AUCs >= AUC))/num_permutations]);

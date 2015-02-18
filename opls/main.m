@@ -312,6 +312,7 @@ sorted = sort(handles.stats.permutation_Q2s,'descend');
 ix = max([1,round(length(handles.stats.permutation_Q2s)*test_alpha)]); % One tailed
 thres = sorted(ix);
 add_line_to_summary_text(handles.summary_text,sprintf('Q^2 Sig. Threshold: %.4f',thres));
+add_line_to_summary_text(handles.summary_text,sprintf('Q^2 p-value: %f',handles.stats.Q2_pvalue));
 if get(handles.groups_checkbox,'Value')
     add_line_to_summary_text(handles.summary_text,sprintf('Accuracy: %.4f%',100*handles.stats.accuracy));
 end
@@ -321,6 +322,7 @@ sorted = sort(handles.stats.permutation_AUCs,'descend');
 ix = max([1,round(length(handles.stats.permutation_AUCs)*test_alpha)]); % One tailed
 thres = sorted(ix);
 add_line_to_summary_text(handles.summary_text,sprintf('AUC Sig. Threshold: %.4f',thres));
+add_line_to_summary_text(handles.summary_text,sprintf('AUC p-value: %f',handles.stats.AUC_pvalue));
 
 
 %% Now determine the sig. variables
