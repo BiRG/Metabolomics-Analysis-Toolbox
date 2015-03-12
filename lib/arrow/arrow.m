@@ -64,6 +64,9 @@ function [h,yy,zz] = arrow(varargin)
 % http://www.usc.edu/civil_eng/johnsone/
 
 % Revision history:
+%    3/10/15  DCW  Applied various patches suggested on
+%                  http://www.mathworks.com/matlabcentral/fileexchange/278-arrow-m
+%                  in comments.
 %    5/20/09  EAJ  Fix view direction in (3D) demo.
 %    6/26/08  EAJ  Replace eval('trycmd','catchcmd') with try, trycmd; catch,
 %                    catchcmd; end; -- break's MATLAB 5 compatibility.
@@ -420,7 +423,7 @@ if (length(page      )==1),   page       = o * page      ;   end;
 if (size(crossdir  ,1)==1),   crossdir   = o * crossdir  ;   end;
 if (length(ends      )==1),   ends       = o * ends      ;   end;
 if (length(ispatch   )==1),   ispatch    = o * ispatch   ;   end;
-ax = o * gca;
+ax = repmat(gca,narrows,1); % DCW patched
 
 % if we've got handles, get the defaults from the handles
 if ~isempty(oldh),
@@ -501,7 +504,7 @@ while (any(axnotdone)),
 	curpage = page(ii);
 	% get axes limits and aspect ratio
 	axl = [get(curax,'XLim'); get(curax,'YLim'); get(curax,'ZLim')];
-	oldaxlims(min(find(oldaxlims(:,1)==0)),:) = [curax reshape(axl',1,6)];
+	oldaxlims(min(find(oldaxlims(:,1)==0)),:) = [ii reshape(axl',1,6)]; % DCW patched
 	% get axes size in pixels (points)
 	u = get(curax,'Units');
 	axposoldunits = get(curax,'Position');
@@ -587,7 +590,7 @@ while (any(axnotdone)),
 		axl(ii,[1 2])=-axl(ii,[2 1]);
 	end;
 	% compute the range of 2-D values
-	curT = get(curax,'Xform');
+    [azA,elA] = view(curax); curT = viewmtx(azA,elA); % DCW patched
 	lim = curT*[0 1 0 1 0 1 0 1;0 0 1 1 0 0 1 1;0 0 0 0 1 1 1 1;1 1 1 1 1 1 1 1];
 	lim = lim(1:2,:)./([1;1]*lim(4,:));
 	curlimmin = min(lim')';
@@ -955,9 +958,9 @@ if (nargout<=1),
 	if isempty(oldaxlims),
 		ARROW_AXLIMITS = [];
 	else,
-		lims = get(oldaxlims(:,1),{'XLim','YLim','ZLim'})';
+		lims = get(ax(oldaxlims(:,1)),{'XLim','YLim','ZLim'})'; % DCW patched
 		lims = reshape(cat(2,lims{:}),6,size(lims,2));
-		mask = arrow_is2DXY(oldaxlims(:,1));
+		mask = arrow_is2DXY(ax(oldaxlims(:,1))); % DCW patched
 		oldaxlims(mask,6:7) = lims(5:6,mask)';
 		ARROW_AXLIMITS = oldaxlims(find(any(oldaxlims(:,2:7)'~=lims)),:);
 		if ~isempty(ARROW_AXLIMITS),

@@ -407,6 +407,8 @@ ylabel('Probability Density Estimate');
 % [n,xi] = hist(handles.p_permuted{v},50);
 % bar(xi,n/sum(n));
 yl = ylim;
+% TODO: update to R2014b's built-in annotation arrow. DCW
+% http://www.mathworks.com/help/matlab/ref/annotationarrow-properties.html
 arrow([handles.stats.Q2,yl(2)/4],[handles.stats.Q2,0]);
 
 handles.run_groups_checkbox = get(handles.groups_checkbox,'Value');
@@ -1327,28 +1329,25 @@ if get(hObject,'Value')
     prompt={'Enter the number of workers (pool size):'};
     name='Open MATLAB parallel computation session';
     numlines=1;
-    sched = findResource();
-    defaultanswer={num2str(sched.ClusterSize)};
+    sched = parcluster();
+    defaultanswer={num2str(sched.NumWorkers)};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     
     poolsize = str2num(answer{1});
-    if poolsize > sched.ClusterSize
-        msgbox(['Please specify a number less than ',num2str(sched.ClusterSize)]);
+    if poolsize > sched.NumWorkers
+        msgbox(['Please specify a number less than ',num2str(sched.NumWorkers)]);
         return;
     end
     if poolsize > 0
         try
-            matlabpool(poolsize);
+            onePool = parpool(poolsize);
         catch ME
             msgbox('Failed to start parallel computation session');
             throw(ME);
         end
     end
 else
-    isOpen = matlabpool('size') > 0;
-    if isOpen
-        matlabpool close
-    end
+    delete(gcp('nocreate'));
 end
 
 
