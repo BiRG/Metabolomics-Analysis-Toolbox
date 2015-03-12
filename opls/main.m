@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 17-May-2011 15:08:23
+% Last Modified by GUIDE v2.5 12-Mar-2015 13:26:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -419,6 +419,8 @@ msgbox('Finished running OPLS');
 guidata(hObject, handles);
 
 function add_line_to_summary_text(h,line)
+% h     handle to summary_text GUI listbox
+% line  String to add to the end of the summary_text listbox
 current = get(h,'String');
 current = {line,current{:}};
 set(h,'String',current);
@@ -1486,3 +1488,23 @@ function sig_vars_inner_num_permutations_edit_CreateFcn(hObject, eventdata, hand
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in export_sig_vars_pushbutton.
+function export_sig_vars_pushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to export_sig_vars_pushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if ( isfield(handles, 'collection') && isfield(handles.collection, 'x') && isfield(handles, 'sig_inxs') )
+    [filename, pathname] = uiputfile({'exported_vars.csv'},'Export variables to...');
+    if (filename ~= 0)
+        filename = [pathname filename];
+        sigs = ['"Significant Variables"',handles.collection.x(handles.sig_inxs)]';
+        insigs = ['"Non-significant Variables"',handles.collection.x(handles.not_sig_inxs)]';
+        export = [sigs insigs];
+        cell2csv(filename, export);
+    end
+else
+    msgbox('A collection must be loaded and processed before significant variables can be exported.');
+end
+
