@@ -1499,8 +1499,23 @@ if ( isfield(handles, 'collection') && isfield(handles.collection, 'x') && isfie
     [filename, pathname] = uiputfile({'exported_vars.csv'},'Export variables to...');
     if (filename ~= 0)
         filename = [pathname filename];
-        sigs = ['"Significant Variables"',handles.collection.x(handles.sig_inxs)]';
-        insigs = ['"Non-significant Variables"',handles.collection.x(handles.not_sig_inxs)]';
+        
+        sigs = num2cell(handles.collection.x(handles.sig_inxs));
+        insigs = num2cell(handles.collection.x(handles.not_sig_inxs));
+        if ( length(sigs) ~= length(insigs) )
+            % Match cell arrays' dimensions.
+            % Must use 2D subscripts or array transposes prematurely.
+            if ( length(sigs) > length(insigs) )
+                insigs{1, length(sigs)} = [];
+            else
+                sigs{1, length(insigs)} = [];
+            end
+        end
+        
+        % Append headers.
+        sigs = ['"Significant Variables"' sigs]';
+        insigs = ['"Non-significant Variables"' insigs]';
+        
         export = [sigs insigs];
         cell2csv(filename, export);
     end
