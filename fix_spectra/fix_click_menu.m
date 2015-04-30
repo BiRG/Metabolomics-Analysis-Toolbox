@@ -261,7 +261,14 @@ elseif strcmp(str{s},'Post collections')
     defaultanswer={''};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     analysis_id = str2double(answer{1});
-    post_collections(gcf,collections,suffix,analysis_id);
+    [username,password] = logindlg;
+    if (ischar(username) && ischar(password))
+        post_collections(gcf,collections,suffix,analysis_id,username,password,600);
+    else
+        % Should never get here.
+        msgbox('Invalid Username or Password','The username and/or password entered were not valid as a username and/or password.');
+        return;
+    end
 elseif strcmp(str{s},'Set zoom x distance')
     prompt={'x distance:'};
     name='Set zoom x distance';

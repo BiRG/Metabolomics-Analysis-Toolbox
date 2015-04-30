@@ -1,4 +1,4 @@
-function post_collections(main_h,collections,suffix,analysis_id,username,password)
+function post_collections(~,collections,suffix,analysis_id,username,password,timeout)
 % Ask for user information then post the given collections to the BIRG server
 %
 % Usage: post_collections(main_h,collections,suffix,analysis_id,username,password)
@@ -11,8 +11,6 @@ function post_collections(main_h,collections,suffix,analysis_id,username,passwor
 % -------------------------------------------------------------------------
 % Input arguments
 % -------------------------------------------------------------------------
-% main_h - ignored. Used in other functions as a handle to the main window
-%
 % collections - (cell array) a cell array of spectral collections. Each
 %     spectral collection is a struct of spectra. This is the format of
 %     the return value of load_collections.m in common_scripts.
@@ -26,12 +24,17 @@ function post_collections(main_h,collections,suffix,analysis_id,username,passwor
 % username - (optional string) if either username or password is absent,
 %     then the user will be prompted for it
 %
+% password - (optional string) Ibid
+%
+% timeout - (optional scalar) Length of timeout in seconds. If unspecified,
+%     default timeout will be used.
+%
 % -------------------------------------------------------------------------
 % Output parameters
 % -------------------------------------------------------------------------
-% 
+%
 % None
-% 
+%
 % -------------------------------------------------------------------------
 % Examples
 % -------------------------------------------------------------------------
@@ -40,9 +43,11 @@ function post_collections(main_h,collections,suffix,analysis_id,username,passwor
 % Authors
 % -------------------------------------------------------------------------
 %
-% Paul Anderson (Before July 2011) 
+% Paul Anderson (Before July 2011)
 %
 % Eric Moyer (July 2013) eric_moyer@yahoo.com
+%
+% Dan C. Wlodarski (April 2015) dan.wlodarski@gmail.com
 
 % Get the username and password from the user if not passed in as
 % parameters. Exit without posting if the user cancels the dialog
@@ -58,9 +63,24 @@ mkdir(tmpdir);
 
 for i = 1:length(collections)
     collection = collections{i};
-    file = save_collection(tmpdir,suffix,collection);    
+    file = save_collection(tmpdir,suffix,collection);
     url = sprintf('http://birg.cs.wright.edu/omics_analysis/spectra_collections.xml');
-    xml = urlread(url,'post',{'name',username,'password',password,'analysis_id',num2str(analysis_id),'collection[data]',fileread(file)});
+    textOfFile = fileread(file);
+    if (exist('timeout','var'))
+        if (~isnumeric(timeout))
+            timeout = str2double(timeout);
+        end
+    else
+        timeout = NaN;
+    end
+    if (~isnan(timeout))
+        xml = urlread(url,'post',...
+            {'name',username,'password',password,'analysis_id',num2str(analysis_id),'collection[data]',textOfFile},...
+            'Timeout',timeout);
+    else
+        xml = urlread(url,'post',...
+            {'name',username,'password',password,'analysis_id',num2str(analysis_id),'collection[data]',textOfFile});
+    end
     delete(file);
     
     file = tempname;
