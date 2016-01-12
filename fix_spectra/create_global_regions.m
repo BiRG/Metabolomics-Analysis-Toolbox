@@ -18,7 +18,7 @@ global_signal_map = zeros(num_variables,1);
 spectrum_idx = 1;    
 for i = 1:num_collections
     for j = 1:collections{i}.num_samples
-        fprintf('Starting SM creation on %s\n',char(collections{i}.sample_id(j)))
+        fprintf('Starting SM creation on group %d, sample %d\n',i,j)
         signal_map = generate_signal_map(x,Y(:,spectrum_idx),packet_size,collections,i,j);
         global_signal_map = global_signal_map + signal_map;
         total_baseline_homog = length(find(global_signal_map == spectrum_idx))/length(find(global_signal_map ~= 0));

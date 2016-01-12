@@ -13,7 +13,7 @@ while go == 1;
     %Pull remaining Noise from spectrum
     
     if isequal(SI_prev, newSI)==1
-        fprintf('Signal Map has converged on %s\n', char(collections{group_num}.sample_id(sample_num)));
+        fprintf('Signal Map has converged on %s\n', num2str(collections{group_num}.sample_id(sample_num)));
         [reducedNoiseIdx,expandedSignalIdx] = expandSigIDX(newNI,newSI,nucleus);
         [trashNI,expandedGroomedSignalIdx] = groomSM(reducedNoiseIdx,expandedSignalIdx);
         SM = create_SM(bins,xy,expandedGroomedSignalIdx);
