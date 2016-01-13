@@ -40,6 +40,11 @@ while are_you_happy ~= 'y'
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     perc_homog = str2num(answer{1})/100;
     inclusion_threshold = total_samples*perc_homog;
+    
+    % TODO: Scan global_signal_map to find "incomplete" bins
+    %       Search within Delta to find bin that completes it
+    %       Move map over to complete
+    
     SMtemp = zeros(length(x),1);
     for j = 1:length(x)
         if global_signal_map(j) >= inclusion_threshold
