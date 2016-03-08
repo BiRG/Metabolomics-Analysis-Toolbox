@@ -15,20 +15,25 @@ global_signal_map = zeros(num_variables,1);
     packet_size = str2num(answer{1});
     %packet_size = 15;
     
+    %{
     prompt={'Enter Delta:'};
     name='Delta';
     numlines=1;
     defaultanswer={'50'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     delta = str2num(answer{1});
+    %}
     
     %Initialize counter for spectrum index in combined_collections
-spectrum_idx = 1;    
+%%%%%spectrum_idx = 1;    
+spectrum_idx = 1;
 for i = 1:num_collections
-    for j = 1:collections{i}.num_samples
+    %%%%%for j = 1:collections{i}.num_samples
+    for j = 1:1
         fprintf('Starting SM creation on group %d, sample %d\n',i,j)
         signal_map = generate_signal_map(x,Y(:,spectrum_idx),packet_size,collections,i,j);
         
+        %{
         k = 1;
         while k <= length(signal_map)
             if signal_map(k) == 1
@@ -48,6 +53,7 @@ for i = 1:num_collections
             end
             k = k+1;
         end
+        %}
         
         global_signal_map = global_signal_map + signal_map;
         total_baseline_homog = length(find(global_signal_map == spectrum_idx))/length(find(global_signal_map ~= 0));
@@ -68,7 +74,8 @@ while are_you_happy ~= 'y'
     defaultanswer={'100'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     perc_homog = str2num(answer{1})/100;
-    inclusion_threshold = total_samples*perc_homog;
+    %%%%%inclusion_threshold = total_samples*perc_homog;
+    inclusion_threshold = 1;
     SMtemp = zeros(length(x),1);
     for j = 1:length(x)
         if global_signal_map(j) >= inclusion_threshold

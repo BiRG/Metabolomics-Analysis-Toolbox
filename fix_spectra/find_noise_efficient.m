@@ -21,9 +21,11 @@ xy.freq = data(:,1); xy.amp = data(:,2);
 
 %Create list of index positions for binning
 %disp('Creating list of index positions for binning')
-
 [bins,num_of_bins] = findBinLimits(num_of_points,xy);
 regional_std = zeros(1,num_of_bins);
+
+
+
 %find standard deviation of each bin
 %disp('Finding standard deviation values')
 for i = 1:num_of_bins
