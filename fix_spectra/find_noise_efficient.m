@@ -1,4 +1,4 @@
-function [noise_index,signal_index,xy,bins] = find_noise_efficient(data,num_of_points, time)
+function [noise_index,signal_index,xy_original,bins] = find_noise_efficient(data,num_of_points, time)
 %%||||||||||||||||||||find_noise|||||||||||||||||||%%
 %By: Daniel C. Homer
 %WSU NMR lab 03/07
@@ -17,19 +17,39 @@ function [noise_index,signal_index,xy,bins] = find_noise_efficient(data,num_of_p
 %disp('Start Find_Noise')
 
 %Read in information
-xy.freq = data(:,1); xy.amp = data(:,2);
+xy_original.freq = data(:,1); xy_original.amp = data(:,2);
+xy = xy_original;
 
 %Create list of index positions for binning
 %disp('Creating list of index positions for binning')
 [bins,num_of_bins] = findBinLimits(num_of_points,xy);
 regional_std = zeros(1,num_of_bins);
 
-
-
-%find standard deviation of each bin
-%disp('Finding standard deviation values')
+% Flatten out each bin based on linear regression
+% and find standard deviation of each bin
 for i = 1:num_of_bins
-     regional_std(i) = std(xy.amp(bins.start(i):bins.end(i)));
+    % Adjust bins using linear regression
+    binxs = transpose(xy.freq(bins.start(i):bins.end(i)));
+    binys = transpose(xy.amp(bins.start(i):bins.end(i)));
+    [r,m,b] = regression(binxs, binys);
+    adjustedys = transpose(binys - (m * binxs + b));
+    xy.amp(bins.start(i):bins.end(i)) = adjustedys;
+    
+    % Adjust bins using 3-point-average method
+% 	binxs = xy.freq(bins.start(i):bins.end(i));
+% 	binys = xy.amp(bins.start(i):bins.end(i));
+%     beginx = mean(binxs(1:3));
+%     beginy = mean(binys(1:3));
+%     endx = mean(binxs(end-2:end));
+%     endy = mean(binys(end-2:end));
+%     m = (beginy - endy) / (beginx - endx);
+%     b = beginy - (m * beginx);
+%     adjustedys = binys - (m * binxs + b);
+%     xy.amp(bins.start(i):bins.end(i)) = adjustedys;
+    
+    % Find standard deviation of points in bin
+%     adjustedys = xy.amp(bins.start(i):bins.end(i));
+    regional_std(i) = std(adjustedys);
 end
 
 %disp('Sorting bins based on Standard deviation')
