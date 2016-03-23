@@ -29,11 +29,11 @@ regional_std = zeros(1,num_of_bins);
 % and find standard deviation of each bin
 for i = 1:num_of_bins
     % Adjust bins using linear regression
-    binxs = transpose(xy.freq(bins.start(i):bins.end(i)));
-    binys = transpose(xy.amp(bins.start(i):bins.end(i)));
-    [r,m,b] = regression(binxs, binys);
-    adjustedys = transpose(binys - (m * binxs + b));
-    xy.amp(bins.start(i):bins.end(i)) = adjustedys;
+%     binxs = transpose(xy.freq(bins.start(i):bins.end(i)));
+%     binys = transpose(xy.amp(bins.start(i):bins.end(i)));
+%     [r,m,b] = regression(binxs, binys);
+%     adjustedys = transpose(binys - (m * binxs + b));
+%     xy.amp(bins.start(i):bins.end(i)) = adjustedys;
     
     % Adjust bins using 3-point-average method
 % 	binxs = xy.freq(bins.start(i):bins.end(i));
@@ -48,7 +48,7 @@ for i = 1:num_of_bins
 %     xy.amp(bins.start(i):bins.end(i)) = adjustedys;
     
     % Find standard deviation of points in bin
-%     adjustedys = xy.amp(bins.start(i):bins.end(i));
+    adjustedys = xy.amp(bins.start(i):bins.end(i));
     regional_std(i) = std(adjustedys);
 end
 
