@@ -110,7 +110,8 @@ handles.output = {hObject, true(1), true, ...
 % Update handles structure
 guidata(hObject, handles);
 
-update_ui(handles);
+%%% Still trying to figure out why this breaks the original spectrum window
+%update_ui(handles);
 
 % UIWAIT makes prob_quotient_norm_dialog wait for user response (see UIRESUME)
 uiwait(handles.figure1);

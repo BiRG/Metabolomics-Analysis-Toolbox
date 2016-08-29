@@ -1,4 +1,4 @@
-function show_minima(spectrum_idx)
+function score = show_minima(spectrum_idx)
     
     collections = getappdata(gcf, 'collections');
     [x, Y] = combine_collections(collections);
@@ -24,9 +24,15 @@ function show_minima(spectrum_idx)
     locs = sorted_locs(1 + elements_to_remove:end - elements_to_remove);
     minima = sorted_minima(1 + elements_to_remove:end - elements_to_remove);
     
-    % Spline
+    % Spline and score (How far points are below the spline)
     yspline = spline(locs, minima, x);
-
+    score = 0;
+    for i = 1:numel(y)
+        if y(i) < yspline(i)
+            score = score + (yspline(i) - y(i));
+        end
+    end
+    
     % Plot the whole thing
     hold on;
     scatter(locs, minima, 'b');
