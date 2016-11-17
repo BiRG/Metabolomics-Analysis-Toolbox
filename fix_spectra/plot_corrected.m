@@ -6,7 +6,7 @@ function plot_corrected()
     y = Y(:, spectrum_inx);
     
     
-    save('raman_scripts/raman_in.mat', 'y');
+    %save('raman_scripts/raman_in.mat', 'y');
     
     raman_correction(y);
     return

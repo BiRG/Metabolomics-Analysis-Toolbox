@@ -4,15 +4,15 @@ function raman_correction(y)
     scales = 1:1:70;
     wCoefs = zhang_cwt(y, scales);
     
-    localMax = getLocalMaximumCWT(wCoefs, scales);
-    %ridgeList = getRidge(localMax, gapTH = 3, skip = 2);
+    localMax = getLocalMaximumCWT(wCoefs, scales, 5, 0);
+    
+    ridgeList = getRidge(localMax, ncol(localMax), -1, 1, 5, 3, 2);
     
     %majorPeakInfo = identifyMajorPeaks(y, ridgeList, wCoefs, SNR.Th = 1, ridgeLength = 5);
     %peakWidth = widthEstimationCWT(y, majorPeakInfo);
     
     %backgr = baselineCorrectionCWT(y, peakWidth, lambda = 1000, differences = 1);
     %corrected = y - backgr;
-    
 end
 
 
@@ -33,7 +33,7 @@ function wCoefs = zhang_cwt(ms, scales)
     
     len = numel(ms);
     
-    wCoefs = [];
+    wCoefs = zeros(numel(scales), len);
     
     psi_xval = psi_xval - psi_xval(1);
     dxval = psi_xval(2);
@@ -55,48 +55,70 @@ function wCoefs = zhang_cwt(ms, scales)
         
         % Shift the position with half wavelet width
         wCoefsi = [wCoefsi((len-floor(lenWave/2) + 1) : len), wCoefsi(1:(len-floor(lenWave/2)))];
-        wCoefs = [wCoefs; wCoefsi];
+        wCoefs(i, :) = wCoefsi;
     end
     
-    wCoefs = wCoefs';
-    wCoefs = wCoefs(1:oldLen, 1:end);
+    wCoefs = wCoefs(1:end, 1:oldLen)';
 end
 
 
-function localMax = getLocalMaximumCWT(wCoefs, scales)
+function localMax = getLocalMaximumCWT(wCoefs, scales, minWinSize, ampThresh)
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    minWinSize = 5;
-    ampThresh = 0;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    localMax = [];
+    localMax = zeros(size(wCoefs));
     
     for i = 1:numel(scales)
         winSize = scales(i) * 2 + 1;
         if winSize < minWinSize
             winSize = minWinSize;
         end
-        %%% vvv
-        temp = localMaximum(wCoefs(:,i), winSize);
-        localMax = [localMax, temp];
+        temp = localMaximum(wCoefs(:,i), winSize)';
+        localMax(:, i) = temp;
     end
     
     % Set the values less than peak threshold as 0
 	localMax(wCoefs < ampThresh) = 0;
-    
-	%colnames(localMax) <- colnames(wCoefs)
-	%rownames(localMax) <- rownames(wCoefs)
 end
 
 
 function localMax = localMaximum(x, winSize)
+    
     len = numel(x);
     rNum = ceil(len / winSize);
     
+    % Transform the vector as a matrix with column length equals winSize
+	% and find the maximum position at each row.
     y = reshape([x; ones(rNum * winSize - len, 1) * x(end)], winSize, rNum);
     [~, ymaxInd] = max(y);
     
-    selInd = find(max(y) > y(1,:) & max(y) > y(end,:));
+    % Only keep the maximum value larger than the boundary values
+    selInd = find(max(y) > y(1, :) & max(y) > y(end, :));
     
+    % keep the result
+    localMax = zeros(1, len);
+    localMax((selInd - 1) * winSize + ymaxInd(selInd)) = 1;
+    
+    % Shift the vector with winSize/2 and do the same operation
+	shift = floor(winSize / 2);
+    rNum = ceil((len + shift) / winSize);
+    y = reshape([ones(shift, 1) * x(1); x; ones(rNum * winSize - len - shift, 1) * x(end)], winSize, rNum);
+    [~, ymaxInd] = max(y);
+    
+    % Only keep the maximum value larger than the boundary values
+    selInd = find(max(y) > y(1, :) & max(y) > y(end, :));
+    localMax((selInd - 1) * winSize + ymaxInd(selInd) - shift) = 1;
+    
+    % Check whether there is some local maxima have in between distance less than winSize
+    maxInd = find(localMax > 0);
+    selInd = find(diff(maxInd) < winSize);
+    
+    if numel(selInd) > 0
+        selMaxInd1 = maxInd(selInd);
+		selMaxInd2 = maxInd(selInd + 1);
+        temp = x(selMaxInd1) - x(selMaxInd2);
+		localMax(selMaxInd1(temp <= 0)) = 0;
+		localMax(selMaxInd2(temp > 0)) = 0;
+    end
+end
+
+function abc = getRidge(localMax, iInit, step, iFinal, minWinSize, gapTh, skip)
 end
