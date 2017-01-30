@@ -71,7 +71,7 @@ for i = 1:length(collections)
             timeout = str2double(timeout);
         end
     else
-        timeout = NaN;
+        timeout = 360;
     end
     if (~isnan(timeout))
         xml = urlread(url,'post',...

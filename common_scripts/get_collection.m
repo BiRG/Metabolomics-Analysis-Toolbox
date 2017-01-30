@@ -40,7 +40,8 @@ try
     if exist('proxy.conf','file')
         load_proxy('proxy.conf');
     end
-    [xml,urlstatus] = urlread(url,'get',{'name',username,'password',password});
+    %[xml, urlstatus] = webread(url, 'name', username, 'password', password);
+    [xml,urlstatus] = urlread(url, 'Timeout', 360, 'get',{'name',username,'password',password});
     if ~isempty(regexp(xml,'password', 'once'))
         message = 'Invalid password';
         collection = {};
