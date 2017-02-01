@@ -1,4 +1,4 @@
-function [collection,message] = get_collection(collection_id,username,password)
+function [collection,message] = get_collection_sftp(collection_id,username,password)
 % Gets the given collection from the birg website using the given username 
 % and password.  If called without any of the parameters, displays dialogs
 % to get them from the user.
@@ -41,7 +41,7 @@ try
         load_proxy('proxy.conf');
     end
     %[xml, urlstatus] = webread(url, 'name', username, 'password', password);
-    [xml,urlstatus] = urlread(url, 'Timeout', 360, 'get',{'name',username,'password',password});
+    [xml,urlstatus] = urlread(url, 'Timeout', 360, 'get',{'name',username,'password',password, 'access', 'sftp'});
     if ~isempty(regexp(xml,'password', 'once'))
         message = 'Invalid password';
         collection = {};
@@ -54,8 +54,9 @@ catch ME
     disp(urlstatus);
     throw(ME);
 end
-n = regexp(xml,'<data>(.*)</data>','tokens');
-data = n{1}{1};
+n = regexp(xml,'<path>(.*)</path>','tokens');
+path = n{1}{1};
+
 % file = tempname;
 % fid = fopen(file,'w');
 % fwrite(fid,xml);

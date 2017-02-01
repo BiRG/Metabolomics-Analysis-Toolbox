@@ -1,4 +1,4 @@
-function [collections,message] = get_collections
+function [collections,message] = get_collections_sftp
 % Displays dialogs for downloading collections from the BIRG server.  
 % Returns a cell array of collections. On error returns an empty array.
 
@@ -35,7 +35,7 @@ try
     for i = 1:length(collection_ids)
         
         collection_id = str2num(collection_ids{i});
-        [collections{end+1},message] = get_collection(collection_id,username,password);
+        [collections{end+1},message] = get_collection_sftp(collection_id,username,password);
         if ~isempty(message)
             collections = {};
             return;
