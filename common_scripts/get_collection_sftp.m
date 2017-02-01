@@ -36,7 +36,7 @@ if ~exist('collection_id','var') || isempty(collection_id)
         return;
     end
 end
-
+[sftpusername, sftppass] = logindlg('Title','Enter SSH Username/Password');
 url = sprintf('http://birg.cs.wright.edu/omics_analysis/collections/%d.xml',collection_id);
 try
     if exist('proxy.conf','file')
@@ -50,7 +50,7 @@ try
         return;
     end
     if urlstatus == 0
-        error('urlread failed with status 0: %s',url); %#ok<SPERR>
+        error('urlread failed with status 0: %s',url);
     end
 catch ME
     disp(urlstatus);
@@ -64,8 +64,7 @@ remotepath = '/';
 for i = 1:(size(n,2) - 1)
     remotepath = strcat(remotepath, n{i}, '/');
 end
-[sftpusername, sftppass] = logindlg('Title','Enter SSH Username/Password');
-localdir = tempname
+localdir = tempname;
 mkdir(localdir);
 textdir=strcat(localdir, '/unzipped');
 mkdir(textdir);

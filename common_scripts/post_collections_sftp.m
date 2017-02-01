@@ -1,13 +1,15 @@
-function post_collections(~,collections,suffix,analysis_id,username,password,timeout)
+function post_collections_sftp(collections,analysis_id,username,password,timeout, hostname)
 % Ask for user information then post the given collections to the BIRG server
 %
-% Usage: post_collections(main_h,collections,suffix,analysis_id,username,password)
+% Usage: post_collections_sftp(main_h,collections,suffix,analysis_id,username,password)
 %
 % The given collections are first saved to a temporary directory and then
 % uploaded to BIRG.
 %
 % Code originally by Paul Anderson.  Comments added after-the-fact
 %
+% Modified by Daniel Foose
+% This actually uses SCP instead of sftp.
 % -------------------------------------------------------------------------
 % Input arguments
 % -------------------------------------------------------------------------
@@ -57,15 +59,24 @@ if(~exist('username','var') || ~exist('password','var'))
         return;
     end
 end
+if (~exist('hostname','var'))
+    hostname='130.108.28.148';
+end
 
 tmpdir = tempname;
 mkdir(tmpdir);
 
+[sftpusername, sftppass] = logindlg('Title','Enter SSH Username/Password');
 for i = 1:length(collections)
     collection = collections{i};
-    file = save_collection(tmpdir,suffix,collection);
+    [~,tmpname,~]=fileparts(tmpdir);
+    archivepath=strcat(tmpdir, '/', tmpname, '.zip');
+    archivename=strcat(tmpname, '.zip');
+    textpath=strcat(tmpdir, '/', tmpname, '.txt');
+    file = save_collection(textpath, collection);
+    zip(archivepath, file);
     url = sprintf('http://birg.cs.wright.edu/omics_analysis/spectra_collections.xml');
-    textOfFile = fileread(file);
+    scp_simple_put(hostname, sftpusername, sftppass, archivename, '/sftpjail', tmpdir, archivename);
     if (exist('timeout','var'))
         if (~isnumeric(timeout))
             timeout = str2double(timeout);
@@ -74,22 +85,12 @@ for i = 1:length(collections)
         timeout = 360;
     end
     if (~isnan(timeout))
-        xml = urlread(url,'post',...
-            {'name',username,'password',password,'analysis_id',num2str(analysis_id),'collection[data]',textOfFile},...
+        urlread(url,'post',...
+            {'name',username,'password',password,'analysis_id',num2str(analysis_id), 'filename', archivename},...
             'Timeout',timeout);
     else
-        xml = urlread(url,'post',...
-            {'name',username,'password',password,'analysis_id',num2str(analysis_id),'collection[data]',textOfFile});
+        urlread(url,'post',...
+            {'name',username,'password',password,'analysis_id',num2str(analysis_id),'filename', archivename});
     end
     delete(file);
-    
-    file = tempname;
-    fid = fopen(file,'w');
-    fprintf(fid,xml);
-    fclose(fid);
-    collection_xml = xml2struct(file);
-    id = collection_xml.Children.Data;
-    fprintf('Successfully posted collection %s-%s as collection %s\n',collection.collection_id, suffix, id);
-    delete(file);
 end
-rmdir(tmpdir);
