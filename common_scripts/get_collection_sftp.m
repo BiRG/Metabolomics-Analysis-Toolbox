@@ -1,4 +1,4 @@
-function [collection,message] = get_collection_sftp(collection_id,username,password)
+function [collection,message] = get_collection_sftp(collection_id,username,password,hostname)
 % Gets the given collection from the birg website using the given username 
 % and password.  If called without any of the parameters, displays dialogs
 % to get them from the user.
@@ -15,7 +15,9 @@ if ~exist('username','var') || ~exist('password','var')
         return;
     end
 end
-
+if ~exist('hostname', 'var')
+    hostname = '130.108.28.148';
+end
 if ~exist('collection_id','var') || isempty(collection_id)
     prompt={'Collection ID:'};
     name='Enter the collection ID from the website';
@@ -56,18 +58,21 @@ catch ME
 end
 n = regexp(xml,'<path>(.*)</path>','tokens');
 path = n{1}{1};
+n = regexp(path, '\/', 'split');
+filename = n{size(n,2)};
+remotepath = '/';
+for i = 1:(size(n,2) - 1)
+    remotepath = strcat(remotepath, n{i}, '/');
+end
+[sftpusername, sftppass] = logindlg('Title','Enter SSH Username/Password');
+localdir = tempname
+mkdir(localdir);
+textdir=strcat(localdir, '/unzipped');
+mkdir(textdir);
+scp_simple_get(hostname, sftpusername, sftppass, filename, localdir, remotepath);
+filename = strcat(localdir, '/', filename);
+unzip(filename, textdir);
+[~,basename,~]=fileparts(filename);
+textfilename=strcat(textdir, '/', basename, '.txt');
 
-% file = tempname;
-% fid = fopen(file,'w');
-% fwrite(fid,xml);
-% %fprintf(fid,xml);
-% fclose(fid);
-% collection_xml = xml2struct(file);
-% data = collection_xml.Children(2).Children.Data;
-file = tempname;
-fid = fopen(file,'w');
-fwrite(fid,data);
-%fprintf(fid,data);
-fclose(fid);
-
-collection = load_collection(file,'');
+collection = load_collection(textfilename, '');
