@@ -77,6 +77,8 @@ for i = 1:length(collections)
     zip(archivepath, file);
     url = sprintf('http://birg.cs.wright.edu/omics_analysis/spectra_collections.xml');
     scp_simple_put(hostname, sftpusername, sftppass, archivename, '/sftpjail', tmpdir, archivename);
+    chmod = strcat('chmod 777 /sftpjail/', archivename);
+    ssh2_simple_command(hostname, sftpusername, sftppass, chmod);
     if (exist('timeout','var'))
         if (~isnumeric(timeout))
             timeout = str2double(timeout);
