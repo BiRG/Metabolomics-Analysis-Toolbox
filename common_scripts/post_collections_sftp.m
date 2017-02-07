@@ -50,6 +50,8 @@ function post_collections_sftp(collections,analysis_id,username,password,timeout
 % Eric Moyer (July 2013) eric_moyer@yahoo.com
 %
 % Dan C. Wlodarski (April 2015) dan.wlodarski@gmail.com
+%
+% Daniel P. Foose (Jan/Feb 2017) dpfoose@gmail.com
 
 % Get the username and password from the user if not passed in as
 % parameters. Exit without posting if the user cancels the dialog
