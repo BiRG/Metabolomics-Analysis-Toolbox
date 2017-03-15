@@ -1,18 +1,21 @@
 %function [backgr, corrected] = raman_correction(y)
-function raman_correction(y)
+function [backgr, corrected] = raman_correction(y)
     
     scales = 1:1:70;
     wCoefs = zhang_cwt(y, scales);
     
     localMax = getLocalMaximumCWT(wCoefs, scales, 5, 0);
     
-    ridgeList = getRidge(localMax, ncol(localMax), -1, 1, 5, 3, 2);
+    ridgeList = getRidge(localMax, scales, size(localMax, 2), -1, 1, 5, 3, 2);
     
     %majorPeakInfo = identifyMajorPeaks(y, ridgeList, wCoefs, SNR.Th = 1, ridgeLength = 5);
     %peakWidth = widthEstimationCWT(y, majorPeakInfo);
     
     %backgr = baselineCorrectionCWT(y, peakWidth, lambda = 1000, differences = 1);
     %corrected = y - backgr;
+    
+    backgr = zeros(size(y));
+    corrected = zeros(size(y));
 end
 
 
@@ -120,5 +123,73 @@ function localMax = localMaximum(x, winSize)
     end
 end
 
-function abc = getRidge(localMax, iInit, step, iFinal, minWinSize, gapTh, skip)
+function ridgeList = getRidge(localMax, scales, iInit, step, iFinal, minWinSize, gapTh, skip)
+    
+    maxInd_curr = find(localMax(:, iInit) > 0);
+    nMz = size(localMax, 1);
+    
+    % Identify all the peak pathes from the coarse level to detail levels (high column to low column)
+	% Only consider the shortest path
+    if size(localMax, 2) > 1
+        colInd = (iInit+step):step:iFinal;
+    else
+        colInd = 1;
+    end
+    
+    ridgeList = maxInd_curr;
+    peakStatus = zeros(1, numel(maxInd_curr));
+    nLevel = numel(colInd);
+    
+    % orphanRidgeList keep the ridges disconnected at certain scale level
+    orphanRidgeList = [];
+	orphanRidgeName = [];
+    
+    for j = 1:nLevel
+        colj = colInd(j);
+		scalej = scales(colj);
+        
+        if colInd(j) == skip
+            %%%% TODO
+        end
+        
+        if numel(maxInd_curr) == 0
+            %%%% TODO
+        end
+        
+        % The slide window size is proportional to the CWT scale
+        winSizej = scalej * 2 + 1;
+        if winSizej < minWinSize
+            winSizej = minWinSize;
+        end
+        
+        selPeakj = [];
+        removej = [];
+        
+        for k = 1:numel(maxInd_curr)
+            indk = maxInd_curr(k);
+            if indk - winSizej < 1; startk = 1; else startk = indk - winSizej; end
+            if indk + winSizej > nMz; endk = nMz; else endk = indk + winSizej; end
+            indcurr = find(localMax(startk:endk, colj) > 0) + startk - 1;
+            
+            if numel(indcurr) == 0
+                %%%% TODO
+            else
+                peakStatus(k) = 0;
+                if numel(indcurr) >= 2
+                    [~, w] = min(abs(indcurr - indk));
+                    indcurr = indcurr(w);
+                end
+            end
+            
+            ridgeList(k) = [ridgelist(k), indcurr];
+            selPeakj = [selpeakj, indcurr];
+        end
+        
+        % Remove the disconnected lines from the currrent list
+        if numel(removej) > 0
+            %%%% TODO
+        end
+        
+        
+    end
 end
