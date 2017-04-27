@@ -1,26 +1,23 @@
-function plot_corrected()
+function plot_corrected(mode)
     
     spectrum_inx = getappdata(gcf,'spectrum_inx');
     collections = getappdata(gcf, 'collections');
     [x, Y] = combine_collections(collections);
     y = Y(:, spectrum_inx);
     
-%     save('raman_scripts/raman_in.mat', 'y');
-%     system('Rscript raman_scripts/adjustsignal.R raman_scripts/raman_in.mat raman_scripts/raman_out.mat');
-%     load('raman_scripts/raman_out.mat');
-%     delete('raman_scripts/raman_in.mat', 'raman_scripts/raman_out.mat');
+    if (strcmp(mode, 'zh'))
+        save('raman_scripts/raman_in.mat', 'y');
+        system('Rscript raman_scripts/adjustsignal.R raman_scripts/raman_in.mat raman_scripts/raman_out.mat > /dev/null 2>&1');
+        load('raman_scripts/raman_out.mat');
+        delete('raman_scripts/raman_in.mat', 'raman_scripts/raman_out.mat');
+        %[background, y_corrected] = raman_correction(y);
+    end
     
-    %[background, y_corrected] = raman_correction(y);
-    
-    background = rollingball(y);
-    background = spline(x, background, x(1:(0.05 / 0.0005):numel(x)))';
+    if (strcmp(mode, 'rb'))
+        background = rollingball(y);
+    end
     
     y_corrected = y - background;
-    
-%     ind = find(x > 3.5 & x < 4.5);
-%     xx = x(ind)';
-%     yy = y(ind);
-%     [background, y_corrected] = FreeIModPoly(yy, xx);
     
     hold on;
     plot(x,background,'b');
