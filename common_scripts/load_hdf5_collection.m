@@ -31,6 +31,7 @@ for i = 1:size(dataset_keys,2)
     key = dataset_keys{i};
     collection(:).(key) = h5read(path, ['/' key]);
 end
+collection(:).('num_samples') = size(collection.Y, 1);
 if isfield(collection, 'baseSampleId')
     collection(:).('base_sample_id') = collection.baseSampleId;
 end

@@ -16,10 +16,14 @@ if ~is_authenticated()
 end
 omics_weboptions = evalin('base', 'omics_weboptions');
 % file upload routes take multipart/form-data instead of JSON
-file = save_collection(tempdir, suffix, collection);
-fid = fopen(file, 'r');
+outdir = tempname;
+mkdir(outdir);
+filename = save_collection(outdir, suffix, collection);
+fid = fopen(filename, 'r');
 data = fread(fid);
 fclose(fid);
+% once data is read, we can delete the file
+rmdir(outdir)
 % matlab does not support multipart/form-data requests
 % so we sadly have to base64 encode the file and send it as text...
 req_body = struct('file', matlab.net.base64encode(data));
@@ -36,14 +40,14 @@ else
     end
     return;
 end
-if exist('analysis_id', 'var')
+if (exist('analysis_id', 'var') && analysis_id ~= -1)
     attach_url = sprintf('https://birg.cs.wright.edu/omics/api/analyses/attach/%d', analysis_id);
     attach_data = struct('collectionId', new_id);
     omics_weboptions.MediaType = 'application/json';
     attach_res = webwrite(attach_url, attach_data, omics_weboptions);
     message = [message ' ' attach_res.message '.'];
-    fprintf('Successfully posted collection %d and attached to analysis %d', new_id, analysis_id);
+    fprintf('Successfully posted collection %d and attached to analysis %d\n', new_id, analysis_id);
 else
-    fprintf('Successfully posted collection %d. Not attached to analysis.', new_id);
+    fprintf('Successfully posted collection %d. Not attached to analysis.\n', new_id);
 
 end
