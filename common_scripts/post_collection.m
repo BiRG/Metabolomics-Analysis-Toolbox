@@ -27,7 +27,7 @@ url = 'https://birg.cs.wright.edu/omics/api/collections/upload';
 res = webwrite(url, req_body, omics_weboptions);
 if isfield(res, 'id')
     new_id = res.id;
-    message = 'OK';
+    message = sprintf('Created collection %d.', new_id);
 else
     if isfield(res, 'message')
         message = res.message;
@@ -36,9 +36,14 @@ else
     end
     return;
 end
-attach_url = sprintf('https://birg.cs.wright.edu/analyses/attach/%d', analysis_id);
-attach_data = struct('collectionId', new_id);
-omics_weboptions.MediaType = 'application/json';
-attach_res = webwrite(attach_url, attach_data, omics_weboptions);
-message = [message ' ' attach_res.message];
-fprintf('Successfully posted collection %d and attached to analysis %d', new_id, analysis_id);
+if exist('analysis_id', 'var')
+    attach_url = sprintf('https://birg.cs.wright.edu/omics/api/analyses/attach/%d', analysis_id);
+    attach_data = struct('collectionId', new_id);
+    omics_weboptions.MediaType = 'application/json';
+    attach_res = webwrite(attach_url, attach_data, omics_weboptions);
+    message = [message ' ' attach_res.message '.'];
+    fprintf('Successfully posted collection %d and attached to analysis %d', new_id, analysis_id);
+else
+    fprintf('Successfully posted collection %d. Not attached to analysis.', new_id);
+
+end
