@@ -58,67 +58,19 @@ function file = save_collection(fname_or_output_dir,suffix_or_collection, collec
 %   Will save col to "/foo/bar/collection_1_test.txt" if col.collection_id
 %   is 1.
 
+% UPDATE:
+% Daniel Foose
+% Feb/Mar 2018
+% This is a wrapper for save_hdf5_collection to make it fit the old api.
+% the master branch contains the old version of this function
+
 if nargin == 3
     collection = collection_if_suffix;
     file = [fullfile(fname_or_output_dir,'collection_'), ...
-        num2str(collection.collection_id),suffix_or_collection,'.txt'];
+        num2str(collection.collection_id),suffix_or_collection,'.h5'];
 else
     collection = suffix_or_collection;
     file = fname_or_output_dir;
 end
 
-fid = fopen(file,'w');
-for i = 1:length(collection.input_names)
-    name = regexprep(collection.input_names{i},' ','_');
-    field_name = lower(name);
-    if i > 1
-        fprintf(fid,'\n');
-    end
-    fprintf(fid,collection.input_names{i});
-    if iscell(collection.(field_name))
-        for j = 1:length(collection.(field_name))
-            if ischar(collection.(field_name){j})
-                fprintf(fid,'\t%s',collection.(field_name){j});
-            elseif int8(collection.(field_name){j}) == collection.(field_name){j} % Integer
-                fprintf(fid,'\t%d',collection.(field_name){j});
-            else
-                fprintf(fid,'\t%f',collection.(field_name){j});
-            end
-        end
-    elseif ischar(collection.(field_name))
-        fprintf(fid,'\t%s',collection.(field_name));
-    elseif length(collection.(field_name)) > 1 % Array
-        for j = 1:length(collection.(field_name))
-            if ischar(collection.(field_name)(j))
-                fprintf(fid,'\t%s',collection.(field_name)(j));
-            elseif int32(collection.(field_name)(j)) == collection.(field_name)(j) % Integer
-                fprintf(fid,'\t%d',collection.(field_name)(j));
-            else
-                fprintf(fid,'\t%f',collection.(field_name)(j));
-            end
-        end
-    elseif int32(collection.(field_name)) == collection.(field_name) % Integer
-        fprintf(fid,'\t%d',collection.(field_name));
-    else
-        fprintf(fid,'\t%f',collection.(field_name));
-    end
-end
-fprintf(fid,'\nX');
-for i = 1:collection.num_samples
-    fprintf(fid,'\tY%d',i);
-end
-for j = 1:length(collection.x)
-    if iscell(collection.x)
-        if isfloat(collection.x{j})
-            fprintf(fid,'\n%f',collection.x{j});
-        else
-            fprintf(fid,'\n%s',collection.x{j});
-        end
-    else
-        fprintf(fid,'\n%f',collection.x(j));
-    end
-    for i = 1:collection.num_samples
-        fprintf(fid,'\t%f',collection.Y(j,i));
-    end
-end
-fclose(fid);
+save_hdf5_collection(collection, file);
