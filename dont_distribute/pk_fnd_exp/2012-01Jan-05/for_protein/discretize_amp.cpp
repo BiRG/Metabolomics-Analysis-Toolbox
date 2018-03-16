@@ -1,1 +1,0 @@
-../discretize_amp.cpp
