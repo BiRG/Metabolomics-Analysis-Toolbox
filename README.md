@@ -9,7 +9,7 @@ Run startup.m before running any other scripts.
 
 Deployment practices:
 ---------------------
-Releases are done as snapshots of the master or omics-dashboard branch
+Releases are done as snapshots of the `master` or `omics-dashboard` branch
 
 Release names should include the data in ISO Format (YYYYMMDD) and the branch from which the release is derived.
 
