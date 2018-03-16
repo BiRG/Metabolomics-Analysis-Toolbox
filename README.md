@@ -3,7 +3,7 @@ Metabolomics Analysis Toolbox
 This is designed for use with the old omics_analysis app.
 Before using any of the code run startup.m in the omics_analysis directory.
 
-Used:
+Use:
 -----
 Run startup.m before running any other scripts.
 
