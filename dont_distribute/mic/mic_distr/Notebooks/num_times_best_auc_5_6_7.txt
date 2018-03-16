@@ -1,5 +1,0 @@
-    746 .b001.roc.tsv
-    137 .b002.roc.tsv
-    341 .b003.roc.tsv
-     99 .b004.roc.tsv
-     81 .b006.roc.tsv
