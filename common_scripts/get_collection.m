@@ -43,3 +43,4 @@ url = sprintf('https://birg.cs.wright.edu/omics/api/collections/download/%d', co
 h5_filename = sprintf('%s%d.h5', tempdir, collection_id);
 h5_filename = websave(h5_filename, url, omics_weboptions);
 collection = load_hdf5_collection(h5_filename);
+collection.x = collection.x'; % x is row vector here, but column vector on site

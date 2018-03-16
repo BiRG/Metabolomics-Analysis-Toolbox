@@ -38,7 +38,9 @@ omics_weboptions = evalin('base', 'omics_weboptions');
 % file upload routes take multipart/form-data instead of JSON
 outdir = tempname;
 mkdir(outdir);
+collection.x = collection.x'; % row vector here, column vector on site
 filename = save_collection(outdir, suffix, collection);
+collection.x = collection.x'; % convert back to row vector
 fid = fopen(filename, 'r');
 data = fread(fid);
 fclose(fid);
