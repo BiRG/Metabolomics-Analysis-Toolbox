@@ -1,4 +1,5 @@
 function [message, new_id] = post_collection(collection, suffix, analysis_id, email, password)
+% Upload a collection structure as an HDF5 file to Omics Dashboard
 if ~exist('suffix', 'var')
     suffix = '';
 end
@@ -23,6 +24,16 @@ end
 if ~isfield(collection, 'userGroup')
     collection.('userGroup') = '-1';
 end
+if ~isfield(collection, 'name')
+    if isfield(collection, 'description')
+        collection.('name') = collection.description;
+    else
+        collection.('name') = 'No Name Provided';
+    end
+end
+if ~isfield(collection, 'description')
+    collection.('description') = 'No description provided';
+end
 omics_weboptions = evalin('base', 'omics_weboptions');
 % file upload routes take multipart/form-data instead of JSON
 outdir = tempname;
@@ -32,7 +43,11 @@ fid = fopen(filename, 'r');
 data = fread(fid);
 fclose(fid);
 % once data is read, we can delete the file
-rmdir(outdir)
+try
+    rmdir(outdir)
+catch
+    fprintf('No directories were removed\n');
+end
 % matlab does not support multipart/form-data requests
 % so we sadly have to base64 encode the file and send it as text...
 req_body = struct('file', matlab.net.base64encode(data));

@@ -14,12 +14,18 @@ for i = 1:size(keys,1)
     key = keys{i};
     value = collection.(key);
     if ~size(find(ismember(key, protected_keys),1))
-        if isnumeric(collection.(key))
+        if isnumeric(value)
             h5create(path, ['/' key], size(value))
             h5write(path, ['/' key], value);
+        elseif iscell(value)
+            write_cell_array(path, key, value);
         else
-            if ~strcmp(value, '')
-                h5writeatt(path, '/', key, value);
+            try
+                if ~strcmp(value, '')
+                    h5writeatt(path, '/', key, value);
+                end
+            catch error
+                fprintf('Could not write %s: %s', key, error.identifier);
             end
         end
     end
