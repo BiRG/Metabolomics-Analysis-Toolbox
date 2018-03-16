@@ -21,7 +21,7 @@ Programs
 | ---- | --------- |
 |opls/main | Orthogonal Projection on Latent Structures|
 |pca/main | Orthogonal Projection on Latent Structures|
-|fix_spectra/fix_spectra - Baseline correction, alignment to reference, and zero regions|
+|fix_spectra/fix_spectra | Baseline correction, alignment to reference, and zero regions|
 |bin/main | Bin based quantification/deconvolution designed around dynamic adaptive binning|
 |visualization/visualize_collections/main |Flexible spectral viewer|
 
