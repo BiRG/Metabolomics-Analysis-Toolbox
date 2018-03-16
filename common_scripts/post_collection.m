@@ -14,6 +14,15 @@ if ~is_authenticated()
         return;
     end   
 end
+if ~isfield(collection, 'groupPermissions')
+    collection.('groupPermissions') = 'full';
+end
+if ~isfield(collection, 'allPermissions')
+    collection.('allPermissions') = 'readonly';
+end
+if ~isfield(collection, 'userGroup')
+    collection.('userGroup') = '-1';
+end
 omics_weboptions = evalin('base', 'omics_weboptions');
 % file upload routes take multipart/form-data instead of JSON
 outdir = tempname;
