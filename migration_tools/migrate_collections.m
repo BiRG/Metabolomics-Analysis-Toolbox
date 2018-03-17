@@ -7,4 +7,3 @@ for i = 1:length(collections)
 end
 post_collections('', collections);
 end
-
