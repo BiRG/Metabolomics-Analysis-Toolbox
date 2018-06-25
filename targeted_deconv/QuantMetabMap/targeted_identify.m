@@ -1278,33 +1278,6 @@ else
         clear('collection','metab_map','peaks','identifications');
         
         
-        if ~exist('./dont_send_emails.foobarbaz','file')
-            % Send the email
-            fraction_done = 0.1;
-            waitbar(fraction_done, wait_bar_handle, ['Final processing: ' ...
-                'Sending identifications to BIRG']);
-            if am_connected_to_internet
-                dir_info = dir(zip_name);
-                if dir_info.bytes < 20*1024*1024 %20 MB attachment limit
-                    send_email_from_birg_autobug('eric_moyer@yahoo.com', ...
-                        ['Spectrum Identifications from ' get_username ' on ' ...
-                        datestr(clock)], ...
-                        'The identifications are in the attachment', ...
-                        {zip_name} ...
-                    );
-                    delete(zip_name);
-                else
-                    uiwait(msgbox(['Could not automatically send large data file.  ', ...
-                        'Please e-mail the file "' zip_name ...
-                        '" to eric_moyer@yahoo.com.  Thank you.']));
-                end
-            else
-                uiwait(msgbox(['You are not connected to the Internet.  ', ...
-                    'Please e-mail the file "' zip_name ...
-                    '" to eric_moyer@yahoo.com.  Thank you.']));
-            end
-        end
-        
         % -----------------------------------------------------------------
         % Finish any pending deconvolutions and store the data
         % -----------------------------------------------------------------
