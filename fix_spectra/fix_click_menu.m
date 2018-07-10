@@ -33,14 +33,14 @@ function fix_click_menu(hObject, eventdata, handles) %#ok<INUSD>
 %
 % Dan Homer ????
 %
-% Paul Anderson ????
+% % Paul Anderson ????
 %
 % Eric Moyer 2011-2012 (eric_moyer@yahoo.com)
 
 str = {'Get collection(s)','Load collections', ...
 ...%'','Set noise regions', ...
 	'','Load regions','Create signal map','Create new region', ...
-       'Edit region','Delete region','Clear regions','Fix baseline', 'Fix baseline (rolling ball)', ...
+       'Edit region','Delete region','Clear regions','Fix baseline', 'Rolling ball baseline', 'Fix negative points to 0', ...
     '','Crop','Set reference','Normalize to reference','Zero regions', 'Sum normalize','Normalize to weight',...     
     '','Save regions','Finalize','Save collections', ...
        'Merge processing logs','Merge locally' ...
@@ -116,8 +116,10 @@ elseif strcmp(str{s},'Set noise regions')
     set_noise_regions;
 elseif strcmp(str{s},'Fix baseline')
     fix_baseline
-elseif strcmp(str{s}, 'Fix baseline (rolling ball)')
-    fix_rb_baseline
+elseif strcmp(str{s},'Rolling ball baseline')
+    fix_rolling_ball_baseline
+elseif strcmp(str{s},'Fix negative points to 0')
+    fix_negative_points
 elseif strcmp(str{s},'Edit region')
     set_edit
 elseif strcmp(str{s},'Create new region')
