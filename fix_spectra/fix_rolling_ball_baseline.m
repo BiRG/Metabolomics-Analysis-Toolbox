@@ -3,7 +3,11 @@ function fix_rolling_ball_baseline
 %   Detailed explanation goes here
 prompt={'Enter min/max window:', 'Enter smoothing window:'};
 name='Rolling ball';
-answer = inputdlg(prompt, name, [1, 35], {'55', '35'});
+rbparams = getappdata(gcf, 'rbparams');
+if size(rbparams, 2) ~= 2
+    rbparams = {'21', '13'};
+answer = inputdlg(prompt, name, [1, 35], rbparams);
+setappdata(gcf, 'rbparams', answer);
 
 if(isempty(answer))
     return
@@ -11,7 +15,6 @@ end
 
 wm = str2double(answer{1});
 ws = str2double(answer{2});
-
 collections = getappdata(gcf,'collections');
 for c = 1:length(collections)
     for s = 1:collections{c}.num_samples
