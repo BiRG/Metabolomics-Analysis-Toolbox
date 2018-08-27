@@ -376,7 +376,7 @@ if ~isempty(raw_metab)
     handles.metabolites = sort_metabmap_by_name_then_ppm(handles.metabolites);
     handles.yes_mask = zeros(1,length(handles.metabolites));
     handles.sample_types = sample_types(handles.metabolites);
-    set(handles.filter_sample_type_popup,'String',[{'All Sample Types'} handles.sample_types]);
+    set(handles.filter_sample_type_popup,'String',[{'All Sample Types'} handles.sample_types']);
     refresh_both_lists(handles);
 
     guidata(handles.figure1, handles);
