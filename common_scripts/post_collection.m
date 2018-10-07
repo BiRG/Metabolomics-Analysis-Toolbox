@@ -66,7 +66,7 @@ else
     end
     return;
 end
-if (exist('analysis_id', 'var') && analysis_id ~= -1)
+if (exist('analysis_id', 'var') && analysis_id ~= -1 && ~isnan(analysis_id))
     attach_url = sprintf('https://birg.cs.wright.edu/omics/api/analyses/attach/%d', analysis_id);
     attach_data = struct('collectionId', new_id);
     omics_weboptions.MediaType = 'application/json';
