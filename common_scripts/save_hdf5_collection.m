@@ -13,19 +13,20 @@ protected_keys = {'owner', 'num_samples', 'createdBy', 'processing_log', 'collec
 for i = 1:size(keys,1)
     key = keys{i};
     value = collection.(key);
-    if key ~= 'x'
-        value = value';
-    end
     if ~size(find(ismember(key, protected_keys),1))
         if isnumeric(value) && sum(size(value)) ~= 2
-            h5create(path, ['/' key], size(value))
-            h5write(path, ['/' key], value);
+            h5create(path, ['/' key], size(value')) % some weird hdf5 row vs. column stuff
+            h5write(path, ['/' key], value');
         elseif iscell(value)
             write_cell_array(path, key, value);
         else
             try
                 if ~strcmp(value, '')
-                    h5writeatt(path, '/', key, value');
+                    value_size = size(value);
+                    if value_size(1) == max(value_size)
+                        value = value';
+                    end
+                    h5writeatt(path, '/', key, value);
                 end
             catch error
                 fprintf('Could not write %s: %s', key, error.identifier);

@@ -48,7 +48,7 @@ try
         return;
     end
     if urlstatus == 0
-        error('urlread failed with status 0: %s',url); %#ok<SPERR>
+        error('urlread failed with status 0: %s',url);
     end
 catch ME
     disp(urlstatus);

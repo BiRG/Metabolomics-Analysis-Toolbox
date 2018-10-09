@@ -22,7 +22,7 @@ if ~isfield(collection, 'allPermissions')
     collection.('allPermissions') = 'readonly';
 end
 if ~isfield(collection, 'userGroup')
-    collection.('userGroup') = '-1';
+    collection.('userGroup') = -1;
 end
 if ~isfield(collection, 'name')
     if isfield(collection, 'description')
@@ -38,9 +38,8 @@ omics_weboptions = evalin('base', 'omics_weboptions');
 % file upload routes take multipart/form-data instead of JSON
 outdir = tempname;
 mkdir(outdir);
-collection.x = collection.x'; % row vector here, column vector on site
+collection = convert_to_new_format(collection);
 filename = save_collection(outdir, suffix, collection);
-collection.x = collection.x'; % convert back to row vector
 fid = fopen(filename, 'r');
 data = fread(fid);
 fclose(fid);
