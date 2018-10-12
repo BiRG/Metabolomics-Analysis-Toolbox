@@ -102,7 +102,7 @@ Cursors=getappdata(main_h,'VerticalCursors');
 if is_integer(regions_cursors(region_inx,1))
     left = GetCursorLocation(main_h,regions_cursors(region_inx,1));
     left_handle = Cursors{regions_cursors(region_inx,1)}.Handles(1);
-    extra_left_handle = Cursors{regions_cursors(region_inx,1)}.Handles(2);
+    extra_left_handle = Cursors{regions_cursors(region_inx,1)}.Handles(1);
 else
     left = get(regions_cursors(region_inx,1),'xdata');
     left = left(1);
@@ -113,7 +113,7 @@ end
 if is_integer(regions_cursors(region_inx,2))
     right = GetCursorLocation(main_h,regions_cursors(region_inx,2));
     right_handle = Cursors{regions_cursors(region_inx,2)}.Handles(1);
-    extra_right_handle = Cursors{regions_cursors(region_inx,2)}.Handles(2);
+    extra_right_handle = Cursors{regions_cursors(region_inx,2)}.Handles(1);
 else
     right = get(regions_cursors(region_inx,2),'xdata');
     right = right(1);
