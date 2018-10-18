@@ -25,13 +25,14 @@ for i = 1:size(attr_keys)
     collection(:).(key) = value;
     collection(:).(key) = collection(:).(key);
 end
-collection(:).('input_names') = [attr_keys' 'collection_id'];
-collection(:).('formatted_input_names') = collection.input_names;
+
 dataset_keys = {file_info.Datasets.Name};
 for i = 1:size(dataset_keys,2)
     key = dataset_keys{i};
     collection(:).(key) = h5read(path, ['/' key]);
 end
+collection(:).('input_names') = [attr_keys' 'collection_id' dataset_keys];
+collection(:).('formatted_input_names') = collection.input_names;
 Y_size = size(collection.Y);
 collection(:).('num_samples') = Y_size(Y_size~=max(size(collection.x)));
 if isfield(collection, 'baseSampleId')
