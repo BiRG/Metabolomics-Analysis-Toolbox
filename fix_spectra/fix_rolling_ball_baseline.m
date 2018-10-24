@@ -7,6 +7,7 @@ name='Rolling ball';
 rbparams = getappdata(gcf, 'rbparams');
 if size(rbparams, 2) ~= 2
     rbparams = {'21', '13'};
+end
 answer = inputdlg(prompt, name, [1, 35], rbparams);
 setappdata(gcf, 'rbparams', answer');
 
