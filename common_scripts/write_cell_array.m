@@ -8,6 +8,12 @@ function write_cell_array(filename, path, value)
 %   H/T to Jason Kaeding: https://www.mathworks.com/matlabcentral/fileexchange/24091-hdf5-read-write-cellstr-example
 
 %
+for idx = 1:numel(value)
+    if (iscell(value(idx)) && numel(value(idx)) > 1)
+        disp('Not writing nested cell array');
+        return
+    end
+end
 if exist(filename, 'file')
     fid = H5F.open(filename ,'H5F_ACC_RDWR', 'H5P_DEFAULT');
 else
