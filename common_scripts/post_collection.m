@@ -66,6 +66,9 @@ else
     return;
 end
 if (exist('analysis_id', 'var') && analysis_id ~= -1 && ~isnan(analysis_id))
+    if ~isnumeric(analysis_id)
+        analysis_id = str2double(analysis_id);
+    end
     attach_url = sprintf('https://birg.cs.wright.edu/omics/api/analyses/attach/%d', analysis_id);
     attach_data = struct('collectionId', new_id);
     omics_weboptions.MediaType = 'application/json';
