@@ -6,7 +6,7 @@ c = getappdata(gcf,'collection_inx');
 s = getappdata(gcf,'spectrum_inx');
 
 add = 0;
-if sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
+if isfield(collections{c}, 'Y_fixed') && sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
     add = 0.7;
 end
 legend_cell = {'Original'};
@@ -17,7 +17,7 @@ myfunc = @(hObject, eventdata, handles) (line_click_info(collections{c},s));
 set(yh,'ButtonDownFcn',myfunc);
 setappdata(gcf,'yh',yh);
 
-if sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
+if isfield(collections{c}, 'Y_fixed') && sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
     legend_cell{end+1} = getappdata(gcf,'add_processing_log');
     if length(legend_cell{end}) > 30
         legend_cell{end} = strtrim(legend_cell{end}(1:30));
