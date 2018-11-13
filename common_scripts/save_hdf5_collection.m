@@ -6,9 +6,6 @@ function save_hdf5_collection(collection, path)
 if exist(path, 'file')==2
   delete(path);
 end
-if ~isnumeric(analysis_id)
-    analysis_id = str2double(analysis_id);
-end
 fid = H5F.create(path);
 H5F.close(fid);
 keys = fieldnames(collection);
