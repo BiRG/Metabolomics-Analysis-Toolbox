@@ -21,5 +21,5 @@ end
 
 collections{length(h5_filenames)} = [];
 for i = 1:length(h5_filenames)
-    collections{i} = load_hdf5_collection([h5_pathnames{i} h5_filenames{i}]);
+    collections{i} = convert_to_old_format(load_hdf5_collection([h5_pathnames{i} h5_filenames{i}]));
 end
