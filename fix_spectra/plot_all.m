@@ -6,7 +6,7 @@ c = getappdata(gcf,'collection_inx');
 s = getappdata(gcf,'spectrum_inx');
 
 add = 0;
-if isfield(collections{c}, 'Y_fixed') && sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
+if isfield(collections{c}, 'Y_fixed') && sum(sum(abs(collections{c}.Y_fixed))) > 0 % Fixed answer available
     add = 0.7;
 end
 legend_cell = {'Original'};
@@ -33,7 +33,7 @@ if isfield(collections{c}, 'Y_fixed') && sum(abs(collections{c}.Y_fixed(:,s))) >
     setappdata(gcf,'yh_fixed',yh_fixed);
     myfunc = @(hObject, eventdata, handles) (line_click_info(collections{c},s));
     set(yh_fixed,'ButtonDownFcn',myfunc);
-    if sum(abs(collections{c}.Y_baseline(:,s))) > 0 % Baseline available
+    if isfield(collections{c}, 'Y_baseline') && sum(abs(collections{c}.Y_baseline(:,s))) > 0 % Baseline available
         legend_cell{end+1} = 'Baseline';
         yh_baseline = line(collections{c}.x,collections{c}.Y_baseline(:,s),'Color','b');
         hs(end+1) = yh_baseline;
