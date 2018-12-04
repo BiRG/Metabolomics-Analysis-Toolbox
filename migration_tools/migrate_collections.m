@@ -8,5 +8,5 @@ for i = 1:length(collections)
     collections{i}.('groupPermissions') = 'full';
     collections{i}.('allPermissions') = 'readonly';
 end
-post_collections('', collections);
+post_collections(collections);
 end

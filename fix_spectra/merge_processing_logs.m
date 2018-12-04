@@ -69,7 +69,7 @@ xml = '';
         end
         collection.processing_log = new_log;
         
-        post_collections(gcf,{collection},'combine_collections',analysis_id,username,password);
+        post_collections({collection},'combine_collections',analysis_id,username,password);
     end
     close(wait_h);
 % catch ME
