@@ -129,6 +129,7 @@ function handles = set_use_spectrum(handles, use_spectrum)
 handles.use_spectrum = use_spectrum;
 handles.ref_spectrum = median_spectrum(handles.binned_spectra, use_spectrum);
 handles.binned_spectra = set_quotients_field(handles.binned_spectra, handles.ref_spectrum);
+handles.('use_bin') = ~sum(isnan(handles.binned_spectra{1}.quotients), 2);
 
 
 function update_ui(handles)
@@ -176,9 +177,8 @@ end
 skew_bin_centers = (skew_bin_edges(1:end-1)+skew_bin_edges(2:end))/2;
 
 % Count the number of spectra in each bin
-axes_handle = findobj('Tag', 'skewness_histogram_axes');
-[skew_bin_counts, bin_for_spectrum]=histc(skewnesses, skew_bin_edges);
-hist_handle = bar(axes_handle, skew_bin_centers, skew_bin_counts(1:end-1)); 
+[skew_bin_counts, ~]=histc(skewnesses, skew_bin_edges);
+bar(handles.skewness_histogram_axes, skew_bin_centers, skew_bin_counts(1:end-1)); 
 xlabel(handles.skewness_histogram_axes, 'Quartile Skewness of Quotient Distribution');
 ylabel(handles.skewness_histogram_axes, 'Number of Spectra');
 
