@@ -97,9 +97,6 @@ if(bin_width == 0)
     return;
 elseif (bin_width < 0)
     error('uniform_bin_collection:neg_binwidth','Bin width passed to uniform_bin_collection cannot be negative');
-elseif (bin_width <= min(diff(collection.x)))
-    error('uniform_bin_collection:narrow_binwidth','Bin width passed to uniform_bin_collection is smaller than smallest distance between two absicssa points');
-
 end
 
 % Calculate the centers of the new bins - these will be the new x-values

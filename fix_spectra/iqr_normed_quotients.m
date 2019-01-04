@@ -97,8 +97,7 @@ if ~exist('only_subtract_ok', 'var')
 end
 
 if ~exist('use_row', 'var')
-    % use_row = true(size(quotients,1),1);
-    use_row = ~sum(isnan(quotients), 2);
+    use_row = true(size(quotients,1),1);
 end
 
 

@@ -347,7 +347,7 @@ elseif strcmp(str{s},'Prob Quot Norm''n')
     
     % Prepare the data for quotient normalization
     bin_width = inputdlg('Bin width (0 for no binning)', ...
-        'Probabilistic Quotient Normalization', 1, {'0.4'});
+        'Probabilistic Quotient Normalization', 1, {'0.04'});
     if isempty(bin_width); return; end
     bin_width = str2double(bin_width);
     if isnan(bin_width); return; end
