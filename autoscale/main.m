@@ -408,7 +408,7 @@ new_collection = scale(handles,handles.collection,type);
 
 
 new_collection.processing_log = [new_collection.processing_log,' ',description,'.'];
-post_collections(gcf,{new_collection},['_',pretty_file_name],analysis_id);
+post_collections({new_collection},['_',pretty_file_name],analysis_id);
 
 % --- Executes on button press in save_figure_pushbutton.
 function save_figure_pushbutton_Callback(hObject, eventdata, handles)

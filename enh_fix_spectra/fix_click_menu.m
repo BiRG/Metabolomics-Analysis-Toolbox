@@ -252,13 +252,7 @@ elseif strcmp(str{s},'Save collections')
 elseif strcmp(str{s},'Post collections')
     collections = getappdata(gcf,'collections');
     suffix = getappdata(gcf,'suffix');
-    prompt={'Analysis ID:'};
-    name='Enter analysis ID from the website';
-    numlines=1;
-    defaultanswer={''};
-    answer=inputdlg(prompt,name,numlines,defaultanswer);
-    analysis_id = str2double(answer{1});
-    post_collections(gcf,collections,suffix,analysis_id);
+    post_collections(collections,suffix);
 elseif strcmp(str{s},'Set zoom x distance')
     prompt={'x distance:'};
     name='Set zoom x distance';

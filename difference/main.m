@@ -328,4 +328,4 @@ analysis_id = answer{1};
 
 new_collection = handles.new_collection;
 new_collection.processing_log = [new_collection.processing_log,' Difference.'];
-post_collections(gcf,{new_collection},'_difference',analysis_id);
+post_collections({new_collection},'_difference',analysis_id);

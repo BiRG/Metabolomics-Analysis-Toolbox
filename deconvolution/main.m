@@ -905,7 +905,7 @@ defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};        
 collection = quantify(collection,reference);
-post_collections(gcf,{collection},'_deconvolution',analysis_id);  
+post_collections({collection},'_deconvolution',analysis_id);  
 
 
 function search_width_edit_Callback(hObject, eventdata, handles)

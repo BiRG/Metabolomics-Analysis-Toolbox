@@ -1,4 +1,4 @@
-function post_collections(~,collections,suffix,analysis_id,email,password,timeout)
+function post_collections(collections,suffix,analysis_id,email,password)
 % Ask for user information then post the given collections to the BIRG server
 %
 % Usage: post_collections(main_h,collections,suffix,analysis_id,username,password)
