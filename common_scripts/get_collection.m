@@ -39,8 +39,8 @@ if ~exist('collection_id','var') || isempty(collection_id)
         return;
     end
 end
-download_url = sprintf('http://birg.cs.wright.edu/omics/api/collections/download/%d', collection_id);
-info_url = sprintf('http://birg.cs.wright.edu/omics/api/collections/%d', collection_id);
+download_url = sprintf('https://birg.cs.wright.edu/omics/api/collections/download/%d', collection_id);
+info_url = sprintf('https://birg.cs.wright.edu/omics/api/collections/%d', collection_id);
 
 h5_filename = sprintf('%s%d.h5', tempdir, collection_id);
 % TODO: get name from server and insert into file
