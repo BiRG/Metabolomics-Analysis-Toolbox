@@ -14,8 +14,12 @@ if isfield(file_info, 'processingLog')
 else
     collection(:).('processing_log') = ' ';
 end
-attr_values = {file_info.Attributes.Value}';
-attr_keys = {file_info.Attributes.Name}';
+attr_values = {};
+attr_keys = {};
+if size(file_info.Attributes) 
+    attr_values = {file_info.Attributes.Value}';
+    attr_keys = {file_info.Attributes.Name}';
+end
 for i = 1:size(attr_keys)
     value = attr_values{i};
     key = attr_keys{i};

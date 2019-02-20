@@ -39,9 +39,14 @@ if ~exist('collection_id','var') || isempty(collection_id)
         return;
     end
 end
-url = sprintf('https://birg.cs.wright.edu/omics/api/collections/download/%d', collection_id);
+download_url = sprintf('http://birg.cs.wright.edu/omics/api/collections/download/%d', collection_id);
+info_url = sprintf('http://birg.cs.wright.edu/omics/api/collections/%d', collection_id);
+
 h5_filename = sprintf('%s%d.h5', tempdir, collection_id);
-h5_filename = websave(h5_filename, url, omics_weboptions);
+% TODO: get name from server and insert into file
+h5_filename = websave(h5_filename, download_url, omics_weboptions);
+info_response = webread(info_url, omics_weboptions);
 collection = load_hdf5_collection(h5_filename);
 collection = convert_to_old_format(collection);
+collection.('name') = info_response.name;
 end
