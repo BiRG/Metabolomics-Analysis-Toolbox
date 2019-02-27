@@ -164,11 +164,12 @@ elseif strcmp(str{s},'Crop')
     for c = 1:length(collections)
         xminimum = str2double(inputdlg(['Collection ' num2str(c) ': Remove Xs less than?'], 'Crop', 1, {num2str(min(collections{c}.x))}));
         xmaximum = str2double(inputdlg(['Collection ' num2str(c) ': Remove Xs greater than?'], 'Crop', 1, {num2str(max(collections{c}.x))}));
-		if isempty(xminimum); xminimum = min(collections{c}.x); end;
-		if isempty(xmaximum); xmaximum = max(collections{c}.x); end;
+		if isempty(xminimum); xminimum = min(collections{c}.x); end
+		if isempty(xmaximum); xmaximum = max(collections{c}.x); end
         inds = find(round(collections{c}.x * 10000) / 10000 >= xminimum & round(collections{c}.x * 10000) / 10000 <= xmaximum);
         collections{c}.x = collections{c}.x(inds);
         collections{c}.Y = collections{c}.Y(inds, :);
+        collections{c}.processingLog = sprintf("%s Cropped to [%d, %d].", collections{c}.processingLog, xminimum, xmaximum);
     end
     setappdata(gcf,'collections',collections);
     plot_all;
