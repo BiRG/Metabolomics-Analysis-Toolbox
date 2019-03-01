@@ -41,7 +41,8 @@ str = {'Get collection(s)','Load collections', ...
 ...%'','Set noise regions', ...
 	'','Load regions','Create signal map','Create new region', ...
        'Edit region','Delete region','Clear regions','Fix baseline', 'Rolling ball baseline', 'Fix negative points to 0', ...
-    '','Crop','Set reference','Normalize to reference','Zero regions', 'Sum normalize','Normalize to weight',...     
+    '','Crop','Set reference','Normalize to reference','Zero regions', 'Sum normalize','Normalize to weight',...
+    '','Merge collections','Merge processing logs','Merge locally', 'Join collections', ...
     '','Save regions','Finalize','Save collections', ...
        'Merge collections','Merge processing logs','Merge locally' ...
        'Post collections','Save figures','Save images', ...
@@ -292,6 +293,27 @@ elseif strcmp(str{s},'Merge collections')
     msgbox('Finished merging collections');
 elseif strcmp(str{s},'Merge locally')
     local_merge;
+elseif strcmp(str{s}, 'Join collections')
+    % Set pointer to wait cursor
+    old_pointer=get(gcf, 'Pointer');
+    set(gcf, 'Pointer', 'watch');
+    loaded_collections = getappdata(gcf,'collections');
+    collections = {join_collections(loaded_collections)};
+
+    % Set the pointer back to what it was
+    set(gcf, 'Pointer', old_pointer);
+ 
+    % Check for error
+    if isempty(collections)
+        return
+    end
+    
+    setappdata(gcf,'spectrum_inx',0);
+    setappdata(gcf,'collection_inx',1);
+    setappdata(gcf,'collections',collections);
+    plot_next_spectrum;
+    setappdata(gcf,'orig_ylim',get(gca,'ylim'));
+    msgbox('Finished joining collections');
 elseif strcmp(str{s},'Post collections')
     collections = getappdata(gcf,'collections');
     suffix = getappdata(gcf,'suffix');
