@@ -112,7 +112,7 @@ try
     
     clear_all(hObject,handles);
     
-    set(handles.description_text,'String',handles.collection.description);
+    set(handles.description_text,'String',handles.collection.name);
     
     populate_listboxes(handles);
 
@@ -736,7 +736,7 @@ try
     
     clear_all(hObject,handles);
     
-    set(handles.description_text,'String',handles.collection.description);
+    set(handles.description_text,'String',handles.collection.name);
     
     populate_listboxes(handles);
 

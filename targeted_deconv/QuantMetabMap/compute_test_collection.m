@@ -194,6 +194,7 @@ collection.collection_id = '-101';
 collection.type = 'SpectraCollection';
 collection.description = ['Artificially generated spectrum ' ...
     'collection for testing targeted deconvolution'];
+collection.name = collection.description;
 collection.processing_log = 'Generated.';
 
 % Calculate the Y values
