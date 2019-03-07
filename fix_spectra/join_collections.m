@@ -169,7 +169,7 @@ function new_collection = join_collections(collections, ...
     positive_collection.x = horzcat(negative_collection.x, positive_collection.x);
     join_label_desc = strjoin(join_label, ',');
     positive_collection.name = sprintf('Collection %s join Collection %s on (%s)', positive_collection.collection_id, negative_collection.collection_id, join_label_desc);
-    positive_collection.processingLog = sprintf('%s Joined Collection %s and Collection %s on (%s).', positive_collection.processingLog, positive_collection.collection_id, negative_collection.collection_id, join_label_desc);
+    positive_collection.processing_log = sprintf('%s Joined Collection %s and Collection %s on (%s).', positive_collection.processing_log, positive_collection.collection_id, negative_collection.collection_id, join_label_desc);
     % remove the label, keep join labels
     new_collection = rmfield(positive_collection, pos_label);
     new_collection.(sprintf('positive_%s', pos_label)) = pos_value;

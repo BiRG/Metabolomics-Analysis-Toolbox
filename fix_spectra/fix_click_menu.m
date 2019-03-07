@@ -170,7 +170,7 @@ elseif strcmp(str{s},'Crop')
         inds = find(round(collections{c}.x * 10000) / 10000 >= xminimum & round(collections{c}.x * 10000) / 10000 <= xmaximum);
         collections{c}.x = collections{c}.x(inds);
         collections{c}.Y = collections{c}.Y(inds, :);
-        collections{c}.processingLog = sprintf("%s Cropped to [%d, %d].", collections{c}.processingLog, xminimum, xmaximum);
+        collections{c}.processing_log = sprintf("%s Cropped to [%d, %d].", collections{c}.processing_log, xminimum, xmaximum);
     end
     setappdata(gcf,'collections',collections);
     plot_all;

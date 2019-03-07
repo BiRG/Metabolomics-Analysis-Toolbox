@@ -7,9 +7,9 @@ collection(:).('collection_id') = basename;
 if isfield(file_info, 'processingLog')
     log = file_info.processingLog;
     if iscell(log)
-        collection(:).('processing_log') = cell2mat(file_info.processingLog);
+        collection(:).('processing_log') = cell2mat(log);
     else
-        collection(:).('processing_log') = file_info.processingLog;
+        collection(:).('processing_log') = log;
     end
 else
     collection(:).('processing_log') = ' ';

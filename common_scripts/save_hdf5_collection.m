@@ -9,7 +9,7 @@ end
 fid = H5F.create(path);
 H5F.close(fid);
 keys = fieldnames(collection);
-protected_keys = {'owner', 'num_samples', 'createdBy', 'processing_log', 'collection_id', 'input_names', 'formatted_input_names', 'base_sample_id', 'filename'};
+protected_keys = {'owner', 'num_samples', 'createdBy', 'collection_id', 'input_names', 'formatted_input_names', 'base_sample_id', 'filename'};
 collection.description = collection.processing_log;
 for i = 1:size(keys,1)
     key = keys{i};
@@ -35,5 +35,4 @@ for i = 1:size(keys,1)
         end
     end
 end
-h5writeatt(path, '/', 'processingLog', collection.('processing_log'));
 end
