@@ -18,13 +18,9 @@ end
 
 
 for c = 1:length(collections)
+    noise_min = get_noise_min(collections{c}.x, collections{c}.Y_fixed, noise_xval);
     for s = 1:collections{c}.num_samples
-        if ~isempty(noise_xval)
-            noise_min = get_noise_min(collections{c}.Y_fixed(:,s), collections{c}.x, noise_xval);
-        else
-            noise_min = 0;
-        end
-        inds = collections{c}.Y_fixed(:,s) < noise_min;
+        inds = collections{c}.Y_fixed(:,s) < noise_min(s);
         collections{c}.Y_fixed(inds,s) = 0;
         collections{c}.Y_baseline(inds,s) = collections{c}.Y(inds,s) - collections{c}.Y_fixed(inds,s);
     end
@@ -35,5 +31,5 @@ end
 
 function noise_min = get_noise_min(x, y, noise_range)
 %noise_range is [largest, smallest]
-noise_min = min(y(x <= noise_range(1) & x >= noise_range(2)));
+noise_min = min(y((x <= noise_range(1) & x >= noise_range(2)), :));
 end

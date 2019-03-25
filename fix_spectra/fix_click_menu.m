@@ -37,7 +37,7 @@ function fix_click_menu(hObject, eventdata, handles) %#ok<INUSD>
 %
 % Eric Moyer 2011-2012 (eric_moyer@yahoo.com)
 
-str = {'Get collection(s)','Load collections', ...
+str = {'Get collection(s)','Get sample(s)', 'Load collections', ...
 ...%'','Set noise regions', ...
 	'','Load regions','Create signal map','Create new region', ...
        'Edit region','Delete region','Clear regions','Fix baseline', 'Rolling ball baseline', 'Fix negative points to 0', ...
@@ -88,6 +88,37 @@ elseif strcmp(str{s},'Get collection(s)')
     set(gcf, 'Pointer', 'watch');
 
     collections = get_collections;
+    
+    % Set the pointer back to what it was
+    set(gcf, 'Pointer', old_pointer);
+ 
+    % Check for error
+    if isempty(collections)
+        return
+    end
+ 
+    % Add the newly loaded collections onto the end of the current list
+    if ~isempty(loaded_collections)
+        collections = [loaded_collections,collections];
+    end
+    
+    setappdata(gcf,'spectrum_inx',0);
+    setappdata(gcf,'collection_inx',1);
+    for c = 1:length(collections)
+        collections{c}.Y_fixed = zeros(size(collections{c}.Y));
+        collections{c}.Y_baseline = zeros(size(collections{c}.Y));
+    end
+    setappdata(gcf,'collections',collections);
+    plot_next_spectrum;
+    setappdata(gcf,'orig_ylim',get(gca,'ylim'));    
+elseif strcmp(str{s},'Get sample(s)')
+    loaded_collections = getappdata(gcf,'collections'); 
+    
+    % Set pointer to wait cursor
+    old_pointer=get(gcf, 'Pointer');
+    set(gcf, 'Pointer', 'watch');
+
+    collections = get_samples;
     
     % Set the pointer back to what it was
     set(gcf, 'Pointer', old_pointer);
