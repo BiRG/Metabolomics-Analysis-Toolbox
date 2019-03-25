@@ -81,7 +81,7 @@ set(handles.loadings_uitable,'ColumnName',{'ID','x (ppm)','P','abs(P)','Sig?'});
 
 clear_all(hObject,handles);
 
-set(handles.description_text,'String',handles.collection.description);
+set(handles.description_text,'String',handles.collection.name);
 
 
 % Update handles structure

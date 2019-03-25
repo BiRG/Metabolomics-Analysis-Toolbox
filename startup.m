@@ -8,7 +8,6 @@ addpath([pwd,'/lib/arrow']);                       % Code for drawing arrows on 
 addpath([pwd,'/lib/data_space_to_figure_space']);  % Matlab code from example for converting a point from data coordinates to figure coordinates
 addpath([pwd,'/lib/hartigan_dip/']);               % Statistical test for multimodality (i.e. reject unimodality with alpha=xyz)
 addpath([pwd,'/lib/mtit/']);                       % Code to add title to plot where subplots also have titles
-addpath([pwd,'/lib/cell2csv/']);                   % Code to export mixed data cell arrays to csv
 addpath([pwd,'/common_scripts']);
 addpath([pwd,'/common_scripts/cursors']);
 addpath([pwd,'/common_scripts/dab']);

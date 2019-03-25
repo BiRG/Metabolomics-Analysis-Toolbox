@@ -1277,6 +1277,7 @@ else
         delete(pkid_name);
         clear('collection','metab_map','peaks','identifications');
         
+        
         % -----------------------------------------------------------------
         % Finish any pending deconvolutions and store the data
         % -----------------------------------------------------------------

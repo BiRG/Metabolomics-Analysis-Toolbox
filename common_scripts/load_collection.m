@@ -1,4 +1,4 @@
-function collection = load_collection(filename,pathname)
+ function collection = load_collection(filename,pathname)
 % Returns the collection stored in the given file.  The file must be a text file and [pathname,
 % filename] must be the needed path to the file.
 %

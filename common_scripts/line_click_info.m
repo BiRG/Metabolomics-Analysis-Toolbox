@@ -8,8 +8,9 @@ end
 message = '';
 selection_type = get(gcf,'SelectionType');
 for i = 1:length(collection.input_names)
-    name = regexprep(collection.input_names{i},' ','_');
-    field_name = lower(name);
+    field_name = collection.input_names{i};
+    %name = regexprep(collection.input_names{i},' ','_');
+    %field_name = lower(name);
     if strcmp(selection_type,'alt') && strcmp(field_name,'processing_log')
         continue
     end

@@ -11,4 +11,4 @@ handles.collection = collections{1};
 
 clear_all(handles.figure1,handles);
 
-set(handles.description_text,'String',handles.collection.description);
+set(handles.description_text,'String',handles.collection.name);

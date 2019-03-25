@@ -112,7 +112,7 @@ try
     
     clear_all(hObject,handles);
 
-    set(handles.description_text,'String',handles.collection.description);
+    set(handles.description_text,'String',handles.collection.name);
     
     populate_listboxes(handles);
     
@@ -280,7 +280,7 @@ try
     
     clear_all(hObject,handles);
     
-    set(handles.description_text,'String',handles.collection.description);
+    set(handles.description_text,'String',handles.collection.name);
     
     populate_listboxes(handles);
 
@@ -393,20 +393,22 @@ function post_collection_pushbutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-prompt={'Analysis ID:','Description:','File name:'};
+prompt={'Analysis ID:','Append to Log:'};
 name='Input for uploading file';
 numlines=1;
-defaultanswer={'','Auto-scaled','autoscale_results'};
+defaultanswer={'','Auto-scaled'};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};
 description = answer{2};
-pretty_file_name = answer{3};
+pretty_file_name = 'autoscale_results';
 
 contents = get(handles.scaling_popupmenu,'String'); % returns scaling_popupmenu contents as cell array
 type = contents{get(handles.scaling_popupmenu,'Value')};
 new_collection = scale(handles,handles.collection,type);
+
+
 new_collection.processing_log = [new_collection.processing_log,' ',description,'.'];
-post_collections(gcf,{new_collection},['_',pretty_file_name],analysis_id);
+post_collections({new_collection},['_',pretty_file_name],analysis_id);
 
 % --- Executes on button press in save_figure_pushbutton.
 function save_figure_pushbutton_Callback(hObject, eventdata, handles)

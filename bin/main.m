@@ -943,7 +943,10 @@ collection = handles.collection;
 % Remove adjacent deconvolution
 collection = adjust_y_deconvolution(collection,bins,deconvolve);
 new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
+new_collection = rmfield(new_collection, 'regions');
 save_collections({new_collection},'_binned');
+new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
+
 
 % --- Executes on button press in post_collection_pushbutton.
 function post_collection_pushbutton_Callback(hObject, eventdata, handles)
@@ -966,7 +969,10 @@ answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = answer{1};        
 collection = adjust_y_deconvolution(collection,bins,deconvolve);
 new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
-post_collections(gcf,{new_collection},'_binned',analysis_id);
+new_collection = rmfield(new_collection, 'regions');
+post_collections({new_collection},'_binned',analysis_id);
+new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
+
 
 % --- Executes on button press in add_bin_pushbutton.
 function add_bin_pushbutton_Callback(hObject, eventdata, handles)

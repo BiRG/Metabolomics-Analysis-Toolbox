@@ -19,9 +19,9 @@ end
 
 for i = 1:num_regions
     if isempty(names{i}) || strcmp(deblank(names{i}),'')
-        new_collection.x{i} = mean(bins(i,:));
+        new_collection.x(i) = mean(bins(i,:));
     else
-        new_collection.x{i} = deblank(names{i});
+        new_collection.x(i) = deblank(names{i});
     end
     for j = 1:collection.num_samples
         if autoscale

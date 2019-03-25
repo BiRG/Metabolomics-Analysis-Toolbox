@@ -5,17 +5,11 @@ for i = 1:length(collection_ids_str)
     collection_ids(i) = str2num(collection_ids_str{i});
 end
 
-[username,password] = logindlg;
-if isempty(username) && isempty(password)
-    msgbox('You must enter a username and password');
-    return;
-end
-
 try
     collections = {};
     for i = 1:length(collection_ids)
         collection_id = collection_ids(i);
-        [collections{i},message] = get_collection(collection_id,username,password);
+        [collections{i},message] = get_collection(collection_id);
         if ~isempty(message)
             msgbox(message);
             return;
@@ -30,4 +24,4 @@ end
 
 clear_all(handles.figure1,handles);
 
-set(handles.description_text,'String',handles.collection.description);
+set(handles.description_text,'String',handles.collection.name);

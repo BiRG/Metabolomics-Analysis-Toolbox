@@ -41,9 +41,10 @@ str = {'Get collection(s)','Load collections', ...
 ...%'','Set noise regions', ...
 	'','Load regions','Create signal map','Create new region', ...
        'Edit region','Delete region','Clear regions','Fix baseline', 'Rolling ball baseline', 'Fix negative points to 0', ...
-    '','Crop','Set reference','Normalize to reference','Zero regions', 'Sum normalize','Normalize to weight',...     
+    '','Crop','Set reference','Normalize to reference','Zero regions', 'Sum normalize','Normalize to weight',...
+    '','Merge collections','Merge processing logs','Merge locally', 'Join collections', ...
     '','Save regions','Finalize','Save collections', ...
-       'Merge processing logs','Merge locally' ...
+       'Merge collections','Merge processing logs','Merge locally' ...
        'Post collections','Save figures','Save images', ...
     '', 'Prob Quot Norm''n', 'Hist Norm''n', ...
     '', 'Calc Area', 'Calc Norm Constant',...
@@ -164,11 +165,12 @@ elseif strcmp(str{s},'Crop')
     for c = 1:length(collections)
         xminimum = str2double(inputdlg(['Collection ' num2str(c) ': Remove Xs less than?'], 'Crop', 1, {num2str(min(collections{c}.x))}));
         xmaximum = str2double(inputdlg(['Collection ' num2str(c) ': Remove Xs greater than?'], 'Crop', 1, {num2str(max(collections{c}.x))}));
-		if isempty(xminimum); xminimum = min(collections{c}.x); end;
-		if isempty(xmaximum); xmaximum = max(collections{c}.x); end;
+		if isempty(xminimum); xminimum = min(collections{c}.x); end
+		if isempty(xmaximum); xmaximum = max(collections{c}.x); end
         inds = find(round(collections{c}.x * 10000) / 10000 >= xminimum & round(collections{c}.x * 10000) / 10000 <= xmaximum);
         collections{c}.x = collections{c}.x(inds);
         collections{c}.Y = collections{c}.Y(inds, :);
+        collections{c}.processing_log = sprintf("%s Cropped to [%d, %d].", collections{c}.processing_log, xminimum, xmaximum);
     end
     setappdata(gcf,'collections',collections);
     plot_all;
@@ -241,8 +243,7 @@ elseif strcmp(str{s},'Finalize')
         end
     end
     for c = 1:length(collections)
-        collections{c}.Y_fixed = collections{c}.Y_fixed*0;
-        collections{c}.Y_baseline = collections{c}.Y_baseline*0;
+        collections{c} = rmfield(collections{c}, {'Y_fixed', 'Y_baseline'});
         try
             for s = 1:collections{c}.num_samples
                 delete(collections{c}.handles{s});
@@ -269,25 +270,55 @@ elseif strcmp(str{s},'Save collections')
     save_collections(collections,suffix);
 elseif strcmp(str{s},'Merge processing logs')
     merge_processing_logs;
+elseif strcmp(str{s},'Merge collections')
+    % Set pointer to wait cursor
+    old_pointer=get(gcf, 'Pointer');
+    set(gcf, 'Pointer', 'watch');
+    loaded_collections = getappdata(gcf,'collections');
+    collections = {merge_collections(loaded_collections)};
+
+    % Set the pointer back to what it was
+    set(gcf, 'Pointer', old_pointer);
+ 
+    % Check for error
+    if isempty(collections)
+        return
+    end
+    
+    setappdata(gcf,'spectrum_inx',0);
+    setappdata(gcf,'collection_inx',1);
+    setappdata(gcf,'collections',collections);
+    plot_next_spectrum;
+    setappdata(gcf,'orig_ylim',get(gca,'ylim'));
+    msgbox('Finished merging collections');
 elseif strcmp(str{s},'Merge locally')
     local_merge;
+elseif strcmp(str{s}, 'Join collections')
+    % Set pointer to wait cursor
+    old_pointer=get(gcf, 'Pointer');
+    set(gcf, 'Pointer', 'watch');
+    loaded_collections = getappdata(gcf,'collections');
+    collections = {join_collections(loaded_collections)};
+
+    % Set the pointer back to what it was
+    set(gcf, 'Pointer', old_pointer);
+ 
+    % Check for error
+    if isempty(collections)
+        return
+    end
+    
+    setappdata(gcf,'spectrum_inx',0);
+    setappdata(gcf,'collection_inx',1);
+    setappdata(gcf,'collections',collections);
+    plot_next_spectrum;
+    setappdata(gcf,'orig_ylim',get(gca,'ylim'));
+    msgbox('Finished joining collections');
 elseif strcmp(str{s},'Post collections')
     collections = getappdata(gcf,'collections');
     suffix = getappdata(gcf,'suffix');
-    prompt={'Analysis ID:'};
-    name='Enter analysis ID from the website';
-    numlines=1;
-    defaultanswer={''};
-    answer=inputdlg(prompt,name,numlines,defaultanswer);
-    analysis_id = str2double(answer{1});
-    [username,password] = logindlg;
-    if (ischar(username) && ischar(password))
-        post_collections(gcf,collections,suffix,analysis_id,username,password,600);
-    else
+    post_collections(collections,suffix);
         % Should never get here.
-        msgbox('Invalid Username or Password','The username and/or password entered were not valid as a username and/or password.');
-        return;
-    end
 elseif strcmp(str{s},'Set zoom x distance')
     prompt={'x distance:'};
     name='Set zoom x distance';

@@ -243,7 +243,7 @@ if xl(1) ~= 0 || xl(2) ~= 1
     xlim(xl);
 end    
 
-set(handles.description_text,'String',handles.collection.description);
+set(handles.description_text,'String',handles.collection.name);
 
 % Update handles structure
 guidata(handles.figure1, handles);

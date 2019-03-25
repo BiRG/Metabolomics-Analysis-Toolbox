@@ -112,7 +112,7 @@ try
     
     clear_all(hObject,handles);
     
-    set(handles.description_text,'String',handles.collection.description);
+    set(handles.description_text,'String',handles.collection.name);
     
     populate_listboxes(handles);
 
@@ -255,7 +255,8 @@ x_pc_inx = str2num(get(handles.x_edit,'String'));
 y_pc_inx = str2num(get(handles.y_edit,'String'));
 
 % Run PCA
-[COEFF, SCORE, LATENT, TSQUARED] = princomp(X');
+[COEFF, SCORE, LATENT, TSQUARED] = pca(X');
+
 % save('X');
 handles.model = {};
 handles.model.coeff = COEFF;
@@ -735,7 +736,7 @@ try
     
     clear_all(hObject,handles);
     
-    set(handles.description_text,'String',handles.collection.description);
+    set(handles.description_text,'String',handles.collection.name);
     
     populate_listboxes(handles);
 
