@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 09-Mar-2012 12:56:53
+% Last Modified by GUIDE v2.5 26-Mar-2019 18:43:02
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -601,7 +601,7 @@ name='Input for uploading file';
 numlines=1;
 defaultanswer={'','Binning results','binning_results'};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
-analysis_id = answer{1};
+analysis_id = str2double(answer{1});
 description = answer{2};
 pretty_file_name = answer{3};
 
@@ -966,7 +966,7 @@ name='Enter the analysis ID from the website';
 numlines=1;
 defaultanswer={''};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
-analysis_id = answer{1};        
+analysis_id = str2double(answer{1});        
 collection = adjust_y_deconvolution(collection,bins,deconvolve);
 new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
 new_collection = rmfield(new_collection, 'regions');
@@ -1995,4 +1995,3 @@ end
 guidata(hObject,handles);
 
 add_line_to_summary_text(handles.summary_text,sprintf('Finished checking remote deconvolution.'));
-

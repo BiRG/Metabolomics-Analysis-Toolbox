@@ -35,6 +35,7 @@ H5P.set_chunk(plist,2); % 2 strings per chunk
 dset = H5D.create(fid,path,VLstr_type,dspace,plist);
 
 % Write data
+value = cellfun(@num2str, value, 'UniformOutput', false);
 H5D.write(dset,VLstr_type,'H5S_ALL','H5S_ALL','H5P_DEFAULT',value);
 
 % Close file & resources

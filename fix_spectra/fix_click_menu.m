@@ -274,8 +274,9 @@ elseif strcmp(str{s},'Finalize')
         end
     end
     for c = 1:length(collections)
-        collections{c} = rmfield(collections{c}, {'Y_fixed', 'Y_baseline'});
         try
+            collections{c} = rmfield(collections{c}, 'Y_fixed');
+            collections{c} = rmfield(collections{c}, 'Y_baseline');
             for s = 1:collections{c}.num_samples
                 delete(collections{c}.handles{s});
             end

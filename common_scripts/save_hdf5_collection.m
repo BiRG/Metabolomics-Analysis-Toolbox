@@ -19,7 +19,11 @@ for i = 1:size(keys,1)
             h5create(path, ['/' key], size(value')) % some weird hdf5 row vs. column stuff
             h5write(path, ['/' key], value');
         elseif iscell(value)
-            write_cell_array(path, key, value);
+            try
+                write_cell_array(path, key, value);
+            catch error
+                fprintf('Could not write %s: %s', key, error.identifier);
+            end
         else
             try
                 if ~strcmp(value, '')
