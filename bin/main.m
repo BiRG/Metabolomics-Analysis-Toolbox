@@ -943,6 +943,8 @@ collection = handles.collection;
 % Remove adjacent deconvolution
 collection = adjust_y_deconvolution(collection,bins,deconvolve);
 new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
+new_collection.('x_min') = bins(:,2)';
+new_collection.('x_max') = bins(:,1)';
 new_collection = rmfield(new_collection, 'regions');
 save_collections({new_collection},'_binned');
 new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
@@ -969,6 +971,8 @@ answer=inputdlg(prompt,name,numlines,defaultanswer);
 analysis_id = str2double(answer{1});        
 collection = adjust_y_deconvolution(collection,bins,deconvolve);
 new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);
+new_collection.('x_min') = bins(:,2)';
+new_collection.('x_max') = bins(:,1)';
 new_collection = rmfield(new_collection, 'regions');
 post_collections({new_collection},'_binned',analysis_id);
 new_collection = bin_collection(collection,get(handles.autoscale_checkbox,'Value'),bins,names);

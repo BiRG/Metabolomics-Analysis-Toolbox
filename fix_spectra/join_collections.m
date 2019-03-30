@@ -81,6 +81,13 @@ function new_collection = join_collections(collections, ...
             good_inds = find(positive_collection.x > 0);
             positive_collection.Y = positive_collection.Y(good_inds',:);
             positive_collection.x = positive_collection.x(good_inds); % one is transposed for some historical reason
+            
+            if isfield(positive_collection, 'x_min')
+                positive_collection.x_min = positive_collection.x_min(good_inds);
+            end
+            if isfield(positive_collection, 'x_max')
+                positive_collection.x_max = positive_collection.x_max(good_inds);
+            end
         
             for f = 1:length(positive_collection.input_names)
                 input_name = positive_collection.input_names{f};
@@ -103,7 +110,12 @@ function new_collection = join_collections(collections, ...
             good_inds = find(negative_collection.x > 0);
             negative_collection.Y = negative_collection.Y(good_inds',:);
             negative_collection.x = -1 * negative_collection.x(good_inds); % one is transposed for some historical reason
-        
+            if isfield(negative_collection, 'x_min')
+                negative_collection.x_min = -1 * negative_collection.x_min(good_inds);
+            end
+            if isfield(negative_collection, 'x_max')
+                negative_collection.x_max = -1 * negative_collection.x_max(good_inds);
+            end  
             for f = 1:length(negative_collection.input_names)
                 input_name = negative_collection.input_names{f};
                 if size(negative_collection.(input_name), 2) == spectrum_count
@@ -167,6 +179,14 @@ function new_collection = join_collections(collections, ...
     % perform the actual concatenation:
     positive_collection.Y = vertcat(negative_collection.Y, positive_collection.Y);
     positive_collection.x = horzcat(negative_collection.x, positive_collection.x);
+    
+    if isfield(positive_collection, 'x_min') && isfield(negative_collection, 'x_min')
+        positive_collection.x_min = vertcat(negative_collection.x_min, positive_collection.x_min); % it gets transposed before update
+    end
+    if isfield(positive_collection, 'x_max') && isfield(negative_collection, 'x_max')
+        positive_collection.x_max = vertcat(negative_collection.x_max, positive_collection.x_max); % it gets transposed before update
+    end    
+    
     join_label_desc = strjoin(join_label, ',');
     positive_collection.name = sprintf('Collection %s join Collection %s on (%s)', positive_collection.collection_id, negative_collection.collection_id, join_label_desc);
     positive_collection.processing_log = sprintf('%s Joined Collection %s and Collection %s on (%s).', positive_collection.processing_log, positive_collection.collection_id, negative_collection.collection_id, join_label_desc);

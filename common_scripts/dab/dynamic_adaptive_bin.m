@@ -99,11 +99,14 @@ for i = 1:length(all_inxs)
         spectra{s}.mins = spectra{s}.all_mins(tinxs,:);
     end
     tbins = perform_heuristic_bin_dynamic(x,max_spectrum,spectra,max_dist_btw_maxs,min_dist_from_boundary);
-    if tbins(1,1) > x(inxs(1))
-        tbins(1,1) = x(inxs(1));
-    end
-    if tbins(end,2) < x(inxs(end))
-        tbins(end,2) = x(inxs(end));
+    try
+        if tbins(1,1) > x(inxs(1))
+            tbins(1,1) = x(inxs(1));
+        end
+        if tbins(end,2) < x(inxs(end))
+            tbins(end,2) = x(inxs(end));
+        end
+    catch
     end
     bins = [bins;tbins];
 end
