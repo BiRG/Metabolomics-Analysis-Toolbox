@@ -1304,9 +1304,10 @@ end
 
 plot_maxs(handles,true);
 
-if inverted_bin
-    msgbox(sprintf('Inverted bin: %f,%f',bin(1),bin(2)));    
-end
+% why did we even waste the time to pop this up????
+%if inverted_bin
+%    msgbox(sprintf('Inverted bin: %f,%f',bin(1),bin(2)));    
+%end
 
 ylim(yl);
 guidata(hObject, handles);

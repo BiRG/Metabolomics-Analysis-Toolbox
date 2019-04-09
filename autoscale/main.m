@@ -398,7 +398,7 @@ name='Input for uploading file';
 numlines=1;
 defaultanswer={'','Auto-scaled'};
 answer=inputdlg(prompt,name,numlines,defaultanswer);
-analysis_id = answer{1};
+analysis_id = str2double(answer{1});
 description = answer{2};
 pretty_file_name = 'autoscale_results';
 

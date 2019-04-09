@@ -20,12 +20,14 @@ for c = 1:length(collections)
             in_region = in_region | ((regions(i,1) >= x) & (x >= regions(i,2)));
         end
         
-        if sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
-            collections{c}.Y_fixed(in_region,s) = 0;
-        else
-            collections{c}.Y_fixed(:,s) = y;
-            collections{c}.Y_fixed(in_region,s) = 0;
+        try
+            if sum(abs(collections{c}.Y_fixed(:,s))) > 0 % Fixed answer available
+                collections{c}.Y_fixed(in_region,s) = 0;
+            end
+        catch
         end
+        collections{c}.Y_fixed(:,s) = y;
+        collections{c}.Y_fixed(in_region,s) = 0;
     end
 end
 setappdata(gcf,'add_processing_log','Zero regions.');
