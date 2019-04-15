@@ -6,7 +6,7 @@ function varargout = main(varargin)
 %      H = MAIN returns the handle to a new MAIN or the handle to
 %      the existing singleton*.
 %
-%      MAIN('CALLBACK',hObject,eventData,handles,...) calls the local
+%      MAIN('CALLBACK',hObject,eventData,handles,...) calls thfe local
 %      function named CALLBACK in MAIN.M with the given input arguments.
 %
 %      MAIN('Property','Value',...) creates a new MAIN or raises the
