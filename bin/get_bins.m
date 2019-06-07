@@ -4,8 +4,9 @@ deconvolve = [];
 names = {};
 data = get(handles.bins_listbox,'String');
 for b = 2:size(data,1) % Skip the first blank
-    fields = split(data{b},',');    
-    bins(end+1,:) = [str2num(fields{1}),str2num(fields{2})];
+    fields = split(data{b},',');
+    boundaries = [str2num(fields{1}), str2num(fields{2})];
+    bins(end+1,:) = [max(boundaries), min(boundaries)];
     if length(fields) == 2
         deconvolve(end+1) = false;
         names{end+1} = '';
