@@ -9,6 +9,7 @@ p_ortho = [];
 Xres = bsxfun(@minus,X, mean(X));
 Yres = (Y)-mean(Y);
 SS_Y=sum(sum(Yres.^2));
+
 SS_X=sum(sum(Xres.^2));
 
 for iter=1:num_OPLS_fact
@@ -24,7 +25,7 @@ for iter=1:num_OPLS_fact
     t_ortho(:,iter) = Xres*w_ortho(:,iter) / (w_ortho(:,iter)'*w_ortho(:,iter));
     p_ortho(:,iter) = (t_ortho(:,iter)'*Xres / (t_ortho(:,iter)'*t_ortho(:,iter)))';
     Xres = Xres - t_ortho(:,iter)*p_ortho(:,iter)';
-end;
+end
 
 %%%%%%%%%%
 % PLS on full data

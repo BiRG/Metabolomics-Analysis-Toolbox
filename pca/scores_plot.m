@@ -1,4 +1,5 @@
 %% Update scores plot
+function scores_plot(handles, x_pc_inx, y_pc_inx)
 contents = get(handles.model_by_listbox,'String');
 groups = {contents{get(handles.model_by_listbox,'Value')}};
 axes(handles.scores_axes);
@@ -16,3 +17,4 @@ hold off
 legend(groups,'Location','Best');
 xlabel(['PC_',num2str(x_pc_inx)],'Interpreter','tex');
 ylabel(['PC_',num2str(y_pc_inx)],'Interpreter','tex');
+end

@@ -302,13 +302,13 @@ for g = 1:length(handles.group_by_inxs)
 end
 set(handles.scores_uitable,'data',data);
 
-scores_plot;
+scores_plot(handles, x_pc_inx, y_pc_inx);
 
-loadings_plot;
+loadings_plot(handles, x_pc_inx);
 
 % Cumulative variance explained plot
 axes(handles.per_var_axes);
-plot(1:length(handles.model.coeff),100*cumsum(handles.model.latent)./sum(handles.model.latent),'*k');
+plot(1:size(handles.model.coeff, 2),100*cumsum(handles.model.latent)./sum(handles.model.latent),'*k');
 ylabel('Cumulative % Variance Explained','Interpreter','tex');
 xlabel('Principal Component');
 msgbox('Finished running PCA');
@@ -337,27 +337,24 @@ clear_before_run(hObject,handles);
 x_pc_inx = str2num(get(handles.x_edit,'String'));
 y_pc_inx = str2num(get(handles.y_edit,'String'));
 
-scores_plot;
-
-loadings_plot;
-
-% Cumulative variance explained plot
-axes(handles.per_var_axes);
-plot(1:length(handles.model.coeff),100*cumsum(handles.model.latent)./sum(handles.model.latent),'*k');
-ylabel('Cumulative % Variance Explained','Interpreter','tex');
-xlabel('Principal Component');
-
 contents = get(hObject,'String');
 selected = contents(get(hObject,'Value'));
 if strcmp(selected,'Scores')
+    scores_plot(handles, x_pc_inx, y_pc_inx);
     set(handles.scores_uipanel,'Visible','on');
     set(handles.loadings_uipanel,'Visible','off');
     set(handles.per_var_explained_uipanel,'Visible','off');
 elseif strcmp(selected,'Loadings')
+    loadings_plot(handles, x_pc_inx);
     set(handles.scores_uipanel,'Visible','off');
     set(handles.loadings_uipanel,'Visible','on');
     set(handles.per_var_explained_uipanel,'Visible','off');
 elseif strcmp(selected,'Cumulative % Variance Explained')
+    % Cumulative variance explained plot
+    axes(handles.per_var_axes);
+    plot(1:size(handles.model.coeff, 2),100*cumsum(handles.model.latent)./sum(handles.model.latent),'*k');
+    ylabel('Cumulative % Variance Explained','Interpreter','tex');
+    xlabel('Principal Component');    
     set(handles.scores_uipanel,'Visible','off');
     set(handles.loadings_uipanel,'Visible','off');
     set(handles.per_var_explained_uipanel,'Visible','on');
@@ -696,7 +693,7 @@ end
 
 for i = 1:length(handles.collection.x)
     data{i+1,1} = handles.collection.x(i);
-    for j = 1:length(handles.model.coeff)
+    for j = 1:size(handles.model.coeff, 2)
         data{i+1,j+1} = handles.model.coeff(i,j);
     end
 end
@@ -804,14 +801,14 @@ function save_per_var_explained_pushbutton_Callback(hObject, eventdata, handles)
 
 data = {};
 % Fill in columns
-for j = 1:length(handles.model.coeff)
+for j = 1:size(handles.model.coeff, 2)
     data{j,1} = ['PC',num2str(j)];
     data{j,2} = handles.model.latent(j)/sum(handles.model.latent);
 end
 
-[filename, pathname] = uiputfile({'*.xlsx'},'Save as');
-
-xlswrite([pathname,filename],data,'Percent Variance Explained');
+[filename, pathname] = uiputfile({'*.csv'},'Save as');
+data_table = cell2table(data, 'VariableNames', {'component', 'variance_explained_ratio'});
+writetable(data_table, [pathname,filename]);
 
 
 % --- Executes on button press in ids_radiobutton.
