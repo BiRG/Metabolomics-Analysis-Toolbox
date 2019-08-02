@@ -8,7 +8,7 @@ function [collection,message] = get_old_collection(collection_id,username,passwo
 message = [];
 
 if ~exist('username','var') || ~exist('password','var')
-    [username,password] = logindlg;
+    [username,password] = logindlg('title', 'Old Login');
     if isempty(username) && isempty(password)
         collection = {};
         message = 'You must enter a username and password';
@@ -17,7 +17,7 @@ if ~exist('username','var') || ~exist('password','var')
 end
 
 if ~exist('collection_id','var') || isempty(collection_id)
-    prompt={'Collection ID:'};
+    prompt={'Old Collection ID:'};
     name='Enter the collection ID from the website';
     numlines=1;
     defaultanswer={''};
@@ -35,7 +35,7 @@ if ~exist('collection_id','var') || isempty(collection_id)
     end
 end
 
-url = sprintf('http://birg.cs.wright.edu/omics_analysis/collections/%d.xml',collection_id);
+url = sprintf('https://birg.cs.wright.edu/omics_analysis/collections/%d.xml',collection_id);
 try
     if exist('proxy.conf','file')
         load_proxy('proxy.conf');
