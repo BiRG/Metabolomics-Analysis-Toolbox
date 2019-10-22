@@ -31,5 +31,5 @@ end
 
 function noise_min = get_noise_min(x, y, noise_range)
 %noise_range is [largest, smallest]
-noise_min = min(y((x <= noise_range(1) & x >= noise_range(2)), :));
+noise_min = min(y((x <= max(noise_range) & x >= min(noise_range)), :));
 end
